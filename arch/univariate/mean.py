@@ -41,6 +41,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+from arch.utility.array import to_array_1d
 
 if TYPE_CHECKING:
     # Fake path to satisfy mypy
@@ -130,7 +131,7 @@ def _ar_forecast(
         fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
         if x.shape[0] > 0:
             fcasts[:, i] += x[:, :, i - p].T @ exogp
-    fcasts = fcasts[:, p:]
+    fcasts = cast(Float64Array2D, fcasts[:, p:])
 
     return fcasts
 
@@ -267,7 +268,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
-        self._x = x
+        self._x: Optional[Union[pd.DataFrame, Float64Array2D]] = None
+        self._x_original = x
         self._x_names: list[str] = []
         self._x_index: Union[NDArray, pd.Index, None] = None
         self.lags: Union[
@@ -276,10 +278,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._lags: Int64Array2D = np.empty((0, 0), dtype=int)
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
-        self.regressors: Float64Array = np.empty((0, 0), dtype=np.double)
+        self.regressors: Float64Array2D = np.empty((0, 0), dtype=np.double)
 
         self._name = "HAR"
-        if self._x is not None:
+        if self._x_original is not None:
             self._name += "-X"
         if lags is not None:
             max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
@@ -366,10 +368,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
-        regressors = self._fit_regressors if y is None else regressors
+        _regressors = self._fit_regressors if y is None else regressors
         y = self._fit_y if y is None else y
-        assert regressors is not None
-        return y - np.asarray(regressors, dtype=float).dot(params)
+        assert _regressors is not None
+        return y - np.asarray(_regressors, dtype=float).dot(params)
 
     @cached_property
     def num_params(self) -> int:
@@ -500,7 +502,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
-        params = cast(Float64Array, ensure1d(params, "params", series=False))
+        params = cast(Float64Array1D, ensure1d(params, "params", series=False))
         if params.shape[0] != num_params:
             raise ValueError(
                 "params has the wrong number of elements. "
@@ -508,8 +510,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             )
 
         dist_params = np.empty(0) if dc == 0 else params[-dc:]
-        vol_params = params[mc : mc + vc]
-        simulator = self.distribution.simulate(dist_params)
+        vol_params = cast(Float64Array1D, params[mc : mc + vc])
+        simulator = self.distribution.simulate(cast(Float64Array1D, dist_params))
         sim_data = self.volatility.simulate(
             vol_params, nobs + burn, simulator, burn, initial_value_vol
         )
@@ -546,22 +548,26 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _check_specification(self) -> None:
         """Checks the specification for obvious errors"""
-        if self._x is not None:
-            if isinstance(self._x, pd.Series):
-                self._x = pd.DataFrame(self._x)
-            elif self._x.ndim == 1:
-                assert isinstance(self._x, np.ndarray)
-                self._x = np.asarray(self._x)[:, None]
+        err_msg = (
+            "x must be nobs by n, where nobs is the same as the number of elements in y"
+        )
+        if self._x_original is not None:
+            if isinstance(self._x_original, pd.Series):
+                self._x = pd.DataFrame(self._x_original)
+            elif isinstance(self._x_original, pd.DataFrame):
+                self._x = self._x_original
+            else:
+                x_original = np.asarray(self._x_original, dtype=float)
+                if x_original.ndim == 1:
+                    x_original = x_original[:, None]
+                self._x = cast(Float64Array2D, x_original)
             assert isinstance(self._x, (np.ndarray, pd.DataFrame))
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
-                raise ValueError(
-                    "x must be nobs by n, where nobs is the same as "
-                    "the number of elements in y"
-                )
+                raise ValueError(err_msg)
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
             names, self._x_index = parse_dataframe(self._x, def_names)
             self._x_names = [str(name) for name in names]
-            self._x = np.asarray(self._x)
+            self._x = cast(Float64Array2D, np.asarray(self._x, dtype=float))
 
     def _reformat_lags(self) -> None:
         """
@@ -584,7 +590,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "When using the 1-d format of lags, values must be positive"
                 )
             lags = np.unique(lags)
-            temp = np.array([lags, lags], dtype=int)
+            temp = cast(Int64Array2D, np.array([lags, lags], dtype=int))
             if self.use_rotated:
                 temp[0, 1:] = temp[0, 0:-1]
                 temp[0, 0] = 0
@@ -600,7 +606,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "lags[0,j] <= lags[1,j] for all lags values."
                 )
             ind = np.lexsort(np.flipud(lags))
-            lags = lags[:, ind]
+            lags = cast(Int64Array2D, lags[:, ind])
             test_mat = np.zeros((lags.shape[1], np.max(lags)), dtype=int)
             # Subtract 1 so first is 0 indexed
             lags = lags - np.array([[1], [0]])
@@ -609,8 +615,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             rank = np.linalg.matrix_rank(test_mat.astype(float))
             if rank != lags.shape[1]:
                 raise ValueError("lags contains redundant entries")
+            self._lags = cast(Int64Array2D, lags)
 
-            self._lags = lags
             if self.use_rotated:
                 from warnings import warn
 
@@ -655,7 +661,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         else:
             reg_x = np.empty((nobs_orig, 0), dtype=np.double)
 
-        self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
+        self.regressors = cast(
+            Float64Array2D, np.hstack((reg_constant, reg_lags, reg_x))
+        )
 
     def _r2(self, params: ArrayLike1D) -> float:
         y = self._fit_y
@@ -671,7 +679,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = np.asarray(self.resids(np.asarray(params, dtype=float)), dtype=float)
+        e = to_array_1d(self.resids(to_array_1d(params)))
 
         return 1.0 - float(e.T.dot(e)) / tss
 
@@ -687,12 +695,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if _last_obs_index <= _first_obs_index:
             raise ValueError("first_obs and last_obs produce in an empty array.")
         self._fit_indices = [_first_obs_index, _last_obs_index]
-        self._fit_y = self._y[_first_obs_index:_last_obs_index]
+        self._fit_y = cast(Float64Array1D, self._y[_first_obs_index:_last_obs_index])
         reg = self.regressors
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
 
-    def _fit_no_arch_normal_errors_params(self) -> Float64Array:
+    def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
         """
         Estimates model parameters excluding sigma2
 
@@ -759,7 +767,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         opt = OptimizeResult({"status": 0, "message": ""})
 
         if x.shape[1] > 0:
-            regression_params = np.linalg.pinv(x).dot(y)
+            regression_params: Float64Array1D = cast(
+                Float64Array1D, np.linalg.pinv(x).dot(y)
+            )
             xpxi = np.linalg.inv(x.T.dot(x) / nobs)
             fitted = x.dot(regression_params)
         else:
@@ -770,7 +780,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         e = y - fitted
         sigma2 = e.T.dot(e) / nobs
 
-        params = np.hstack((regression_params, sigma2))
+        params = to_array_1d(np.hstack((regression_params, sigma2)))
         hessian = np.zeros((self.num_params + 1, self.num_params + 1))
         hessian[: self.num_params, : self.num_params] = -xpxi
         hessian[-1, -1] = -1
@@ -874,7 +884,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         f"the included exogenous regressors. {key} not found in: "
                         f"{keys}"
                     )
-                temp = np.asarray(x[key], dtype=np.double)
+                temp = np.asarray(x[key], dtype=float)
                 if temp.ndim == 1:
                     temp = temp.reshape((1, -1))
                 collected.append(temp)
@@ -956,7 +966,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 f"this value is {max(0, earliest - 1)}."
             )
         # Parse params
-        params = np.asarray(params)
+        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
 
         #####################################
@@ -964,9 +974,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         #####################################
         # Back cast should use only the sample used in fitting
         resids = self.resids(mp)
-        backcast = self._volatility.backcast(np.asarray(resids, dtype=float))
-        full_resids = np.asarray(
-            self.resids(mp, self._y[earliest:], self.regressors[earliest:]), dtype=float
+        backcast = self._volatility.backcast(resids)
+        full_resids = to_array_1d(
+            self.resids(
+                mp,
+                cast(Float64Array1D, self._y[earliest:]),
+                cast(Float64Array2D, self.regressors[earliest:]),
+            )
         )
         vb = self._volatility.variance_bounds(full_resids, 2.0)
         if rng is None:
@@ -1204,8 +1218,8 @@ class ConstantMean(HARX):
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
-        _y = self._fit_y if y is None else np.asarray(y, dtype=np.double)
-        return _y - params
+        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
+        return _y - params[0]
 
 
 class ZeroMean(HARX):
@@ -1459,7 +1473,7 @@ class ARX(HARX):
             rescale=rescale,
         )
         self._name = "AR"
-        if self._x is not None:
+        if self._x_original is not None:
             self._name += "-X"
 
     def _model_description(self, include_lags: bool = True) -> dict[str, str]:
@@ -1724,9 +1738,11 @@ class ARCHInMean(ARX):
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
-        return super().resids(params[:-1], y=y, regressors=regressors)
+        return super().resids(
+            cast(Float64Array1D, params[:-1]), y=y, regressors=regressors
+        )
 
-    def starting_values(self) -> Float64Array:
+    def starting_values(self) -> Float64Array1D:
         return np.r_[super().starting_values(), 0.0]
 
     @overload
@@ -1735,7 +1751,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
 
@@ -1745,7 +1761,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -1756,7 +1772,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[True] = ...,
     ) -> Float64Array1D:  # pragma: no cover
         ...  # pragma: no cover
@@ -1766,7 +1782,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: bool = False,
     ) -> Union[float, Float64Array1D]:
         # Parse parameters
