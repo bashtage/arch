@@ -4,13 +4,6 @@ from typing import Any, Callable, Optional
 
 from arch.utility.exceptions import PerformanceWarning
 
-try:
-    import numba  # noqa
-
-    HAS_NUMBA = True
-except ImportError:
-    HAS_NUMBA = False
-
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
 
 performance_warning: str = """
@@ -18,12 +11,13 @@ numba is not available, and this function is being executed without JIT
 compilation. Either install numba or reinstalling after installing Cython
 is strongly recommended."""
 
+HAS_NUMBA = False
 try:
     if DISABLE_NUMBA:
         raise ImportError
-
     from numba import jit
 
+    HAS_NUMBA = True
     jit = functools.partial(jit, nopython=True)
 
 except ImportError:
