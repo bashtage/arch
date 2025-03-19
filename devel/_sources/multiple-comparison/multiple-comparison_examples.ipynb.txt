@@ -332,7 +332,7 @@
     "better_models = pd.concat(\n",
     "    [model_losses_df.mean(axis=0), model_losses_df.mean(axis=0)], axis=1\n",
     ")\n",
-    "better_models.columns = [\"Same or worse\", \"Better\"]\n",
+    "better_models.columns = pd.Index([\"Same or worse\", \"Better\"])\n",
     "better = better_models.index.isin(stepm.superior_models)\n",
     "worse = np.logical_not(better)\n",
     "better_models.loc[better, \"Same or worse\"] = np.nan\n",
