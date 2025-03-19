@@ -18,6 +18,7 @@ from arch.utility.array import (
     ensure2d,
     find_index,
     parse_dataframe,
+    to_array_1d,
 )
 
 
@@ -295,3 +296,29 @@ def test_concrete_class_meta():
             @abstractmethod
             def func(self):
                 pass
+
+
+@pytest.mark.parametrize(
+    "arr",
+    [
+        np.array([1.0], dtype=float),
+        np.array(0),
+        np.array([0, 1]),
+        np.array([[2, 3, 4]]),
+        Series([1, 2, 3]),
+    ],
+)
+def test_to_array_1d(arr):
+    converted = to_array_1d(arr)
+    assert isinstance(converted, np.ndarray)
+    assert converted.ndim == 1
+    assert converted.dtype == np.float64
+
+
+def test_to_array_1d_err():
+    with pytest.raises(ValueError, match="x must be 1D"):
+        to_array_1d(np.array([[1, 2], [3, 4]]))
+    with pytest.raises(TypeError, match="x must be a Series or ndarray"):
+        to_array_1d(0)
+    with pytest.raises(TypeError, match="x must be a Series or ndarray"):
+        to_array_1d(DataFrame([[0, 1]]))
