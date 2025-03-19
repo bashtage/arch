@@ -38,17 +38,21 @@ NDArray = Union[np.ndarray]
 Float64Array = np.ndarray[tuple[int, ...], np.dtype[np.float64]]  # pragma: no cover
 Float64Array1D = np.ndarray[tuple[int], np.dtype[np.float64]]  # pragma: no cover
 Float64Array2D = np.ndarray[tuple[int, int], np.dtype[np.float64]]  # pragma: no cover
-Int64Array = np.ndarray[tuple[int, ...], np.dtype[np.longlong]]  # pragma: no cover
-Int64Array2D = np.ndarray[tuple[int, int], np.dtype[np.longlong]]  # pragma: no cover
+Int64Array = np.ndarray[tuple[int, ...], np.dtype[np.int64]]  # pragma: no cover
+Int64Array1D = np.ndarray[tuple[int], np.dtype[np.int64]]  # pragma: no cover
+#     tuple[list[np.ndarray[tuple[int], np.dtype[np.signedinteger[Any]]]], dict[str, np.ndarray[tuple[int], np.dtype[np.signedinteger[Any]]]]]
+Int64Array2D = np.ndarray[tuple[int, int], np.dtype[np.int64]]  # pragma: no cover
 Int32Array = np.ndarray[tuple[int, ...], np.dtype[np.intc]]  # pragma: no cover
-IntArray = np.ndarray[tuple[int, ...], np.dtype[np.int_]]  # pragma: no cover
+IntArray = np.ndarray[tuple[int, ...], np.dtype[np.int64]]  # pragma: no cover
 BoolArray = np.ndarray[tuple[int, ...], np.dtype[np.bool_]]  # pragma: no cover
 AnyArray = np.ndarray[tuple[int, ...], Any]  # pragma: no cover
 AnyArray1D = np.ndarray[tuple[int], Any]  # pragma: no cover
 Uint32Array = np.ndarray[tuple[int, ...], np.dtype[np.uintc]]  # pragma: no cover
 
 BootstrapIndexT = Union[
-    Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]
+    Int64Array1D,
+    tuple[Int64Array1D, ...],
+    tuple[list[Int64Array1D], dict[str, Int64Array1D]],
 ]
 RandomStateState = tuple[str, Uint32Array, int, int, float]
 

@@ -28,6 +28,7 @@ from arch.typing import (
     DateLike,
     Float64Array,
     Float64Array1D,
+    Float64Array2D,
     ForecastingMethod,
     Label,
     Literal,
@@ -426,7 +427,7 @@ class ARCHModel(metaclass=ABCMeta):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
 
@@ -436,7 +437,7 @@ class ARCHModel(metaclass=ABCMeta):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -447,7 +448,7 @@ class ARCHModel(metaclass=ABCMeta):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[True] = ...,
     ) -> Float64Array1D:  # pragma: no cover
         ...  # pragma: no cover
@@ -457,7 +458,7 @@ class ARCHModel(metaclass=ABCMeta):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: bool = False,
     ) -> Union[float, Float64Array1D]:
         """
@@ -513,9 +514,9 @@ class ARCHModel(metaclass=ABCMeta):
         _x = to_array_1d(np.asarray(x, dtype=float))
         km, kv = int(self.num_params), int(self.volatility.num_params)
         return (
-            to_array_1d(x[:km]),
-            to_array_1d(x[km : km + kv]),
-            to_array_1d(x[km + kv :]),
+            to_array_1d(_x[:km]),
+            to_array_1d(_x[km : km + kv]),
+            to_array_1d(_x[km + kv :]),
         )
 
     def fix(

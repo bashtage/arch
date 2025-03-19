@@ -15,6 +15,7 @@ from arch.typing import (
     BootstrapIndexT,
     Float64Array,
     Int64Array,
+    Int64Array1D,
     Literal,
     NDArray,
     RandomStateState,
@@ -55,12 +56,12 @@ def _get_prng_state(
 
 def _get_random_integers(
     prng: Union[Generator, RandomState], upper: int, *, size: int = 1
-) -> Int64Array:
+) -> Int64Array1D:
     if isinstance(prng, Generator):
-        return prng.integers(upper, size=size, dtype=np.int64)
+        return cast(Int64Array1D, prng.integers(upper, size=size, dtype=np.int64))
     else:
         assert isinstance(prng, RandomState)
-        return prng.randint(upper, size=size, dtype=np.int64)
+        return cast(Int64Array1D, prng.randint(upper, size=size, dtype=np.int64))
 
 
 def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
@@ -438,7 +439,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                     raise ValueError(
                         "All inputs must have the same number of elements in axis 0"
                     )
-        self._index: BootstrapIndexT = np.arange(self._num_items)
+        self._index: BootstrapIndexT = np.arange(self._num_items, dtype=np.int64)
 
         self._parameters: list[int] = []
         self.pos_data: tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...] = args
@@ -626,7 +627,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             False or if no seed has been set, the bootstrap will be reset
             to the initial state.  Default is True
         """
-        self._index = np.arange(self._num_items)
+        self._index = np.arange(self._num_items, dtype=np.int64)
         self._resample()
         self.state = self._initial_state
 
@@ -1380,7 +1381,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> tuple[list[Int64Array], dict[str, Int64Array]]:
+    ) -> tuple[list[Int64Array1D], dict[str, Int64Array1D]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1424,8 +1425,14 @@ class IndependentSamplesBootstrap(IIDBootstrap):
             False or if no seed has been set, the bootstrap will be reset
             to the initial state.  Default is True
         """
-        pos_indices = [np.arange(self._num_arg_items[i]) for i in range(self._num_args)]
-        kw_indices = {key: np.arange(self._num_kw_items[key]) for key in self._kwargs}
+        pos_indices: list[Int64Array1D] = [
+            np.arange(self._num_arg_items[i], dtype=np.int64)
+            for i in range(self._num_args)
+        ]
+        kw_indices: dict[str, Int64Array1D] = {
+            key: np.arange(self._num_kw_items[key], dtype=np.int64)
+            for key in self._kwargs
+        }
         self._index = pos_indices, kw_indices
         self._resample()
         self.state = self._initial_state
@@ -1595,21 +1602,21 @@ class CircularBlockBootstrap(IIDBootstrap):
         html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
         return html
 
-    def update_indices(self) -> Int64Array:
+    def update_indices(self) -> Int64Array1D:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
         indices = _get_random_integers(
             self._generator, self._num_items, size=num_blocks
         )
-        indices = indices[:, None] + np.arange(self.block_size)
-        indices = indices.flatten()
+        _indices = indices[:, None] + np.arange(self.block_size, dtype=np.int64)
+        indices = _indices.flatten()
         indices %= self._num_items
 
         if indices.shape[0] > self._num_items:
-            return indices[: self._num_items]
+            return cast(Int64Array1D, indices[: self._num_items])
         else:
-            return indices
+            return cast(Int64Array1D, indices)
 
 
 class StationaryBootstrap(CircularBlockBootstrap):
@@ -1707,7 +1714,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
         )
         self._p = 1.0 / block_size
 
-    def update_indices(self) -> Int64Array:
+    def update_indices(self) -> Int64Array1D:
         indices = _get_random_integers(
             self._generator, self._num_items, size=self._num_items
         )
@@ -1816,7 +1823,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
             block_size, *args, random_state=random_state, seed=seed, **kwargs
         )
 
-    def update_indices(self) -> Int64Array:
+    def update_indices(self) -> Int64Array1D:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1826,7 +1833,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         indices = indices.flatten()
 
         if indices.shape[0] > self._num_items:
-            return indices[: self._num_items]
+            return cast(Int64Array1D, indices[: self._num_items])
         else:
             return indices
 
@@ -1846,6 +1853,6 @@ class MOONBootstrap(IIDBootstrap):  # pragma: no cover
     def update_indices(
         self,
     ) -> Union[
-        Int64Array, tuple[list[Int64Array], dict[str, Int64Array]]
+        Int64Array1D, tuple[list[Int64Array1D], dict[str, Int64Array1D]]
     ]:  # pragma: no cover
         raise NotImplementedError

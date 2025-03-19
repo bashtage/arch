@@ -16,7 +16,7 @@ from arch.typing import (
     ArrayLike2D,
     BoolArray,
     Float64Array,
-    Int64Array,
+    Int64Array1D,
     IntArray,
     Literal,
     Uint32Array,
@@ -448,7 +448,7 @@ class StepM(MultipleComparison):
         self.k: int = self.models.shape[1]
         self.reps: int = reps
         self.size: float = size
-        self._superior_models: Optional[list[Hashable]] = None
+        self._superior_models: Optional[list[int]] = None
         self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
 
         self._model = "StepM"
@@ -472,16 +472,13 @@ class StepM(MultipleComparison):
         # 1. Run SPA
         self.spa.compute()
         # 2. If any models superior, store indices, remove and re-run SPA
-        better_models = list(self.spa.better_models(self.size))
+        better_models = list(int(i) for i in self.spa.better_models(self.size))
         all_better_models = better_models[:]
         # 3. Stop if nothing superior
         while better_models and (len(better_models) < self.k):
             # A. Use Selector to remove better models
             selector = np.ones(self.k, dtype=np.bool_)
-            if isinstance(self.models, pd.DataFrame):  # Columns
-                selector[self.models.columns.isin(all_better_models)] = False
-            else:
-                selector[np.array(all_better_models)] = False
+            selector[np.array(all_better_models)] = False
             self.spa.subset(selector)
             # B. Rerun
             self.spa.compute()
@@ -494,7 +491,7 @@ class StepM(MultipleComparison):
         self._superior_models = all_better_models
 
     @property
-    def superior_models(self) -> list[Hashable]:
+    def superior_models(self) -> Union[list[int], Sequence[Hashable]]:
         """
         List of the indices or column names of the superior models
 
@@ -507,6 +504,8 @@ class StepM(MultipleComparison):
         if self._superior_models is None:
             msg = "compute must be called before accessing superior_models"
             raise RuntimeError(msg)
+        if isinstance(self.models, pd.DataFrame):
+            return list(self.models.columns[self._superior_models])
         return self._superior_models
 
 
@@ -781,7 +780,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         pvalue: float = 0.05,
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
-    ) -> Union[Int64Array, list[Hashable]]:
+    ) -> Union[Int64Array1D]:
         """
         Returns set of models rejected as being equal-or-worse than the
         benchmark
@@ -811,10 +810,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
         better_models = self._loss_diff.mean(0) > crit_val
         better_models = np.logical_and(better_models, self._selector)
-        if isinstance(self.models, pd.DataFrame):
-            return list(self.models.columns[better_models])
-        else:
-            return np.argwhere(better_models).flatten()
+        return np.argwhere(better_models).flatten()
 
     def _check_compute(self) -> None:
         if self._pvalues:

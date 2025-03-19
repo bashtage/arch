@@ -61,11 +61,11 @@ def to_array_1d(x: Union[AnyArray, Series]) -> Float64Array1D:
         if _x.ndim == 1:
             return cast(Float64Array1D, _x.astype(float))
         elif _x.ndim == 0:
-            return cast(Float64Array1D, np.atleast_1d(_x).astype(float))
+            return cast(Float64Array1D, np.atleast_1d(_x).astype(float, copy=False))
         else:
             raise ValueError("Array must be 1D or 1D convertible")
     elif isinstance(x, Series):
-        return x.to_numpy().astype(float)
+        return x.to_numpy().astype(float, copy=False)
     else:
         raise TypeError("x must be a Series or ndarray")
 

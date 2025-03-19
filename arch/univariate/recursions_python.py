@@ -13,7 +13,7 @@ from typing import Optional, Union, cast
 import numpy as np
 from scipy.special import gammaln
 
-from arch.typing import Float64Array, Int32Array
+from arch.typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [
@@ -40,7 +40,7 @@ LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
 SQRT2_OV_PI = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 
 
-def bounds_check_python(sigma2: float, var_bounds: Float64Array) -> float:
+def bounds_check_python(sigma2: float, var_bounds: Float64Array2D) -> float:
     if sigma2 < var_bounds[0]:
         sigma2 = var_bounds[0]
     elif sigma2 > var_bounds[1]:
@@ -56,12 +56,12 @@ bounds_check = jit(bounds_check_python, nopython=True, inline="always")
 
 def harch_core_python(
     t: int,
-    parameters: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     lags: Int32Array,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> float:
     sigma2[t] = parameters[0]
     for i in range(lags.shape[0]):
@@ -80,13 +80,13 @@ harch_core = jit(harch_core_python, nopython=True, inline="always")
 
 
 def harch_recursion_python(
-    parameters: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     lags: Int32Array,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Parameters
@@ -127,13 +127,13 @@ harch_recursion = jit(harch_recursion_python, nopython=True)
 
 
 def arch_recursion_python(
-    parameters: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     p: int,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Parameters
@@ -172,11 +172,11 @@ arch_recursion = jit(arch_recursion_python, nopython=True)
 
 def garch_core_python(
     t: int,
-    parameters: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
     p: int,
     o: int,
     q: int,
@@ -244,16 +244,16 @@ garch_core = jit(garch_core_python, nopython=True, inline="always")
 
 
 def garch_recursion_python(
-    parameters: Float64Array,
-    fresids: Float64Array,
-    sresids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    fresids: Float64Array1D,
+    sresids: Float64Array1D,
+    sigma2: Float64Array1D,
     p: int,
     o: int,
     q: int,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Compute variance recursion for GARCH and related models
@@ -317,18 +317,18 @@ garch_recursion = jit(garch_recursion_python, nopython=True)
 
 
 def egarch_recursion_python(
-    parameters: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     p: int,
     o: int,
     q: int,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
-    lnsigma2: Float64Array,
-    std_resids: Float64Array,
-    abs_std_resids: Float64Array,
+    var_bounds: Float64Array2D,
+    lnsigma2: Float64Array1D,
+    std_resids: Float64Array1D,
+    abs_std_resids: Float64Array1D,
 ) -> Float64Array:
     """
     Compute variance recursion for EGARCH models
@@ -401,13 +401,13 @@ egarch_recursion = jit(egarch_recursion_python, nopython=True)
 
 
 def midas_recursion_python(
-    parameters: Float64Array,
+    parameters: Float64Array1D,
     weights: Float64Array,
-    resids: Float64Array,
-    sigma2: Float64Array,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Parameters
@@ -466,7 +466,7 @@ midas_recursion = jit(midas_recursion_python, nopython=True)
 
 
 def figarch_weights_python(
-    parameters: Float64Array, p: int, q: int, trunc_lag: int
+    parameters: Float64Array1D, p: int, q: int, trunc_lag: int
 ) -> Float64Array:
     r"""
     Parameters
@@ -507,15 +507,15 @@ figarch_weights = jit(figarch_weights_python, nopython=True)
 
 
 def figarch_recursion_python(
-    parameters: Float64Array,
-    fresids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    fresids: Float64Array1D,
+    sigma2: Float64Array1D,
     p: int,
     q: int,
     nobs: int,
     trunc_lag: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Parameters
@@ -569,17 +569,17 @@ figarch_recursion = jit(figarch_recursion_python, nopython=True)
 
 
 def aparch_recursion_python(
-    parameters: Float64Array,
-    resids: Float64Array,
-    abs_resids: Float64Array,
-    sigma2: Float64Array,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    abs_resids: Float64Array1D,
+    sigma2: Float64Array1D,
     sigma_delta: Float64Array,
     p: int,
     o: int,
     q: int,
     nobs: int,
     backcast: float,
-    var_bounds: Float64Array,
+    var_bounds: Float64Array2D,
 ) -> Float64Array:
     """
     Compute variance recursion for GARCH and related models
@@ -659,7 +659,10 @@ class VolatilityUpdater(metaclass=ABCMeta):
 
     @abstractmethod
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         """
         Initialize the recursion prior to calling update
@@ -685,10 +688,10 @@ class VolatilityUpdater(metaclass=ABCMeta):
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         """
         Update the current variance at location t
@@ -717,10 +720,10 @@ class VolatilityUpdater(metaclass=ABCMeta):
     def _update_tester(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         """
         Testing shim for update with compatibility with the Cythonized version
@@ -753,17 +756,20 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.backcast = -1.0
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)
 
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         loc = 0
         sigma2[t] = parameters[loc]
@@ -800,17 +806,20 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.backcast = -1.0
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)
 
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         backcast = self.backcast
 
@@ -836,7 +845,10 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             self.params[2] = lam
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         if self.estimate_lam:
             self.params[1] = 1.0 - parameters[0]
@@ -846,10 +858,10 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         sigma2[t] = self.params[0]
         if t == 0:
@@ -890,7 +902,10 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             self.weights[i] /= sum_w
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         self.update_weights(parameters[2 + self.asym])
         alpha = parameters[1]
@@ -909,10 +924,10 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         omega = parameters[0]
         if t > 0:
@@ -941,7 +956,10 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.fresids = np.empty(0)
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         self.backcast = backcast
@@ -951,10 +969,10 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         p = self.p
         q = self.q
@@ -981,27 +999,30 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
         self,
         kmax: int,
         combination_weights: Float64Array,
-        smoothing_parameters: Float64Array,
+        smoothing_parameters: Float64Array1D,
     ) -> None:
         super().__init__()
         self.kmax = kmax
         self.combination_weights = combination_weights
         self.smoothing_parameters = smoothing_parameters
-        self.backcast: Float64Array = np.empty(kmax)
+        self.backcast: Float64Array1D = np.empty(kmax)
         self.last_sigma2s: Float64Array = np.empty((1, kmax))
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
-        self.backcast = cast(Float64Array, backcast)
+        self.backcast = cast(Float64Array1D, backcast)
 
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         w = self.combination_weights
         mus = self.smoothing_parameters
@@ -1031,7 +1052,10 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             self.std_resids = np.empty(nobs)
 
     def initialize_update(
-        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
+        self,
+        parameters: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
+        nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)
         self._resize(nobs)
@@ -1039,10 +1063,10 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def update(
         self,
         t: int,
-        parameters: Float64Array,
-        resids: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
     ) -> None:
         if t > 0:
             self.std_resids[t - 1] = resids[t - 1] / np.sqrt(sigma2[t - 1])
@@ -1087,10 +1111,10 @@ class ARCHInMeanRecursion:
         self,
         y: Float64Array,
         x: Float64Array,
-        mean_parameters: Float64Array,
-        variance_params: Float64Array,
-        sigma2: Float64Array,
-        var_bounds: Float64Array,
+        mean_parameters: Float64Array1D,
+        variance_params: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
         power: float,
     ) -> Float64Array:
         nobs = y.shape[0]

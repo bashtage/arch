@@ -18,6 +18,7 @@ from arch.typing import (
     ArrayLike1D,
     Float64Array,
     Float64Array1D,
+    Float64Array2D,
     ForecastingMethod,
     Int32Array,
     RNGType,
@@ -79,7 +80,7 @@ class BootstrapRng:
 
     def __init__(
         self,
-        std_resid: Float64Array,
+        std_resid: Float64Array1D,
         start: int,
         random_state: Optional[RandomState] = None,
     ) -> None:
@@ -283,7 +284,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         resids: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> float:
         """
         Compute the variance for a single observation
@@ -338,7 +339,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: Float64Array1D,
         resids: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         horizon: int,
         start_index: int,
     ) -> tuple[Float64Array1D, Float64Array]:
@@ -369,7 +370,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
         t = resids.shape[0]
         _resids: Float64Array1D = to_array_1d(np.concatenate((resids, np.array([0.0]))))
-        _var_bounds: Float64Array = np.concatenate(
+        _var_bounds: Float64Array2D = np.concatenate(
             (var_bounds, np.array([[0, np.inf]]))
         )
         sigma2: Float64Array1D
@@ -387,7 +388,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -424,7 +425,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -472,7 +473,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -511,7 +512,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
         sigma2 = np.empty(resids.shape[0], dtype=float)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
-        std_resid = resids / np.sqrt(sigma2)
+        std_resid = to_array_1d(resids / np.sqrt(sigma2))
         if start < self._min_bootstrap_obs:
             raise ValueError(
                 f"start must include more than {self._min_bootstrap_obs} observations"
@@ -521,7 +522,9 @@ class VolatilityProcess(metaclass=ABCMeta):
             parameters, resids, backcast, var_bounds, start, horizon, simulations, rng
         )
 
-    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array:
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
         """
         Construct loose bounds for conditional variances.
 
@@ -550,7 +553,9 @@ class VolatilityProcess(metaclass=ABCMeta):
         w = w / sum(w)
         var_bound = np.zeros(nobs)
         initial_value = w.dot(resids[:tau] ** 2.0)
-        ewma_recursion(0.94, resids, var_bound, resids.shape[0], initial_value)
+        ewma_recursion(
+            0.94, to_array_1d(resids), var_bound, resids.shape[0], initial_value
+        )
 
         var_bounds = np.vstack((var_bound / 1e6, var_bound * 1e6)).T
         var = float(np.var(resids))
@@ -563,7 +568,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         if power != 2.0:
             var_bounds **= power / 2.0
 
-        return np.ascontiguousarray(var_bounds)
+        return cast(Float64Array2D, np.ascontiguousarray(var_bounds))
 
     @abstractmethod
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
@@ -645,7 +650,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         """
         Compute the variance for the ARCH model
@@ -689,7 +694,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: ArrayLike1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: Optional[int] = None,
         horizon: int = 1,
         method: ForecastingMethod = "analytic",
@@ -832,14 +837,14 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> float:
         """
         Private implementation of a Gaussian log-likelihood for use in constructing
         starting values or other quantities that do not depend on the distribution
         used by the model.
         """
-        sigma2 = np.zeros_like(resids)
+        sigma2 = np.zeros(resids.shape[0], dtype=float)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
         return float(self._normal.loglikelihood([], resids, sigma2))
 
@@ -876,7 +881,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         sigma2[:] = parameters[0]
         return sigma2
@@ -927,7 +932,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -942,7 +947,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -1052,7 +1057,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
         return descr
 
-    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array:
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -1120,7 +1127,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
         # sresids is I(resids<0)
@@ -1143,7 +1150,11 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, backcast: Union[float, Float64Array1D]
     ) -> Union[float, Float64Array1D]:
         backcast = super().backcast_transform(backcast)
-        return np.sqrt(backcast) ** self.power
+        _backcast = np.sqrt(backcast) ** self.power
+        if np.isscalar(_backcast):
+            return float(cast(np.float64, _backcast))
+        else:
+            return to_array_1d(_backcast)
 
     def backcast(self, resids: ArrayLike1D) -> Union[float, Float64Array1D]:
         power = self.power
@@ -1263,12 +1274,12 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         if horizon == 1:
             return VarianceForecast(forecasts)
@@ -1371,14 +1382,14 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         t = resids.shape[0]
         paths = np.empty((t - start, simulations, horizon))
@@ -1515,7 +1526,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         lags = self.lags
         nobs = resids.shape[0]
@@ -1566,7 +1577,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         sv = (1.0 - alpha) * np.var(resids) * np.ones(k_arch + 1)
         sv[1:] = alpha / k_arch
 
-        return sv
+        return to_array_1d(sv)
 
     def parameter_names(self) -> list[str]:
         names = ["omega"]
@@ -1612,7 +1623,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -1632,7 +1643,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -1785,7 +1796,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         nobs = resids.shape[0]
         weights = self._weights(parameters)
@@ -1851,7 +1862,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds = self.variance_bounds(resids)
         backcast = self.backcast(resids)
         llfs = []
-        svs = []
+        svs: list[Float64Array1D] = []
         for a, t in itertools.product(alpha, theta):
             gamma = [0.0]
             if self._asym:
@@ -1860,9 +1871,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 total = a + g / 2
                 o = (1 - min(total, 0.99)) * var
                 if self._asym:
-                    sv = np.array([o, a, g, t], dtype=float)
+                    sv = cast(Float64Array1D, np.array([o, a, g, t], dtype=float))
                 else:
-                    sv = np.array([o, a, t], dtype=float)
+                    sv = cast(Float64Array1D, np.array([o, a, t], dtype=float))
 
                 svs.append(sv)
 
@@ -1929,12 +1940,12 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         omega, aw, gw, resids2, indicator = self._common_forecast_components(
-            parameters, resids, backcast, horizon
+            parameters, to_array_1d(resids), backcast, horizon
         )
         m = self.m
         resids2 = resids2[start:].copy()
@@ -1955,14 +1966,14 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
         omega, aw, gw, resids2, indicator = self._common_forecast_components(
-            parameters, resids, backcast, horizon
+            parameters, to_array_1d(resids), backcast, horizon
         )
         t = resids.shape[0]
         m = self.m
@@ -2035,14 +2046,14 @@ class ARCH(GARCH):
         p = self.p
 
         alphas = np.arange(0.1, 0.95, 0.05)
-        svs = []
+        svs: list[Float64Array1D] = []
         backcast = self.backcast(resids)
         llfs = alphas.copy()
         var_bounds = self.variance_bounds(resids)
         for i, alpha in enumerate(alphas):
             sv = (1.0 - alpha) * np.var(resids) * np.ones(p + 1)
             sv[1:] = alpha / p
-            svs.append(sv)
+            svs.append(cast(Float64Array1D, sv))
             llfs[i] = self._gaussian_loglikelihood(
                 cast(Float64Array1D, sv), resids, backcast, var_bounds
             )
@@ -2119,11 +2130,13 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         lam = parameters[0] if self._estimate_lam else self.lam
         assert isinstance(lam, float)
-        return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
+        return ewma_recursion(
+            lam, to_array_1d(resids), sigma2, resids.shape[0], float(backcast)
+        )
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         if self._estimate_lam:
@@ -2172,12 +2185,17 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         _, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start_index=start
+            parameters,
+            to_array_1d(resids),
+            backcast,
+            var_bounds,
+            horizon,
+            start_index=start,
         )
         for i in range(1, horizon):
             forecasts[:, i] = forecasts[:, 0]
@@ -2188,7 +2206,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -2348,14 +2366,14 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         mus = self._ewma_smoothing_parameters()
         backcast_arr = np.asarray(backcast)
         if backcast_arr.ndim == 0:
-            backcast_arr = cast(np.ndarray, backcast * np.ones(mus.shape[0]))
-        if backcast_arr.shape[0] != mus.shape[0] and backcast_arr.ndim != 0:
+            backcast_arr = cast(Float64Array1D, backcast * np.ones(mus.shape[0]))
+        if backcast_arr.shape[0] != mus.shape[0] or backcast_arr.ndim != 1:
             raise ValueError(
-                "User backcast must be either a scalar or an vector containing the "
+                "User backcast must be either a scalar or a vector containing the "
                 "number of\ncomponent EWMAs in the model."
             )
 
-        return backcast_arr
+        return cast(Float64Array1D, backcast_arr)
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
         return np.empty((0,))
@@ -2363,7 +2381,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> list[str]:
         return []
 
-    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array:
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
         return np.ones((resids.shape[0], 1)) * np.array([-1.0, np.finfo(np.double).max])
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
@@ -2378,18 +2398,18 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         nobs = resids.shape[0]
         kmax = self.kmax
         w = self._ewma_combination_weights()
         mus = self._ewma_smoothing_parameters()
 
-        sigma2_temp = np.zeros_like(sigma2)
-        backcast = cast(Float64Array, backcast)
+        sigma2_temp = np.zeros(sigma2.shape[0], dtype=float)
+        backcast = cast(Float64Array1D, backcast)
         for k in range(kmax):
             mu = mus[k]
-            ewma_recursion(mu, resids, sigma2_temp, nobs, backcast[k])
+            ewma_recursion(mu, to_array_1d(resids), sigma2_temp, nobs, backcast[k])
             if k == 0:
                 sigma2[:] = w[k] * sigma2_temp
             else:
@@ -2436,12 +2456,17 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         _, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start_index=start
+            parameters,
+            to_array_1d(resids),
+            backcast,
+            var_bounds,
+            horizon,
+            start_index=start,
         )
         for i in range(1, horizon):
             forecasts[:, i] = forecasts[:, 0]
@@ -2452,7 +2477,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -2461,7 +2486,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         kmax = self.kmax
         w = self._ewma_combination_weights()
         mus = self._ewma_smoothing_parameters()
-        backcast = cast(Float64Array, np.asarray(backcast))
+        backcast = cast(Float64Array1D, to_array_1d(np.asarray(backcast)))
 
         t = resids.shape[0]
         paths = np.empty((t - start, simulations, horizon))
@@ -2473,7 +2498,13 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         _resids = np.ascontiguousarray(resids)
         for k in range(kmax):
             mu = mus[k]
-            ewma_recursion(mu, _resids, component_one_step[k, :], t + 1, backcast[k])
+            ewma_recursion(
+                mu,
+                to_array_1d(_resids),
+                to_array_1d(component_one_step[k, :]),
+                t + 1,
+                backcast[k],
+            )
         # Transpose to be (t+1, kmax)
         component_one_step = component_one_step.T
 
@@ -2566,7 +2597,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
         return descr
 
-    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array:
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
         return super().variance_bounds(resids, 2.0)
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
@@ -2594,7 +2627,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
@@ -2658,8 +2691,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         sigma2 = np.zeros(nobs + burn)
         data = np.zeros(nobs + burn)
-        lnsigma2: Float64Array1D
-        lnsigma2 = np.zeros(nobs + burn)
+        lnsigma2: Float64Array1D = np.zeros(nobs + burn)
         abserrors = cast(Float64Array1D, np.absolute(errors))
 
         norm_const = np.sqrt(2 / np.pi)
@@ -2682,7 +2714,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 lnsigma2[t] += parameters[loc] * lnsigma2[t - 1 - j]
                 loc += 1
 
-        sigma2 = np.exp(lnsigma2)
+        sigma2 = cast(Float64Array1D, np.exp(lnsigma2))
         data = errors * np.sqrt(sigma2)
 
         return data[burn:], sigma2[burn:]
@@ -2730,12 +2762,12 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         _, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
 
         return VarianceForecast(forecasts)
@@ -2745,14 +2777,14 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         t = resids.shape[0]
         p, o, q = self.p, self.o, self.q
@@ -2844,7 +2876,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         if self._stop - self._start != sigma2.shape[0]:
             raise ValueError("start and stop do not have the correct values.")
@@ -2905,7 +2937,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -2919,7 +2951,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
@@ -3041,7 +3073,9 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return descr
 
-    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array:
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -3107,7 +3141,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
         power = self.power
@@ -3128,7 +3162,11 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, backcast: Union[float, Float64Array1D]
     ) -> Union[float, Float64Array1D]:
         backcast = super().backcast_transform(backcast)
-        return np.sqrt(backcast) ** self.power
+        _backcast = np.sqrt(backcast) ** self.power
+        if np.isscalar(_backcast):
+            return float(cast(np.float64, _backcast))
+        else:
+            return to_array_1d(_backcast)
 
     def backcast(self, resids: ArrayLike1D) -> Union[float, Float64Array1D]:
         power = self.power
@@ -3257,12 +3295,12 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         if horizon == 1:
             return VarianceForecast(forecasts)
@@ -3299,14 +3337,14 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         t = resids.shape[0]
         paths = np.empty((t - start, simulations, horizon))
@@ -3449,7 +3487,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         """The value of delta in the model. NaN is delta is estimated."""
         return self._common_asym
 
-    def _repack_parameters(self, parameters: Float64Array) -> Float64Array:
+    def _repack_parameters(self, parameters: Float64Array1D) -> Float64Array1D:
         if not self._repack:
             return parameters
         p, o, q = self.p, self.o, self.q
@@ -3470,7 +3508,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         abs_resids = np.absolute(resids)
         if self._sigma_delta.shape[0] != resids.shape[0]:
@@ -3538,7 +3576,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             if est_delta:
                 sv[-1] = delta
             svs.append(sv)
-            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+            llfs[i] = self._gaussian_loglikelihood(
+                to_array_1d(sv), to_array_1d(resids), backcast, var_bounds
+            )
         loc = np.argmax(llfs)
         sv = svs[int(loc)]
         if self._common_asym:
@@ -3594,7 +3634,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: Union[float, Float64Array, None] = None,
     ) -> tuple[Float64Array, Float64Array]:
-        params = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
+        params = ensure1d(parameters, "parameters", False).astype(float)
         params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
@@ -3681,14 +3721,14 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         parameters = self._repack_parameters(parameters)
         t = resids.shape[0]
@@ -3736,12 +3776,12 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array1D,
         resids: ArrayLike1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
         _, forecasts = self._one_step_forecast(
-            parameters, resids, backcast, var_bounds, horizon, start
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
 
         return VarianceForecast(forecasts)

@@ -615,7 +615,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             rank = np.linalg.matrix_rank(test_mat.astype(float))
             if rank != lags.shape[1]:
                 raise ValueError("lags contains redundant entries")
-            self._lags = lags
+            self._lags = cast(Int64Array2D, lags)
 
             if self.use_rotated:
                 from warnings import warn
@@ -679,7 +679,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = self.resids(to_array_1d(np.asarray(params)))
+        e = to_array_1d(self.resids(to_array_1d(params)))
 
         return 1.0 - float(e.T.dot(e)) / tss
 
@@ -767,7 +767,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         opt = OptimizeResult({"status": 0, "message": ""})
 
         if x.shape[1] > 0:
-            regression_params = np.linalg.pinv(x).dot(y)
+            regression_params: Float64Array1D = cast(
+                Float64Array1D, np.linalg.pinv(x).dot(y)
+            )
             xpxi = np.linalg.inv(x.T.dot(x) / nobs)
             fitted = x.dot(regression_params)
         else:
@@ -778,7 +780,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         e = y - fitted
         sigma2 = e.T.dot(e) / nobs
 
-        params = np.hstack((regression_params, sigma2))
+        params = to_array_1d(np.hstack((regression_params, sigma2)))
         hessian = np.zeros((self.num_params + 1, self.num_params + 1))
         hessian[: self.num_params, : self.num_params] = -xpxi
         hessian[-1, -1] = -1
@@ -964,7 +966,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 f"this value is {max(0, earliest - 1)}."
             )
         # Parse params
-        params = np.asarray(params)
+        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
 
         #####################################
@@ -973,13 +975,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         # Back cast should use only the sample used in fitting
         resids = self.resids(mp)
         backcast = self._volatility.backcast(resids)
-        full_resids = np.asarray(
+        full_resids = to_array_1d(
             self.resids(
                 mp,
                 cast(Float64Array1D, self._y[earliest:]),
                 cast(Float64Array2D, self.regressors[earliest:]),
-            ),
-            dtype=float,
+            )
         )
         vb = self._volatility.variance_bounds(full_resids, 2.0)
         if rng is None:
@@ -1218,7 +1219,7 @@ class ConstantMean(HARX):
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
         _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
-        return _y - params
+        return _y - params[0]
 
 
 class ZeroMean(HARX):
@@ -1484,7 +1485,7 @@ class ARX(HARX):
             lagstr_comp = [str(lag[1]) for lag in self._lags.T]
             lagstr = ", ".join(lagstr_comp)
 
-        xstr = str(self._x.shape[1]) if self._x_original is not None else "0"
+        xstr = str(self._x.shape[1]) if self._x is not None else "0"
         conststr = "yes" if self.constant else "no"
         od = {"constant": conststr}
         if include_lags:
@@ -1750,7 +1751,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
 
@@ -1760,7 +1761,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -1771,7 +1772,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: Literal[True] = ...,
     ) -> Float64Array1D:  # pragma: no cover
         ...  # pragma: no cover
@@ -1781,7 +1782,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
         backcast: Union[float, Float64Array1D],
-        var_bounds: Float64Array,
+        var_bounds: Float64Array2D,
         individual: bool = False,
     ) -> Union[float, Float64Array1D]:
         # Parse parameters
