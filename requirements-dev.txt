@@ -35,3 +35,4 @@ notebook
 nbconvert
 sphinx-autodoc-typehints
 pickleshare
+setuptools>=78.1.1 # not directly required, pinned by Snyk to avoid a vulnerability
