@@ -75,7 +75,7 @@ from arch.utility.array import (
     parse_dataframe,
 )
 
-__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
+__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean","MAMean"]
 
 COV_TYPES = {
     "white": "White's Heteroskedasticity Consistent Estimator",
@@ -1871,6 +1871,347 @@ class ARCHInMean(ARX):
             y[t] += parameters[ind] * trans_vol[t] + errors[t]
 
         return y
+
+
+class MAMean(ARCHModel):
+    r"""
+    Moving Average (MA) Mean Model.
+
+    Parameters
+    ----------
+    y : {ndarray, Series}, optional
+        Dependent variable.
+    lags : int
+        Order of the MA model (q).
+    hold_back : int, optional
+        Number of observations to exclude at start.
+    volatility : VolatilityProcess, optional
+        Volatility model.
+    distribution : Distribution, optional
+        Error distribution.
+    rescale : bool, optional
+        Whether to rescale the series to avoid convergence issues.
+
+    Notes
+    -----
+    The MA(q) model is defined as:
+
+    .. math::
+        y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \ldots + \theta_q \epsilon_{t-q}
+    """
+
+    def __init__(
+        self,
+        y: Optional[ArrayLike] = None,
+        lags: int = 1,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
+    ) -> None:
+        """
+        Initialize the MA(q) mean model.
+        """
+        super().__init__(
+            y,
+            volatility=volatility,
+            distribution=distribution,
+            hold_back=hold_back or lags,
+            rescale=rescale,
+        )
+        self._name = "MA"
+        self.lags = lags
+        self.constant = True
+
+    def __repr__(self) -> str:
+        return f"MAMean(lags={self.lags}, constant={self.constant})"
+
+    def parameter_names(self) -> list[str]:
+        """
+        Returns the parameter names for the MA model.
+        """
+        names = ["mu"]
+        names += [f"theta_{i+1}" for i in range(self.lags)]
+        return names
+
+    @cached_property
+    def num_params(self) -> int:
+        """
+        Returns the number of parameters in the MA model.
+        """
+        return 1 + self.lags
+
+    def resids(
+        self,
+        params: Float64Array1D,
+        y: Optional[ArrayLike1D] = None,
+        regressors: Optional[ArrayLike2D] = None,
+    ) -> Float64Array1D:
+        """
+        Compute residuals for the MA(q) model.
+
+        Parameters
+        ----------
+        params : array_like
+            Model parameters (mu, theta_1, ..., theta_q).
+        y : array_like, optional
+            Data to compute residuals on. If None, use fitted y.
+        regressors : array_like, optional
+            Not used.
+
+        Returns
+        -------
+        res : ndarray
+            Residuals.
+        """
+        y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
+        T = y.shape[0]
+        q = self.lags
+        mu = params[0]
+        theta = params[1:]
+        res = np.zeros(T, dtype=np.float64)
+        res[:q] = y[:q] - mu
+        for t in range(q, T):
+            past_res = res[t - q : t][::-1]
+            ma_term = np.dot(theta, past_res)
+            res[t] = y[t] - mu - ma_term
+        return res
+
+    def simulate(
+        self,
+        params: Union[ArrayLike1D, Sequence[float]],
+        nobs: int,
+        burn: int = 500,
+        initial_value: Union[float, Float64Array, None] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
+        initial_value_vol: Union[float, Float64Array, None] = None,
+    ) -> pd.DataFrame:
+        """
+        Simulate data from the MA(q) model.
+
+        Parameters
+        ----------
+        params : array_like
+            Model parameters (mu, theta_1, ..., theta_q, volatility, distribution).
+        nobs : int
+            Number of observations to simulate.
+        burn : int, optional
+            Number of burn-in observations.
+        initial_value : float or array_like, optional
+            Initial value for the process. Not used in MA model.
+        x : array_like, optional
+            Not used.
+        initial_value_vol : float or array_like, optional
+            Initial value for volatility process.
+
+        Returns
+        -------
+        DataFrame
+            Simulated data with columns: data, volatility, errors.
+        """
+        if x is not None:
+            raise ValueError("x must be None for MA model simulation.")
+
+        params = ensure1d(params, "params")
+        mu = params[0]
+        theta = params[1 : 1 + self.lags]
+
+        vol = np.ones(nobs + burn, dtype=np.float64)
+        if self.volatility is not None:
+            vol_params_len = self.volatility.num_params
+            vol_params = params[1 + self.lags : 1 + self.lags + vol_params_len]
+            _, vol = self.volatility.simulate(
+                vol_params, nobs + burn, burn=0, rng=np.random.standard_normal
+            )
+
+        dist_params = params[
+            1 + self.lags + (self.volatility.num_params if self.volatility else 0) :
+        ]
+        simulator = self.distribution.simulate(dist_params)
+        vol = np.clip(vol, 1e-8, None)
+        errors = simulator(nobs + burn) * np.sqrt(vol)
+
+        y = np.zeros(nobs + burn, dtype=np.float64)
+        for t in range(self.lags, nobs + burn):
+            y[t] = mu + errors[t] + np.dot(theta, errors[t - self.lags : t][::-1])
+
+        return pd.DataFrame(
+            {"data": y[burn:], "volatility": vol[burn:], "errors": errors[burn:]}
+        )
+
+    def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
+        """
+        Estimate MA(q) parameters using statsmodels ARIMA or fallback.
+        """
+        try:
+            from statsmodels.tsa.arima.model import ARIMA
+
+            model = ARIMA(self._fit_y, order=(0, 0, self.lags), trend="c")
+            res = model.fit(method="css", disp=0)
+            mu = res.params.get("const", np.mean(self._fit_y))
+            thetas = [res.params.get(f"ma.L{i+1}", 0.0) for i in range(self.lags)]
+            return np.array([mu] + thetas, dtype=np.float64)
+        except Exception:
+            mu = np.mean(self._fit_y)
+            theta = np.full(self.lags, 0.1)
+            return np.array([mu] + list(theta), dtype=np.float64)
+
+    def _fit_no_arch_normal_errors(
+        self, cov_type: Literal["robust", "classic"] = "robust"
+    ) -> ARCHModelResult:
+        """
+        Not implemented: MA(q) has no closed-form OLS solution.
+        """
+        raise NotImplementedError("MA(q) has no closed-form OLS solution.")
+
+    def forecast(
+        self,
+        params: Optional[Float64Array1D] = None,
+        horizon: int = 1,
+        start: Optional[int] = None,
+        align: str = "origin",
+        method: ForecastingMethod = "analytic",
+        simulations: int = 1000,
+        rng: Optional[Callable[..., np.ndarray]] = None,
+        random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: bool = False,
+        x: Union[dict[Label, ArrayLike], ArrayLike, None] = None,
+    ) -> ARCHModelForecast:
+        """
+        Forecast mean and variance from the MA(q) model.
+
+        Parameters
+        ----------
+        params : array_like, optional
+            Model parameters.
+        horizon : int, optional
+            Forecast horizon.
+        start : int, optional
+            Starting index for forecast.
+        align : str, optional
+            Alignment for forecast index.
+        method : str, optional
+            Forecasting method.
+        simulations : int, optional
+            Number of simulations for simulation-based forecasts.
+        rng : callable, optional
+            Random number generator.
+        random_state : RandomState, optional
+            Random state for reproducibility.
+        reindex : bool, optional
+            Whether to reindex the forecast output.
+        x : array_like, optional
+            Not used.
+
+        Returns
+        -------
+        ARCHModelForecast
+            Forecast object containing mean and variance forecasts.
+        """
+        if align not in ("origin", "target"):
+            raise ValueError("align must be 'origin' or 'target'")
+        if not isinstance(horizon, int) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1")
+        if self._fit_y is None:
+            raise RuntimeError("Model must be fit before forecasting")
+
+        full_params = params if params is not None else self._last_params
+        mean_params = full_params[: self.num_params]
+        resids = self.resids(mean_params)
+        nobs = self._fit_y.shape[0]
+        mu = mean_params[0]
+        mean_fc = np.full((nobs, horizon), mu)
+        index = np.arange(nobs)
+
+        var_fc = np.zeros_like(mean_fc)
+        if self.volatility is not None:
+            backcast = self.volatility.backcast(resids)
+            var_bounds = self.volatility.variance_bounds(resids)
+            vol_params = full_params[
+                self.num_params : self.num_params + self.volatility.num_params
+            ]
+            vol_forecast = self.volatility.forecast(
+                parameters=vol_params,
+                resids=resids,
+                backcast=backcast,
+                var_bounds=var_bounds,
+                start=start,
+                horizon=horizon,
+                method=method,
+                simulations=simulations,
+                rng=rng,
+                random_state=random_state,
+            )
+            var_fc = vol_forecast.forecasts
+
+        valid_rows = var_fc.shape[0]
+        forecast_index = np.arange(nobs)[-valid_rows:]
+        residual_var = np.full((valid_rows, 1), np.var(resids, ddof=1))
+        mean_fc = mean_fc[-valid_rows:]
+
+        return ARCHModelForecast(
+            mean=pd.DataFrame(
+                mean_fc,
+                index=forecast_index,
+                columns=[f"h.{i+1}" for i in range(horizon)],
+            ),
+            variance=pd.DataFrame(
+                var_fc,
+                index=forecast_index,
+                columns=[f"h.{i+1}" for i in range(horizon)],
+            ),
+            index=forecast_index,
+            start_index=start if start is not None else 0,
+            residual_variance=pd.DataFrame(
+                residual_var, index=forecast_index, columns=["h.1"]
+            ),
+        )
+
+    def summary(self) -> str:
+        """
+        Return a summary string describing the MA(q) model configuration.
+        """
+        lines = [
+            f"Model: MAMean (MA({self.lags}))",
+            f"Constant: {self.constant}",
+            f"Number of parameters: {self.num_params}",
+            f"Volatility: {self.volatility.__class__.__name__ if self.volatility else 'None'}",
+            f"Distribution: {self.distribution.__class__.__name__ if self.distribution else 'None'}",
+        ]
+        return "\n".join(lines)
+
+    def _adjust_sample(self, first_obs: Optional[int], last_obs: Optional[int]) -> None:
+        """
+        Adjust the sample for fitting the MA model.
+
+        Parameters
+        ----------
+        first_obs : int, optional
+            First observation index.
+        last_obs : int, optional
+            Last observation index.
+        """
+        y = self._y_original
+        if isinstance(y, pd.Series):
+            y = y.values
+        elif isinstance(y, pd.DataFrame):
+            y = y.iloc[:, 0].values
+
+        if first_obs is None:
+            first_obs = self.hold_back
+        if last_obs is None:
+            last_obs = y.shape[0] - 1
+
+        print(">>> MAMean._adjust_sample!", first_obs, last_obs)
+        self._fit_indices = np.array([first_obs, last_obs + 1], dtype=int)
+        self._fit_y = to_array_1d(y[first_obs : last_obs + 1])
+
+    def _scale_changed(self) -> None:
+        """
+        Not implemented: scale change handling for MA model.
+        """
+        raise NotImplementedError("MAMean scale change handling not implemented.")
 
 
 def arch_model(
