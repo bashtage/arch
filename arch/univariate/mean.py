@@ -2082,11 +2082,12 @@ class MAMean(ARCHModel):
             hold_back=hold_back or lags,
             rescale=rescale,
         )
-        
-        self._name = "MA" # noqa: B024  # if you use flake8 or CodeQL config to ignore subclass overwrites
+
+        self._name = "MA"  # noqa: B024  # if you use flake8 or CodeQL config to ignore subclass overwrites
 
         self.lags = lags
         self.constant = True
+
     # @property
     # def name(self):
     #     return "MA"
