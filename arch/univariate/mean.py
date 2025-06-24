@@ -1919,10 +1919,14 @@ class MAMean(ARCHModel):
             hold_back=hold_back or lags,
             rescale=rescale,
         )
-        self._name = "MA"
+        
+        self._name = "MA" # noqa: B024  # if you use flake8 or CodeQL config to ignore subclass overwrites
+
         self.lags = lags
         self.constant = True
-
+    # @property
+    # def name(self):
+    #     return "MA"
     def __repr__(self) -> str:
         return f"MAMean(lags={self.lags}, constant={self.constant})"
 
@@ -2122,7 +2126,7 @@ class MAMean(ARCHModel):
         nobs = self._fit_y.shape[0]
         mu = mean_params[0]
         mean_fc = np.full((nobs, horizon), mu)
-        index = np.arange(nobs)
+        # index = np.arange(nobs)
 
         var_fc = np.zeros_like(mean_fc)
         if self.volatility is not None:
@@ -2203,7 +2207,7 @@ class MAMean(ARCHModel):
         if last_obs is None:
             last_obs = y.shape[0] - 1
 
-        print(">>> MAMean._adjust_sample!", first_obs, last_obs)
+        # print(">>> MAMean._adjust_sample!", first_obs, last_obs)
         self._fit_indices = np.array([first_obs, last_obs + 1], dtype=int)
         self._fit_y = to_array_1d(y[first_obs : last_obs + 1])
 
