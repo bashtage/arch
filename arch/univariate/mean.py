@@ -75,7 +75,16 @@ from arch.utility.array import (
     parse_dataframe,
 )
 
-__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean","MAMean"]
+__all__ = [
+    "HARX",
+    "ConstantMean",
+    "ZeroMean",
+    "ARX",
+    "arch_model",
+    "LS",
+    "ARCHInMean",
+    "MAMean",
+]
 
 COV_TYPES = {
     "white": "White's Heteroskedasticity Consistent Estimator",
@@ -1919,11 +1928,12 @@ class MAMean(ARCHModel):
             hold_back=hold_back or lags,
             rescale=rescale,
         )
-        
-        self._name = "MA" # noqa: B024  # if you use flake8 or CodeQL config to ignore subclass overwrites
+
+        self._name = "MA"  # noqa: B024  # if you use flake8 or CodeQL config to ignore subclass overwrites
 
         self.lags = lags
         self.constant = True
+
     # @property
     # def name(self):
     #     return "MA"
