@@ -23,7 +23,7 @@
     
   
       
-        <title>Version 5 - arch v7.2.1 (+35)</title>
+        <title>Version 5 - arch v7.2.1 (+37)</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6ec1c446c2c357833.min.css?v=e2e8fea8" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+35)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+35)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+37)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+37)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+35)
+            arch v7.2.1 (+37)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+35)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+35)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+37)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+37)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+35)
+    arch v7.2.1 (+37)
   </label>
   
     <div class="md-nav__source">
@@ -1057,10 +1057,10 @@ be set after the test is created.</p></li>
 <h3 id="bootstrap">Bootstrap<a class="headerlink" href="#bootstrap" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument to all bootstraps (e.g., <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.IIDBootstrap.html#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap (Python class) — Bootstrap using uniform resampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIDBootstrap</span></code></a>
-and <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap" title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes"><code class="xref py py-class docutils literal notranslate"><span class="pre">StationaryBootstrap</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
-to be used. The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument also accepts legacy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
+and <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap" title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes"><code class="xref py py-class docutils literal notranslate"><span class="pre">StationaryBootstrap</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
+to be used. The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument also accepts legacy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
 instances and integers.  If an integer is passed, the random number generator is constructed by
-calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
+calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
 <code class="docutils literal notranslate"><span class="pre">random_state</span></code> keyword argument.</p></li>
 <li><p>The <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.random_state.html#arch.bootstrap.IIDBootstrap.random_state" title="arch.bootstrap.IIDBootstrap.random_state (Python property) — Set or get the instance random state"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_state()</span></code></a> property has also been deprecated in favor
 of <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.generator.html#arch.bootstrap.IIDBootstrap.generator" title="arch.bootstrap.IIDBootstrap.generator (Python property) — Set or get the instance PRNG"><code class="xref py py-func docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
@@ -1070,10 +1070,10 @@ methods have been replaced by the <a class="reference internal" href="../bootstr
 <h3 id="volatility-modeling">Volatility Modeling<a class="headerlink" href="#volatility-modeling" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument to all distributions (e.g., <a class="reference internal" href="../univariate/generated/arch.univariate.Normal.html#arch.univariate.Normal" title="arch.univariate.distribution.Normal (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Normal</span></code></a>
-and <a class="reference internal" href="../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.StudentsT" title="arch.univariate.distribution.StudentsT (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StudentsT</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
-to be used. The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument also accepts legacy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
+and <a class="reference internal" href="../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.StudentsT" title="arch.univariate.distribution.StudentsT (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StudentsT</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
+to be used. The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument also accepts legacy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
 instances and integers.  If an integer is passed, the random number generator is constructed by
-calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
+calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
 <code class="docutils literal notranslate"><span class="pre">random_state</span></code> keyword argument.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Normal.random_state</span></code> property has also been deprecated in favor
 of <a class="reference internal" href="../univariate/generated/generated/arch.univariate.Normal.generator.html#arch.univariate.Normal.generator" title="arch.univariate.Normal.generator (Python property) — The NumPy Generator or RandomState attached to the distribution"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
