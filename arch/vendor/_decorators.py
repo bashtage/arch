@@ -2,13 +2,7 @@ from __future__ import annotations
 
 from functools import wraps
 from textwrap import dedent
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
 import warnings
 
 if TYPE_CHECKING:
