@@ -23,7 +23,7 @@
     
   
       
-        <title>Bootstrap Examples - arch v7.2.1 (+37)</title>
+        <title>Bootstrap Examples - arch v7.2.1 (+39)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+37)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+37)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+39)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+39)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+37)
+            arch v7.2.1 (+39)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+37)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+37)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+39)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+39)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+37)
+    arch v7.2.1 (+39)
   </label>
   
     <div class="md-nav__source">
@@ -1012,9 +1012,10 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.frenchdata</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.frenchdata</span>
 
 <span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </code></pre></div>
@@ -1341,9 +1342,9 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.417298 -7.805488e-05 -0.106686
-gre   -0.000078  4.137960e-07 -0.000050
-gpa   -0.106686 -4.954734e-05  0.039776
+Const  0.404577 -8.929319e-05 -0.102021
+gre   -0.000089  4.031278e-07 -0.000044
+gpa   -0.102021 -4.405456e-05  0.037674
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1362,14 +1363,14 @@ gpa   -0.106686 -4.954734e-05  0.039776
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Const    0.645986
-gre      0.000643
-gpa      0.199439
+Const    0.636063
+gre      0.000635
+gpa      0.194098
 dtype: float64
 T-stats
-Const   -4.649539
-gre      2.553418
-gpa      2.279267
+Const   -4.722071
+gre      2.586984
+gpa      2.341990
 dtype: float64
 </pre></div></div>
 </div>
@@ -1389,8 +1390,8 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const       gre       gpa
-Lower -4.188953  0.000350  0.041331
-Upper -1.586923  0.002881  0.821913
+Lower -4.145735  0.000345  0.046298
+Upper -1.738101  0.002814  0.838408
 </pre></div></div>
 </div>
 <h3 id="Speeding-things-up">Speeding things up<a class="headerlink" href="#Speeding-things-up" title="Link to this heading">¶</a></h3>
@@ -1423,9 +1424,9 @@ Upper -1.586923  0.002881  0.821913
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.417298 -7.805488e-05 -0.106686
-gre   -0.000078  4.137960e-07 -0.000050
-gpa   -0.106686 -4.954734e-05  0.039776
+Const  0.404577 -8.929319e-05 -0.102021
+gre   -0.000089  4.031278e-07 -0.000044
+gpa   -0.102021 -4.405456e-05  0.037674
 </pre></div></div>
 </div>
 <h2 id="Bootstrapping-Uneven-Length-Samples">Bootstrapping Uneven Length Samples<a class="headerlink" href="#Bootstrapping-Uneven-Length-Samples" title="Link to this heading">¶</a></h2>
