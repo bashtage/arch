@@ -757,8 +757,9 @@ class DynamicOLS:
         mod = OLS(lhs, rhs)
         res = mod.fit()
         coeffs = np.asarray(res.params)
-        resid = lhs.squeeze() - (rhs @ coeffs).squeeze()
-        resid.name = "resid"
+        resid = pd.Series(
+            lhs.squeeze() - np.asarray(rhs @ coeffs).squeeze(), name="resid"
+        )
         cov, est = self._cov(
             cov_type, kernel, bandwidth, force_int, df_adjust, rhs, resid
         )

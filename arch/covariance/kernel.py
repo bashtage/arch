@@ -274,6 +274,7 @@ class CovarianceEstimator(ABC):
             self._bandwidth = self.opt_bandwidth
         if self._force_int:
             return float(int(np.ceil(self._bandwidth)))
+        assert self._bandwidth is not None
         return self._bandwidth
 
     @property
