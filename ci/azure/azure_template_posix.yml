@@ -37,8 +37,9 @@ jobs:
       python_310_conda_numba:
         python.version: '3.10'
         use.conda: 'true'
+        NUMPY: 2.0.0
         USE_NUMBA: true
-        MATPLOTLIB: 3.4.0
+        MATPLOTLIB: 3.0
         PYTEST_PATTERN: "(slow or not slow)"
       python310_numpy120:
         python.version: '3.10'
