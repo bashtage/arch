@@ -5,7 +5,7 @@ import os
 import pickle
 from random import shuffle
 import sys
-from typing import IO, Optional, cast
+from typing import IO, cast
 
 import colorama
 from joblib import Parallel, delayed
@@ -55,7 +55,7 @@ def demean(w: Float64Array) -> Float64Array:
     return w - w.mean(1).reshape((w.shape[0], 1, w.shape[2]))
 
 
-def inner_prod(a: Float64Array, b: Optional[Float64Array] = None) -> Float64Array:
+def inner_prod(a: Float64Array, b: Float64Array | None = None) -> Float64Array:
     if b is None:
         b = a
     return a.transpose((0, 2, 1)) @ b

@@ -3,9 +3,9 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 import copy
-from typing import TYPE_CHECKING, Callable, Optional, Union, cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
 import numpy as np
 import pandas as pd
@@ -249,17 +249,22 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        lags: Union[
-            int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
-        ] = None,
+        y: ArrayLike | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        lags: (
+            int
+            | Sequence[int]
+            | Sequence[Sequence[int]]
+            | Int32Array
+            | Int64Array
+            | None
+        ) = None,
         constant: bool = True,
         use_rotated: bool = False,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
     ) -> None:
         super().__init__(
             y,
@@ -268,13 +273,18 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
-        self._x: Optional[Union[pd.DataFrame, Float64Array2D]] = None
+        self._x: pd.DataFrame | Float64Array2D | None = None
         self._x_original = x
         self._x_names: list[str] = []
-        self._x_index: Union[NDArray, pd.Index, None] = None
-        self.lags: Union[
-            int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
-        ] = lags
+        self._x_index: NDArray | pd.Index | None = None
+        self.lags: (
+            int
+            | Sequence[int]
+            | Sequence[Sequence[int]]
+            | Int32Array
+            | Int64Array
+            | None
+        ) = lags
         self._lags: Int64Array2D = np.empty((0, 0), dtype=int)
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
@@ -312,7 +322,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._init_model()
 
     @property
-    def x(self) -> Optional[ArrayLike2D]:
+    def x(self) -> ArrayLike2D | None:
         """Gets the value of the exogenous regressors in the model"""
         return self._x
 
@@ -365,8 +375,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def resids(
         self,
         params: Float64Array1D,
-        y: Optional[ArrayLike1D] = None,
-        regressors: Optional[ArrayLike2D] = None,
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         _regressors = self._fit_regressors if y is None else regressors
         y = self._fit_y if y is None else y
@@ -386,7 +396,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array,
         x: Float64Array,
         errors: Float64Array,
-        initial_value: Union[float, Float64Array, None],
+        initial_value: float | Float64Array | None,
         conditional_variance: Float64Array,
     ) -> Float64Array:
         max_lag = 0 if not self._lags.size else int(np.max(self._lags))
@@ -422,12 +432,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self,
-        params: Union[ArrayLike1D, Sequence[float]],
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
-        initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        initial_value_vol: Union[float, Float64Array, None] = None,
+        initial_value: float | Float64Array | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
         Simulates data from a linear regression, AR or HAR models
@@ -685,8 +695,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _adjust_sample(
         self,
-        first_obs: Union[int, DateLike, None],
-        last_obs: Union[int, DateLike, None],
+        first_obs: int | DateLike | None,
+        last_obs: int | DateLike | None,
     ) -> None:
         index = self._y_series.index
         _first_obs_index = cutoff_to_index(first_obs, index, 0)
@@ -836,7 +846,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _reformat_forecast_x(
         self,
-        x: Union[dict[Label, ArrayLike], ArrayLike, None],
+        x: dict[Label, ArrayLike] | ArrayLike | None,
         horizon: int,
         start: int,
     ) -> Float64Array:
@@ -942,15 +952,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self,
         params: ArrayLike1D,
         horizon: int = 1,
-        start: Union[int, DateLike, None] = None,
+        start: int | DateLike | None = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
-        rng: Optional[Callable[[Union[int, tuple[int, ...]]], Float64Array]] = None,
-        random_state: Optional[np.random.RandomState] = None,
+        rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
+        random_state: np.random.RandomState | None = None,
         *,
         reindex: bool = False,
-        x: Union[dict[Label, ArrayLike], ArrayLike, None] = None,
+        x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
@@ -1019,10 +1029,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         for i in range(horizon):
             lrf = var_fcasts[:, : (i + 1)].dot(impulse[i::-1] ** 2)
             longrun_var_fcasts[:, i] = lrf
-        variance_paths: Optional[Float64Array] = None
-        mean_paths: Optional[Float64Array] = None
-        shocks: Optional[Float64Array] = None
-        long_run_variance_paths: Optional[Float64Array] = None
+        variance_paths: Float64Array | None = None
+        mean_paths: Float64Array | None = None
+        shocks: Float64Array | None = None
+        long_run_variance_paths: Float64Array | None = None
         if method.lower() in ("simulation", "bootstrap"):
             # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
@@ -1118,11 +1128,11 @@ class ConstantMean(HARX):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
+        y: ArrayLike | None = None,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
     ) -> None:
         super().__init__(
             y,
@@ -1145,12 +1155,12 @@ class ConstantMean(HARX):
 
     def simulate(
         self,
-        params: Union[ArrayLike1D, Sequence[float]],
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
-        initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        initial_value_vol: Union[float, Float64Array, None] = None,
+        initial_value: float | Float64Array | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
         Simulated data from a constant mean model
@@ -1215,8 +1225,8 @@ class ConstantMean(HARX):
     def resids(
         self,
         params: Float64Array1D,
-        y: Optional[ArrayLike1D] = None,
-        regressors: Optional[ArrayLike2D] = None,
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
         return _y - params[0]
@@ -1264,11 +1274,11 @@ class ZeroMean(HARX):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
+        y: ArrayLike | None = None,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
     ) -> None:
         super().__init__(
             y,
@@ -1293,12 +1303,12 @@ class ZeroMean(HARX):
 
     def simulate(
         self,
-        params: Union[ArrayLike1D, Sequence[float]],
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
-        initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        initial_value_vol: Union[float, Float64Array, None] = None,
+        initial_value: float | Float64Array | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
         Simulated data from a zero mean model
@@ -1366,8 +1376,8 @@ class ZeroMean(HARX):
     def resids(
         self,
         params: Float64Array1D,
-        y: Optional[ArrayLike1D] = None,
-        regressors: Optional[ArrayLike2D] = None,
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         if y is not None:
             return y
@@ -1433,14 +1443,14 @@ class ARX(HARX):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        lags: Union[int, list[int], Int32Array, Int64Array, None] = None,
+        y: ArrayLike | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        lags: int | list[int] | Int32Array | Int64Array | None = None,
         constant: bool = True,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
     ) -> None:
         # Convert lags to 2-d format
 
@@ -1553,13 +1563,13 @@ class LS(HARX):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
+        y: ArrayLike | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
         constant: bool = True,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
     ) -> None:
         # Convert lags to 2-d format
         super().__init__(
@@ -1641,15 +1651,15 @@ class ARCHInMean(ARX):
 
     def __init__(
         self,
-        y: Optional[ArrayLike] = None,
-        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
-        lags: Union[int, list[int], Int32Array, Int64Array, None] = None,
+        y: ArrayLike | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        lags: int | list[int] | Int32Array | Int64Array | None = None,
         constant: bool = True,
-        hold_back: Optional[int] = None,
-        volatility: Optional[VolatilityProcess] = None,
-        distribution: Optional[Distribution] = None,
-        rescale: Optional[bool] = None,
-        form: Union[int, float, Literal["log", "vol", "var"]] = "vol",
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
+        form: int | float | Literal["log", "vol", "var"] = "vol",
     ) -> None:
         super().__init__(
             y, x, lags, constant, hold_back, volatility, distribution, rescale
@@ -1688,7 +1698,7 @@ class ARCHInMean(ARX):
         self._recursion = ARCHInMeanRecursion(self._volatility_updater)
 
     @property
-    def form(self) -> Union[int, float, Literal["log", "vol", "var"]]:
+    def form(self) -> int | float | Literal["log", "vol", "var"]:
         """The form of the conditional variance in the mean"""
         return self._form
 
@@ -1718,15 +1728,15 @@ class ARCHInMean(ARX):
         self,
         params: ArrayLike1D,
         horizon: int = 1,
-        start: Union[int, DateLike, None] = None,
+        start: int | DateLike | None = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
-        rng: Optional[Callable[[Union[int, tuple[int, ...]]], Float64Array]] = None,
-        random_state: Optional[np.random.RandomState] = None,
+        rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
+        random_state: np.random.RandomState | None = None,
         *,
-        reindex: Optional[bool] = None,
-        x: Union[dict[Label, ArrayLike], ArrayLike, None] = None,
+        reindex: bool | None = None,
+        x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
         raise NotImplementedError(
             "forecasts are not implemented for (G)ARCH-in-mean models"
@@ -1735,8 +1745,8 @@ class ARCHInMean(ARX):
     def resids(
         self,
         params: Float64Array1D,
-        y: Optional[ArrayLike1D] = None,
-        regressors: Optional[ArrayLike2D] = None,
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         return super().resids(
             cast(Float64Array1D, params[:-1]), y=y, regressors=regressors
@@ -1750,7 +1760,7 @@ class ARCHInMean(ARX):
         self,
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -1760,7 +1770,7 @@ class ARCHInMean(ARX):
         self,
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
@@ -1771,7 +1781,7 @@ class ARCHInMean(ARX):
         self,
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
         individual: Literal[True] = ...,
     ) -> Float64Array1D:  # pragma: no cover
@@ -1781,10 +1791,10 @@ class ARCHInMean(ARX):
         self,
         parameters: Float64Array1D,
         sigma2: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
         individual: bool = False,
-    ) -> Union[float, Float64Array1D]:
+    ) -> float | Float64Array1D:
         # Parse parameters
         _callback_info["count"] += 1
 
@@ -1819,7 +1829,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array,
         x: Float64Array,
         errors: Float64Array,
-        initial_value: Union[float, Float64Array, None],
+        initial_value: float | Float64Array | None,
         conditional_variance: Float64Array,
     ) -> Float64Array:
         """
@@ -1874,16 +1884,16 @@ class ARCHInMean(ARX):
 
 
 def arch_model(
-    y: Optional[ArrayLike],
-    x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
+    y: ArrayLike | None,
+    x: ArrayLike | ArrayLike2D | None = None,
     mean: Literal[
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
-    lags: Union[int, list[int], Int32Array, Int64Array, None] = 0,
+    lags: int | list[int] | Int32Array | Int64Array | None = 0,
     vol: Literal[
         "GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH", "FIGARCH"
     ] = "GARCH",
-    p: Union[int, list[int]] = 1,
+    p: int | list[int] = 1,
     o: int = 0,
     q: int = 1,
     power: float = 2.0,
@@ -1897,8 +1907,8 @@ def arch_model(
         "ged",
         "generalized error",
     ] = "normal",
-    hold_back: Optional[int] = None,
-    rescale: Optional[bool] = None,
+    hold_back: int | None = None,
+    rescale: bool | None = None,
 ) -> HARX:
     """
     Initialization of common ARCH model specifications

@@ -1,13 +1,15 @@
 [project]
 name = "arch"
-dynamic = ["dependencies", "version", "readme"]
-license = { file = "LICENSE.md" }
+readme = "README.md"
+license = "NCSA"
+license-files = [ "LICENSE.md" ]
+dynamic = ["dependencies", "version"]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
 description = "ARCH for Python"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
   "arch",
   "ARCH",
@@ -35,6 +37,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",

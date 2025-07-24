@@ -1,6 +1,6 @@
 from collections.abc import Hashable, Sequence
 import copy
-from typing import Optional, Union, cast
+from typing import cast
 import warnings
 
 import numpy as np
@@ -19,7 +19,6 @@ from arch.typing import (
     Int64Array1D,
     IntArray,
     Literal,
-    Uint32Array,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 
@@ -67,17 +66,6 @@ class MultipleComparison:
         """
         self.bootstrap.reset()
 
-    def seed(self, value: Union[int, list[int], Uint32Array]) -> None:
-        """
-        Seed the bootstrap's random number generator
-
-        Parameters
-        ----------
-        value : {int, List[int], ndarray[int]}
-            Integer to use as the seed
-        """
-        self.bootstrap.seed(value)
-
 
 class MCS(MultipleComparison):
     """
@@ -124,13 +112,13 @@ class MCS(MultipleComparison):
         losses: ArrayLike2D,
         size: float,
         reps: int = 1000,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         method: Literal["R", "max"] = "R",
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
         ] = "stationary",
         *,
-        seed: Union[int, np.random.Generator, np.random.RandomState, None] = None,
+        seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
         self.losses = ensure2d(losses, "losses")
@@ -297,6 +285,7 @@ class MCS(MultipleComparison):
                     "occur if the number of losses is too small, or if there are "
                     "repeated (identical) losses in the set under consideration.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
             simulated_test_stat = incl_bs_avg_loss_err / std_devs
             simulated_test_stat = np.max(simulated_test_stat, 1)
@@ -420,7 +409,7 @@ class StepM(MultipleComparison):
         benchmark: ArrayLike,
         models: ArrayLike,
         size: float = 0.05,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         reps: int = 1000,
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
@@ -428,7 +417,7 @@ class StepM(MultipleComparison):
         studentize: bool = True,
         nested: bool = False,
         *,
-        seed: Union[int, np.random.Generator, np.random.RandomState, None] = None,
+        seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
         self.benchmark = ensure2d(benchmark, "benchmark")
@@ -448,7 +437,7 @@ class StepM(MultipleComparison):
         self.k: int = self.models.shape[1]
         self.reps: int = reps
         self.size: float = size
-        self._superior_models: Optional[list[int]] = None
+        self._superior_models: list[int] | None = None
         self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
 
         self._model = "StepM"
@@ -491,7 +480,7 @@ class StepM(MultipleComparison):
         self._superior_models = all_better_models
 
     @property
-    def superior_models(self) -> Union[list[int], Sequence[Hashable]]:
+    def superior_models(self) -> list[int] | Sequence[Hashable]:
         """
         List of the indices or column names of the superior models
 
@@ -568,7 +557,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         benchmark: ArrayLike,
         models: ArrayLike,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         reps: int = 1000,
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
@@ -576,7 +565,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         studentize: bool = True,
         nested: bool = False,
         *,
-        seed: Union[int, np.random.Generator, np.random.RandomState, None] = None,
+        seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
         self.benchmark = ensure2d(benchmark, "benchmark")
@@ -610,7 +599,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self._seed = seed
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: dict[str, float] = {}
-        self._simulated_vals: Optional[Float64Array] = None
+        self._simulated_vals: Float64Array | None = None
         self._selector: BoolArray = np.ones(self.k, dtype=np.bool_)
         self._model = "SPA"
         if self.studentize:
@@ -780,7 +769,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         pvalue: float = 0.05,
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
-    ) -> Union[Int64Array1D]:
+    ) -> Int64Array1D:
         """
         Returns set of models rejected as being equal-or-worse than the
         benchmark

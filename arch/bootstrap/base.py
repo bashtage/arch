@@ -1,5 +1,11 @@
-from collections.abc import Generator as PyGenerator, Mapping, Sequence
-from typing import Any, Callable, Hashable, List, Optional, Union, cast
+from collections.abc import (
+    Callable,
+    Generator as PyGenerator,
+    Hashable,
+    Mapping,
+    Sequence,
+)
+from typing import Any, Union, cast
 import warnings
 
 import numpy as np
@@ -19,7 +25,6 @@ from arch.typing import (
     Literal,
     NDArray,
     RandomStateState,
-    Uint32Array,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 from arch.utility.exceptions import (
@@ -45,8 +50,8 @@ except ImportError:  # pragma: no cover
 
 
 def _get_prng_state(
-    prng: Union[Generator, RandomState],
-) -> Union[RandomStateState, Mapping[str, Any]]:
+    prng: Generator | RandomState,
+) -> RandomStateState | Mapping[str, Any]:
     if isinstance(prng, Generator):
         return prng.bit_generator.state
     else:
@@ -55,7 +60,7 @@ def _get_prng_state(
 
 
 def _get_random_integers(
-    prng: Union[Generator, RandomState], upper: int, *, size: int = 1
+    prng: Generator | RandomState, upper: int, *, size: int = 1
 ) -> Int64Array1D:
     if isinstance(prng, Generator):
         return cast(Int64Array1D, prng.integers(upper, size=size, dtype=np.int64))
@@ -89,7 +94,7 @@ def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
     cv = 2 * np.sqrt(np.log10(nobs) / nobs)
     acv = np.zeros(m_max + 1)
     abs_acorr = np.zeros(m_max + 1)
-    opt_m: Optional[int] = None
+    opt_m: int | None = None
     for i in range(m_max + 1):
         v1 = eps[i + 1 :] @ eps[i + 1 :]
         v2 = eps[: -(i + 1)] @ eps[: -(i + 1)]
@@ -117,7 +122,7 @@ def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
     return b_sb, b_cb
 
 
-def optimal_block_length(x: Union[ArrayLike1D, ArrayLike2D]) -> pd.DataFrame:
+def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     r"""
     Estimate optimal window length for time-series bootstraps
 
@@ -188,7 +193,7 @@ def optimal_block_length(x: Union[ArrayLike1D, ArrayLike2D]) -> pd.DataFrame:
     x_arr = np.asarray(ensure2d(np.asarray(x, dtype=float), "x"), dtype=float)
     opt = [_single_optimal_block(col) for col in x_arr.T]
     if isinstance(x, pd.DataFrame):
-        idx: List[Hashable] = list(x.columns)
+        idx: list[Hashable] = list(x.columns)
     elif isinstance(x, pd.Series):
         idx = [x.name]
     else:
@@ -229,7 +234,7 @@ def _loo_jackknife(
     nobs: int,
     args: Sequence[ArrayLike],
     kwargs: dict[str, ArrayLike],
-    extra_kwargs: Optional[dict[str, ArrayLike]] = None,
+    extra_kwargs: dict[str, ArrayLike] | None = None,
 ) -> Float64Array:
     """
     Leave one out jackknife estimation
@@ -273,7 +278,7 @@ def _loo_jackknife(
 
 
 def _add_extra_kwargs(
-    kwargs: dict[str, Any], extra_kwargs: Optional[dict[str, Any]] = None
+    kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     """
     Safely add additional keyword arguments to an existing dictionary
@@ -314,14 +319,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    random_state : RandomState, optional
-        ``RandomState`` to use to ensure reproducable results. Cannot
-        be used with ``seed``
-
-        .. deprecated:: 5.0
-
-           The random_state keyword argument has been deprecated. Use seed instead.
-
     kwargs
         Keyword arguments to bootstrap
 
@@ -388,28 +385,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     def __init__(
         self,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
         self._args = list(args)
         self._kwargs = kwargs
-        self._generator: Union[Generator, RandomState]
-        if random_state is not None:
-            if not isinstance(random_state, RandomState):
-                raise TypeError("random_state must be a RandomState when set.")
-            if seed is not None:
-                raise ValueError("random_state cannot be used with generator.")
-            warnings.warn(
-                "random_state is deprecated and will be removed in a future version. "
-                "The default random number generator is changing to a NumPy "
-                "Generator. To continue using RandomState, please directly pass a "
-                "RandomState instance using the ``generator`` keyword argument.",
-                FutureWarning,
-            )
-            _seed: Union[int, RandomState, Generator, None] = random_state
-        else:
-            _seed = seed
+        self._generator: Generator | RandomState
+        _seed = seed
 
         if isinstance(_seed, (RandomState, Generator)):
             self._generator = _seed
@@ -442,17 +424,17 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self._index: BootstrapIndexT = np.arange(self._num_items, dtype=np.int64)
 
         self._parameters: list[int] = []
-        self.pos_data: tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...] = args
-        self.kw_data: dict[str, Union[AnyArray, pd.Series, pd.DataFrame]] = kwargs
+        self.pos_data: tuple[AnyArray | pd.Series | pd.DataFrame, ...] = args
+        self.kw_data: dict[str, AnyArray | pd.Series | pd.DataFrame] = kwargs
         self.data: tuple[
-            tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...],
-            dict[str, Union[AnyArray, pd.Series, pd.DataFrame]],
+            tuple[AnyArray | pd.Series | pd.DataFrame, ...],
+            dict[str, AnyArray | pd.Series | pd.DataFrame],
         ] = (self.pos_data, self.kw_data)
 
-        self._base: Optional[Float64Array] = None
-        self._results: Optional[Float64Array] = None
-        self._studentized_results: Optional[Float64Array] = None
-        self._last_func: Optional[Callable[..., ArrayLike]] = None
+        self._base: Float64Array | None = None
+        self._results: Float64Array | None = None
+        self._studentized_results: Float64Array | None = None
+        self._last_func: Callable[..., ArrayLike] | None = None
         for key, value in kwargs.items():
             attr = getattr(self, key, None)
             if attr is None:
@@ -477,7 +459,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         return html
 
     @property
-    def generator(self) -> Union[Generator, RandomState]:
+    def generator(self) -> Generator | RandomState:
         """
         Set or get the instance PRNG
 
@@ -490,37 +472,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         return self._generator
 
     @generator.setter
-    def generator(self, value: Union[Generator, RandomState]) -> None:
+    def generator(self, value: Generator | RandomState) -> None:
         if not isinstance(value, (Generator, RandomState)):
             raise TypeError("Only a Generator or RandomState can be set")
-        self._generator = value
-
-    @property
-    def random_state(self) -> Union[Generator, RandomState]:
-        """
-        Set or get the instance random state
-
-        Returns
-        -------
-        RandomState
-            RandomState instance used by bootstrap
-        """
-        warnings.warn(
-            "The random_state property is deprecated and will be removed in a "
-            "future version.  Use seed instead",
-            FutureWarning,
-        )
-        return self._generator
-
-    @random_state.setter
-    def random_state(self, value: RandomState) -> None:
-        warnings.warn(
-            "The random_state property is deprecated and will be removed in a "
-            "future version.  Use seed instead",
-            FutureWarning,
-        )
-        if not isinstance(value, (Generator, RandomState)):
-            raise TypeError("Value being set must be a Generator or a RandomState")
         self._generator = value
 
     @property
@@ -531,7 +485,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         return self._index
 
     @property
-    def state(self) -> Union[RandomStateState, Mapping[str, Any]]:
+    def state(self) -> RandomStateState | Mapping[str, Any]:
         """
         Set or get the generator's state
 
@@ -549,72 +503,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             return self._generator.get_state()
 
     @state.setter
-    def state(self, value: Union[RandomStateState, Mapping[str, Any]]) -> None:
+    def state(self, value: RandomStateState | Mapping[str, Any]) -> None:
         if isinstance(self._generator, Generator):
             assert isinstance(value, Mapping)
             self._generator.bit_generator.state = value
         else:
             assert isinstance(self._generator, RandomState)
             self._generator.set_state(cast(RandomStateState, value))
-
-    def get_state(self) -> Union[RandomStateState, Mapping[str, Any]]:
-        """
-        Gets the state of the bootstrap's random number generator
-
-        Returns
-        -------
-        dict
-            Dictionary containing the state.
-        """
-        warnings.warn(
-            "get_state is deprecated and will be removed in a future version. "
-            "Use the state property instead.",
-            FutureWarning,
-        )
-        return _get_prng_state(self._generator)
-
-    def set_state(self, state: Union[RandomStateState, dict[str, Any]]) -> None:
-        """
-        Sets the state of the bootstrap's random number generator
-
-        Parameters
-        ----------
-        state : dict
-            Dictionary or tuple containing the state.
-        """
-        warnings.warn(
-            "get_state is deprecated and will be removed in a future version. "
-            "Use the state property instead.",
-            FutureWarning,
-        )
-        if isinstance(self._generator, Generator):
-            assert isinstance(state, Mapping)
-            self._generator.bit_generator.state = state
-        else:
-            assert isinstance(self._generator, RandomState)
-            self._generator.set_state(state)
-
-    def seed(self, value: Union[int, list[int], Uint32Array]) -> None:
-        """
-        Reseeds the bootstrap's random number generator
-
-        Parameters
-        ----------
-        value : {int, List[int], ndarray}
-            Value to use as the seed.
-        """
-        warnings.warn(
-            "seed is deprecated and will be removed in a future version. "
-            "Set the seed when creating the bootstrap.",
-            FutureWarning,
-        )
-        self._seed = value
-        if isinstance(self._generator, Generator):
-            bit_gen = self._generator.bit_generator.__class__
-            self._generator.bit_generator.state = bit_gen(value).state
-        else:
-            assert isinstance(self._generator, RandomState)
-            self._generator.seed(value)
 
     def reset(self, use_seed: bool = True) -> None:
         """
@@ -683,12 +578,12 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         ] = "basic",
         size: float = 0.95,
         tail: Literal["two", "upper", "lower"] = "two",
-        extra_kwargs: Optional[dict[str, Any]] = None,
+        extra_kwargs: dict[str, Any] | None = None,
         reuse: bool = False,
         sampling: Literal[
             "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
         ] = "nonparametric",
-        std_err_func: Optional[Callable[..., ArrayLike]] = None,
+        std_err_func: Callable[..., ArrayLike] | None = None,
         studentize_reps: int = 1000,
     ) -> Float64Array:
         """
@@ -815,7 +710,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                     "The conditions to reuse the previous bootstrap has "
                     "not been satisfied. A new bootstrap will be used."
                 )
-                warnings.warn(warn, RuntimeWarning)
+                warnings.warn(warn, RuntimeWarning, stacklevel=2)
             self._construct_bootstrap_estimates(
                 func,
                 reps,
@@ -938,7 +833,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         return b[:, None]
 
     def _bca_acceleration(
-        self, func: Callable[..., Float64Array], extra_kwags: Optional[dict[str, Any]]
+        self, func: Callable[..., Float64Array], extra_kwags: dict[str, Any] | None
     ) -> float:
         nobs = self._num_items
         jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs, extra_kwags)
@@ -947,7 +842,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     def clone(
         self,
         *args: ArrayLike,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> "IIDBootstrap":
         """
@@ -967,14 +862,14 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         type[self]
             Bootstrap instance
         """
-        bs = self.__class__(*args, random_state=None, seed=seed, **kwargs)
+        bs = self.__class__(*args, seed=seed, **kwargs)
         return bs
 
     def apply(
         self,
         func: Callable[..., ArrayLike],
         reps: int = 1000,
-        extra_kwargs: Optional[dict[str, Any]] = None,
+        extra_kwargs: dict[str, Any] | None = None,
     ) -> Float64Array:
         """
         Applies a function to bootstrap replicated data
@@ -1035,8 +930,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self,
         func: Callable[..., ArrayLike],
         reps: int,
-        extra_kwargs: Optional[dict[str, Any]] = None,
-        std_err_func: Optional[Callable[..., ArrayLike]] = None,
+        extra_kwargs: dict[str, Any] | None = None,
+        std_err_func: Callable[..., ArrayLike] | None = None,
         studentize_reps: int = 0,
         sampling: Literal[
             "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
@@ -1098,8 +993,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         func: Callable[..., ArrayLike],
         reps: int = 1000,
         recenter: bool = True,
-        extra_kwargs: Optional[dict[str, Any]] = None,
-    ) -> Union[float, Float64Array]:
+        extra_kwargs: dict[str, Any] | None = None,
+    ) -> float | Float64Array:
         """
         Compute parameter covariance using bootstrap
 
@@ -1179,8 +1074,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         func: Callable[..., ArrayLike],
         reps: int = 1000,
         recenter: bool = True,
-        extra_kwargs: Optional[dict[str, Any]] = None,
-    ) -> Union[float, Float64Array]:
+        extra_kwargs: dict[str, Any] | None = None,
+    ) -> float | Float64Array:
         """
         Compute parameter variance using bootstrap
 
@@ -1269,7 +1164,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Resample all data using the values in _index
         """
         indices = cast(Union[Int64Array, tuple[Int64Array, ...]], self._index)
-        pos_data: list[Union[NDArray, pd.DataFrame, pd.Series]] = []
+        pos_data: list[NDArray | pd.DataFrame | pd.Series] = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 assert isinstance(indices, np.ndarray)
@@ -1277,7 +1172,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             else:
                 assert isinstance(values, np.ndarray)
                 pos_data.append(values[indices])
-        named_data: dict[str, Union[NDArray, pd.DataFrame, pd.Series]] = {}
+        named_data: dict[str, NDArray | pd.DataFrame | pd.Series] = {}
         for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 assert isinstance(indices, np.ndarray)
@@ -1329,10 +1224,11 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``random_state``
+    To ensure a reproducible bootstrap, you must set the ``seed``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and any variable
-    passed using this keyword must be an instance of ``RandomState``.
+    Note that ``seed`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of a NumPy ``Generator`` or
+    ``RandomState``.
 
     Examples
     --------
@@ -1352,11 +1248,11 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
 
-    Set the random_state if reproducibility is required
+    Set the seed if reproducibility is required
 
-    >>> from numpy.random import RandomState
-    >>> rs = RandomState(1234)
-    >>> bs = IndependentSamplesBootstrap(x, y=y, z=z, random_state=rs)
+    >>> from numpy.random import default_rng
+    >>> gen = default_rng(1234)
+    >>> bs = IndependentSamplesBootstrap(x, y=y, z=z, seed=gen)
 
     See also
     --------
@@ -1369,11 +1265,10 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     def __init__(
         self,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(*args, random_state=random_state, seed=seed, **kwargs)
+        super().__init__(*args, seed=seed, **kwargs)
 
         self._num_args = len(args)
         self._num_arg_items = [len(arg) for arg in args]
@@ -1444,14 +1339,14 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         pos_indices, kw_indices = cast(
             tuple[list[Int64Array], dict[str, Int64Array]], self._index
         )
-        pos_data: list[Union[NDArray, pd.DataFrame, pd.Series]] = []
+        pos_data: list[NDArray | pd.DataFrame | pd.Series] = []
         for i, values in enumerate(self._args):
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 pos_data.append(values.iloc[pos_indices[i]])
             else:
                 assert isinstance(values, np.ndarray)
                 pos_data.append(values[pos_indices[i]])
-        named_data: dict[str, Union[AnyArray, pd.Series, pd.DataFrame]] = {}
+        named_data: dict[str, AnyArray | pd.Series | pd.DataFrame] = {}
         for key, values in self._kwargs.items():
             idx = kw_indices[key]
             if isinstance(values, (pd.Series, pd.DataFrame)):
@@ -1481,14 +1376,6 @@ class CircularBlockBootstrap(IIDBootstrap):
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    random_state : RandomState, optional
-        ``RandomState`` to use to ensure reproducable results. Cannot
-        be used with ``seed``
-
-        .. deprecated:: 5.0
-
-           The random_state keyword argument has been deprecated. Use seed instead.
-
     kwargs
         Keyword arguments to bootstrap
 
@@ -1510,10 +1397,11 @@ class CircularBlockBootstrap(IIDBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``random_state``
+    To ensure a reproducible bootstrap, you must set the ``seed``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and any variable
-    passed using this keyword must be an instance of ``RandomState``.
+    Note that ``seed`` is a reserved keyword and any variable
+    passed using this keyword must be an integer, a ``Generator`` or a
+    ``RandomState``.
 
     See Also
     --------
@@ -1540,11 +1428,11 @@ class CircularBlockBootstrap(IIDBootstrap):
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
 
-    Set the random_state if reproducibility is required
+    Set the seed if reproducibility is required
 
-    >>> from numpy.random import RandomState
-    >>> rs = RandomState(1234)
-    >>> bs = CircularBlockBootstrap(17, x, y=y, z=z, random_state=rs)
+    >>> from numpy.random import default_rng
+    >>> gen = default_rng(1234)
+    >>> bs = CircularBlockBootstrap(17, x, y=y, z=z, seed=gen)
     """
 
     _name = "Circular Block Bootstrap"
@@ -1553,18 +1441,17 @@ class CircularBlockBootstrap(IIDBootstrap):
         self,
         block_size: int,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(*args, random_state=random_state, seed=seed, **kwargs)
+        super().__init__(*args, seed=seed, **kwargs)
         self.block_size: int = block_size
         self._parameters = [block_size]
 
     def clone(
         self,
         *args: ArrayLike,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> "CircularBlockBootstrap":
         """
@@ -1585,7 +1472,7 @@ class CircularBlockBootstrap(IIDBootstrap):
             Bootstrap instance
         """
         block_size = self._parameters[0]
-        return self.__class__(block_size, *args, random_state=None, seed=seed, **kwargs)
+        return self.__class__(block_size, *args, seed=seed, **kwargs)
 
     def __str__(self) -> str:
         txt = self._name
@@ -1633,14 +1520,6 @@ class StationaryBootstrap(CircularBlockBootstrap):
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    random_state : RandomState, optional
-        ``RandomState`` to use to ensure reproducable results. Cannot
-        be used with ``seed``
-
-        .. deprecated:: 5.0
-
-           The random_state keyword argument has been deprecated. Use seed instead.
-
     kwargs
         Keyword arguments to bootstrap
 
@@ -1662,10 +1541,11 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``random_state``
+    To ensure a reproducible bootstrap, you must set the ``seed``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and any variable
-    passed using this keyword must be an instance of ``RandomState``.
+    Note that ``seed`` is a reserved keyword and any variable
+    passed using this keyword must be an integer, a ``Generator`` or a
+    ``RandomState``.
 
     See Also
     --------
@@ -1692,11 +1572,11 @@ class StationaryBootstrap(CircularBlockBootstrap):
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
 
-    Set the random_state if reproducibility is required
+    Set the seed if reproducibility is required
 
-    >>> from numpy.random import RandomState
-    >>> rs = RandomState(1234)
-    >>> bs = StationaryBootstrap(12, x, y=y, z=z, random_state=rs)
+    >>> from numpy.random import default_rng
+    >>> gen = default_rng(1234)
+    >>> bs = StationaryBootstrap(12, x, y=y, z=z, seed=gen)
     """
 
     _name = "Stationary Bootstrap"
@@ -1705,13 +1585,10 @@ class StationaryBootstrap(CircularBlockBootstrap):
         self,
         block_size: int,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(
-            block_size, *args, random_state=random_state, seed=seed, **kwargs
-        )
+        super().__init__(block_size, *args, seed=seed, **kwargs)
         self._p = 1.0 / block_size
 
     def update_indices(self) -> Int64Array1D:
@@ -1741,14 +1618,6 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    random_state : RandomState, optional
-        ``RandomState`` to use to ensure reproducable results. Cannot
-        be used with ``seed``
-
-        .. deprecated:: 5.0
-
-           The random_state keyword argument has been deprecated. Use seed instead.
-
     kwargs
         Keyword arguments to bootstrap
 
@@ -1770,10 +1639,11 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``random_state``
+    To ensure a reproducible bootstrap, you must set the ``seed``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and any variable
-    passed using this keyword must be an instance of ``RandomState``.
+    Note that ``seed`` is a reserved keyword and any variable
+    passed using this keyword must be an integer, a ``Generator`` or a
+    ``RandomState``.
 
     See Also
     --------
@@ -1802,11 +1672,11 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
 
-    Set the random_state if reproducibility is required
+    Set the seed if reproducibility is required
 
-    >>> from numpy.random import RandomState
-    >>> rs = RandomState(1234)
-    >>> bs = MovingBlockBootstrap(7, x, y=y, z=z, random_state=rs)
+    >>> from numpy.random import default_rng
+    >>> gen = default_rng(1234)
+    >>> bs = MovingBlockBootstrap(7, x, y=y, z=z, seed = gen)
     """
 
     _name = "Moving Block Bootstrap"
@@ -1815,13 +1685,10 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         self,
         block_size: int,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(
-            block_size, *args, random_state=random_state, seed=seed, **kwargs
-        )
+        super().__init__(block_size, *args, seed=seed, **kwargs)
 
     def update_indices(self) -> Int64Array1D:
         num_blocks = self._num_items // self.block_size
@@ -1843,16 +1710,15 @@ class MOONBootstrap(IIDBootstrap):  # pragma: no cover
         self,
         block_size: int,
         *args: ArrayLike,
-        random_state: Optional[RandomState] = None,
-        seed: Union[int, Generator, RandomState, None] = None,
+        seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(*args, random_state=random_state, seed=seed, **kwargs)
+        super().__init__(*args, seed=seed, **kwargs)
         self.block_size: int = block_size
 
     def update_indices(
         self,
-    ) -> Union[
-        Int64Array1D, tuple[list[Int64Array1D], dict[str, Int64Array1D]]
-    ]:  # pragma: no cover
+    ) -> (
+        Int64Array1D | tuple[list[Int64Array1D], dict[str, Int64Array1D]]
+    ):  # pragma: no cover
         raise NotImplementedError

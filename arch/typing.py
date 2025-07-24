@@ -1,6 +1,6 @@
-from collections.abc import Hashable
+from collections.abc import Callable, Hashable
 import datetime as dt
-from typing import Any, Callable, Literal, Optional, TypeVar, Union
+from typing import Any, Literal, Optional, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
@@ -40,7 +40,6 @@ Float64Array1D = np.ndarray[tuple[int], np.dtype[np.float64]]  # pragma: no cove
 Float64Array2D = np.ndarray[tuple[int, int], np.dtype[np.float64]]  # pragma: no cover
 Int64Array = np.ndarray[tuple[int, ...], np.dtype[np.int64]]  # pragma: no cover
 Int64Array1D = np.ndarray[tuple[int], np.dtype[np.int64]]  # pragma: no cover
-#     tuple[list[np.ndarray[tuple[int], np.dtype[np.signedinteger[Any]]]], dict[str, np.ndarray[tuple[int], np.dtype[np.signedinteger[Any]]]]]
 Int64Array2D = np.ndarray[tuple[int, int], np.dtype[np.int64]]  # pragma: no cover
 Int32Array = np.ndarray[tuple[int, ...], np.dtype[np.intc]]  # pragma: no cover
 IntArray = np.ndarray[tuple[int, ...], np.dtype[np.int64]]  # pragma: no cover

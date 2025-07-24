@@ -1,6 +1,7 @@
+from collections.abc import Callable
 import functools
 import os
-from typing import Any, Callable, Optional
+from typing import Any
 
 from arch.utility.exceptions import PerformanceWarning
 
@@ -23,7 +24,7 @@ try:
 except ImportError:
 
     def jit(
-        function_or_signature: Optional[Callable[..., Any]] = None,
+        function_or_signature: Callable[..., Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> Any:
@@ -33,7 +34,7 @@ except ImportError:
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
                 import warnings
 
-                warnings.warn(performance_warning, PerformanceWarning)
+                warnings.warn(performance_warning, PerformanceWarning, stacklevel=2)
                 return function_or_signature(*args, **kwargs)
 
             return wrapper
@@ -44,7 +45,7 @@ except ImportError:
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
                 import warnings
 
-                warnings.warn(performance_warning, PerformanceWarning)
+                warnings.warn(performance_warning, PerformanceWarning, stacklevel=2)
                 return func(*args, **kwargs)
 
             return wrapper

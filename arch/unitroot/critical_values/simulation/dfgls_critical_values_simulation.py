@@ -5,7 +5,7 @@ best when joblib is installed.
 """
 
 import datetime
-from typing import Optional, cast
+from typing import cast
 
 import numpy as np
 from numpy.linalg import pinv
@@ -47,7 +47,7 @@ def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndar
 
 
 def dfgsl_simulation(
-    n: int, trend: Literal["c", "ct"], b: int, rng: Optional[RandomState] = None
+    n: int, trend: Literal["c", "ct"], b: int, rng: RandomState | None = None
 ) -> float:
     """
     Simulates the empirical distribution of the DFGLS test statistic

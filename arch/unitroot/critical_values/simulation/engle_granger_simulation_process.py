@@ -1,6 +1,7 @@
 from collections import defaultdict
+from collections.abc import MutableMapping
 import glob
-from typing import MutableMapping, cast
+from typing import cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
