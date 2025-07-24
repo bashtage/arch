@@ -182,6 +182,9 @@ jobs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
 
-  - bash: bash <(curl -s https://codecov.io/bash)
-    displayName: 'CodeCov upload'
+  - script: |
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
+      chmod +x codecov
+      ./codecov -f coverage.xml -F adder -F subtractor
+    displayName: 'Codecov upload'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))

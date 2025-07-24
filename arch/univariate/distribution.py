@@ -5,6 +5,7 @@ Distributions to use in ARCH models.  All distributions must inherit from
 
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable, Sequence
+from typing import cast
 
 import numpy as np
 from numpy import (
@@ -577,7 +578,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
-        k = stats.kurtosis(std_resid, fisher=False)
+        k = cast(float, stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
@@ -832,7 +833,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
-        k = stats.kurtosis(std_resid, fisher=False)
+        k = cast(float, stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
