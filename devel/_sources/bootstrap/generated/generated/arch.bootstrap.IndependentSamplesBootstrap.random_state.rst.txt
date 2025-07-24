@@ -1,6 +1,0 @@
-arch.bootstrap.IndependentSamplesBootstrap.random\_state
-========================================================
-
-.. currentmodule:: arch.bootstrap
-
-.. autoproperty:: IndependentSamplesBootstrap.random_state

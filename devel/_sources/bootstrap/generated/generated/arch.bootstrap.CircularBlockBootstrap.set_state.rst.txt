@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.CircularBlockBootstrap.set\_state
-================================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: CircularBlockBootstrap.set_state

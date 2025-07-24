@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.StationaryBootstrap.seed
-=======================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: StationaryBootstrap.seed

@@ -35,7 +35,6 @@
 
       ~Normal.generator
       ~Normal.name
-      ~Normal.random_state
    
    
    

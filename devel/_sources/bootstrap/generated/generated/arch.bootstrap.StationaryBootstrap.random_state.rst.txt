@@ -1,6 +1,0 @@
-arch.bootstrap.StationaryBootstrap.random\_state
-================================================
-
-.. currentmodule:: arch.bootstrap
-
-.. autoproperty:: StationaryBootstrap.random_state

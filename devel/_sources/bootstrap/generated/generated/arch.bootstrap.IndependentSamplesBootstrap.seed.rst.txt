@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.IndependentSamplesBootstrap.seed
-===============================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: IndependentSamplesBootstrap.seed

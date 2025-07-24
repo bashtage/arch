@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.StepM.seed
-=========================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: StepM.seed

@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.MovingBlockBootstrap.seed
-========================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: MovingBlockBootstrap.seed

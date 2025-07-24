@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: MCS
-   :exclude-members: compute,reset,seed,
+   :exclude-members: compute,reset,
 
    
    
@@ -15,7 +15,6 @@
 
       ~MCS.compute
       ~MCS.reset
-      ~MCS.seed
    
    
    

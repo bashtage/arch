@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.IIDBootstrap.seed
-================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: IIDBootstrap.seed

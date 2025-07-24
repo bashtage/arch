@@ -1,6 +1,0 @@
-arch.univariate.GeneralizedError.random\_state
-==============================================
-
-.. currentmodule:: arch.univariate
-
-.. autoproperty:: GeneralizedError.random_state

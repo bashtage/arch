@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.IIDBootstrap.get\_state
-======================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: IIDBootstrap.get_state

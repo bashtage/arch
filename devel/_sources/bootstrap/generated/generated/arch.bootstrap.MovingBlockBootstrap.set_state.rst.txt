@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.MovingBlockBootstrap.set\_state
-==============================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: MovingBlockBootstrap.set_state

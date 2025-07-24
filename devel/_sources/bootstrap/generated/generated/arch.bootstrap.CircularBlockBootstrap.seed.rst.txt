@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.CircularBlockBootstrap.seed
-==========================================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: CircularBlockBootstrap.seed

@@ -1,6 +1,0 @@
-arch.bootstrap.MovingBlockBootstrap.random\_state
-=================================================
-
-.. currentmodule:: arch.bootstrap
-
-.. autoproperty:: MovingBlockBootstrap.random_state

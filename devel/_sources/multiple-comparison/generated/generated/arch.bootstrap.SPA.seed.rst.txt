@@ -1,8 +1,0 @@
-:orphan:
-
-arch.bootstrap.SPA.seed
-=======================
-
-.. currentmodule:: arch.bootstrap
-
-.. automethod:: SPA.seed

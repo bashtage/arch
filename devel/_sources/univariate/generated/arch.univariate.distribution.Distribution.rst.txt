@@ -35,7 +35,6 @@
 
       ~Distribution.generator
       ~Distribution.name
-      ~Distribution.random_state
    
    
    

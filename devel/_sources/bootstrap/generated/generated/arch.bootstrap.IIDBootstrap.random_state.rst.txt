@@ -1,6 +1,0 @@
-arch.bootstrap.IIDBootstrap.random\_state
-=========================================
-
-.. currentmodule:: arch.bootstrap
-
-.. autoproperty:: IIDBootstrap.random_state
