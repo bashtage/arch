@@ -185,3 +185,10 @@ jobs:
   - bash: bash <(curl -s https://codecov.io/bash)
     displayName: 'CodeCov upload'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+
+  - script: |
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
+      chmod +x codecov
+      ./codecov -f coverage.xml -F adder -F subtractor
+    displayName: 'Codecov upload (Alt)'
+
