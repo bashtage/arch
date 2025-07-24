@@ -1,5 +1,6 @@
+from collections.abc import Callable
 import copy
-from typing import Callable, NamedTuple, Union
+from typing import NamedTuple
 import warnings
 
 import numpy as np
@@ -42,7 +43,7 @@ class BSData(NamedTuple):
     y_series: pd.Series
     z_df: pd.DataFrame
 
-    func: Callable[[np.ndarray, int], Union[float, np.ndarray]]
+    func: Callable[[np.ndarray, int], float | np.ndarray]
 
 
 @pytest.fixture(scope="function", params=[1234, "gen", "rs"])
@@ -811,8 +812,7 @@ def test_reset():
     final = 0
     final_reset = 1
     bs = IIDBootstrap(np.arange(100))
-    with pytest.warns(FutureWarning):
-        state = bs.get_state()
+    state = bs.state
     for data, _ in bs.bootstrap(10):
         final = data[0]
     bs.reset()
@@ -821,16 +821,6 @@ def test_reset():
         final_reset = data[0]
     assert_equal(final, final_reset)
     assert_equal(state, state_reset)
-
-
-def test_pass_random_state():
-    x = np.arange(1000)
-    rs = RandomState(0)
-    with pytest.warns(FutureWarning):
-        IIDBootstrap(x, random_state=rs)
-
-    with pytest.raises(TypeError):
-        IIDBootstrap(x, random_state="0")
 
 
 def test_iid_unequal_equiv():
@@ -913,8 +903,7 @@ def test_unequal_reset():
     variance = bs.var(mean_diff)
     assert variance > 0
     bs.reset()
-    with pytest.warns(FutureWarning):
-        state = bs.get_state()
+    state = bs.state
     assert_equal(state[1], orig_state[1])
 
     rs = RandomState(1234)
@@ -966,16 +955,6 @@ def test_set_randomstate(bs_setup):
     assert bs.generator is rs
 
 
-def test_set_randomstate_exception(bs_setup):
-    bs = IIDBootstrap(bs_setup.x)
-    rs = np.array([1, 2, 3, 4])
-    with pytest.raises(
-        TypeError, match="Value being set must be a Generator or a RandomState"
-    ):
-        with pytest.warns(FutureWarning):
-            bs.random_state = rs
-
-
 def test_iid_args_kwargs(bs_setup):
     bs1 = IIDBootstrap(bs_setup.y, seed=0)
     bs2 = IIDBootstrap(y=bs_setup.y, seed=0)
@@ -1023,15 +1002,8 @@ def test_bc_extremum_error():
 
 
 def test_invalid_random_state_generator():
-    rs = RandomState(1234)
-    with pytest.raises(ValueError):
-        IIDBootstrap(np.empty(100), random_state=rs, seed=123)
     with pytest.raises(TypeError, match="generator keyword argument"):
         IIDBootstrap(np.empty(100), seed="123")
-    bs = IIDBootstrap(np.empty(100))
-    with pytest.raises(TypeError):
-        with pytest.warns(FutureWarning):
-            bs.seed("1234")
 
 
 def test_generator(seed):
@@ -1050,30 +1022,13 @@ def test_generator(seed):
     else:
         assert isinstance(state, tuple)
     bs.state = state
-    with pytest.warns(FutureWarning):
-        bs.set_state(state)
-    with pytest.warns(FutureWarning):
-        state = bs.get_state()
     if isinstance(bs.generator, np.random.Generator):
         assert isinstance(state, dict)
     else:
         assert isinstance(state, tuple)
-    with pytest.warns(FutureWarning):
-        assert isinstance(bs.random_state, typ)
-        bs.random_state = bs.random_state
 
 
 def test_staionary_seed(bs_setup, seed):
     sb = StationaryBootstrap(10, bs_setup.y, seed=seed)
     for pos, _ in sb.bootstrap(10):
         assert pos[0].shape[0] == bs_setup.y.shape[0]
-
-
-def test_seed(bs_setup, seed):
-    bs = IIDBootstrap(bs_setup.y, seed=seed)
-    with pytest.warns(FutureWarning):
-        bs.seed(1234)
-    with pytest.warns(FutureWarning):
-        bs.seed([1234, 5678])
-    with pytest.warns(FutureWarning):
-        bs.seed(np.array([1234, 5678], dtype=np.uint32))

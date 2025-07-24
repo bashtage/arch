@@ -3,13 +3,13 @@ Simulation for critical value production for Engle-Granger
 """
 
 import argparse
+from collections.abc import Sequence
 import datetime as dt
 from functools import partial
 from itertools import product
 import os
 from random import shuffle
 import sys
-from typing import Sequence
 
 import colorama
 from joblib import Parallel, cpu_count, delayed

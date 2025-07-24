@@ -60,9 +60,7 @@ def test_equivalence(spa_data):
 
 def test_variances_and_selection(spa_data):
     adj_models = spa_data.models + linspace(-2, 0.5, spa_data.k)
-    spa = SPA(spa_data.benchmark, adj_models, block_size=10, reps=10)
-    with pytest.warns(FutureWarning):
-        spa.seed(23456)
+    spa = SPA(spa_data.benchmark, adj_models, block_size=10, reps=10, seed=23456)
     spa.compute()
     variances = spa._loss_diff_var
     loss_diffs = spa._loss_diff

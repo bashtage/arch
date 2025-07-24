@@ -2,7 +2,7 @@ from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import Optional, SupportsInt, Union, cast
+from typing import SupportsInt, cast
 
 import numpy as np
 from pandas import DataFrame, Index
@@ -84,9 +84,9 @@ class CovarianceEstimate:
         self,
         short_run: Float64Array,
         one_sided_strict: Float64Array,
-        columns: Union[Index, list[str], None] = None,
-        long_run: Optional[Float64Array] = None,
-        one_sided: Optional[Float64Array] = None,
+        columns: Index | list[str] | None = None,
+        long_run: Float64Array | None = None,
+        one_sided: Float64Array | None = None,
     ) -> None:
         self._sr = short_run
         self._oss = one_sided_strict
@@ -94,13 +94,13 @@ class CovarianceEstimate:
         self._long_run = long_run
         self._one_sided = one_sided
 
-    def _wrap(self, value: Float64Array) -> Union[Float64Array, DataFrame]:
+    def _wrap(self, value: Float64Array) -> Float64Array | DataFrame:
         if self._columns is not None:
             return DataFrame(value, columns=self._columns, index=self._columns)
         return value
 
     @cached_property
-    def long_run(self) -> Union[Float64Array, DataFrame]:
+    def long_run(self) -> Float64Array | DataFrame:
         """
         The long-run covariance estimate.
         """
@@ -111,14 +111,14 @@ class CovarianceEstimate:
         return self._wrap(long_run)
 
     @cached_property
-    def short_run(self) -> Union[Float64Array, DataFrame]:
+    def short_run(self) -> Float64Array | DataFrame:
         """
         The short-run covariance estimate.
         """
         return self._wrap(self._sr)
 
     @cached_property
-    def one_sided(self) -> Union[Float64Array, DataFrame]:
+    def one_sided(self) -> Float64Array | DataFrame:
         """
         The one-sided covariance estimate.
         """
@@ -129,7 +129,7 @@ class CovarianceEstimate:
         return self._wrap(one_sided)
 
     @cached_property
-    def one_sided_strict(self) -> Union[Float64Array, DataFrame]:
+    def one_sided_strict(self) -> Float64Array | DataFrame:
         """
         The one-sided strict covariance estimate.
         """
@@ -190,10 +190,10 @@ class CovarianceEstimator(ABC):
     def __init__(
         self,
         x: ArrayLike,
-        bandwidth: Optional[float] = None,
+        bandwidth: float | None = None,
         df_adjust: int = 0,
         center: bool = True,
-        weights: Optional[ArrayLike] = None,
+        weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
         self._x_orig = ensure2d(x, "x")

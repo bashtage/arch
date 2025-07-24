@@ -8,7 +8,7 @@ python -m pip install .
 from arch.compat.numba import jit
 
 from abc import ABCMeta, abstractmethod
-from typing import Optional, Union, cast
+from typing import cast
 
 import numpy as np
 from scipy.special import gammaln
@@ -654,6 +654,7 @@ class VolatilityUpdater(metaclass=ABCMeta):
     in Python.
     """
 
+    @abstractmethod
     def __init__(self) -> None:
         pass
 
@@ -661,7 +662,7 @@ class VolatilityUpdater(metaclass=ABCMeta):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         """
@@ -758,7 +759,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)
@@ -808,7 +809,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)
@@ -836,7 +837,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 
 class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
-    def __init__(self, lam: Optional[float]) -> None:
+    def __init__(self, lam: float | None) -> None:
         super().__init__()
         self.estimate_lam = lam is None
         self.params = np.zeros(3)
@@ -847,7 +848,7 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         if self.estimate_lam:
@@ -904,7 +905,7 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.update_weights(parameters[2 + self.asym])
@@ -958,7 +959,7 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
@@ -1011,7 +1012,7 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.backcast = cast(Float64Array1D, backcast)
@@ -1054,7 +1055,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self,
         parameters: Float64Array1D,
-        backcast: Union[float, Float64Array1D],
+        backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
         self.backcast = cast(float, backcast)

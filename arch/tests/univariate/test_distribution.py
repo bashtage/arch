@@ -222,13 +222,5 @@ def test_no_parameters_error(distribution):
 
 
 def test_random_state_seed_transition():
-    with pytest.warns(FutureWarning, match="random_state is"):
-        norm = Normal(random_state=RandomState(1234))
-    with pytest.warns(FutureWarning, match="random_state is"):
-        assert isinstance(norm.random_state, RandomState)
-    with pytest.raises(ValueError):
-        Normal(random_state=RandomState(), seed=1234)
-    with pytest.raises(ValueError):
-        Normal(random_state=RandomState(), seed=default_rng())
     with pytest.raises(TypeError):
         Normal(seed="1234")

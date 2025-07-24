@@ -25,25 +25,24 @@ jobs:
       python_310:
         python.version: '3.10'
         test.install: true
-      python_39:
-        python.version: '3.9'
       python_311_copy_on_write:
         python.version: '3.11'
         ARCH_TEST_COPY_ON_WRITE: 1
       python_minimums:
-        python.version: '3.9'
+        python.version: '3.10'
         NUMPY: 1.23.0
         SCIPY: 1.9.0
         MATPLOTLIB: 3.4.0
         PANDAS: 1.4.0
-      python_39_conda_numba:
-        python.version: '3.9'
+      python_310_conda_numba:
+        python.version: '3.10'
         use.conda: 'true'
+        NUMPY: 2.0.0
         USE_NUMBA: true
-        MATPLOTLIB: 3.4.0
+        MATPLOTLIB: 3.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python39_numpy120:
-        python.version: '3.9'
+      python310_numpy120:
+        python.version: '3.10'
         MATPLOTLIB: 3.3.0
         NUMPY: 1.22.3
         SCIPY: 1.8.0
@@ -58,26 +57,26 @@ jobs:
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 2.2.2
         USE_NUMBA: true
-      python_39_no_binary_environment:
-        python.version: '3.9'
+      python_312_no_binary_environment:
+        python.version: '3.12'
         ARCH_NO_BINARY: true
         use.conda: 'true'
         USE_NUMBA: true
         PYTEST_OPTS: '--skip-slow'
-      python_39_no_numba:
-        python.version: '3.9'
+      python_310_no_numba:
+        python.version: '3.10'
         NUMPY: 1.24.0
         USE_NUMBA: false
         MATPLOTLIB: 3.5.0
         PANDAS: 1.5.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python_39_numpy_118:
-        python.version: '3.9'
+      python_310_numpy_124:
+        python.version: '3.10'
         NUMPY: 1.24.0
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
       python_312_statsmodels_main:
-        python.version: '3.9'
+        python.version: '3.10'
         STATSMODELS_MAIN: true
         coverage: false
       python312_pre:

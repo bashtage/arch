@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple, Optional, Union, cast
+from typing import Any, NamedTuple, Optional, cast
 
 import pandas as pd
 from statsmodels.iolib.summary import Summary
@@ -66,7 +66,7 @@ def _check_cointegrating_regression(
 
 
 def _cross_section(
-    y: Union[ArrayLike1D, ArrayLike2D], x: ArrayLike2D, trend: UnitRootTrend
+    y: ArrayLike1D | ArrayLike2D, x: ArrayLike2D, trend: UnitRootTrend
 ) -> RegressionResults:
     if trend not in ("n", "c", "ct", "ctt"):
         raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')
@@ -183,7 +183,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         alternative: str = "Cointegration",
         trend: str = "c",
         order: int = 2,
-        xsection: Optional[RegressionResults] = None,
+        xsection: RegressionResults | None = None,
     ) -> None:
         super().__init__(stat, pvalue, crit_vals, null, alternative)
         self.name = "NONE"
@@ -220,7 +220,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         return resid
 
     def plot(
-        self, axes: Optional["plt.Axes"] = None, title: Optional[str] = None
+        self, axes: Optional["plt.Axes"] = None, title: str | None = None
     ) -> "plt.Figure":
         """
         Plot the cointegration residuals.

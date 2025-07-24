@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
-from typing import Optional, Union, cast
+from typing import cast
 import warnings
 
 import numpy as np
@@ -128,8 +128,8 @@ SHORT_TREND_DESCRIPTION = {
 
 
 def _is_reduced_rank(
-    x: Union[Float64Array, DataFrame],
-) -> tuple[bool, Union[int, None]]:
+    x: Float64Array | DataFrame,
+) -> tuple[bool, int | None]:
     """
     Check if a matrix has reduced rank preferring quick checks
     """
@@ -372,7 +372,7 @@ def _autolag_ols(
 def _df_select_lags(
     y: Float64Array,
     trend: Literal["n", "c", "ct", "ctt"],
-    max_lags: Optional[int],
+    max_lags: int | None,
     method: Literal["aic", "bic", "t-stat"],
     low_memory: bool = False,
 ) -> tuple[float, int]:
@@ -423,6 +423,7 @@ def _df_select_lags(
                 f"of {nobs} is likely to be slow. Consider directly setting "
                 "``max_lags`` to a small value to avoid this performance issue.",
                 PerformanceWarning,
+                stacklevel=2,
             )
     assert max_lags is not None
     if low_memory:
@@ -494,9 +495,9 @@ class UnitRootTest(metaclass=ABCMeta):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int],
-        trend: Union[UnitRootTrend, Literal["t"]],
-        valid_trends: Union[list[str], tuple[str, ...]],
+        lags: int | None,
+        trend: UnitRootTrend | Literal["t"],
+        valid_trends: list[str] | tuple[str, ...],
     ) -> None:
         self._y = ensure1d(y, "y", series=False)
         self._delta_y = diff(y)
@@ -508,9 +509,9 @@ class UnitRootTest(metaclass=ABCMeta):
         if trend not in self.valid_trends:
             raise ValueError("trend not understood")
         self._trend = trend
-        self._stat: Optional[float] = None
+        self._stat: float | None = None
         self._critical_values: dict[str, float] = {}
-        self._pvalue: Optional[float] = None
+        self._pvalue: float | None = None
         self._null_hypothesis = "The process contains a unit root."
         self._alternative_hypothesis = "The process is weakly stationary."
         self._test_name = ""
@@ -753,11 +754,11 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: UnitRootTrend = "c",
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
-        low_memory: Optional[bool] = None,
+        low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("n", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
@@ -822,7 +823,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._regression
 
     @property
-    def max_lags(self) -> Union[int, None]:
+    def max_lags(self) -> int | None:
         """Sets or gets the maximum lags used when automatically selecting lag
         length"""
         return self._max_lags
@@ -902,11 +903,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["c", "ct"] = "c",
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
-        low_memory: Optional[bool] = None,
+        low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
@@ -994,7 +995,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._regression
 
     @property
-    def max_lags(self) -> Union[int, None]:
+    def max_lags(self) -> int | None:
         """Sets or gets the maximum lags used when automatically selecting lag
         length"""
         return self._max_lags
@@ -1094,7 +1095,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["n", "c", "ct"] = "c",
         test_type: Literal["tau", "rho"] = "tau",
     ) -> None:
@@ -1275,7 +1276,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
 
     def __init__(
-        self, y: ArrayLike, lags: Optional[int] = None, trend: Literal["c", "ct"] = "c"
+        self, y: ArrayLike, lags: int | None = None, trend: Literal["c", "ct"] = "c"
     ) -> None:
         valid_trends = ("c", "ct")
         if lags is None:
@@ -1283,6 +1284,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 "Lag selection has changed to use a data-dependent method. To use the "
                 "old method that only depends on time, set lags=-1",
                 DeprecationWarning,
+                stacklevel=2,
             )
         self._legacy_lag_selection = False
         if lags == -1:
@@ -1292,7 +1294,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._test_name = "KPSS Stationarity Test"
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
-        self._resids: Union[ArrayLike1D, None] = None
+        self._resids: ArrayLike1D | None = None
 
     def _check_specification(self) -> None:
         trend_order = len(self._trend)
@@ -1444,10 +1446,10 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["c", "ct", "t"] = "c",
         trim: float = 0.15,
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
     ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
@@ -1658,8 +1660,8 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._robust = robust
         self._debiased = debiased
         self._overlap = overlap
-        self._vr: Optional[float] = None
-        self._stat_variance: Optional[float] = None
+        self._vr: float | None = None
+        self._stat_variance: float | None = None
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         for q, cv in zip(quantiles, norm.ppf(quantiles)):
             self._critical_values[str(int(100 * q)) + "%"] = cv
@@ -1712,6 +1714,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 warnings.warn(
                     invalid_length_doc.format(var="y", block=q, drop=extra),
                     InvalidLengthWarning,
+                    stacklevel=2,
                 )
 
         nobs = y.shape[0]
@@ -1962,7 +1965,7 @@ def kpss_crit(
 
 
 def auto_bandwidth(
-    y: Union[Sequence[Union[float, int]], ArrayLike1D],
+    y: Sequence[float | int] | ArrayLike1D,
     kernel: Literal[
         "ba", "bartlett", "nw", "pa", "parzen", "gallant", "qs", "andrews"
     ] = "ba",

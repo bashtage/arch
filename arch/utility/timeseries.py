@@ -1,4 +1,4 @@
-from typing import Optional, Union, overload
+from typing import overload
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,7 @@ def _enforce_unique_col_name(existing: list[str], new: list[str]) -> list[str]:
         import warnings
 
         ws = column_name_conflict_doc.format("\n    ".join(converted_names))
-        warnings.warn(ws, ColumnNameConflict)
+        warnings.warn(ws, ColumnNameConflict, stacklevel=2)
 
     return unique_names
 
@@ -73,12 +73,12 @@ def add_trend(
 
 
 def add_trend(
-    x: Optional[NDArrayOrFrame] = None,
+    x: NDArrayOrFrame | None = None,
     trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
     prepend: bool = False,
-    nobs: Optional[int] = None,
+    nobs: int | None = None,
     has_constant: Literal["raise", "add", "skip"] = "skip",
-) -> Union[Float64Array, pd.DataFrame]:
+) -> Float64Array | pd.DataFrame:
     """
     Adds a trend and/or constant to an array.
 

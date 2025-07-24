@@ -1,13 +1,15 @@
 [project]
 name = "arch"
-dynamic = ["dependencies", "version", "readme"]
-license = { file = "LICENSE.md" }
+readme = "README.md"
+license = "NCSA"
+license-files = [ "LICENSE.md" ]
+dynamic = ["dependencies", "version"]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
 description = "ARCH for Python"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
   "arch",
   "ARCH",
@@ -31,10 +33,10 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: End Users/Desktop",
   "Intended Audience :: Financial and Insurance Industry",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",
@@ -63,7 +65,7 @@ build-backend = "setuptools.build_meta"
 dependencies = { file = ["requirements.txt"] }
 
 [tool.black]
-target-version = ['py39', 'py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312', 'py313']
 exclude = '''
 (
     \.egg

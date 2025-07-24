@@ -4,7 +4,7 @@ and constant plus trend scenarios.
 """
 
 import os
-from typing import Optional, cast
+from typing import cast
 
 import numpy as np
 from numpy.random import RandomState
@@ -18,7 +18,7 @@ def simulate_kpss(
     nobs: int,
     b: int,
     trend: str = "c",
-    rng: Optional[RandomState] = None,
+    rng: RandomState | None = None,
 ) -> float:
     """
     Simulated the KPSS test statistic for nobs observations,
