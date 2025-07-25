@@ -7,18 +7,6 @@ from arch.vendor._decorators import deprecate_kwarg, indent
 
 @deprecate_kwarg("old", "new", {"yes": True, "no": False}, stacklevel=2)
 def f(x: int, *, old: Literal["yes", "no"] = "yes", new: bool = True) -> int:
-    """
-    Function with keyword-only arguments.
-
-    Parameters
-    ----------
-    x : int
-        An integer value.
-    y : str, optional
-        An optional integer value.
-    y_new : bool, optional
-        Another optional integer value.
-    """
     if new:
         return x + 1
     else:
@@ -43,6 +31,23 @@ def bar(old=False, new=False):
     return new
 
 
+def _baz_mapping(old: Literal["yes", "no"]) -> bool:
+    if old == "yes":
+        return True
+    elif old == "no":
+        return False
+    else:
+        raise ValueError(old)
+
+
+@deprecate_kwarg("old", "new", _baz_mapping, stacklevel=2)
+def baz(x: int, *, old: Literal["yes", "no"] = "yes", new: bool = True) -> int:
+    if new:
+        return x + 1
+    else:
+        return x - 1
+
+
 def test_deprecate_kwarg():
     """
     Test the deprecation of the `y` keyword argument in the function `f`.
@@ -53,6 +58,12 @@ def test_deprecate_kwarg():
         f(1, old="no")
     f(2, new=True)
     f(2, new=False)
+    with pytest.raises(TypeError):
+        f(2, old="yes", new=True)
+    baz(2, old="yes")
+    baz(2, old="no")
+    with pytest.raises(ValueError):
+        baz(2, old="maybe")
 
 
 def test_deprecate_kwarg_no_alt():
@@ -97,3 +108,5 @@ This is a test
     )
     assert res[:5] == "\n" + " " * 4
     assert res[5:] == "This is a test\n    "
+
+    assert indent(None) == ""
