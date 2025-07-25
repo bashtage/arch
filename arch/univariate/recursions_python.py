@@ -749,7 +749,6 @@ class VolatilityUpdater(metaclass=ABCMeta):
 
 class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, o: int, q: int, power: float) -> None:
-        super().__init__()
         self.p = p
         self.o = o
         self.q = q
@@ -802,7 +801,6 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lags: Int32Array) -> None:
-        super().__init__()
         self.lags = lags
         self.backcast = -1.0
 
@@ -838,7 +836,6 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lam: float | None) -> None:
-        super().__init__()
         self.estimate_lam = lam is None
         self.params = np.zeros(3)
         if lam is not None:
@@ -877,7 +874,6 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, m: int, asym: bool) -> None:
-        super().__init__()
         self.m = m
         self.asym = asym
         self.aw = np.empty(m)
@@ -948,7 +944,6 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None:
-        super().__init__()
         self.p = p
         self.q = q
         self.truncation = truncation
@@ -1002,7 +997,6 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
         combination_weights: Float64Array,
         smoothing_parameters: Float64Array1D,
     ) -> None:
-        super().__init__()
         self.kmax = kmax
         self.combination_weights = combination_weights
         self.smoothing_parameters = smoothing_parameters
@@ -1037,7 +1031,6 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
 
 class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, o: int, q: int) -> None:
-        super().__init__()
         self.p = p
         self.o = o
         self.q = q

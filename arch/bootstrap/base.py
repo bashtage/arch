@@ -259,16 +259,16 @@ def _loo_jackknife(
     results = []
     for i in range(nobs):
         items = np.r_[0:i, i + 1 : nobs]
-        args_copy = []
+        args_copy: list[ArrayLike] = []
         for arg in args:
             if isinstance(arg, (pd.Series, pd.DataFrame)):
-                args_copy.append(arg.iloc[items])
+                args_copy.append(cast(Union[pd.Series, pd.DataFrame], arg.iloc[items]))
             else:
                 args_copy.append(arg[items])
-        kwargs_copy = {}
+        kwargs_copy: dict[str, ArrayLike] = {}
         for k, v in kwargs.items():
             if isinstance(v, (pd.Series, pd.DataFrame)):
-                kwargs_copy[k] = v.iloc[items]
+                kwargs_copy[k] = cast(Union[pd.Series, pd.DataFrame], v.iloc[items])
             else:
                 kwargs_copy[k] = v[items]
         if extra_kwargs is not None:

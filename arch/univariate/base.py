@@ -76,7 +76,7 @@ See convergence_flag.
 _callback_info = {"iter": 0, "llf": 0.0, "count": 0, "display": 1}
 
 
-def _callback(parameters: Float64Array, *args: Any) -> None:
+def _callback(parameters: Float64Array1D) -> None:
     """
     Callback for use in optimization
 
@@ -752,10 +752,19 @@ class ARCHModel(metaclass=ABCMeta):
         bounds.extend(d.bounds(std_resids))
 
         # 3. Construct starting values from all models
-        sv = starting_values
-        if starting_values is not None:
-            assert sv is not None
-            sv = ensure1d(sv, "starting_values")
+        if starting_values is None:
+            sv = to_array_1d(
+                np.hstack(
+                    [
+                        self.starting_values(),
+                        sv_volatility,
+                        d.starting_values(std_resids),
+                    ]
+                )
+            )
+        else:
+            assert starting_values is not None
+            sv = np.asarray(ensure1d(starting_values, "starting_values"), dtype=float)
             assert isinstance(sv, (np.ndarray, pd.Series))
             valid = sv.shape[0] == num_params
             if a.shape[0] > 0:
@@ -768,17 +777,6 @@ class ARCHModel(metaclass=ABCMeta):
                     starting_value_warning, StartingValueWarning, stacklevel=2
                 )
                 starting_values = None
-
-        if starting_values is None:
-            sv = to_array_1d(
-                np.hstack(
-                    [
-                        self.starting_values(),
-                        sv_volatility,
-                        d.starting_values(std_resids),
-                    ]
-                )
-            )
 
         # 4. Estimate models using constrained optimization
         _callback_info["count"], _callback_info["iter"] = 0, 0
@@ -806,7 +804,7 @@ class ARCHModel(metaclass=ABCMeta):
                 "Values in x were outside bounds during a minimize step",
                 RuntimeWarning,
             )
-            opt = minimize(
+            opt = minimize(  # type: ignore[call-overload]
                 func,
                 sv,
                 args=args,
