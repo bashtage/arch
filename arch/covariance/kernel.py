@@ -202,9 +202,10 @@ class CovarianceEstimator(ABC):
         if self._center:
             self._x = self._x - self._x.mean(0)
         if bandwidth is not None:
-            if not np.isscalar(bandwidth) or (cast(float, bandwidth) < 0.0):
+            _bandwidth = bandwidth
+            if not np.isscalar(_bandwidth) or (cast(float, _bandwidth) < 0.0):
                 raise ValueError("bandwidth must be a non-negative scalar.")
-        self._bandwidth = bandwidth
+        self._bandwidth: float | None = bandwidth
         self._auto_bandwidth = bandwidth is None
         if not np.isscalar(df_adjust) or (cast(int, df_adjust) < 0):
             raise ValueError("df_adjust must be a non-negative integer.")
