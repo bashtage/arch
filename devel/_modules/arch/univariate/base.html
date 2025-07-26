@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v7.2.1 (+51)</title>
+        <title>arch.univariate.base - arch v7.2.1 (+53)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+51)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+51)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+53)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+53)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+51)
+            arch v7.2.1 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+51)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+51)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+53)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+53)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+51)
+    arch v7.2.1 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -535,7 +535,7 @@
 <span class="n">_callback_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;iter&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;llf&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;display&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Callback for use in optimization</span>
 
@@ -1224,10 +1224,19 @@
         <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">std_resids</span><span class="p">))</span>
 
         <span class="c1"># 3. Construct starting values from all models</span>
-        <span class="n">sv</span> <span class="o">=</span> <span class="n">starting_values</span>
-        <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">sv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">sv</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="s2">&quot;starting_values&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span>
+                        <span class="n">sv_volatility</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">std_resids</span><span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">starting_values</span><span class="p">,</span> <span class="s2">&quot;starting_values&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">))</span>
             <span class="n">valid</span> <span class="o">=</span> <span class="n">sv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_params</span>
             <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1240,17 +1249,6 @@
                     <span class="n">starting_value_warning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
                 <span class="p">)</span>
                 <span class="n">starting_values</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span>
-                        <span class="n">sv_volatility</span><span class="p">,</span>
-                        <span class="n">d</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">std_resids</span><span class="p">),</span>
-                    <span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
 
         <span class="c1"># 4. Estimate models using constrained optimization</span>
         <span class="n">_callback_info</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">],</span> <span class="n">_callback_info</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
@@ -1278,7 +1276,7 @@
                 <span class="s2">&quot;Values in x were outside bounds during a minimize step&quot;</span><span class="p">,</span>
                 <span class="ne">RuntimeWarning</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>  <span class="c1"># type: ignore[call-overload]</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">sv</span><span class="p">,</span>
                 <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
