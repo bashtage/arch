@@ -2,7 +2,7 @@ from typing import Literal
 
 import pytest
 
-from arch.vendor._decorators import deprecate_kwarg, indent
+from arch.vendor._decorators import Substitution, deprecate_kwarg, indent
 
 
 @deprecate_kwarg("old", "new", {"yes": True, "no": False}, stacklevel=2)
@@ -59,9 +59,12 @@ def test_deprecate_kwarg():
     f(2, new=True)
     f(2, new=False)
     with pytest.raises(TypeError):
-        f(2, old="yes", new=True)
-    baz(2, old="yes")
-    baz(2, old="no")
+        with pytest.warns(FutureWarning, match="the old"):
+            f(2, old="yes", new=True)
+    with pytest.warns(FutureWarning, match="the old"):
+        baz(2, old="yes")
+    with pytest.warns(FutureWarning, match="the old"):
+        baz(2, old="no")
     with pytest.raises(ValueError):
         baz(2, old="maybe")
 
@@ -75,20 +78,21 @@ def test_deprecate_kwarg_no_alt():
 
 
 def test_bad_deprecate_kwarg():
+    def h(x: int, *, old: bool = True) -> int:
+        """
+        Function with keyword-only arguments.
+
+        Parameters
+        ----------
+        x : int
+            An integer value.
+        """
+        return x + 1
+
+    assert h(1) == 2
+
     def constructor():
-        @deprecate_kwarg("old", None, [("yes", True), ("no", False)])
-        def h(x: int, *, old: bool = True) -> int:
-            """
-            Function with keyword-only arguments.
-
-            Parameters
-            ----------
-            x : int
-                An integer value.
-            """
-            return x + 1
-
-        return h
+        return deprecate_kwarg("old", None, [("yes", True), ("no", False)])(h)
 
     with pytest.raises(TypeError):
         constructor()
@@ -110,3 +114,14 @@ This is a test
     assert res[5:] == "This is a test\n    "
 
     assert indent(None) == ""
+
+
+def test_substitution_error():
+    with pytest.raises(AssertionError):
+        Substitution("First", second="second")("")
+
+
+def test_substitution_update():
+    sub = Substitution(first="first", second="second")
+    sub.update({"third": "third"})
+    assert "third" in sub.params
