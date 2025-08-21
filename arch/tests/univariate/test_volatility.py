@@ -1640,7 +1640,7 @@ def test_aparch(setup, initial_value):
     assert_equal(aparch._delta, np.nan)
     assert aparch.p == aparch.o == aparch.q == 1
 
-    parameters[1] = 0.9
+    parameters[1] = 0.20001
     with pytest.warns(InitialValueWarning):
         aparch.simulate(parameters, setup.t, rng.simulate([]))
 
