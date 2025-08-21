@@ -11,7 +11,7 @@ matplotlib>=3
 seaborn
 
 # Tests
-pytest>=7.3,<8
+pytest>=8.4.1,<9
 pytest-xdist
 pytest-cov
 
