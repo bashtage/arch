@@ -188,7 +188,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1107,7 +1107,7 @@ class ConstantMean(HARX):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1252,7 +1252,7 @@ class ZeroMean(HARX):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1414,7 +1414,7 @@ class ARX(HARX):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1540,7 +1540,7 @@ class LS(HARX):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1615,7 +1615,7 @@ class ARCHInMean(ARX):
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
-        than y is rescaled and the new scale is reported in the estimation results.
+        then y is rescaled and the new scale is reported in the estimation results.
     form : {"log", "vol", "var", int, float}
         The form of the conditional variance that appears in the mean equation. The
         string names use the log of the conditional variance ("log"), the square-root
@@ -1953,7 +1953,7 @@ def arch_model(
         Flag indicating whether to automatically rescale data if the scale
         of the data is likely to produce convergence issues when estimating
         model parameters. If False, the model is estimated on the data without
-        transformation.  If True, than y is rescaled and the new scale is
+        transformation.  If True, then y is rescaled and the new scale is
         reported in the estimation results.
 
     Returns
