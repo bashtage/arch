@@ -34,7 +34,7 @@ from arch.typing import (
     Literal,
 )
 from arch.univariate.distribution import Distribution, Normal
-from arch.univariate.volatility import ConstantVariance, VolatilityProcess
+from arch.univariate.volatility import ConstantVariance, VolatilityProcess, MSGARCH
 from arch.utility.array import ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
@@ -714,15 +714,21 @@ class ARCHModel(metaclass=ABCMeta):
         if total_params == 0:
             return self._fit_parameterless_model(cov_type=cov_type, backcast=backcast)
 
-        sigma2 = np.zeros(resids.shape[0], dtype=float)
-        self._backcast = backcast
-        sv_volatility = v.starting_values(resids)
+        n_regimes = v.k if isinstance(v, MSGARCH) else 1
+        sigma2 = np.zeros((resids.shape[0], n_regimes)) if n_regimes > 1 else np.zeros(resids.shape[0])
+        self._backcast = backcast 
+        sv_volatility = v.starting_values(resids) # initial guess for GARCH recursion
         self._var_bounds = var_bounds = v.variance_bounds(resids)
-        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
-        std_resids = resids / np.sqrt(sigma2)
+        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds) # fills sigma 2 recursively using chosen vol model 
+        if n_regimes == 1:
+            std_resids = resids / np.sqrt(sigma2) 
+        else:
+            pi = self.volatility.pi # shape (k,)
+            pi_weighted_sigma2 = sigma2 @ pi # (t,k) @ (k,) = (t,)
+            std_resids = resids / np.sqrt(pi_weighted_sigma2) ## Using stationary distribution to weight regime variances. This is only an approximation (true weights should come from filtered probabilties), but we don't have these available at this stage
 
         # 2. Construct constraint matrices from all models and distribution
-        constraints = (
+        constraints = (                                                               
             self.constraints(),
             self.volatility.constraints(),
             self.distribution.constraints(),
@@ -790,12 +796,16 @@ class ARCHModel(metaclass=ABCMeta):
             _callback_info["display"] = update_freq
         disp_flag = True if disp == "final" else False
 
-        func = self._loglikelihood
-        args = (sigma2, backcast, var_bounds)
+        if isinstance(self.volatility, MSGARCH):  
+            func = self.volatility.msgarch_loglikelihood # MS GARCH
+            args = (resids, sigma2, backcast, var_bounds)
+
+        else:
+            func = self._loglikelihood  # standard GARCH
+            args = (sigma2, backcast, var_bounds)
+
         ineq_constraints = constraint(a, b)
-
         from scipy.optimize import minimize
-
         options = {} if options is None else options
         options.setdefault("disp", disp_flag)
         with warnings.catch_warnings():
@@ -835,7 +845,10 @@ class ARCHModel(metaclass=ABCMeta):
         mp, vp, dp = self._parse_parameters(params)
 
         resids = self.resids(mp)
-        vol = np.zeros(resids.shape[0], dtype=float)
+        if isinstance(self.volatility, MSGARCH):  
+            vol = np.zeros((resids.shape[0], n_regimes), dtype=float) # MS GARCH
+        else:
+            vol = np.zeros(resids.shape[0], dtype=float)  # standard GARCH
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = cast(Float64Array1D, np.sqrt(vol))
 
@@ -849,8 +862,21 @@ class ARCHModel(metaclass=ABCMeta):
         first_obs, last_obs = self._fit_indices
         resids_final = np.full(self._y.shape, np.nan, dtype=float)
         resids_final[first_obs:last_obs] = resids
-        vol_final = np.full(self._y.shape, np.nan, dtype=float)
-        vol_final[first_obs:last_obs] = vol
+
+        if isinstance(self.volatility, MSGARCH):
+            filtered_probs = self.volatility.filtered_probs  # n_regimes x n_obs
+        else:
+            filtered_probs = None
+
+        
+        if isinstance(self.volatility, MSGARCH):   
+            vol_final = np.full(self._y.shape, np.nan, dtype=float)
+            weighted_sigma2 = (vol**2 * filtered_probs.T).sum(axis=1) 
+            vol_final[first_obs:last_obs] = np.sqrt(weighted_sigma2)
+            
+        else:              
+            vol_final = np.full(self._y.shape, np.nan, dtype=float)
+            vol_final[first_obs:last_obs] = vol
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)

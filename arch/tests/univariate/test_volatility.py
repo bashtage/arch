@@ -12,7 +12,7 @@ from numpy.testing import (
 )
 import pytest
 from scipy.special import gamma, gammaln
-
+from arch import arch_model
 from arch.univariate import ZeroMean
 from arch.univariate.distribution import Normal, SkewStudent, StudentsT
 import arch.univariate.recursions_python as recpy
@@ -28,6 +28,7 @@ from arch.univariate.volatility import (
     FixedVariance,
     MIDASHyperbolic,
     RiskMetrics2006,
+    MSGARCH,
 )
 from arch.utility.exceptions import InitialValueWarning
 
@@ -1804,3 +1805,28 @@ def test_figarch_weights():
     lam_cy = rec.figarch_weights(params, 1, 1, 1000)
     assert_allclose(lam_py, lam_nb)
     assert_allclose(lam_py, lam_cy)
+
+
+
+def test_msgarch():
+    data = np.random.randn(100) # arbitary data series
+    model = arch_model(data, vol="MSGARCH",p=1,q=1,mean="zero")  # 2 regimes
+    result = model.fit(disp="off")
+    forecast = result.forecast(horizon=1)
+    cond_var = result.conditional_volatility
+    probs = result.model.volatility.filtered_probs
+    ll = result.loglikelihood
+
+    assert hasattr(result, "params")
+    assert result is not None
+    assert result.params.shape[0] == 8 #  2*3 GARCH params + 2 transition matrix probabilities (this is valid whilst k=2)
+    assert np.all(np.isfinite(result.params))
+    assert result.model.volatility.k == 2 
+    assert np.all(forecast.variance.values > 0)
+    assert forecast.variance.shape[1] == 1
+    assert np.allclose(probs[:,1:].sum(axis=0), 1.0, atol=1e-6) # excludes t=0 prob's as these have not been filtered
+    assert np.all((probs >= 0) & (probs <= 1))
+    assert cond_var.shape[0] == len(data)
+    assert np.all(cond_var > 0)
+    assert np.isfinite(ll)
+
