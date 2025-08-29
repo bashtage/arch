@@ -29,6 +29,7 @@ from arch.univariate.volatility import (
     FixedVariance,
     MIDASHyperbolic,
     RiskMetrics2006,
+    MSGARCH,
 )
 
 recursions: types.ModuleType
@@ -55,6 +56,7 @@ __all__ = [
     "HARX",
     "LS",
     "MIDASHyperbolic",
+    "MSGARCH",
     "Normal",
     "RiskMetrics2006",
     "SkewStudent",
