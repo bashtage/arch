@@ -15,6 +15,7 @@ from arch.univariate.mean import (
     ARCHInMean,
     ConstantMean,
     ZeroMean,
+    MAMean,
     arch_model,
 )
 from arch.univariate.volatility import (
@@ -43,6 +44,7 @@ __all__ = [
     "ARCHInMean",
     "ARX",
     "ConstantMean",
+    "MAMean",
     "ConstantVariance",
     "Distribution",
     "EGARCH",
