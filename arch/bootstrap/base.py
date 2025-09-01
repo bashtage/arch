@@ -20,6 +20,7 @@ from arch.typing import (
     ArrayLike2D,
     BootstrapIndexT,
     Float64Array,
+    Float64Array2D,
     Int64Array,
     Int64Array1D,
     Literal,
@@ -201,7 +202,7 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     return pd.DataFrame(opt, index=idx, columns=["stationary", "circular"])
 
 
-def _get_acceleration(jk_params: Float64Array) -> float:
+def _get_acceleration(jk_params: Float64Array) -> Float64Array2D:
     """
     Estimates the BCa acceleration parameter using jackknife estimates
     of theta.
@@ -772,7 +773,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                         )
                     a = self._bca_acceleration(func, extra_kwargs)
                 else:
-                    a = 0.0
+                    a = np.zeros((1, 1))
                 percentiles = stats.norm.cdf(
                     b + (b + norm_quantiles) / (1.0 - a * (b + norm_quantiles))
                 )
@@ -834,7 +835,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def _bca_acceleration(
         self, func: Callable[..., Float64Array], extra_kwags: dict[str, Any] | None
-    ) -> float:
+    ) -> Float64Array2D:
         nobs = self._num_items
         jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs, extra_kwags)
         return _get_acceleration(jk_params)
