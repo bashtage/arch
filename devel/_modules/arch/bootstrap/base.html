@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch v7.2.1 (+64)</title>
+        <title>arch.bootstrap.base - arch v7.2.1 (+66)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+64)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+64)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+66)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+66)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+64)
+            arch v7.2.1 (+66)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+64)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+64)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+66)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+66)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+64)
+    arch v7.2.1 (+66)
   </label>
   
     <div class="md-nav__source">
@@ -479,6 +479,7 @@
     <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">BootstrapIndexT</span><span class="p">,</span>
     <span class="n">Float64Array</span><span class="p">,</span>
+    <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="n">Int64Array</span><span class="p">,</span>
     <span class="n">Int64Array1D</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
@@ -663,7 +664,7 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_get_acceleration</span><span class="p">(</span><span class="n">jk_params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_acceleration</span><span class="p">(</span><span class="n">jk_params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array2D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Estimates the BCa acceleration parameter using jackknife estimates</span>
 <span class="sd">    of theta.</span>
@@ -1244,7 +1245,7 @@
                         <span class="p">)</span>
                     <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bca_acceleration</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="n">percentiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span>
                     <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">))</span>
                 <span class="p">)</span>
@@ -1307,7 +1308,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_bca_acceleration</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span> <span class="n">extra_kwags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array2D</span><span class="p">:</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_items</span>
         <span class="n">jk_params</span> <span class="o">=</span> <span class="n">_loo_jackknife</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwags</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_get_acceleration</span><span class="p">(</span><span class="n">jk_params</span><span class="p">)</span>
