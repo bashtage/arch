@@ -863,10 +863,7 @@ class ARCHModel(metaclass=ABCMeta):
         resids_final = np.full(self._y.shape, np.nan, dtype=float)
         resids_final[first_obs:last_obs] = resids
 
-        if isinstance(self.volatility, MSGARCH):
-            filtered_probs = self.volatility.filtered_probs  # n_regimes x n_obs
-        else:
-            filtered_probs = None
+        filtered_probs = self.volatility.compute_filtered_probs(params, resids, sigma2, backcast, var_bounds)
 
         
         if isinstance(self.volatility, MSGARCH):   
@@ -896,6 +893,7 @@ class ARCHModel(metaclass=ABCMeta):
             fit_start,
             fit_stop,
             model_copy,
+            filtered_probs,
         )
 
     @abstractmethod
@@ -1829,6 +1827,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         fit_start: int,
         fit_stop: int,
         model: ARCHModel,
+        filtered_probs: Float64Array | None = None,
     ) -> None:
         super().__init__(
             params, resid, volatility, dep_var, names, loglikelihood, is_pandas, model
@@ -1839,6 +1838,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         self._r2 = r2
         self.cov_type: str = cov_type
         self._optim_output = optim_output
+        self._filtered_probs = filtered_probs
 
     @cached_property
     def scale(self) -> float:
@@ -2089,6 +2089,10 @@ class ARCHModelResult(ARCHModelFixedResult):
             Result from numerical optimization of the log-likelihood.
         """
         return self._optim_output
+    
+    @property
+    def filtered_probs(self):
+        return self._filtered_probs 
 
 
 def _align_forecast(

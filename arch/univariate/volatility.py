@@ -861,6 +861,12 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
 
 
+    def compute_filtered_probs(self, params, resids, sigma2, backcast, var_bounds):
+        """
+        Default behavior for non MS models. Returns 1's for each time period (we are always in the single regime).
+        """
+        return np.ones((1, len(resids)))
+
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Constant volatility process
@@ -4011,10 +4017,6 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         #mean params, volatility params per regime, distribution params
         mp, vp, dp = self._parse_parameters(parameters)
 
-        # GARCH params per regime
-        garch_block = vp[:self.k*self.num_params_single]
-        garch_params = garch_block.reshape(self.k, self.num_params_single)  
-
         # extract the free parameters for the transition matrix
         start = self.k * self.num_params_single
         end = start + self.k  # only one free param per row
@@ -4110,5 +4112,46 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         dp = x[km+kv:]
 
         return mp, vp, dp
+    
+
+    def compute_filtered_probs(self, parameters, resids, sigma2, backcast, var_bounds):
+        # parse parameters
+        mp, vp, dp = self._parse_parameters(parameters)
+
+        # transition matrix
+        start = self.k * self.num_params_single
+        end = start + self.k
+        free_P = vp[start:end]
+        transition_matrix = np.zeros((self.k, self.k))
+        transition_matrix[0, 0] = free_P[0]
+        transition_matrix[0, 1] = 1.0 - free_P[0]
+        transition_matrix[1, 0] = free_P[1]
+        transition_matrix[1, 1] = 1.0 - free_P[1]
+
+        #  Initial probabilties
+        eigvals, eigvecs = np.linalg.eig(transition_matrix.T)
+        pi = np.real(eigvecs[:, np.isclose(eigvals, 1)].flatten())
+        pi /= pi.sum()
+
+        
+        p = np.zeros((self.k, len(resids)))
+        p[:, 0] = pi
+        sigma2 = self.compute_variance(vp, resids, np.zeros((len(resids), self.k)), backcast, var_bounds)
+
+        # Hamilton filter
+        var_floor = 1e-4
+        sigma2 = np.maximum(sigma2, var_floor)
+        log_p = np.log(np.maximum(p, 1e-12))
+
+        for t in range(1, len(resids)):
+            sigma2_t = sigma2[t, :]
+            log_likes = -0.5 * (np.log(2 * np.pi * sigma2_t) + (resids[t] ** 2) / sigma2_t)
+            log_pred_probs = logsumexp(np.log(np.maximum(transition_matrix.T, 1e-12)) + log_p[:, t-1][:, None], axis=0)
+            log_mixture = logsumexp(log_pred_probs + log_likes)
+            log_p[:, t] = log_pred_probs + log_likes - log_mixture
+
+        # return filtered probs
+        return np.exp(log_p)
+
 
 

@@ -10,6 +10,7 @@ from numpy.testing import (
     assert_array_equal,
     assert_equal,
 )
+from sklearn.mixture import GaussianMixture
 import pytest
 from scipy.special import gamma, gammaln
 from arch import arch_model
