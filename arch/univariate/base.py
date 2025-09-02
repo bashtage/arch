@@ -845,10 +845,7 @@ class ARCHModel(metaclass=ABCMeta):
         mp, vp, dp = self._parse_parameters(params)
 
         resids = self.resids(mp)
-        if isinstance(self.volatility, MSGARCH):  
-            vol = np.zeros((resids.shape[0], n_regimes), dtype=float) # MS GARCH
-        else:
-            vol = np.zeros(resids.shape[0], dtype=float)  # standard GARCH
+        vol = self.volatility._initialise_vol(resids, n_regimes)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = cast(Float64Array1D, np.sqrt(vol))
 
