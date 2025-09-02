@@ -867,6 +867,12 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
         return np.ones((1, len(resids)))
 
+    def _initialise_vol(self, resids, n_regimes):
+        """
+        Construct empty volatility array.
+        """
+        return np.zeros(resids.shape[0], dtype=float)
+
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Constant volatility process
@@ -4152,6 +4158,10 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         # return filtered probs
         return np.exp(log_p)
+    
+
+    def _initialise_vol(self, resids, n_regimes):
+        return np.zeros((resids.shape[0], n_regimes), dtype=float)
 
 
 
