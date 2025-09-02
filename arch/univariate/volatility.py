@@ -12,7 +12,8 @@ from warnings import warn
 
 import numpy as np
 from numpy.random import RandomState
-from scipy.special import gammaln
+from scipy.special import gammaln, logsumexp
+from scipy.stats import norm
 
 from arch.typing import (
     ArrayLike1D,
@@ -859,6 +860,18 @@ class VolatilityProcess(metaclass=ABCMeta):
             Variables names
         """
 
+
+    def compute_filtered_probs(self, params, resids, sigma2, backcast, var_bounds):
+        """
+        Default behavior for non MS models. Returns 1's for each time period (we are always in the single regime).
+        """
+        return np.ones((1, len(resids)))
+
+    def _initialise_vol(self, resids, n_regimes):
+        """
+        Construct empty volatility array.
+        """
+        return np.zeros(resids.shape[0], dtype=float)
 
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
@@ -3808,3 +3821,347 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
 
         return descr
+
+class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
+    """
+    Markov Switching GARCH volatility process.
+
+    This model combines multiple GARCH processes (one per regime) with a 
+    Markov chain dictating regime transitions. At each time step, the
+    conditional variance is computed as a weighted average of the
+    variances in each regime, with weights given by the filtered
+    probabilities of being in each regime.
+
+    """
+
+    def __init__(self, garch_type=GARCH) -> None:
+        super().__init__()
+        self.p = 1 # fixed for now
+        self.q = 1 # fixed for now
+        self.k = 2 # fixed for now
+        self.garch_type = garch_type # fixed for now
+        self.o = 0 # fixed for now
+        self.power = 2.0 # fixed for now
+
+        self.num_params_single = 1 + self.p + self.q # parameters in a single regime
+        self._num_params = self.num_params_single * self.k + self.k # regime specifc + transition matrix 
+
+        # Instantiate one GARCH type object per regime
+        self.regimes = [GARCH(p=self.p, o=self.o, q=self.q, power=self.power) for _ in range(self.k)]
+
+        # Initialise constant transition matrix 
+        self.transition_matrix = np.full((self.k, self.k), 1.0 / self.k)
+
+        self._name = self._generate_name()
+        self.filtered_probs = None
+        self.pi = None
+        self.base_garch = GARCH(self.p, self.o, self.q, self.power) # used later for forecasting
+
+
+    def _generate_name(self) -> str:
+        return "MS GARCH"
+
+
+    def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
+        power = self.power
+        fresids = np.abs(resids) ** power
+        sresids = np.sign(resids)
+        p, o, q = self.p, self.o, self.q
+        t = resids.shape[0]
+        sigma2 = np.ascontiguousarray(sigma2)  
+
+        # regime 1
+        col1 = np.ascontiguousarray(sigma2[:, 0])
+        rec.garch_recursion(parameters[0:3], fresids, sresids, col1, p, o, q, t, backcast, var_bounds)
+        sigma2[:, 0] = col1
+        
+        # regime 2
+        col2 = np.ascontiguousarray(sigma2[:, 1])
+        rec.garch_recursion(parameters[3:6], fresids, sresids, col2, p, o, q, t, backcast, var_bounds)
+        sigma2[:, 1] = col2
+
+        inv_power = 2.0 / power
+        sigma2 **= inv_power
+        return sigma2
+        
+
+    def bounds(self, resids):
+        v = float(np.mean(np.abs(resids) ** self.power))
+        bounds = []
+        for r in range(self.k):
+            bounds.append((1e-4 * v, 10.0 * v)) # omega
+            bounds.extend([(1e-4, 0.999)] * self.p) # alpha
+            bounds.extend([(1e-4, 0.999)] * self.q) # beta
+        bounds.extend([(1e-6, 0.999)] * self.k) # transition probabilities: (k-1) free per row
+        return bounds
+
+
+    def parameter_names(self):
+        names = []
+        for r in range(1,self.k+1):
+            names.extend([f"omega_r{r}", f"alpha_r{r}", f"beta_r{r}"])
+        names.extend(['p11', 'p21'])
+        return names
+
+
+    def simulate(self):
+        pass
+
+
+    def _check_forecasting_method(self, method: ForecastingMethod, horizon: int) -> None:
+        return
+
+
+    def _simulation_forecast(self):
+        pass
+
+
+    def constraints(self) -> tuple[np.ndarray, np.ndarray]:
+        k = self.k       # number of regimes
+        p, q = self.p, self.q
+        k_arch = 1 + p + q  # omega + alphas + betas per regime
+
+        a_list = []
+        b_list = []
+
+        # 1. Regime specific volatility constraints
+        for r in range(k):
+            a = np.zeros((k_arch, k_arch * k + k))  # k_arch rows, total free params columns
+            b = np.zeros(k_arch)
+
+            # Positivity constraints: omega, alpha, beta >= 0
+            for i in range(k_arch):
+                a[i, r*k_arch + i] = -1.0
+                b[i] = 0 
+        
+            # stationarity: alpha + beta < 1 
+            a_stationarity = np.zeros(k_arch * k + k)
+            a_stationarity[r*k_arch + 1] = 1.0  # alpha
+            a_stationarity[r*k_arch + 2] = 1.0  # beta
+            b_stationarity = 0.9999
+            a_list.append(a)
+            b_list.append(b)
+
+            # append stationarity constraint
+            a_list.append(a_stationarity.reshape(1, -1))
+            b_list.append(np.array([b_stationarity]))
+
+        # 2 Transition probability constraints (rows sum <= 1)
+        # Free params: P11, P21
+        a_trans = np.zeros((k, k_arch*k + k))
+        b_trans = np.zeros(k)
+
+        # P11 >= 0 
+        a_trans[0, k_arch*k + 0] = -1.0
+        b_trans[0] = 0.0
+
+        # P21 >= 0
+        a_trans[1, k_arch*k + 1] = -1.0
+        b_trans[1] = 0.0
+
+        # combine all
+        a_total = np.vstack(a_list + [a_trans])
+        b_total = np.concatenate(b_list + [b_trans])
+
+        return a_total, b_total
+
+
+    def variance_bounds(self, resids: ArrayLike1D, power: float = 2.0) -> Float64Array2D:
+        return super().variance_bounds(resids, self.power)
+
+
+    def starting_values(self, resids):
+        """
+        MSGARCH starting values via GM + Viterbi + single GARCH
+        Returns: [ω₁, α₁, β₁, ω₂, α₂, β₂, p11, p21]
+        """
+        from sklearn.mixture import GaussianMixture
+        from arch import arch_model
+
+        # GM groups returns by vol level 
+        gm = GaussianMixture(n_components=self.k, random_state=1).fit(np.abs(resids).reshape(-1, 1))
+        
+        # Viterbi decoding for hard regime classification 
+        viterbi_regimes = np.argmax(gm.predict_proba(np.abs(resids).reshape(-1, 1)), axis=1)
+        
+        # fit garch(1,1) to each regime's returns
+        garch_params = []
+        for x in range(self.k):
+            regime_mask = (viterbi_regimes == x)
+            if np.sum(regime_mask) < 10:  # use all data if regime is tiny
+                regime_mask = np.ones_like(resids, dtype=bool)
+            
+            # simple GARCH(1,1) for each regime
+            am = arch_model(resids[regime_mask], vol='Garch', p=1, q=1, dist='normal')
+            res = am.fit(disp="off")
+            garch_params.extend([res.params['omega'], res.params['alpha[1]'], res.params['beta[1]']])
+            
+        #Estimate transition matrix from viterbi path
+        P = np.zeros((self.k, self.k)) # K is the number of regimes
+        for t in range(1, len(viterbi_regimes)):
+            i, j = viterbi_regimes[t-1], viterbi_regimes[t]
+            P[i, j] += 1 # counts regime transitions
+        P = P / np.sum(P, axis=1, keepdims=True)  # normalise so rows sum to 1
+        
+        # stationary distribution for initial probabilities
+        eigvals, eigvecs = np.linalg.eig(P.T)
+        pi = eigvecs[:, np.isclose(eigvals, 1)].flatten()
+        self.pi = pi / pi.sum()
+
+        # include free transition parameters
+        free_P = [P[0, 0], P[1, 0]]
+
+        return np.array(garch_params + free_P)
+    
+
+
+    def msgarch_loglikelihood(self, parameters, resids, sigma2, backcast, var_bounds):
+        from arch.univariate.base import _callback_info
+        _callback_info["count"] += 1
+
+        # 1. Parse parameters into regime specific components
+        #mean params, volatility params per regime, distribution params
+        mp, vp, dp = self._parse_parameters(parameters)
+
+        # extract the free parameters for the transition matrix
+        start = self.k * self.num_params_single
+        end = start + self.k  # only one free param per row
+        free_P = vp[start:end]  # shape: (k,)
+
+        # reconstruct the full 2x2 transition matrix
+        transition_matrix = np.zeros((self.k, self.k))
+        transition_matrix[0, 0] = free_P[0]
+        transition_matrix[0, 1] = 1.0 - free_P[0]
+        transition_matrix[1, 0] = free_P[1]
+        transition_matrix[1, 1] = 1.0 - free_P[1]
+
+        # Initial probabilities
+        eigvals, eigvecs = np.linalg.eig(transition_matrix.T)
+        pi = np.real(eigvecs[:, np.isclose(eigvals, 1)].flatten())
+        self.pi /= pi.sum()
+
+        # Initialise regime probabilities array
+        p = np.zeros((self.k, len(resids)))
+        p[:, 0] = self.pi 
+
+        # Initialise regime specific variance recursions using backcast
+        sigma2 = np.zeros((len(resids), self.k))
+        sigma2 = self.compute_variance(vp, resids, sigma2, backcast, var_bounds)
+        
+        loglikelihood = 0.0  # accumulator for total loglikelihood
+        var_floor = 1e-4
+        sigma2 = np.maximum(sigma2, var_floor)
+        log_p = np.log(np.maximum(p, 1e-12))
+        
+        # Loop over each time point
+        for t in range(1, len(resids)):
+            # sigma2 for current timestep
+            sigma2_t = sigma2[t, :]
+
+            # loglikelihood for each regime
+            log_likes = -0.5 * (np.log(2 * np.pi * sigma2_t) + (resids[t] ** 2) / sigma2_t)
+
+            # log of predicted probs: log(P' * p_t-1) in log space
+            # log(P.T) +  log_p[:, t-1] reshaped for broadcasting
+            log_pred_probs = logsumexp(np.log(np.maximum(transition_matrix.T, 1e-12)) + log_p[:, t-1][:, None], axis=0)
+
+            # log of mixture likelihood
+            log_mixture = logsumexp(log_pred_probs + log_likes)
+
+            # update filtered probabilities 
+            log_p[:, t] = log_pred_probs + log_likes - log_mixture
+
+            # accumulate log-likelihood
+            loglikelihood += log_mixture
+     
+        p[:, :] = np.exp(log_p) 
+        self.filtered_probs = p.copy()
+        return -loglikelihood
+
+
+    def _analytic_forecast(self,parameters,resids,backcast,var_bounds,start,horizon,filtered_probs=None):
+        t = resids.shape[0] # # of observations
+        k = self.k
+        vol_per_regime = np.zeros((t, k))  # volatility per regime
+        for r in range(k):
+            # unpack regime r params from flat parameters
+            omega = parameters[r*(3)+0]  # assuming p=q=1, no asymmetry for simplicity
+            alpha = parameters[r*(3)+1]
+            beta = parameters[r*(3)+2]
+
+            vol_r = np.zeros(t)
+            self.base_garch.compute_variance(np.array([omega,alpha,beta]), resids, vol_r, backcast, var_bounds)
+            vol_per_regime[:, r] = np.sqrt(vol_r)
+
+        # Get filtered probabilities
+        if filtered_probs is None:
+            filtered_probs = self.filtered_probs  # shape n_obs x k
+
+        # Weighted average volatility
+        vol_final = np.sum(vol_per_regime * filtered_probs.T, axis=1)  # n_obs
+        vol_final = vol_final[start:].reshape(-1, horizon) 
+
+        self.vol_per_regime = vol_per_regime
+        self.vol_final = vol_final
+
+        return VarianceForecast(vol_final)
+
+
+
+    def _parse_parameters(self, x: np.ndarray):
+        x = np.asarray(x, dtype=float)
+        km = int(0)   # current implementation has 0 mean model params
+        kv = int(self.num_params)              # total vol params length for MSGARCH
+                                            
+        mp = x[:km]
+        vp = x[km:km+kv]       
+        dp = x[km+kv:]
+
+        return mp, vp, dp
+    
+
+    def compute_filtered_probs(self, parameters, resids, sigma2, backcast, var_bounds):
+        # parse parameters
+        mp, vp, dp = self._parse_parameters(parameters)
+
+        # transition matrix
+        start = self.k * self.num_params_single
+        end = start + self.k
+        free_P = vp[start:end]
+        transition_matrix = np.zeros((self.k, self.k))
+        transition_matrix[0, 0] = free_P[0]
+        transition_matrix[0, 1] = 1.0 - free_P[0]
+        transition_matrix[1, 0] = free_P[1]
+        transition_matrix[1, 1] = 1.0 - free_P[1]
+
+        #  Initial probabilties
+        eigvals, eigvecs = np.linalg.eig(transition_matrix.T)
+        pi = np.real(eigvecs[:, np.isclose(eigvals, 1)].flatten())
+        pi /= pi.sum()
+
+        
+        p = np.zeros((self.k, len(resids)))
+        p[:, 0] = pi
+        sigma2 = self.compute_variance(vp, resids, np.zeros((len(resids), self.k)), backcast, var_bounds)
+
+        # Hamilton filter
+        var_floor = 1e-4
+        sigma2 = np.maximum(sigma2, var_floor)
+        log_p = np.log(np.maximum(p, 1e-12))
+
+        for t in range(1, len(resids)):
+            sigma2_t = sigma2[t, :]
+            log_likes = -0.5 * (np.log(2 * np.pi * sigma2_t) + (resids[t] ** 2) / sigma2_t)
+            log_pred_probs = logsumexp(np.log(np.maximum(transition_matrix.T, 1e-12)) + log_p[:, t-1][:, None], axis=0)
+            log_mixture = logsumexp(log_pred_probs + log_likes)
+            log_p[:, t] = log_pred_probs + log_likes - log_mixture
+
+        # return filtered probs
+        return np.exp(log_p)
+    
+
+    def _initialise_vol(self, resids, n_regimes):
+        return np.zeros((resids.shape[0], n_regimes), dtype=float)
+
+
+

@@ -67,6 +67,7 @@ from arch.univariate.volatility import (
     HARCH,
     ConstantVariance,
     VolatilityProcess,
+    MSGARCH
 )
 from arch.utility.array import (
     AbstractDocStringInheritor,
@@ -1891,7 +1892,7 @@ def arch_model(
     ] = "Constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
     vol: Literal[
-        "GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH", "FIGARCH"
+        "GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH", "FIGARCH", "MSGARCH"
     ] = "GARCH",
     p: int | list[int] = 1,
     o: int = 0,
@@ -2000,6 +2001,7 @@ def arch_model(
         "harch",
         "constant",
         "egarch",
+        "msgarch",
     )
     known_dist = (
         "normal",
@@ -2060,8 +2062,10 @@ def arch_model(
     elif vol_model == "aparch":
         assert isinstance(p, int)
         v = APARCH(p=p, o=o, q=q)
-    else:  # vol == 'harch'
+    elif vol_model == 'harch':
         v = HARCH(lags=p)
+    else: # vol_model == "msgarch":
+        v = MSGARCH()
 
     if dist_name in ("skewstudent", "skewt"):
         d: Distribution = SkewStudent()
