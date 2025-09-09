@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v7.2.1 (+72)</title>
+        <title>arch.covariance.kernel - arch v7.2.1 (+77)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+72)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+72)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+77)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+77)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+72)
+            arch v7.2.1 (+77)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+72)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+72)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+77)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+77)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+72)
+    arch v7.2.1 (+77)
   </label>
   
     <div class="md-nav__source">
@@ -560,6 +560,8 @@
             <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
 
+<div class="viewcode-block" id="CovarianceEstimate.long_run">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.long_run.html#arch.covariance.kernel.CovarianceEstimate.long_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -569,15 +571,21 @@
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">long_run</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">long_run</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="CovarianceEstimate.short_run">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.short_run.html#arch.covariance.kernel.CovarianceEstimate.short_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">short_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The short-run covariance estimate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="CovarianceEstimate.one_sided">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided.html#arch.covariance.kernel.CovarianceEstimate.one_sided">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -587,14 +595,18 @@
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">one_sided</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">one_sided</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="CovarianceEstimate.one_sided_strict">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided_strict.html#arch.covariance.kernel.CovarianceEstimate.one_sided_strict">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided_strict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div>
+</div>
 
 
 
@@ -808,6 +820,8 @@
             <span class="n">f_qs</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">j</span><span class="o">**</span><span class="n">q</span> <span class="o">*</span> <span class="n">sig_j</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">f_qs</span> <span class="o">/</span> <span class="n">f_0s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
+<div class="viewcode-block" id="CovarianceEstimator.opt_bandwidth">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.opt_bandwidth.html#arch.covariance.kernel.CovarianceEstimator.opt_bandwidth">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">opt_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -836,7 +850,8 @@
         <span class="n">bw</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha_q</span> <span class="o">*</span> <span class="n">nobs</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">bw</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">bw</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
@@ -844,6 +859,8 @@
 <span class="sd">        Compute the kernel&#39;s weights</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="CovarianceEstimator.kernel_weights">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.kernel_weights.html#arch.covariance.kernel.CovarianceEstimator.kernel_weights">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -854,8 +871,11 @@
 <span class="sd">        ndarray</span>
 <span class="sd">            The weight vector including 1 in position 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="CovarianceEstimator.cov">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.cov.html#arch.covariance.kernel.CovarianceEstimator.cov">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CovarianceEstimate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -885,7 +905,8 @@
         <span class="n">oss</span> <span class="o">=</span> <span class="n">_cov_jit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">CovarianceEstimate</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="n">oss</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CovarianceEstimate</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="n">oss</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">force_int</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

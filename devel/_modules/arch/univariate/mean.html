@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v7.2.1 (+72)</title>
+        <title>arch.univariate.mean - arch v7.2.1 (+77)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+72)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+72)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+77)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+77)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+72)
+            arch v7.2.1 (+77)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+72)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+72)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+77)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+77)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+72)
+    arch v7.2.1 (+77)
   </label>
   
     <div class="md-nav__source">
@@ -850,13 +850,16 @@
         <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_regressors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="HARX.num_params">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.num_params.html#arch.univariate.HARX.num_params">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_mean</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1625,9 +1628,12 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="ConstantMean.num_params">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ConstantMean.num_params.html#arch.univariate.ConstantMean.num_params">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="mi">1</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_model_description</span><span class="p">(</span><span class="n">include_lags</span><span class="p">)</span>
@@ -1785,9 +1791,12 @@
         <span class="k">return</span> <span class="p">[]</span></div>
 
 
+<div class="viewcode-block" id="ZeroMean.num_params">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ZeroMean.num_params.html#arch.univariate.ZeroMean.num_params">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_model_description</span><span class="p">(</span><span class="n">include_lags</span><span class="p">)</span>
@@ -2225,10 +2234,13 @@
         <span class="n">names</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_generate_variable_names</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">names</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span>
 
+<div class="viewcode-block" id="ARCHInMean.num_params">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.num_params.html#arch.univariate.ARCHInMean.num_params">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span></div>
+
 
 <div class="viewcode-block" id="ARCHInMean.forecast">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.forecast.html#arch.univariate.ARCHInMean.forecast">[docs]</a>
