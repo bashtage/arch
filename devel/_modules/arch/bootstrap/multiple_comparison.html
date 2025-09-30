@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v7.2.1 (+81)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v7.2.1 (+86)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+81)
+            arch v7.2.1 (+86)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+81)
+    arch v7.2.1 (+86)
   </label>
   
     <div class="md-nav__source">
@@ -481,7 +481,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure2d</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;StepM&quot;</span><span class="p">,</span> <span class="s2">&quot;SPA&quot;</span><span class="p">,</span> <span class="s2">&quot;RealityCheck&quot;</span><span class="p">,</span> <span class="s2">&quot;MCS&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MCS&quot;</span><span class="p">,</span> <span class="s2">&quot;SPA&quot;</span><span class="p">,</span> <span class="s2">&quot;RealityCheck&quot;</span><span class="p">,</span> <span class="s2">&quot;StepM&quot;</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_info_to_str</span><span class="p">(</span>
@@ -492,9 +492,10 @@
     <span class="n">_str</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;id&quot;</span> <span class="ow">or</span> <span class="n">is_repr</span><span class="p">:</span>
+            <span class="n">_k</span> <span class="o">=</span> <span class="n">k</span>
             <span class="k">if</span> <span class="n">is_html</span><span class="p">:</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="s2">&quot;&lt;strong&gt;&quot;</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;&lt;/strong&gt;&quot;</span>
-            <span class="n">_str</span> <span class="o">+=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
+                <span class="n">_k</span> <span class="o">=</span> <span class="s2">&quot;&lt;strong&gt;&quot;</span> <span class="o">+</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">&quot;&lt;/strong&gt;&quot;</span>
+            <span class="n">_str</span> <span class="o">+=</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
     <span class="k">return</span> <span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
 
@@ -612,13 +613,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IntArray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># For testing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;MCS&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">bootstrap_inst</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bootstrap_inst</span><span class="p">),</span>
+            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+        <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results_computed</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_has_been_computed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -628,9 +627,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eliminated</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Model index&quot;</span><span class="p">,</span> <span class="s2">&quot;Pvalue&quot;</span><span class="p">]</span>
         <span class="n">mcs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">eliminated</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">max_pval</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">max_pval</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">max_pval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">max_pval</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])])</span>
+            <span class="n">max_pval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">max_pval</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])])</span>
             <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_pval</span>
         <span class="n">model_index</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Model index&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -706,8 +705,7 @@
             <span class="n">included</span><span class="p">[</span><span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="c1"># Add pval of 1 for model remaining</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">included</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
-            <span class="n">eliminated</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ind</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+        <span class="n">eliminated</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">ind</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_pvalues</span><span class="p">(</span><span class="n">eliminated</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -759,13 +757,16 @@
             <span class="n">test_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">std_loss_diffs</span><span class="p">)</span>
             <span class="n">pval</span> <span class="o">=</span> <span class="p">(</span><span class="n">test_stat</span> <span class="o">&lt;</span> <span class="n">simulated_test_stat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
             <span class="n">locs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">std_loss_diffs</span> <span class="o">==</span> <span class="n">test_stat</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">idx_val</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">locs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())]:</span>
-                <span class="n">eliminated</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">idx_val</span><span class="p">),</span> <span class="n">pval</span><span class="p">))</span>
+            <span class="n">eliminated</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx_val</span><span class="p">),</span> <span class="n">pval</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">idx_val</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">locs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
             <span class="n">included</span><span class="p">[</span><span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">locs</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">included</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
-            <span class="n">eliminated</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">ind</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">))</span>
+        <span class="n">eliminated</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="nb">int</span><span class="p">(</span><span class="n">ind</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_pvalues</span><span class="p">(</span><span class="n">eliminated</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -912,14 +913,12 @@
             <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">&quot;asymptotic&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;FWER (size)&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;studentization&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;FWER (size)&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;studentization&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
+            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+        <span class="p">}</span>
 
 <div class="viewcode-block" id="StepM.compute">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.StepM.compute.html#arch.bootstrap.StepM.compute">[docs]</a>
@@ -930,7 +929,7 @@
         <span class="c1"># 1. Run SPA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="c1"># 2. If any models superior, store indices, remove and re-run SPA</span>
-        <span class="n">better_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">better_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">better_models</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">better_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
         <span class="n">all_better_models</span> <span class="o">=</span> <span class="n">better_models</span><span class="p">[:]</span>
         <span class="c1"># 3. Stop if nothing superior</span>
         <span class="k">while</span> <span class="n">better_models</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">better_models</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
@@ -1079,13 +1078,11 @@
             <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">&quot;asymptotic&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;studentization&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;studentization&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
+            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+        <span class="p">}</span>
 
 <div class="viewcode-block" id="SPA.reset">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.SPA.reset.html#arch.bootstrap.SPA.reset">[docs]</a>
@@ -1136,9 +1133,11 @@
 
         <span class="n">max_loss_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">pvalues</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_simulated_vals</span> <span class="o">&gt;</span> <span class="n">max_loss_diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">[(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="s2">&quot;consistent&quot;</span><span class="p">,</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;consistent&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">}</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1156,7 +1155,7 @@
         <span class="n">means</span> <span class="o">=</span> <span class="p">[</span><span class="n">lower_mean</span><span class="p">,</span> <span class="n">consistent_mean</span><span class="p">,</span> <span class="n">upper_mean</span><span class="p">]</span>
         <span class="n">simulated_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bs_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)):</span>
-            <span class="n">pos_arg</span><span class="p">,</span> <span class="n">kw_arg</span> <span class="o">=</span> <span class="n">bs_data</span>
+            <span class="n">pos_arg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bs_data</span>
             <span class="n">loss_diff_star</span> <span class="o">=</span> <span class="n">pos_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">means</span><span class="p">):</span>
                 <span class="n">simulated_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_diff_star</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">mean</span>
@@ -1189,7 +1188,7 @@
                 <span class="n">variances</span> <span class="o">+=</span> <span class="p">(</span>
                     <span class="mi">2</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">demeaned</span><span class="p">[:</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">i</span><span class="p">),</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">demeaned</span><span class="p">[</span><span class="n">i</span><span class="p">:,</span> <span class="p">:],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
                 <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">variances</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;np.ndarray&quot;</span><span class="p">,</span> <span class="n">variances</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_column_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolArray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

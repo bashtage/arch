@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v7.2.1 (+81)</title>
+        <title>arch.unitroot.unitroot - arch v7.2.1 (+86)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+81)
+            arch v7.2.1 (+86)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+81)
+    arch v7.2.1 (+86)
   </label>
   
     <div class="md-nav__source">
@@ -555,16 +555,16 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ADF&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DFGLS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PhillipsPerron&quot;</span><span class="p">,</span>
     <span class="s2">&quot;KPSS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SHORT_TREND_DESCRIPTION&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TREND_DESCRIPTION&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PhillipsPerron&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VarianceRatio&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ZivotAndrews&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_bandwidth&quot;</span><span class="p">,</span>
     <span class="s2">&quot;kpss_crit&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mackinnoncrit&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mackinnonp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ZivotAndrews&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auto_bandwidth&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TREND_DESCRIPTION&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;SHORT_TREND_DESCRIPTION&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">TREND_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;ctt&quot;</span><span class="p">}</span>
@@ -635,11 +635,11 @@
     <span class="n">maxlag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;aic&quot;</span><span class="p">:</span>
         <span class="n">crit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">llf</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_lag</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bic&quot;</span><span class="p">:</span>
         <span class="n">crit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">llf</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">*</span> <span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_lag</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">:</span>
         <span class="n">stop</span> <span class="o">=</span> <span class="mf">1.6448536269514722</span>
@@ -742,10 +742,10 @@
         <span class="n">xpx_sub</span> <span class="o">=</span> <span class="n">xpx</span><span class="p">[:</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">i</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">xpx_sub</span><span class="p">,</span> <span class="n">xpy</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span>
-        <span class="k">except</span> <span class="n">LinAlgError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InfeasibleTestException</span><span class="p">(</span>
                 <span class="n">singular_array_error</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_lags</span><span class="o">=</span><span class="n">maxlag</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="n">m</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
         <span class="n">sigma2</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">squeeze</span><span class="p">(</span><span class="n">ypy</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">xpx_sub</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
         <span class="k">if</span> <span class="n">lower_method</span> <span class="o">==</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">:</span>
             <span class="n">xpxi</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">xpx_sub</span><span class="p">)</span>
@@ -1234,7 +1234,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_select_lag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ic_best</span><span class="p">,</span> <span class="n">best_lag</span> <span class="o">=</span> <span class="n">_df_select_lags</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
-            <span class="n">cast</span><span class="p">(</span><span class="n">UnitRootTrend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">),</span>
+            <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UnitRootTrend&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span>
             <span class="n">low_memory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_low_memory</span><span class="p">,</span>
@@ -1257,18 +1257,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_select_lag</span><span class="p">()</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
-        <span class="n">resols</span> <span class="o">=</span> <span class="n">_estimate_df_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnitRootTrend</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span> <span class="n">lags</span><span class="p">)</span>
+        <span class="n">resols</span> <span class="o">=</span> <span class="n">_estimate_df_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UnitRootTrend&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span> <span class="n">lags</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">resols</span>
         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">mackinnonp</span><span class="p">(</span>
             <span class="n">stat</span><span class="p">,</span>
-            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">],</span> <span class="n">trend</span><span class="p">),</span>
+            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Literal[&#39;n&#39;, &#39;c&#39;, &#39;ct&#39;, &#39;ctt&#39;]&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span>
             <span class="n">num_unit_roots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">critical_values</span> <span class="o">=</span> <span class="n">mackinnoncrit</span><span class="p">(</span>
             <span class="n">num_unit_roots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">],</span> <span class="n">trend</span><span class="p">),</span>
+            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Literal[&#39;n&#39;, &#39;c&#39;, &#39;ct&#39;, &#39;ctt&#39;]&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span>
             <span class="n">nobs</span><span class="o">=</span><span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_critical_values</span> <span class="o">=</span> <span class="p">{</span>
@@ -1421,7 +1421,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="n">max_lags</span><span class="p">)</span><span class="o">.</span><span class="n">lags</span>
             <span class="n">ols_detrend_coef</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">y_ols_detrend</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">z</span> <span class="o">@</span> <span class="n">ols_detrend_coef</span>
-            <span class="n">icbest</span><span class="p">,</span> <span class="n">bestlag</span> <span class="o">=</span> <span class="n">_df_select_lags</span><span class="p">(</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">bestlag</span> <span class="o">=</span> <span class="n">_df_select_lags</span><span class="p">(</span>
                 <span class="n">y_ols_detrend</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">max_lags</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_low_memory</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">bestlag</span>
@@ -1435,10 +1435,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">mackinnonp</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">],</span> <span class="n">trend</span><span class="p">),</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;dfgls&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Literal[&#39;c&#39;, &#39;ct&#39;]&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;dfgls&quot;</span>
         <span class="p">)</span>
         <span class="n">critical_values</span> <span class="o">=</span> <span class="n">mackinnoncrit</span><span class="p">(</span>
-            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">],</span> <span class="n">trend</span><span class="p">),</span>
+            <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Literal[&#39;c&#39;, &#39;ct&#39;]&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span>
             <span class="n">nobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span>
             <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;dfgls&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -2139,7 +2139,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_vr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat_variance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">quantiles</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">cv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">quantiles</span><span class="p">,</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">quantiles</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">cv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">quantiles</span><span class="p">,</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">quantiles</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_critical_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">q</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv</span>
 
     <span class="nd">@property</span>
@@ -2186,7 +2186,7 @@
             <span class="c1"># Check length of y</span>
             <span class="k">if</span> <span class="n">nq</span> <span class="o">%</span> <span class="n">q</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">extra</span> <span class="o">=</span> <span class="n">nq</span> <span class="o">%</span> <span class="n">q</span>
-                <span class="n">y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="n">extra</span><span class="p">])</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Float64Array1D&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="n">extra</span><span class="p">])</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="n">invalid_length_doc</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">extra</span><span class="p">),</span>
                     <span class="n">InvalidLengthWarning</span><span class="p">,</span>
@@ -2285,11 +2285,11 @@
 <span class="sd">    and the &quot;n&quot; version of the ADF z test statistic were computed following</span>
 <span class="sd">    the methodology of MacKinnon (1994).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dist_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;adf-t&quot;</span><span class="p">,</span> <span class="s2">&quot;adf-z&quot;</span><span class="p">,</span> <span class="s2">&quot;dfgls&quot;</span><span class="p">],</span> <span class="n">dist_type</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="n">dist_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Literal[&#39;adf-t&#39;, &#39;adf-z&#39;, &#39;dfgls&#39;]&quot;</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">num_unit_roots</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">dist_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;adf-t&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Cointegration results (num_unit_roots &gt; 1) are&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;only available for ADF-t values&quot;</span>
+            <span class="s2">&quot;only available for ADF-t values&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">dist_type</span> <span class="o">==</span> <span class="s2">&quot;adf-t&quot;</span><span class="p">:</span>
         <span class="n">maxstat</span> <span class="o">=</span> <span class="n">tau_max</span><span class="p">[</span><span class="n">regression</span><span class="p">][</span><span class="n">num_unit_roots</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -2491,7 +2491,7 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_arr</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span>
         <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_arr</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_arr</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-        <span class="n">sig</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">npsum</span><span class="p">([</span><span class="n">i</span> <span class="o">*</span> <span class="n">j</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]))</span>
+        <span class="n">sig</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">npsum</span><span class="p">([</span><span class="n">i</span> <span class="o">*</span> <span class="n">j</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)]))</span>
 
     <span class="n">sigma_m1</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">)]</span>  <span class="c1"># sigma without the 1st element</span>
     <span class="n">s0</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sigma_m1</span><span class="p">)</span>

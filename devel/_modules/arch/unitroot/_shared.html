@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._shared - arch v7.2.1 (+81)</title>
+        <title>arch.unitroot._shared - arch v7.2.1 (+86)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+81)
+            arch v7.2.1 (+86)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+81)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+81)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+86)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+86)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+81)
+    arch v7.2.1 (+86)
   </label>
   
     <div class="md-nav__source">
@@ -521,7 +521,7 @@
     <span class="k">if</span> <span class="n">trend_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_trends</span><span class="p">:</span>
         <span class="n">trends</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">supported_trends</span><span class="p">])</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown trend. Must be one of </span><span class="se">{{</span><span class="si">{</span><span class="n">trends</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">CointegrationSetup</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x_df</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnitRootTrend</span><span class="p">,</span> <span class="n">trend_name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">CointegrationSetup</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x_df</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UnitRootTrend&quot;</span><span class="p">,</span> <span class="n">trend_name</span><span class="p">))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cross_section</span><span class="p">(</span>
@@ -701,7 +701,7 @@
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Residual&quot;</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;plt.Figure&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">pad</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span>
