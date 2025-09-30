@@ -18,19 +18,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [cp313]
+        python: [cp314]
         os: [ubuntu-latest, windows-latest]
     env:
       BUILD_COMMIT: "main"
-      CIBW_BUILD: ${{ matrix.python }}-*
-      CIBW_ARCHS_LINUX: "x86_64"
-      CIBW_ARCHS_MACOS: "x86_64"
-      CIBW_SKIP: "pp* *-musllinux_* *-win32"
-      CIBW_BEFORE_BUILD: python -m pip install wheel>=0.41.0 pip --upgrade
-      CIBW_TEST_REQUIRES: pytest pytest-xdist xarray matplotlib
-      CIBW_TEST_COMMAND: python -c "import arch; arch.test(['--skip-slow','-n','2'])"
-      # Avoid testing on emulated architectures
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: 'auditwheel repair --strip -w {dest_dir} {wheel}'
       MKL_NUM_THREADS: 1
       OMP_NUM_THREADS: 1
       OPENLAS_NUM_THREADS: 1
@@ -45,8 +36,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==3.1.4
-
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse .
+      - uses: pypa/cibuildwheel@v3.2.0
+        env:
+          CIBW_BUILD: ${{ matrix.python }}-*
+          CIBW_BEFORE_BUILD: python -m pip install wheel>=0.41.0 pip --upgrade
+          CIBW_TEST_COMMAND: python -c "import arch; arch.test(['--skip-slow','-n','auto'])"
+          CIBW_TEST_REQUIRES: pytest pytest-xdist  pytest-cov matplotlib numpy scipy pandas seaborn
+          CIBW_SKIP: "pp* *-musllinux_* *-win32"
+          CIBW_ARCHS_LINUX: "x86_64"
