@@ -61,6 +61,9 @@ documentation = "https://bashtage.github.io/arch/"
 repository = "https://github.com/bashtage/arch"
 changelog = "https://bashtage.github.io/arch/changes.html"
 
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
 [tool.black]
 target-version = ['py310', 'py311', 'py312', 'py313']
 exclude = '''

@@ -22,7 +22,7 @@ except ImportError:
     CYTHON_INSTALLED = False
     if CYTHON_COVERAGE:
         raise ImportError(
-            "cython is required for cython coverage. Unset " "ARCH_CYTHON_COVERAGE"
+            "cython is required for cython coverage. Unset ARCH_CYTHON_COVERAGE"
         )
 
 
@@ -138,9 +138,6 @@ installed.
         )
 
     setup(
-        name="arch",
-        long_description=description,
-        long_description_content_type="text/markdown",
         packages=["arch"] + find_namespace_packages(),
         ext_modules=extensions,
         package_dir={"arch": "./arch"},
