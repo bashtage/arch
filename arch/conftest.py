@@ -10,7 +10,7 @@ pytest_plugins = [
 
 
 logger = logging.getLogger(__name__)
-COW = bool(os.environ.get("ARCH_TEST_COPY_ON_WRITE", False))
+COW = bool(os.environ.get("ARCH_TEST_COPY_ON_WRITE", ""))
 try:
     pd.options.mode.copy_on_write = COW
 except AttributeError:
@@ -47,7 +47,7 @@ def pytest_runtest_setup(item):
         pytest.skip("skipping due to --only-slow")  # pragma: no cover
 
 
-@pytest.fixture()
+@pytest.fixture
 def agg_backend():
     """
     Fixture that switches the backend to agg for the duration of the test
@@ -67,10 +67,10 @@ def agg_backend():
     """
     backend = None
     try:
-        import matplotlib
+        import matplotlib as mpl  # noqa: PLC0415
 
-        backend = matplotlib.get_backend()
-        matplotlib.use("agg")
+        backend = mpl.get_backend()
+        mpl.use("agg")
 
     except ImportError:
         # Nothing to do if MPL is not available
@@ -81,6 +81,6 @@ def agg_backend():
 
     yield null
     if backend:
-        import matplotlib
+        import matplotlib as mpl  # noqa: PLC0415
 
-        matplotlib.use(backend)
+        mpl.use(backend)

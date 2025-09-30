@@ -52,20 +52,20 @@ def test_deprecate_kwarg():
     """
     Test the deprecation of the `y` keyword argument in the function `f`.
     """
-    with pytest.warns(FutureWarning, match="the old"):
+    with pytest.warns(FutureWarning, match=r"the old"):
         f(1, old="yes")
-    with pytest.warns(FutureWarning, match="the old"):
+    with pytest.warns(FutureWarning, match=r"the old"):
         f(1, old="no")
     f(2, new=True)
     f(2, new=False)
-    with pytest.raises(TypeError):
-        with pytest.warns(FutureWarning, match="the old"):
+    with pytest.raises(TypeError, match=r"Can only specify 'old' or 'new', not both"):
+        with pytest.warns(FutureWarning, match=r"the old"):
             f(2, old="yes", new=True)
-    with pytest.warns(FutureWarning, match="the old"):
+    with pytest.warns(FutureWarning, match=r"the old"):
         baz(2, old="yes")
-    with pytest.warns(FutureWarning, match="the old"):
+    with pytest.warns(FutureWarning, match=r"the old"):
         baz(2, old="no")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"maybe"):
         baz(2, old="maybe")
 
 
@@ -73,7 +73,7 @@ def test_deprecate_kwarg_no_alt():
     """
     Test the deprecation of the `y` keyword argument in the function `f`.
     """
-    with pytest.warns(FutureWarning, match="the 'old'"):
+    with pytest.warns(FutureWarning, match=r"the 'old'"):
         g(1, old=True)
 
 
@@ -94,12 +94,12 @@ def test_bad_deprecate_kwarg():
     def constructor():
         return deprecate_kwarg("old", None, [("yes", True), ("no", False)])(h)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"mapping from old to new argu"):
         constructor()
 
 
 def test_simple_depr():
-    with pytest.warns(FutureWarning, match="the 'old'"):
+    with pytest.warns(FutureWarning, match=r"the 'old'"):
         bar(old=True)
 
 
@@ -117,7 +117,9 @@ This is a test
 
 
 def test_substitution_error():
-    with pytest.raises(AssertionError):
+    with pytest.raises(
+        AssertionError, match=r"Only positional or keyword args are allow"
+    ):
         Substitution("First", second="second")("")
 
 

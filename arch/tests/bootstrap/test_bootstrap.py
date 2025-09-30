@@ -9,7 +9,7 @@ from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
-import scipy.stats as stats
+from scipy import stats
 
 from arch.bootstrap import (
     CircularBlockBootstrap,
@@ -18,8 +18,10 @@ from arch.bootstrap import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
-from arch.bootstrap._samplers_python import stationary_bootstrap_sample
-from arch.bootstrap._samplers_python import stationary_bootstrap_sample_python  # noqa
+from arch.bootstrap._samplers_python import (
+    stationary_bootstrap_sample,
+    stationary_bootstrap_sample_python,
+)
 from arch.bootstrap.base import _loo_jackknife
 from arch.utility.exceptions import StudentizationError
 
@@ -46,7 +48,7 @@ class BSData(NamedTuple):
     func: Callable[[np.ndarray, int], float | np.ndarray]
 
 
-@pytest.fixture(scope="function", params=[1234, "gen", "rs"])
+@pytest.fixture(params=[1234, "gen", "rs"])
 def seed(request):
     if request.param == "gen":
         return np.random.default_rng(1234)
@@ -55,7 +57,7 @@ def seed(request):
     return request.param
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def bs_setup():
     rng = RandomState(1234)
     y = rng.standard_normal(1000)
@@ -169,17 +171,17 @@ def test_mixed_types(bs_setup, seed):
 def test_errors(bs_setup):
     x = np.arange(10)
     y = np.arange(100)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"All inputs must hav"):
         IIDBootstrap(x, y)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"index is a reserved name"):
         IIDBootstrap(index=x)
     bs = IIDBootstrap(y)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"Unknown method"):
         bs.conf_int(bs_setup.func, method="unknown")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"tail must be one of two-sided"):
         bs.conf_int(bs_setup.func, tail="dragon")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"size must be strictly between 0 and 1"):
         bs.conf_int(bs_setup.func, size=95)
 
 
@@ -502,7 +504,7 @@ def test_conf_int_parametric(bs_setup):
         count += 1
     assert_allclose(bs._results, results)
 
-    with pytest.raises(ValueError, match="sampling must be one"):
+    with pytest.raises(ValueError, match=r"sampling must be one"):
         bs.conf_int(func=semi_func, reps=100, sampling="other")
 
 
@@ -514,7 +516,7 @@ def test_extra_kwargs(bs_setup):
     bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     bs = IIDBootstrap(axis=bs_setup.x)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"extra_kwargs contains keys used"):
         bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
 
@@ -639,11 +641,9 @@ def test_str(bs_setup, seed):
     assert_equal(bs.__repr__(), expected)
     expected = (
         "<strong>IID Bootstrap</strong>("
-        + "<strong>no. pos. inputs</strong>: 1, "
-        + "<strong>no. keyword inputs</strong>: 0, "
-        + "<strong>ID</strong>: "
-        + hex(id(bs))
-        + ")"
+        "<strong>no. pos. inputs</strong>: 1, "
+        "<strong>no. keyword inputs</strong>: 0, "
+        "<strong>ID</strong>: " + hex(id(bs)) + ")"
     )
     assert_equal(bs._repr_html(), expected)
 
@@ -668,12 +668,10 @@ def test_str(bs_setup, seed):
     assert_equal(bs.__repr__(), expected)
     expected = (
         "<strong>Circular Block Bootstrap</strong>"
-        + "(<strong>block size</strong>: 20, "
-        + "<strong>no. pos. inputs</strong>: 0, "
-        + "<strong>no. keyword inputs</strong>: 2,"
-        + " <strong>ID</strong>: "
-        + hex(id(bs))
-        + ")"
+        "(<strong>block size</strong>: 20, "
+        "<strong>no. pos. inputs</strong>: 0, "
+        "<strong>no. keyword inputs</strong>: 2,"
+        " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
     assert_equal(bs._repr_html(), expected)
 
@@ -689,12 +687,10 @@ def test_str(bs_setup, seed):
     assert_equal(bs.__repr__(), expected)
     expected = (
         "<strong>Moving Block Bootstrap</strong>"
-        + "(<strong>block size</strong>: 20, "
-        + "<strong>no. pos. inputs</strong>: 0, "
-        + "<strong>no. keyword inputs</strong>: 2,"
-        + " <strong>ID</strong>: "
-        + hex(id(bs))
-        + ")"
+        "(<strong>block size</strong>: 20, "
+        "<strong>no. pos. inputs</strong>: 0, "
+        "<strong>no. keyword inputs</strong>: 2,"
+        " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
     assert_equal(bs._repr_html(), expected)
 
@@ -863,7 +859,7 @@ def test_unequal_bs():
     variance = bs.var(mean_diff)
     assert variance > 0
 
-    with pytest.raises(ValueError, match="BCa cannot be applied"):
+    with pytest.raises(ValueError, match=r"BCa cannot be applied"):
         bs.conf_int(mean_diff, method="bca")
 
 
@@ -928,11 +924,11 @@ def test_studentization_error():
 
 def test_list_input():
     # GH 315
-    with pytest.raises(TypeError, match="Positional input 0 "):
-        vals = np.random.standard_normal(25).tolist()
+    vals = np.random.standard_normal(25).tolist()
+    with pytest.raises(TypeError, match=r"Positional input 0 "):
         IIDBootstrap(vals)
-    with pytest.raises(TypeError, match="Input `data` "):
-        vals = np.random.standard_normal(25).tolist()
+    vals = np.random.standard_normal(25).tolist()
+    with pytest.raises(TypeError, match=r"Input `data` "):
         IIDBootstrap(data=vals)
 
 
@@ -958,7 +954,7 @@ def test_set_randomstate(bs_setup):
 def test_iid_args_kwargs(bs_setup):
     bs1 = IIDBootstrap(bs_setup.y, seed=0)
     bs2 = IIDBootstrap(y=bs_setup.y, seed=0)
-    for a, b in zip(bs1.bootstrap(1), bs2.bootstrap(1)):
+    for a, b in zip(bs1.bootstrap(1), bs2.bootstrap(1), strict=False):
         assert np.all(a[0][0] == b[1]["y"])
 
 
@@ -997,12 +993,12 @@ def test_bc_extremum_error():
         ]
     )
     bs = IIDBootstrap(val, seed=np.random.RandomState(0))
-    with pytest.raises(RuntimeError, match="Empirical probability used"):
+    with pytest.raises(RuntimeError, match=r"Empirical probability used"):
         bs.conf_int(profile_function, 100, method="bc")
 
 
 def test_invalid_random_state_generator():
-    with pytest.raises(TypeError, match="generator keyword argument"):
+    with pytest.raises(TypeError, match=r"generator keyword argument"):
         IIDBootstrap(np.empty(100), seed="123")
 
 
@@ -1012,7 +1008,7 @@ def test_generator(seed):
     assert isinstance(bs.generator, typ)
     gen_copy = copy.deepcopy(bs.generator)
     bs.generator = gen_copy
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"Only a Generator or RandomState"):
         bs.generator = 3
     assert isinstance(bs.generator, typ)
     assert bs.generator is gen_copy

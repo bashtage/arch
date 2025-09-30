@@ -88,9 +88,9 @@ def test_smoke(trivariate_data, trend, test_type, kernel, bandwidth, force_int):
 
 def test_errors(trivariate_data):
     y, x = trivariate_data
-    with pytest.raises(ValueError, match="kernel is not a known estimator."):
+    with pytest.raises(ValueError, match=r"kernel is not a known estimator."):
         phillips_ouliaris(y, x, kernel="fancy-kernel")
-    with pytest.raises(ValueError, match="Unknown test_type: z-alpha."):
+    with pytest.raises(ValueError, match=r"Unknown test_type: z-alpha."):
         phillips_ouliaris(y, x, test_type="z-alpha")
 
 
@@ -127,22 +127,24 @@ def test_p_test_direct(trivariate_data, trend, bandwidth):
 
 
 def test_cv_exceptions():
-    with pytest.raises(ValueError, match="test_type must be one of"):
+    with pytest.raises(ValueError, match=r"test_type must be one of"):
         phillips_ouliaris_cv("unknown", "c", 2, 500)
-    with pytest.raises(ValueError, match="trend must by one of:"):
+    with pytest.raises(ValueError, match=r"trend must by one of:"):
         phillips_ouliaris_cv("Pu", "unknown", 2, 500)
-    with pytest.raises(ValueError, match="The number of stochastic trends must"):
+    with pytest.raises(ValueError, match=r"The number of stochastic trends must"):
         phillips_ouliaris_cv("Pu", "ct", 25, 500)
-    with pytest.warns(CriticalValueWarning):
+    with pytest.warns(
+        CriticalValueWarning, match=r"The sample size is smaller than the smallest"
+    ):
         phillips_ouliaris_cv("Pu", "ct", 2, 10)
 
 
 def test_pval_exceptions():
-    with pytest.raises(ValueError, match="test_type must be one of"):
+    with pytest.raises(ValueError, match=r"test_type must be one of"):
         phillips_ouliaris_pval(3.0, "unknown", "c", 2)
-    with pytest.raises(ValueError, match="trend must by one of:"):
+    with pytest.raises(ValueError, match=r"trend must by one of:"):
         phillips_ouliaris_pval(3.0, "Pu", "unknown", 2)
-    with pytest.raises(ValueError, match="The number of stochastic trends must"):
+    with pytest.raises(ValueError, match=r"The number of stochastic trends must"):
         phillips_ouliaris_pval(3.0, "Pu", "ct", 25)
 
 

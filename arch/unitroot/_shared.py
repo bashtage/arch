@@ -62,7 +62,7 @@ def _check_cointegrating_regression(
     if trend_name.lower() not in supported_trends:
         trends = ",".join([f'"{st}"' for st in supported_trends])
         raise ValueError(f"Unknown trend. Must be one of {{{trends}}}")
-    return CointegrationSetup(y, x_df, cast(UnitRootTrend, trend_name))
+    return CointegrationSetup(y, x_df, cast("UnitRootTrend", trend_name))
 
 
 def _cross_section(
@@ -242,7 +242,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         title = "Cointegrating Residual" if title is None else title
         ax = df.plot(legend=False, ax=axes, title=title)
         ax.set_xlim(df.index.min(), df.index.max())
-        fig = cast(plt.Figure, ax.get_figure())
+        fig = cast("plt.Figure", ax.get_figure())
         fig.tight_layout(pad=1.0)
 
         return fig

@@ -24,7 +24,7 @@ DISTRIBUTIONS = [
 ]
 
 
-@pytest.mark.parametrize("dist, params", DISTRIBUTIONS)
+@pytest.mark.parametrize(("dist", "params"), DISTRIBUTIONS)
 def test_moment(dist, params):
     """
     Ensures that Distribtion.moment and .partial_moment agree

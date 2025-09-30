@@ -52,7 +52,9 @@ class WaldTestStatistic:
     @cached_property
     def critical_values(self) -> dict[str, float]:
         """Critical values test for common test sizes"""
-        return dict(zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99])))
+        return dict(
+            zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99]), strict=False)
+        )
 
     @property
     def null(self) -> str:

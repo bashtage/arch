@@ -8,13 +8,13 @@ import pytest
 from arch.utility.timeseries import ColumnNameConflict, add_trend
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def rng():
     return RandomState(12345)
 
 
 def test_add_trend_err():
-    with pytest.raises(ValueError, match="One and only one"):
+    with pytest.raises(ValueError, match=r"One and only one"):
         add_trend(x=None, trend="ctt", nobs=None)
 
 
@@ -45,8 +45,9 @@ def test_add_trend_prepend_dataframe(rng):
 
 def test_add_trend_duplicate_name():
     x = pd.DataFrame(np.zeros((10, 1)), columns=["trend"])
-    with pytest.warns(ColumnNameConflict):
-        add_trend(x, trend="ct")
+    with pytest.warns(ColumnNameConflict, match=r"Some of the column names being"):
+        _ = add_trend(x, trend="ct")
+    with pytest.warns(ColumnNameConflict, match=r"Some of the column names being"):
         y = add_trend(x, trend="ct")
 
     assert "const" in y.columns
@@ -105,12 +106,14 @@ def test_skip_constant():
 
 def test_errors():
     n = 100
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"trend unknown not understood"):
         add_trend(x=None, trend="unknown", nobs=n)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"One and only one of x or nobs must be provided"
+    ):
         add_trend(x=None, trend="ct")
     x = np.ones((100, 1))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"x already contains a constant"):
         add_trend(x, trend="ct", has_constant="raise")
 
 
@@ -120,7 +123,7 @@ def test_trend_n_nobs():
 
 
 def test_addtrend_bad_nobs():
-    with pytest.raises(ValueError, match="nobs must"):
+    with pytest.raises(ValueError, match=r"nobs must"):
         add_trend(None, trend="ct")
-    with pytest.raises(ValueError, match="nobs must"):
+    with pytest.raises(ValueError, match=r"nobs must"):
         add_trend(None, trend="ct", nobs=-3)

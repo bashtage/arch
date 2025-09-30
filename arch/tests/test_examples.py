@@ -11,7 +11,7 @@ try:
     import jupyter_client
 
     # matplotlib is required for most notebooks
-    import matplotlib  # noqa: F401
+    import matplotlib as mpl  # noqa: F401
     from nbconvert.preprocessors import ExecutePreprocessor
     import nbformat
 
@@ -38,7 +38,7 @@ except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason=REASON)
 
 SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
-if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):  # pragma: no cover
+if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", "")):  # pragma: no cover
     SLOW_NOTEBOOKS = []
 kernel_name = "python%s" % sys.version_info.major
 

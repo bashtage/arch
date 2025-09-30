@@ -2,12 +2,13 @@ from collections.abc import Callable
 import functools
 import os
 from typing import Any
+import warnings
 
 from arch.utility.exceptions import PerformanceWarning
 
-DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
+DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", "") in ("1", "true", "True")
 
-performance_warning: str = """
+performance_warning: str = """\
 numba is not available, and this function is being executed without JIT
 compilation. Either install numba or reinstalling after installing Cython
 is strongly recommended."""
@@ -32,8 +33,6 @@ except ImportError:
             # Used directly, e.g., f_jit = jit(f)
             @functools.wraps(function_or_signature)
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
-                import warnings
-
                 warnings.warn(performance_warning, PerformanceWarning, stacklevel=2)
                 return function_or_signature(*args, **kwargs)
 
@@ -43,8 +42,6 @@ except ImportError:
         def wrap(func: Callable[..., Any]) -> Callable[..., Any]:
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
-                import warnings
-
                 warnings.warn(performance_warning, PerformanceWarning, stacklevel=2)
                 return func(*args, **kwargs)
 
@@ -53,4 +50,4 @@ except ImportError:
         return wrap
 
 
-__all__ = ["jit", "PerformanceWarning", "HAS_NUMBA", "DISABLE_NUMBA"]
+__all__ = ["DISABLE_NUMBA", "HAS_NUMBA", "PerformanceWarning", "jit"]

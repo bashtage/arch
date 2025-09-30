@@ -29,7 +29,7 @@ from arch.univariate.volatility import (
     MIDASHyperbolic,
     RiskMetrics2006,
 )
-from arch.utility.exceptions import InitialValueWarning
+from arch.utility.exceptions import InitialValueWarning, ValueWarning
 
 rec: types.ModuleType
 try:
@@ -660,29 +660,41 @@ def test_garch_many_lags(setup):
 
 
 def test_errors(setup):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         GARCH(p=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         GARCH(o=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         GARCH(q=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"One of p or o must be strictly positive"):
         GARCH(p=0, q=0)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"power must be strictly positive, usually larger than 0.25"
+    ):
         GARCH(power=-0.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"lam must be strictly between 0 and 1"):
         EWMAVariance(lam=-0.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
+    ):
         RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
+    ):
         RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
+    ):
         RiskMetrics2006(tau1=-10)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"tau1 \* rho \*\* \(kmax-1\) smaller than tau0"
+    ):
         RiskMetrics2006(tau0=10, tau1=8, rho=1.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"kmax must be a positive integer"):
         RiskMetrics2006(kmax=0)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"rho must be a positive number larger than 1"
+    ):
         RiskMetrics2006(rho=0.5)
 
 
@@ -691,7 +703,10 @@ def test_warnings_nonstationary(setup):
     parameters = np.array([0.1, 0.2, 0.8, 4.0])
     studt = StudentsT()
     warnings.simplefilter("always", UserWarning)
-    with pytest.warns(InitialValueWarning):
+    with pytest.warns(
+        InitialValueWarning,
+        match=r"Parameters are not consistent with a stationary model",
+    ):
         garch.simulate(parameters, 1000, studt.simulate([4.0]))
 
 
@@ -699,7 +714,10 @@ def test_warnings_nonstationary_garch(setup):
     garch = GARCH()
     parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
     skewstud = SkewStudent()
-    with pytest.warns(InitialValueWarning):
+    with pytest.warns(
+        InitialValueWarning,
+        match=r"Parameters are not consistent with a stationary model",
+    ):
         garch.simulate(parameters, 1000, skewstud.simulate([4.0, 0.5]))
 
 
@@ -707,7 +725,10 @@ def test_warnings_nonstationary_harch(setup):
     studt = StudentsT()
     harch = HARCH(lags=[1, 5, 22])
     parameters = np.array([0.1, 0.2, 0.4, 0.5])
-    with pytest.warns(InitialValueWarning):
+    with pytest.warns(
+        InitialValueWarning,
+        match=r"Parameters are not consistent with a stationary model",
+    ):
         harch.simulate(parameters, 1000, studt.simulate([4.0]))
 
 
@@ -1021,12 +1042,12 @@ def test_egarch(setup, initial_value):
     txt = egarch.__repr__()
     assert str(hex(id(egarch))) in txt
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"One of p or o must"):
         EGARCH(p=0, o=0, q=1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         EGARCH(p=1, o=1, q=-1)
     parameters = np.array([0.1, 0.1, -0.1, 1.05])
-    with pytest.warns(InitialValueWarning):
+    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"):
         egarch.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1150,7 +1171,7 @@ def test_fixed_variance(setup):
     parameters = np.empty(0)
     assert fv.start == 123
     assert fv.stop == 731
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"start and stop do not"):
         fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
 
 
@@ -1238,8 +1259,8 @@ def test_midas_symmetric(setup, initial_value):
     assert_equal(midas.num_params, 3)
     assert_equal(midas.m, 22)
 
-    with pytest.warns(InitialValueWarning):
-        parameters = np.array([0.1, 1.1, 0.4])
+    parameters = np.array([0.1, 1.1, 0.4])
+    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
         midas.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1334,8 +1355,11 @@ def test_midas_asymmetric(setup):
     assert_equal(midas.num_params, 4)
     assert_equal(midas.m, 33)
 
-    with pytest.warns(InitialValueWarning):
-        parameters = np.array([0.1, 0.3, 1.6, 0.4])
+    parameters = np.array([0.1, 0.3, 1.6, 0.4])
+    with pytest.warns(
+        InitialValueWarning,
+        match=r"Parameters are not consistent with a stationary mode",
+    ):
         midas.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1432,8 +1456,9 @@ def test_figarch(setup, initial_value):
     assert_equal(figarch.truncation, trunc_lag)
 
     params = np.array([0.1, 1.01, 0.4, 1.005])
-    with pytest.warns(InitialValueWarning):
-        figarch.simulate(params, 20, rng.simulate([]))
+    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
+        with pytest.warns(ValueWarning, match=r"beta >= 1"):
+            figarch.simulate(params, 20, rng.simulate([]))
 
 
 def test_figarch_no_phi(setup):
@@ -1512,17 +1537,19 @@ def test_figarch_no_phi_beta(setup):
 
 
 def test_figarch_errors(setup):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"truncation must be a positive integer"):
         FIGARCH(truncation=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"invalid literal for int\(\) with base 10: 'apple'"
+    ):
         FIGARCH(truncation="apple")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
         FIGARCH(p=2)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
         FIGARCH(q=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
         FIGARCH(power=0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
         FIGARCH(power=-0.25)
 
 
@@ -1641,7 +1668,9 @@ def test_aparch(setup, initial_value):
     assert aparch.p == aparch.o == aparch.q == 1
 
     parameters[1] = 0.20001
-    with pytest.warns(InitialValueWarning):
+    with pytest.warns(
+        InitialValueWarning, match=r"Parameters are not consistent with a stationary"
+    ):
         aparch.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1757,15 +1786,15 @@ def test_aparch_against_garch(setup):
 
 
 def test_aparch_exceptions(setup):
-    with pytest.raises(ValueError, match="delta must be between 0.05"):
+    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
         APARCH(delta=0.0)
-    with pytest.raises(ValueError, match="delta must be between 0.05"):
+    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
         APARCH(delta=4.1)
-    with pytest.raises(TypeError, match="delta must be convertible"):
+    with pytest.raises(TypeError, match=r"delta must be convertible"):
         APARCH(delta="a")
-    with pytest.raises(ValueError, match="All lags lengths must be"):
+    with pytest.raises(ValueError, match=r"All lags lengths must be"):
         APARCH(p=0)
-    with pytest.raises(ValueError, match="o must be <= p"):
+    with pytest.raises(ValueError, match=r"o must be <= p"):
         APARCH(p=1, o=2)
 
 

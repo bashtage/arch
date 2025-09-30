@@ -14,4 +14,4 @@ else:
 PD_LT_22 = parse(pd.__version__) < parse("2.1.99")
 MONTH_END = "M" if PD_LT_22 else "ME"
 
-__all__ = ["is_datetime64_any_dtype", "MONTH_END"]
+__all__ = ["MONTH_END", "is_datetime64_any_dtype"]

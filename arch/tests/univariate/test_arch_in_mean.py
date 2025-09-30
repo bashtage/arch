@@ -4,6 +4,7 @@ import pytest
 
 from arch.data import sp500
 from arch.univariate import ARCHInMean, Normal
+from arch.univariate.recursions_python import ARCHInMeanRecursion
 from arch.univariate.volatility import (
     ARCH,
     EGARCH,
@@ -36,11 +37,15 @@ SUPPORTED = [
 
 
 def test_exceptions():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"form must be a floating point "):
         ARCHInMean(SP500, form=0 + 3j, volatility=GARCH())
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"When using a floating point number for form"
+    ):
         ARCHInMean(SP500, form=0, volatility=GARCH())
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"form must be a floating point number of one"
+    ):
         ARCHInMean(SP500, form="unknown", volatility=GARCH())
 
 
@@ -69,7 +74,9 @@ def test_smoke(form):
     assert res.param_cov.shape == (5, 5)
     assert isinstance(res.param_cov, pd.DataFrame)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(
+        NotImplementedError, match=r"forecasts are not implemented for \(G\)ARCH"
+    ):
         res.forecast(reindex=True)
 
 
@@ -108,7 +115,7 @@ def test_simulate():
     kappa = res.params.iloc[1]
     rescaled_vol = vol / kappa
     np.testing.assert_allclose(rescaled_vol, sim.volatility)
-    with pytest.raises(ValueError, match="initial_value has the wrong shape"):
+    with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
 
 
@@ -179,14 +186,15 @@ def test_not_updateable():
             self._volatility_updater = None
 
     nug = NonUpdateableGARCH()
-    with pytest.raises(NotImplementedError):
-        nug.volatility_updater
-    with pytest.raises(ValueError, match="The volatility process"):
-        ARCHInMean(SP500, volatility=nug)
+    with pytest.raises(
+        NotImplementedError, match=r"Subclasses may optionally implement"
+    ):
+        _ = nug.volatility_updater
+    with pytest.raises(ValueError, match=r"The volatility process"):
+        _ = ARCHInMean(SP500, volatility=nug)
 
 
 def test_wrong_process():
-    from arch.univariate.recursions_python import ARCHInMeanRecursion
 
-    with pytest.raises(TypeError, match="updater must be a VolatilityUpdater"):
+    with pytest.raises(TypeError, match=r"updater must be a VolatilityUpdater"):
         ARCHInMeanRecursion(updater=object())

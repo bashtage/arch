@@ -44,11 +44,11 @@ def test_ccr_smoke(trivariate_data, trend, x_trend, diff, kernel, bandwidth, for
 def test_exceptions(trivariate_data, estimator):
     y, x = trivariate_data
     with pytest.raises(
-        ValueError, match="The number of observations in y and x differ"
+        ValueError, match=r"The number of observations in y and x differ"
     ):
         estimator(y[1:], x)
     mod = estimator(y, x)
-    with pytest.raises(ValueError, match="kernel is not a known kernel estimator"):
+    with pytest.raises(ValueError, match=r"kernel is not a known kernel estimator"):
         mod.fit(kernel="unknown")
 
 

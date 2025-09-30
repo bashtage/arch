@@ -75,7 +75,7 @@ def dfgsl_simulation(
     delta_y = y.copy()
     delta_y[1:, :] = delta_y[1:, :] - (1 + ct) * delta_y[:-1, :]
     detrend_coef = delta_z_inv.dot(delta_y)
-    y_detrended = y - cast(np.ndarray, z.dot(detrend_coef))
+    y_detrended = y - cast("np.ndarray", z.dot(detrend_coef))
 
     delta_y_detrended = np.diff(y_detrended, axis=0)
     rhs = y_detrended[:-1, :]

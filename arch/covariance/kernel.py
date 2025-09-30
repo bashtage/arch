@@ -12,20 +12,20 @@ from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor._decorators import Substitution
 
 __all__ = [
+    "Andrews",
     "Bartlett",
+    "CovarianceEstimate",
+    "CovarianceEstimator",
+    "Gallant",
+    "NeweyWest",
     "Parzen",
     "ParzenCauchy",
     "ParzenGeometric",
     "ParzenRiesz",
+    "QuadraticSpectral",
     "TukeyHamming",
     "TukeyHanning",
     "TukeyParzen",
-    "CovarianceEstimate",
-    "CovarianceEstimator",
-    "QuadraticSpectral",
-    "Andrews",
-    "Gallant",
-    "NeweyWest",
 ]
 
 KERNELS = [
@@ -203,13 +203,13 @@ class CovarianceEstimator(ABC):
             self._x = self._x - self._x.mean(0)
         if bandwidth is not None:
             _bandwidth = bandwidth
-            if not np.isscalar(_bandwidth) or (cast(float, _bandwidth) < 0.0):
+            if not np.isscalar(_bandwidth) or (cast("float", _bandwidth) < 0.0):
                 raise ValueError("bandwidth must be a non-negative scalar.")
         self._bandwidth: float | None = bandwidth
         self._auto_bandwidth = bandwidth is None
-        if not np.isscalar(df_adjust) or (cast(int, df_adjust) < 0):
+        if not np.isscalar(df_adjust) or (cast("int", df_adjust) < 0):
             raise ValueError("df_adjust must be a non-negative integer.")
-        self._df_adjust = int(cast(SupportsInt, df_adjust))
+        self._df_adjust = int(cast("SupportsInt", df_adjust))
         self._df = self._x.shape[0] - self._df_adjust
         if self._df <= 0:
             raise ValueError(
@@ -222,7 +222,7 @@ class CovarianceEstimator(ABC):
             xw = self._x_weights = np.ones((self._x.shape[1], 1))
         else:
             _xw = ensure1d(np.asarray(weights), "weights", series=False).astype(float)
-            xw = self._x_weights = cast(Float64Array2D, _xw[:, None])
+            xw = self._x_weights = cast("Float64Array2D", _xw[:, None])
         if (
             xw.shape[0] != self._x.shape[1]
             or xw.shape[1] != 1

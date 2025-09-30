@@ -11,12 +11,12 @@ from arch.unitroot.unitroot import (
 
 __all__ = [
     "ADF",
-    "KPSS",
     "DFGLS",
-    "VarianceRatio",
+    "KPSS",
+    "EngleGrangerTestResults",
     "PhillipsPerron",
+    "VarianceRatio",
     "ZivotAndrews",
     "auto_bandwidth",
     "engle_granger",
-    "EngleGrangerTestResults",
 ]

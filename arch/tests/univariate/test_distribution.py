@@ -2,8 +2,8 @@ import numpy as np
 from numpy.random import RandomState, default_rng
 from numpy.testing import assert_almost_equal, assert_array_equal, assert_equal
 import pytest
+from scipy import stats
 from scipy.special import gamma, gammaln
-import scipy.stats as stats
 
 from arch.univariate.distribution import (
     GeneralizedError,
@@ -46,7 +46,7 @@ class TestDistributions:
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 0)
 
-        a, b = dist.constraints()
+        a, _ = dist.constraints()
         assert_equal(len(a), 0)
 
         assert_array_equal(dist.starting_values(self.resids), np.empty((0,)))
@@ -67,14 +67,14 @@ class TestDistributions:
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 1)
 
-        a, b = dist.constraints()
+        a, _ = dist.constraints()
         assert_equal(a.shape, (2, 1))
 
         k = stats.kurtosis(self.resids, fisher=False)
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         assert_array_equal(dist.starting_values(self.resids), np.array([sv]))
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 2"):
             dist.simulate(np.array([1.5]))
         sim = dist.simulate(8.0)
         assert isinstance(sim(100), np.ndarray)
@@ -116,20 +116,20 @@ class TestDistributions:
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 2)
 
-        a, b = dist.constraints()
+        a, _ = dist.constraints()
         assert_equal(a.shape, (4, 2))
 
         k = stats.kurtosis(self.resids, fisher=False)
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         assert_array_equal(dist.starting_values(self.resids), np.array([sv, 0.0]))
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The shape parameter must be larger"):
             dist.simulate(np.array([1.5, 0.0]))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The skew parameter must be smaller than 1"):
             dist.simulate(np.array([4.0, 1.5]))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The skew parameter must be smaller than 1"):
             dist.simulate(np.array([4.0, -1.5]))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 2"):
             dist.simulate(np.array([1.5, 1.5]))
 
         sim = dist.simulate([8.0, -0.2])
@@ -163,7 +163,7 @@ class TestDistributions:
 
         assert_array_equal(dist.starting_values(self.resids), np.array([1.5]))
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 1"):
             dist.simulate(np.array([0.9]))
         simulator = dist.simulate(1.5)
         rvs = simulator(1000)
@@ -173,7 +173,7 @@ class TestDistributions:
 
 
 def test_bad_input():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"Normal.__init__\(\) got an unexpected"):
         Normal(random_state="random_state")
 
 
@@ -205,22 +205,22 @@ def test_roundtrip_cdf_ppf(distribution):
 def test_invalid_params():
     pits = np.arange(1, 100.0) / 100.0
     dist = Normal()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"parameters must have 0 elements"):
         dist.ppf(pits, [1.0])
     dist = StudentsT()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"S does not satisfy the bounds requirement"):
         dist.ppf(pits, [1.0])
 
 
 def test_no_parameters_error(distribution):
     dist = distribution()
     pits = np.arange(1, 100.0) / 100.0
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"parameters must have"):
         dist.ppf(pits, None)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"parameters must have"):
         dist.cdf(pits, None)
 
 
 def test_random_state_seed_transition():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"seed must by a NumPy Generator or RandomState"):
         Normal(seed="1234")

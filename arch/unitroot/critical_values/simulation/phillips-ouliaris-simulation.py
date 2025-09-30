@@ -158,7 +158,7 @@ def p_tests_vec(
     for i in range(1, lag + 1):
         w = 1 - i / (lag + 1)
         gamma = inner_prod(xi[:, i:], xi[:, :-i]) / nobs
-        omega += w * (gamma + cast(np.ndarray, gamma).transpose((0, 2, 1)))
+        omega += w * (gamma + cast("np.ndarray", gamma).transpose((0, 2, 1)))
     omega21 = omega[:, :1, 1:]
     omega22 = omega[:, 1:, 1:]
     omega112 = omega[:, :1, :1] - omega21 @ inv(omega22) @ omega21.transpose((0, 2, 1))
@@ -251,7 +251,7 @@ def save_partial(
     temp_file = temp_file_name(full_path)
     info = {"results": results, "remaining": remaining, "gen": gen}
     with gzip.open(temp_file, "wb", 4) as pkl:
-        pickle.dump(info, cast(IO[bytes], pkl))
+        pickle.dump(info, cast("IO[bytes]", pkl))
 
 
 def load_partial(
@@ -261,7 +261,7 @@ def load_partial(
     if os.path.exists(temp_file):
         try:
             with gzip.open(temp_file, "rb") as pkl:
-                info = pickle.load(cast(IO[bytes], pkl))
+                info = pickle.load(cast("IO[bytes]", pkl))
             gen = info["gen"]
             results = info["results"]
             remaining = info["remaining"]
@@ -366,7 +366,7 @@ if __name__ == "__main__":
         gen = np.random.Generator(np.random.PCG64(child))
         filename = (
             "phillips-ouliaris-results-statistic-"
-            + f"{statistic}-trend-{trend}-{idx:04d}.hdf"
+            f"{statistic}-trend-{trend}-{idx:04d}.hdf"
         )
 
         full_file = os.path.join(ROOT, filename)
@@ -375,8 +375,8 @@ if __name__ == "__main__":
         jobs.append(
             (
                 gen,
-                cast(Literal["z", "p"], statistic),
-                cast(UnitRootTrend, trend),
+                cast("Literal['z', 'p']", statistic),
+                cast("UnitRootTrend", trend),
                 idx,
                 full_file,
             )

@@ -6,6 +6,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 from collections.abc import Callable, Mapping, Sequence
 import copy
 from typing import TYPE_CHECKING, cast, overload
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -75,7 +76,7 @@ from arch.utility.array import (
     parse_dataframe,
 )
 
-__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
+__all__ = ["ARX", "HARX", "LS", "ARCHInMean", "ConstantMean", "ZeroMean", "arch_model"]
 
 COV_TYPES = {
     "white": "White's Heteroskedasticity Consistent Estimator",
@@ -131,7 +132,7 @@ def _ar_forecast(
         fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
         if x.shape[0] > 0:
             fcasts[:, i] += x[:, :, i - p].T @ exogp
-    fcasts = cast(Float64Array2D, fcasts[:, p:])
+    fcasts = cast("Float64Array2D", fcasts[:, p:])
 
     return fcasts
 
@@ -302,11 +303,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._hold_back = max_lags if hold_back is None else hold_back
 
         if self._hold_back < max_lags:
-            from warnings import warn
-
-            warn(
+            warnings.warn(
                 "hold_back is less then the minimum number given the lags selected",
                 RuntimeWarning,
+                stacklevel=2,
             )
             self._hold_back = max_lags
 
@@ -512,7 +512,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
-        params = cast(Float64Array1D, ensure1d(params, "params", series=False))
+        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
         if params.shape[0] != num_params:
             raise ValueError(
                 "params has the wrong number of elements. "
@@ -520,17 +520,17 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             )
 
         dist_params = np.empty(0) if dc == 0 else params[-dc:]
-        vol_params = cast(Float64Array1D, params[mc : mc + vc])
-        simulator = self.distribution.simulate(cast(Float64Array1D, dist_params))
+        vol_params = cast("Float64Array1D", params[mc : mc + vc])
+        simulator = self.distribution.simulate(cast("Float64Array1D", dist_params))
         sim_data = self.volatility.simulate(
             vol_params, nobs + burn, simulator, burn, initial_value_vol
         )
         errors = sim_data[0]
-        vol = cast(Float64Array, np.sqrt(sim_data[1]))
+        vol = cast("Float64Array", np.sqrt(sim_data[1]))
 
         y = self._simulate_mean(params[:mc], x_arr, errors, initial_value, sim_data[1])
 
-        df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
+        df = {"data": y[burn:], "volatility": vol[burn:], "errors": errors[burn:]}
         return pd.DataFrame(df)
 
     def _generate_variable_names(self) -> list[str]:
@@ -548,12 +548,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def _generate_lag_names(self) -> list[str]:
         """Generates lag names.  Overridden by other models"""
         lags = self._lags
-        names = []
         var_name = str(self._y_series.name) if self._y_series.name else ""
         if len(var_name) > 10:
             var_name = var_name[:4] + "..." + var_name[-3:]
-        for i in range(lags.shape[1]):
-            names.append(var_name + "[" + str(lags[0, i]) + ":" + str(lags[1, i]) + "]")
+        names = [
+            var_name + "[" + str(lags[0, i]) + ":" + str(lags[1, i]) + "]"
+            for i in range(lags.shape[1])
+        ]
         return names
 
     def _check_specification(self) -> None:
@@ -570,14 +571,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 x_original = np.asarray(self._x_original, dtype=float)
                 if x_original.ndim == 1:
                     x_original = x_original[:, None]
-                self._x = cast(Float64Array2D, x_original)
+                self._x = cast("Float64Array2D", x_original)
             assert isinstance(self._x, (np.ndarray, pd.DataFrame))
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
                 raise ValueError(err_msg)
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
             names, self._x_index = parse_dataframe(self._x, def_names)
             self._x_names = [str(name) for name in names]
-            self._x = cast(Float64Array2D, np.asarray(self._x, dtype=float))
+            self._x = cast("Float64Array2D", np.asarray(self._x, dtype=float))
 
     def _reformat_lags(self) -> None:
         """
@@ -600,7 +601,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "When using the 1-d format of lags, values must be positive"
                 )
             lags = np.unique(lags)
-            temp = cast(Int64Array2D, np.array([lags, lags], dtype=int))
+            temp = cast("Int64Array2D", np.array([lags, lags], dtype=int))
             if self.use_rotated:
                 temp[0, 1:] = temp[0, 0:-1]
                 temp[0, 0] = 0
@@ -616,7 +617,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "lags[0,j] <= lags[1,j] for all lags values."
                 )
             ind = np.lexsort(np.flipud(lags))
-            lags = cast(Int64Array2D, lags[:, ind])
+            lags = cast("Int64Array2D", lags[:, ind])
             test_mat = np.zeros((lags.shape[1], np.max(lags)), dtype=int)
             # Subtract 1 so first is 0 indexed
             lags = lags - np.array([[1], [0]])
@@ -625,12 +626,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             rank = np.linalg.matrix_rank(test_mat.astype(float))
             if rank != lags.shape[1]:
                 raise ValueError("lags contains redundant entries")
-            self._lags = cast(Int64Array2D, lags)
+            self._lags = cast("Int64Array2D", lags)
 
             if self.use_rotated:
-                from warnings import warn
-
-                warn("Rotation is not available when using the 2-d lags input format")
+                warnings.warn(
+                    "Rotation is not available when using the 2-d lags input format",
+                    stacklevel=2,
+                )
         else:
             raise ValueError("Incorrect format for lags")
 
@@ -640,10 +642,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         har = params[int(self.constant) :]
         ar: Float64Array1D
         ar = np.zeros(self._max_lags, dtype=float)
-        for value, lag in zip(har, self._lags.T):
+        for value, lag in zip(har, self._lags.T, strict=False):
             ar[lag[0] : lag[1]] += value / (lag[1] - lag[0])
         if self.constant:
-            ar = cast(Float64Array1D, np.concatenate((params[:1], ar)))
+            ar = cast("Float64Array1D", np.concatenate((params[:1], ar)))
         return ar
 
     def _init_model(self) -> None:
@@ -672,7 +674,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             reg_x = np.empty((nobs_orig, 0), dtype=np.double)
 
         self.regressors = cast(
-            Float64Array2D, np.hstack((reg_constant, reg_lags, reg_x))
+            "Float64Array2D", np.hstack((reg_constant, reg_lags, reg_x))
         )
 
     def _r2(self, params: ArrayLike1D) -> float:
@@ -703,9 +705,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         _first_obs_index += self._hold_back
         _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
         if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce in an empty array.")
+            raise ValueError("first_obs and last_obs produce an empty array.")
         self._fit_indices = [_first_obs_index, _last_obs_index]
-        self._fit_y = cast(Float64Array1D, self._y[_first_obs_index:_last_obs_index])
+        self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
         reg = self.regressors
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
@@ -778,7 +780,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         if x.shape[1] > 0:
             regression_params: Float64Array1D = cast(
-                Float64Array1D, np.linalg.pinv(x).dot(y)
+                "Float64Array1D", np.linalg.pinv(x).dot(y)
             )
             xpxi = np.linalg.inv(x.T.dot(x) / nobs)
             fitted = x.dot(regression_params)
@@ -988,8 +990,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         full_resids = to_array_1d(
             self.resids(
                 mp,
-                cast(Float64Array1D, self._y[earliest:]),
-                cast(Float64Array2D, self.regressors[earliest:]),
+                cast("Float64Array1D", self._y[earliest:]),
+                cast("Float64Array2D", self.regressors[earliest:]),
             )
         )
         vb = self._volatility.variance_bounds(full_resids, 2.0)
@@ -1218,7 +1220,7 @@ class ConstantMean(HARX):
         y = errors + mp
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
-        df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
+        df = {"data": y[burn:], "volatility": vol[burn:], "errors": errors[burn:]}
 
         return pd.DataFrame(df)
 
@@ -1369,7 +1371,7 @@ class ZeroMean(HARX):
         y = errors
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
-        df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
+        df = {"data": y[burn:], "volatility": vol[burn:], "errors": errors[burn:]}
 
         return pd.DataFrame(df)
 
@@ -1507,12 +1509,11 @@ class ARX(HARX):
 
     def _generate_lag_names(self) -> list[str]:
         lags = self._lags
-        names = []
+
         var_name = str(self._y_series.name) if self._y_series.name else ""
         if len(var_name) > 10:
             var_name = var_name[:4] + "..." + var_name[-3:]
-        for i in range(lags.shape[1]):
-            names.append(var_name + "[" + str(lags[1, i]) + "]")
+        names = [var_name + "[" + str(lags[1, i]) + "]" for i in range(lags.shape[1])]
         return names
 
 
@@ -1659,7 +1660,7 @@ class ARCHInMean(ARX):
         volatility: VolatilityProcess | None = None,
         distribution: Distribution | None = None,
         rescale: bool | None = None,
-        form: int | float | Literal["log", "vol", "var"] = "vol",
+        form: float | Literal["log", "vol", "var"] = "vol",
     ) -> None:
         super().__init__(
             y, x, lags, constant, hold_back, volatility, distribution, rescale
@@ -1749,7 +1750,7 @@ class ARCHInMean(ARX):
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         return super().resids(
-            cast(Float64Array1D, params[:-1]), y=y, regressors=regressors
+            cast("Float64Array1D", params[:-1]), y=y, regressors=regressors
         )
 
     def starting_values(self) -> Float64Array1D:
@@ -1822,7 +1823,7 @@ class ARCHInMean(ARX):
             _callback_info["llf"] = llf_f = -float(llf)
             return llf_f
 
-        return cast(Float64Array1D, -llf)
+        return cast("Float64Array1D", -llf)
 
     def _simulate_mean(
         self,
@@ -1890,9 +1891,7 @@ def arch_model(
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
-    vol: Literal[
-        "GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH", "FIGARCH"
-    ] = "GARCH",
+    vol: Literal["GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH"] = "GARCH",
     p: int | list[int] = 1,
     o: int = 0,
     q: int = 1,

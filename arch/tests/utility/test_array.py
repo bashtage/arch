@@ -22,7 +22,7 @@ from arch.utility.array import (
 )
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def rng():
     return RandomState(12345)
 
@@ -35,7 +35,7 @@ def test_ensure1d():
     out = ensure1d(np.arange(5.0)[:, None], "y")
     assert_equal(out, np.arange(5.0))
     in_array = np.reshape(np.arange(16.0), (4, 4))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"y must be squeezable"):
         ensure1d(in_array, "y")
 
     y = Series(np.arange(5.0))
@@ -67,7 +67,7 @@ def test_ensure1d():
     assert isinstance(ys, Series)
     assert ys.name == "1"
     y = DataFrame(np.reshape(np.arange(10), (5, 2)))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"y must be squeezable to 1 dimension"):
         ensure1d(y, "y")
 
 
@@ -87,9 +87,11 @@ def test_ensure2d():
     assert isinstance(npa, np.ndarray)
     assert npa.ndim == 2
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"Variable x must be 2d"):
         ensure2d(np.array([[[1]]]), "x")
-    with pytest.raises(TypeError):
+    with pytest.raises(
+        TypeError, match=r"Variable x must be a Series, DataFrame or ndarray"
+    ):
         ensure2d([1], "x")
 
 
@@ -153,24 +155,24 @@ def test_date_to_index():
     assert_equal(index, 500)
     index = date_to_index(dt.datetime(2009, 8, 1), date_index)
     assert_equal(index, 500)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"date must be a datetime"):
         date_to_index(dt.date(2009, 8, 1), date_index)
     z = y + 0.0
     z.index = np.arange(3000)
     num_index = z.index
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"date_index must be a datetime64 array"):
         date_to_index(dt.datetime(2009, 8, 1), num_index)
     idx = date_range("1999-12-31", periods=3)
 
     df = DataFrame([1, 2, 3], index=idx[::-1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
         date_to_index(idx[0], df.index)
 
     df = DataFrame([1, 2, 3], index=[idx[0]] * 3)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
         date_to_index(idx[0], df.index)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"date: NaT cannot be parsed to a date"):
         date_to_index("NaT", idx)
 
     #  check whether this also works for a localized datetimeindex
@@ -236,7 +238,7 @@ def test_cutoff_to_index():
     y = Series(np.arange(3000.0), index=dr)
     date_index = y.index
     assert cutoff_to_index(1000, date_index, 0) == 1000
-    assert cutoff_to_index(int(1000), date_index, 0) == 1000
+    assert cutoff_to_index((1000), date_index, 0) == 1000
     assert cutoff_to_index(np.int16(1000), date_index, 0) == 1000
     assert cutoff_to_index(np.int64(1000), date_index, 0) == 1000
     assert cutoff_to_index(date_index[1000], date_index, 0) == 1000
@@ -254,9 +256,9 @@ def test_find_index():
     npy_date = np.datetime64(series.index[3000].to_pydatetime())
     found_loc = find_index(series, npy_date)
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"bad-date cannot"):
         find_index(series, "bad-date")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"index not found"):
         find_index(series, "1900-01-01")
 
     assert_equal(find_index(df, "2000-01-01"), 0)
@@ -265,9 +267,9 @@ def test_find_index():
     assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
     found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"bad-date cannot be converted to datetime"):
         find_index(df, "bad-date")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"index not found"):
         find_index(df, "1900-01-01")
 
     idx = find_index(df, 1)
@@ -290,7 +292,7 @@ def test_doc():
 
 
 def test_concrete_class_meta():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=r"Dummy has not implemented abstrac"):
 
         class Dummy(metaclass=ConcreteClassMeta):
             @abstractmethod
@@ -316,9 +318,9 @@ def test_to_array_1d(arr):
 
 
 def test_to_array_1d_err():
-    with pytest.raises(ValueError, match="x must be 1D"):
+    with pytest.raises(ValueError, match=r"x must be 1D"):
         to_array_1d(np.array([[1, 2], [3, 4]]))
-    with pytest.raises(TypeError, match="x must be a Series or ndarray"):
+    with pytest.raises(TypeError, match=r"x must be a Series or ndarray"):
         to_array_1d(0)
-    with pytest.raises(TypeError, match="x must be a Series or ndarray"):
+    with pytest.raises(TypeError, match=r"x must be a Series or ndarray"):
         to_array_1d(DataFrame([[0, 1]]))

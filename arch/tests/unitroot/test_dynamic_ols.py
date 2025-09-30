@@ -43,25 +43,25 @@ def test_smoke_fit(data, cov_type, kernel, bandwidth, force_int, df_adjust):
 
 def test_mismatch_lead_lag(data):
     y, x = data
-    with pytest.raises(ValueError, match="common is specified but leads"):
+    with pytest.raises(ValueError, match=r"common is specified but leads"):
         DynamicOLS(y, x, "c", 4, 5, True)
-    with pytest.raises(ValueError, match="common is specified but max_lead"):
+    with pytest.raises(ValueError, match=r"common is specified but max_lead"):
         DynamicOLS(y, x, max_lag=6, max_lead=7, common=True)
 
 
 def test_invalid_input(data):
     y, x = data
-    with pytest.raises(ValueError, match="method must be one of"):
+    with pytest.raises(ValueError, match=r"method must be one of"):
         DynamicOLS(y, x, method="unknown")
-    with pytest.raises(ValueError, match="Unknown trend. Must be one"):
+    with pytest.raises(ValueError, match=r"Unknown trend. Must be one"):
         DynamicOLS(y, x, trend="cttt")
 
 
 def test_invalid_fit_options(data):
     y, x = data
-    with pytest.raises(ValueError, match="kernel is not a "):
+    with pytest.raises(ValueError, match=r"kernel is not a "):
         DynamicOLS(y, x).fit(kernel="unknown")
-    with pytest.raises(ValueError, match="Unknown cov_type"):
+    with pytest.raises(ValueError, match=r"Unknown cov_type"):
         DynamicOLS(y, x).fit(cov_type="unknown")
 
 
@@ -204,5 +204,5 @@ def test_error(trivariate_data):
     else:
         y = y[:20]
         x = x[:20]
-    with pytest.raises(ValueError, match="max_lag and max_lead are too large"):
+    with pytest.raises(ValueError, match=r"max_lag and max_lead are too large"):
         DynamicOLS(y, x, max_lag=10, max_lead=10)

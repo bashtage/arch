@@ -82,5 +82,98 @@ exclude = '''
 [tool.setuptools_scm]
 write_to = "arch/_version.py"
 
+[tool.ruff]
+line-length = 88
+fix = false
+target-version = "py310"
+
 [tool.ruff.lint]
 typing-modules = ["arch.typing"]
+
+select = [
+  # pyflakes
+  "F",
+  # pycodestyle
+  "E", "W",
+  # flake8-2020
+  "YTT",
+  # flake8-bugbear
+  "B",
+  # flake8-quotes
+  "Q",
+  # flake8-debugger
+  "T10",
+  # flake8-gettext
+  "INT",
+  # pylint
+  "PL",
+  # flake8-pytest-style
+  "PT",
+  # misc lints
+  "PIE",
+  # flake8-pyi
+  "PYI",
+  # tidy imports
+  "TID",
+  # implicit string concatenation
+  "ISC",
+  # flake8-type-checking
+  "TC",
+  # comprehensions
+  "C4",
+  # pygrep-hooks
+  "PGH",
+  # Ruff-specific rules
+  "RUF",
+  # flake8-bandit: exec-builtin
+  "S102",
+  # Perflint
+  "PERF",
+  # flynt
+  "FLY",
+  # flake8-future-annotations
+  "FA",
+  # unconventional-import-alias
+  "ICN001",
+  # flake8-slots
+  "SLOT",
+  # flake8-raise
+  "RSE"
+]
+
+ignore = [
+    # Required to allow black formatting
+    # Whitespace before ':' (Needed for black)
+    "E203",
+    # Line too long (### > 88 characters) (Needed for black)
+    "E501",
+    # Multiple statements on one line (colon) (E701)
+    "E701",
+    # Always ignore
+    # RUF005 Consider `[a, *b]` instead of concatenation - don't like
+    "RUF005",
+    # TC do not work with doc building
+    # Move application import `linearmodels....` into a type-checking block
+    "TC001",
+    # Move third-party import `...` into a type-checking block
+    "TC002",
+    # Move standard library import `...` into a type-checking block
+    "TC003",
+
+    #  ### Intentionally disabled
+    # Too many arguments to function call
+    "PLR0913", # 55
+    # Too many branches
+    "PLR0912", # 14
+    # Too many statements
+    "PLR0915", # 21
+    # Magic number
+    "PLR2004",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Has function names test for running test suite, not a (pytest) )test
+"arch/utility/__init__.py" = ["PT028"]
+# Greek letters in comments
+"arch/unitroot/_phillips_ouliaris.py" = ["RUF002"]
+"arch/unitroot/_engle_granger.py" = ["RUF001"]

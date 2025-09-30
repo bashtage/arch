@@ -1,4 +1,5 @@
 from typing import overload
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -10,8 +11,8 @@ class ColumnNameConflict(Warning):
     pass
 
 
-column_name_conflict_doc: str = """
-Some of the column named being added were not unique and have been renamed.
+column_name_conflict_doc: str = """\
+Some of the column names being added were not unique and have been renamed.
 
              {0}
 """
@@ -31,7 +32,6 @@ def _enforce_unique_col_name(existing: list[str], new: list[str]) -> list[str]:
             unique_names[i] = fixed_name
             converted_names.append(f"{original_name}   ->   {fixed_name}")
     if converted_names:
-        import warnings
 
         ws = column_name_conflict_doc.format("\n    ".join(converted_names))
         warnings.warn(ws, ColumnNameConflict, stacklevel=2)
@@ -122,7 +122,7 @@ def add_trend(
         return np.empty((nobs, 0))
     elif trend_name == "c":
         trend_order = 0
-    elif trend_name == "ct" or trend_name == "t":
+    elif trend_name in {"ct", "t"}:
         trend_order = 1
     else:  # trend_name == "ctt":
         trend_order = 2
@@ -161,10 +161,9 @@ def add_trend(
             x = trend_array_df.join(x)
         else:
             x = x.join(trend_array_df)
+    elif prepend:
+        x = np.column_stack((trend_array, x))
     else:
-        if prepend:
-            x = np.column_stack((trend_array, x))
-        else:
-            x = np.column_stack((x, trend_array))
+        x = np.column_stack((x, trend_array))
     assert x is not None
     return x

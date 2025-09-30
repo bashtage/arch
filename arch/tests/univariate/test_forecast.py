@@ -22,6 +22,7 @@ from arch.univariate import (
     ConstantVariance,
     EWMAVariance,
     MIDASHyperbolic,
+    Normal,
     RiskMetrics2006,
     ZeroMean,
     arch_model,
@@ -180,11 +181,11 @@ class TestForecasting:
         assert_frame_equal(fcast.variance, alt_fcast.variance)
         assert_frame_equal(fcast.residual_variance, alt_fcast.residual_variance)
 
-        with pytest.raises(ValueError, match="horizon must"):
+        with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon=3.0)
-        with pytest.raises(ValueError, match="horizon must"):
+        with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon=-1)
-        with pytest.raises(ValueError, match="horizon must"):
+        with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon="3")
 
         fcast_reindex = res.forecast(res.params, horizon=3, reindex=True)
@@ -217,7 +218,7 @@ class TestForecasting:
         assert np.all(np.asarray(0.0 == fcast.mean))
         assert_allclose(fcast.variance, np.ones((501, 3)) * params[0])
         assert_allclose(fcast.residual_variance, np.ones((501, 3)) * params[0])
-        with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+        with pytest.raises(ValueError, match=r"horizon must be an integer >= 1"):
             res.forecast(horizon=0)
 
     def test_frame_labels(self):
@@ -333,7 +334,9 @@ class TestForecasting:
         expected[2:] = res.params.iloc[-1]
         assert_allclose(np.asarray(fcast.residual_variance), expected[1:])
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(horizon=5, start=0)
 
     def test_har_forecast(self):
@@ -343,9 +346,13 @@ class TestForecasting:
         fcast_5 = res.forecast(horizon=5)
         assert_allclose(fcast_1.mean, fcast_5.mean.iloc[:, :1])
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(horizon=1, start=0)
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(horizon=1, start=20)
 
         fcast_66 = res.forecast(horizon=66, start=21)
@@ -399,12 +406,16 @@ class TestForecasting:
         for field in ("mean", "variance", "residual_variance"):
             assert_frame_equal(getattr(fcast_1, field), getattr(fcast_2, field))
 
-        with pytest.raises(ValueError):
-            date = self.har3.index[20]
+        date = self.har3.index[20]
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(start=date)
 
-        with pytest.raises(ValueError):
-            date = self.har3.index[0]
+        date = self.har3.index[0]
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(start=date)
 
         fcast_0 = res.forecast()
@@ -549,7 +560,9 @@ class TestForecasting:
         assert np.all(np.asarray(np.isfinite(forecast.mean)))
         assert np.all(np.asarray(np.isfinite(forecast.variance)))
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(horizon=3, start=y.index[98])
 
         res = mod.fit(disp="off")
@@ -566,7 +579,9 @@ class TestForecasting:
 
         mod = arch_model(y, mean="AR", lags=[1, 2])
         res = mod.fit(disp="off")
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res.forecast(horizon=3, start=0)
 
         forecast = res.forecast(horizon=3, start=1)
@@ -606,7 +621,9 @@ class TestForecasting:
         res_first_obs = mod.fit(disp="off", first_obs=20)
         assert_allclose(res_holdback.params, res_first_obs.params)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res_holdback.forecast(start=18)
 
     def test_holdback_lastobs(self):
@@ -620,7 +637,9 @@ class TestForecasting:
         res_direct = mod.fit(disp="off")
         assert_allclose(res_direct.params, res_first_obs_last_obs.params)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Due to backcasting and/or data availability"
+        ):
             res_holdback_last_obs.forecast(start=18)
 
     def test_holdback_ar(self):
@@ -649,17 +668,17 @@ def test_reindex(model_spec, reindex, first_obs, last_obs):
     fcast = res.forecast(horizon=2, method="bootstrap", simulations=25, reindex=reindex)
     assert fcast.mean.shape == (dim0, 2)
     assert fcast.simulations.values.shape == (dim0, 25, 2)
-    with pytest.raises(ValueError, match="horizon must be"):
+    with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=0, reindex=reindex)
 
 
 def test_invalid_horizon():
     res = arch_model(SP500).fit(disp="off")
-    with pytest.raises(ValueError, match="horizon must be"):
+    with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=-1)
-    with pytest.raises(ValueError, match="horizon must be"):
+    with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=1.0)
-    with pytest.raises(ValueError, match="horizon must be"):
+    with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon="5")
 
 
@@ -675,7 +694,7 @@ EXOG_PARAMS = product(
 )
 
 
-@pytest.fixture(scope="function", params=EXOG_PARAMS)
+@pytest.fixture(params=EXOG_PARAMS)
 def exog_format(request):
     xtyp, shape, full = request.param
     rng = RandomState(123456)
@@ -725,11 +744,10 @@ def test_x_reformat_1var(exog_format):
         return
     if isinstance(exog, dict):
         nexog = len(exog)
+    elif np.ndim(exog) == 3:
+        nexog = exog.shape[0]
     else:
-        if np.ndim(exog) == 3:
-            nexog = exog.shape[0]
-        else:
-            nexog = 1
+        nexog = 1
     cols = [f"x{i}" for i in range(1, nexog + 1)]
     rng = RandomState(12345)
     x = pd.DataFrame(
@@ -800,39 +818,39 @@ def test_x_forecasting_simulation_smoke(nexog):
 
 def test_x_exceptions():
     res = ARX(SP500, lags=1).fit(disp="off")
-    with pytest.raises(TypeError, match="x is not None but"):
+    with pytest.raises(TypeError, match=r"x is not None but"):
         res.forecast(x=SP500)
     x = SP500.copy()
     x[:] = np.random.standard_normal(SP500.shape)
     x.name = "Exog"
     res = ARX(SP500, lags=1, x=x).fit(disp="off")
-    with pytest.raises(TypeError, match="x is None but the model"):
+    with pytest.raises(TypeError, match=r"x is None but the model"):
         res.forecast()
     res = ARX(SP500, lags=1, x=x).fit(disp="off")
-    with pytest.raises(ValueError, match="x must have the same"):
+    with pytest.raises(ValueError, match=r"x must have the same"):
         res.forecast(x={})
-    with pytest.raises(ValueError, match="x must have the same"):
+    with pytest.raises(ValueError, match=r"x must have the same"):
         res.forecast(x={"x0": x, "x1": x})
-    with pytest.raises(KeyError, match="The keys of x must exactly"):
+    with pytest.raises(KeyError, match=r"The keys of x must exactly"):
         res.forecast(x={"z": x})
-    with pytest.raises(ValueError, match="The arrays contained in the dictionary"):
-        _x = np.asarray(x).reshape((1, x.shape[0], 1))
+    _x = np.asarray(x).reshape((1, x.shape[0], 1))
+    with pytest.raises(ValueError, match=r"The arrays contained in the dictionary"):
         res.forecast(x={"Exog": _x})
     x2 = pd.concat([x, x], axis=1)
     x2.columns = ["x0", "x1"]
     x2.iloc[:, 1] = np.random.standard_normal(SP500.shape)
     res = ARX(SP500, lags=1, x=x2).fit(disp="off")
-    with pytest.raises(ValueError, match="The shapes of the arrays contained"):
+    with pytest.raises(ValueError, match=r"The shapes of the arrays contained"):
         res.forecast(x={"x0": x2.iloc[:, 0], "x1": x2.iloc[10:, 1:]})
-    with pytest.raises(ValueError, match="1- and 2-dimensional x values"):
+    with pytest.raises(ValueError, match=r"1- and 2-dimensional x values"):
         res.forecast(x=x2)
-    with pytest.raises(ValueError, match="The leading dimension of x"):
-        _x2 = np.asarray(x2)
-        _x2 = _x2.reshape((1, -1, 2))
+    _x2 = np.asarray(x2)
+    _x2 = _x2.reshape((1, -1, 2))
+    with pytest.raises(ValueError, match=r"The leading dimension of x"):
         res.forecast(x=_x2)
-    with pytest.raises(ValueError, match="The number of values passed"):
+    with pytest.raises(ValueError, match=r"The number of values passed"):
         res.forecast(x=np.empty((2, SP500.shape[0], 3)))
-    with pytest.raises(ValueError, match="The shape of x does not satisfy the"):
+    with pytest.raises(ValueError, match=r"The shape of x does not satisfy the"):
         res.forecast(x=np.empty((2, SP500.shape[0] // 2, 1)))
 
 
@@ -913,7 +931,6 @@ def test_forecast_ar0(constant, lags):
 def test_simulation_exog():
     # GH 551
     burn = 250
-    from arch.univariate import Normal
 
     rs = np.random.RandomState(3382983)
     normal = Normal(seed=rs)

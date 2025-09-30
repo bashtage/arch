@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ["str_format", "pval_format"]
+__all__ = ["pval_format", "str_format"]
 
 
 def str_format(v: float) -> str:
@@ -17,7 +17,7 @@ def str_format(v: float) -> str:
     if digits > 0:
         d = int(5 - digits)
     else:
-        d = int(4)
+        d = 4
 
     format_str = "{0:" + f"0.{d}f" + "}"
     return format_str.format(v)
