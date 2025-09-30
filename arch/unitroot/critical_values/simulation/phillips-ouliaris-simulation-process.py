@@ -200,7 +200,6 @@ report = []
 for key, n_sim_value in nsimulation.items():
     s = key[0].upper()
     t = key[1]
-    n = n_sim_value
     report.append(
         f"{s}-type statistics with trend {t} based on {n_sim_value:,} simulations"
     )
