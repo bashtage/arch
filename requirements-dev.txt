@@ -20,6 +20,7 @@ black[jupyter]~=25.1.0
 isort~=5.12
 colorama
 flake8
+flake8-bugbear
 mypy
 ruff>=0.8.6
 pyupgrade>=3.4.0

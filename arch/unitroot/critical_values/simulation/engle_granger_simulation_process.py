@@ -5,7 +5,7 @@ from typing import cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
 from shared import format_dict
 from statsmodels.regression.linear_model import OLS, WLS
 
@@ -54,7 +54,7 @@ for trend in trends:
                 params[-1] = 0.00
             out[cv].append(params)
         values = np.array(out[cv]).tolist()
-        out[cv] = [[round(cast(float, val), 5) for val in row] for row in values]
+        out[cv] = [[round(cast("float", val), 5) for val in row] for row in values]
 
     final_cv[trend] = dict(out)
 

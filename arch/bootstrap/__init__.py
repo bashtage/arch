@@ -21,15 +21,15 @@ except ImportError:
 
 
 __all__ = [
-    "IIDBootstrap",
-    "CircularBlockBootstrap",
-    "MovingBlockBootstrap",
-    "StationaryBootstrap",
-    "IndependentSamplesBootstrap",
-    "SPA",
-    "RealityCheck",
-    "StepM",
     "MCS",
+    "SPA",
+    "CircularBlockBootstrap",
+    "IIDBootstrap",
+    "IndependentSamplesBootstrap",
+    "MovingBlockBootstrap",
+    "RealityCheck",
+    "StationaryBootstrap",
+    "StepM",
     "_samplers_python",
     "optimal_block_length",
 ]

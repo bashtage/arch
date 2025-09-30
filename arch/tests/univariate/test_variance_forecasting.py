@@ -177,7 +177,9 @@ class TestVarianceForecasts:
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Bootstrap forecasting requires at least"
+        ):
             vol.forecast(
                 params,
                 self.resid,
@@ -240,7 +242,7 @@ class TestVarianceForecasts:
             params, self.resid, backcast, var_bounds, start=100, horizon=3
         )
         assert_allclose(forecast.forecasts, expected[100:])
-        with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+        with pytest.raises(ValueError, match=r"horizon must be an integer >= 1"):
             vol.forecast(params, self.resid, backcast, var_bounds, start=0, horizon=0)
 
     def test_arch_1_forecast_simulation(self):
@@ -547,7 +549,9 @@ class TestVarianceForecasts:
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Analytic forecasts not available for horizon"
+        ):
             vol.forecast(params, self.resid, backcast, var_bounds, horizon=10, start=0)
 
     def test_tarch_111_forecast_simulation(self):
@@ -650,7 +654,9 @@ class TestVarianceForecasts:
             assert_allclose(paths.mean(0), forecast.forecasts[j - 100])
             assert_allclose(paths, forecast.forecast_paths[j - 100])
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"start must include more than 100 observations"
+        ):
             vol.forecast(
                 params,
                 self.resid,
@@ -662,7 +668,7 @@ class TestVarianceForecasts:
                 method="bootstrap",
                 random_state=self.rng,
             )
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"unknown is not a known forecasting"):
             vol.forecast(params, self.resid, backcast, var_bounds, method="unknown")
 
     def test_harch_forecast_simulation(self):
@@ -866,7 +872,7 @@ class TestVarianceForecasts:
         assert_allclose(forecast.forecast_paths, paths[100:])
         assert_allclose(forecast.shocks, shocks[100:])
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"Analytic forecasts not available"):
             vol.forecast(params, resids, backcast, var_bounds, horizon=5)
 
     def test_egarch_101_forecast(self):
@@ -1913,7 +1919,7 @@ class TestVarianceForecasts:
         final += beta * (sigma2[-1] ** (delta / 2.0))
         final **= 2.0 / delta
         assert_allclose(final, forecast.forecasts[-1, 0])
-        with pytest.raises(ValueError, match="Analytic forecasts not"):
+        with pytest.raises(ValueError, match=r"Analytic forecasts not"):
             vol.forecast(
                 params,
                 resids,
@@ -2017,7 +2023,9 @@ class TestVarianceForecasts:
         assert forecast.forecasts.shape[1] == 1
 
         vol = FIGARCH(truncation=50, power=1.0)
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Analytic forecasts not available for horizon"
+        ):
             vol.forecast(
                 params, resids, backcast, var_bounds, horizon=2, method="analytic"
             )
@@ -2186,12 +2194,13 @@ class TestBootstrapRng:
         y = self.rng.random_sample(1000)
         bs_rng = BootstrapRng(y, 100)
         rng = bs_rng.rng()
-        with pytest.raises(IndexError):
-            for _ in range(100, 1001):
-                rng(1)
+        for _ in range(100, 1000):
+            rng(1)
+        with pytest.raises(IndexError, match=r"not enough data points"):
+            rng(1)
 
         y = self.rng.random_sample(1000)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"start must be > 0 and"):
             BootstrapRng(y, 0)
 
     def test_bootstrap_rng(self):
@@ -2207,7 +2216,9 @@ class TestBootstrapRng:
         bs_rs = bs_rng.random_state
         assert bs_rs is rs
 
-        with pytest.raises(TypeError):
+        with pytest.raises(
+            TypeError, match=r"random_state must be a NumPy RandomState instance"
+        ):
             BootstrapRng(resid, start=100, random_state=1234)
 
 

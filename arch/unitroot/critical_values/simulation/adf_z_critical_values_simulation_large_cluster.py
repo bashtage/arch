@@ -125,7 +125,7 @@ rng = RandomState(0)
 seeds = list(rng.random_integers(0, 2**31 - 2, size=EX_NUM))
 
 for tr in trends:
-    results = cast(ndarray, zeros((len(percentiles), m, EX_NUM)) * nan)
+    results = cast("ndarray", zeros((len(percentiles), m, EX_NUM)) * nan)
     filename = "adf_z_" + tr + ".npz"
 
     for i, t in enumerate(T):
@@ -154,6 +154,6 @@ for tr in trends:
         elapsed = datetime.datetime.now() - now
         print(f"Total time {elapsed} for T={t}")
         quantiles = [percentile(x, percentiles) for x in out]
-        results[:, i, :] = cast(ndarray, array(quantiles).T)
+        results[:, i, :] = cast("ndarray", array(quantiles).T)
 
         savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)

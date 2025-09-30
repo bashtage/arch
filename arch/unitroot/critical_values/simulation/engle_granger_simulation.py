@@ -126,7 +126,7 @@ def block(
         if last_report - remaining > 1000:
             last_report = remaining
             print(f"Index: {idx}, Trend: {trend}, Remaining: {remaining}")
-            print(f"Est. time remaining: {str(dt.timedelta(seconds=remaining_time))}")
+            print(f"Est. time remaining: {dt.timedelta(seconds=remaining_time)!s}")
 
     out = np.percentile(tstats, PERCENTILES, 1)
     np.savez(

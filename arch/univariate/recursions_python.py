@@ -17,23 +17,23 @@ from arch.typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [
-    "bounds_check",
-    "harch_recursion",
-    "arch_recursion",
-    "garch_recursion",
-    "egarch_recursion",
-    "midas_recursion",
-    "figarch_weights",
-    "figarch_recursion",
-    "aparch_recursion",
-    "GARCHUpdater",
-    "FIGARCHUpdater",
+    "ARCHInMeanRecursion",
+    "EGARCHUpdater",
     "EWMAUpdater",
+    "FIGARCHUpdater",
+    "GARCHUpdater",
     "HARCHUpdater",
     "MIDASUpdater",
-    "EGARCHUpdater",
     "VolatilityUpdater",
-    "ARCHInMeanRecursion",
+    "aparch_recursion",
+    "arch_recursion",
+    "bounds_check",
+    "egarch_recursion",
+    "figarch_recursion",
+    "figarch_weights",
+    "garch_recursion",
+    "harch_recursion",
+    "midas_recursion",
 ]
 
 LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
@@ -382,8 +382,7 @@ def egarch_recursion_python(
             else:
                 lnsigma2[t] += parameters[loc] * lnsigma2[t - 1 - j]
             loc += 1
-        if lnsigma2[t] > LNSIGMA_MAX:
-            lnsigma2[t] = LNSIGMA_MAX
+        lnsigma2[t] = min(lnsigma2[t], LNSIGMA_MAX)
         sigma2[t] = np.exp(lnsigma2[t])
         if sigma2[t] < var_bounds[t, 0]:
             sigma2[t] = var_bounds[t, 0]
@@ -683,7 +682,6 @@ class VolatilityUpdater(metaclass=ABCMeta):
         to pre-compute expensive parameter transformations that do not change
         with each call to ``update``.
         """
-        pass
 
     @abstractmethod
     def update(
@@ -716,7 +714,6 @@ class VolatilityUpdater(metaclass=ABCMeta):
         -----
         The update to sigma2 occurs inplace.
         """
-        pass
 
     def _update_tester(
         self,
@@ -761,7 +758,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
-        self.backcast = cast(float, backcast)
+        self.backcast = cast("float", backcast)
 
     def update(
         self,
@@ -810,7 +807,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
-        self.backcast = cast(float, backcast)
+        self.backcast = cast("float", backcast)
 
     def update(
         self,
@@ -1009,7 +1006,7 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
-        self.backcast = cast(Float64Array1D, backcast)
+        self.backcast = cast("Float64Array1D", backcast)
 
     def update(
         self,
@@ -1051,7 +1048,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
-        self.backcast = cast(float, backcast)
+        self.backcast = cast("float", backcast)
         self._resize(nobs)
 
     def update(
@@ -1084,8 +1081,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             else:
                 self.lnsigma2[t] += parameters[loc] * self.lnsigma2[t - 1 - j]
             loc += 1
-        if self.lnsigma2[t] > LNSIGMA_MAX:
-            self.lnsigma2[t] = LNSIGMA_MAX
+        self.lnsigma2[t] = min(self.lnsigma2[t], LNSIGMA_MAX)
         sigma2[t] = np.exp(self.lnsigma2[t])
         if sigma2[t] < var_bounds[t, 0]:
             sigma2[t] = var_bounds[t, 0]

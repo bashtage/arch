@@ -24,5 +24,5 @@ def test_performance_warning():
     var_bounds = np.empty((nobs, 2))
     var_bounds[:, 0] = 0.0
     var_bounds[:, 1] = 1.0e14
-    with pytest.warns(PerformanceWarning):
+    with pytest.warns(PerformanceWarning, match=r"numba is not available"):
         arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds)

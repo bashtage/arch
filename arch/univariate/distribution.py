@@ -28,13 +28,13 @@ from numpy import (
     sum,
 )
 from numpy.random import Generator, RandomState, default_rng
+from scipy import stats
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
-import scipy.stats as stats
 
 from arch.typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 
-__all__ = ["Distribution", "Normal", "StudentsT", "SkewStudent", "GeneralizedError"]
+__all__ = ["Distribution", "GeneralizedError", "Normal", "SkewStudent", "StudentsT"]
 
 
 class Distribution(metaclass=ABCMeta):
@@ -81,7 +81,7 @@ class Distribution(metaclass=ABCMeta):
             raise ValueError(f"parameters must have {len(bounds)} elements")
         if len(bounds) == 0:
             return empty(0)
-        for p, n, b in zip(params, self.name, bounds):
+        for p, n, b in zip(params, self.name, bounds, strict=False):
             if not (b[0] <= p <= b[1]):
                 raise ValueError(
                     f"{n} does not satisfy the bounds requirement of ({b[0]}, {b[1]})"
@@ -115,7 +115,7 @@ class Distribution(metaclass=ABCMeta):
 
     @abstractmethod
     def simulate(
-        self, parameters: int | float | Sequence[float | int] | ArrayLike1D
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         """
         Simulates i.i.d. draws from the distribution
@@ -420,7 +420,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         return self._generator.standard_normal(size)
 
     def simulate(
-        self, parameters: int | float | Sequence[float | int] | ArrayLike1D
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         return self._simulator
 
@@ -578,7 +578,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
-        k = cast(float, stats.kurtosis(std_resid, fisher=False))
+        k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
@@ -589,7 +589,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         return self._generator.standard_t(self._parameters[0], size=size) / std_dev
 
     def simulate(
-        self, parameters: int | float | Sequence[float | int] | ArrayLike1D
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
@@ -718,7 +718,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     References
     ----------
     .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
-       *International Economic Review*, 35(3), 705–730.
+       *International Economic Review*, 35(3), 705-730.
        <https://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
 
     """
@@ -833,7 +833,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
-        k = cast(float, stats.kurtosis(std_resid, fisher=False))
+        k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
@@ -849,7 +849,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return ppf
 
     def simulate(
-        self, parameters: int | float | Sequence[float | int] | ArrayLike1D
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
@@ -1182,7 +1182,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return randoms / scale
 
     def simulate(
-        self, parameters: int | float | Sequence[float | int] | ArrayLike1D
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 1.0:

@@ -40,7 +40,7 @@ for k in ("c", "ct"):
     critical_values[0] = 0.0
     sio.write(k + " = (")
     count = 0
-    for c, q in zip(critical_values, quantiles):
+    for c, q in zip(critical_values, quantiles, strict=False):
         sio.write("(" + f"{q:0.3f}" + ", " + f"{c:0.4f}" + ")")
         count += 1
         if count % 4 == 0:

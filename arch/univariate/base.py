@@ -12,8 +12,8 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import OptimizeResult
-import scipy.stats as stats
+from scipy import stats
+from scipy.optimize import OptimizeResult, minimize
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS
@@ -59,12 +59,12 @@ except ImportError:
 
 
 __all__ = [
-    "implicit_constant",
-    "ARCHModelResult",
     "ARCHModel",
     "ARCHModelForecast",
+    "ARCHModelResult",
     "constraint",
     "format_float_fixed",
+    "implicit_constant",
 ]
 
 CONVERGENCE_WARNING: str = """\
@@ -195,9 +195,11 @@ class ARCHModel(metaclass=ABCMeta):
         self._name = "ARCHModel"
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
         if y is not None:
-            self._y_series = cast(pd.Series, ensure1d(y, "y", series=True))
+            self._y_series = cast("pd.Series", ensure1d(y, "y", series=True))
         else:
-            self._y_series = cast(pd.Series, ensure1d(np.empty((0,)), "y", series=True))
+            self._y_series = cast(
+                "pd.Series", ensure1d(np.empty((0,)), "y", series=True)
+            )
         self._y = to_array_1d(
             np.ascontiguousarray(self._y_series.to_numpy()).astype(float)
         )
@@ -389,7 +391,7 @@ class ARCHModel(metaclass=ABCMeta):
         var_bounds = self.volatility.variance_bounds(y)
         vol = np.zeros(y.shape, dtype=float)
         self.volatility.compute_variance(params, y, vol, backcast, var_bounds)
-        vol = cast(Float64Array1D, np.sqrt(vol))
+        vol = cast("Float64Array1D", np.sqrt(vol))
 
         # Reshape resids vol
         vol_final = np.full(self._y.shape, np.nan, dtype=float)
@@ -400,7 +402,7 @@ class ARCHModel(metaclass=ABCMeta):
         fit_start, fit_stop = self._fit_indices
         loglikelihood = -1.0 * self._loglikelihood(
             params,
-            cast(Float64Array1D, vol**2 * np.ones(fit_stop - fit_start)),
+            cast("Float64Array1D", vol**2 * np.ones(fit_stop - fit_start)),
             backcast,
             var_bounds,
         )
@@ -496,7 +498,7 @@ class ARCHModel(metaclass=ABCMeta):
             _callback_info["llf"] = llf_f = -float(llf)
             return llf_f
 
-        return cast(np.ndarray, -llf)
+        return cast("np.ndarray", -llf)
 
     def _all_parameter_names(self) -> list[str]:
         """Returns a list containing all parameter names from the mean model,
@@ -564,7 +566,7 @@ class ARCHModel(metaclass=ABCMeta):
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
         assert isinstance(loglikelihood, float)
 
-        mp, vp, dp = self._parse_parameters(params)
+        mp, vp, _ = self._parse_parameters(params)
 
         resids = to_array_1d(self.resids(mp))
         vol = np.zeros(resids.shape[0], dtype=float)
@@ -615,7 +617,7 @@ class ARCHModel(metaclass=ABCMeta):
     def fit(
         self,
         update_freq: int = 1,
-        disp: bool | Literal["off"] | Literal["final"] = "final",
+        disp: Literal["off", "final"] | bool = "final",
         starting_values: ArrayLike1D | None = None,
         cov_type: Literal["robust", "classic"] = "robust",
         show_warning: bool = True,
@@ -794,8 +796,6 @@ class ARCHModel(metaclass=ABCMeta):
         args = (sigma2, backcast, var_bounds)
         ineq_constraints = constraint(a, b)
 
-        from scipy.optimize import minimize
-
         options = {} if options is None else options
         options.setdefault("disp", disp_flag)
         with warnings.catch_warnings():
@@ -832,12 +832,12 @@ class ARCHModel(metaclass=ABCMeta):
         params = opt.x
         loglikelihood = -1.0 * opt.fun
 
-        mp, vp, dp = self._parse_parameters(params)
+        mp, vp, _ = self._parse_parameters(params)
 
         resids = self.resids(mp)
         vol = np.zeros(resids.shape[0], dtype=float)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
-        vol = cast(Float64Array1D, np.sqrt(vol))
+        vol = cast("Float64Array1D", np.sqrt(vol))
 
         try:
             r2 = self._r2(mp)
@@ -1258,7 +1258,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         counts = (mc, vc, dc)
         titles = ("Mean Model", "Volatility Model", "Distribution")
         total = 0
-        for title, count in zip(titles, counts):
+        for title, count in zip(titles, counts, strict=False):
             if count == 0:
                 continue
 
@@ -1404,8 +1404,8 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         >>> fig = res.plot(scale=360)
         """
-        from matplotlib.axes import Axes
-        from matplotlib.pyplot import figure
+        from matplotlib.axes import Axes  # noqa: PLC0415
+        from matplotlib.pyplot import figure  # noqa: PLC0415
 
         def _set_tight_x(axis: Axes, index: pd.Index) -> None:
             try:
@@ -1557,12 +1557,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         if params is None:
             params = self._params
-        else:
-            if (
-                params.size != np.array(self._params).size
-                or params.ndim != self._params.ndim
-            ):
-                raise ValueError("params have incorrect dimensions")
+        elif (
+            params.size != np.array(self._params).size
+            or params.ndim != self._params.ndim
+        ):
+            raise ValueError("params have incorrect dimensions")
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
         return self.model.forecast(
@@ -1636,7 +1635,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         >>> res = am.fit()
         >>> fig = res.hedgehog_plot(plot_type='mean')
         """
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         plot_mean = plot_type.lower() == "mean"
         if start is None:
@@ -1652,7 +1651,7 @@ class ARCHModelFixedResult(_SummaryRepr):
                         simulations=simulations,
                     )
                     invalid_start = False
-                except ValueError:
+                except ValueError:  # noqa: PERF203
                     start += 1
         else:
             forecasts = self.forecast(
@@ -1917,15 +1916,14 @@ class ARCHModelResult(ARCHModelFixedResult):
         smry.tables.append(table)
 
         conf_int = np.asarray(self.conf_int())
-        conf_int_str = []
-        for c in conf_int:
-            conf_int_str.append(
-                "["
-                + format_float_fixed(c[0], 7, 3)
-                + ","
-                + format_float_fixed(c[1], 7, 3)
-                + "]"
-            )
+        conf_int_str = [
+            "["
+            + format_float_fixed(c[0], 7, 3)
+            + ","
+            + format_float_fixed(c[1], 7, 3)
+            + "]"
+            for c in conf_int
+        ]
 
         stubs = list(self._names)
         header = ["coef", "std err", "t", "P>|t|", "95.0% Conf. Int."]
@@ -1956,7 +1954,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         counts = (mc, vc, dc)
         titles = ("Mean Model", "Volatility Model", "Distribution")
         total = 0
-        for title, count in zip(titles, counts):
+        for title, count in zip(titles, counts, strict=False):
             if count == 0:
                 continue
 

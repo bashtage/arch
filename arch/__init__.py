@@ -4,9 +4,9 @@ from .utility import test
 
 
 def doc() -> None:
-    import webbrowser
+    import webbrowser  # noqa: PLC0415
 
     webbrowser.open("https://bashtage.github.io/arch/")
 
 
-__all__ = ["arch_model", "__version__", "doc", "test", "version_tuple"]
+__all__ = ["__version__", "arch_model", "doc", "test", "version_tuple"]

@@ -156,12 +156,12 @@ for file_type in FILE_TYPES:
         num_files[(file_type, trend)] = len(result_files)
         for rf in result_files:
             temp = pd.DataFrame(pd.read_hdf(rf, "results"))
-            mi_cols = cast(pd.MultiIndex, temp.columns)
+            mi_cols = cast("pd.MultiIndex", temp.columns)
             statistics = mi_cols.levels[2]
             for stat in statistics:
                 # TODO: Bug in pandas-stubs prevents valid index types
                 index_slice = pd.IndexSlice[:, :, stat]
-                single = temp.loc[:, index_slice]  # type: ignore
+                single = temp.loc[:, index_slice]
                 single.columns = single.columns.droplevel(2)
                 results[(stat, trend)].append(single)
 
@@ -172,12 +172,12 @@ nsimulation = {k: 250_000 * v for k, v in num_files.items()}
 joined = defaultdict(list)
 for key in results:
     result_dfs = results[key]
-    mi_columns = cast(pd.MultiIndex, result_dfs[0].columns)
+    mi_columns = cast("pd.MultiIndex", result_dfs[0].columns)
     stoch_trends = mi_columns.levels[1]
     for st in stoch_trends:
         for df in result_dfs:
             # TODO: Bug in pandas-stubs prevents valid index types
-            single = df.loc[:, pd.IndexSlice[:, st]]  # type: ignore
+            single = df.loc[:, pd.IndexSlice[:, st]]
             single.columns = single.columns.droplevel(1)
             single = single.dropna(axis=1, how="all")
             joined[key + (st,)].append(single)
@@ -186,8 +186,8 @@ final = {key: pd.concat(joined[key], axis=1) for key in joined}
 stat_names = {"p_z": "Pz", "p_u": "Pu", "z_t": "Zt", "z_a": "Za"}
 cv_params = {}
 cv_tau_min = {}
-for final_key in final:
-    final_key = (stat_names[final_key[0]],) + final_key[1:]
+for _final_key in final:
+    final_key = (stat_names[_final_key[0]],) + _final_key[1:]
     cv_params[final_key], cv_tau_min[final_key] = estimate_cv_regression(
         final[final_key], final_key[0]
     )
@@ -197,11 +197,12 @@ for wins_key in sorted(WINS):
     print(f"{wins_key}: {WINS[wins_key]}")
 
 report = []
-for key in nsimulation:
+for key, n_sim_value in nsimulation.items():
     s = key[0].upper()
     t = key[1]
-    n = nsimulation[key]
-    report.append(f"{s}-type statistics with trend {t} based on {n:,} simulations")
+    report.append(
+        f"{s}-type statistics with trend {t} based on {n_sim_value:,} simulations"
+    )
 
 counts = "\n".join(report)
 
@@ -212,23 +213,23 @@ quantiles_d = defaultdict(list)
 pval_data = {}
 for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
     # TODO: Bug in pandas-stubs prevents valid index types
-    pval_data[multi_key] = final[multi_key].loc[:, 2000]  # type: ignore
+    pval_data[multi_key] = final[multi_key].loc[:, 2000]
     # TODO: Bug in pandas-stubs prevents valid index types
-    temp_series = final[multi_key].loc[:, 2000].mean(1)  # type: ignore
+    temp_series = final[multi_key].loc[:, 2000].mean(1)
     # This is a series since there are many columns with 2000
-    temp_series.name = multi_key[-1]  # type: ignore
+    temp_series.name = multi_key[-1]
     quantiles_d[multi_key[:-1]].append(temp_series)
 quantiles = {}
 for key in quantiles_d:
-    selected = cast(np.ndarray, quantiles_d[key])
+    selected = cast("np.ndarray", quantiles_d[key])
     quantiles[key] = pd.concat(selected, axis=1)
 
 
 plt.rc("figure", figsize=(16, 8))
 sns.set_style("darkgrid")
 pdf = matplotlib.backends.backend_pdf.PdfPages("output.pdf")
-for quantile_key in quantiles:
-    temp = quantiles[quantile_key]
+for quantile_key, quantile_value in quantiles.items():
+    temp = quantile_value
     y = temp.index.to_numpy()[:, None]
     x = temp.to_numpy()
     stat = quantile_key[0]
@@ -253,8 +254,8 @@ pval_small_p = {}
 pval_tau_star = {}
 pval_tau_min = {}
 pval_tau_max = {}
-for pval_key in pval_data:
-    pval_series = pval_data[pval_key].copy()
+for pval_key, pval_value in pval_data.items():
+    pval_series = pval_value.copy()
     if pval_key[0] in ("p_z", "p_u"):
         pval_series.index = 1 - pval_series.index
         pval_series = -1 * pval_series

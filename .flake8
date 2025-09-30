@@ -1,0 +1,4 @@
+[flake8]
+# Leave at 99 for now
+max-line-length = 99
+ignore = E203,W503,BLK100

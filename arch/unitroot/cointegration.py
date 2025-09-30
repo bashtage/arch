@@ -32,13 +32,13 @@ from arch.utility.timeseries import add_trend
 from arch.vendor._decorators import Appender, Substitution
 
 __all__ = [
-    "engle_granger",
-    "EngleGrangerTestResults",
+    "CriticalValueWarning",
     "DynamicOLS",
     "DynamicOLSResults",
-    "phillips_ouliaris",
+    "EngleGrangerTestResults",
     "PhillipsOuliarisTestResults",
-    "CriticalValueWarning",
+    "engle_granger",
+    "phillips_ouliaris",
 ]
 
 
@@ -1035,8 +1035,8 @@ class FullyModifiedOLS:
             center = float(self._y.mean())
             tss_df = 1
         y_centered = self._y - center
-        ssr = float(cast(float, resid.T @ resid))
-        tss = float(cast(float, y_centered.T @ y_centered))
+        ssr = float(cast("float", resid.T @ resid))
+        tss = float(cast("float", y_centered.T @ y_centered))
         r2 = 1.0 - ssr / tss
         r2_adj = 1.0 - (ssr / (nobs - nvar)) / (tss / (nobs - tss_df))
         return resid, r2, r2_adj

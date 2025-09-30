@@ -67,8 +67,8 @@ def trivariate_data(request) -> tuple[ArrayLike2D, ArrayLike2D]:
         dt_index = pd.date_range("1-1-2000", periods=nobs, freq=MONTH_END)
         cols = [f"y{i}" for i in range(1, 4)]
         data = pd.DataFrame(y, columns=cols, index=dt_index)
-        return cast(pd.DataFrame, data.iloc[:, :1]), cast(
-            pd.DataFrame, data.iloc[:, 1:]
+        return cast("pd.DataFrame", data.iloc[:, :1]), cast(
+            "pd.DataFrame", data.iloc[:, 1:]
         )
 
-    return cast(Float64Array2D, y[:, :1]), cast(Float64Array2D, y[:, 1:])
+    return cast("Float64Array2D", y[:, :1]), cast("Float64Array2D", y[:, 1:])

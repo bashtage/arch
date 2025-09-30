@@ -1,3 +1,5 @@
+from arch.compat.matplotlib import HAS_MATPLOTLIB
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
@@ -7,13 +9,6 @@ from statsmodels.iolib.summary import Summary
 from arch.unitroot._engle_granger import engle_granger_cv, engle_granger_pval
 from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
 from arch.unitroot.cointegration import engle_granger
-
-try:
-    import matplotlib.pyplot as plt  # noqa
-
-    HAS_MATPLOTLIB = True
-except ImportError:
-    HAS_MATPLOTLIB = False
 
 
 @pytest.fixture(scope="module", params=[True, False])
@@ -167,7 +162,7 @@ def test_trivariate(data, trend, method, lhs, agg_backend):
     assert isinstance(ci, pd.Series)
 
     if HAS_MATPLOTLIB:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         fig = test.plot()
         assert isinstance(fig, plt.Figure)
@@ -178,16 +173,16 @@ def test_trivariate(data, trend, method, lhs, agg_backend):
 
 
 def test_exceptions_pvals():
-    with pytest.raises(ValueError, match="Trend must by one"):
+    with pytest.raises(ValueError, match=r"Trend must by one"):
         engle_granger_cv("unknown", 2, 500)
-    with pytest.raises(ValueError, match="The number of cross-sectional"):
+    with pytest.raises(ValueError, match=r"The number of cross-sectional"):
         engle_granger_cv("n", 25, 500)
 
 
 def test_exceptions_critvals():
-    with pytest.raises(ValueError, match="Trend must by one"):
+    with pytest.raises(ValueError, match=r"Trend must by one"):
         engle_granger_pval(-3.0, "unknown", 500)
-    with pytest.raises(ValueError, match="The number of cross-sectional"):
+    with pytest.raises(ValueError, match=r"The number of cross-sectional"):
         engle_granger_pval(-3.0, "n", 500)
 
 
@@ -201,7 +196,7 @@ def test_exceptions(data):
         y, x = data.y, data.x
     else:
         y, x = data[:, :2].T
-    with pytest.raises(ValueError, match="Unknown trend. Must be one of"):
+    with pytest.raises(ValueError, match=r"Unknown trend. Must be one of"):
         engle_granger(y, x, trend="nc")
 
 
@@ -215,6 +210,8 @@ def test_name_ci_vector(data):
 
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not available")
 def test_plot(data, agg_backend):
+    import matplotlib.pyplot as plt  # noqa: PLC0415
+
     rhs = ["x", "y", "z"]
     lhs = "y"
     if isinstance(data, pd.DataFrame):
@@ -233,7 +230,7 @@ def test_plot(data, agg_backend):
 def test_cross_section_exceptions():
     y = np.random.standard_normal(1000)
     x = np.random.standard_normal((1000, 2))
-    with pytest.raises(ValueError, match="trend must be one of "):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         _cross_section(y, x, "unknown")
 
 

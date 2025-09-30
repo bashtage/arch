@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
-import scipy.stats as stats
+from scipy import stats
 
 from arch.bootstrap import (
     CircularBlockBootstrap,
@@ -29,7 +29,7 @@ class SPAData(NamedTuple):
     models_df: pd.DataFrame
 
 
-@pytest.fixture()
+@pytest.fixture
 def spa_data():
     rng = RandomState(23456)
     fixed_rng = stats.chi2(10)
@@ -118,21 +118,27 @@ def test_pvalues_and_critvals(spa_data):
 def test_errors(spa_data):
     spa = SPA(spa_data.benchmark, spa_data.models, reps=100)
 
-    with pytest.raises(RuntimeError):
-        spa.pvalues
+    with pytest.raises(
+        RuntimeError, match=r"compute must be called before pvalues are available"
+    ):
+        _ = spa.pvalues
 
-    with pytest.raises(RuntimeError):
-        spa.critical_values()
-    with pytest.raises(RuntimeError):
-        spa.better_models()
+    with pytest.raises(
+        RuntimeError, match=r"compute must be called before pvalues are available"
+    ):
+        _ = spa.critical_values()
+    with pytest.raises(
+        RuntimeError, match=r"compute must be called before pvalues are available"
+    ):
+        _ = spa.better_models()
 
-    with pytest.raises(ValueError):
-        SPA(spa_data.benchmark, spa_data.models, bootstrap="unknown")
+    with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
+        _ = SPA(spa_data.benchmark, spa_data.models, bootstrap="unknown")
     spa.compute()
-    with pytest.raises(ValueError):
-        spa.better_models(pvalue_type="unknown")
-    with pytest.raises(ValueError):
-        spa.critical_values(pvalue=1.0)
+    with pytest.raises(ValueError, match=r"Unknown pvalue type"):
+        _ = spa.better_models(pvalue_type="unknown")
+    with pytest.raises(ValueError, match=r"pvalue must be in \(0,1\)"):
+        _ = spa.critical_values(pvalue=1.0)
 
 
 def test_str_repr(spa_data):
@@ -144,8 +150,8 @@ def test_str_repr(spa_data):
 
     expected = (
         "<strong>SPA</strong>("
-        + "<strong>studentization</strong>: asymptotic, "
-        + "<strong>bootstrap</strong>: "
+        "<strong>studentization</strong>: asymptotic, "
+        "<strong>bootstrap</strong>: "
         + str(spa.bootstrap)
         + ", <strong>ID</strong>: "
         + hex(id(spa))
@@ -297,7 +303,7 @@ class TestStepM:
     def test_errors(self):
         stepm = StepM(self.benchmark, self.models, size=0.10)
         with pytest.raises(RuntimeError):
-            stepm.superior_models
+            _ = stepm.superior_models
 
     def test_exact_ties(self):
         adj_models = self.models_df - 100.0
@@ -362,7 +368,7 @@ class TestMCS:
         indices = np.zeros(m) * np.nan
         for i in range(m):
             removed = list(indices[np.isfinite(indices)])
-            include = list(set(list(range(10))).difference(removed))
+            include = list(set(range(10)).difference(removed))
             include.sort()
             pval, drop_index = r_step(
                 losses[:, np.array(include)], mcs._bootstrap_indices
@@ -405,7 +411,7 @@ class TestMCS:
         indices = np.zeros(m) * np.nan
         for i in range(m):
             removed = list(indices[np.isfinite(indices)])
-            include = list(set(list(range(10))).difference(removed))
+            include = list(set(range(10)).difference(removed))
             include.sort()
             pval, drop_index, _ = max_step(
                 losses[:, np.array(include)], mcs._bootstrap_indices
@@ -427,11 +433,13 @@ class TestMCS:
 
     def test_mcs_error(self):
         mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method="r")
-        with pytest.raises(RuntimeError):
-            mcs.included
+        with pytest.raises(
+            RuntimeError, match=r"Must call compute before accessing results"
+        ):
+            _ = mcs.included
 
     def test_errors(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"losses must have at least two columns"):
             MCS(self.losses[:, 1], 0.05)
         mcs = MCS(
             self.losses,
@@ -451,7 +459,7 @@ class TestMCS:
             bootstrap="moving block",
         )
         mcs.compute()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
             MCS(self.losses, 0.05, bootstrap="unknown")
 
     def test_str_repr(self):
@@ -462,8 +470,8 @@ class TestMCS:
         assert_equal(mcs.__repr__(), expected)
         expected = (
             "<strong>MCS</strong>("
-            + "<strong>size</strong>: 0.05, "
-            + "<strong>bootstrap</strong>: "
+            "<strong>size</strong>: 0.05, "
+            "<strong>bootstrap</strong>: "
             + str(mcs.bootstrap)
             + ", "
             + "<strong>ID</strong>: "
@@ -500,5 +508,5 @@ def test_bad_values():
     # GH 654
     qlike = np.array([[0.38443391, 0.39939706, 0.2619653]])
     q = MCS(qlike, size=0.05, method="max")
-    with pytest.warns(RuntimeWarning, match="During computation of a step"):
+    with pytest.warns(RuntimeWarning, match=r"During computation of a step"):
         q.compute()

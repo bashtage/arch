@@ -24,14 +24,14 @@ from arch.typing import (
 )
 
 __all__ = [
-    "ensure1d",
-    "parse_dataframe",
-    "DocStringInheritor",
-    "date_to_index",
-    "cutoff_to_index",
-    "ensure2d",
     "AbstractDocStringInheritor",
+    "DocStringInheritor",
+    "cutoff_to_index",
+    "date_to_index",
+    "ensure1d",
+    "ensure2d",
     "find_index",
+    "parse_dataframe",
     "to_array_1d",
 ]
 
@@ -56,12 +56,12 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     """
     if isinstance(x, np.ndarray):
         if x.ndim == 1 and x.dtype == np.float64:
-            return cast(Float64Array1D, x)
+            return cast("Float64Array1D", x)
         _x = x.squeeze()
         if _x.ndim == 1:
-            return cast(Float64Array1D, _x.astype(float))
+            return cast("Float64Array1D", _x.astype(float))
         elif _x.ndim == 0:
-            return cast(Float64Array1D, np.atleast_1d(_x).astype(float, copy=False))
+            return cast("Float64Array1D", np.atleast_1d(_x).astype(float, copy=False))
         else:
             raise ValueError("x must be 1D or 1D convertible")
     elif isinstance(x, Series):
@@ -72,7 +72,7 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
 
 @overload
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,
+    x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[True] = ...,
 ) -> Series:  # pragma: no cover
@@ -81,7 +81,7 @@ def ensure1d(
 
 @overload
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,
+    x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[False],
 ) -> AnyArray1D:  # pragma: no cover
@@ -89,7 +89,7 @@ def ensure1d(
 
 
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,  # noqa: E231
+    x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: bool = False,
 ) -> AnyArray1D | Series:
@@ -137,9 +137,9 @@ def ensure2d(
         elif x.ndim == 2:
             return x
         else:
-            raise ValueError("Variable " + name + "must be 2d or reshapable to 2d")
+            raise ValueError(f"Variable {name} must be 2d or reshapable to 2d")
     else:
-        raise TypeError("Variable " + name + "must be a Series, DataFrame or ndarray.")
+        raise TypeError(f"Variable {name} must be a Series, DataFrame or ndarray.")
 
 
 def parse_dataframe(
@@ -172,7 +172,7 @@ class DocStringInheritor(type):
     def __new__(
         mcs, name: str, bases: tuple[type, ...], clsdict: dict[str, Any]
     ) -> Any:
-        if not ("__doc__" in clsdict and clsdict["__doc__"]):
+        if not (clsdict.get("__doc__")):
             for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
                 doc = mro_cls.__doc__
                 if doc:

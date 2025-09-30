@@ -36,7 +36,7 @@ def simulate_kpss(
         z = add_trend(z, trend="t")
     zinv = np.linalg.pinv(z)
     trend_coef = zinv.dot(e)
-    resid = e - cast(np.ndarray, z.dot(trend_coef))
+    resid = e - cast("np.ndarray", z.dot(trend_coef))
     s = np.cumsum(resid, axis=0)
     lam = (resid**2.0).mean(axis=0)
     kpss = 1 / (nobs**2.0) * (s**2.0).sum(axis=0) / lam

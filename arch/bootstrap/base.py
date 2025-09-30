@@ -11,7 +11,7 @@ import warnings
 import numpy as np
 from numpy.random import Generator, RandomState
 import pandas as pd
-import scipy.stats as stats
+from scipy import stats
 
 from arch.typing import (
     AnyArray,
@@ -36,11 +36,11 @@ from arch.utility.exceptions import (
 )
 
 __all__ = [
-    "IIDBootstrap",
-    "StationaryBootstrap",
     "CircularBlockBootstrap",
-    "MovingBlockBootstrap",
+    "IIDBootstrap",
     "IndependentSamplesBootstrap",
+    "MovingBlockBootstrap",
+    "StationaryBootstrap",
     "optimal_block_length",
 ]
 
@@ -64,10 +64,10 @@ def _get_random_integers(
     prng: Generator | RandomState, upper: int, *, size: int = 1
 ) -> Int64Array1D:
     if isinstance(prng, Generator):
-        return cast(Int64Array1D, prng.integers(upper, size=size, dtype=np.int64))
+        return cast("Int64Array1D", prng.integers(upper, size=size, dtype=np.int64))
     else:
         assert isinstance(prng, RandomState)
-        return cast(Int64Array1D, prng.randint(upper, size=size, dtype=np.int64))
+        return cast("Int64Array1D", prng.randint(upper, size=size, dtype=np.int64))
 
 
 def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
@@ -198,7 +198,7 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     elif isinstance(x, pd.Series):
         idx = [x.name]
     else:
-        idx = [i for i in range(x_arr.shape[1])]
+        idx = list(range(x_arr.shape[1]))
     return pd.DataFrame(opt, index=idx, columns=["stationary", "circular"])
 
 
@@ -263,13 +263,15 @@ def _loo_jackknife(
         args_copy: list[ArrayLike] = []
         for arg in args:
             if isinstance(arg, (pd.Series, pd.DataFrame)):
-                args_copy.append(cast(Union[pd.Series, pd.DataFrame], arg.iloc[items]))
+                args_copy.append(
+                    cast("Union[pd.Series, pd.DataFrame]", arg.iloc[items])
+                )
             else:
                 args_copy.append(arg[items])
         kwargs_copy: dict[str, ArrayLike] = {}
         for k, v in kwargs.items():
             if isinstance(v, (pd.Series, pd.DataFrame)):
-                kwargs_copy[k] = cast(Union[pd.Series, pd.DataFrame], v.iloc[items])
+                kwargs_copy[k] = cast("Union[pd.Series, pd.DataFrame]", v.iloc[items])
             else:
                 kwargs_copy[k] = v[items]
         if extra_kwargs is not None:
@@ -412,10 +414,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         if args:
             self._num_items = len(args[0])
         elif kwargs:
-            key = list(kwargs.keys())[0]
+            key = next(iter(kwargs.keys()))
             self._num_items = len(kwargs[key])
         all_args = list(args)
-        all_args.extend([v for v in kwargs.values()])
+        all_args.extend(list(kwargs.values()))
         if self._common_size_required:
             for arg in all_args:
                 if len(arg) != self._num_items:
@@ -510,7 +512,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             self._generator.bit_generator.state = value
         else:
             assert isinstance(self._generator, RandomState)
-            self._generator.set_state(cast(RandomStateState, value))
+            self._generator.set_state(cast("RandomStateState", value))
 
     def reset(self, use_seed: bool = True) -> None:
         """
@@ -689,12 +691,11 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         studentize_reps = studentize_reps if method == studentized else 0
         if sampling in ("semi", "semi-parametric", "semiparametric"):
             sampling = "semiparametric"
-        else:
-            if sampling not in ("nonparametric", "parametric"):
-                raise ValueError(
-                    'sampling must be one of "nonparametric", "parametric", "semi", '
-                    '"semi-parametric", or "semiparametric"'
-                )
+        elif sampling not in ("nonparametric", "parametric"):
+            raise ValueError(
+                'sampling must be one of "nonparametric", "parametric", "semi", '
+                '"semi-parametric", or "semiparametric"'
+            )
         _reuse = False
         if reuse:
             # check conditions for reuse
@@ -717,7 +718,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 reps,
                 extra_kwargs,
                 std_err_func=std_err_func,
-                studentize_reps=studentize_reps,  # noqa
+                studentize_reps=studentize_reps,
                 sampling=sampling,
             )
 
@@ -755,7 +756,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
-                values = cast(Float64Array, studentized_results)
+                values = cast("Float64Array", studentized_results)
 
             if method in ("debiased", "bc", "bias-corrected", "bca"):
                 # bias corrected uses modified percentiles, but is
@@ -1164,7 +1165,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         """
         Resample all data using the values in _index
         """
-        indices = cast(Union[Int64Array, tuple[Int64Array, ...]], self._index)
+        indices = cast("Union[Int64Array, tuple[Int64Array, ...]]", self._index)
         pos_data: list[NDArray | pd.DataFrame | pd.Series] = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
@@ -1338,7 +1339,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         Resample all data using the values in _index
         """
         pos_indices, kw_indices = cast(
-            tuple[list[Int64Array], dict[str, Int64Array]], self._index
+            "tuple[list[Int64Array], dict[str, Int64Array]]", self._index
         )
         pos_data: list[NDArray | pd.DataFrame | pd.Series] = []
         for i, values in enumerate(self._args):
@@ -1502,9 +1503,9 @@ class CircularBlockBootstrap(IIDBootstrap):
         indices %= self._num_items
 
         if indices.shape[0] > self._num_items:
-            return cast(Int64Array1D, indices[: self._num_items])
+            return cast("Int64Array1D", indices[: self._num_items])
         else:
-            return cast(Int64Array1D, indices)
+            return cast("Int64Array1D", indices)
 
 
 class StationaryBootstrap(CircularBlockBootstrap):
@@ -1701,7 +1702,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         indices = indices.flatten()
 
         if indices.shape[0] > self._num_items:
-            return cast(Int64Array1D, indices[: self._num_items])
+            return cast("Int64Array1D", indices[: self._num_items])
         else:
             return indices
 

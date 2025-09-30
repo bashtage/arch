@@ -1,4 +1,5 @@
 import os
+import sys
 
 from arch.utility.cov import cov_nw
 
@@ -24,12 +25,10 @@ def test(
         defaults with the user-provided arguments.
     """
 
-    import sys
-
     try:
-        import pytest
-    except ImportError:
-        raise ImportError("Need pytest to run tests")
+        import pytest  # noqa: PLC0415
+    except ImportError as exc:
+        raise ImportError("Need pytest to run tests") from exc
 
     cmd = ["--tb=auto", "--disable-pytest-warnings"]
     if extra_args:

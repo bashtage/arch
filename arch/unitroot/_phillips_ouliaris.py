@@ -1,4 +1,5 @@
 from typing import cast
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -292,7 +293,7 @@ def phillips_ouliaris(
         return _po_ptests(
             z,
             xsection,
-            cast(Literal["Pu", "Pz"], test_type),
+            cast("Literal['Pu', 'Pz']", test_type),
             trend,
             kernel,
             bandwidth,
@@ -301,7 +302,7 @@ def phillips_ouliaris(
     return _po_ztests(
         z,
         xsection,
-        cast(Literal["Za", "Zt"], test_type),
+        cast("Literal['Za', 'Zt']", test_type),
         trend,
         kernel,
         bandwidth,
@@ -440,7 +441,6 @@ def phillips_ouliaris_cv(
     tbl = CV_PARAMETERS[key]
     min_size = CV_TAU_MIN[key]
     if nobs < min_size:
-        import warnings
 
         warnings.warn(
             "The sample size is smaller than the smallest sample size used "

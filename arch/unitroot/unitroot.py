@@ -96,16 +96,16 @@ from arch.utility.timeseries import add_trend
 __all__ = [
     "ADF",
     "DFGLS",
-    "PhillipsPerron",
     "KPSS",
+    "SHORT_TREND_DESCRIPTION",
+    "TREND_DESCRIPTION",
+    "PhillipsPerron",
     "VarianceRatio",
+    "ZivotAndrews",
+    "auto_bandwidth",
     "kpss_crit",
     "mackinnoncrit",
     "mackinnonp",
-    "ZivotAndrews",
-    "auto_bandwidth",
-    "TREND_DESCRIPTION",
-    "SHORT_TREND_DESCRIPTION",
 ]
 
 TREND_MAP = {None: "n", 0: "c", 1: "ct", 2: "ctt"}
@@ -176,11 +176,11 @@ def _select_best_ic(
     maxlag = len(sigma2) - 1
     if method == "aic":
         crit = -2 * llf + 2 * arange(float(maxlag + 1))
-        icbest, _lag = min(zip(crit, arange(maxlag + 1)))
+        icbest, _lag = min(zip(crit, arange(maxlag + 1), strict=False))
         lag = int(_lag)
     elif method == "bic":
         crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
-        icbest, _lag = min(zip(crit, arange(maxlag + 1)))
+        icbest, _lag = min(zip(crit, arange(maxlag + 1), strict=False))
         lag = int(_lag)
     elif method == "t-stat":
         stop = 1.6448536269514722
@@ -283,10 +283,10 @@ def _autolag_ols_low_memory(
         xpx_sub = xpx[:i, :i]
         try:
             b = solve(xpx_sub, xpy[:i])
-        except LinAlgError:
+        except LinAlgError as exc:
             raise InfeasibleTestException(
                 singular_array_error.format(max_lags=maxlag, lag=m - i)
-            )
+            ) from exc
         sigma2[i - m] = squeeze(ypy - b.T @ xpx_sub @ b) / nobs
         if lower_method == "t-stat":
             xpxi = inv(xpx_sub)
@@ -773,7 +773,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def _select_lag(self) -> None:
         ic_best, best_lag = _df_select_lags(
             self._y,
-            cast(UnitRootTrend, self._trend),
+            cast("UnitRootTrend", self._trend),
             self._max_lags,
             self._method,
             low_memory=self._low_memory,
@@ -796,18 +796,18 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._select_lag()
         assert self._lags is not None
         y, trend, lags = self._y, self._trend, self._lags
-        resols = _estimate_df_regression(y, cast(UnitRootTrend, trend), lags)
+        resols = _estimate_df_regression(y, cast("UnitRootTrend", trend), lags)
         self._regression = resols
         (self._stat, *_) = (stat, *_) = resols.tvalues
         self._nobs = int(resols.nobs)
         self._pvalue = mackinnonp(
             stat,
-            regression=cast(Literal["n", "c", "ct", "ctt"], trend),
+            regression=cast("Literal['n', 'c', 'ct', 'ctt']", trend),
             num_unit_roots=1,
         )
         critical_values = mackinnoncrit(
             num_unit_roots=1,
-            regression=cast(Literal["n", "c", "ct", "ctt"], trend),
+            regression=cast("Literal['n', 'c', 'ct', 'ctt']", trend),
             nobs=resols.nobs,
         )
         self._critical_values = {
@@ -957,7 +957,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._lags = ADF(self._y, method=method, max_lags=max_lags).lags
             ols_detrend_coef = lstsq(z, y, rcond=None)[0]
             y_ols_detrend = y - z @ ols_detrend_coef
-            icbest, bestlag = _df_select_lags(
+            _, bestlag = _df_select_lags(
                 y_ols_detrend, "n", max_lags, method, low_memory=self._low_memory
             )
             self._lags = bestlag
@@ -971,10 +971,10 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat, *_ = resols.tvalues
         assert self._stat is not None
         self._pvalue = mackinnonp(
-            self._stat, regression=cast(Literal["c", "ct"], trend), dist_type="dfgls"
+            self._stat, regression=cast("Literal['c', 'ct']", trend), dist_type="dfgls"
         )
         critical_values = mackinnoncrit(
-            regression=cast(Literal["c", "ct"], trend),
+            regression=cast("Literal['c', 'ct']", trend),
             nobs=self._nobs,
             dist_type="dfgls",
         )
@@ -1663,7 +1663,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._vr: float | None = None
         self._stat_variance: float | None = None
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
-        for q, cv in zip(quantiles, norm.ppf(quantiles)):
+        for q, cv in zip(quantiles, norm.ppf(quantiles), strict=False):
             self._critical_values[str(int(100 * q)) + "%"] = cv
 
     @property
@@ -1710,7 +1710,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
             # Check length of y
             if nq % q != 0:
                 extra = nq % q
-                y = cast(Float64Array1D, y[:-extra])
+                y = cast("Float64Array1D", y[:-extra])
                 warnings.warn(
                     invalid_length_doc.format(var="y", block=q, drop=extra),
                     InvalidLengthWarning,
@@ -1808,11 +1808,11 @@ def mackinnonp(
     and the "n" version of the ADF z test statistic were computed following
     the methodology of MacKinnon (1994).
     """
-    dist_type = cast(Literal["adf-t", "adf-z", "dfgls"], dist_type.lower())
+    dist_type = cast("Literal['adf-t', 'adf-z', 'dfgls']", dist_type.lower())
     if num_unit_roots > 1 and dist_type.lower() != "adf-t":
         raise ValueError(
             "Cointegration results (num_unit_roots > 1) are"
-            + "only available for ADF-t values"
+            "only available for ADF-t values"
         )
     if dist_type == "adf-t":
         maxstat = tau_max[regression][num_unit_roots - 1]
@@ -2012,7 +2012,7 @@ def auto_bandwidth(
     for i in range(n + 1):
         a = list(y_arr[i:])
         b = list(y_arr[: len(y_arr) - i])
-        sig[i] = int(npsum([i * j for (i, j) in zip(a, b)]))
+        sig[i] = int(npsum([i * j for (i, j) in zip(a, b, strict=False)]))
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)
