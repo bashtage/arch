@@ -5,7 +5,7 @@ from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
 from numpy.random import Generator, RandomState
 
-from arch.typing import UnitRootTrend
+from arch._typing import UnitRootTrend
 
 # Storage Location
 if platform.system() == "Linux":

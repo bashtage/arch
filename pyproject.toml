@@ -1,14 +1,22 @@
 [build-system]
+build-backend = 'mesonpy'
 requires = [
-  "setuptools>=61",
-  "wheel",
-  "setuptools_scm>=9.2.0,<10",
-  "cython>=3.0.10",
-  "numpy>=2.0.0,<3"
+    'meson-python',
+    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+    "numpy>=2.0.0,<3",
+    "setuptools_scm>=9.2.0,<10",
 ]
-build-backend = "setuptools.build_meta"
 
 [project]
+name = "arch"
+# Keep syned with requirements.txt
+dependencies = [
+    "numpy>=1.22.3",
+    "scipy>=1.8",
+    "pandas>=1.4",
+    "statsmodels>=0.12",
+    "packaging",
+]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -26,7 +34,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 description = "ARCH for Python"
-dynamic = ["dependencies", "version"]
+version = "8.0.0dev0"
 keywords = [
   "arch",
   "ARCH",
@@ -51,15 +59,89 @@ license-files = [ "LICENSE.md" ]
 maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
-name = "arch"
 readme = "README.md"
 requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = [
+    # test
+    "pytest>=8.4.1,<9",
+    "pytest-randomly",
+    "pytest-xdist",
+    "pytest-cov",
+    "coverage[toml]",
+    "meson",
+    "ninja",
+]
+doc = [
+    # Documentation
+    "setuptools>=61",
+    "wheel",
+    "setuptools_scm[toml]>=8.0.3,<9",
+    "oldest-supported-numpy",
+    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+    "numpy >=1.22",
+    "scipy >=1.5.0",
+    "ipython >=8.0.1",
+    "matplotlib >=3.0",
+    "patsy >=0.5.3",
+    "statsmodels >=0.13.5",
+    "jinja2",
+    "sphinx>=7",
+    "seaborn",
+    "numpydoc>=1.0.0",
+    "nbsphinx",
+    "sphinx-immaterial",
+    "jupyter",
+    "notebook",
+    "sphinx-autodoc-typehints",
+    "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
+    "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
+    "ipython>=7",
+    "sphinx_immaterial",
+    "nbconvert",
+    "pickleshare",
+    # Requirements for doc build, in addition to requirements.txt
+    "pandas~=2.3.3",
+]
+dev = [
+    # versioning
+    "setuptools_scm[toml]>=9.2.0,<10",
+    "packaging",
+    # Performance
+    "cython>=3.0.10",
+    "numba>=0.55",
+    # Graphics
+    "matplotlib>=3",
+    "seaborn",
+    # Tests
+    "pytest>=8.4.1,<9",
+    "pytest-randomly",
+    "pytest-xdist",
+    "pytest-cov",
+    # formatting
+    "black[jupyter]~=25.9.0",
+    "isort~=6.0",
+    "colorama",
+    "flake8",
+    "flake8-bugbear",
+    "mypy",
+    "ruff>=0.8.6",
+    "pyupgrade>=3.4.0",
+    "jupyterlab-code-formatter",
+    "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
+    "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
+]
+
 
 [project.urls]
 homepage = "https://github.com/bashtage/arch"
 documentation = "https://bashtage.github.io/arch/"
 repository = "https://github.com/bashtage/arch"
 changelog = "https://bashtage.github.io/arch/changes.html"
+
+[tool.meson-python.args]
+setup = ['--vsenv']
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
@@ -188,6 +270,7 @@ filterwarnings = [
     "ignore:`formatargspec`:DeprecationWarning:statsmodels",
     "ignore:Using or importing:DeprecationWarning",
     "ignore:Session._key_changed is deprecated:DeprecationWarning",
+    "error:y is poorly:arch.utility.exceptions.DataScaleWarning:",
     "error:Support for multi-dimensional:DeprecationWarning",
     "error:Mutating unit root tests is deprecated:FutureWarning",
     "error:invalid value encountered in cos:RuntimeWarning",

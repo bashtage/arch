@@ -7,6 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
+  FLAGS: ''
 
 
 jobs:
@@ -49,11 +50,11 @@ jobs:
         PANDAS: 1.4.0
       python_311_cython_coverage:
         python.version: '3.11'
-        ARCH_CYTHON_COVERAGE: true
+        FLAGS: '-Csetup-args=-Dcython-coverage=true'
         PYTEST_PATTERN: "(not slow)"
       python_311_no_binary:
         python.version: '3.11'
-        ARCH_NO_BINARY: true
+        FLAGS: '-Csetup-args=-Dno-binary=true'
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 2.2.2
         USE_NUMBA: true
@@ -110,11 +111,12 @@ jobs:
         echo "Installing statsmodels main"
         source ci/install-statsmodels-main.sh
       fi
-    displayName: 'Install statsmodels main'
+    displayName: 'Install arch main'
 
   - script: |
      source ci/azure/update_path.sh
      flake8 arch
+     ruff check arch
      black --check arch
      isort --check arch
     displayName: 'Check style and formatting'
@@ -131,15 +133,15 @@ jobs:
 
   - script: |
       echo "Installing to site packages"
-      python -m pip wheel . --wheel-dir ./dist/ --no-build-isolation
+      python -m pip wheel -v . --wheel-dir ./dist/
       WHL=$(ls -t ./dist/arch-*.whl | head -1)
       pip install ${WHL}
     displayName: 'Install arch (site-packages)'
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      echo python -m pip install -e . -v --no-build-isolation
-      python -m pip install -e . -v --no-build-isolation
+      echo python -m pip install --no-build-isolation -vv -e . ${FLAGS}
+      python -m pip install --no-build-isolation -vv -e . ${FLAGS}
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 

@@ -13,7 +13,7 @@ from numpy.random import Generator, RandomState
 import pandas as pd
 from scipy import stats
 
-from arch.typing import (
+from arch._typing import (
     AnyArray,
     ArrayLike,
     ArrayLike1D,

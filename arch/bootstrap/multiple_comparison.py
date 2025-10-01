@@ -6,12 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 
-from arch.bootstrap.base import (
-    CircularBlockBootstrap,
-    MovingBlockBootstrap,
-    StationaryBootstrap,
-)
-from arch.typing import (
+from arch._typing import (
     ArrayLike,
     ArrayLike2D,
     BoolArray,
@@ -19,6 +14,11 @@ from arch.typing import (
     Int64Array1D,
     IntArray,
     Literal,
+)
+from arch.bootstrap.base import (
+    CircularBlockBootstrap,
+    MovingBlockBootstrap,
+    StationaryBootstrap,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 

@@ -39,8 +39,11 @@ jobs:
       - uses: pypa/cibuildwheel@v3.2.0
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
-          CIBW_BEFORE_BUILD: python -m pip install wheel>=0.41.0 pip --upgrade
+          CIBW_BEFORE_BUILD: python -m pip install pip --upgrade
           CIBW_TEST_COMMAND: python -c "import arch; arch.test(['--skip-slow','-n','auto'])"
           CIBW_TEST_REQUIRES: pytest pytest-xdist  pytest-cov matplotlib numpy scipy pandas seaborn
-          CIBW_SKIP: "pp* *-musllinux_* *-win32"
+          CIBW_SKIP: "*-musllinux_* *-win32"
           CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_BUILD_VERBOSITY: 2
+        with:
+          output-dir: wheelhouse

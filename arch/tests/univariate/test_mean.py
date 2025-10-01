@@ -26,8 +26,8 @@ from scipy.optimize import OptimizeResult
 import statsmodels.regression.linear_model as smlm
 import statsmodels.tools as smtools
 
+from arch._typing import Literal
 from arch.data import sp500
-from arch.typing import Literal
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelFixedResult,
@@ -797,7 +797,7 @@ class TestMeanModel:
         sv = np.array([1.0, 0.3, 0.8])
         with warnings.catch_warnings(record=True) as w:
             am.fit(starting_values=sv, update_freq=UPDATE_FREQ, disp=DISPLAY)
-            assert_equal(len(w), 1)
+            assert len(w) == 1, str(w)
 
     def test_no_param_volatility(self):
         cm = ConstantMean(self.y)
@@ -1011,7 +1011,9 @@ class TestMeanModel:
         )
         am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
 
-        am.fit(disp=DISPLAY)
+        with pytest.warns(DataScaleWarning, match=r"y is poorly scaled"):
+            am.fit(disp=DISPLAY)
+
         with pytest.warns(DataScaleWarning, match=r"y is poorly scaled"):
             am.fit(show_warning=True, disp=DISPLAY)
 
@@ -1128,7 +1130,7 @@ class TestMeanModel:
         assert std.loglikelihood >= loose.loglikelihood
         with warnings.catch_warnings(record=True) as w:
             short = am.fit(options={"maxiter": 3}, disp=DISPLAY)
-        assert len(w) == 1
+        assert len(w) == 1, str(w)
         assert std.loglikelihood >= short.loglikelihood
         assert short.convergence_flag != 0
 

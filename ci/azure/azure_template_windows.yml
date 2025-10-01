@@ -35,20 +35,21 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip "setuptools>=61" wheel
-      python -m pip install -r requirements-dev.txt
-      python -m pip install -r requirements.txt
-    displayName: 'Install dependencies'
-
-  - script: |
+      python -m venv arch-test
+      call arch-test\Scripts\activate.bat
+      python -m pip install --upgrade pip wheel
+      python -m pip install -r requirements-dev.txt -U
+      python -m pip install -r requirements.txt -U
       python -m pip list
-    displayName: 'List Configuration'
+    displayName: 'Create Venv and Install dependencies'
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
+      call arch-test\Scripts\activate.bat
+      python -m pip install -e . -vv --no-build-isolation
     displayName: 'Build Cython Extensions'
 
   - script: |
+      call arch-test\Scripts\activate.bat
       pytest arch --junitxml=junit/test-results.xml -n 2 --durations=25
     displayName: 'pytest'
 

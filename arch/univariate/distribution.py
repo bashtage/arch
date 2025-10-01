@@ -31,7 +31,7 @@ from numpy.random import Generator, RandomState, default_rng
 from scipy import stats
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 
-from arch.typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
+from arch._typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 
 __all__ = ["Distribution", "GeneralizedError", "Normal", "SkewStudent", "StudentsT"]

@@ -18,7 +18,7 @@ from typing import cast
 from ipyparallel import Client, DirectView
 from numpy import array, nan, ndarray, percentile, savez
 
-from arch.typing import UnitRootTrend
+from arch._typing import UnitRootTrend
 
 from .adf_simulation import adf_simulation
 

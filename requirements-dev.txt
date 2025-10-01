@@ -1,4 +1,7 @@
 # versioning
+meson-python>=0.18.0
+meson
+ninja
 setuptools_scm[toml]>=8.0.3,<9
 packaging
 

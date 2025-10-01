@@ -9,7 +9,7 @@ simulation.
 
 from numpy import array, asarray, inf
 
-from arch.typing import Float64Array
+from arch._typing import Float64Array
 
 small_scaling = asarray([1, 1, 1e-2])
 tau_small_p = {}

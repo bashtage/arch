@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pandas as pd
 
-from arch.typing import Float64Array, Literal, NDArrayOrFrame
+from arch._typing import Float64Array, Literal, NDArrayOrFrame
 
 
 class ColumnNameConflict(Warning):

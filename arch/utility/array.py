@@ -13,7 +13,7 @@ from typing import Any, Literal, Union, cast, overload
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
 
-from arch.typing import (
+from arch._typing import (
     AnyArray,
     AnyArray1D,
     AnyPandas,

@@ -5,7 +5,7 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
-from arch.typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
+from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.unitroot._shared import (
     ResidualCointegrationTestResult,
     _check_cointegrating_regression,

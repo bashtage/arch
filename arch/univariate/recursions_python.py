@@ -13,7 +13,7 @@ from typing import cast
 import numpy as np
 from scipy.special import gammaln
 
-from arch.typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
+from arch._typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [

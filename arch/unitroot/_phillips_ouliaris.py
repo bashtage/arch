@@ -8,8 +8,8 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
+from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.covariance.kernel import CovarianceEstimator
-from arch.typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.unitroot._shared import (
     KERNEL_ERR,
     KERNEL_ESTIMATORS,

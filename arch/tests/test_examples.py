@@ -47,18 +47,17 @@ NOTEBOOK_DIR = os.path.abspath(os.path.join(head, "..", "..", "examples"))
 
 nbs = sorted(glob.glob(os.path.join(NOTEBOOK_DIR, "*.ipynb")))
 ids = [os.path.split(nb)[-1].split(".")[0] for nb in nbs]
-if not nbs:  # pragma: no cover
+if nbs:  # pragma: no cover
+    @pytest.mark.slow
+    @pytest.mark.parametrize("notebook", nbs, ids=ids)
+    @pytest.mark.skipif(SKIP, reason=REASON)
+    def test_notebook(notebook):
+        nb_name = os.path.split(notebook)[-1]
+        if nb_name in SLOW_NOTEBOOKS:
+            pytest.skip("Notebook is too slow to test")
+        nb = nbformat.read(notebook, as_version=4)
+        ep = ExecutePreprocessor(allow_errors=False, timeout=240, kernel_name=kernel_name)
+        ep.preprocess(nb, {"metadata": {"path": NOTEBOOK_DIR}})
+else:
     REASON = "No notebooks found and so no tests run"
     pytestmark = pytest.mark.skip(reason=REASON)
-
-
-@pytest.mark.slow
-@pytest.mark.parametrize("notebook", nbs, ids=ids)
-@pytest.mark.skipif(SKIP, reason=REASON)
-def test_notebook(notebook):
-    nb_name = os.path.split(notebook)[-1]
-    if nb_name in SLOW_NOTEBOOKS:
-        pytest.skip("Notebook is too slow to test")
-    nb = nbformat.read(notebook, as_version=4)
-    ep = ExecutePreprocessor(allow_errors=False, timeout=240, kernel_name=kernel_name)
-    ep.preprocess(nb, {"metadata": {"path": NOTEBOOK_DIR}})

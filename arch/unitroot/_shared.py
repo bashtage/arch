@@ -4,8 +4,8 @@ import pandas as pd
 from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
+from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
 import arch.covariance.kernel as lrcov
-from arch.typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 

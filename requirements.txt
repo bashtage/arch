@@ -1,4 +1,6 @@
+# Keep synced with pyproject.toml
 numpy>=1.22.3
 scipy>=1.8
 pandas>=1.4
 statsmodels>=0.12
+packaging
