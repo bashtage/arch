@@ -110,7 +110,7 @@ jobs:
         echo "Installing statsmodels main"
         source ci/install-statsmodels-main.sh
       fi
-    displayName: 'Install statsmodels main'
+    displayName: 'Install arch main'
 
   - script: |
      source ci/azure/update_path.sh

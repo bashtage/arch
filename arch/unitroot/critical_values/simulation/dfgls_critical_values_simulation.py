@@ -1,6 +1,6 @@
 """
 Critical value simulation for the Dickey-Fuller GLS model.  Similar in design
-to MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works
+to MacKinnon (2010).  Makes use of parallel_fun which works
 best when joblib is installed.
 """
 
