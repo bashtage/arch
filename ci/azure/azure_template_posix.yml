@@ -115,6 +115,7 @@ jobs:
   - script: |
      source ci/azure/update_path.sh
      flake8 arch
+     ruff check arch
      black --check arch
      isort --check arch
     displayName: 'Check style and formatting'
@@ -138,8 +139,8 @@ jobs:
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      echo python -m pip install -e . -v --no-build-isolation
-      python -m pip install -e . -v --no-build-isolation
+      echo python -m pip install -e . -vv --no-build-isolation
+      python -m pip install -e . -vv --no-build-isolation
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 

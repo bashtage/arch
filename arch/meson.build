@@ -10,8 +10,12 @@ try:
     # e.g. a venv created inside the dir
     # If so, convert it to a relative path
     incdir = os.path.relpath(np.get_include())
-except Exception:
-    incdir = np.get_include()
+except Exception as exc:
+    print(exc)
+    try:
+        incdir = np.get_include()
+    except Exception as exc2:
+        print(exc2)
 print(incdir)
      ''',
     ],

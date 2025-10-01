@@ -35,9 +35,9 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip "setuptools>=61" wheel
-      python -m pip install -r requirements-dev.txt
-      python -m pip install -r requirements.txt
+      python -m pip install --upgrade pip wheel
+      python -m pip install -r requirements-dev.txt -U
+      python -m pip install -r requirements.txt -U
     displayName: 'Install dependencies'
 
   - script: |
@@ -45,7 +45,7 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
+      python -m pip install -e . -vv
     displayName: 'Build Cython Extensions'
 
   - script: |
