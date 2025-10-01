@@ -4,9 +4,12 @@ incdir_numpy = run_command(
         '-c',
         '''
 import os
-os.chdir(os.path.join("..", "examples"))
+cwd = os.getcwd()
 
+# Protect from import errors due to module names
+os.chdir(os.path.join("..", "examples"))
 import numpy as np
+os.chdir(cwd)
 
 try:
     # Check if include directory is inside the dir
