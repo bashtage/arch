@@ -4,7 +4,10 @@ incdir_numpy = run_command(
         '-c',
         '''
 import os
+os.chdir(os.path.join("..", "examples"))
+
 import numpy as np
+
 try:
     # Check if include directory is inside the dir
     # e.g. a venv created inside the dir
@@ -70,7 +73,6 @@ subdir('univariate')
 
 subdirs_list = [
     '__future__',
-    '__pycache__',
     'bootstrap',
     'compat',
     'covariance',

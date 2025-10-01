@@ -132,7 +132,7 @@ jobs:
 
   - script: |
       echo "Installing to site packages"
-      python -m pip wheel . --wheel-dir ./dist/ --no-build-isolation
+      python -m pip wheel -v . --wheel-dir ./dist/
       WHL=$(ls -t ./dist/arch-*.whl | head -1)
       pip install ${WHL}
     displayName: 'Install arch (site-packages)'
