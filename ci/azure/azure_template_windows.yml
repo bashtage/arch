@@ -45,7 +45,7 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      python -m pip install -e . -vv
+      python -m pip install -e . -vv --no-build-isolation
     displayName: 'Build Cython Extensions'
 
   - script: |
