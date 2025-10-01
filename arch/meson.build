@@ -24,9 +24,6 @@ print(incdir)
     check: true,
 ).stdout().strip()
 
-message('###### The include directory is: ' + incdir_numpy)
-message('#################################################')
-
 inc_np = include_directories(incdir_numpy, is_system: true)
 _math_pxd = [
 ]

@@ -47,14 +47,3 @@ jobs:
           CIBW_BUILD_VERBOSITY: 2
         with:
           output-dir: wheelhouse
-
-#      - name: CIBW Windows
-#        shell: pwsh
-#        run: |
-#          python -m venv arch-build
-#          dir
-#          . arch-build\Scripts\activate.ps1
-#          python -m pip install --upgrade pip
-#          python -m pip install cibuildwheel==3.2.0
-#          cibuildwheel --output-dir wheelhouse
-#       if: runner.os == 'Windows'

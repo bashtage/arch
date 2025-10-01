@@ -49,11 +49,11 @@ jobs:
         PANDAS: 1.4.0
       python_311_cython_coverage:
         python.version: '3.11'
-        ARCH_CYTHON_COVERAGE: true
+        FLAGS: '-Csetup-args="-Dcython-coverage=true"'
         PYTEST_PATTERN: "(not slow)"
       python_311_no_binary:
         python.version: '3.11'
-        ARCH_NO_BINARY: true
+        FLAGS: '-Csetup-args="-Dno-binary=true"'
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 2.2.2
         USE_NUMBA: true
@@ -139,13 +139,8 @@ jobs:
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      echo python -m pip install -e . -vv --no-build-isolation
-      python -m pip install -e . -vv --no-build-isolation
-      cat build/cp310/meson-logs/meson-log.txt || true
-      cat build/cp311/meson-logs/meson-log.txt || true
-      cat build/cp312/meson-logs/meson-log.txt || true
-      cat build/cp313/meson-logs/meson-log.txt || true
-      cat build/cp314/meson-logs/meson-log.txt || true
+      echo python -m pip install -e . -vv --no-build-isolation ${FLAGS}
+      python -m pip install -e . -vv --no-build-isolation ${FLAGS}
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 
