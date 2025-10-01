@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from arch.typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
+from arch._typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
 
 def harch_recursion(
     parameters: Float64Array1D,

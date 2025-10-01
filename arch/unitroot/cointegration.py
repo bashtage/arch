@@ -10,8 +10,8 @@ from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
+from arch._typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
 from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
-from arch.typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,

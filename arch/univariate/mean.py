@@ -13,7 +13,7 @@ import pandas as pd
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.typing import (
+from arch._typing import (
     ArrayLike,
     ArrayLike1D,
     ArrayLike2D,
@@ -58,7 +58,7 @@ else:
 
 from functools import cached_property
 
-from arch.typing import Literal
+from arch._typing import Literal
 from arch.univariate.volatility import (
     APARCH,
     ARCH,

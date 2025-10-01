@@ -20,7 +20,7 @@ import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
 import psutil
 
-from arch.typing import UnitRootTrend
+from arch._typing import UnitRootTrend
 
 GREEN = colorama.Fore.GREEN
 BLUE = colorama.Fore.BLUE

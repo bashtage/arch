@@ -44,7 +44,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.typing import (
+from arch._typing import (
     ArrayLike,
     ArrayLike1D,
     ArrayLike2D,

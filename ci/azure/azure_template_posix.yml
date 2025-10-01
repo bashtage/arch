@@ -141,6 +141,11 @@ jobs:
   - script: |
       echo python -m pip install -e . -vv --no-build-isolation
       python -m pip install -e . -vv --no-build-isolation
+      cat build/cp310/meson-logs/meson-log.txt || true
+      cat build/cp311/meson-logs/meson-log.txt || true
+      cat build/cp312/meson-logs/meson-log.txt || true
+      cat build/cp313/meson-logs/meson-log.txt || true
+      cat build/cp314/meson-logs/meson-log.txt || true
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 

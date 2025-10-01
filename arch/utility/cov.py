@@ -1,6 +1,6 @@
 from numpy import asarray, squeeze
 
-from arch.typing import Float64Array
+from arch._typing import Float64Array
 
 
 def cov_nw(

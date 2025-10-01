@@ -5,6 +5,7 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
+from arch._typing import ArrayLike
 from arch.covariance.kernel import (
     Andrews,
     Bartlett,
@@ -21,7 +22,6 @@ from arch.covariance.kernel import (
     TukeyHanning,
     TukeyParzen,
 )
-from arch.typing import ArrayLike
 
 ESTIMATORS = [
     Andrews,

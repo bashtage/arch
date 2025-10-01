@@ -1,6 +1,6 @@
 from arch.compat.numba import jit
 
-from arch.typing import Float64Array, Int64Array
+from arch._typing import Float64Array, Int64Array
 
 
 def stationary_bootstrap_sample_python(

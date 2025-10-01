@@ -15,7 +15,7 @@ import pandas as pd
 from phillips_ouliaris import QUANTILES, ROOT, SAMPLE_SIZES, TRENDS
 import psutil
 
-from arch.typing import Float64Array, Literal, UnitRootTrend
+from arch._typing import Float64Array, Literal, UnitRootTrend
 from arch.utility.timeseries import add_trend
 
 GREEN = colorama.Fore.GREEN

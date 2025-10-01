@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from arch.typing import ArrayLike2D, Float64Array, Float64Array2D
+from arch._typing import ArrayLike2D, Float64Array, Float64Array2D
 
 
 @pytest.fixture(scope="module", params=[True, False])

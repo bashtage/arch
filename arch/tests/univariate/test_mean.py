@@ -26,8 +26,8 @@ from scipy.optimize import OptimizeResult
 import statsmodels.regression.linear_model as smlm
 import statsmodels.tools as smtools
 
+from arch._typing import Literal
 from arch.data import sp500
-from arch.typing import Literal
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelFixedResult,

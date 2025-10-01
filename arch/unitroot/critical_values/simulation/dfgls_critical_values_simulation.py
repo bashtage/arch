@@ -12,7 +12,7 @@ from numpy.linalg import pinv
 from numpy.random import RandomState
 from statsmodels.tools.parallel import parallel_func
 
-from arch.typing import Literal
+from arch._typing import Literal
 
 # Controls memory use, in MiB
 MAX_MEMORY_SIZE = 100

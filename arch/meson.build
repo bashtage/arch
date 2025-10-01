@@ -90,6 +90,6 @@ top_level_py_list = [
     '__init__.py',
     'conftest.py',
     'py.typed',
-    'typing.py'
+    '_typing.py'
 ]
 py.install_sources(top_level_py_list, subdir: 'arch')

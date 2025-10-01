@@ -3,7 +3,7 @@ from numpy.testing import assert_allclose
 import pytest
 from statsmodels.iolib.summary import Summary
 
-from arch.typing import Float64Array, UnitRootTrend
+from arch._typing import Float64Array, UnitRootTrend
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
     phillips_ouliaris_cv,

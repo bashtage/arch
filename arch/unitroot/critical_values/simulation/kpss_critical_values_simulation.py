@@ -10,7 +10,7 @@ import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 
-from arch.typing import Float64Array
+from arch._typing import Float64Array
 from arch.utility.timeseries import add_trend
 
 

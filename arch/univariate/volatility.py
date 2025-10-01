@@ -14,7 +14,7 @@ import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln
 
-from arch.typing import (
+from arch._typing import (
     ArrayLike1D,
     Float64Array,
     Float64Array1D,

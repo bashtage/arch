@@ -7,7 +7,7 @@ from typing import SupportsInt, cast
 import numpy as np
 from pandas import DataFrame, Index
 
-from arch.typing import ArrayLike, Float64Array, Float64Array2D
+from arch._typing import ArrayLike, Float64Array, Float64Array2D
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor._decorators import Substitution
 
