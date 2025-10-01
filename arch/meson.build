@@ -31,15 +31,14 @@ _math_pxd = [
 # Copy the main __init__.py to the build dir.
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
-#_cython_tree = declare_dependency(sources: [
 _cython_tree = [fs.copyfile('__init__.py')]
 cython_args = []
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 if get_option('cython-coverage')
-  cython_args += ['--directive', 'linetrace=true']
+  cython_args += ['-Xlinetrace=True']
   cython_c_args += ['-DCYTHON_TRACE_NOGIL=1']
 endif
-cython_args += ['-3', '--output-file', '@OUTPUT@', '--include-dir', '@BUILD_ROOT@', '@INPUT@']
+# cython_args += ['--output-file', '@OUTPUT@', '--include-dir', '@BUILD_ROOT@', '@INPUT@']
 
 arch_dir = py.get_install_dir() / 'arch'
 # Generate version.py for sdist
