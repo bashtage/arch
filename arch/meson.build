@@ -14,18 +14,17 @@ try:
     # If so, convert it to a relative path
     incdir = os.path.relpath(np.get_include())
 except Exception as exc:
-    print(exc)
-    try:
-        incdir = np.get_include()
-    except Exception as exc2:
-        print(exc2)
+    incdir = np.get_include()
 print(incdir)
      ''',
     ],
     check: true,
 ).stdout().strip()
 
-inc_np = include_directories(incdir_numpy)
+message('###### The include directory is: ' + incdir_numpy)
+message('#################################################')
+
+inc_np = include_directories(incdir_numpy, is_system: true)
 _math_pxd = [
 ]
 
