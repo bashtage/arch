@@ -71,6 +71,7 @@ subdir('univariate')
 
 subdirs_list = [
     '__future__',
+    '_build',
     'bootstrap',
     'compat',
     'covariance',
