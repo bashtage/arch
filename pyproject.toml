@@ -170,7 +170,7 @@ fix = false
 target-version = "py310"
 
 [tool.ruff.lint]
-typing-modules = ["arch.typing"]
+typing-modules = ["arch._typing"]
 
 select = [
   # pyflakes
@@ -270,7 +270,6 @@ filterwarnings = [
     "ignore:`formatargspec`:DeprecationWarning:statsmodels",
     "ignore:Using or importing:DeprecationWarning",
     "ignore:Session._key_changed is deprecated:DeprecationWarning",
-    "error:y is poorly:arch.utility.exceptions.DataScaleWarning:",
     "error:Support for multi-dimensional:DeprecationWarning",
     "error:Mutating unit root tests is deprecated:FutureWarning",
     "error:invalid value encountered in cos:RuntimeWarning",

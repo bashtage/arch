@@ -157,9 +157,7 @@ jobs:
 
   - script: |
       echo "Testing editable install"
-      if [[ ${COVERAGE} == "true" ]]; then
-        export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"
-      fi
+      export COVERAGE_OPTS="--cov=arch --cov-report xml:coverage.xml --cov-report term"
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
     displayName: 'Run tests (editable)'
@@ -167,6 +165,7 @@ jobs:
 
   - script: |
       echo "Testing pip-pre"
+      export COVERAGE_OPTS="--cov=arch --cov-report xml:coverage.xml --cov-report term"
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
     displayName: 'Run tests (pip pre)'

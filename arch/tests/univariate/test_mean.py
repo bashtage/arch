@@ -144,13 +144,23 @@ def forecastable_model(request) -> tuple[ARCHModelResult, ARCHModelFixedResult]:
     return res, mod.fix(res.params)
 
 
+FIT_FIXED_PARAMS = []
+count = 0
+for model, vol in itertools.product(mean_models, volatility_processes):
+    count += isinstance(vol, FIGARCH)
+    marks = pytest.mark.slow if isinstance(vol, FIGARCH) and count >= 3 else ()
+    FIT_FIXED_PARAMS.append(pytest.param((model, vol), marks=marks))
+
+FIT_FIXED_IDS = [
+    f"{param[0][0].__class__.__name__}-{param[0][1]}{' (SLOW)' if len(mark) else ''}"
+    for param, mark, _ in FIT_FIXED_PARAMS
+]
+
+
 @pytest.fixture(
     scope="module",
-    params=list(itertools.product(mean_models, volatility_processes)),
-    ids=[
-        f"{a.__class__.__name__}-{b}"
-        for a, b in itertools.product(mean_models, volatility_processes)
-    ],
+    params=FIT_FIXED_PARAMS,
+    #    ids=FIT_FIXED_IDS,
 )
 def fit_fixed_models(request):
     mod: ARCHModel
@@ -1421,6 +1431,7 @@ def test_all_attr_numpy_pandas(use_pandas):
             getattr(res, attr)
 
 
+@pytest.mark.slow
 def test_figarch_power():
     base = ConstantMean(SP500, volatility=FIGARCH())
     fiavgarch = ConstantMean(SP500, volatility=FIGARCH(power=1.0))
