@@ -11,10 +11,10 @@ requires = [
 name = "arch"
 # Keep syned with requirements.txt
 dependencies = [
-    "numpy>=1.22.3",
+    "numpy>=1.22.3,<3",
+    "pandas>=1.4.0",
     "scipy>=1.8",
-    "pandas>=1.4",
-    "statsmodels>=0.12",
+    "statsmodels>=0.13.0",
     "packaging",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
@@ -22,6 +22,7 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: End Users/Desktop",
   "Intended Audience :: Financial and Insurance Industry",
+  "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -125,7 +126,7 @@ dev = [
     "colorama",
     "flake8",
     "flake8-bugbear",
-    "mypy",
+    "mypy>=1.3",
     "ruff>=0.8.6",
     "pyupgrade>=3.4.0",
     "jupyterlab-code-formatter",
@@ -143,9 +144,6 @@ changelog = "https://bashtage.github.io/arch/changes.html"
 [tool.meson-python.args]
 setup = ['--vsenv']
 
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
-
 [tool.black]
 target-version = ['py310', 'py311', 'py312', 'py313']
 exclude = '''
@@ -161,8 +159,10 @@ exclude = '''
 )
 '''
 
-[tool.setuptools_scm]
-write_to = "arch/_version.py"
+[tool.pyright]
+exclude = [
+    "**/tests/**",
+]
 
 [tool.ruff]
 line-length = 88
@@ -232,8 +232,6 @@ ignore = [
     # Multiple statements on one line (colon) (E701)
     "E701",
     # Always ignore
-    # RUF005 Consider `[a, *b]` instead of concatenation - don't like
-    "RUF005",
     # TC do not work with doc building
     # Move application import `linearmodels....` into a type-checking block
     "TC001",
@@ -251,6 +249,8 @@ ignore = [
     "PLR0915", # 21
     # Magic number
     "PLR2004",
+    # Like to suggest use [a, *b] instead of [a] + b
+    "RUF005",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -265,7 +265,8 @@ ignore = [
 minversion = "8.4.1"
 testpaths = "arch"
 xfail_strict = true
-empty_parameter_set_mark = "fail_at_collect"
+addopts = "--strict"
+empty_parameter_set_mark = "xfail"
 filterwarnings = [
     "ignore:`formatargspec`:DeprecationWarning:statsmodels",
     "ignore:Using or importing:DeprecationWarning",
@@ -298,7 +299,6 @@ markers = [
 ]
 
 
-
 [tool.isort]
 profile = "black"
 src_paths = ["arch"]
@@ -317,12 +317,13 @@ use_parentheses=true
 [tool.coverage.run]
 source = ["arch"]
 branch = true
-plugins = ["Cython.Coverage"]
+plugins = [ "Cython.Coverage" ]
 omit = [
     # Version file
     "*/_version.py",
     # Compatibility code
     "*/compat/*",
+    "*/conftest.py",
 ]
 
 [tool.coverage.report]
@@ -346,6 +347,7 @@ exclude_also = [
     # Ignore failure messages
     "pytest.xfail",
     # Ignore ImportError protection
+    "raise ImportError",
     "except ImportError",
     # Ignore type checking code
     "if TYPE_CHECKING",
@@ -368,11 +370,14 @@ omit = [
     "*samplers.py",
 ]
 
-
 [tool.coverage.html]
 directory = "coverage_html_report"
 
 [tool.mypy]
+plugins="numpy.typing.mypy_plugin"
+exclude = [
+    "tests",
+]
 ignore_missing_imports=true
 no_implicit_optional=true
 strict_equality=true

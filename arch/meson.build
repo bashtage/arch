@@ -7,7 +7,7 @@ import os
 cwd = os.getcwd()
 
 # Protect from import errors due to module names
-os.chdir(os.path.join("..", "examples"))
+os.chdir(os.path.join('..', 'examples'))
 import numpy as np
 os.chdir(cwd)
 
@@ -25,20 +25,23 @@ print(incdir)
 ).stdout().strip()
 
 inc_np = include_directories(incdir_numpy, is_system: true)
-_math_pxd = [
-]
 
 # Copy the main __init__.py to the build dir.
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
 _cython_tree = [fs.copyfile('__init__.py')]
-cython_args = []
+cython_args = [
+    '-Xcpow=True',
+    '-Xboundscheck=False',
+    '-Xwraparound=False',
+    '-Xcdivision=True',
+    '-Xbinding=True'
+]
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 if get_option('cython-coverage')
   cython_args += ['-Xlinetrace=True']
   cython_c_args += ['-DCYTHON_TRACE=1']
 endif
-# cython_args += ['--output-file', '@OUTPUT@', '--include-dir', '@BUILD_ROOT@', '@INPUT@']
 
 arch_dir = py.get_install_dir() / 'arch'
 # Generate version.py for sdist
