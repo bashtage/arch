@@ -17,6 +17,7 @@ seaborn
 pytest>=8.4.1,<9
 pytest-xdist
 pytest-cov
+pytest-randomly
 
 # formatting
 black[jupyter]~=25.1.0
