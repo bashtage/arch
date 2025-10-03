@@ -1,21 +1,21 @@
 [build-system]
 build-backend = 'mesonpy'
 requires = [
-    'meson-python',
-    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
-    "numpy>=2.0.0,<3",
-    "setuptools_scm>=9.2.0,<10",
+  'meson-python',
+  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "numpy>=2.0.0,<3",
+  "setuptools_scm>=9.2.0,<10",
 ]
 
 [project]
 name = "arch"
 # Keep syned with requirements.txt
 dependencies = [
-    "numpy>=1.22.3,<3",
-    "pandas>=1.4.0",
-    "scipy>=1.8",
-    "statsmodels>=0.13.0",
-    "packaging",
+  "numpy>=1.22.3,<3",
+  "pandas>=1.4.0",
+  "scipy>=1.8",
+  "statsmodels>=0.13.0",
+  "packaging",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 classifiers = [
@@ -65,73 +65,73 @@ requires-python = ">=3.10"
 
 [project.optional-dependencies]
 test = [
-    # test
-    "pytest>=8.4.1,<9",
-    "pytest-randomly",
-    "pytest-xdist",
-    "pytest-cov",
-    "coverage[toml]",
-    "meson",
-    "ninja",
+  # test
+  "pytest>=8.4.1,<9",
+  "pytest-randomly",
+  "pytest-xdist",
+  "pytest-cov",
+  "coverage[toml]",
+  "meson",
+  "ninja",
 ]
 doc = [
-    # Documentation
-    "setuptools>=61",
-    "wheel",
-    "setuptools_scm[toml]>=8.0.3,<9",
-    "oldest-supported-numpy",
-    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
-    "numpy >=1.22",
-    "scipy >=1.5.0",
-    "ipython >=8.0.1",
-    "matplotlib >=3.0",
-    "patsy >=0.5.3",
-    "statsmodels >=0.13.5",
-    "jinja2",
-    "sphinx>=7",
-    "seaborn",
-    "numpydoc>=1.0.0",
-    "nbsphinx",
-    "sphinx-immaterial",
-    "jupyter",
-    "notebook",
-    "sphinx-autodoc-typehints",
-    "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
-    "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
-    "ipython>=7",
-    "sphinx_immaterial",
-    "nbconvert",
-    "pickleshare",
-    # Requirements for doc build, in addition to requirements.txt
-    "pandas~=2.3.3",
+  # Documentation
+  "setuptools>=61",
+  "wheel",
+  "setuptools_scm[toml]>=8.0.3,<9",
+  "oldest-supported-numpy",
+  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "numpy >=1.22",
+  "scipy >=1.5.0",
+  "ipython >=8.0.1",
+  "matplotlib >=3.0",
+  "patsy >=0.5.3",
+  "statsmodels >=0.13.5",
+  "jinja2",
+  "sphinx>=7",
+  "seaborn",
+  "numpydoc>=1.0.0",
+  "nbsphinx",
+  "sphinx-immaterial",
+  "jupyter",
+  "notebook",
+  "sphinx-autodoc-typehints",
+  "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
+  "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
+  "ipython>=7",
+  "sphinx_immaterial",
+  "nbconvert",
+  "pickleshare",
+  # Requirements for doc build, in addition to requirements.txt
+  "pandas~=2.3.3",
 ]
 dev = [
-    # versioning
-    "setuptools_scm[toml]>=9.2.0,<10",
-    "packaging",
-    # Performance
-    "cython>=3.0.10",
-    "numba>=0.55",
-    # Graphics
-    "matplotlib>=3",
-    "seaborn",
-    # Tests
-    "pytest>=8.4.1,<9",
-    "pytest-randomly",
-    "pytest-xdist",
-    "pytest-cov",
-    # formatting
-    "black[jupyter]~=25.9.0",
-    "isort~=6.0",
-    "colorama",
-    "flake8",
-    "flake8-bugbear",
-    "mypy>=1.3",
-    "ruff>=0.8.6",
-    "pyupgrade>=3.4.0",
-    "jupyterlab-code-formatter",
-    "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
-    "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
+  # versioning
+  "setuptools_scm[toml]>=9.2.0,<10",
+  "packaging",
+  # Performance
+  "cython>=3.0.10",
+  "numba>=0.55",
+  # Graphics
+  "matplotlib>=3",
+  "seaborn",
+  # Tests
+  "pytest>=8.4.1,<9",
+  "pytest-randomly",
+  "pytest-xdist",
+  "pytest-cov",
+  # formatting
+  "black[jupyter]~=25.9.0",
+  "isort~=6.0",
+  "colorama",
+  "flake8",
+  "flake8-bugbear",
+  "mypy>=1.3",
+  "ruff>=0.8.6",
+  "pyupgrade>=3.4.0",
+  "jupyterlab-code-formatter",
+  "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
 ]
 
 
@@ -148,7 +148,7 @@ setup = ['--vsenv']
 target-version = ['py310', 'py311', 'py312', 'py313']
 exclude = '''
 (
-    \.egg
+  \.egg
   | \.git
   | \.mypy_cache
   | \.oytest_cache
@@ -161,7 +161,7 @@ exclude = '''
 
 [tool.pyright]
 exclude = [
-    "**/tests/**",
+  "**/tests/**",
 ]
 
 [tool.ruff]
@@ -224,33 +224,33 @@ select = [
 ]
 
 ignore = [
-    # Required to allow black formatting
-    # Whitespace before ':' (Needed for black)
-    "E203",
-    # Line too long (### > 88 characters) (Needed for black)
-    "E501",
-    # Multiple statements on one line (colon) (E701)
-    "E701",
-    # Always ignore
-    # TC do not work with doc building
-    # Move application import `linearmodels....` into a type-checking block
-    "TC001",
-    # Move third-party import `...` into a type-checking block
-    "TC002",
-    # Move standard library import `...` into a type-checking block
-    "TC003",
+  # Required to allow black formatting
+  # Whitespace before ':' (Needed for black)
+  "E203",
+  # Line too long (### > 88 characters) (Needed for black)
+  "E501",
+  # Multiple statements on one line (colon) (E701)
+  "E701",
+  # Always ignore
+  # TC do not work with doc building
+  # Move application import `linearmodels....` into a type-checking block
+  "TC001",
+  # Move third-party import `...` into a type-checking block
+  "TC002",
+  # Move standard library import `...` into a type-checking block
+  "TC003",
 
-    #  ### Intentionally disabled
-    # Too many arguments to function call
-    "PLR0913", # 55
-    # Too many branches
-    "PLR0912", # 14
-    # Too many statements
-    "PLR0915", # 21
-    # Magic number
-    "PLR2004",
-    # Like to suggest use [a, *b] instead of [a] + b
-    "RUF005",
+  #  ### Intentionally disabled
+  # Too many arguments to function call
+  "PLR0913", # 55
+  # Too many branches
+  "PLR0912", # 14
+  # Too many statements
+  "PLR0915", # 21
+  # Magic number
+  "PLR2004",
+  # Like to suggest use [a, *b] instead of [a] + b
+  "RUF005",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -268,34 +268,34 @@ xfail_strict = true
 addopts = "--strict"
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
-    "ignore:`formatargspec`:DeprecationWarning:statsmodels",
-    "ignore:Using or importing:DeprecationWarning",
-    "ignore:Session._key_changed is deprecated:DeprecationWarning",
-    "error:Support for multi-dimensional:DeprecationWarning",
-    "error:Mutating unit root tests is deprecated:FutureWarning",
-    "error:invalid value encountered in cos:RuntimeWarning",
-    "error:invalid value encountered in log:RuntimeWarning",
-    "error:divide by zero encountered in double_scalars:RuntimeWarning",
-    "error:Lag selection has changed:DeprecationWarning",
-    "error:More than 20 figures have been opened:RuntimeWarning:",
-    "error:invalid value encountered in sqrt:RuntimeWarning:",
-    "error:Inequality constraints incompatible::",
-    "error:Parameters are not consistent with a::",
-    "error:overflow encountered in double_scalars:RuntimeWarning:",
-    "error:overflow encountered in multiply:RuntimeWarning:",
-    "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
-    "error:The default for reindex:FutureWarning:",
-    "error:overflow encountered in square:RuntimeWarning",
-    "error:Values in x were outside bounds:RuntimeWarning:",
-    "error:The random_state property is deprecated:FutureWarning",
-    "error:random_state is deprecated:FutureWarning",
-    "error:seed is deprecated:FutureWarning",
-    "error:get_state is deprecated:FutureWarning",
-    "error:Conversion of an array with ndim:DeprecationWarning:arch",
+  "ignore:`formatargspec`:DeprecationWarning:statsmodels",
+  "ignore:Using or importing:DeprecationWarning",
+  "ignore:Session._key_changed is deprecated:DeprecationWarning",
+  "error:Support for multi-dimensional:DeprecationWarning",
+  "error:Mutating unit root tests is deprecated:FutureWarning",
+  "error:invalid value encountered in cos:RuntimeWarning",
+  "error:invalid value encountered in log:RuntimeWarning",
+  "error:divide by zero encountered in double_scalars:RuntimeWarning",
+  "error:Lag selection has changed:DeprecationWarning",
+  "error:More than 20 figures have been opened:RuntimeWarning:",
+  "error:invalid value encountered in sqrt:RuntimeWarning:",
+  "error:Inequality constraints incompatible::",
+  "error:Parameters are not consistent with a::",
+  "error:overflow encountered in double_scalars:RuntimeWarning:",
+  "error:overflow encountered in multiply:RuntimeWarning:",
+  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
+  "error:The default for reindex:FutureWarning:",
+  "error:overflow encountered in square:RuntimeWarning",
+  "error:Values in x were outside bounds:RuntimeWarning:",
+  "error:The random_state property is deprecated:FutureWarning",
+  "error:random_state is deprecated:FutureWarning",
+  "error:seed is deprecated:FutureWarning",
+  "error:get_state is deprecated:FutureWarning",
+  "error:Conversion of an array with ndim:DeprecationWarning:arch",
 ]
 junit_family = "xunit2"
 markers = [
-    "slow: mark a test as slow"
+  "slow: mark a test as slow"
 ]
 
 
@@ -319,11 +319,11 @@ source = ["arch"]
 branch = true
 plugins = [ "Cython.Coverage" ]
 omit = [
-    # Version file
-    "*/_version.py",
-    # Compatibility code
-    "*/compat/*",
-    "*/conftest.py",
+  # Version file
+  "*/_version.py",
+  # Compatibility code
+  "*/compat/*",
+  "*/conftest.py",
 ]
 
 [tool.coverage.report]
@@ -331,43 +331,43 @@ show_missing = true
 ignore_errors = false
 # Regexes for lines to exclude from consideration
 exclude_also = [
-    # Have to re-enable the standard pragma
-    "pragma: no cover",
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
 
-    # Do not complain about missing debug-only code:
-    "def __repr__",
-    "if self\\.debug",
+  # Do not complain about missing debug-only code:
+  "def __repr__",
+  "if self\\.debug",
 
-    # Don't complain if tests don't hit defensive assertion code:
-    "raise NotImplementedError",
-    "except NotImplementedError",
-    "raise AssertionError",
-    # Ignore pass
-    "pass",
-    # Ignore failure messages
-    "pytest.xfail",
-    # Ignore ImportError protection
-    "raise ImportError",
-    "except ImportError",
-    # Ignore type checking code
-    "if TYPE_CHECKING",
-    "elif TYPE_CHECKING",
-    # Cython function declarations
-    "cdef",
-    # Cython functions with void
-    "cdef void",
-    # Numba jit decorators
-    "@jit",
-    # Do not complain if non-runnable code is not run:
-    "if 0:",
-    "if __name__ == .__main__.:",
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise NotImplementedError",
+  "except NotImplementedError",
+  "raise AssertionError",
+  # Ignore pass
+  "pass",
+  # Ignore failure messages
+  "pytest.xfail",
+  # Ignore ImportError protection
+  "raise ImportError",
+  "except ImportError",
+  # Ignore type checking code
+  "if TYPE_CHECKING",
+  "elif TYPE_CHECKING",
+  # Cython function declarations
+  "cdef",
+  # Cython functions with void
+  "cdef void",
+  # Numba jit decorators
+  "@jit",
+  # Do not complain if non-runnable code is not run:
+  "if 0:",
+  "if __name__ == .__main__.:",
 ]
 include = [ "*/arch/*" ]
 omit = [
-    "*/_version.py",
-    "*/compat/*",
-    "*recursions.py",
-    "*samplers.py",
+  "*/_version.py",
+  "*/compat/*",
+  "*recursions.py",
+  "*samplers.py",
 ]
 
 [tool.coverage.html]
@@ -376,7 +376,7 @@ directory = "coverage_html_report"
 [tool.mypy]
 plugins="numpy.typing.mypy_plugin"
 exclude = [
-    "tests",
+  "tests",
 ]
 ignore_missing_imports=true
 no_implicit_optional=true
