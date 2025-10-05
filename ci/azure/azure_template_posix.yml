@@ -152,6 +152,11 @@ jobs:
       popd
       echo "arch.univariate.recursions location"
       python -c "import arch.univariate.recursions; print(arch.univariate.recursions.__file__)"
+      pushd arch/bootstrap/
+      python _cython_coverage.py build_ext --inplace
+      popd
+      python -c "import arch.bootstrap._samplers; print(arch.bootstrap._samplers.__file__)"
+
     displayName: 'Build ext for Cython Coverage'
     condition: eq(variables['cython.coverage'], 'true')
 

@@ -21,8 +21,8 @@ MACROS = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"), ("CYTHON_TRACE", "1"
 
 ext_modules = [
     Extension(
-        "recursions",
-        ["recursions.pyx"],
+        "_samplers",
+        ["_samplers.pyx"],
         define_macros=MACROS,
         include_dirs=[np_inc],
     )
