@@ -51,11 +51,11 @@ jobs:
         PANDAS: 1.4.0
       python_311_cython_coverage:
         python.version: '3.11'
-        FLAGS: '-Csetup-args=-Dcython-coverage=true'
+        BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
         cython.coverage: true
       python_311_no_binary:
         python.version: '3.11'
-        FLAGS: '-Csetup-args=-Dno-binary=true'
+        BUILD_FLAGS: '-Csetup-args=-Dno-binary=true'
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 2.2.2
         USE_NUMBA: true
@@ -136,8 +136,8 @@ jobs:
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      echo python -m pip install --no-build-isolation -vv -e . ${FLAGS}
-      python -m pip install --no-build-isolation -vv -e . ${FLAGS}
+      echo python -m pip install --no-build-isolation -vv -e . ${BUILD_FLAGS}
+      python -m pip install --no-build-isolation -vv -e . ${BUILD_FLAGS}
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 
