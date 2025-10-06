@@ -17,73 +17,73 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
-#      python_313:
-#        python.version: '3.13'
-#      python_312:
-#        python.version: '3.12'
-#      python_311:
-#        python.version: '3.11'
-#      python_310:
-#        python.version: '3.10'
-#        test.install: true
-#      python_311_copy_on_write:
-#        python.version: '3.11'
-#        ARCH_TEST_COPY_ON_WRITE: 1
-#      python_minimums:
-#        python.version: '3.10'
-#        NUMPY: 1.23.0
-#        SCIPY: 1.9.0
-#        MATPLOTLIB: 3.4.0
-#        PANDAS: 1.4.0
-#      python_310_conda_numba:
-#        python.version: '3.10'
-#        use.conda: 'true'
-#        NUMPY: 2.0.0
-#        USE_NUMBA: true
-#        MATPLOTLIB: 3.0
-#        PYTEST_PATTERN: "(slow or not slow)"
-#      python310_numpy120:
-#        python.version: '3.10'
-#        MATPLOTLIB: 3.3.0
-#        NUMPY: 1.22.3
-#        SCIPY: 1.8.0
-#        PANDAS: 1.4.0
+      python_313:
+        python.version: '3.13'
+      python_312:
+        python.version: '3.12'
+      python_311:
+        python.version: '3.11'
+      python_310:
+        python.version: '3.10'
+        test.install: true
+      python_311_copy_on_write:
+        python.version: '3.11'
+        ARCH_TEST_COPY_ON_WRITE: 1
+      python_minimums:
+        python.version: '3.10'
+        NUMPY: 1.23.0
+        SCIPY: 1.9.0
+        MATPLOTLIB: 3.4.0
+        PANDAS: 1.4.0
+      python_310_conda_numba:
+        python.version: '3.10'
+        use.conda: 'true'
+        NUMPY: 2.0.0
+        USE_NUMBA: true
+        MATPLOTLIB: 3.0
+        PYTEST_PATTERN: "(slow or not slow)"
+      python310_numpy120:
+        python.version: '3.10'
+        MATPLOTLIB: 3.3.0
+        NUMPY: 1.22.3
+        SCIPY: 1.8.0
+        PANDAS: 1.4.0
       python_311_cython_coverage:
         python.version: '3.11'
         FLAGS: '-Csetup-args=-Dcython-coverage=true'
         PYTEST_PATTERN: "(not slow)"
         cython.coverage: true
-#      python_311_no_binary:
-#        python.version: '3.11'
-#        FLAGS: '-Csetup-args=-Dno-binary=true'
-#        PYTEST_OPTS: '--skip-slow'
-#        PANDAS: 2.2.2
-#        USE_NUMBA: true
-#      python_312_no_binary_environment:
-#        python.version: '3.12'
-#        ARCH_NO_BINARY: true
-#        use.conda: 'true'
-#        USE_NUMBA: true
-#        PYTEST_OPTS: '--skip-slow'
-#      python_310_no_numba:
-#        python.version: '3.10'
-#        NUMPY: 1.24.0
-#        USE_NUMBA: false
-#        MATPLOTLIB: 3.5.0
-#        PANDAS: 1.5.0
-#        PYTEST_PATTERN: "(slow or not slow)"
-#      python_310_numpy_124:
-#        python.version: '3.10'
-#        NUMPY: 1.24.0
-#        USE_NUMBA: false
-#        PYTEST_PATTERN: "(slow or not slow)"
-#      python_312_statsmodels_main:
-#        python.version: '3.10'
-#        STATSMODELS_MAIN: true
-#        coverage: false
-#      python312_pre:
-#        python.version: '3.12'
-#        pip.pre: true
+      python_311_no_binary:
+        python.version: '3.11'
+        FLAGS: '-Csetup-args=-Dno-binary=true'
+        PYTEST_OPTS: '--skip-slow'
+        PANDAS: 2.2.2
+        USE_NUMBA: true
+      python_312_no_binary_environment:
+        python.version: '3.12'
+        ARCH_NO_BINARY: true
+        use.conda: 'true'
+        USE_NUMBA: true
+        PYTEST_OPTS: '--skip-slow'
+      python_310_no_numba:
+        python.version: '3.10'
+        NUMPY: 1.24.0
+        USE_NUMBA: false
+        MATPLOTLIB: 3.5.0
+        PANDAS: 1.5.0
+        PYTEST_PATTERN: "(slow or not slow)"
+      python_310_numpy_124:
+        python.version: '3.10'
+        NUMPY: 1.24.0
+        USE_NUMBA: false
+        PYTEST_PATTERN: "(slow or not slow)"
+      python_312_statsmodels_main:
+        python.version: '3.10'
+        STATSMODELS_MAIN: true
+        coverage: false
+      python312_pre:
+        python.version: '3.12'
+        pip.pre: true
 
     maxParallel: 10
 
@@ -148,16 +148,12 @@ jobs:
 
   - script: |
       pushd arch/univariate
-      python _cython_coverage.py build_ext --inplace
+      cython --verbose -M --fast-fail -3  -X cpow=True -X boundscheck=False -X wraparound=False -X cdivision=True -X binding=True -X linetrace=True .\recursions.pyx
       popd
-      echo "arch.univariate.recursions location"
-      python -c "import arch.univariate.recursions; print(arch.univariate.recursions.__file__)"
       pushd arch/bootstrap/
-      python _cython_coverage.py build_ext --inplace
+      cython --verbose -M --fast-fail -3  -X cpow=True -X boundscheck=False -X wraparound=False -X cdivision=True -X binding=True -X linetrace=True .\_samplers.pyx
       popd
-      python -c "import arch.bootstrap._samplers; print(arch.bootstrap._samplers.__file__)"
-
-    displayName: 'Build ext for Cython Coverage'
+    displayName: 'Transpile Cython to C for coverage support'
     condition: eq(variables['cython.coverage'], 'true')
 
   - script: |

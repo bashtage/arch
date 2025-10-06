@@ -62,14 +62,20 @@ ANALYTICAL_VOLATILITIES = [
 
 
 MODEL_SPECS = list(product(MEAN_MODELS, VOLATILITIES))
-ANALYTICAL_MODEL_SPECS = list(product(MEAN_MODELS, ANALYTICAL_VOLATILITIES))
+ANALYTICAL_MODEL_SPECS = []
+count = 0
+for model, vol in product(MEAN_MODELS, ANALYTICAL_VOLATILITIES):
+    count += isinstance(vol, FIGARCH)
+    marks = pytest.mark.slow if isinstance(vol, FIGARCH) and count > 1 else ()
+    ANALYTICAL_MODEL_SPECS.append(pytest.param((model, vol), marks=marks))
 
 IDS = [
     f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}" for mean, vol in MODEL_SPECS
 ]
+
 ANALYTICAL_IDS = [
-    f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}"
-    for mean, vol in ANALYTICAL_MODEL_SPECS
+    f"{param[0][0].__class__.__name__}-{param[0][1]}{' (SLOW)' if len(mark) else ''}"
+    for param, mark, _ in ANALYTICAL_MODEL_SPECS
 ]
 
 
