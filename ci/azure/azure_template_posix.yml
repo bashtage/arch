@@ -19,6 +19,7 @@ jobs:
     matrix:
       python_313:
         python.version: '3.13'
+        PYTEST_PATTERN: "(slow or not slow)"
       python_312:
         python.version: '3.12'
       python_311:
@@ -51,7 +52,7 @@ jobs:
       python_311_cython_coverage:
         python.version: '3.11'
         FLAGS: '-Csetup-args=-Dcython-coverage=true'
-        PYTEST_PATTERN: "(not slow)"
+        cython.coverage: true
       python_311_no_binary:
         python.version: '3.11'
         FLAGS: '-Csetup-args=-Dno-binary=true'
@@ -70,11 +71,6 @@ jobs:
         USE_NUMBA: false
         MATPLOTLIB: 3.5.0
         PANDAS: 1.5.0
-        PYTEST_PATTERN: "(slow or not slow)"
-      python_310_numpy_124:
-        python.version: '3.10'
-        NUMPY: 1.24.0
-        USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
       python_312_statsmodels_main:
         python.version: '3.10'
@@ -144,6 +140,16 @@ jobs:
       python -m pip install --no-build-isolation -vv -e . ${FLAGS}
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
+
+  - script: |
+      pushd arch/univariate
+      cython --verbose -M --fast-fail -3  -X cpow=True -X boundscheck=False -X wraparound=False -X cdivision=True -X binding=True -X linetrace=True recursions.pyx
+      popd
+      pushd arch/bootstrap/
+      cython --verbose -M --fast-fail -3  -X cpow=True -X boundscheck=False -X wraparound=False -X cdivision=True -X binding=True -X linetrace=True _samplers.pyx
+      popd
+    displayName: 'Transpile Cython to C for coverage support'
+    condition: eq(variables['cython.coverage'], 'true')
 
   - script: |
       set -e

@@ -148,7 +148,7 @@ FIT_FIXED_PARAMS = []
 count = 0
 for model, vol in itertools.product(mean_models, volatility_processes):
     count += isinstance(vol, FIGARCH)
-    marks = pytest.mark.slow if isinstance(vol, FIGARCH) and count >= 3 else ()
+    marks = pytest.mark.slow if isinstance(vol, FIGARCH) and count > 1 else ()
     FIT_FIXED_PARAMS.append(pytest.param((model, vol), marks=marks))
 
 FIT_FIXED_IDS = [
@@ -160,7 +160,7 @@ FIT_FIXED_IDS = [
 @pytest.fixture(
     scope="module",
     params=FIT_FIXED_PARAMS,
-    #    ids=FIT_FIXED_IDS,
+    ids=FIT_FIXED_IDS,
 )
 def fit_fixed_models(request):
     mod: ARCHModel

@@ -315,7 +315,7 @@ include_trailing_comma=true
 use_parentheses=true
 
 [tool.coverage.run]
-source = ["arch"]
+source = [ "arch" ]
 branch = true
 plugins = [ "Cython.Coverage" ]
 omit = [
