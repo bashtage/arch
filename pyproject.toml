@@ -35,7 +35,9 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 description = "ARCH for Python"
-version = "8.0.0dev0"
+dynamic = [
+  'version'
+]
 keywords = [
   "arch",
   "ARCH",
@@ -143,6 +145,9 @@ changelog = "https://bashtage.github.io/arch/changes.html"
 
 [tool.meson-python.args]
 setup = ['--vsenv']
+
+[tool.setuptools_scm]
+version_file = "arch/_version.py"
 
 [tool.black]
 target-version = ['py310', 'py311', 'py312', 'py313']
