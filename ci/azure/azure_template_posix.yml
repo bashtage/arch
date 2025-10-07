@@ -7,7 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
-  FLAGS: ''
+  BUILD_FLAGS: ''
 
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         python.version: '3.11'
       python_310:
         python.version: '3.10'
-        test.install: true
+        test.wheel: true
       python_311_copy_on_write:
         python.version: '3.11'
         ARCH_TEST_COPY_ON_WRITE: 1
@@ -36,6 +36,7 @@ jobs:
         SCIPY: 1.9.0
         MATPLOTLIB: 3.4.0
         PANDAS: 1.4.0
+        test.sdist: true
       python_310_conda_numba:
         python.version: '3.10'
         use.conda: 'true'
@@ -51,11 +52,11 @@ jobs:
         PANDAS: 1.4.0
       python_311_cython_coverage:
         python.version: '3.11'
-        FLAGS: '-Csetup-args=-Dcython-coverage=true'
+        BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
         cython.coverage: true
       python_311_no_binary:
         python.version: '3.11'
-        FLAGS: '-Csetup-args=-Dno-binary=true'
+        BUILD_FLAGS: '-Csetup-args=-Dno-binary=true'
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 2.2.2
         USE_NUMBA: true
@@ -75,7 +76,6 @@ jobs:
       python_312_statsmodels_main:
         python.version: '3.10'
         STATSMODELS_MAIN: true
-        coverage: false
       python312_pre:
         python.version: '3.12'
         pip.pre: true
@@ -127,19 +127,30 @@ jobs:
     displayName: 'List Configuration (conda)'
     condition: eq(variables['use.conda'], 'true')
 
-  - script: |
-      echo "Installing to site packages"
-      python -m pip wheel -v . --wheel-dir ./dist/
-      WHL=$(ls -t ./dist/arch-*.whl | head -1)
-      pip install ${WHL}
-    displayName: 'Install arch (site-packages)'
-    condition: eq(variables['test.install'], 'true')
 
   - script: |
-      echo python -m pip install --no-build-isolation -vv -e . ${FLAGS}
-      python -m pip install --no-build-isolation -vv -e . ${FLAGS}
+      echo "Installing to site packages (sdist)"
+      python -m pip install pip build --upgrade
+      python -m build --sdist . -v  
+      SDIST=$(ls -t ./dist/arch-*.tar.gz | head -1)
+      pip install ${SDIST} -v
+    displayName: 'Install arch (site-packages, sdist)'
+    condition: eq(variables['test.sdist'], 'true')
+
+  - script: |
+      echo "Installing to site packages (wheel)
+      python -m pip install pip wheel --upgrade"
+      python -m pip wheel . --wheel-dir ./dist/
+      WHL=$(ls -t ./dist/arch-*.whl | head -1)
+      pip install ${WHL} -v
+    displayName: 'Install arch (site-packages, wheel)'
+    condition: eq(variables['test.wheel'], 'true')
+
+  - script: |
+      echo python -m pip install --no-build-isolation -vv -e . ${BUILD_FLAGS}
+      python -m pip install --no-build-isolation -vv -e . ${BUILD_FLAGS}
     displayName: 'Install arch (editable)'
-    condition: ne(variables['test.install'], 'true')
+    condition: and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true'))
 
   - script: |
       pushd arch/univariate
@@ -152,28 +163,27 @@ jobs:
     condition: eq(variables['cython.coverage'], 'true')
 
   - script: |
-      set -e
       echo "Testing site packages"
       mkdir test_run_dir
       pushd test_run_dir
       python -c "import arch; arch.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
       popd
     displayName: 'Run tests (site-packages)'
-    condition: eq(variables['test.install'], 'true')
+    condition: or(eq(variables['test.wheel'], 'true'), eq(variables['test.sdist'], 'true'))
 
   - script: |
       echo "Testing editable install"
-      export COVERAGE_OPTS="--cov=arch --cov-report xml:coverage.xml --cov-report term"
-      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
-      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
+      export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
     displayName: 'Run tests (editable)'
-    condition: and(ne(variables['test.install'], 'true'), ne(variables['pip.pre'], 'true'))
+    condition: and(and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true')), ne(variables['pip.pre'], 'true'))
 
   - script: |
       echo "Testing pip-pre"
-      export COVERAGE_OPTS="--cov=arch --cov-report xml:coverage.xml --cov-report term"
-      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
-      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
+      export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
     displayName: 'Run tests (pip pre)'
     condition: eq(variables['pip.pre'], 'true')
     continueOnError: true
@@ -187,11 +197,11 @@ jobs:
   - task: PublishCodeCoverageResults@2
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'))
 
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'))
