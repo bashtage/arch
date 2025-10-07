@@ -14,7 +14,6 @@ variables:
   TEST_INSTALL: false
   MPLBACKEND: agg
   PYTEST_PATTERN: "(not slow)"
-  coverage: true
   test.install: false
   pip.pre: false
 
