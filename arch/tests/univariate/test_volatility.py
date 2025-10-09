@@ -10,7 +10,6 @@ from numpy.testing import (
     assert_array_equal,
     assert_equal,
 )
-from sklearn.mixture import GaussianMixture
 import pytest
 from scipy.special import gamma, gammaln
 from arch import arch_model
@@ -1822,7 +1821,7 @@ def test_msgarch():
     assert result is not None
     assert result.params.shape[0] == 8 #  2*3 GARCH params + 2 transition matrix probabilities (this is valid whilst k=2)
     assert np.all(np.isfinite(result.params))
-    assert result.model.volatility.k == 2 
+    assert result.model.volatility.k == 2
     assert np.all(forecast.variance.values > 0)
     assert forecast.variance.shape[1] == 1
     assert np.allclose(probs[:,1:].sum(axis=0), 1.0, atol=1e-6) # excludes t=0 prob's as these have not been filtered

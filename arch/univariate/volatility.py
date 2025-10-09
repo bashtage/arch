@@ -13,7 +13,6 @@ from warnings import warn
 import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln, logsumexp
-from scipy.stats import norm
 
 from arch.typing import (
     ArrayLike1D,
@@ -209,7 +208,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     _updatable: bool = True
 
-    def __init__(self) -> None:
+    def __init__(self, model=None) -> None:
         self._num_params = 0
         self._name = ""
         self.closed_form: bool = False
@@ -218,6 +217,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         self._start = 0
         self._stop = -1
         self._volatility_updater: rec.VolatilityUpdater | None = None
+        self._loglikelihood = None
+        self.model = model
 
     def __str__(self) -> str:
         return self.name
@@ -872,6 +873,12 @@ class VolatilityProcess(metaclass=ABCMeta):
         Construct empty volatility array.
         """
         return np.zeros(resids.shape[0], dtype=float)
+
+    def compute_loglikelihood(self, parameters, resids, sigma2, backcast, var_bounds):
+        """
+        Just calls the default ARCHModel _loglikelihood
+        """
+        return self.model._loglikelihood(parameters, sigma2, backcast, var_bounds)
 
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
@@ -3844,22 +3851,19 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.power = 2.0 # fixed for now
 
         self.num_params_single = 1 + self.p + self.q # parameters in a single regime
-        self._num_params = self.num_params_single * self.k + self.k # regime specifc + transition matrix 
+        self._num_params = self.num_params_single * self.k + self.k # regime specifc + transition matrix
 
         # Instantiate one GARCH type object per regime
         self.regimes = [GARCH(p=self.p, o=self.o, q=self.q, power=self.power) for _ in range(self.k)]
 
-        # Initialise constant transition matrix 
+        # Initialise constant transition matrix
         self.transition_matrix = np.full((self.k, self.k), 1.0 / self.k)
 
-        self._name = self._generate_name()
+        self._name = "MS GARCH"
         self.filtered_probs = None
         self.pi = None
         self.base_garch = GARCH(self.p, self.o, self.q, self.power) # used later for forecasting
 
-
-    def _generate_name(self) -> str:
-        return "MS GARCH"
 
 
     def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
@@ -3868,13 +3872,13 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         sresids = np.sign(resids)
         p, o, q = self.p, self.o, self.q
         t = resids.shape[0]
-        sigma2 = np.ascontiguousarray(sigma2)  
+        sigma2 = np.ascontiguousarray(sigma2)
 
         # regime 1
         col1 = np.ascontiguousarray(sigma2[:, 0])
         rec.garch_recursion(parameters[0:3], fresids, sresids, col1, p, o, q, t, backcast, var_bounds)
         sigma2[:, 0] = col1
-        
+
         # regime 2
         col2 = np.ascontiguousarray(sigma2[:, 1])
         rec.garch_recursion(parameters[3:6], fresids, sresids, col2, p, o, q, t, backcast, var_bounds)
@@ -3888,7 +3892,7 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def bounds(self, resids):
         v = float(np.mean(np.abs(resids) ** self.power))
         bounds = []
-        for r in range(self.k):
+        for _ in range(self.k):
             bounds.append((1e-4 * v, 10.0 * v)) # omega
             bounds.extend([(1e-4, 0.999)] * self.p) # alpha
             bounds.extend([(1e-4, 0.999)] * self.q) # beta
@@ -3904,7 +3908,8 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return names
 
 
-    def simulate(self):
+    def simulate(self, *args, **kwargs):
+        """Placeholder for future MS-GARCH simulate method"""
         pass
 
 
@@ -3912,9 +3917,9 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return
 
 
-    def _simulation_forecast(self):
+    def _simulation_forecast(self, *args, **kwargs):
+        """Placeholder for future MS-GARCH simulation forecast"""
         pass
-
 
     def constraints(self) -> tuple[np.ndarray, np.ndarray]:
         k = self.k       # number of regimes
@@ -3932,9 +3937,9 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             # Positivity constraints: omega, alpha, beta >= 0
             for i in range(k_arch):
                 a[i, r*k_arch + i] = -1.0
-                b[i] = 0 
+                b[i] = 0
         
-            # stationarity: alpha + beta < 1 
+            # stationarity: alpha + beta < 1
             a_stationarity = np.zeros(k_arch * k + k)
             a_stationarity[r*k_arch + 1] = 1.0  # alpha
             a_stationarity[r*k_arch + 2] = 1.0  # beta
@@ -3951,7 +3956,7 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         a_trans = np.zeros((k, k_arch*k + k))
         b_trans = np.zeros(k)
 
-        # P11 >= 0 
+        # P11 >= 0
         a_trans[0, k_arch*k + 0] = -1.0
         b_trans[0] = 0.0
 
@@ -3978,10 +3983,10 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         from sklearn.mixture import GaussianMixture
         from arch import arch_model
 
-        # GM groups returns by vol level 
+        # GM groups returns by vol level
         gm = GaussianMixture(n_components=self.k, random_state=1).fit(np.abs(resids).reshape(-1, 1))
         
-        # Viterbi decoding for hard regime classification 
+        # Viterbi decoding for hard regime classification
         viterbi_regimes = np.argmax(gm.predict_proba(np.abs(resids).reshape(-1, 1)), axis=1)
         
         # fit garch(1,1) to each regime's returns
@@ -4042,7 +4047,7 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         # Initialise regime probabilities array
         p = np.zeros((self.k, len(resids)))
-        p[:, 0] = self.pi 
+        p[:, 0] = self.pi
 
         # Initialise regime specific variance recursions using backcast
         sigma2 = np.zeros((len(resids), self.k))
@@ -4068,13 +4073,13 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             # log of mixture likelihood
             log_mixture = logsumexp(log_pred_probs + log_likes)
 
-            # update filtered probabilities 
+            # update filtered probabilities
             log_p[:, t] = log_pred_probs + log_likes - log_mixture
 
             # accumulate log-likelihood
             loglikelihood += log_mixture
      
-        p[:, :] = np.exp(log_p) 
+        p[:, :] = np.exp(log_p)
         self.filtered_probs = p.copy()
         return -loglikelihood
 
@@ -4099,7 +4104,7 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         # Weighted average volatility
         vol_final = np.sum(vol_per_regime * filtered_probs.T, axis=1)  # n_obs
-        vol_final = vol_final[start:].reshape(-1, horizon) 
+        vol_final = vol_final[start:].reshape(-1, horizon)
 
         self.vol_per_regime = vol_per_regime
         self.vol_final = vol_final
@@ -4114,7 +4119,7 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         kv = int(self.num_params)              # total vol params length for MSGARCH
                                             
         mp = x[:km]
-        vp = x[km:km+kv]       
+        vp = x[km:km+kv]
         dp = x[km+kv:]
 
         return mp, vp, dp
@@ -4162,6 +4167,10 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _initialise_vol(self, resids, n_regimes):
         return np.zeros((resids.shape[0], n_regimes), dtype=float)
+    
+
+    def compute_loglikelihood(self):
+        return self.msgarch_loglikelihood() 
 
 
 

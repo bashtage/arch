@@ -716,10 +716,10 @@ class ARCHModel(metaclass=ABCMeta):
 
         n_regimes = v.k if isinstance(v, MSGARCH) else 1
         sigma2 = np.zeros((resids.shape[0], n_regimes)) if n_regimes > 1 else np.zeros(resids.shape[0])
-        self._backcast = backcast 
+        self._backcast = backcast
         sv_volatility = v.starting_values(resids) # initial guess for GARCH recursion
         self._var_bounds = var_bounds = v.variance_bounds(resids)
-        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds) # fills sigma 2 recursively using chosen vol model 
+        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds) # fills sigma 2 recursively using chosen vol model
         if n_regimes == 1:
             std_resids = resids / np.sqrt(sigma2) 
         else:
@@ -728,7 +728,7 @@ class ARCHModel(metaclass=ABCMeta):
             std_resids = resids / np.sqrt(pi_weighted_sigma2) ## Using stationary distribution to weight regime variances. This is only an approximation (true weights should come from filtered probabilties), but we don't have these available at this stage
 
         # 2. Construct constraint matrices from all models and distribution
-        constraints = (                                                               
+        constraints = (                                                    
             self.constraints(),
             self.volatility.constraints(),
             self.distribution.constraints(),
@@ -796,13 +796,16 @@ class ARCHModel(metaclass=ABCMeta):
             _callback_info["display"] = update_freq
         disp_flag = True if disp == "final" else False
 
-        if isinstance(self.volatility, MSGARCH):  
+        if isinstance(self.volatility, MSGARCH):
             func = self.volatility.msgarch_loglikelihood # MS GARCH
             args = (resids, sigma2, backcast, var_bounds)
 
         else:
             func = self._loglikelihood  # standard GARCH
             args = (sigma2, backcast, var_bounds)
+
+        # func = self.volatility.compute_loglikelihood()
+        # args = (sigma2, backcast, var_bounds)
 
         ineq_constraints = constraint(a, b)
         from scipy.optimize import minimize
@@ -859,16 +862,15 @@ class ARCHModel(metaclass=ABCMeta):
         first_obs, last_obs = self._fit_indices
         resids_final = np.full(self._y.shape, np.nan, dtype=float)
         resids_final[first_obs:last_obs] = resids
-
         filtered_probs = self.volatility.compute_filtered_probs(params, resids, sigma2, backcast, var_bounds)
 
         
-        if isinstance(self.volatility, MSGARCH):   
+        if isinstance(self.volatility, MSGARCH):
             vol_final = np.full(self._y.shape, np.nan, dtype=float)
             weighted_sigma2 = (vol**2 * filtered_probs.T).sum(axis=1) 
             vol_final[first_obs:last_obs] = np.sqrt(weighted_sigma2)
             
-        else:              
+        else:  
             vol_final = np.full(self._y.shape, np.nan, dtype=float)
             vol_final[first_obs:last_obs] = vol
 
