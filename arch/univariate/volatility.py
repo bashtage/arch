@@ -4169,8 +4169,12 @@ class MSGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return np.zeros((resids.shape[0], n_regimes), dtype=float)
     
 
-    def compute_loglikelihood(self):
-        return self.msgarch_loglikelihood() 
+    def compute_loglikelihood(self, parameters=None, resids=None, sigma2=None, backcast=None, var_bounds=None):
+        return self.msgarch_loglikelihood(parameters, resids, sigma2, backcast, var_bounds)
+
+
+    
+
 
 
 
