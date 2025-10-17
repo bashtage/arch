@@ -21,9 +21,9 @@
    "outputs": [],
    "source": [
     "import matplotlib.pyplot as plt\n",
-    "import seaborn\n",
+    "import seaborn as sns\n",
     "\n",
-    "seaborn.set_style(\"darkgrid\")\n",
+    "sns.set_style(\"darkgrid\")\n",
     "plt.rc(\"figure\", figsize=(16, 6))\n",
     "plt.rc(\"savefig\", dpi=90)\n",
     "plt.rc(\"font\", family=\"sans-serif\")\n",
