@@ -80,13 +80,12 @@ doc = [
   # Documentation
   "setuptools>=61",
   "wheel",
-  "setuptools_scm[toml]>=8.0.3,<9",
-  "oldest-supported-numpy",
+  "setuptools_scm[toml]>=9.2.0,<10",
   "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
-  "numpy >=1.22",
-  "scipy >=1.5.0",
+  "numpy >=2.3.4",
+  "scipy >=1.16.0",
   "ipython >=8.0.1",
-  "matplotlib >=3.0",
+  "matplotlib >=3.10",
   "patsy >=0.5.3",
   "statsmodels >=0.13.5",
   "jinja2",
