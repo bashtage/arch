@@ -78,13 +78,13 @@ from arch.unitroot.critical_values.dickey_fuller import (
 )
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
-from arch.utility import cov_nw
 from arch.utility.array import (
     AbstractDocStringInheritor,
     ensure1d,
     ensure2d,
     to_array_1d,
 )
+from arch.utility.cov import cov_nw
 from arch.utility.exceptions import (
     InfeasibleTestException,
     InvalidLengthWarning,

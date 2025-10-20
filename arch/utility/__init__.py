@@ -1,8 +1,6 @@
 import os
 import sys
 
-from arch.utility.cov import cov_nw
-
 PKG = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -54,4 +52,4 @@ def test(
     return status
 
 
-__all__ = ["cov_nw", "test"]
+__all__ = ["test"]
