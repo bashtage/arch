@@ -35,7 +35,6 @@
 
       ~SkewStudent.generator
       ~SkewStudent.name
-      ~SkewStudent.random_state
    
    
    

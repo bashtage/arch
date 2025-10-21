@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: StationaryBootstrap
-   :exclude-members: apply,bootstrap,clone,conf_int,cov,get_state,reset,seed,set_state,update_indices,var,
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,reset,update_indices,var,
 
    
    
@@ -18,10 +18,7 @@
       ~StationaryBootstrap.clone
       ~StationaryBootstrap.conf_int
       ~StationaryBootstrap.cov
-      ~StationaryBootstrap.get_state
       ~StationaryBootstrap.reset
-      ~StationaryBootstrap.seed
-      ~StationaryBootstrap.set_state
       ~StationaryBootstrap.update_indices
       ~StationaryBootstrap.var
    
@@ -36,7 +33,6 @@
 
       ~StationaryBootstrap.generator
       ~StationaryBootstrap.index
-      ~StationaryBootstrap.random_state
       ~StationaryBootstrap.state
    
    

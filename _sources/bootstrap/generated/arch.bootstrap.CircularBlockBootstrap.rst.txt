@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: CircularBlockBootstrap
-   :exclude-members: apply,bootstrap,clone,conf_int,cov,get_state,reset,seed,set_state,update_indices,var,
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,reset,update_indices,var,
 
    
    
@@ -18,10 +18,7 @@
       ~CircularBlockBootstrap.clone
       ~CircularBlockBootstrap.conf_int
       ~CircularBlockBootstrap.cov
-      ~CircularBlockBootstrap.get_state
       ~CircularBlockBootstrap.reset
-      ~CircularBlockBootstrap.seed
-      ~CircularBlockBootstrap.set_state
       ~CircularBlockBootstrap.update_indices
       ~CircularBlockBootstrap.var
    
@@ -36,7 +33,6 @@
 
       ~CircularBlockBootstrap.generator
       ~CircularBlockBootstrap.index
-      ~CircularBlockBootstrap.random_state
       ~CircularBlockBootstrap.state
    
    

@@ -49,9 +49,9 @@
     "import matplotlib.pyplot as plt\n",
     "import numpy as np\n",
     "import pandas as pd\n",
-    "import seaborn\n",
+    "import seaborn as sns\n",
     "\n",
-    "seaborn.set_style(\"darkgrid\")\n",
+    "sns.set_style(\"darkgrid\")\n",
     "plt.rc(\"figure\", figsize=(16, 6))\n",
     "plt.rc(\"savefig\", dpi=90)\n",
     "plt.rc(\"font\", family=\"sans-serif\")\n",
@@ -525,7 +525,7 @@
     "\n",
     "simulations = []\n",
     "rng = RandomState(20210301)\n",
-    "for i in range(100):\n",
+    "for _ in range(100):\n",
     "    x0_sim = sim_ar1(np.array([1, 0.8]), x0.iloc[-1], 10, rng)\n",
     "    x1_sim = sim_ar1(np.array([2.5, 0.5]), x1.iloc[-1], 10, rng)\n",
     "    x = {\"x0\": x0_sim, \"x1\": x1_sim}\n",
@@ -711,7 +711,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.12.7"
+   "version": "3.12.9"
   }
  },
  "nbformat": 4,

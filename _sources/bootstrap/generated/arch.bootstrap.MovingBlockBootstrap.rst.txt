@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: MovingBlockBootstrap
-   :exclude-members: apply,bootstrap,clone,conf_int,cov,get_state,reset,seed,set_state,update_indices,var,
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,reset,update_indices,var,
 
    
    
@@ -18,10 +18,7 @@
       ~MovingBlockBootstrap.clone
       ~MovingBlockBootstrap.conf_int
       ~MovingBlockBootstrap.cov
-      ~MovingBlockBootstrap.get_state
       ~MovingBlockBootstrap.reset
-      ~MovingBlockBootstrap.seed
-      ~MovingBlockBootstrap.set_state
       ~MovingBlockBootstrap.update_indices
       ~MovingBlockBootstrap.var
    
@@ -36,7 +33,6 @@
 
       ~MovingBlockBootstrap.generator
       ~MovingBlockBootstrap.index
-      ~MovingBlockBootstrap.random_state
       ~MovingBlockBootstrap.state
    
    

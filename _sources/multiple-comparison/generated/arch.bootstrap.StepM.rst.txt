@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: StepM
-   :exclude-members: compute,reset,seed,
+   :exclude-members: compute,reset,
 
    
    
@@ -15,7 +15,6 @@
 
       ~StepM.compute
       ~StepM.reset
-      ~StepM.seed
    
    
    

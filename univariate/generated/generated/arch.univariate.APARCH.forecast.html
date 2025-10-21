@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -10,12 +11,19 @@
       
       
       
+      
+        <link rel="prev" href="arch.univariate.APARCH.constraints.html">
+      
+      
+        <link rel="next" href="arch.univariate.APARCH.parameter_names.html">
+      
+      
       <link rel="icon" href="../../../_static/favicon.ico">
     
     
   
       
-        <title>arch.univariate.APARCH.forecast - arch 7.2.0</title>
+        <title>arch.univariate.APARCH.forecast - arch 8.0.0</title>
       
     
 
@@ -30,15 +38,13 @@
     
       
         
-        
-          
-          
-          <meta name="theme-color" content="#2094f3">
-        
       
       
 
+
     
+    
+      
     
     
       
@@ -47,9 +53,9 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -64,9 +70,8 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -83,26 +88,29 @@
       
     </div>
     
-      <div data-md-component="outdated" hidden>
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
       </div>
     
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.2.0
+            arch 8.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -115,10 +123,14 @@
       </div>
     </div>
     
+      
+    
+    
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -126,24 +138,27 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -155,7 +170,7 @@
         <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     arch
@@ -187,19 +202,20 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.2.0
+    arch 8.0.0
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     arch
@@ -211,455 +227,704 @@
     
       
       
-      
-
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../univariate.html"><span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
           
-            <label for="__nav_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Univariate Volatility Models" data-md-level="1">
-        <label class="md-nav__title" for="__nav_1">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../univariate.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate.rst (reference label)"><span>Univariate Volatility Models</span></span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/univariate/univariate.rst (reference label)"><span>Univariate Volatility Models</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../introduction.html" class="md-nav__link">
-        <span title="/univariate/introduction.rst (reference label)" class="md-ellipsis">Introduction</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/introduction.rst (reference label)"><span>Introduction</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_volatility_modeling.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)" class="md-ellipsis">Examples</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)"><span>Examples</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../forecasting.html" class="md-nav__link">
-        <span title="/univariate/forecasting.rst (reference label)" class="md-ellipsis">Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/forecasting.rst (reference label)"><span>Forecasting</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_volatility_forecasting.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_forecasting.ipynb (reference label)" class="md-ellipsis">Volatility Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_forecasting.ipynb (reference label)"><span>Volatility Forecasting</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_volatility_forecasting.html#Value-at-Risk-Forecasting" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_forecasting.ipynb#value-at-risk-forecasting (reference label)" class="md-ellipsis">Value-<wbr>at-<wbr>Risk Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_forecasting.ipynb#value-at-risk-forecasting (reference label)"><span>Value-<wbr>at-<wbr>Risk Forecasting</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_volatility_scenarios.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_scenarios.ipynb (reference label)" class="md-ellipsis">Forecasting Scenarios</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_scenarios.ipynb (reference label)"><span>Forecasting Scenarios</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_forecasting_with_exogenous_variables.html" class="md-nav__link">
-        <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)" class="md-ellipsis">Forecasting with Exogenous Variables</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)"><span>Forecasting with Exogenous Variables</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../mean.html" class="md-nav__link">
-        <span title="/univariate/mean.rst (reference label)" class="md-ellipsis">Mean Models</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/mean.rst (reference label)"><span>Mean Models</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_9" type="checkbox" id="__nav_1_9" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../volatility.html"><span title="/univariate/volatility.rst (reference label)" class="md-ellipsis">Volatility Processes</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9" checked>
+        
           
-            <label for="__nav_1_9">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Volatility Processes" data-md-level="2">
-        <label class="md-nav__title" for="__nav_1_9">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/univariate/volatility.rst (reference label)" class="md-ellipsis">Volatility Processes</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../volatility.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/volatility.rst (reference label)"><span>Volatility Processes</span></span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_1_9" id="__nav_1_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/univariate/volatility.rst (reference label)"><span>Volatility Processes</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.ConstantVariance.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.constantvariance.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>Constant<wbr>Variance</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.constantvariance.rst (reference label)"><span>arch.<wbr>univariate.<wbr>Constant<wbr>Variance</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.GARCH.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.garch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>GARCH</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.garch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>GARCH</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.FIGARCH.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.figarch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>FIGARCH</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.figarch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>FIGARCH</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.EGARCH.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.egarch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>EGARCH</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.egarch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>EGARCH</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.HARCH.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.harch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>HARCH</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.harch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>HARCH</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.MIDASHyperbolic.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.midashyperbolic.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>MIDASHyperbolic</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.midashyperbolic.rst (reference label)"><span>arch.<wbr>univariate.<wbr>MIDASHyperbolic</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../arch.univariate.ARCH.html" class="md-nav__link">
-        <span title="/univariate/generated/arch.univariate.arch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>ARCH</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.arch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>ARCH</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_9_8" type="checkbox" id="__nav_1_9_8" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../arch.univariate.APARCH.html"><span title="/univariate/generated/arch.univariate.aparch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9_8" checked>
+        
           
-            <label for="__nav_1_9_8">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="arch.univariate.APARCH" data-md-level="3">
-        <label class="md-nav__title" for="__nav_1_9_8">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/univariate/generated/arch.univariate.aparch.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="../arch.univariate.APARCH.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/arch.univariate.aparch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH</span></span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_1_9_8" id="__nav_1_9_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_9_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_9_8">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/univariate/generated/arch.univariate.aparch.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_9_8_1" type="checkbox" id="__nav_1_9_8_1" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../arch.univariate.APARCH.html#arch.univariate.APARCH"><span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9_8_1" checked>
+        
           
-            <label for="__nav_1_9_8_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="arch.univariate.APARCH" data-md-level="4">
-        <label class="md-nav__title" for="__nav_1_9_8_1">
-          <span class="md-nav__icon md-icon"></span>
-          <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="../arch.univariate.APARCH.html#arch.univariate.APARCH" class="md-nav__link ">
+              
+  
+  
+    <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span>
+  
+  <span class="md-ellipsis">
+    <span title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><span>arch.<wbr>univariate.<wbr>APARCH</span></span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_1_9_8_1" id="__nav_1_9_8_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_1_9_8_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_9_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><span>arch.<wbr>univariate.<wbr>APARCH</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.backcast.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.backcast.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>backcast</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.backcast.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>backcast</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.backcast_transform.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.backcast_transform.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>backcast_<wbr>transform</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.backcast_transform.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>backcast_<wbr>transform</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.bounds.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.bounds.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>bounds</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.bounds.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>bounds</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.compute_variance.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.compute_variance.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>compute_<wbr>variance</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.compute_variance.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>compute_<wbr>variance</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.constraints.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.constraints.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>constraints</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.constraints.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>constraints</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
       
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/univariate/generated/generated/arch.univariate.aparch.forecast.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>forecast</span>
+          
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.forecast.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>forecast</span></span>
+    
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.forecast.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>forecast</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.forecast.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>forecast</span></span>
+    
+  </span>
+  
+
       </a>
       
         
@@ -680,7 +945,12 @@
       
         <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast" class="md-nav__link">
-    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="arch.univariate.APARCH.forecast (Python method) — Forecast volatility from the model" class="md-ellipsis">APARCH.<wbr>forecast</span>
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast (Python method) — Forecast volatility from the model"><span>APARCH.<wbr>forecast</span></span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="APARCH.forecast">
@@ -688,7 +958,10 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-parameters" class="md-nav__link">
-    <span class="md-ellipsis">Parameters</span>
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Parameters">
@@ -696,70 +969,120 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.parameters" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model" class="md-ellipsis">parameters</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model"><span>parameters</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.resids" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion" class="md-ellipsis">resids</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion"><span>resids</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.backcast" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion" class="md-ellipsis">backcast</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion"><span>backcast</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.var_bounds" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds" class="md-ellipsis">var_<wbr>bounds</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds"><span>var_<wbr>bounds</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.start" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast." class="md-ellipsis">start</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast."><span>start</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.horizon" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon." class="md-ellipsis">horizon</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon."><span>horizon</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.method" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast." class="md-ellipsis">method</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast."><span>method</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.simulations" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap." class="md-ellipsis">simulations</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap."><span>simulations</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.rng" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is &#39;simulation&#39;." class="md-ellipsis">rng</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is &#39;simulation&#39;."><span>rng</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.random_state" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is &#39;bootstrap&#39;" class="md-ellipsis">random_<wbr>state</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is &#39;bootstrap&#39;"><span>random_<wbr>state</span></span>
+    </span>
   </a>
   
 </li>
@@ -771,21 +1094,30 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-returns" class="md-nav__link">
-    <span class="md-ellipsis">Returns</span>
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-return-type" class="md-nav__link">
-    <span class="md-ellipsis">Return type</span>
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-raises" class="md-nav__link">
-    <span class="md-ellipsis">Raises</span>
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
   </a>
   
 </li>
@@ -802,349 +1134,542 @@
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.parameter_names.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.parameter_names.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>parameter_<wbr>names</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.parameter_names.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>parameter_<wbr>names</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.simulate.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.simulate.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>simulate</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.simulate.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>simulate</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.starting_values.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.starting_values.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>starting_<wbr>values</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.starting_values.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>starting_<wbr>values</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.update.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.update.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>update</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.update.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>update</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.variance_bounds.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.variance_bounds.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>variance_<wbr>bounds</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.variance_bounds.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>variance_<wbr>bounds</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.common_asym.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.common_asym.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>common_<wbr>asym</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.common_asym.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>common_<wbr>asym</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.delta.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.delta.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>delta</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.delta.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>delta</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.name.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.name.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>name</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.name.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>name</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.num_params.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.num_params.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>num_<wbr>params</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.num_params.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>num_<wbr>params</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.start.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.start.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>start</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.start.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>start</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.stop.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.stop.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>stop</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.stop.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>stop</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.updateable.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.updateable.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>updateable</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.updateable.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>updateable</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="arch.univariate.APARCH.volatility_updater.html" class="md-nav__link">
-        <span title="/univariate/generated/generated/arch.univariate.aparch.volatility_updater.rst (reference label)" class="md-ellipsis">arch.<wbr>univariate.<wbr>APARCH.<wbr>volatility_<wbr>updater</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.aparch.volatility_updater.rst (reference label)"><span>arch.<wbr>univariate.<wbr>APARCH.<wbr>volatility_<wbr>updater</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../volatility.html#parameterless-variance-processes" class="md-nav__link">
-        <span title="/univariate/volatility.rst#parameterless-variance-processes (reference label)" class="md-ellipsis">Parameterless Variance Processes</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/volatility.rst#parameterless-variance-processes (reference label)"><span>Parameterless Variance Processes</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../volatility.html#fixedvariance" class="md-nav__link">
-        <span title="/univariate/volatility.rst#fixedvariance (reference label)" class="md-ellipsis">Fixed<wbr>Variance</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/volatility.rst#fixedvariance (reference label)"><span>Fixed<wbr>Variance</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../volatility.html#writing-new-volatility-processes" class="md-nav__link">
-        <span title="/univariate/volatility.rst#writing-new-volatility-processes (reference label)" class="md-ellipsis">Writing New Volatility Processes</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/volatility.rst#writing-new-volatility-processes (reference label)"><span>Writing New Volatility Processes</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../univariate_using_fixed_variance.html" class="md-nav__link">
-        <span title="/univariate/univariate_using_fixed_variance.ipynb (reference label)" class="md-ellipsis">Using the Fixed Variance Process</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_using_fixed_variance.ipynb (reference label)"><span>Using the Fixed Variance Process</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../distribution.html" class="md-nav__link">
-        <span title="/univariate/distribution.rst (reference label)" class="md-ellipsis">Distributions</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/distribution.rst (reference label)"><span>Distributions</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../results.html" class="md-nav__link">
-        <span title="/univariate/results.rst (reference label)" class="md-ellipsis">Results</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/results.rst (reference label)"><span>Results</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../utility.html" class="md-nav__link">
-        <span title="/univariate/utility.rst (reference label)" class="md-ellipsis">Utilities</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/utility.rst (reference label)"><span>Utilities</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../background.html" class="md-nav__link">
-        <span title="/univariate/background.rst (reference label)" class="md-ellipsis">Background and References</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/background.rst (reference label)"><span>Background and References</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
@@ -1152,15 +1677,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../bootstrap/bootstrap.html" class="md-nav__link">
-        <span title="/bootstrap/bootstrap.rst (reference label)" class="md-ellipsis">Bootstrapping</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bootstrap/bootstrap.rst (reference label)"><span>Bootstrapping</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1168,15 +1700,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../multiple-comparison/multiple-comparisons.html" class="md-nav__link">
-        <span title="/multiple-comparison/multiple-comparisons.rst (reference label)" class="md-ellipsis">Multiple Comparison Problems</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/multiple-comparison/multiple-comparisons.rst (reference label)"><span>Multiple Comparison Problems</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1184,15 +1723,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../unitroot/unitroot.html" class="md-nav__link">
-        <span title="/unitroot/unitroot.rst (reference label)" class="md-ellipsis">Unit Root Testing</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst (reference label)"><span>Unit Root Testing</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1200,15 +1746,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../unitroot/unitroot.html#cointegration-analysis" class="md-nav__link">
-        <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)" class="md-ellipsis">Cointegration Analysis</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)"><span>Cointegration Analysis</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1216,15 +1769,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../covariance/covariance.html" class="md-nav__link">
-        <span title="/covariance/covariance.rst (reference label)" class="md-ellipsis">Long-<wbr>run Covariance Estimation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/covariance/covariance.rst (reference label)"><span>Long-<wbr>run Covariance Estimation</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1232,15 +1792,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../api.html" class="md-nav__link">
-        <span title="/api.rst (reference label)" class="md-ellipsis">API Reference</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/api.rst (reference label)"><span>API Reference</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1248,15 +1815,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../types.html" class="md-nav__link">
-        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1264,15 +1838,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../../changes.html" class="md-nav__link">
-        <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/changes.rst (reference label)"><span>Change Log</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1305,7 +1886,12 @@
       
         <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast" class="md-nav__link">
-    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="arch.univariate.APARCH.forecast (Python method) — Forecast volatility from the model" class="md-ellipsis">APARCH.<wbr>forecast</span>
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast (Python method) — Forecast volatility from the model"><span>APARCH.<wbr>forecast</span></span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="APARCH.forecast">
@@ -1313,7 +1899,10 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-parameters" class="md-nav__link">
-    <span class="md-ellipsis">Parameters</span>
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Parameters">
@@ -1321,70 +1910,120 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.parameters" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model" class="md-ellipsis">parameters</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model"><span>parameters</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.resids" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion" class="md-ellipsis">resids</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion"><span>resids</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.backcast" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion" class="md-ellipsis">backcast</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion"><span>backcast</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.var_bounds" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds" class="md-ellipsis">var_<wbr>bounds</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds"><span>var_<wbr>bounds</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.start" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast." class="md-ellipsis">start</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast."><span>start</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.horizon" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon." class="md-ellipsis">horizon</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon."><span>horizon</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.method" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast." class="md-ellipsis">method</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast."><span>method</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.simulations" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap." class="md-ellipsis">simulations</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap."><span>simulations</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.rng" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is &#39;simulation&#39;." class="md-ellipsis">rng</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is &#39;simulation&#39;."><span>rng</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast.random_state" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is &#39;bootstrap&#39;" class="md-ellipsis">random_<wbr>state</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is &#39;bootstrap&#39;"><span>random_<wbr>state</span></span>
+    </span>
   </a>
   
 </li>
@@ -1396,21 +2035,30 @@
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-returns" class="md-nav__link">
-    <span class="md-ellipsis">Returns</span>
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-return-type" class="md-nav__link">
-    <span class="md-ellipsis">Return type</span>
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#arch.univariate.APARCH.forecast-raises" class="md-nav__link">
-    <span class="md-ellipsis">Raises</span>
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
   </a>
   
 </li>
@@ -1431,41 +2079,43 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
 
 
 <h1 id="arch-univariate-aparch-forecast">arch.univariate.APARCH.forecast<a class="headerlink" href="#arch-univariate-aparch-forecast" title="Link to this heading">¶</a></h1>
 <dl class="py method objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="arch.univariate.APARCH.forecast">
-<span class="sig-prename descclassname"><span class="pre">APARCH.</span></span><span class="sig-name descname"><span class="pre">forecast</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.parameters" title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model"><span class="n"><span class="pre">parameters</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><span class="pre">Series</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.resids" title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion"><span class="n"><span class="pre">resids</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.backcast" title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion"><span class="n"><span class="pre">backcast</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.var_bounds" title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds"><span class="n"><span class="pre">var_bounds</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.start" title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast."><span class="n"><span class="pre">start</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.horizon" title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon."><span class="n"><span class="pre">horizon</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.method" title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast."><span class="n"><span class="pre">method</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><span class="s"><span class="pre">'analytic'</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="s"><span class="pre">'simulation'</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="s"><span class="pre">'bootstrap'</span></span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;analytic&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.simulations" title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap."><span class="n"><span class="pre">simulations</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.rng" title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is 'simulation'."><span class="n"><span class="pre">rng</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.random_state" title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is 'bootstrap'"><span class="n"><span class="pre">random_state</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.1)"><span class="pre">RandomState</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="desctype"><a class="reference internal" href="../arch.univariate.volatility.VarianceForecast.html#arch.univariate.volatility.VarianceForecast" title="arch.univariate.volatility.VarianceForecast (Python class) — Container for variance forecasts"><span class="pre">VarianceForecast</span></a></span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">APARCH.</span></span><span class="sig-name descname"><span class="pre">forecast</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.parameters" title="arch.univariate.APARCH.forecast.parameters (Python parameter) — Parameters required to forecast the volatility model"><span class="n"><span class="pre">parameters</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.3)"><span class="pre">Series</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.resids" title="arch.univariate.APARCH.forecast.resids (Python parameter) — Residuals to use in the recursion"><span class="n"><span class="pre">resids</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.3)"><span class="pre">Series</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.backcast" title="arch.univariate.APARCH.forecast.backcast (Python parameter) — Value to use when initializing the recursion"><span class="n"><span class="pre">backcast</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.var_bounds" title="arch.univariate.APARCH.forecast.var_bounds (Python parameter) — Array containing columns of lower and upper bounds"><span class="n"><span class="pre">var_bounds</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.start" title="arch.univariate.APARCH.forecast.start (Python parameter) — Index of the first observation to use as the starting point for the forecast."><span class="n"><span class="pre">start</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.horizon" title="arch.univariate.APARCH.forecast.horizon (Python parameter) — Forecast horizon."><span class="n"><span class="pre">horizon</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.method" title="arch.univariate.APARCH.forecast.method (Python parameter) — Method to use when producing the forecast."><span class="n"><span class="pre">method</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><span class="s"><span class="pre">'analytic'</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="s"><span class="pre">'simulation'</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="s"><span class="pre">'bootstrap'</span></span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;analytic&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.simulations" title="arch.univariate.APARCH.forecast.simulations (Python parameter) — Number of simulations to run when computing the forecast using either simulation or bootstrap."><span class="n"><span class="pre">simulations</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.rng" title="arch.univariate.APARCH.forecast.rng (Python parameter) — Callable random number generator required if method is 'simulation'."><span class="n"><span class="pre">rng</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#arch.univariate.APARCH.forecast.random_state" title="arch.univariate.APARCH.forecast.random_state (Python parameter) — NumPy RandomState instance to use when method is 'bootstrap'"><span class="n"><span class="pre">random_state</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.3)"><span class="pre">RandomState</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="desctype"><a class="reference internal" href="../arch.univariate.volatility.VarianceForecast.html#arch.univariate.volatility.VarianceForecast" title="arch.univariate.volatility.VarianceForecast (Python class) — Container for variance forecasts"><span class="pre">VarianceForecast</span></a></span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast" title="Link to this definition">¶</a></dt>
 <dd><p>Forecast volatility from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="arch.univariate.APARCH.forecast-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.univariate.APARCH.forecast-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
-<dt id="arch.univariate.APARCH.forecast.parameters"><span class="n sig-name">parameters</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">Series</a></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.parameters" title="Permalink to this definition">¶</a></dt><dd><p>Parameters required to forecast the volatility model</p>
+<dt id="arch.univariate.APARCH.forecast.parameters"><span class="n sig-name">parameters</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.3)">Series</a></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.parameters" title="Permalink to this definition">¶</a></dt><dd><p>Parameters required to forecast the volatility model</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.resids"><span class="n sig-name">resids</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)">Any</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.resids" title="Permalink to this definition">¶</a></dt><dd><p>Residuals to use in the recursion</p>
+<dt id="arch.univariate.APARCH.forecast.resids"><span class="n sig-name">resids</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.3)">Series</a></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.resids" title="Permalink to this definition">¶</a></dt><dd><p>Residuals to use in the recursion</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.backcast"><span class="n sig-name">backcast</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)">Any</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.backcast" title="Permalink to this definition">¶</a></dt><dd><p>Value to use when initializing the recursion</p>
+<dt id="arch.univariate.APARCH.forecast.backcast"><span class="n sig-name">backcast</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.backcast" title="Permalink to this definition">¶</a></dt><dd><p>Value to use when initializing the recursion</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.var_bounds"><span class="n sig-name">var_bounds</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)">Any</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.var_bounds" title="Permalink to this definition">¶</a></dt><dd><p>Array containing columns of lower and upper bounds</p>
+<dt id="arch.univariate.APARCH.forecast.var_bounds"><span class="n sig-name">var_bounds</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.univariate.APARCH.forecast.var_bounds" title="Permalink to this definition">¶</a></dt><dd><p>Array containing columns of lower and upper bounds</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.start"><span class="n sig-name">start</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.start" title="Permalink to this definition">¶</a></dt><dd><p>Index of the first observation to use as the starting point for
+<dt id="arch.univariate.APARCH.forecast.start"><span class="n sig-name">start</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.start" title="Permalink to this definition">¶</a></dt><dd><p>Index of the first observation to use as the starting point for
 the forecast.  Default is len(resids).</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.horizon"><span class="n sig-name">horizon</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.horizon" title="Permalink to this definition">¶</a></dt><dd><p>Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+<dt id="arch.univariate.APARCH.forecast.horizon"><span class="n sig-name">horizon</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.horizon" title="Permalink to this definition">¶</a></dt><dd><p>Forecast horizon.  Must be 1 or larger.  Forecasts are produced
 for horizons in [1, horizon].</p>
 </dd>
 <dt id="arch.univariate.APARCH.forecast.method"><span class="n sig-name">method</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'analytic'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'simulation'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'bootstrap'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;analytic&#39;</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.method" title="Permalink to this definition">¶</a></dt><dd><p>Method to use when producing the forecast. The default is analytic.</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.simulations"><span class="n sig-name">simulations</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.simulations" title="Permalink to this definition">¶</a></dt><dd><p>Number of simulations to run when computing the forecast using
+<dt id="arch.univariate.APARCH.forecast.simulations"><span class="n sig-name">simulations</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.simulations" title="Permalink to this definition">¶</a></dt><dd><p>Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.rng"><span class="n sig-name">rng</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)">Callable</a><span class="p">[</span><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)">Any</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.rng" title="Permalink to this definition">¶</a></dt><dd><p>Callable random number generator required if method is
+<dt id="arch.univariate.APARCH.forecast.rng"><span class="n sig-name">rng</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)">Callable</a><span class="p">[</span><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.rng" title="Permalink to this definition">¶</a></dt><dd><p>Callable random number generator required if method is
 ‘simulation’. Must take a single shape input and return random
 samples numbers with that shape.</p>
 </dd>
-<dt id="arch.univariate.APARCH.forecast.random_state"><span class="n sig-name">random_state</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.1)">RandomState</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.random_state" title="Permalink to this definition">¶</a></dt><dd><p>NumPy RandomState instance to use when method is ‘bootstrap’</p>
+<dt id="arch.univariate.APARCH.forecast.random_state"><span class="n sig-name">random_state</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.3)">RandomState</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.APARCH.forecast.random_state" title="Permalink to this definition">¶</a></dt><dd><p>NumPy RandomState instance to use when method is ‘bootstrap’</p>
 </dd>
 </dl>
 </dd>
@@ -1478,11 +2128,11 @@ or bootstrap, the simulated paths.</p>
 </dd>
 <dt class="field-even" id="arch.univariate.APARCH.forecast-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.APARCH.forecast-raises" title="Permalink to this headline">¶</a></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – <ul>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – <ul>
 <li><p>If method is not supported</p></li>
 </ul>
 </p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – <ul>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – <ul>
 <li><p>If the method is not known</p></li>
 </ul>
 </p></li>
@@ -1500,6 +2150,14 @@ to use this method when not available will raise a ValueError.</p>
 
 
 
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
@@ -1510,42 +2168,6 @@ to use this method when not available will raise a ValueError.</p>
       </main>
       
         <footer class="md-footer">
-  
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="arch.univariate.APARCH.constraints.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: arch.univariate.APARCH.constraints" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              arch.univariate.APARCH.constraints
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="arch.univariate.APARCH.parameter_names.html" class="md-footer__link md-footer__link--next" aria-label="Next: arch.univariate.APARCH.parameter_names" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              arch.univariate.APARCH.parameter_names
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   
   
@@ -1571,26 +2193,32 @@ to use this method when not available will raise a ValueError.</p>
   
     
     
+    
+    
     <a href="https://github.com/bashtage/arch" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://pypi.org/project/arch/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://doi.org/10.5281/zenodo.593254" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216m256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216"/></svg>
     </a>
   
 </div>
@@ -1605,10 +2233,11 @@ to use this method when not available will raise a ValueError.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../../../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

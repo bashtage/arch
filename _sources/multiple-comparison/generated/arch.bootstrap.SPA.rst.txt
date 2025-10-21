@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: SPA
-   :exclude-members: better_models,compute,critical_values,reset,seed,subset,
+   :exclude-members: better_models,compute,critical_values,reset,subset,
 
    
    
@@ -17,7 +17,6 @@
       ~SPA.compute
       ~SPA.critical_values
       ~SPA.reset
-      ~SPA.seed
       ~SPA.subset
    
    
