@@ -6,7 +6,7 @@ from numpy.testing import assert_almost_equal
 import pytest
 from statsmodels.datasets import macrodata
 
-from arch.utility import cov_nw
+from arch.utility.cov import cov_nw
 
 
 class TestVarNW:
