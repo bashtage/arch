@@ -1,6 +1,7 @@
 Change Logs
 -----------
 
+.. include:: changes/8.0.rst
 .. include:: changes/7.0.rst
 
 =============
