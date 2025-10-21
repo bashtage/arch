@@ -1,15 +1,14 @@
-setuptools>=61
 wheel
-setuptools_scm[toml]>=8.0.3,<9
-oldest-supported-numpy
-cython>=0.29.34  # Works with 3.0.0b2
-numpy >=1.22
-scipy >=1.5.0
+meson-python
+ninja
+setuptools_scm[toml]>=9.2,<10
+cython>=3.1.0
+numpy >=2
+scipy >=1.15.0
 ipython >=8.0.1
-matplotlib >=3.0
-pandas >=1.1.0
-patsy >=0.5.3
-statsmodels >=0.13.5
+matplotlib >=3.9
+pandas >=2.3.0
+statsmodels >=0.14.5
 jinja2
 sphinx
 seaborn
