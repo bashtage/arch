@@ -12,7 +12,11 @@ pytest_plugins = [
 logger = logging.getLogger(__name__)
 COW = bool(os.environ.get("ARCH_TEST_COPY_ON_WRITE", ""))
 try:
-    pd.options.mode.copy_on_write = COW
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        pd.options.mode.copy_on_write = COW
 except AttributeError:
     pass
 
