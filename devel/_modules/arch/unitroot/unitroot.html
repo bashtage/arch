@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v8.0.1 (+4)</title>
+        <title>arch.unitroot.unitroot - arch v8.0.1 (+12)</title>
       
     
 
@@ -49,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+4)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+4)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+12)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+12)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+4)
+            arch v8.0.1 (+12)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+4)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+4)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+12)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+12)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+4)
+    arch v8.0.1 (+12)
   </label>
   
     <div class="md-nav__source">
@@ -646,8 +646,6 @@
         <span class="n">large_tstat</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tstat</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">stop</span>
         <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">squeeze</span><span class="p">(</span><span class="n">argwhere</span><span class="p">(</span><span class="n">large_tstat</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
         <span class="n">icbest</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tstat</span><span class="p">[</span><span class="n">lag</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown method&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">icbest</span><span class="p">,</span> <span class="n">lag</span>
 
@@ -1007,6 +1005,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_specification</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_statistic</span><span class="p">()</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;aic&quot;</span><span class="p">,</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;method must be a string&quot;</span><span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;tstat&quot;</span><span class="p">,</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;t-stat&quot;</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;aic&quot;</span><span class="p">,</span> <span class="s2">&quot;bic&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;method must be one of &#39;aic&#39;, &#39;bic&#39; or &#39;t-stat&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">null_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The null hypothesis&quot;&quot;&quot;</span>
@@ -1144,11 +1152,11 @@
 
 <span class="sd">    max_lags : int, optional</span>
 <span class="sd">        The maximum number of lags to use when selecting lag length</span>
-<span class="sd">    method : {&quot;AIC&quot;, &quot;BIC&quot;, &quot;t-stat&quot;}, optional</span>
+<span class="sd">    method : {&quot;aic&quot;, &quot;bic&quot;, &quot;t-stat&quot;}, optional</span>
 <span class="sd">        The method to use when selecting the lag length</span>
 
-<span class="sd">        - &quot;AIC&quot; - Select the minimum of the Akaike IC</span>
-<span class="sd">        - &quot;BIC&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
+<span class="sd">        - &quot;aic&quot; - Select the minimum of the Akaike IC</span>
+<span class="sd">        - &quot;bic&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 <span class="sd">        - &quot;t-stat&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 
 <span class="sd">    low_memory : bool</span>
@@ -1224,7 +1232,7 @@
         <span class="n">valid_trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">valid_trends</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span> <span class="o">=</span> <span class="n">max_lags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_name</span> <span class="o">=</span> <span class="s2">&quot;Augmented Dickey-Fuller&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_low_memory</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">low_memory</span><span class="p">)</span>
@@ -1259,7 +1267,7 @@
         <span class="n">y</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">resols</span> <span class="o">=</span> <span class="n">_estimate_df_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UnitRootTrend&quot;</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span> <span class="n">lags</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">resols</span>
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">mackinnonp</span><span class="p">(</span>
             <span class="n">stat</span><span class="p">,</span>
@@ -1315,11 +1323,11 @@
 <span class="sd">        The maximum number of lags to use when selecting lag length. When using</span>
 <span class="sd">        automatic lag length selection, the lag is selected using OLS</span>
 <span class="sd">        detrending rather than GLS detrending ([pq]_).</span>
-<span class="sd">    method : {&quot;AIC&quot;, &quot;BIC&quot;, &quot;t-stat&quot;}, optional</span>
+<span class="sd">    method : {&quot;aic&quot;, &quot;bic&quot;, &quot;t-stat&quot;}, optional</span>
 <span class="sd">        The method to use when selecting the lag length</span>
 
-<span class="sd">        - &quot;AIC&quot; - Select the minimum of the Akaike IC</span>
-<span class="sd">        - &quot;BIC&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
+<span class="sd">        - &quot;aic&quot; - Select the minimum of the Akaike IC</span>
+<span class="sd">        - &quot;bic&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 <span class="sd">        - &quot;t-stat&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 
 <span class="sd">    Notes</span>
@@ -1376,7 +1384,7 @@
         <span class="n">valid_trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">valid_trends</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span> <span class="o">=</span> <span class="n">max_lags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_low_memory</span> <span class="o">=</span> <span class="n">low_memory</span>
         <span class="k">if</span> <span class="n">low_memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1876,11 +1884,11 @@
 <span class="sd">        calculation in range [0, 0.333] (default=0.15)</span>
 <span class="sd">    max_lags : int, optional</span>
 <span class="sd">        The maximum number of lags to use when selecting lag length</span>
-<span class="sd">    method : {&quot;AIC&quot;, &quot;BIC&quot;, &quot;t-stat&quot;}, optional</span>
+<span class="sd">    method : {&quot;aic&quot;, &quot;bic&quot;, &quot;t-stat&quot;}, optional</span>
 <span class="sd">        The method to use when selecting the lag length</span>
 
-<span class="sd">        - &quot;AIC&quot; - Select the minimum of the Akaike IC</span>
-<span class="sd">        - &quot;BIC&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
+<span class="sd">        - &quot;aic&quot; - Select the minimum of the Akaike IC</span>
+<span class="sd">        - &quot;bic&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 <span class="sd">        - &quot;t-stat&quot; - Select the minimum of the Schwarz/Bayesian IC</span>
 
 <span class="sd">    Notes</span>
@@ -1930,7 +1938,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;trim must be a float in range [0, 1/3]&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trim</span> <span class="o">=</span> <span class="n">trim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span> <span class="o">=</span> <span class="n">max_lags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_name</span> <span class="o">=</span> <span class="s2">&quot;Zivot-Andrews&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_all_stats</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nan</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_null_hypothesis</span> <span class="o">=</span> <span class="p">(</span>
@@ -2561,7 +2570,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.1.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
