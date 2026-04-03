@@ -1383,7 +1383,7 @@ def test_false_reindex():
 
 
 def test_invalid_arch_model():
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         arch_model(SP500, p="3")
 
 
