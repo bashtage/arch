@@ -16,6 +16,7 @@ except ImportError:
 from arch.univariate.volatility import (
     APARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -1919,6 +1920,85 @@ class TestVarianceForecasts:
         final += beta * (sigma2[-1] ** (delta / 2.0))
         final **= 2.0 / delta
         assert_allclose(final, forecast.forecasts[-1, 0])
+        with pytest.raises(ValueError, match=r"Analytic forecasts not"):
+            vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="analytic",
+            )
+
+    def test_fiaparch_one_step(self):
+        trunc = 50
+        vol = FIAPARCH(truncation=trunc)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([0.1, 0.2, 0.4, 0.2, -0.3, 1.5])
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+
+        delta = 1.5
+        vol_fixed = FIAPARCH(truncation=trunc, delta=delta)
+        params_fixed = np.array([0.1, 0.2, 0.4, 0.2, -0.3])
+        sigma2_f = np.empty_like(resids)
+        vol_fixed.compute_variance(
+            params_fixed, resids, sigma2_f, backcast, var_bounds
+        )
+        forecast_f = vol_fixed.forecast(
+            params_fixed, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(sigma2_f[1:], forecast_f.forecasts[:-1, 0])
+
+        with pytest.raises(
+            ValueError, match=r"Analytic forecasts not available for horizon"
+        ):
+            vol.forecast(
+                params, resids, backcast, var_bounds, horizon=2, method="analytic"
+            )
+
+    @pytest.mark.parametrize("o", [0, 1])
+    @pytest.mark.parametrize("delta", [None, 1.5])
+    def test_fiaparch_simulation_smoke(self, o, delta):
+        dist = Normal(seed=self.rng)
+        rng = dist.simulate([])
+        trunc = 50
+        vol = FIAPARCH(o=o, delta=delta, truncation=trunc)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = [0.1, 0.2, 0.4, 0.2]
+        if o == 0:
+            params = [0.1, 0.2, 0.4, 0.2]
+        else:
+            params = [0.1, 0.2, 0.4, 0.2, -0.3]
+        if delta is None:
+            params = np.array(params + [1.5])
+        else:
+            params = np.array(params)
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        forecast = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=0,
+            method="simulation",
+            rng=rng,
+            simulations=100,
+        )
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+        assert forecast.forecast_paths is not None
+        assert forecast.shocks is not None
         with pytest.raises(ValueError, match=r"Analytic forecasts not"):
             vol.forecast(
                 params,

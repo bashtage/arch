@@ -1943,9 +1943,16 @@ def test_fiaparch(setup):
     assert_equal(fiaparch.truncation, trunc_lag)
 
 
-def test_fiaparch_updater_matches_recursion(setup):
-    fiaparch = FIAPARCH(truncation=300)
-    parameters = np.array([0.1, 0.2, 0.4, 0.2, 0.8, 1.3])
+@pytest.mark.parametrize("o", [0, 1])
+@pytest.mark.parametrize("delta", [None, 1.5])
+def test_fiaparch_updater_matches_recursion(setup, o, delta):
+    fiaparch = FIAPARCH(truncation=300, o=o, delta=delta)
+    params = [0.1, 0.2, 0.4, 0.2]
+    if o:
+        params.append(0.8)
+    if delta is None:
+        params.append(1.3)
+    parameters = np.array(params)
     backcast = fiaparch.backcast(setup.resids)
     var_bounds = fiaparch.variance_bounds(setup.resids)
 
@@ -1988,10 +1995,18 @@ def test_fiaparch_no_beta(setup):
     # omega, phi, d, gamma, delta
     assert len(bounds) == fiaparch.num_params
 
-    a, b = fiaparch.constraints()
+    a, _ = fiaparch.constraints()
     # No beta => FIGARCH block shrinks (5 rows), gamma (2 rows), delta (2 rows) = 9
     assert a.shape[1] == 5
     assert a.shape[0] == 9
+
+    backcast = fiaparch.backcast(setup.resids)
+    var_bounds = fiaparch.variance_bounds(setup.resids)
+    # omega, phi, d, gamma, delta (no beta)
+    parameters = np.array([1.0, 0.2, 0.4, -0.3, 1.5])
+    sigma2 = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
+    assert np.all(np.isfinite(sigma2))
 
 
 def test_fiaparch_no_asym(setup):
@@ -2009,6 +2024,14 @@ def test_fiaparch_no_asym(setup):
     assert "gamma" not in names
 
     assert_equal(fiaparch.name, "FI Power ARCH")
+
+    backcast = fiaparch.backcast(setup.resids)
+    var_bounds = fiaparch.variance_bounds(setup.resids)
+    # omega, phi, d, beta, delta (no gamma)
+    parameters = np.array([1.0, 0.2, 0.4, 0.2, 1.5])
+    sigma2 = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
+    assert np.all(np.isfinite(sigma2))
 
 
 def test_fiaparch_fixed_delta(setup):
@@ -2029,7 +2052,7 @@ def test_fiaparch_fixed_delta(setup):
     assert "delta" not in names
     assert_equal(fiaparch.delta, delta_val)
 
-    a, b = fiaparch.constraints()
+    a, _ = fiaparch.constraints()
     # FIGARCH (7 rows) + gamma (2 rows) + no delta => 9
     assert a.shape == (9, 5)
 
@@ -2060,6 +2083,59 @@ def test_fiaparch_fixed_delta(setup):
         delta_val,
     )
     assert_allclose(setup.sigma2, cond_var_direct)
+
+    rng = Normal(seed=RandomState())
+    sim_data = fiaparch.simulate(parameters, setup.t, rng.simulate([]))
+    assert sim_data[0].shape[0] == setup.t
+    assert sim_data[1].shape[0] == setup.t
+
+
+def test_fiaparch_str_fixed_delta(setup):
+    fiaparch = FIAPARCH(delta=1.5)
+    s = str(fiaparch)
+    assert "delta: 1.5" in s
+
+
+def test_fiaparch_simulate_initial_value(setup):
+    fiaparch = FIAPARCH(truncation=100)
+    rng = Normal(seed=RandomState())
+    parameters = np.array([1.0, 0.2, 0.4, 0.2, -0.3, 1.5])
+    sim_data = fiaparch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=5.0
+    )
+    assert sim_data[0].shape[0] == setup.t
+    assert sim_data[1].shape[0] == setup.t
+
+
+def test_fiaparch_simulate_high_persistence(setup):
+    fiaparch = FIAPARCH(truncation=100)
+    rng = Normal(seed=RandomState())
+    parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
+    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
+        fiaparch.simulate(parameters, 20, rng.simulate([]))
+
+
+def test_fiaparch_simulate_high_beta(setup):
+    fiaparch = FIAPARCH(truncation=100)
+    rng = Normal(seed=RandomState())
+    parameters = np.array([0.1, 0.0, 0.4, 1.005, -0.3, 1.5])
+    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
+        with pytest.warns(ValueWarning, match=r"beta >= 1"):
+            fiaparch.simulate(parameters, 20, rng.simulate([]))
+
+
+def test_fiaparch_backcast_transform(setup):
+    fiaparch = FIAPARCH()
+    backcast = fiaparch.backcast(setup.resids)
+    result = fiaparch.backcast_transform(backcast)
+    assert np.isscalar(result)
+    delta = 2.0
+    expected = float(np.sqrt(backcast) ** delta)
+    assert_allclose(result, expected)
+
+    result_arr = fiaparch.backcast_transform(np.array([backcast, backcast]))
+    assert result_arr.shape == (2,)
+    assert_allclose(result_arr, np.array([expected, expected]))
 
 
 def test_fiaparch_errors(setup):

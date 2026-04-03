@@ -3471,9 +3471,8 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 self._delta = float(delta)
             except (ValueError, TypeError) as exc:
                 raise TypeError("delta must be convertible to a float.") from exc
-            if not 0.05 < delta < 4:
+            if not 0.05 < self._delta < 4:
                 raise ValueError("delta must be between 0.05 and 4")
-            self._delta = delta
         if p < 0 or q < 0 or p > 1 or q > 1:
             raise ValueError("p and q must be either 0 or 1.")
         if o < 0 or o > 1:
