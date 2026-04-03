@@ -1972,7 +1972,7 @@ def test_fiaparch_no_phi(setup):
     # omega, d, beta, gamma, delta
     assert len(bounds) == fiaparch.num_params
 
-    a, b = fiaparch.constraints()
+    a, _ = fiaparch.constraints()
     # No phi => FIGARCH block shrinks (5 rows), gamma (2 rows), delta (2 rows) = 9
     assert a.shape[1] == 5
     assert a.shape[0] == 9

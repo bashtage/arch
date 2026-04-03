@@ -3831,7 +3831,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
-        sigma2, forecasts = self._one_step_forecast(
+        _, forecasts = self._one_step_forecast(
             parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         t = resids.shape[0]
