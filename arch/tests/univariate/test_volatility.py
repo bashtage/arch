@@ -1858,6 +1858,12 @@ def test_fiaparch(setup):
     fiaparch.compute_variance(
         parameters, setup.resids, setup.sigma2, backcast, var_bounds
     )
+    # Call again to exercise the sigma_delta buffer reuse path
+    sigma2_second = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(
+        parameters, setup.resids, sigma2_second, backcast, var_bounds
+    )
+    assert_allclose(setup.sigma2, sigma2_second)
 
     cond_var_direct = np.zeros_like(setup.sigma2)
     sigma_delta_direct = np.zeros_like(setup.sigma2)
@@ -1967,6 +1973,13 @@ def test_fiaparch_updater_matches_recursion(setup, o, delta):
 
     assert_allclose(sigma2_updater, sigma2)
 
+    # Second initialize_update to exercise the buffer-already-allocated branch
+    updater.initialize_update(parameters, backcast, setup.t)
+    sigma2_updater2 = np.zeros_like(setup.sigma2)
+    for t in range(setup.t):
+        updater._update_tester(t, parameters, setup.resids, sigma2_updater2, var_bounds)
+    assert_allclose(sigma2_updater2, sigma2)
+
 
 def test_fiaparch_no_phi(setup):
     trunc_lag = 333
@@ -2023,6 +2036,28 @@ def test_fiaparch_no_beta(setup):
     sigma2 = np.zeros_like(setup.sigma2)
     fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
     assert np.all(np.isfinite(sigma2))
+
+    cond_var_direct = np.zeros_like(setup.sigma2)
+    sigma_delta_direct = np.zeros_like(setup.sigma2)
+    fig_params = parameters[:3]  # omega, phi, d (no beta)
+    gamma = parameters[3]
+    delta = parameters[4]
+    recpy.fiaparch_recursion_python(
+        fig_params,
+        setup.resids,
+        np.abs(setup.resids),
+        cond_var_direct,
+        sigma_delta_direct,
+        1,
+        0,
+        setup.t,
+        1000,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    assert_allclose(sigma2, cond_var_direct)
 
 
 def test_fiaparch_no_asym(setup):
@@ -2141,6 +2176,21 @@ def test_fiaparch_simulate_high_beta(setup):
             fiaparch.simulate(parameters, 20, rng.simulate([]))
 
 
+def test_fiaparch_simulate_persistence_ge_1(setup):
+    fiaparch = FIAPARCH(truncation=100)
+    rng = Normal(seed=RandomState())
+    # d > 1 pushes persistence >= 1
+    parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
+    fig_params = parameters[:4]
+    lam = rec.figarch_weights(fig_params[1:], 1, 1, 100)
+    persistence = np.sum(lam)
+    assert persistence >= 1
+    with pytest.warns(InitialValueWarning):
+        sim_data = fiaparch.simulate(parameters, 20, rng.simulate([]))
+    assert sim_data[0].shape[0] == 20
+    assert sim_data[1].shape[0] == 20
+
+
 @pytest.mark.parametrize(
     "p,o,q",
     [(0, 1, 1), (1, 0, 1), (1, 1, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 0, 0)],
@@ -2219,6 +2269,28 @@ def test_fiaparch_minimal(setup):
     sigma2 = np.zeros_like(setup.sigma2)
     fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
     assert np.all(np.isfinite(sigma2))
+
+    cond_var_direct = np.zeros_like(setup.sigma2)
+    sigma_delta_direct = np.zeros_like(setup.sigma2)
+    fig_params = parameters[:2]  # omega, d (no phi, no beta)
+    gamma = parameters[2]
+    delta = parameters[3]
+    recpy.fiaparch_recursion_python(
+        fig_params,
+        setup.resids,
+        np.abs(setup.resids),
+        cond_var_direct,
+        sigma_delta_direct,
+        0,
+        0,
+        setup.t,
+        1000,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    assert_allclose(sigma2, cond_var_direct)
 
 
 def test_fiaparch_errors(setup):
