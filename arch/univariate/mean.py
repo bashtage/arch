@@ -2040,7 +2040,7 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol_model in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
+    if vol in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
         p, int
     ):
         raise TypeError(

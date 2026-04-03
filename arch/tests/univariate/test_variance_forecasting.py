@@ -2010,6 +2010,62 @@ class TestVarianceForecasts:
                 method="analytic",
             )
 
+    @pytest.mark.parametrize("p,q", [(0, 1), (1, 0), (0, 0)])
+    def test_fiaparch_one_step_reduced(self, p, q):
+        trunc = 50
+        vol = FIAPARCH(p=p, q=q, truncation=trunc)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = [0.1]
+        if p:
+            params.append(0.2)
+        params.append(0.4)
+        if q:
+            params.append(0.2)
+        params.extend([-0.3, 1.5])
+        params = np.array(params)
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+
+    @pytest.mark.parametrize("p,q", [(0, 1), (1, 0), (0, 0)])
+    def test_fiaparch_simulation_reduced(self, p, q):
+        dist = Normal(seed=self.rng)
+        rng = dist.simulate([])
+        trunc = 50
+        vol = FIAPARCH(p=p, q=q, truncation=trunc)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = [0.1]
+        if p:
+            params.append(0.2)
+        params.append(0.4)
+        if q:
+            params.append(0.2)
+        params.extend([-0.3, 1.5])
+        params = np.array(params)
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        forecast = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=0,
+            method="simulation",
+            rng=rng,
+            simulations=100,
+        )
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+        assert forecast.forecast_paths is not None
+        assert forecast.shocks is not None
+
     def test_midas_analytical(self):
         vol = MIDASHyperbolic()
         resids = self.resid

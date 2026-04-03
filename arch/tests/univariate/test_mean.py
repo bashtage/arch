@@ -1363,6 +1363,18 @@ def test_fiaparch_non_int_p():
         arch_model(SP500, vol="fiaparch", p=[1, 2])
 
 
+def test_fiaparch_arch_model_kwargs():
+    am = arch_model(SP500, vol="fiaparch", o=0)
+    assert isinstance(am.volatility, FIAPARCH)
+    assert am.volatility.o == 0
+    assert am.volatility.name == "FI Power ARCH"
+
+    am2 = arch_model(SP500, vol="FIAPARCH", p=0, q=0)
+    assert isinstance(am2.volatility, FIAPARCH)
+    assert am2.volatility.p == 0
+    assert am2.volatility.q == 0
+
+
 def test_param_cov():
     mod = ConstantMean(SP500)
     res = mod.fit(disp="off")

@@ -1979,10 +1979,22 @@ def test_fiaparch_no_phi(setup):
     # omega, d, beta, gamma, delta
     assert len(bounds) == fiaparch.num_params
 
+    names = fiaparch.parameter_names()
+    assert "phi" not in names
+    assert names == ["omega", "d", "beta", "gamma", "delta"]
+
     a, _ = fiaparch.constraints()
     # No phi => FIGARCH block shrinks (5 rows), gamma (2 rows), delta (2 rows) = 9
     assert a.shape[1] == 5
     assert a.shape[0] == 9
+
+    backcast = fiaparch.backcast(setup.resids)
+    var_bounds = fiaparch.variance_bounds(setup.resids)
+    # omega, d, beta, gamma, delta (no phi)
+    parameters = np.array([1.0, 0.4, 0.2, -0.3, 1.5])
+    sigma2 = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
+    assert np.all(np.isfinite(sigma2))
 
 
 def test_fiaparch_no_beta(setup):
@@ -1994,6 +2006,10 @@ def test_fiaparch_no_beta(setup):
     bounds = fiaparch.bounds(setup.resids)
     # omega, phi, d, gamma, delta
     assert len(bounds) == fiaparch.num_params
+
+    names = fiaparch.parameter_names()
+    assert "beta" not in names
+    assert names == ["omega", "phi", "d", "gamma", "delta"]
 
     a, _ = fiaparch.constraints()
     # No beta => FIGARCH block shrinks (5 rows), gamma (2 rows), delta (2 rows) = 9
@@ -2022,6 +2038,7 @@ def test_fiaparch_no_asym(setup):
 
     names = fiaparch.parameter_names()
     assert "gamma" not in names
+    assert names == ["omega", "phi", "d", "beta", "delta"]
 
     assert_equal(fiaparch.name, "FI Power ARCH")
 
@@ -2124,6 +2141,30 @@ def test_fiaparch_simulate_high_beta(setup):
             fiaparch.simulate(parameters, 20, rng.simulate([]))
 
 
+@pytest.mark.parametrize(
+    "p,o,q",
+    [(0, 1, 1), (1, 0, 1), (1, 1, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 0, 0)],
+)
+def test_fiaparch_simulate_reduced(setup, p, o, q):
+    fiaparch = FIAPARCH(p=p, o=o, q=q, truncation=100)
+    rng = Normal(seed=RandomState())
+    params = [1.0]
+    if p:
+        params.append(0.2)
+    params.append(0.4)
+    if q:
+        params.append(0.2)
+    if o:
+        params.append(-0.3)
+    params.append(1.5)
+    parameters = np.array(params)
+    sim_data = fiaparch.simulate(parameters, setup.t, rng.simulate([]))
+    assert sim_data[0].shape[0] == setup.t
+    assert sim_data[1].shape[0] == setup.t
+    assert np.all(np.isfinite(sim_data[0]))
+    assert np.all(np.isfinite(sim_data[1]))
+
+
 def test_fiaparch_backcast_transform(setup):
     fiaparch = FIAPARCH()
     backcast = fiaparch.backcast(setup.resids)
@@ -2136,6 +2177,48 @@ def test_fiaparch_backcast_transform(setup):
     result_arr = fiaparch.backcast_transform(np.array([backcast, backcast]))
     assert result_arr.shape == (2,)
     assert_allclose(result_arr, np.array([expected, expected]))
+
+    fiaparch_fd = FIAPARCH(delta=1.5)
+    backcast_fd = fiaparch_fd.backcast(setup.resids)
+    result_fd = fiaparch_fd.backcast_transform(backcast_fd)
+    assert np.isscalar(result_fd)
+    expected_fd = float(np.sqrt(backcast_fd) ** 1.5)
+    assert_allclose(result_fd, expected_fd)
+
+    result_fd_arr = fiaparch_fd.backcast_transform(
+        np.array([backcast_fd, backcast_fd])
+    )
+    assert result_fd_arr.shape == (2,)
+    assert_allclose(result_fd_arr, np.array([expected_fd, expected_fd]))
+
+
+def test_fiaparch_minimal(setup):
+    fiaparch = FIAPARCH(p=0, q=0)
+
+    assert fiaparch.num_params == 4  # omega, d, gamma, delta
+
+    names = fiaparch.parameter_names()
+    assert names == ["omega", "d", "gamma", "delta"]
+
+    bounds = fiaparch.bounds(setup.resids)
+    assert len(bounds) == 4
+
+    a, b = fiaparch.constraints()
+    # FIGARCH block: omega > 0, d > 0, d < 1 => 3 rows
+    # gamma: 2 rows, delta: 2 rows => total 7
+    assert a.shape == (7, 4)
+    assert b.shape == (7,)
+
+    sv = fiaparch.starting_values(setup.resids)
+    assert sv.shape[0] == 4
+
+    backcast = fiaparch.backcast(setup.resids)
+    var_bounds = fiaparch.variance_bounds(setup.resids)
+    # omega, d, gamma, delta
+    parameters = np.array([1.0, 0.4, -0.3, 1.5])
+    sigma2 = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
+    assert np.all(np.isfinite(sigma2))
 
 
 def test_fiaparch_errors(setup):
@@ -2165,3 +2248,4 @@ def test_fiaparch_str(setup, p, o, q):
     assert f"q: {q}" in s
     assert f"p: {p}" in s
     assert f"o: {o}" in s
+    assert "delta:" not in s
