@@ -526,6 +526,42 @@ def figarch_recursion(const double[::1] parameters,
     return np.asarray(sigma2)
 
 
+def fiaparch_recursion(const double[::1] parameters,
+                       const double[::1] resids,
+                       const double[::1] abs_resids,
+                       double[::1] sigma2,
+                       double[::1] sigma_delta,
+                       int p,
+                       int q,
+                       int nobs,
+                       int trunc_lag,
+                       double backcast,
+                       double[:, ::1] var_bounds,
+                       double gamma,
+                       double delta):
+    cdef Py_ssize_t t, i
+    cdef double bc_weight, omega, beta, omega_tilde, shock
+    cdef double [::1] lam
+
+    omega = parameters[0]
+    beta = parameters[1 + p + q] if q else 0.0
+    omega_tilde = omega / (1 - beta)
+    lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
+    for t in range(nobs):
+        bc_weight = 0.0
+        for i in range(t, trunc_lag):
+            bc_weight += lam[i]
+        sigma_delta[t] = omega_tilde + bc_weight * backcast
+        for i in range(min(t, trunc_lag)):
+            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
+            sigma_delta[t] += lam[i] * (shock ** delta)
+        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
+        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+
+    return np.asarray(sigma2)
+
+
 def aparch_recursion(const double[::1] parameters,
                      const double[::1] resids,
                      const double[::1] abs_resids,
@@ -983,6 +1019,125 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
         for i in range(min(t, trunc_lag)):
             sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+
+cdef class FIAPARCHUpdater(VolatilityUpdater):
+    cdef:
+        int p, q, o, truncation, est_delta
+        double delta
+        double[::1] lam
+        double[::1] _resids
+        double[::1] _abs_resids
+        double[::1] _sigma_delta
+        double backcast
+
+    def __init__(
+        self,
+        int p,
+        int q,
+        int o,
+        int truncation,
+        bint est_delta,
+        double delta
+    ):
+        self.p = p
+        self.q = q
+        self.o = o
+        self.truncation = truncation
+        self.est_delta = est_delta
+        self.delta = delta
+        self.lam = np.empty(truncation)
+        self._resids = np.empty(0)
+        self._abs_resids = np.empty(0)
+        self._sigma_delta = np.empty(0)
+
+    def __setstate__(self, state):
+        cdef Py_ssize_t i
+        cdef double[::1] temp
+        self.backcast = state[0]
+        self.delta = state[1]
+        temp = state[2]
+        assert self.lam.shape[0] == temp.shape[0]
+        for i in range(self.truncation):
+            self.lam[i] = temp[i]
+        temp = state[3]
+        self._resids = np.empty(temp.shape[0])
+        for i in range(temp.shape[0]):
+            self._resids[i] = temp[i]
+        temp = state[4]
+        self._abs_resids = np.empty(temp.shape[0])
+        for i in range(temp.shape[0]):
+            self._abs_resids[i] = temp[i]
+        temp = state[5]
+        self._sigma_delta = np.empty(temp.shape[0])
+        for i in range(temp.shape[0]):
+            self._sigma_delta[i] = temp[i]
+
+    def __reduce__(self):
+        return (
+            FIAPARCHUpdater,
+            (
+                self.p,
+                self.q,
+                self.o,
+                self.truncation,
+                bool(self.est_delta),
+                self.delta,
+            ),
+            (
+                self.backcast,
+                self.delta,
+                np.asarray(self.lam),
+                np.asarray(self._resids),
+                np.asarray(self._abs_resids),
+                np.asarray(self._sigma_delta),
+            )
+        )
+
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
+        self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
+        self.backcast = backcast
+        if self._resids.shape[0] < nobs:
+            self._resids = np.empty(nobs)
+            self._abs_resids = np.empty(nobs)
+            self._sigma_delta = np.empty(nobs)
+
+    cdef void update(self,
+                     Py_ssize_t t,
+                     const double[::1] parameters,
+                     const double[::1] resids,
+                     double[::1] sigma2,
+                     const double[:, ::1] var_bounds
+                     ):
+        cdef Py_ssize_t i
+        cdef double bc_weight, omega, beta, omega_tilde, shock, gamma, delta
+        cdef int p = self.p, q = self.q, o = self.o, trunc_lag = self.truncation
+
+        omega = parameters[0]
+        beta = parameters[1 + p + q] if q else 0.0
+        omega_tilde = omega / (1 - beta)
+        gamma = parameters[2 + p + q] if o else 0.0
+        delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
+
+        if t > 0:
+            self._resids[t-1] = resids[t-1]
+            self._abs_resids[t-1] = fabs(resids[t-1])
+
+        bc_weight = 0.0
+        for i in range(t, trunc_lag):
+            bc_weight += self.lam[i]
+        self._sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        for i in range(min(t, trunc_lag)):
+            shock = self._abs_resids[t - i - 1] - gamma * self._resids[t - i - 1]
+            self._sigma_delta[t] += self.lam[i] * (shock ** delta)
+        sigma2[t] = self._sigma_delta[t] ** (2.0 / delta)
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
+        self._sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 cdef class RiskMetrics2006Updater(VolatilityUpdater):

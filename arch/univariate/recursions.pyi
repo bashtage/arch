@@ -69,6 +69,21 @@ def figarch_recursion(
     backcast: float,
     var_bounds: Float64Array2D,
 ) -> Float64Array: ...
+def fiaparch_recursion(
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    abs_resids: Float64Array1D,
+    sigma2: Float64Array1D,
+    sigma_delta: Float64Array1D,
+    p: int,
+    q: int,
+    nobs: int,
+    trunc_lag: int,
+    backcast: float,
+    var_bounds: Float64Array2D,
+    gamma: float,
+    delta: float,
+) -> Float64Array: ...
 def aparch_recursion(
     parameters: Float64Array1D,
     resids: Float64Array1D,
@@ -128,6 +143,17 @@ class EWMAUpdater(VolatilityUpdater):
 
 class FIGARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None: ...
+
+class FIAPARCHUpdater(VolatilityUpdater):
+    def __init__(
+        self,
+        p: int,
+        q: int,
+        o: int,
+        truncation: int,
+        est_delta: bool,
+        delta: float,
+    ) -> None: ...
 
 class HARCHUpdater(VolatilityUpdater):
     def __init__(self, lags: Int32Array) -> None: ...

@@ -63,6 +63,7 @@ from arch.univariate.volatility import (
     APARCH,
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -1994,6 +1995,7 @@ def arch_model(
     known_vol = (
         "arch",
         "figarch",
+        "fiaparch",
         "aparch",
         "garch",
         "harch",
@@ -2035,7 +2037,7 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(
+    if vol in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
         p, int
     ):
         raise TypeError(
@@ -2056,6 +2058,9 @@ def arch_model(
     elif vol_model == "egarch":
         assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
+    elif vol_model == "fiaparch":
+        assert isinstance(p, int)
+        v = FIAPARCH(p=p, o=o, q=q)
     elif vol_model == "aparch":
         assert isinstance(p, int)
         v = APARCH(p=p, o=o, q=q)

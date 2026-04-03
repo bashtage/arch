@@ -42,6 +42,7 @@ else:
 __all__ = [
     "ARCH",
     "EGARCH",
+    "FIAPARCH",
     "FIGARCH",
     "GARCH",
     "HARCH",
@@ -3385,6 +3386,501 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 forecasts[path_loc, h] = sigma2.mean()
                 # 4. Transform new residual
                 fpath[:, truncation + h] = np.absolute(shocks[path_loc, :, h]) ** power
+
+        return VarianceForecast(forecasts, paths, shocks)
+
+
+class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
+    r"""
+    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process
+
+    Parameters
+    ----------
+    p : {0, 1}
+        Order of the symmetric innovation
+    o : {0, 1}
+        Order of the asymmetric innovation
+    q : {0, 1}
+        Order of the lagged (transformed) conditional variance
+    delta : float, optional
+        Value to use for a fixed delta in the model. If not provided,
+        the value of delta is jointly estimated with other model parameters.
+        User provided delta is restricted to lie in (0.05, 4.0).
+    truncation : int, optional
+        Truncation point to use in ARCH(:math:`\infty`) representation.
+        Default is 1000.
+
+    Examples
+    --------
+    >>> from arch.univariate import FIAPARCH
+
+    Standard FIAPARCH
+
+    >>> fiaparch = FIAPARCH()
+
+    Without asymmetry (reduces to FIGARCH-like)
+
+    >>> fi = FIAPARCH(o=0)
+
+    Fixed power parameter
+
+    >>> fiaparch = FIAPARCH(delta=1.0)
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_t^{\delta} = \omega
+        + [1-\beta L - (1-\phi L)(1-L)^d]
+        (|\epsilon_{t}| - \gamma \epsilon_{t})^{\delta}
+        + \beta \sigma_{t-1}^{\delta}
+
+    where ``L`` is the lag operator, ``d`` is the fractional differencing
+    parameter, and ``gamma`` controls asymmetry. The model is estimated
+    using the ARCH(:math:`\infty`) representation,
+
+    .. math::
+
+        \sigma_t^{\delta} = (1-\beta)^{-1} \omega
+        + \sum_{i=1}^{\infty} \lambda_i
+        (|\epsilon_{t-i}| - \gamma \epsilon_{t-i})^{\delta}
+
+    The weights :math:`\lambda_i` are identical to those used in FIGARCH.
+    """
+
+    def __init__(
+        self,
+        p: int = 1,
+        o: int = 1,
+        q: int = 1,
+        delta: float | None = None,
+        truncation: int = 1000,
+    ) -> None:
+        super().__init__()
+        self.p: int = int(p)
+        self.o: int = int(o)
+        self.q: int = int(q)
+        self._truncation = int(truncation)
+        self._est_delta = delta is None
+        self._delta = float(np.nan)
+        if not self._est_delta:
+            try:
+                assert delta is not None
+                self._delta = float(delta)
+            except (ValueError, TypeError) as exc:
+                raise TypeError("delta must be convertible to a float.") from exc
+            if not 0.05 < delta < 4:
+                raise ValueError("delta must be between 0.05 and 4")
+            self._delta = delta
+        if p < 0 or q < 0 or p > 1 or q > 1:
+            raise ValueError("p and q must be either 0 or 1.")
+        if o < 0 or o > 1:
+            raise ValueError("o must be either 0 or 1.")
+        if self._truncation <= 0:
+            raise ValueError("truncation must be a positive integer")
+        self._num_params = 2 + p + q + o + int(self._est_delta)
+        self._name = self._generate_name()
+        delta_init = 2.0 if self._est_delta else self._delta
+        self._volatility_updater = rec.FIAPARCHUpdater(
+            p, q, o, self._truncation, self._est_delta, delta_init
+        )
+        self._sigma_delta = np.empty(0)
+
+    @property
+    def truncation(self) -> int:
+        """Truncation lag for the ARCH-infinity approximation"""
+        return self._truncation
+
+    @property
+    def delta(self) -> float:
+        """The value of delta in the model. NaN if delta is estimated."""
+        return self._delta
+
+    def __str__(self) -> str:
+        descr = self.name + "\n"
+        descr += f"    p: {self.p}, o: {self.o}, q: {self.q}"
+        if not self._est_delta:
+            descr += f", delta: {self._delta:0.1f}"
+        descr += f", truncation: {self.truncation}\n"
+        return descr
+
+    def _generate_name(self) -> str:
+        if self.o > 0:
+            return "FIAPARCH"
+        else:
+            return "FI Power ARCH"
+
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        eps_half = np.sqrt(np.finfo(np.double).eps)
+        delta = 2.0 if self._est_delta else self._delta
+        v = max(
+            float(np.mean(np.absolute(resids) ** delta)),
+            float(np.mean(resids**2)),
+        )
+
+        bounds = [(0.0, 10.0 * float(v))]
+        bounds.extend([(0.0, 0.5)] * self.p)  # phi
+        bounds.extend([(0.0, 1.0 - eps_half)])  # d
+        bounds.extend([(0.0, 1.0 - eps_half)] * self.q)  # beta
+        bounds.extend([(-0.9997, 0.9997)] * self.o)  # gamma
+        if self._est_delta:
+            bounds.append((0.05, 4.0))
+
+        return bounds
+
+    def constraints(self) -> tuple[Float64Array, Float64Array]:
+        # omega > 0
+        # 0 <= phi <= (1-d)/2  (if p)
+        # 0 <= d <= 1
+        # 0 <= beta <= d+phi  (if q)
+        # -1 < gamma < 1  (if o)
+        # 0.05 < delta < 4  (if est_delta)
+        n_figarch = 1 + self.p + 1 + self.q  # omega, [phi], d, [beta]
+        n_gamma = self.o
+        n_delta = int(self._est_delta)
+        n_params = n_figarch + n_gamma + n_delta
+
+        # FIGARCH constraints first (identical to FIGARCH.constraints())
+        a_fig = np.array(
+            [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, -2, -1, 0],
+                [0, 0, 1, 0],
+                [0, 0, -1, 0],
+                [0, 0, 0, 1],
+                [0, 1, 1, -1],
+            ]
+        )
+        b_fig = np.array([0, 0, -1, 0, -1, 0, 0])
+        if not self.q:
+            a_fig = a_fig[:-2, :-1]
+            b_fig = b_fig[:-2]
+        if not self.p:
+            a_fig = np.delete(a_fig, (1,), axis=1)
+            a_fig = np.delete(a_fig, (1, 2), axis=0)
+            b_fig = np.delete(b_fig, (1, 2))
+
+        n_fig_constraints = a_fig.shape[0]
+        n_gamma_constraints = 2 * n_gamma  # gamma > -0.9997, gamma < 0.9997
+        n_delta_constraints = 2 * n_delta  # delta > 0.05, delta < 4
+        n_total_constraints = n_fig_constraints + n_gamma_constraints + n_delta_constraints
+
+        a = np.zeros((n_total_constraints, n_params))
+        b = np.zeros(n_total_constraints)
+
+        # FIGARCH block
+        a[:n_fig_constraints, :n_figarch] = a_fig
+        b[:n_fig_constraints] = b_fig
+
+        row = n_fig_constraints
+        col = n_figarch
+
+        # Gamma constraints: gamma > -0.9997, gamma < 0.9997
+        for i in range(n_gamma):
+            a[row, col + i] = 1.0
+            b[row] = -0.9997
+            row += 1
+            a[row, col + i] = -1.0
+            b[row] = -0.9997
+            row += 1
+        col += n_gamma
+
+        # Delta constraints: delta > 0.05, delta < 4
+        for i in range(n_delta):
+            a[row, col + i] = 1.0
+            b[row] = 0.05
+            row += 1
+            a[row, col + i] = -1.0
+            b[row] = -4.0
+            row += 1
+
+        return a, b
+
+    def compute_variance(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        sigma2: Float64Array1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> Float64Array1D:
+        nobs = resids.shape[0]
+        abs_resids = np.absolute(resids)
+        if self._sigma_delta.shape[0] != nobs:
+            self._sigma_delta = np.empty(nobs)
+        sigma_delta = self._sigma_delta
+
+        p, o, q = self.p, self.o, self.q
+        truncation = self.truncation
+
+        gamma = parameters[1 + p + 1 + q] if o else 0.0
+        if self._est_delta:
+            delta = parameters[-1]
+        else:
+            delta = self._delta
+
+        fig_params = parameters[: 1 + p + 1 + q]
+
+        rec.fiaparch_recursion(
+            fig_params,
+            resids,
+            abs_resids,
+            sigma2,
+            sigma_delta,
+            p,
+            q,
+            nobs,
+            truncation,
+            backcast,
+            var_bounds,
+            gamma,
+            delta,
+        )
+
+        return sigma2
+
+    def backcast_transform(
+        self, backcast: float | Float64Array1D
+    ) -> float | Float64Array1D:
+        backcast = super().backcast_transform(backcast)
+        delta = 2.0 if self._est_delta else self._delta
+        _backcast = np.sqrt(backcast) ** delta
+        if np.isscalar(_backcast):
+            return float(cast("np.float64", _backcast))
+        else:
+            return to_array_1d(_backcast)
+
+    def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
+        delta = 2.0 if self._est_delta else self._delta
+        tau = min(75, resids.shape[0])
+        w = 0.94 ** np.arange(tau)
+        w = w / sum(w)
+        backcast = float(
+            np.sum((np.absolute(resids[:tau]) ** delta) * w)
+        )
+        return backcast
+
+    def simulate(
+        self,
+        parameters: Sequence[int | float] | ArrayLike1D,
+        nobs: int,
+        rng: RNGType,
+        burn: int = 500,
+        initial_value: float | Float64Array | None = None,
+    ) -> tuple[Float64Array, Float64Array]:
+        parameters = ensure1d(parameters, "parameters", False)
+        truncation = self.truncation
+        p, o, q = self.p, self.o, self.q
+
+        fig_params = parameters[: 1 + p + 1 + q]
+        gamma = float(parameters[1 + p + 1 + q]) if o else 0.0
+        if self._est_delta:
+            delta = float(parameters[-1])
+        else:
+            delta = self._delta
+
+        lam = rec.figarch_weights(fig_params[1:], p, q, truncation)
+        lam_rev = lam[::-1]
+        errors = rng(truncation + nobs + burn)
+
+        beta = float(fig_params[-1]) if q else 0.0
+
+        if initial_value is None:
+            persistence = np.sum(lam)
+            initial_value = float(fig_params[0])
+            if beta < 1:
+                initial_value /= 1 - beta
+            if persistence < 1:
+                initial_value /= 1 - persistence
+            if persistence >= 1.0 or beta >= 1.0:
+                warn(initial_value_warning, InitialValueWarning, stacklevel=2)
+        assert initial_value is not None
+        sigma2 = np.empty(truncation + nobs + burn)
+        data = np.empty(truncation + nobs + burn)
+        sigma_delta_arr = np.empty(truncation + nobs + burn)
+
+        sigma_delta_arr[:truncation] = initial_value
+        sigma2[:truncation] = initial_value ** (2.0 / delta)
+        data[:truncation] = np.sqrt(sigma2[:truncation]) * errors[:truncation]
+
+        omega = float(fig_params[0])
+        if beta < 1:
+            omega_tilde = omega / (1 - beta)
+        else:
+            warn(
+                "beta >= 1.0, using omega as intercept since long-run variance "
+                "is ill-defined.",
+                ValueWarning,
+                stacklevel=2,
+            )
+            omega_tilde = omega
+
+        for t in range(truncation, truncation + nobs + burn):
+            fshocks = np.empty(truncation)
+            for i in range(truncation):
+                shock = abs(data[t - 1 - i]) - gamma * data[t - 1 - i]
+                fshocks[i] = shock**delta
+            sigma_delta_arr[t] = omega_tilde + lam_rev.dot(fshocks[::-1])
+            sigma2[t] = sigma_delta_arr[t] ** (2.0 / delta)
+            data[t] = errors[t] * np.sqrt(sigma2[t])
+
+        return data[truncation + burn :], sigma2[truncation + burn :]
+
+    def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        truncation = self.truncation
+        p, o, q = self.p, self.o, self.q
+        ds = [0.2, 0.5, 0.7]
+        phi_ratio = [0.2, 0.5, 0.8] if p else [0]
+        beta_ratio = [0.1, 0.5, 0.9] if q else [0]
+        gammas = [-0.5, 0.0, 0.5] if o else [0.0]
+        deltas = [0.5, 1.2, 2.0] if self._est_delta else [self._delta]
+
+        all_starting_vals = []
+        for d in ds:
+            for pr in phi_ratio:
+                phi = (1 - d) / 2 * pr
+                for br in beta_ratio:
+                    beta = (d + phi) * br
+                    for gam in gammas:
+                        for delt in deltas:
+                            target = np.mean(np.absolute(resids) ** delt)
+                            scale = np.mean(resids**2) / (target ** (2.0 / delt))
+                            target *= scale ** (delt / 2)
+                            temp = [phi, d, beta]
+                            lam = rec.figarch_weights(
+                                np.array(temp), 1, 1, truncation
+                            )
+                            omega = (1 - beta) * target * (1 - np.sum(lam))
+                            sv = [omega]
+                            if p:
+                                sv.append(phi)
+                            sv.append(d)
+                            if q:
+                                sv.append(beta)
+                            if o:
+                                sv.append(gam)
+                            if self._est_delta:
+                                sv.append(delt)
+                            all_starting_vals.append(tuple(sv))
+
+        distinct_svs = list(set(all_starting_vals))
+        starting_vals = np.array(distinct_svs)
+
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        llfs = np.zeros(len(starting_vals))
+        for i, sv in enumerate(starting_vals):
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+        loc = np.argmax(llfs)
+
+        return starting_vals[int(loc)]
+
+    def parameter_names(self) -> list[str]:
+        names = ["omega"]
+        if self.p:
+            names += ["phi"]
+        names += ["d"]
+        if self.q:
+            names += ["beta"]
+        if self.o:
+            names += ["gamma"]
+        if self._est_delta:
+            names += ["delta"]
+        return names
+
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
+        return super().variance_bounds(resids, power)
+
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
+        if horizon == 1:
+            return
+        if method == "analytic":
+            raise ValueError("Analytic forecasts not available for horizon > 1")
+        return
+
+    def _analytic_forecast(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+        start: int,
+        horizon: int,
+    ) -> VarianceForecast:
+        _, forecasts = self._one_step_forecast(
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
+        )
+
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+        start: int,
+        horizon: int,
+        simulations: int,
+        rng: RNGType,
+    ) -> VarianceForecast:
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
+        )
+        t = resids.shape[0]
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
+
+        p, o, q = self.p, self.o, self.q
+        truncation = self.truncation
+
+        gamma = float(parameters[1 + p + 1 + q]) if o else 0.0
+        if self._est_delta:
+            delta = float(parameters[-1])
+        else:
+            delta = self._delta
+
+        fig_params = parameters[: 1 + p + 1 + q]
+        lam = rec.figarch_weights(fig_params[1:], p, q, truncation)
+        lam_rev = lam[::-1]
+        omega = float(fig_params[0])
+        beta = float(fig_params[-1]) if q else 0.0
+        omega_tilde = omega / (1 - beta)
+
+        abs_resids_full = np.absolute(resids)
+        fshocks_hist = np.empty(resids.shape[0])
+        for i in range(resids.shape[0]):
+            fshocks_hist[i] = (abs_resids_full[i] - gamma * resids[i]) ** delta
+
+        fpath = np.empty((simulations, truncation + horizon))
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            available = i + 1 - max(0, i - truncation + 1)
+            fpath[:, truncation - available : truncation] = fshocks_hist[
+                max(0, i + 1 - truncation) : i + 1
+            ]
+            if available < truncation:
+                fpath[:, : (truncation - available)] = backcast
+            for h in range(horizon):
+                lagged_fshocks = fpath[:, h : truncation + h]
+                temp_sigma_delta = omega_tilde + lagged_fshocks.dot(lam_rev)
+                sigma2_h = temp_sigma_delta ** (2.0 / delta)
+                path_loc = i - start
+                shocks[path_loc, :, h] = std_shocks[:, h] * np.sqrt(sigma2_h)
+                paths[path_loc, :, h] = sigma2_h
+                forecasts[path_loc, h] = sigma2_h.mean()
+                new_shocks = np.absolute(shocks[path_loc, :, h])
+                fpath[:, truncation + h] = (
+                    new_shocks - gamma * shocks[path_loc, :, h]
+                ) ** delta
 
         return VarianceForecast(forecasts, paths, shocks)
 

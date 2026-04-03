@@ -46,6 +46,7 @@ from arch.univariate.volatility import (
     APARCH,
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -684,6 +685,9 @@ class TestMeanModel:
 
         am = arch_model(self.y, vol="figarch")
         assert isinstance(am.volatility, FIGARCH)
+
+        am = arch_model(self.y, vol="fiaparch")
+        assert isinstance(am.volatility, FIAPARCH)
 
         am = arch_model(self.y, vol="aparch")
         assert isinstance(am.volatility, APARCH)
