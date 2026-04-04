@@ -1947,11 +1947,18 @@ def test_fiaparch(setup):
     assert_equal(fiaparch.truncation, trunc_lag)
 
 
+@pytest.mark.parametrize("p", [0, 1])
 @pytest.mark.parametrize("o", [0, 1])
+@pytest.mark.parametrize("q", [0, 1])
 @pytest.mark.parametrize("delta", [None, 1.5])
-def test_fiaparch_updater_matches_recursion(setup, o, delta):
-    fiaparch = FIAPARCH(truncation=300, o=o, delta=delta)
-    params = [0.1, 0.2, 0.4, 0.2]
+def test_fiaparch_updater_matches_recursion(setup, p, o, q, delta):
+    fiaparch = FIAPARCH(p=p, o=o, q=q, truncation=300, delta=delta)
+    params = [0.1]
+    if p:
+        params.append(0.2)
+    params.append(0.4)
+    if q:
+        params.append(0.2)
     if o:
         params.append(0.8)
     if delta is None:
@@ -2319,3 +2326,32 @@ def test_fiaparch_str(setup, p, o, q):
     assert f"p: {p}" in s
     assert f"o: {o}" in s
     assert "delta:" not in s
+
+
+@pytest.mark.parametrize("delta", [None, 1.5])
+def test_fiaparch_updater_reduce_setstate(setup, delta):
+    fiaparch = FIAPARCH(truncation=300, delta=delta)
+    params = [0.1, 0.2, 0.4, 0.2, -0.3]
+    if delta is None:
+        params.append(1.5)
+    parameters = np.array(params)
+    backcast = fiaparch.backcast(setup.resids)
+    var_bounds = fiaparch.variance_bounds(setup.resids)
+
+    sigma2 = np.zeros_like(setup.sigma2)
+    fiaparch.compute_variance(parameters, setup.resids, sigma2, backcast, var_bounds)
+
+    updater = fiaparch.volatility_updater
+    updater.initialize_update(parameters, backcast, setup.t)
+    sigma2_pre = np.zeros_like(setup.sigma2)
+    for t in range(setup.t):
+        updater._update_tester(t, parameters, setup.resids, sigma2_pre, var_bounds)
+
+    cls, init_args, state = updater.__reduce__()
+    restored = cls(*init_args)
+    restored.__setstate__(state)
+    sigma2_post = np.zeros_like(setup.sigma2)
+    for t in range(setup.t):
+        restored._update_tester(t, parameters, setup.resids, sigma2_post, var_bounds)
+
+    assert_allclose(sigma2_post, sigma2_pre)
