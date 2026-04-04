@@ -1083,6 +1083,37 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.abs_resids = np.empty(0)
         self.sigma_delta = np.empty(0)
 
+    def __setstate__(self, state: tuple) -> None:
+        self.backcast = state[0]
+        self.delta = state[1]
+        lam = np.asarray(state[2], dtype=np.float64)
+        assert lam.shape[0] == self.truncation
+        self.lam = lam.copy()
+        self.resids = np.asarray(state[3], dtype=np.float64).copy()
+        self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
+        self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
+
+    def __reduce__(self):
+        return (
+            FIAPARCHUpdater,
+            (
+                self.p,
+                self.q,
+                self.o,
+                self.truncation,
+                bool(self.est_delta),
+                float(self.delta),
+            ),
+            (
+                self.backcast,
+                self.delta,
+                np.asarray(self.lam),
+                np.asarray(self.resids),
+                np.asarray(self.abs_resids),
+                np.asarray(self.sigma_delta),
+            ),
+        )
+
     def initialize_update(
         self,
         parameters: Float64Array1D,
