@@ -1912,9 +1912,7 @@ def test_fiaparch(setup):
     lam_rev = lam[::-1]
     omega_tilde = fig_params[0] / (1 - fig_params[-1])
     persistence = np.sum(lam)
-    initial_value = omega_tilde
-    if persistence < 1:
-        initial_value /= 1 - persistence
+    initial_value = omega_tilde / (1 - persistence)
     e = setup.rng.standard_normal(trunc_lag + setup.t + 500)
     sigma2 = np.zeros(trunc_lag + setup.t + 500)
     data = np.zeros(trunc_lag + setup.t + 500)
