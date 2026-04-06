@@ -63,6 +63,7 @@ from arch.univariate.volatility import (
     APARCH,
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -1891,7 +1892,9 @@ def arch_model(
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
-    vol: Literal["GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH"] = "GARCH",
+    vol: Literal[
+        "GARCH", "ARCH", "EGARCH", "FIGARCH", "FIAPARCH", "APARCH", "HARCH"
+    ] = "GARCH",
     p: int | list[int] = 1,
     o: int = 0,
     q: int = 1,
@@ -1927,7 +1930,8 @@ def arch_model(
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'APARCH' and 'HARCH'
+        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
+        and 'HARCH'
     p : int, optional
         Lag order of the symmetric innovation
     o : int, optional
@@ -1994,6 +1998,7 @@ def arch_model(
     known_vol = (
         "arch",
         "figarch",
+        "fiaparch",
         "aparch",
         "garch",
         "harch",
@@ -2035,7 +2040,7 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(
+    if vol in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
         p, int
     ):
         raise TypeError(
@@ -2056,6 +2061,9 @@ def arch_model(
     elif vol_model == "egarch":
         assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
+    elif vol_model == "fiaparch":
+        assert isinstance(p, int)
+        v = FIAPARCH(p=p, o=o, q=q)
     elif vol_model == "aparch":
         assert isinstance(p, int)
         v = APARCH(p=p, o=o, q=q)

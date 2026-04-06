@@ -46,6 +46,7 @@ from arch.univariate.volatility import (
     APARCH,
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -684,6 +685,9 @@ class TestMeanModel:
 
         am = arch_model(self.y, vol="figarch")
         assert isinstance(am.volatility, FIGARCH)
+
+        am = arch_model(self.y, vol="fiaparch")
+        assert isinstance(am.volatility, FIAPARCH)
 
         am = arch_model(self.y, vol="aparch")
         assert isinstance(am.volatility, APARCH)
@@ -1352,6 +1356,23 @@ def test_invalid_vol_dist():
         ConstantMean(SP500, volatility="GARCH")
     with pytest.raises(TypeError, match=r"distribution must inherit"):
         ConstantMean(SP500, distribution="Skew-t")
+
+
+def test_fiaparch_non_int_p():
+    with pytest.raises(TypeError, match=r"p must be a scalar int"):
+        arch_model(SP500, vol="fiaparch", p=[1, 2])
+
+
+def test_fiaparch_arch_model_kwargs():
+    am = arch_model(SP500, vol="fiaparch", o=0)
+    assert isinstance(am.volatility, FIAPARCH)
+    assert am.volatility.o == 0
+    assert am.volatility.name == "FI Power ARCH"
+
+    am2 = arch_model(SP500, vol="FIAPARCH", p=0, q=0)
+    assert isinstance(am2.volatility, FIAPARCH)
+    assert am2.volatility.p == 0
+    assert am2.volatility.q == 0
 
 
 def test_param_cov():
