@@ -18,5 +18,5 @@ sphinx-immaterial
 jupyter
 notebook
 sphinx-autodoc-typehints
-fonttools>=4.43.0 # not directly required, pinned by Snyk to avoid a vulnerability
+fonttools>=4.62.0 # not directly required, pinned by Snyk to avoid a vulnerability
 jupyterlab>=4.4.8 # not directly required, pinned by Snyk to avoid a vulnerability
