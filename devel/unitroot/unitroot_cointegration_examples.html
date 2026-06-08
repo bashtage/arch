@@ -23,7 +23,7 @@
     
   
       
-        <title>Cointegration Testing - arch v8.0.1 (+16)</title>
+        <title>Cointegration Testing - arch v8.0.1 (+21)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+16)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+16)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+21)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+16)
+            arch v8.0.1 (+21)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+16)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+16)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+21)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+16)
+    arch v8.0.1 (+21)
   </label>
   
     <div class="md-nav__source">
@@ -773,7 +773,7 @@
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.939</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -2.47 (10%), -2.78 (5%), -3.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: No Trend<br/>Critical Values: -2.47 (10%), -2.78 (5%), -3.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">plot</span></code> method can be used to plot the model residual. We see that while this appears to be mean 0, it might have a trend in it.</p>
 <div class="nbinput docutils container">
@@ -840,7 +840,7 @@ dtype: float64
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.840</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -3.52 (10%), -3.81 (5%), -4.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: Constant and Linear Time Trend<br/>Critical Values: -3.52 (10%), -3.81 (5%), -4.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
@@ -908,7 +908,7 @@ dtype: float64
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.825</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -2.48 (10%), -2.79 (5%), -3.38 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: No Trend<br/>Critical Values: -2.48 (10%), -2.79 (5%), -3.38 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <p>These residuals look quite a bit better although it is possible the break in the cointegrating vector happened around 2005 when oil prices first surged.</p>
 <div class="nbinput docutils container">

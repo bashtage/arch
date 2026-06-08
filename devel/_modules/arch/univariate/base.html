@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+16)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+21)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+16)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+16)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+21)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+16)
+            arch v8.0.1 (+21)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+16)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+16)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+21)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+16)
+    arch v8.0.1 (+21)
   </label>
   
     <div class="md-nav__source">
@@ -2242,13 +2242,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">arch_lm_test</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">standardized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaldTestStatistic</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ARCH LM test for conditional heteroskedasticity</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        lags : int, optional</span>
 <span class="sd">            Number of lags to include in the model.  If not specified,</span>
+<span class="sd">            uses $\lceil 1.2 T^{1/4} \rceil$.</span>
 <span class="sd">        standardized : bool, optional</span>
 <span class="sd">            Flag indicating to test the model residuals divided by their</span>
 <span class="sd">            conditional standard deviations.  If False, directly tests the</span>
