@@ -101,7 +101,7 @@ def engle_granger(
     cv = engle_granger_cv(trend, num_x, nobs)
     pv = engle_granger_pval(stat, trend, num_x)
     return EngleGrangerTestResults(
-        stat, pv, cv, order=num_x, adf=adf, xsection=xsection
+        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=trend
     )
 
 

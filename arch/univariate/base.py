@@ -1701,13 +1701,14 @@ class ARCHModelFixedResult(_SummaryRepr):
     def arch_lm_test(
         self, lags: int | None = None, standardized: bool = False
     ) -> WaldTestStatistic:
-        """
+        r"""
         ARCH LM test for conditional heteroskedasticity
 
         Parameters
         ----------
         lags : int, optional
             Number of lags to include in the model.  If not specified,
+            uses $\lceil 1.2 T^{1/4} \rceil$.
         standardized : bool, optional
             Flag indicating to test the model residuals divided by their
             conditional standard deviations.  If False, directly tests the
