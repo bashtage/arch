@@ -9,7 +9,7 @@ requires = [
 
 [project]
 name = "arch"
-# Keep syned with requirements.txt
+# Keep synced with requirements.txt
 dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
