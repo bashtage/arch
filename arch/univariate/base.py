@@ -380,7 +380,7 @@ class ARCHModel(metaclass=ABCMeta):
         """
         y = self._fit_y
         # Fake convergence results, see GH #87
-        opt = cast("Any", OptimizeResult())
+        opt = cast(Any, OptimizeResult())
         opt.status = 0
         opt.message = ""
 
