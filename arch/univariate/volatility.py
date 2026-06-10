@@ -2221,8 +2221,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         paths = np.empty((t - start, simulations, horizon))
         shocks = np.empty((t - start, simulations, horizon))
         if self._estimate_lam:
-            lam = parameters[0]
+            lam = float(parameters[0])
         else:
+            assert self.lam is not None
             lam = self.lam
         assert one_step.forecasts is not None
         for i in range(start, t):

@@ -198,7 +198,7 @@ class MCS(MultipleComparison):
         # R method
         # 1. Compute pairwise difference (k,k)
         losses = self._losses_arr
-        mean_losses = losses.mean(0)[:, None]
+        mean_losses = losses.mean(axis=0)[:, None]
         loss_diffs = mean_losses - mean_losses.T
         # Compute pairwise variance using bootstrap (k,k)
         # In each bootstrap, save the average difference of each pair (b,k,k)
@@ -209,11 +209,11 @@ class MCS(MultipleComparison):
             self._bootstrap_indices.append(
                 np.asarray(bs_index, dtype=int)
             )  # For testing
-            mean_losses_star = losses[bs_index].mean(0)[:, None]
+            mean_losses_star = losses[bs_index].mean(axis=0)[:, None]
             bootstrapped_mean_losses[j] = mean_losses_star - mean_losses_star.T
         # Recenter
         bootstrapped_mean_losses -= loss_diffs
-        variances = (bootstrapped_mean_losses**2).mean(0)
+        variances = (bootstrapped_mean_losses**2).mean(axis=0)
         variances += np.eye(self.k)  # Prevent division by 0
         self._variances = variances
         # Standardize everything
@@ -230,18 +230,18 @@ class MCS(MultipleComparison):
             test_stat = np.max(included_loss_diffs)
             included_bs_losses = std_bs_mean_losses[:, indices, indices.T]
             simulated_test_stat = np.max(np.max(included_bs_losses, 2), 1)
-            pval = (test_stat < simulated_test_stat).mean()
+            pval = float((test_stat < simulated_test_stat).mean())
             loc = np.argwhere(included_loss_diffs == test_stat)
             # Loc has indices i,j, -- i  is the elimination
             # Diffs are L(i) - L(j), so large value in [i,j] indicates
             # i is worse than j
             # Elimination is for
             i = loc.squeeze()[0]
-            eliminated.append((indices.flat[i], pval))
+            eliminated.append((int(indices.flat[i]), pval))
             included[indices.flat[i]] = False
         # Add pval of 1 for model remaining
-        indices = np.argwhere(included).flatten()
-        eliminated.extend([(ind, 1.0) for ind in indices])
+        remaining_indices = np.argwhere(included).flatten()
+        eliminated.extend([(int(ind), 1.0) for ind in remaining_indices])
         self._pvalues = self._format_pvalues(eliminated)
 
     def _compute_max(self) -> None:
@@ -251,7 +251,7 @@ class MCS(MultipleComparison):
         # max method
         losses = self._losses_arr
         # 1. compute loss "errors"
-        loss_errors = losses - losses.mean(0)
+        loss_errors = losses - losses.mean(axis=0)
         # Generate bootstrap samples
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
         for i, data in enumerate(self.bootstrap.bootstrap(self.reps)):
@@ -260,7 +260,7 @@ class MCS(MultipleComparison):
                 np.asarray(bs_index, dtype=int)
             )  # For testing
             bs_errors = loss_errors[bs_index]
-            avg_bs_errors = bs_errors.mean(0)
+            avg_bs_errors = bs_errors.mean(axis=0)
             avg_bs_errors -= avg_bs_errors.mean()
             bs_avg_loss_errors[i] = avg_bs_errors
             # Initialize the set
@@ -274,7 +274,7 @@ class MCS(MultipleComparison):
             incl_bs_grand_loss = incl_bs_avg_loss_err.mean(1)
             # Reshape for broadcast
             incl_bs_avg_loss_err -= incl_bs_grand_loss[:, None]
-            std_devs = np.sqrt((incl_bs_avg_loss_err**2).mean(0))
+            std_devs = np.sqrt((incl_bs_avg_loss_err**2).mean(axis=0))
             if np.any(std_devs <= 0):
                 warnings.warn(
                     "During computation of a step of the MCS the estimated standard "
@@ -287,11 +287,11 @@ class MCS(MultipleComparison):
                 )
             simulated_test_stat = incl_bs_avg_loss_err / std_devs
             simulated_test_stat = np.max(simulated_test_stat, 1)
-            loss_diffs = incl_losses.mean(0)
+            loss_diffs = incl_losses.mean(axis=0)
             loss_diffs -= loss_diffs.mean()
             std_loss_diffs = loss_diffs / std_devs
             test_stat = np.max(std_loss_diffs)
-            pval = (test_stat < simulated_test_stat).mean()
+            pval = float((test_stat < simulated_test_stat).mean())
             locs = np.argwhere(std_loss_diffs == test_stat)
             eliminated.extend(
                 [
@@ -301,8 +301,8 @@ class MCS(MultipleComparison):
             )
             included[indices.flat[locs]] = False
 
-        indices = np.argwhere(included).flatten()
-        eliminated.extend([(int(ind), 1.0) for ind in indices])
+        remaining_indices = np.argwhere(included).flatten()
+        eliminated.extend([(int(ind), 1.0) for ind in remaining_indices])
         self._pvalues = self._format_pvalues(eliminated)
 
     @property
@@ -664,7 +664,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self._valid_columns = self._check_column_validity()
         # 3. Compute simulated values
         # Upper always re-centers
-        upper_mean = self._loss_diff.mean(0)
+        upper_mean = self._loss_diff.mean(axis=0)
         consistent_mean = upper_mean.copy()
         consistent_mean[np.logical_not(self._valid_columns)] = 0.0
         lower_mean = upper_mean.copy()
@@ -676,7 +676,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             pos_arg, _ = bs_data
             loss_diff_star = pos_arg[0]
             for j, mean in enumerate(means):
-                simulated_vals[:, i, j] = loss_diff_star.mean(0) - mean
+                simulated_vals[:, i, j] = loss_diff_star.mean(axis=0) - mean
         self._simulated_vals = simulated_vals
 
     def _compute_variance(self) -> None:
@@ -693,7 +693,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         if self.nested:
             # Use bootstrap to estimate variances
             bs = self.bootstrap.clone(demeaned, seed=copy.deepcopy(self._seed))
-            means = bs.apply(lambda x: x.mean(0), reps=self.reps)
+            means = bs.apply(lambda x: x.mean(axis=0), reps=self.reps)
             variances = self.t * means.var(axis=0)
         else:
             t = self.t
@@ -720,7 +720,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             calculation
         """
         t, variances = self.t, self._loss_diff_var
-        mean_loss_diff = self._loss_diff.mean(0)
+        mean_loss_diff = self._loss_diff.mean(axis=0)
         threshold = -1.0 * np.sqrt((variances / t) * 2 * np.log(np.log(t)))
         return mean_loss_diff >= threshold
 
@@ -796,7 +796,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         if pvalue_type not in self._pvalues:
             raise ValueError("Unknown pvalue type")
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
-        better_models = self._loss_diff.mean(0) > crit_val
+        better_models = self._loss_diff.mean(axis=0) > crit_val
         better_models = np.logical_and(better_models, self._selector)
         return np.argwhere(better_models).flatten()
 

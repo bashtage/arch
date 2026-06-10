@@ -77,7 +77,9 @@ def block(
                 _tau -= _tau.mean()
                 tau = _tau.reshape((sub_size + 1, 1))
                 coefs = (tau * sub).sum(1) / (tau**2).sum()
-                coefs = np.reshape(coefs, (this_block, 1, cross_section_size), copy=False)
+                coefs = np.reshape(
+                    coefs, (this_block, 1, cross_section_size), copy=False
+                )
                 sub -= coefs * tau
             if trend == "ctt":
                 _tau = np.arange(float(sub_size + 1))
@@ -87,7 +89,9 @@ def block(
                 _tau2 -= (_tau * _tau2).sum() / (_tau**2).sum() * tau
                 tau2 = _tau2.reshape((sub_size + 1, 1))
                 coefs = (tau2 * sub).sum(1) / (tau2**2).sum()
-                coefs = np.reshape(coefs, (this_block, 1, cross_section_size), copy=False)
+                coefs = np.reshape(
+                    coefs, (this_block, 1, cross_section_size), copy=False
+                )
                 sub -= coefs * tau2
             errors = np.empty((this_block, sub_size + 1, max_k))
             errors[:, :, :1] = sub[:, :, :1]
