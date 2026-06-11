@@ -1364,6 +1364,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         std_res = self.resid / self.conditional_volatility
         if isinstance(std_res, pd.Series):
             std_res.name = "std_resid"
+        else:
+            std_res = pd.Series(std_res, name="std_resid", index=self._index)
         return std_res
 
     def plot(
