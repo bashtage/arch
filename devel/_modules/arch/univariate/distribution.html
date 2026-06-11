@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch v8.0.1 (+23)</title>
+        <title>arch.univariate.distribution - arch v8.0.1 (+27)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+23)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+27)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+23)
+            arch v8.0.1 (+27)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+23)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+27)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+23)
+    arch v8.0.1 (+27)
   </label>
   
     <div class="md-nav__source">
@@ -956,7 +956,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
@@ -966,7 +966,7 @@
             <span class="n">_pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">ppf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">_pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ppf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ppf</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ppf</span></div>
 
@@ -1508,7 +1508,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="n">_resids</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">&quot;resids&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -1524,7 +1524,7 @@
         <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">tcdf</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">_resids</span> <span class="o">&lt;</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
         <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span><span class="n">_resids</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tcdf</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
 
