@@ -5,7 +5,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
 import numpy as np
@@ -776,7 +776,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y = self._fit_y
 
         # Fake convergence results, see GH #87
-        opt = OptimizeResult({"status": 0, "message": ""})
+        opt = cast(Any, OptimizeResult())
+        opt.status = 0
+        opt.message = ""
 
         if x.shape[1] > 0:
             regression_params: Float64Array1D = cast(

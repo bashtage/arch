@@ -36,6 +36,8 @@ def deprecate_kwarg(
         If mapping is present, use it to translate old arguments to
         new arguments. A callable must do its own value checking;
         values not found in a dict will be forwarded unchanged.
+    stacklevel : int
+        Stack level to use when issuing the warning.
 
     Examples
     --------

@@ -9,7 +9,7 @@ requires = [
 
 [project]
 name = "arch"
-# Keep syned with requirements.txt
+# Keep synced with requirements.txt
 dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
@@ -416,6 +416,7 @@ directory = "coverage_html_report"
 plugins="numpy.typing.mypy_plugin"
 exclude = [
   "tests",
+  "unitroot/critical_values/simulation",
 ]
 ignore_missing_imports=true
 no_implicit_optional=true
@@ -439,7 +440,21 @@ disallow_untyped_defs=false
 disallow_incomplete_defs=false
 
 [[tool.mypy.overrides]]
-module = "unitroot.critical_values.simulation.*"
+module = ["conftest", "arch.conftest"]
+check_untyped_defs=false
+disallow_untyped_defs=false
+disallow_incomplete_defs=false
+
+[tool.pyrefly]
+project-excludes = ["**/tests*"]
+preset = "legacy"
+ignore-missing-imports = ["*"]
+
+[[tool.mypy.overrides]]
+module = [
+  "unitroot.critical_values.simulation.*",
+  "arch.unitroot.critical_values.simulation.*",
+]
 check_untyped_defs=false
 disallow_untyped_defs=false
 disallow_incomplete_defs=false
