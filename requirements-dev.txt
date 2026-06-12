@@ -42,3 +42,4 @@ sphinx-autodoc-typehints
 pickleshare
 jupyterlab>=4.4.8 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+jupyter-server>=2.18.0 # not directly required, pinned by Snyk to avoid a vulnerability
