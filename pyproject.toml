@@ -299,8 +299,8 @@ ignore = [
 "arch/unitroot/_phillips_ouliaris.py" = ["RUF002"]
 "arch/unitroot/_engle_granger.py" = ["RUF001"]
 
-
 [tool.pytest.ini_options]
+strict_parametrization_ids = true
 minversion = "8.4.1"
 testpaths = "arch"
 xfail_strict = true
