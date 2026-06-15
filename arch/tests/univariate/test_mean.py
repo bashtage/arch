@@ -152,7 +152,7 @@ for model, vol in itertools.product(mean_models, volatility_processes):
     FIT_FIXED_PARAMS.append(pytest.param((model, vol), marks=marks))
 
 FIT_FIXED_IDS = [
-    f"{param[0][0].__class__.__name__}-{param[0][1]}{' (SLOW)' if len(mark) else ''}"
+    f"{param[0][0].name}-{param[0][1]}{' (SLOW)' if len(mark) else ''}"
     for param, mark, _ in FIT_FIXED_PARAMS
 ]
 
