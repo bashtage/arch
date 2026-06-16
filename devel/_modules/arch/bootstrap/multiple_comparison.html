@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+31)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+33)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+31)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+31)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+33)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+33)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+31)
+            arch v8.0.1 (+33)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+31)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+31)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+33)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+33)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+31)
+    arch v8.0.1 (+33)
   </label>
   
     <div class="md-nav__source">
@@ -749,6 +749,7 @@
                     <span class="ne">RuntimeWarning</span><span class="p">,</span>
                     <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="n">std_devs</span><span class="p">[</span><span class="n">std_devs</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
             <span class="n">simulated_test_stat</span> <span class="o">=</span> <span class="n">incl_bs_avg_loss_err</span> <span class="o">/</span> <span class="n">std_devs</span>
             <span class="n">simulated_test_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">simulated_test_stat</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">loss_diffs</span> <span class="o">=</span> <span class="n">incl_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
