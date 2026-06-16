@@ -285,6 +285,7 @@ class MCS(MultipleComparison):
                     RuntimeWarning,
                     stacklevel=2,
                 )
+                std_devs[std_devs <= 0] = np.finfo(float).eps
             simulated_test_stat = incl_bs_avg_loss_err / std_devs
             simulated_test_stat = np.max(simulated_test_stat, 1)
             loss_diffs = incl_losses.mean(axis=0)

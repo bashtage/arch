@@ -299,12 +299,12 @@ ignore = [
 "arch/unitroot/_phillips_ouliaris.py" = ["RUF002"]
 "arch/unitroot/_engle_granger.py" = ["RUF001"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 strict_parametrization_ids = true
 minversion = "8.4.1"
-testpaths = "arch"
+testpaths = ["arch"]
 xfail_strict = true
-addopts = "--strict"
+addopts = ["--strict"]
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
   "ignore:`formatargspec`:DeprecationWarning:statsmodels",
@@ -331,6 +331,7 @@ filterwarnings = [
   "error:seed is deprecated:FutureWarning",
   "error:get_state is deprecated:FutureWarning",
   "error:Conversion of an array with ndim:DeprecationWarning:arch",
+  "error:invalid value encountered in divide:RuntimeWarning"
 ]
 junit_family = "xunit2"
 markers = [
