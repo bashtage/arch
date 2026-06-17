@@ -31,6 +31,59 @@ from arch.univariate.mean import _ar_forecast, _ar_to_impulse
 
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
+
+def _recompute_ar_simulation_paths(
+    y: np.ndarray,
+    start_index: int,
+    horizon: int,
+    constant: float,
+    dynp: np.ndarray,
+    shocks: np.ndarray,
+    variance_paths: np.ndarray,
+    expected_x: np.ndarray,
+    exog_p: np.ndarray,
+    max_lags: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Recompute AR mean simulation paths (mirrors ``HARX.forecast``)."""
+    impulse = _ar_to_impulse(horizon, dynp)
+    long_run_variance_paths = variance_paths.copy()
+    for i in range(horizon):
+        impulses = impulse[i::-1][:, None]
+        lrvp = variance_paths[:, :, : (i + 1)].dot(impulses**2)
+        lrvp = lrvp[:, :, 0]
+        long_run_variance_paths[:, :, i] = lrvp
+
+    t = y.shape[0]
+    m = max_lags
+    mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
+    dynp_rev = dynp[::-1]
+    for i in range(start_index, t):
+        path_loc = i - start_index
+        mean_paths[path_loc, :, :m] = y[i - m + 1 : i + 1]
+        for j in range(horizon):
+            mean_paths[path_loc, :, m + j] = (
+                constant
+                + mean_paths[path_loc, :, j : m + j].dot(dynp_rev)
+                + shocks[path_loc, :, j]
+            )
+            if expected_x.shape[0] > 0:
+                mean_paths[path_loc, :, m + j] += expected_x[:, path_loc, j].T @ exog_p
+    mean_paths = mean_paths[:, :, m:]
+    return mean_paths, long_run_variance_paths
+
+
+def _ar_mean_simulation_coefficients(
+    model, params
+) -> tuple[float, np.ndarray, np.ndarray]:
+    mp, _, _ = model._parse_parameters(np.asarray(params))
+    arp = model._har_to_ar(mp)
+    nexog = 0 if model._x is None else model._x.shape[1]
+    exog_p = np.empty(0) if model._x is None else mp[-nexog:]
+    constant = arp[0] if model.constant else 0.0
+    dynp = arp[int(model.constant) :]
+    return constant, dynp, exog_p
+
+
 MEAN_MODELS = [
     HARX(SP500, lags=[1, 5]),
     ARX(SP500, lags=2),
@@ -538,6 +591,136 @@ class TestForecasting:
         )
         assert_frame_equal(forecast.mean, repeat.mean)
         assert_frame_equal(forecast.variance, repeat.variance)
+
+    @pytest.mark.parametrize(
+        ("method", "start", "simulations"),
+        [
+            ("simulation", 50, 25),
+            ("bootstrap", 200, 25),
+        ],
+    )
+    def test_ar1_garch_mean_forecast_simulation_paths(
+        self, method: str, start: int, simulations: int
+    ):
+        am = arch_model(self.ar1, mean="AR", vol="GARCH", lags=[1])
+        res = am.fit(disp="off")
+        horizon = 5
+        forecast_kwargs: dict = {
+            "horizon": horizon,
+            "start": start,
+            "method": method,
+            "simulations": simulations,
+        }
+        if method == "bootstrap":
+            forecast_kwargs["random_state"] = RandomState(424242)
+        forecast = res.forecast(**forecast_kwargs)
+        sim = forecast.simulations
+        model = res.model
+        y = np.asarray(model._y)
+        constant, dynp, exog_p = _ar_mean_simulation_coefficients(model, res.params)
+        expected_mean, expected_lrv = _recompute_ar_simulation_paths(
+            y,
+            start,
+            horizon,
+            constant,
+            dynp,
+            sim.residuals,
+            sim.residual_variances,
+            np.empty(0),
+            exog_p,
+            model._max_lags,
+        )
+        nobs = y.shape[0] - start
+        assert sim.values.shape == (nobs, simulations, horizon)
+        assert sim.residuals.shape == (nobs, simulations, horizon)
+        assert sim.residual_variances.shape == (nobs, simulations, horizon)
+        assert sim.variances.shape == (nobs, simulations, horizon)
+        assert_allclose(sim.values, expected_mean)
+        assert_allclose(sim.variances, expected_lrv)
+
+    @pytest.mark.parametrize("method", ["simulation", "bootstrap"])
+    def test_ar2_garch_mean_forecast_simulation_paths(self, method: str):
+        am = arch_model(self.ar2, mean="AR", vol="GARCH", lags=[1, 2], p=1, q=1)
+        res = am.fit(disp="off")
+        horizon = 4
+        start = 200 if method == "bootstrap" else 30
+        simulations = 20
+        forecast_kwargs: dict = {
+            "horizon": horizon,
+            "start": start,
+            "method": method,
+            "simulations": simulations,
+        }
+        if method == "bootstrap":
+            forecast_kwargs["random_state"] = RandomState(535353)
+        forecast = res.forecast(**forecast_kwargs)
+        sim = forecast.simulations
+        model = res.model
+        y = np.asarray(model._y)
+        constant, dynp, exog_p = _ar_mean_simulation_coefficients(model, res.params)
+        expected_mean, expected_lrv = _recompute_ar_simulation_paths(
+            y,
+            start,
+            horizon,
+            constant,
+            dynp,
+            sim.residuals,
+            sim.residual_variances,
+            np.empty(0),
+            exog_p,
+            model._max_lags,
+        )
+        assert_allclose(sim.values, expected_mean)
+        assert_allclose(sim.variances, expected_lrv)
+
+    def test_arx_garch_mean_forecast_simulation_paths(self):
+        rng = RandomState(12345)
+        am = arch_model(None, mean="ARX", lags=2)
+        data = am.simulate([0.1, 1.2, -0.6, 0.1, 0.1, 0.8], nobs=1000)
+        cols = ["x1", "x2"]
+        x = pd.DataFrame(
+            rng.standard_normal((data.data.shape[0], 2)),
+            columns=cols,
+            index=data.data.index,
+        )
+        y = data.data + x @ np.array([0.25, 0.5])
+        y.name = "y"
+        am = arch_model(y, x, mean="ARX", lags=2, p=1, q=1)
+        res = am.fit(disp="off")
+        horizon = 4
+        simulations = 20
+        start = y.shape[0] - 1
+        x_fcast = np.zeros((x.shape[1], 1, horizon))
+        for i in range(x_fcast.shape[0]):
+            x_fcast[i] = np.arange(100 * i, 100 * i + horizon)
+
+        forecast = res.forecast(
+            horizon=horizon,
+            start=start,
+            method="simulation",
+            simulations=simulations,
+            x=x_fcast,
+        )
+        sim = forecast.simulations
+        model = res.model
+        y_array = np.asarray(model._y)
+        constant, dynp, exog_p = _ar_mean_simulation_coefficients(model, res.params)
+        expected_x = model._reformat_forecast_x(x_fcast, horizon, start)
+        expected_mean, expected_lrv = _recompute_ar_simulation_paths(
+            y_array,
+            start,
+            horizon,
+            constant,
+            dynp,
+            sim.residuals,
+            sim.residual_variances,
+            expected_x,
+            exog_p,
+            model._max_lags,
+        )
+        assert sim.values.shape == (1, simulations, horizon)
+        assert_allclose(sim.values, expected_mean)
+        assert_allclose(sim.variances, expected_lrv)
 
     def test_ar2_garch11(self):
         pass

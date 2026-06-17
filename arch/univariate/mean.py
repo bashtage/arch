@@ -1038,7 +1038,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         shocks: Float64Array | None = None
         long_run_variance_paths: Float64Array | None = None
         if method.lower() in ("simulation", "bootstrap"):
-            # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
             variance_paths = vfcast.forecast_paths
             assert isinstance(vfcast.shocks, np.ndarray)
