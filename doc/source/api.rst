@@ -49,6 +49,15 @@ Shock Distributions
    ~arch.univariate.SkewStudent
    ~arch.univariate.GeneralizedError
 
+Residual Diagnostics
+~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+
+   ~arch.univariate.excess_kurtosis
+   ~arch.univariate.hill_estimator
+   ~arch.univariate.var_ratio
+
 Unit Root Testing
 -----------------
 .. autosummary::

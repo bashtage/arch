@@ -11,3 +11,17 @@ Test Results
 
 .. autoclass:: WaldTestStatistic
    :members:
+
+Residual Diagnostics
+--------------------
+
+.. module:: arch.univariate
+   :noindex:
+.. currentmodule:: arch.univariate
+
+.. autosummary::
+   :toctree: generated/
+
+   excess_kurtosis
+   hill_estimator
+   var_ratio
