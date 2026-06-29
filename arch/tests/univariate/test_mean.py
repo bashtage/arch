@@ -1249,6 +1249,76 @@ def test_arch_lm(simulated_data):
     assert "H0: Standardized" in wald.__repr__()
 
 
+def test_li_mak(simulated_data):
+    # --- default call ---
+    zm = ZeroMean(simulated_data, volatility=GARCH())
+    res = zm.fit(disp=DISPLAY)
+    wald = res.li_mak_test()
+
+    nobs = simulated_data.shape[0]
+    default_lags = int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))
+    # df = lags - fitdf where fitdf = GARCH(1,1).num_params - 1 = 2
+    assert wald.df == default_lags - 2
+    assert "uncorrelated" in wald.null
+    assert "Li-Mak" in wald.__repr__()
+    assert wald.stat >= 0.0
+    assert 0.0 <= wald.pval <= 1.0
+    assert_almost_equal(wald.pval, 1 - stats.chi2(wald.df).cdf(wald.stat))
+
+    # --- explicit lags ---
+    wald5 = res.li_mak_test(lags=5)
+    assert wald5.df == 5 - 2  # fitdf=2 for GARCH(1,1)
+    assert wald5.stat >= 0.0
+
+    # --- fitdf=0 gives uncorrected Ljung-Box on squared standardized residuals ---
+    wald_lb = res.li_mak_test(lags=5, fitdf=0)
+    assert wald_lb.df == 5
+
+    # manually compute Ljung-Box on squared standardized residuals
+    e = res.resid / res.conditional_volatility
+    a = e**2
+    a = a[~np.isnan(a)]
+    n = a.shape[0]
+    a_dm = a - a.mean()
+    a_var = (a_dm**2).sum()
+    stat_manual = 0.0
+    for k in range(1, 6):
+        rk = (a_dm[k:] * a_dm[:-k]).sum() / a_var
+        stat_manual += rk**2 / (n - k)
+    stat_manual *= n * (n + 2)
+    assert_almost_equal(wald_lb.stat, stat_manual, decimal=8)
+
+    # --- li_mak != arch_lm on standardized residuals (different formula + df) ---
+    wald_archlm = res.arch_lm_test(lags=5, standardized=True)
+    # ARCH-LM uses nobs*R^2 (OLS); Li-Mak uses Ljung-Box — different statistics
+    assert wald_archlm.stat != pytest.approx(wald5.stat)
+
+    # --- fitdf parameter override ---
+    wald_custom = res.li_mak_test(lags=10, fitdf=5)
+    assert wald_custom.df == 5
+
+
+def test_li_mak_constant_variance(simulated_data):
+    """With constant variance, fitdf defaults to 0 (no df correction needed)."""
+    from arch.univariate.volatility import ConstantVariance
+
+    zm = ZeroMean(simulated_data, volatility=ConstantVariance())
+    res = zm.fit(disp=DISPLAY)
+    wald = res.li_mak_test(lags=5)
+    assert wald.df == 5  # fitdf = ConstantVariance.num_params - 1 = 0
+
+
+def test_li_mak_pval_structure(simulated_data):
+    """p-value, critical values and repr are consistent."""
+    zm = ZeroMean(simulated_data, volatility=GARCH())
+    res = zm.fit(disp=DISPLAY)
+    wald = res.li_mak_test(lags=10)
+    assert len(wald.critical_values) == 3
+    assert "10%" in wald.critical_values
+    assert "Li-Mak" in repr(wald)
+    assert_almost_equal(wald.pval, 1 - stats.chi2(wald.df).cdf(wald.stat))
+
+
 def test_autoscale():
     rs = np.random.RandomState(34254321)
     dist = Normal(seed=rs)
