@@ -589,7 +589,7 @@ def aparch_recursion_python(
         Model parameters
     resids : ndarray
         Residuals.
-    aresids : ndarray
+    abs_resids : ndarray
         Absolute value of residuals.
     sigma2 : ndarray
         Conditional variances with same shape as resids
