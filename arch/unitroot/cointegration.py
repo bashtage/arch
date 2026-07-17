@@ -167,7 +167,7 @@ class _CommonCointegrationResults:
         If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where
         m is the number of regressors in the model.
         """
-        return float(self._df_scale * self._cov_est.short_run[0, 0])
+        return float(np.asarray(self._df_scale * self._cov_est.short_run)[0, 0])
 
     @property
     def long_run_variance(self) -> float:
@@ -188,7 +188,7 @@ class _CommonCointegrationResults:
         If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where
         m is the number of regressors in the model.
         """
-        return float(self._df_scale * self._cov_est.long_run[0, 0])
+        return float(np.asarray(self._df_scale * self._cov_est.long_run)[0, 0])
 
     @staticmethod
     def _top_table(
