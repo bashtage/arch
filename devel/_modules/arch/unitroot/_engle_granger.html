@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._engle_granger - arch v8.0.1 (+45)</title>
+        <title>arch.unitroot._engle_granger - arch v8.0.1 (+47)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -486,13 +486,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">engle_granger</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
-    <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+    <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;aic&quot;</span><span class="p">,</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;EngleGrangerTestResults&quot;</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"t-stat"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"bic"</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"EngleGrangerTestResults"</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Test for cointegration within a set of time series.</span>
 
 <span class="sd">    Parameters</span>
@@ -501,20 +501,20 @@
 <span class="sd">        The left-hand-side variable in the cointegrating regression.</span>
 <span class="sd">    x : array_like</span>
 <span class="sd">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="sd">    trend : {&quot;n&quot;,&quot;c&quot;,&quot;ct&quot;,&quot;ctt&quot;}, default &quot;c&quot;</span>
+<span class="sd">    trend : {"n","c","ct","ctt"}, default "c"</span>
 <span class="sd">        Trend to include in the cointegrating regression. Trends are:</span>
 
-<span class="sd">        * &quot;n&quot;: No deterministic terms</span>
-<span class="sd">        * &quot;c&quot;: Constant</span>
-<span class="sd">        * &quot;ct&quot;: Constant and linear trend</span>
-<span class="sd">        * &quot;ctt&quot;: Constant, linear and quadratic trends</span>
+<span class="sd">        * "n": No deterministic terms</span>
+<span class="sd">        * "c": Constant</span>
+<span class="sd">        * "ct": Constant and linear trend</span>
+<span class="sd">        * "ctt": Constant, linear and quadratic trends</span>
 <span class="sd">    lags : int, default None</span>
 <span class="sd">        The number of lagged differences to include in the Augmented</span>
 <span class="sd">        Dickey-Fuller test used on the residuals of the</span>
 <span class="sd">    max_lags : int, default None</span>
 <span class="sd">        The maximum number of lags to consider when using automatic</span>
 <span class="sd">        lag-length in the Augmented Dickey-Fuller regression.</span>
-<span class="sd">    method: {&quot;aic&quot;, &quot;bic&quot;, &quot;tstat&quot;}, default &quot;bic&quot;</span>
+<span class="sd">    method: {"aic", "bic", "tstat"}, default "bic"</span>
 <span class="sd">        The method used to select the number of lags included in the</span>
 <span class="sd">        Augmented Dickey-Fuller regression.</span>
 
@@ -528,7 +528,7 @@
 <span class="sd">    arch.unitroot.ADF</span>
 <span class="sd">        Augmented Dickey-Fuller testing.</span>
 <span class="sd">    arch.unitroot.PhillipsPerron</span>
-<span class="sd">        Phillips &amp; Perron&#39;s unit root test.</span>
+<span class="sd">        Phillips &amp; Perron's unit root test.</span>
 <span class="sd">    arch.unitroot.cointegration.phillips_ouliaris</span>
 <span class="sd">        Phillips-Ouliaris tests of cointegration.</span>
 
@@ -550,12 +550,12 @@
 <span class="sd">    cross-sectional regression using a set of critical values that is</span>
 <span class="sd">    determined by the number of assumed stochastic trends when the null</span>
 <span class="sd">    hypothesis is true.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">setup</span> <span class="o">=</span> <span class="n">_check_cointegrating_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">trend</span><span class="p">)</span>
     <span class="n">xsection</span> <span class="o">=</span> <span class="n">_cross_section</span><span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">setup</span><span class="o">.</span><span class="n">trend</span><span class="p">)</span>
     <span class="n">resid</span> <span class="o">=</span> <span class="n">xsection</span><span class="o">.</span><span class="n">resid</span>
     <span class="c1"># Never pass in the trend here since only used in x-section</span>
-    <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="n">max_lags</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+    <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="n">max_lags</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
     <span class="n">stat</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="n">stat</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">resid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">adf</span><span class="o">.</span><span class="n">lags</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">num_x</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -570,7 +570,7 @@
 <div class="viewcode-block" id="EngleGrangerTestResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.EngleGrangerTestResults.html#arch.unitroot.cointegration.EngleGrangerTestResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EngleGrangerTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Results class for Engle-Granger cointegration tests.</span>
 
 <span class="sd">    Parameters</span>
@@ -587,23 +587,23 @@
 <span class="sd">    alternative : str</span>
 <span class="sd">        The alternative hypothesis.</span>
 <span class="sd">    trend : str</span>
-<span class="sd">        The model&#39;s trend description.</span>
+<span class="sd">        The model's trend description.</span>
 <span class="sd">    order : int</span>
 <span class="sd">        The number of stochastic trends in the null distribution.</span>
 <span class="sd">    adf : ADF</span>
 <span class="sd">        The ADF instance used to perform the test and lag selection.</span>
 <span class="sd">    xsection : RegressionResults</span>
 <span class="sd">        The OLS results used in the cross-sectional regression.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">crit_vals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
-        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Cointegration&quot;</span><span class="p">,</span>
-        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Cointegration&quot;</span><span class="p">,</span>
-        <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"No Cointegration"</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Cointegration"</span><span class="p">,</span>
+        <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
         <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">adf</span><span class="p">:</span> <span class="n">ADF</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">xsection</span><span class="p">:</span> <span class="n">RegressionResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -611,31 +611,31 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">stat</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">,</span> <span class="n">crit_vals</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">alternative</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">xsection</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Engle-Granger Cointegration Test&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"Engle-Granger Cointegration Test"</span>
         <span class="k">assert</span> <span class="n">adf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span> <span class="o">=</span> <span class="n">adf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_additional_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;ADF Lag length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">,</span>
-                <span class="s2">&quot;Trend&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="p">,</span>
-                <span class="s2">&quot;Estimated Root ρ (γ+1)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span>
-                <span class="s2">&quot;Distribution Order&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution_order</span><span class="p">,</span>
+                <span class="s2">"ADF Lag length"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">,</span>
+                <span class="s2">"Trend"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="p">,</span>
+                <span class="s2">"Estimated Root ρ (γ+1)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span>
+                <span class="s2">"Distribution Order"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution_order</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of lags used in the Augmented Dickey-Fuller regression.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The number of lags used in the Augmented Dickey-Fuller regression."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span><span class="o">.</span><span class="n">lags</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The maximum number of lags used in the lag-length selection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The maximum number of lags used in the lag-length selection."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span><span class="o">.</span><span class="n">max_lags</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        The estimated coefficient in the Dickey-Fuller Test</span>
 
 <span class="sd">        Returns</span>
@@ -652,7 +652,7 @@
 
 <span class="sd">            \Delta y_t = \gamma y_{t-1} + \sum_{i=1}^p \delta_i \Delta y_{t-i}</span>
 <span class="sd">                         + \epsilon_t</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">param0</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">params</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">param0</span>
@@ -660,12 +660,12 @@
 <div class="viewcode-block" id="EngleGrangerTestResults.summary">
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerTestResults.summary.html#arch.unitroot.cointegration.EngleGrangerTestResults.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Summary of test, containing statistic, p-value and critical values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Summary of test, containing statistic, p-value and critical values"""</span>
         <span class="n">table_data</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;Test Statistic&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;P-value&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;ADF Lag length&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Estimated Root ρ (γ+1)&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Test Statistic"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"P-value"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"ADF Lag length"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Estimated Root ρ (γ+1)"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
@@ -675,27 +675,27 @@
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
             <span class="n">colwidths</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
             <span class="n">datatypes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-            <span class="n">data_aligns</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">),</span>
+            <span class="n">data_aligns</span><span class="o">=</span><span class="p">(</span><span class="s2">"l"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="n">smry</span> <span class="o">=</span> <span class="n">Summary</span><span class="p">()</span>
         <span class="n">smry</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="n">cv_string</span> <span class="o">=</span> <span class="s2">&quot;Critical Values: &quot;</span>
+        <span class="n">cv_string</span> <span class="o">=</span> <span class="s2">"Critical Values: "</span>
         <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span>
-            <span class="n">cv_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">cv_string</span> <span class="o">+=</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
-            <span class="n">cv_string</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"%"</span>
+            <span class="n">cv_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">cv_string</span> <span class="o">+=</span> <span class="s2">" ("</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="s2">")"</span>
+            <span class="n">cv_string</span> <span class="o">+=</span> <span class="s2">", "</span>
         <span class="c1"># Remove trailing ,&lt;space&gt;</span>
         <span class="n">cv_string</span> <span class="o">=</span> <span class="n">cv_string</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
         <span class="n">extra_text</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;Trend: &quot;</span> <span class="o">+</span> <span class="n">TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">],</span>
+            <span class="s2">"Trend: "</span> <span class="o">+</span> <span class="n">TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">],</span>
             <span class="n">cv_string</span><span class="p">,</span>
-            <span class="s2">&quot;Null Hypothesis: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">null_hypothesis</span><span class="p">,</span>
-            <span class="s2">&quot;Alternative Hypothesis: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
-            <span class="s2">&quot;Distribution Order: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution_order</span><span class="p">),</span>
+            <span class="s2">"Null Hypothesis: "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">null_hypothesis</span><span class="p">,</span>
+            <span class="s2">"Alternative Hypothesis: "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
+            <span class="s2">"Distribution Order: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution_order</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="n">smry</span><span class="o">.</span><span class="n">add_extra_txt</span><span class="p">(</span><span class="n">extra_text</span><span class="p">)</span>
@@ -705,12 +705,12 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">engle_granger_cv</span><span class="p">(</span><span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Critical Values for Engle-Granger t-tests</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    trend : {&quot;n&quot;, &quot;c&quot;, &quot;ct&quot;, &quot;ctt&quot;}</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
 <span class="sd">        The trend included in the model</span>
 <span class="sd">    num_x : The number of cross-sectional regressors in the model.</span>
 <span class="sd">        Must be between 1 and 12.</span>
@@ -721,15 +721,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    Series</span>
 <span class="sd">        The critical values for 1, 5 and 10%</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trends</span><span class="p">:</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">num_x</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The number of cross-sectional variables must be between 1 and &quot;</span>
-            <span class="s2">&quot;12 (inclusive)&quot;</span>
+            <span class="s2">"The number of cross-sectional variables must be between 1 and "</span>
+            <span class="s2">"12 (inclusive)"</span>
         <span class="p">)</span>
     <span class="n">tbl</span> <span class="o">=</span> <span class="n">CV_PARAMETERS</span><span class="p">[</span><span class="n">trend</span><span class="p">]</span>
 
@@ -742,14 +742,14 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">engle_granger_pval</span><span class="p">(</span><span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Asymptotic P-values for Engle-Granger t-tests</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    stat : float</span>
 <span class="sd">        The test statistic</span>
-<span class="sd">    trend : {&quot;n&quot;, &quot;c&quot;, &quot;ct&quot;, &quot;ctt&quot;}</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
 <span class="sd">        The trend included in the model</span>
 <span class="sd">    num_x : The number of cross-sectional regressors in the model.</span>
 <span class="sd">        Must be between 1 and 12.</span>
@@ -758,15 +758,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    Series</span>
 <span class="sd">        The critical values for 1, 5 and 10%</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trends</span><span class="p">:</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">num_x</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The number of cross-sectional variables must be between 1 and &quot;</span>
-            <span class="s2">&quot;12 (inclusive)&quot;</span>
+            <span class="s2">"The number of cross-sectional variables must be between 1 and "</span>
+            <span class="s2">"12 (inclusive)"</span>
         <span class="p">)</span>
     <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">trend</span><span class="p">,</span> <span class="n">num_x</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">TAU_MAX</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>

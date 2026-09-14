@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._shared - arch v8.0.1 (+45)</title>
+        <title>arch.unitroot._shared - arch v8.0.1 (+47)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -478,8 +478,8 @@
     <span class="n">kernel</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lrcov</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">lrcov</span><span class="o">.</span><span class="n">KERNELS</span>
 <span class="p">}</span>
 <span class="n">KERNEL_ESTIMATORS</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lrcov</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">lrcov</span><span class="o">.</span><span class="n">KERNELS</span><span class="p">})</span>
-<span class="n">KNOWN_KERNELS</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">))</span>
-<span class="n">KERNEL_ERR</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;kernel is not a known estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">KNOWN_KERNELS</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="n">KNOWN_KERNELS</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">))</span>
+<span class="n">KERNEL_ERR</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"kernel is not a known estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">KNOWN_KERNELS</span><span class="si">}</span><span class="s2">"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CointegrationSetup</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
@@ -489,11 +489,11 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">kernel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">))</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;kernel is not a known kernel estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">est</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"kernel is not a known kernel estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">est</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">kernel</span>
 
@@ -502,38 +502,38 @@
     <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>
-    <span class="n">supported_trends</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">),</span>
+    <span class="n">supported_trends</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CointegrationSetup</span><span class="p">:</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The number of observations in y and x differ. y has &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> observtations, and x has </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"The number of observations in y and x differ. y has "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> observtations, and x has </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
         <span class="n">x_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">x_df</span> <span class="o">=</span> <span class="n">x</span>
     <span class="n">trend_name</span> <span class="o">=</span> <span class="n">trend</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">trend_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_trends</span><span class="p">:</span>
-        <span class="n">trends</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">supported_trends</span><span class="p">])</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown trend. Must be one of </span><span class="se">{{</span><span class="si">{</span><span class="n">trends</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">CointegrationSetup</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x_df</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UnitRootTrend&quot;</span><span class="p">,</span> <span class="n">trend_name</span><span class="p">))</span>
+        <span class="n">trends</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s1">"'</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">supported_trends</span><span class="p">])</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown trend. Must be one of </span><span class="se">{{</span><span class="si">{</span><span class="n">trends</span><span class="si">}</span><span class="se">}}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">CointegrationSetup</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x_df</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"UnitRootTrend"</span><span class="p">,</span> <span class="n">trend_name</span><span class="p">))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cross_section</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;trend must be one of &quot;n&quot;, &quot;c&quot;, &quot;ct&quot; or &quot;ctt&quot;&#39;</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'trend must be one of "n", "c", "ct" or "ctt"'</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">trend</span><span class="p">)</span>
@@ -542,7 +542,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CointegrationTestResult</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Base results class for cointegration tests.</span>
 
 <span class="sd">    Parameters</span>
@@ -554,31 +554,31 @@
 <span class="sd">    crit_vals : Series</span>
 <span class="sd">        The critical values of the Engle-Granger specific to the sample size</span>
 <span class="sd">        and model dimension.</span>
-<span class="sd">    null : str, default &quot;No Cointegration&quot;</span>
+<span class="sd">    null : str, default "No Cointegration"</span>
 <span class="sd">        The null hypothesis.</span>
-<span class="sd">    alternative : str, default &quot;Cointegration&quot;</span>
+<span class="sd">    alternative : str, default "Cointegration"</span>
 <span class="sd">        The alternative hypothesis.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">crit_vals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
-        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Cointegration&quot;</span><span class="p">,</span>
-        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Cointegration&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"No Cointegration"</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Cointegration"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="n">stat</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">pvalue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_crit_vals</span> <span class="o">=</span> <span class="n">crit_vals</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_null</span> <span class="o">=</span> <span class="n">null</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span> <span class="o">=</span> <span class="n">alternative</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_additional_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets or gets the name of the cointegration test&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets or gets the name of the cointegration test"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
@@ -587,17 +587,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The test statistic.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The test statistic."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The p-value of the test statistic.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The p-value of the test statistic."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Critical Values</span>
 
 <span class="sd">        Returns</span>
@@ -605,31 +605,31 @@
 <span class="sd">        Series</span>
 <span class="sd">            Series with three keys, 1, 5 and 10 containing the critical values</span>
 <span class="sd">            of the test statistic.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crit_vals</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">null_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The null hypothesis&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The null hypothesis"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">alternative_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The alternative hypothesis&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The alternative hypothesis"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Statistic: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;P-value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Null: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">null_hypothesis</span><span class="si">}</span><span class="s2">, &quot;</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Alternative: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternative_hypothesis</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Statistic: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"P-value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Null: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">null_hypothesis</span><span class="si">}</span><span class="s2">, "</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Alternative: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternative_hypothesis</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_info</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">out</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ResidualCointegrationTestResult</span><span class="p">(</span><span class="n">CointegrationTestResult</span><span class="p">):</span>
@@ -638,14 +638,14 @@
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">crit_vals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
-        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No Cointegration&quot;</span><span class="p">,</span>
-        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Cointegration&quot;</span><span class="p">,</span>
-        <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"No Cointegration"</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Cointegration"</span><span class="p">,</span>
+        <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
         <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">xsection</span><span class="p">:</span> <span class="n">RegressionResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">,</span> <span class="n">crit_vals</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"NONE"</span>
         <span class="k">assert</span> <span class="n">xsection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xsection</span> <span class="o">=</span> <span class="n">xsection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="n">order</span>
@@ -654,34 +654,34 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The trend used in the cointegrating regression&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The trend used in the cointegrating regression"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">distribution_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of stochastic trends under the null hypothesis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The number of stochastic trends under the null hypothesis."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cointegrating_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The estimated cointegrating vector.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xsection</span><span class="o">.</span><span class="n">params</span>
         <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_xsection</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ynames</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">),</span> <span class="o">-</span><span class="n">params</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The residual from the cointegrating regression.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The residual from the cointegrating regression."""</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xsection</span><span class="o">.</span><span class="n">resid</span>
-        <span class="n">resid</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Residual&quot;</span>
+        <span class="n">resid</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"Cointegrating Residual"</span>
         <span class="k">return</span> <span class="n">resid</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;plt.Axes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;plt.Figure&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">"plt.Axes"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"plt.Figure"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the cointegration residuals.</span>
 
 <span class="sd">        Parameters</span>
@@ -695,13 +695,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        Figure</span>
 <span class="sd">            The matplotlib Figure instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Residual&quot;</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">"Cointegrating Residual"</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;plt.Figure&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"plt.Figure"</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">pad</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span>
@@ -710,7 +710,7 @@
         <span class="k">return</span> <span class="n">Summary</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display as HTML for IPython notebook.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Display as HTML for IPython notebook."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_html</span><span class="p">()</span>
 </code></pre></div>
 

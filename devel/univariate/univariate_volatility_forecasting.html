@@ -23,7 +23,7 @@
     
   
       
-        <title>Volatility Forecasting - arch v8.0.1 (+45)</title>
+        <title>Volatility Forecasting - arch v8.0.1 (+47)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -1358,11 +1358,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"figure"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"savefig"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1380,7 +1380,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch</span><span class="w"> </span><span class="kn">import</span> <span class="n">arch_model</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]</span>
+<span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"Adj Close"</span><span class="p">]</span>
 <span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">market</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </code></pre></div>
 </div>
@@ -1398,7 +1398,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;Garch&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">"Garch"</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"Normal"</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1408,10 +1408,10 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.276118552504
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482207
+Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.284960008103
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477484757
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6936.718476988983
+            Current function value: 6936.718476988985
             Iterations: 11
             Function evaluations: 68
             Gradient evaluations: 11
@@ -1475,9 +1475,9 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.1       h.2       h.3       h.4       h.5
+                h.1       h.2       h.3       h.4     h.5
 Date
-2018-12-31  3.59647  3.568502  3.540887  3.513621  3.486701
+2018-12-31  3.59647  3.568502  3.540887  3.513621  3.4867
 </pre></div></div>
 </div>
 <h2 id="Alternative-Forecast-Generation-Schemes">Alternative Forecast Generation Schemes<a class="headerlink" href="#Alternative-Forecast-Generation-Schemes" title="Link to this heading">¶</a></h2>
@@ -1488,7 +1488,7 @@ Date
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="s2">&quot;2011-1-1&quot;</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="s2">"2011-1-1"</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
@@ -1499,10 +1499,10 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     34,   Neg. LLF: 4578.713321777337
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 4555.338450774295
+Iteration:      5,   Func. Count:     34,   Neg. LLF: 4578.713300777299
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 4555.338450947712
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 4555.285110045364
+            Current function value: 4555.285110045383
             Iterations: 14
             Function evaluations: 83
             Gradient evaluations: 14
@@ -1523,12 +1523,12 @@ Date
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">index</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">index</span>
 <span class="n">start_loc</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">end_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="s2">&quot;2010-1-1&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">end_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="s2">"2010-1-1"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">first_obs</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">first_obs</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
     <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
     <span class="n">fcast</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcast</span>
@@ -1563,7 +1563,7 @@ Date
 2010-01-26  1.112205  1.115886  1.119545
 2010-01-27  1.051295  1.055327  1.059335
 2010-01-28  1.085678  1.089512  1.093324
-2010-01-29  1.085786  1.089593  1.093378
+2010-01-29  1.085786  1.089594  1.093378
 </pre></div></div>
 </div>
 <h3 id="Recursive-Forecast-Generation">Recursive Forecast Generation<a class="headerlink" href="#Recursive-Forecast-Generation" title="Link to this heading">¶</a></h3>
@@ -1577,12 +1577,12 @@ Date
 
 <span class="n">index</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">index</span>
 <span class="n">start_loc</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">end_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="s2">&quot;2010-1-1&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">end_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="s2">"2010-1-1"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
     <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
     <span class="n">fcast</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcast</span>
@@ -1628,7 +1628,7 @@ Date
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># TARCH specification</span>
-<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;GARCH&quot;</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">"GARCH"</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -1640,10 +1640,10 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.495604247777
-Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.883180893361
+Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.495527491306
+Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.88318030922
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6822.882823391775
+            Current function value: 6822.882823373991
             Iterations: 13
             Function evaluations: 93
             Gradient evaluations: 13
@@ -1660,8 +1660,8 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">var_2016</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s2">&quot;2016&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
-<span class="n">subplot</span> <span class="o">=</span> <span class="n">var_2016</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Conditional Variance&quot;</span><span class="p">)</span>
+<span class="n">var_2016</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s2">"2016"</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">var_2016</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Conditional Variance"</span><span class="p">)</span>
 <span class="n">subplot</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">var_2016</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_2016</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </code></pre></div>
 </div>
@@ -1686,14 +1686,14 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"simulation"</span><span class="p">)</span>
 <span class="n">sims</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">simulations</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-<span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#9cb2d6&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Simulated path&quot;</span><span class="p">)</span>
-<span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#002868&quot;</span><span class="p">)</span>
-<span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Expected variance&quot;</span><span class="p">)</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#9cb2d6"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Simulated path"</span><span class="p">)</span>
+<span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#002868"</span><span class="p">)</span>
+<span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Expected variance"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -1713,13 +1713,13 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"bootstrap"</span><span class="p">)</span>
 <span class="n">sims</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">simulations</span>
 
-<span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#9cb2d6&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Simulated path&quot;</span><span class="p">)</span>
-<span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#002868&quot;</span><span class="p">)</span>
-<span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Expected variance&quot;</span><span class="p">)</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#9cb2d6"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Simulated path"</span><span class="p">)</span>
+<span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#002868"</span><span class="p">)</span>
+<span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Expected variance"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -1743,8 +1743,8 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;Garch&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">last_obs</span><span class="o">=</span><span class="s2">&quot;2017-12-31&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">"Garch"</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"skewt"</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">,</span> <span class="n">last_obs</span><span class="o">=</span><span class="s2">"2017-12-31"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1755,9 +1755,9 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
-<span class="n">cond_mean</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">cond_var</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s2">"target"</span><span class="p">)</span>
+<span class="n">cond_mean</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">cond_var</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 </code></pre></div>
@@ -1768,7 +1768,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[-2.64487085 -1.64965821]
+[-2.64487243 -1.64965756]
 </pre></div></div>
 </div>
 <p>Next, we plot the two VaRs along with the returns. The returns that violate the VaR forecasts are highlighted.</p>
@@ -1777,26 +1777,26 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
-<span class="n">value_at_risk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value_at_risk</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1%&quot;</span><span class="p">,</span> <span class="s2">&quot;5%&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cond_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">value_at_risk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value_at_risk</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"1%"</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cond_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">xl</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">rets_2018</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">rets_2018</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;S&amp;P 500 Return&quot;</span>
+<span class="n">rets_2018</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">rets_2018</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"S&amp;P 500 Return"</span>
 <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;5%&quot;</span><span class="p">]:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#000000&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;1%&quot;</span><span class="p">]:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#BB0000&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">]:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#000000"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"1%"</span><span class="p">]:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#BB0000"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#BB00BB&quot;</span><span class="p">)</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#BB00BB"</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"object"</span><span class="p">)</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;#BB0000&quot;</span><span class="p">:</span> <span class="s2">&quot;1</span><span class="si">% E</span><span class="s2">xceedence&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#BB00BB&quot;</span><span class="p">:</span> <span class="s2">&quot;5</span><span class="si">% E</span><span class="s2">xceedence&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#000000&quot;</span><span class="p">:</span> <span class="s2">&quot;No Exceedence&quot;</span><span class="p">,</span>
+    <span class="s2">"#BB0000"</span><span class="p">:</span> <span class="s2">"1</span><span class="si">% E</span><span class="s2">xceedence"</span><span class="p">,</span>
+    <span class="s2">"#BB00BB"</span><span class="p">:</span> <span class="s2">"5</span><span class="si">% E</span><span class="s2">xceedence"</span><span class="p">,</span>
+    <span class="s2">"#000000"</span><span class="p">:</span> <span class="s2">"No Exceedence"</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;#BB0000&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;#BB00BB&quot;</span><span class="p">:</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;#000000&quot;</span><span class="p">:</span> <span class="s2">&quot;o&quot;</span><span class="p">}</span>
+<span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"#BB0000"</span><span class="p">:</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"#BB00BB"</span><span class="p">:</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">"#000000"</span><span class="p">:</span> <span class="s2">"o"</span><span class="p">}</span>
 <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
     <span class="n">sel</span> <span class="o">=</span> <span class="n">c</span> <span class="o">==</span> <span class="n">color</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -1806,7 +1806,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
         <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span>
         <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">color</span><span class="p">],</span>
     <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Parametric VaR&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Parametric VaR"</span><span class="p">)</span>
 <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1824,7 +1824,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_rets</span> <span class="o">=</span> <span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="s2">&quot;2017&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_rets</span> <span class="o">=</span> <span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="s2">"2017"</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">"mu"</span><span class="p">])</span> <span class="o">/</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span>
 <span class="n">std_rets</span> <span class="o">=</span> <span class="n">std_rets</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">std_rets</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -1836,8 +1836,8 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.01   -2.668266
-0.05   -1.723342
+0.01   -2.668265
+0.05   -1.723341
 dtype: float64
 </pre></div></div>
 </div>
@@ -1846,20 +1846,20 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
-<span class="n">value_at_risk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value_at_risk</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1%&quot;</span><span class="p">,</span> <span class="s2">&quot;5%&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cond_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">value_at_risk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value_at_risk</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"1%"</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cond_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">xl</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">rets_2018</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">rets_2018</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;S&amp;P 500 Return&quot;</span>
+<span class="n">rets_2018</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">rets_2018</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"S&amp;P 500 Return"</span>
 <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">value_at_risk</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;5%&quot;</span><span class="p">]:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#000000&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;1%&quot;</span><span class="p">]:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#BB0000&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">]:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#000000"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">rets_2018</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">value_at_risk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"1%"</span><span class="p">]:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#BB0000"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#BB00BB&quot;</span><span class="p">)</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#BB00BB"</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"object"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
     <span class="n">sel</span> <span class="o">=</span> <span class="n">c</span> <span class="o">==</span> <span class="n">color</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -1869,7 +1869,7 @@ dtype: float64
         <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span>
         <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">color</span><span class="p">],</span>
     <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Filtered Historical Simulation VaR&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Filtered Historical Simulation VaR"</span><span class="p">)</span>
 <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 </div>

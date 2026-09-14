@@ -23,7 +23,7 @@
     
   
       
-        <title>Covariance Estimation - arch v8.0.1 (+45)</title>
+        <title>Covariance Estimation - arch v8.0.1 (+47)</title>
       
     
 
@@ -94,7 +94,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -105,7 +105,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -200,10 +200,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -750,12 +750,12 @@ Sharpe ratio of the S&amp;P 500 using Yahoo! Finance data.</p>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'^GSPC'</span><span class="p">,</span> <span class="s1">'yahoo'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
 <span class="n">low</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="n">high</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
-<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">'M'</span><span class="p">)</span>
+<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'ffill'</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <p>The function that returns the parameters.</p>
@@ -774,7 +774,7 @@ bootstrap with an average block size of 12.</p>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">returns</span><span class="p">)</span>
 <span class="n">param_cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">)</span>
-<span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">,</span> <span class="s1">&#39;SR&#39;</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'mu'</span><span class="p">,</span> <span class="s1">'sigma'</span><span class="p">,</span> <span class="s1">'SR'</span><span class="p">]</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 <span class="n">param_cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>

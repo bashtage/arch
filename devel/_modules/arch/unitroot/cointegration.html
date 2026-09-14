@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+45)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+47)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -491,13 +491,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Appender</span><span class="p">,</span> <span class="n">Substitution</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;CriticalValueWarning&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DynamicOLS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DynamicOLSResults&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;EngleGrangerTestResults&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PhillipsOuliarisTestResults&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;engle_granger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;phillips_ouliaris&quot;</span><span class="p">,</span>
+    <span class="s2">"CriticalValueWarning"</span><span class="p">,</span>
+    <span class="s2">"DynamicOLS"</span><span class="p">,</span>
+    <span class="s2">"DynamicOLSResults"</span><span class="p">,</span>
+    <span class="s2">"EngleGrangerTestResults"</span><span class="p">,</span>
+    <span class="s2">"PhillipsOuliarisTestResults"</span><span class="p">,</span>
+    <span class="s2">"engle_granger"</span><span class="p">,</span>
+    <span class="s2">"phillips_ouliaris"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -531,59 +531,59 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The estimated parameters of the cointegrating vector&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The estimated parameters of the cointegrating vector"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">]</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">std_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Standard errors  of the parameters in the cointegrating vector</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;std_errors&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"std_errors"</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        T-statistics of the parameters in the cointegrating vector</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_errors</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tvalues&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_errors</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"tvalues"</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        P-value of the parameters in the cointegrating vector</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pvalues&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"pvalues"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The estimated parameter covariance of the cointegrating vector&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The estimated parameter covariance of the cointegrating vector"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The model residuals&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The model residuals"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The kernel used to estimate the covariance&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The kernel used to estimate the covariance"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The bandwidth used in the parameter covariance estimation&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The bandwidth used in the parameter covariance estimation"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The model R²&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The model R²"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rsquared</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rsquared_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The degree-of-freedom adjusted R²&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The degree-of-freedom adjusted R²"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rsquared_adj</span>
 
     <span class="nd">@cached_property</span>
@@ -605,7 +605,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">residual_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        The variance of the regression residual.</span>
 
 <span class="sd">        Returns</span>
@@ -625,12 +625,12 @@
 
 <span class="sd">        If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where</span>
 <span class="sd">        m is the number of regressors in the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_est</span><span class="o">.</span><span class="n">short_run</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The long-run variance of the regression residual.</span>
 
 <span class="sd">        Returns</span>
@@ -646,7 +646,7 @@
 
 <span class="sd">        If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where</span>
 <span class="sd">        m is the number of regressors in the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_est</span><span class="o">.</span><span class="n">long_run</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@staticmethod</span>
@@ -663,9 +663,9 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">SimpleTable</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">txt_fmt</span><span class="o">=</span><span class="n">fmt_2cols</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">stubs</span><span class="o">=</span><span class="n">stubs</span><span class="p">)</span>
 
         <span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt_2cols</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">fmt</span><span class="p">[</span><span class="s2">&quot;data_fmts&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%18s</span><span class="s2">&quot;</span>
+        <span class="n">fmt</span><span class="p">[</span><span class="s2">"data_fmts"</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%18s</span><span class="s2">"</span>
 
-        <span class="n">top_right</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;</span><span class="si">%-21s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">top_right</span><span class="p">]</span>
+        <span class="n">top_right</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"</span><span class="si">%-21s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="s2">"  "</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">top_right</span><span class="p">]</span>
         <span class="n">stubs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">stub</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">top_right</span><span class="p">:</span>
@@ -677,12 +677,12 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_top_right</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
         <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
-            <span class="p">(</span><span class="s2">&quot;R²:&quot;</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Adjusted. R²:&quot;</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Residual Variance:&quot;</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residual_variance</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Long-run Variance:&quot;</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_run_variance</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"No. Observations:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="p">(</span><span class="s2">"R²:"</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Adjusted. R²:"</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Residual Variance:"</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residual_variance</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Long-run Variance:"</span><span class="p">,</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_run_variance</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">top_right</span>
 
@@ -707,14 +707,14 @@
                 <span class="n">txt_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">txt_row</span><span class="p">)</span>
 
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">,</span> <span class="s2">&quot;Std. Err.&quot;</span><span class="p">,</span> <span class="s2">&quot;T-stat&quot;</span><span class="p">,</span> <span class="s2">&quot;P-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Lower CI&quot;</span><span class="p">,</span> <span class="s2">&quot;Upper CI&quot;</span><span class="p">]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Std. Err."</span><span class="p">,</span> <span class="s2">"T-stat"</span><span class="p">,</span> <span class="s2">"P-value"</span><span class="p">,</span> <span class="s2">"Lower CI"</span><span class="p">,</span> <span class="s2">"Upper CI"</span><span class="p">]</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">SimpleTable</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">stubs</span><span class="o">=</span><span class="n">stubs</span><span class="p">,</span> <span class="n">txt_fmt</span><span class="o">=</span><span class="n">fmt_params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Summary of the model, containing estimated parameters and std. errors</span>
 
 <span class="sd">        Returns</span>
@@ -722,19 +722,19 @@
 <span class="sd">        Summary</span>
 <span class="sd">            A summary instance with method that support export to text, csv</span>
 <span class="sd">            or latex.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">):</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">))</span>
 
         <span class="n">top_left</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;Trend:&quot;</span><span class="p">,</span> <span class="n">SHORT_TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]),</span>
-            <span class="p">(</span><span class="s2">&quot;Kernel:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Bandwidth:&quot;</span><span class="p">,</span> <span class="n">bw</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Trend:"</span><span class="p">,</span> <span class="n">SHORT_TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Kernel:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Bandwidth:"</span><span class="p">,</span> <span class="n">bw</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="n">top_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_right</span><span class="p">()</span>
@@ -750,7 +750,7 @@
         <span class="n">tstats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">)</span>
         <span class="n">pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Vector&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">"Cointegrating Vector"</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_table</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">tstats</span><span class="p">,</span> <span class="n">pvalues</span><span class="p">,</span> <span class="n">stubs</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
         <span class="n">smry</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
@@ -760,7 +760,7 @@
 <div class="viewcode-block" id="DynamicOLSResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.DynamicOLSResults.html#arch.unitroot.cointegration.DynamicOLSResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicOLSResults</span><span class="p">(</span><span class="n">_CommonCointegrationResults</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Estimation results for Dynamic OLS models</span>
 
 <span class="sd">    Parameters</span>
@@ -784,7 +784,7 @@
 <span class="sd">        Regression results from fitting statsmodels OLS.</span>
 <span class="sd">    df_adjust : bool</span>
 <span class="sd">        Whether to degree of freedom adjust the estimator.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -810,7 +810,7 @@
             <span class="n">df_adjust</span><span class="p">,</span>
             <span class="n">r2</span><span class="o">=</span><span class="n">reg_results</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span>
             <span class="n">adj_r2</span><span class="o">=</span><span class="n">reg_results</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">,</span>
-            <span class="n">estimator_type</span><span class="o">=</span><span class="s2">&quot;Dynamic OLS&quot;</span><span class="p">,</span>
+            <span class="n">estimator_type</span><span class="o">=</span><span class="s2">"Dynamic OLS"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">=</span> <span class="n">leads</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
@@ -819,29 +819,29 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The complete set of parameters, including leads and lags&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The complete set of parameters, including leads and lags"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameter covariance of the all model parameters, incl. leads and lags</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of lags included in the model&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The number of lags included in the model"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">leads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of leads included in the model&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The number of leads included in the model"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The type of parameter covariance estimator used&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The type of parameter covariance estimator used"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_type</span>
 
     <span class="nd">@property</span>
@@ -855,7 +855,7 @@
 <div class="viewcode-block" id="DynamicOLSResults.summary">
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.summary.html#arch.unitroot.cointegration.DynamicOLSResults.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Summary of the model, containing estimated parameters and std. errors</span>
 
 <span class="sd">        Parameters</span>
@@ -869,25 +869,25 @@
 <span class="sd">        Summary</span>
 <span class="sd">            A summary instance with method that support export to text, csv</span>
 <span class="sd">            or latex.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">):</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">))</span>
 
         <span class="n">top_left</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;Trend:&quot;</span><span class="p">,</span> <span class="n">SHORT_TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]),</span>
-            <span class="p">(</span><span class="s2">&quot;Leads:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_leads</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Lags:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Cov Type:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cov_type</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Kernel:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;Bandwidth:&quot;</span><span class="p">,</span> <span class="n">bw</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Trend:"</span><span class="p">,</span> <span class="n">SHORT_TREND_DESCRIPTION</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Leads:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_leads</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Lags:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Cov Type:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cov_type</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Kernel:"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"Bandwidth:"</span><span class="p">,</span> <span class="n">bw</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="n">top_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_right</span><span class="p">()</span>
         <span class="n">smry</span> <span class="o">=</span> <span class="n">Summary</span><span class="p">()</span>
-        <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Vector&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> <span class="s2">&quot;Model&quot;</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Dynamic OLS </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s2"> Summary&quot;</span>
+        <span class="n">typ</span> <span class="o">=</span> <span class="s2">"Cointegrating Vector"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> <span class="s2">"Model"</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Dynamic OLS </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s2"> Summary"</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_table</span><span class="p">(</span><span class="n">top_left</span><span class="p">,</span> <span class="n">top_right</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
         <span class="c1"># Top Table</span>
         <span class="c1"># Parameter table</span>
@@ -905,7 +905,7 @@
             <span class="n">tstats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">)</span>
             <span class="n">pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Cointegrating Vector&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> <span class="s2">&quot;Model Parameters&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">"Cointegrating Vector"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> <span class="s2">"Model Parameters"</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_table</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">tstats</span><span class="p">,</span> <span class="n">pvalues</span><span class="p">,</span> <span class="n">stubs</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
         <span class="n">smry</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -918,7 +918,7 @@
 <div class="viewcode-block" id="DynamicOLS">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicOLS</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Dynamic OLS (DOLS) cointegrating vector estimation</span>
 
 <span class="sd">    Parameters</span>
@@ -927,13 +927,13 @@
 <span class="sd">        The left-hand-side variable in the cointegrating regression.</span>
 <span class="sd">    x : array_like</span>
 <span class="sd">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="sd">    trend : {&quot;n&quot;,&quot;c&quot;,&quot;ct&quot;,&quot;ctt&quot;}, default &quot;c&quot;</span>
+<span class="sd">    trend : {"n","c","ct","ctt"}, default "c"</span>
 <span class="sd">        Trend to include in the cointegrating regression. Trends are:</span>
 
-<span class="sd">        * &quot;n&quot;: No deterministic terms</span>
-<span class="sd">        * &quot;c&quot;: Constant</span>
-<span class="sd">        * &quot;ct&quot;: Constant and linear trend</span>
-<span class="sd">        * &quot;ctt&quot;: Constant, linear and quadratic trends</span>
+<span class="sd">        * "n": No deterministic terms</span>
+<span class="sd">        * "c": Constant</span>
+<span class="sd">        * "ct": Constant and linear trend</span>
+<span class="sd">        * "ctt": Constant, linear and quadratic trends</span>
 <span class="sd">    lags : int, default None</span>
 <span class="sd">        The number of lags to include in the model.  If None, the optimal</span>
 <span class="sd">        number of lags is chosen using method.</span>
@@ -948,12 +948,12 @@
 <span class="sd">        The maximum lag to consider. See Notes for value used when None.</span>
 <span class="sd">    max_lead : int, default None</span>
 <span class="sd">        The maximum lead to consider. See Notes for value used when None.</span>
-<span class="sd">    method : {&quot;aic&quot;,&quot;bic&quot;,&quot;hqic&quot;}, default &quot;bic&quot;</span>
+<span class="sd">    method : {"aic","bic","hqic"}, default "bic"</span>
 <span class="sd">        The method used to select lag length when lags or leads is None.</span>
 
-<span class="sd">        * &quot;aic&quot; - Akaike Information Criterion</span>
-<span class="sd">        * &quot;hqic&quot; - Hannan-Quinn Information Criterion</span>
-<span class="sd">        * &quot;bic&quot; - Schwartz/Bayesian Information Criterion</span>
+<span class="sd">        * "aic" - Akaike Information Criterion</span>
+<span class="sd">        * "hqic" - Hannan-Quinn Information Criterion</span>
+<span class="sd">        * "bic" - Schwartz/Bayesian Information Criterion</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -989,19 +989,19 @@
 <span class="sd">    .. [2] Stock, J. H., &amp; Watson, M. W. (1993). A simple estimator of</span>
 <span class="sd">       cointegrating vectors in higher order integrated systems.</span>
 <span class="sd">       Econometrica: Journal of the Econometric Society, 783-820.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
-        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">leads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">common</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">max_lag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_lead</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;aic&quot;</span><span class="p">,</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span> <span class="s2">&quot;hqic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"hqic"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"bic"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">setup</span> <span class="o">=</span> <span class="n">_check_cointegrating_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">trend</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">y</span>
@@ -1017,13 +1017,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the inputs&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Validate the inputs"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="s2">&quot;aic&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bic&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hqic&quot;</span><span class="p">,</span>
+            <span class="s2">"aic"</span><span class="p">,</span>
+            <span class="s2">"bic"</span><span class="p">,</span>
+            <span class="s2">"hqic"</span><span class="p">,</span>
         <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;method must be one of &quot;aic&quot;, &quot;bic&quot;, or &quot;hqic&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'method must be one of "aic", "bic", or "hqic"'</span><span class="p">)</span>
         <span class="n">max_lag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lag</span>
         <span class="n">max_lead</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span>
@@ -1033,11 +1033,11 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;common is specified but leads and lags have different values&quot;</span>
+                <span class="s2">"common is specified but leads and lags have different values"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;common is specified but max_lead and max_lag have different values&quot;</span>
+                <span class="s2">"common is specified but max_lead and max_lag have different values"</span>
             <span class="p">)</span>
         <span class="n">max_ll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead_lag</span><span class="p">()</span>
 
@@ -1046,15 +1046,15 @@
         <span class="n">obs_remaining</span> <span class="o">-=</span> <span class="n">max_ll</span> <span class="k">if</span> <span class="n">max_lead</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lead</span>
         <span class="k">if</span> <span class="n">obs_remaining</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;max_lag and max_lead are too large for the amount of &quot;</span>
-                <span class="s2">&quot;data. The largest model specification in the search &quot;</span>
-                <span class="s2">&quot;cannot be estimated.&quot;</span>
+                <span class="s2">"max_lag and max_lead are too large for the amount of "</span>
+                <span class="s2">"data. The largest model specification in the search "</span>
+                <span class="s2">"cannot be estimated."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_variables</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">leads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the variables for the regression&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Format the variables for the regression"""</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_df</span>
         <span class="n">delta_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
@@ -1062,12 +1062,12 @@
 
         <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">lags</span><span class="p">,</span> <span class="n">leads</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">lag_data</span> <span class="o">=</span> <span class="n">delta_x</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="n">lag</span><span class="p">)</span>
-            <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;LAG&quot;</span> <span class="k">if</span> <span class="n">lag</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;LEAD&quot;</span>
+            <span class="n">typ</span> <span class="o">=</span> <span class="s2">"LAG"</span> <span class="k">if</span> <span class="n">lag</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"LEAD"</span>
             <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span>
-                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;D.</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">typ</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lag</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">"D.</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">typ</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lag</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">lag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;D.</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
+                <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="sa">f</span><span class="s2">"D.</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lag_data</span><span class="p">)</span>
         <span class="n">data_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
         <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
@@ -1086,12 +1086,12 @@
         <span class="k">return</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_ic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">nparam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute an info criterion&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Compute an info criterion"""</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">resids</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">==</span> <span class="s2">&quot;aic&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">==</span> <span class="s2">"aic"</span><span class="p">:</span>
             <span class="n">penalty</span> <span class="o">=</span> <span class="mf">2.0</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">==</span> <span class="s2">&quot;hqic&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">==</span> <span class="s2">"hqic"</span><span class="p">:</span>
             <span class="n">penalty</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nobs</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># bic</span>
             <span class="n">penalty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
@@ -1102,7 +1102,7 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">12.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_leads_and_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select the optimal number of leads and lags&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Select the optimal number of leads and lags"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1150,31 +1150,31 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;unadjusted&quot;</span><span class="p">,</span> <span class="s2">&quot;homoskedastic&quot;</span><span class="p">,</span> <span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;kernel&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unadjusted&quot;</span><span class="p">,</span>
-        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span>
+            <span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"unadjusted"</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"bartlett"</span><span class="p">,</span>
         <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicOLSResults</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Estimate the Dynamic OLS regression</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        cov_type : str, default &quot;unadjusted&quot;</span>
-<span class="sd">            Either &quot;unadjusted&quot; (or is equivalent &quot;homoskedastic&quot;) or &quot;robust&quot;</span>
-<span class="sd">            (or its equivalent &quot;kernel&quot;).</span>
-<span class="sd">        kernel : str, default &quot;bartlett&quot;</span>
+<span class="sd">        cov_type : str, default "unadjusted"</span>
+<span class="sd">            Either "unadjusted" (or is equivalent "homoskedastic") or "robust"</span>
+<span class="sd">            (or its equivalent "kernel").</span>
+<span class="sd">        kernel : str, default "bartlett"</span>
 <span class="sd">            The string name of any of any known kernel-based long-run</span>
-<span class="sd">            covariance estimators. Common choices are &quot;bartlett&quot; for the</span>
-<span class="sd">            Bartlett kernel (Newey-West), &quot;parzen&quot; for the Parzen kernel</span>
-<span class="sd">            and &quot;quadratic-spectral&quot; for the Quadratic Spectral kernel.</span>
+<span class="sd">            covariance estimators. Common choices are "bartlett" for the</span>
+<span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
+<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
 <span class="sd">        bandwidth : int, default None</span>
 <span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
 <span class="sd">            estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">            &quot;unadjusted&quot; produces the classic OLS covariance estimator.</span>
-<span class="sd">            Setting the bandwidth to 0 and using &quot;robust&quot; produces White&#39;s</span>
+<span class="sd">            "unadjusted" produces the classic OLS covariance estimator.</span>
+<span class="sd">            Setting the bandwidth to 0 and using "robust" produces White's</span>
 <span class="sd">            covariance estimator.</span>
 <span class="sd">        force_int : bool, default False</span>
 <span class="sd">            Whether the force the estimated optimal bandwidth to be an integer.</span>
@@ -1207,7 +1207,7 @@
 
 <span class="sd">        where :math:`\hat{\sigma}^2_{HAC}` is an estimator of the long-run</span>
 <span class="sd">        variance of the regression error and</span>
-<span class="sd">        :math:`\hat{\Sigma}_{ZZ}=T^{-1}Z&#39;Z`. :math:`Z_t` is a vector the</span>
+<span class="sd">        :math:`\hat{\Sigma}_{ZZ}=T^{-1}Z'Z`. :math:`Z_t` is a vector the</span>
 <span class="sd">        includes all terms in the regression (i.e., deterministics,</span>
 <span class="sd">        cross-sectional, leads and lags) When using the robust covariance,</span>
 <span class="sd">        the parameter covariance is estimated as</span>
@@ -1219,7 +1219,7 @@
 <span class="sd">        where :math:`\hat{S}_{HAC}` is a Heteroskedasticity-Autocorrelation</span>
 <span class="sd">        Consistent estimator of the covariance of the regression scores</span>
 <span class="sd">        :math:`Z_t\epsilon_t`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">leads</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads_and_lags</span><span class="p">()</span>
         <span class="c1"># TODO: Rank check and drop??</span>
         <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_variables</span><span class="p">(</span><span class="n">leads</span><span class="p">,</span> <span class="n">lags</span><span class="p">)</span>
@@ -1227,12 +1227,12 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
         <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-            <span class="n">lhs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rhs</span> <span class="o">@</span> <span class="n">coeffs</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;resid&quot;</span>
+            <span class="n">lhs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rhs</span> <span class="o">@</span> <span class="n">coeffs</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"resid"</span>
         <span class="p">)</span>
         <span class="n">cov</span><span class="p">,</span> <span class="n">est</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span><span class="p">(</span>
             <span class="n">cov_type</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">resid</span>
         <span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">coeffs</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">coeffs</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"params"</span><span class="p">)</span>
         <span class="n">num_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">DynamicOLSResults</span><span class="p">(</span>
             <span class="n">params</span><span class="p">,</span>
@@ -1251,7 +1251,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_cov</span><span class="p">(</span>
-        <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unadjusted&quot;</span><span class="p">,</span> <span class="s2">&quot;homoskedastic&quot;</span><span class="p">,</span> <span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;kernel&quot;</span><span class="p">],</span>
+        <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span><span class="p">],</span>
         <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -1259,28 +1259,28 @@
         <span class="n">rhs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">CovarianceEstimator</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the covariance&quot;&quot;&quot;</span>
-        <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Estimate the covariance"""</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">kernel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">KERNEL_ERR</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
-        <span class="n">eps</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">),</span> <span class="s2">&quot;eps&quot;</span><span class="p">)</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">),</span> <span class="s2">"eps"</span><span class="p">)</span>
         <span class="n">nobs</span><span class="p">,</span> <span class="n">nx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">sigma_xx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span> <span class="o">/</span> <span class="n">nobs</span>
         <span class="n">sigma_xx_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma_xx</span><span class="p">)</span>
         <span class="n">kernel_est</span> <span class="o">=</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">kernel</span><span class="p">]</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">nx</span><span class="p">)</span> <span class="k">if</span> <span class="n">df_adjust</span> <span class="k">else</span> <span class="mf">1.0</span>
-        <span class="k">if</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;unadjusted&quot;</span><span class="p">,</span> <span class="s2">&quot;homoskedastic&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">):</span>
             <span class="n">est</span> <span class="o">=</span> <span class="n">kernel_est</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_int</span><span class="o">=</span><span class="n">force_int</span><span class="p">)</span>
             <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">sigma2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma_xx_inv</span> <span class="o">/</span> <span class="n">nobs</span>
-        <span class="k">elif</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;kernel&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span><span class="p">):</span>
             <span class="n">scores</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">eps</span>
             <span class="n">est</span> <span class="o">=</span> <span class="n">kernel_est</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_int</span><span class="o">=</span><span class="n">force_int</span><span class="p">)</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">sigma_xx_inv</span> <span class="o">@</span> <span class="n">s</span> <span class="o">@</span> <span class="n">sigma_xx_inv</span> <span class="o">/</span> <span class="n">nobs</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown cov_type&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown cov_type"</span><span class="p">)</span>
         <span class="n">cov_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cov_df</span><span class="p">,</span> <span class="n">est</span></div>
 
@@ -1319,14 +1319,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Long-run variance estimate used in the parameter covariance estimator</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_omega_112</span></div>
 
 
 
-<span class="n">COMMON_DOCSTRING</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">COMMON_DOCSTRING</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">    </span><span class="si">%(method)s</span><span class="s2"> cointegrating vector estimation.</span>
 
 <span class="s2">    Parameters</span>
@@ -1335,18 +1335,18 @@
 <span class="s2">        The left-hand-side variable in the cointegrating regression.</span>
 <span class="s2">    x : array_like</span>
 <span class="s2">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="s2">    trend : {&quot;n&quot;,&quot;c&quot;,&quot;ct&quot;,&quot;ctt&quot;}, default &quot;c&quot;</span>
+<span class="s2">    trend : {"n","c","ct","ctt"}, default "c"</span>
 <span class="s2">        Trend to include in the cointegrating regression. Trends are:</span>
 
-<span class="s2">        * &quot;n&quot;: No deterministic terms</span>
-<span class="s2">        * &quot;c&quot;: Constant</span>
-<span class="s2">        * &quot;ct&quot;: Constant and linear trend</span>
-<span class="s2">        * &quot;ctt&quot;: Constant, linear and quadratic trends</span>
-<span class="s2">    x_trend : {None,&quot;c&quot;,&quot;ct&quot;,&quot;ctt&quot;}, default None</span>
+<span class="s2">        * "n": No deterministic terms</span>
+<span class="s2">        * "c": Constant</span>
+<span class="s2">        * "ct": Constant and linear trend</span>
+<span class="s2">        * "ctt": Constant, linear and quadratic trends</span>
+<span class="s2">    x_trend : {None,"c","ct","ctt"}, default None</span>
 <span class="s2">        Trends that affects affect the x-data but do not appear in the</span>
 <span class="s2">        cointegrating regression. x_trend must be at least as large as</span>
-<span class="s2">        trend, so that if trend is &quot;ct&quot;, x_trend must be either &quot;ct&quot; or</span>
-<span class="s2">        &quot;ctt&quot;.</span>
+<span class="s2">        trend, so that if trend is "ct", x_trend must be either "ct" or</span>
+<span class="s2">        "ctt".</span>
 
 <span class="s2">    Notes</span>
 <span class="s2">    -----</span>
@@ -1364,18 +1364,18 @@
 
 <span class="s2">       \Delta X_t = \Delta D_</span><span class="si">{1t}</span><span class="s2"> \Gamma_1 + \Delta D_</span><span class="si">{2t}</span><span class="s2"> \Gamma_2 + \eta_</span><span class="si">{2t}</span>
 
-<span class="s2">    Define the vector of residuals as :math:`\eta = (\eta_</span><span class="si">{1t}</span><span class="s2">,\eta&#39;_</span><span class="si">{2t}</span><span class="s2">)&#39;`, and the</span>
+<span class="s2">    Define the vector of residuals as :math:`\eta = (\eta_</span><span class="si">{1t}</span><span class="s2">,\eta'_</span><span class="si">{2t}</span><span class="s2">)'`, and the</span>
 <span class="s2">    long-run covariance</span>
 
 <span class="s2">    .. math::</span>
 
-<span class="s2">       \Omega = \sum_{h=-\infty}^{\infty} E[\eta_t\eta_{t-h}&#39;]</span>
+<span class="s2">       \Omega = \sum_{h=-\infty}^{\infty} E[\eta_t\eta_{t-h}']</span>
 
 <span class="s2">    and the one-sided long-run covariance matrix</span>
 
 <span class="s2">    .. math::</span>
 
-<span class="s2">       \Lambda_0 = \sum_{h=0}^\infty E[\eta_t\eta_{t-h}&#39;]</span>
+<span class="s2">       \Lambda_0 = \sum_{h=0}^\infty E[\eta_t\eta_{t-h}']</span>
 
 <span class="s2">    The covariance matrices are partitioned into a block form</span>
 
@@ -1383,24 +1383,24 @@
 
 <span class="s2">       \Omega = \left[\begin</span><span class="si">{array}{cc}</span>
 <span class="s2">                         \omega_</span><span class="si">{11}</span><span class="s2"> &amp; \omega_</span><span class="si">{12}</span><span class="s2"> \\</span>
-<span class="s2">                         \omega&#39;_</span><span class="si">{12}</span><span class="s2"> &amp; \Omega_</span><span class="si">{22}</span>
+<span class="s2">                         \omega'_</span><span class="si">{12}</span><span class="s2"> &amp; \Omega_</span><span class="si">{22}</span>
 <span class="s2">                \end</span><span class="si">{array}</span><span class="s2"> \right]</span>
 
 <span class="s2">    The cointegrating vector is then estimated using modified data</span>
 
 <span class="si">%(estimator)s</span>
-<span class="s2">    &quot;&quot;&quot;</span>
+<span class="s2">    """</span>
 
-<span class="n">CCR_METHOD</span> <span class="o">=</span> <span class="s2">&quot;Canonical Cointegrating Regression&quot;</span>
+<span class="n">CCR_METHOD</span> <span class="o">=</span> <span class="s2">"Canonical Cointegrating Regression"</span>
 
-<span class="n">CCR_ESTIMATOR</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">CCR_ESTIMATOR</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">    .. math::</span>
 
-<span class="s2">        X^\star_t &amp; = X_t - \hat{\Lambda}_2&#39;\hat{\Sigma}^{-1}\hat{\eta}_t \\</span>
+<span class="s2">        X^\star_t &amp; = X_t - \hat{\Lambda}_2'\hat{\Sigma}^{-1}\hat{\eta}_t \\</span>
 <span class="s2">        Y^\star_t &amp; = Y_t - (\hat{\Sigma}^{-1} \hat{\Lambda}_2 \hat{\beta}</span>
-<span class="s2">                           + \hat{\kappa})&#39; \hat{\eta}_t</span>
+<span class="s2">                           + \hat{\kappa})' \hat{\eta}_t</span>
 
-<span class="s2">    where :math:`\hat{\kappa} = (0,\hat{\Omega}_</span><span class="si">{22}</span><span class="s2">^{-1}\hat{\Omega}&#39;_</span><span class="si">{12}</span><span class="s2">)` and</span>
+<span class="s2">    where :math:`\hat{\kappa} = (0,\hat{\Omega}_</span><span class="si">{22}</span><span class="s2">^{-1}\hat{\Omega}'_</span><span class="si">{12}</span><span class="s2">)` and</span>
 <span class="s2">    the regression</span>
 
 <span class="s2">    .. math::</span>
@@ -1413,11 +1413,11 @@
 <span class="s2">    ----------</span>
 <span class="s2">    .. [1] Park, J. Y. (1992). Canonical cointegrating regressions. Econometrica:</span>
 <span class="s2">       Journal of the Econometric Society, 119-143.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
-<span class="n">FMOLS_METHOD</span> <span class="o">=</span> <span class="s2">&quot;Fully Modified OLS&quot;</span>
+<span class="n">FMOLS_METHOD</span> <span class="o">=</span> <span class="s2">"Fully Modified OLS"</span>
 
-<span class="n">FMOLS_ESTIMATOR</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">FMOLS_ESTIMATOR</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">    .. math::</span>
 
 <span class="s2">       Y^\star_t = Y_t - \hat{\omega}_</span><span class="si">{12}</span><span class="s2">\hat{\Omega}_</span><span class="si">{22}</span><span class="s2">\hat{\eta}_</span><span class="si">{2t}</span>
@@ -1428,7 +1428,7 @@
 
 <span class="s2">        \hat{\theta} = \left[\begin</span><span class="si">{array}{c}</span><span class="s2">\hat{\gamma}_1 \\</span>
 <span class="s2">                       \hat{\beta} \end</span><span class="si">{array}</span><span class="s2">\right]</span>
-<span class="s2">                     = \left(\sum_{t=2}^T Z_tZ&#39;_t\right)^{-1}</span>
+<span class="s2">                     = \left(\sum_{t=2}^T Z_tZ'_t\right)^{-1}</span>
 <span class="s2">                       \left(\sum_{t=2}^t Z_t Y^\star_t -</span>
 <span class="s2">                       T \left[\begin</span><span class="si">{array}{c}</span><span class="s2"> 0 \\ \lambda^{\star\prime}_</span><span class="si">{12}</span>
 <span class="s2">                       \end</span><span class="si">{array}</span><span class="s2">\right]\right)</span>
@@ -1447,7 +1447,7 @@
 <span class="s2">    .. [1] Hansen, B. E., &amp; Phillips, P. C. (1990). Estimation and inference in</span>
 <span class="s2">       models of cointegration: A simulation study. Advances in Econometrics,</span>
 <span class="s2">       8(1989), 225-248.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="FullyModifiedOLS">
@@ -1459,7 +1459,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
-        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
         <span class="n">x_trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">setup</span> <span class="o">=</span> <span class="n">_check_cointegrating_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">trend</span><span class="p">)</span>
@@ -1504,15 +1504,15 @@
         <span class="n">z</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="n">nobs</span><span class="p">,</span> <span class="n">nvar</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span> <span class="o">@</span> <span class="n">theta</span><span class="p">)</span>
-        <span class="n">resid</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;resid&quot;</span>
+        <span class="n">resid</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"resid"</span>
         <span class="n">center</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">tss_df</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="s2">&quot;c&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"c"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">:</span>
             <span class="n">center</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
             <span class="n">tss_df</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">y_centered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">-</span> <span class="n">center</span>
-        <span class="n">ssr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">resid</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">resid</span><span class="p">))</span>
-        <span class="n">tss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">y_centered</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_centered</span><span class="p">))</span>
+        <span class="n">ssr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">resid</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">resid</span><span class="p">))</span>
+        <span class="n">tss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">y_centered</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_centered</span><span class="p">))</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ssr</span> <span class="o">/</span> <span class="n">tss</span>
         <span class="n">r2_adj</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">ssr</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">nvar</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">tss</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">tss_df</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">resid</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">r2_adj</span>
@@ -1521,29 +1521,29 @@
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.FullyModifiedOLS.fit.html#arch.unitroot.cointegration.FullyModifiedOLS.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"bartlett"</span><span class="p">,</span>
         <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CointegrationAnalysisResults</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimate the cointegrating vector.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        diff : bool, default False</span>
 <span class="sd">            Use differenced data to estimate the residuals.</span>
-<span class="sd">        kernel : str, default &quot;bartlett&quot;</span>
+<span class="sd">        kernel : str, default "bartlett"</span>
 <span class="sd">            The string name of any of any known kernel-based long-run</span>
-<span class="sd">            covariance estimators. Common choices are &quot;bartlett&quot; for the</span>
-<span class="sd">            Bartlett kernel (Newey-West), &quot;parzen&quot; for the Parzen kernel</span>
-<span class="sd">            and &quot;quadratic-spectral&quot; for the Quadratic Spectral kernel.</span>
+<span class="sd">            covariance estimators. Common choices are "bartlett" for the</span>
+<span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
+<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
 <span class="sd">        bandwidth : int, default None</span>
 <span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
 <span class="sd">            estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">            &quot;unadjusted&quot; produces the classic OLS covariance estimator.</span>
-<span class="sd">            Setting the bandwidth to 0 and using &quot;robust&quot; produces White&#39;s</span>
+<span class="sd">            "unadjusted" produces the classic OLS covariance estimator.</span>
+<span class="sd">            Setting the bandwidth to 0 and using "robust" produces White's</span>
 <span class="sd">            covariance estimator.</span>
 <span class="sd">        force_int : bool, default False</span>
 <span class="sd">            Whether the force the estimated optimal bandwidth to be an integer.</span>
@@ -1557,7 +1557,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        CointegrationAnalysisResults</span>
 <span class="sd">            The estimation results instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">cov_est</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_fit</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
         <span class="n">lmbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">one_sided</span><span class="p">)</span>
@@ -1591,7 +1591,7 @@
         <span class="n">zpz_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">zpz</span><span class="p">)</span>
         <span class="n">param_cov</span> <span class="o">=</span> <span class="n">omega_112</span> <span class="o">*</span> <span class="n">zpz_inv</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="n">z_df</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">params_s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
+        <span class="n">params_s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"params"</span><span class="p">)</span>
         <span class="n">param_cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
         <span class="n">resid</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">r2_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_statistics</span><span class="p">(</span><span class="n">params_s</span><span class="p">)</span>
         <span class="n">resid_kern</span> <span class="o">=</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">kernel</span><span class="p">](</span>
@@ -1608,7 +1608,7 @@
             <span class="n">df_adjust</span><span class="p">,</span>
             <span class="n">r2</span><span class="p">,</span>
             <span class="n">r2_adj</span><span class="p">,</span>
-            <span class="s2">&quot;Fully Modified OLS&quot;</span><span class="p">,</span>
+            <span class="s2">"Fully Modified OLS"</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 
@@ -1623,7 +1623,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
-        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">"c"</span><span class="p">,</span>
         <span class="n">x_trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">x_trend</span><span class="p">)</span>
@@ -1633,7 +1633,7 @@
     <span class="nd">@Appender</span><span class="p">(</span><span class="n">FullyModifiedOLS</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"bartlett"</span><span class="p">,</span>
         <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1669,7 +1669,7 @@
         <span class="n">with_trend</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">with_trend</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="n">with_trend</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"params"</span><span class="p">)</span>
         <span class="n">param_cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
         <span class="n">resid</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">r2_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_statistics</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">resid_kern</span> <span class="o">=</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">kernel</span><span class="p">](</span>
@@ -1686,7 +1686,7 @@
             <span class="n">df_adjust</span><span class="p">,</span>
             <span class="n">r2</span><span class="p">,</span>
             <span class="n">r2_adj</span><span class="p">,</span>
-            <span class="s2">&quot;Fully Modified OLS&quot;</span><span class="p">,</span>
+            <span class="s2">"Fully Modified OLS"</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

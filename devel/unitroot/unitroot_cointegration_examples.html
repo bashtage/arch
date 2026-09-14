@@ -23,7 +23,7 @@
     
   
       
-        <title>Cointegration Testing - arch v8.0.1 (+45)</title>
+        <title>Cointegration Testing - arch v8.0.1 (+47)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -646,11 +646,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"figure"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"savefig"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -684,7 +684,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span>
 
-<span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -710,7 +710,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -749,7 +749,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">engle_granger</span>
 
-<span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -816,7 +816,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;ct&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"ct"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -884,7 +884,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="p">[:</span><span class="s2">&quot;2008&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="p">[:</span><span class="s2">&quot;2008&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="p">[:</span><span class="s2">"2008"</span><span class="p">]</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="p">[:</span><span class="s2">"2008"</span><span class="p">]</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -917,7 +917,7 @@ dtype: float64
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span> <span class="o">=</span> <span class="n">eg_test</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">title</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Pre-2009 Cointegration Residual&quot;</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Pre-2009 Cointegration Residual"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -945,7 +945,7 @@ dtype: float64
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.cointegration</span><span class="w"> </span><span class="kn">import</span> <span class="n">phillips_ouliaris</span>
 
 <span class="n">po_zt_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Zt&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"Zt"</span>
 <span class="p">)</span>
 <span class="n">po_zt_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -977,7 +977,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_za_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Za&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"Za"</span>
 <span class="p">)</span>
 <span class="n">po_za_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -1010,7 +1010,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_pu_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Pu&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"Pu"</span>
 <span class="p">)</span>
 <span class="n">po_pu_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -1042,7 +1042,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_pz_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Pz&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"Pz"</span>
 <span class="p">)</span>
 <span class="n">po_pz_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>

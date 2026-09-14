@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+45)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+47)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -471,42 +471,42 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Substitution</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Andrews&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Bartlett&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CovarianceEstimate&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CovarianceEstimator&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Gallant&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NeweyWest&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Parzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenCauchy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenGeometric&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenRiesz&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;QuadraticSpectral&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHamming&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHanning&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyParzen&quot;</span><span class="p">,</span>
+    <span class="s2">"Andrews"</span><span class="p">,</span>
+    <span class="s2">"Bartlett"</span><span class="p">,</span>
+    <span class="s2">"CovarianceEstimate"</span><span class="p">,</span>
+    <span class="s2">"CovarianceEstimator"</span><span class="p">,</span>
+    <span class="s2">"Gallant"</span><span class="p">,</span>
+    <span class="s2">"NeweyWest"</span><span class="p">,</span>
+    <span class="s2">"Parzen"</span><span class="p">,</span>
+    <span class="s2">"ParzenCauchy"</span><span class="p">,</span>
+    <span class="s2">"ParzenGeometric"</span><span class="p">,</span>
+    <span class="s2">"ParzenRiesz"</span><span class="p">,</span>
+    <span class="s2">"QuadraticSpectral"</span><span class="p">,</span>
+    <span class="s2">"TukeyHamming"</span><span class="p">,</span>
+    <span class="s2">"TukeyHanning"</span><span class="p">,</span>
+    <span class="s2">"TukeyParzen"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">KERNELS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Bartlett&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Parzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenCauchy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenGeometric&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenRiesz&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHamming&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHanning&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyParzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;QuadraticSpectral&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Andrews&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Gallant&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NeweyWest&quot;</span><span class="p">,</span>
+    <span class="s2">"Bartlett"</span><span class="p">,</span>
+    <span class="s2">"Parzen"</span><span class="p">,</span>
+    <span class="s2">"ParzenCauchy"</span><span class="p">,</span>
+    <span class="s2">"ParzenGeometric"</span><span class="p">,</span>
+    <span class="s2">"ParzenRiesz"</span><span class="p">,</span>
+    <span class="s2">"TukeyHamming"</span><span class="p">,</span>
+    <span class="s2">"TukeyHanning"</span><span class="p">,</span>
+    <span class="s2">"TukeyParzen"</span><span class="p">,</span>
+    <span class="s2">"QuadraticSpectral"</span><span class="p">,</span>
+    <span class="s2">"Andrews"</span><span class="p">,</span>
+    <span class="s2">"Gallant"</span><span class="p">,</span>
+    <span class="s2">"NeweyWest"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="CovarianceEstimate">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimate.html#arch.covariance.kernel.CovarianceEstimate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimate</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Covariance estimate using a long-run covariance estimator</span>
 
 <span class="sd">    Parameters</span>
@@ -539,7 +539,7 @@
 <span class="sd">    .. math::</span>
 
 <span class="sd">        \Lambda_0 = \Gamma_0 + \Lambda_1.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -564,9 +564,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.long_run.html#arch.covariance.kernel.CovarianceEstimate.long_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The long-run covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span>
         <span class="k">else</span><span class="p">:</span>
@@ -578,9 +578,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.short_run.html#arch.covariance.kernel.CovarianceEstimate.short_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">short_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The short-run covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span></div>
 
 
@@ -588,9 +588,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided.html#arch.covariance.kernel.CovarianceEstimate.one_sided">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The one-sided covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span>
         <span class="k">else</span><span class="p">:</span>
@@ -602,9 +602,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided_strict.html#arch.covariance.kernel.CovarianceEstimate.one_sided_strict">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided_strict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div>
 </div>
 
@@ -628,7 +628,7 @@
 <div class="viewcode-block" id="CovarianceEstimator">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimator.html#arch.covariance.kernel.CovarianceEstimator">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    %(kernel_name)s kernel covariance estimation.</span>
 
 <span class="sd">    Parameters</span>
@@ -636,7 +636,7 @@
 <span class="sd">    x : array_like</span>
 <span class="sd">        The data to use in covariance estimation.</span>
 <span class="sd">    bandwidth : float, default None</span>
-<span class="sd">        The kernel&#39;s bandwidth.  If None, optimal bandwidth is estimated.</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, default 0</span>
 <span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
 <span class="sd">        number of observations in x minus df_adjust when dividing</span>
@@ -659,9 +659,9 @@
 <span class="sd">       %(formula)s</span>
 
 <span class="sd">    where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="s2">""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -672,33 +672,33 @@
         <span class="n">weights</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_center</span> <span class="o">=</span> <span class="n">center</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">bandwidth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">_bandwidth</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">_bandwidth</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bandwidth must be a non-negative scalar.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">_bandwidth</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">_bandwidth</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"bandwidth must be a non-negative scalar."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bandwidth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">df_adjust</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;df_adjust must be a non-negative integer.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;SupportsInt&quot;</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">df_adjust</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"int"</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"df_adjust must be a non-negative integer."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"SupportsInt"</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Degrees of freedom is &lt;= 0 after adjusting the sample &quot;</span>
-                <span class="s2">&quot;size of x using df_adjust. df_adjust must be less than&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"Degrees of freedom is &lt;= 0 after adjusting the sample "</span>
+                <span class="s2">"size of x using df_adjust. df_adjust must be less than"</span>
+                <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="n">xw</span><span class="p">:</span> <span class="n">Float64Array2D</span>
         <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">_xw</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Float64Array2D&quot;</span><span class="p">,</span> <span class="n">_xw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
+            <span class="n">_xw</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="s2">"weights"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array2D"</span><span class="p">,</span> <span class="n">_xw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="ow">or</span> <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
@@ -706,47 +706,47 @@
             <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xw</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;weights must be a 1 by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> (x.shape[1]) &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;array with non-negative values where at least one value is &quot;</span>
-                <span class="s2">&quot;strictly greater than 0.&quot;</span>
+                <span class="sa">f</span><span class="s2">"weights must be a 1 by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> (x.shape[1]) "</span>
+                <span class="sa">f</span><span class="s2">"array with non-negative values where at least one value is "</span>
+                <span class="s2">"strictly greater than 0."</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span> <span class="o">=</span> <span class="n">force_int</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Kernel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Degree of Freedom Adjustment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Centered: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">centered</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Automatic Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Kernel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Degree of Freedom Adjustment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Centered: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">centered</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Automatic Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The covariance estimator&#39;s name.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The covariance estimator's name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The covariance estimator&#39;s name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The covariance estimator's name.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The bandwidth used by the covariance estimator.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The user-provided or estimated optimal bandwidth.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_bandwidth</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
@@ -756,7 +756,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Flag indicating whether the data are centered (demeaned).</span>
 
 
@@ -764,37 +764,37 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            A flag indicating whether the estimator is centered.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The constant used in optimal bandwidth calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The constant value used in the optimal bandwidth calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The power used in optimal bandwidth calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The power value used in the optimal bandwidth calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The optimal rate used in bandwidth selection.</span>
 
 <span class="sd">        Controls the number of lags used in the variance estimate that</span>
@@ -804,7 +804,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The rate used in bandwidth selection.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
@@ -824,7 +824,7 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.opt_bandwidth.html#arch.covariance.kernel.CovarianceEstimator.opt_bandwidth">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">opt_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Estimate optimal bandwidth.</span>
 
 <span class="sd">        Returns</span>
@@ -842,7 +842,7 @@
 
 <span class="sd">        where :math:`c_k` is a kernel-dependent constant, T is the sample size,</span>
 <span class="sd">        q determines the optimal bandwidth rate for the kernel.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_const</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -855,22 +855,22 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the kernel&#39;s weights</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute the kernel's weights</span>
+<span class="sd">        """</span>
 
 <div class="viewcode-block" id="CovarianceEstimator.kernel_weights">
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.kernel_weights.html#arch.covariance.kernel.CovarianceEstimator.kernel_weights">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Weights used in covariance calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
 <span class="sd">            The weight vector including 1 in position 0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">()</span></div>
 
 
@@ -878,7 +878,7 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.cov.html#arch.covariance.kernel.CovarianceEstimator.cov">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CovarianceEstimate</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The estimated covariances.</span>
 
 <span class="sd">        Returns</span>
@@ -894,7 +894,7 @@
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        CovarianceEstimate</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
@@ -910,21 +910,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">force_int</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Flag indicating whether the bandwidth is restricted to be an integer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span></div>
 
 
 
-<span class="n">_bartlett_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_bartlett_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> 1-</span><span class="se">\\</span><span class="s2">left|z</span><span class="se">\\</span><span class="s2">right| &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> 0 &amp; z&gt;1 </span><span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="Bartlett">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Bartlett&#39;s (Newey-West)&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Bartlett's (Newey-West)"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bartlett</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -940,24 +940,24 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
             <span class="nb">float</span>
         <span class="p">)</span></div>
 
 
 
-<span class="n">_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="se">\</span>
 <span class="s2">1-6z^</span><span class="si">{2}</span><span class="se">\\</span><span class="s2">left(1-z</span><span class="se">\\</span><span class="s2">right) &amp; z</span><span class="se">\\</span><span class="s2">leq</span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">2</span><span class="se">\\</span><span class="s2">left(1-z</span><span class="se">\\</span><span class="s2">right)^</span><span class="si">{3}</span><span class="s2"> &amp; </span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2">&lt;z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="Parzen">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Parzen.html#arch.covariance.kernel.Parzen">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -973,7 +973,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
         <span class="n">w</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">])</span>
@@ -982,17 +982,17 @@
 
 
 
-<span class="n">_parzen_reisz_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_reisz_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">1-z^2 &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenRiesz">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenRiesz.html#arch.covariance.kernel.ParzenRiesz">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen-Reisz&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen-Reisz"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenRiesz</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1008,22 +1008,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span></div>
 
 
 
-<span class="n">_parzen_geometric_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_geometric_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenGeometric">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenGeometric.html#arch.covariance.kernel.ParzenGeometric">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Geometric&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's Geometric"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenGeometric</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1039,22 +1039,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_parzen_cauchy_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_cauchy_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z^2} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenCauchy">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenCauchy.html#arch.covariance.kernel.ParzenCauchy">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Cauchy&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's Cauchy"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenCauchy</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1070,22 +1070,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_hamming_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_hamming_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.54 + 0.46 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyHamming">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHamming.html#arch.covariance.kernel.TukeyHamming">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hamming&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Hamming"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyHamming</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1101,22 +1101,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.54</span> <span class="o">+</span> <span class="mf">0.46</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_hanning_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_hanning_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> + </span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyHanning">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHanning.html#arch.covariance.kernel.TukeyHanning">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hanning&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Hanning"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyHanning</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1132,22 +1132,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_parzen_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.436 + 0.564 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyParzen">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyParzen.html#arch.covariance.kernel.TukeyParzen">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Parzen&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Parzen"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyParzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1163,18 +1163,18 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.436</span> <span class="o">+</span> <span class="mf">0.564</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_qs_name</span> <span class="o">=</span> <span class="s2">&quot;Quadratic-Spectral (Andrews&#39;)&quot;</span>
-<span class="n">_qs_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_qs_name</span> <span class="o">=</span> <span class="s2">"Quadratic-Spectral (Andrews')"</span>
+<span class="n">_qs_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">1 &amp; z=0</span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{3}</span><span class="s2">{x^</span><span class="si">{2}</span><span class="s2">}</span><span class="se">\\</span><span class="s2">left(</span><span class="se">\\</span><span class="s2">frac{</span><span class="se">\\</span><span class="s2">sin x}</span><span class="si">{x}</span><span class="s2">-</span><span class="se">\\</span><span class="s2">cos x</span><span class="se">\\</span><span class="s2">right),x=</span><span class="se">\\</span><span class="s2">frac{6</span><span class="se">\\</span><span class="s2">pi z}</span><span class="si">{5}</span><span class="s2"> &amp; z&gt;0 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="QuadraticSpectral">
@@ -1209,39 +1209,39 @@
 <div class="viewcode-block" id="Gallant">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Gallant.html#arch.covariance.kernel.Gallant">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Parzen covariance estimator.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    Parzen</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="Andrews">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Andrews.html#arch.covariance.kernel.Andrews">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name of the QuadraticSpectral covariance estimator.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    QuadraticSpectral</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="NeweyWest">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.NeweyWest.html#arch.covariance.kernel.NeweyWest">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Bartlett covariance estimator.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    Bartlett</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 </code></pre></div>
 

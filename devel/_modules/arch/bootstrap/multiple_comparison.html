@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+45)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+47)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -481,31 +481,31 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure2d</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MCS&quot;</span><span class="p">,</span> <span class="s2">&quot;SPA&quot;</span><span class="p">,</span> <span class="s2">&quot;RealityCheck&quot;</span><span class="p">,</span> <span class="s2">&quot;StepM&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"MCS"</span><span class="p">,</span> <span class="s2">"SPA"</span><span class="p">,</span> <span class="s2">"RealityCheck"</span><span class="p">,</span> <span class="s2">"StepM"</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_info_to_str</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">is_repr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_html</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">is_html</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;&lt;strong&gt;&quot;</span> <span class="o">+</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;&lt;/strong&gt;&quot;</span>
-    <span class="n">_str</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">"&lt;/strong&gt;"</span>
+    <span class="n">_str</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">"("</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;id&quot;</span> <span class="ow">or</span> <span class="n">is_repr</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"id"</span> <span class="ow">or</span> <span class="n">is_repr</span><span class="p">:</span>
             <span class="n">_k</span> <span class="o">=</span> <span class="n">k</span>
             <span class="k">if</span> <span class="n">is_html</span><span class="p">:</span>
-                <span class="n">_k</span> <span class="o">=</span> <span class="s2">&quot;&lt;strong&gt;&quot;</span> <span class="o">+</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">&quot;&lt;/strong&gt;&quot;</span>
-            <span class="n">_str</span> <span class="o">+=</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
-    <span class="k">return</span> <span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                <span class="n">_k</span> <span class="o">=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">"&lt;/strong&gt;"</span>
+            <span class="n">_str</span> <span class="o">+=</span> <span class="n">_k</span> <span class="o">+</span> <span class="s2">": "</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">", "</span>
+    <span class="k">return</span> <span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">")"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MultipleComparison</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Abstract class for inheritance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">CircularBlockBootstrap</span><span class="p">(</span>
             <span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
@@ -521,16 +521,16 @@
         <span class="k">return</span> <span class="n">_info_to_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset the bootstrap to it&#39;s initial state.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reset the bootstrap to it's initial state.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="MCS">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MCS</span><span class="p">(</span><span class="n">MultipleComparison</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model Confidence Set (MCS) of Hansen, Lunde and Nason.</span>
 
 <span class="sd">    Parameters</span>
@@ -544,16 +544,16 @@
 <span class="sd">        Length of window to use in the bootstrap.  If not provided, sqrt(T)</span>
 <span class="sd">        is used.  In general, this should be provided and chosen to be</span>
 <span class="sd">        appropriate for the data.</span>
-<span class="sd">    method : {&#39;max&#39;, &#39;R&#39;}, optional</span>
-<span class="sd">        MCS test and elimination implementation method, either &#39;max&#39; or &#39;R&#39;.</span>
-<span class="sd">        Default is &#39;R&#39;.</span>
+<span class="sd">    method : {'max', 'R'}, optional</span>
+<span class="sd">        MCS test and elimination implementation method, either 'max' or 'R'.</span>
+<span class="sd">        Default is 'R'.</span>
 <span class="sd">    reps : int, optional</span>
 <span class="sd">        Number of bootstrap replications to uses.  Default is 1000.</span>
 <span class="sd">    bootstrap : str, optional</span>
 <span class="sd">        Bootstrap to use.  Options are</span>
-<span class="sd">        &#39;stationary&#39; or &#39;sb&#39;: Stationary bootstrap (Default)</span>
-<span class="sd">        &#39;circular&#39; or &#39;cbb&#39;: Circular block bootstrap</span>
-<span class="sd">        &#39;moving block&#39; or &#39;mbb&#39;: Moving block bootstrap</span>
+<span class="sd">        'stationary' or 'sb': Stationary bootstrap (Default)</span>
+<span class="sd">        'circular' or 'cbb': Circular block bootstrap</span>
+<span class="sd">        'moving block' or 'mbb': Moving block bootstrap</span>
 <span class="sd">    seed : {int, Generator, RandomState}, optional</span>
 <span class="sd">        Seed value to use when creating the bootstrap used in the comparison.</span>
 <span class="sd">        If an integer or None, the NumPy default_rng is used with the seed</span>
@@ -567,7 +567,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Hansen, P. R., Lunde, A., &amp; Nason, J. M. (2011). The model confidence set.</span>
 <span class="sd">       Econometrica, 79(2), 453-497.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -575,18 +575,18 @@
         <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"R"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"R"</span><span class="p">,</span>
         <span class="n">bootstrap</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;stationary&quot;</span><span class="p">,</span> <span class="s2">&quot;sb&quot;</span><span class="p">,</span> <span class="s2">&quot;circular&quot;</span><span class="p">,</span> <span class="s2">&quot;cbb&quot;</span><span class="p">,</span> <span class="s2">&quot;moving block&quot;</span><span class="p">,</span> <span class="s2">&quot;mbb&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stationary&quot;</span><span class="p">,</span>
+            <span class="s2">"stationary"</span><span class="p">,</span> <span class="s2">"sb"</span><span class="p">,</span> <span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"cbb"</span><span class="p">,</span> <span class="s2">"moving block"</span><span class="p">,</span> <span class="s2">"mbb"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"stationary"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="s2">&quot;losses&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="s2">"losses"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_losses_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_losses_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;losses must have at least two columns&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"losses must have at least two columns"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">reps</span>
         <span class="k">if</span> <span class="n">block_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -596,59 +596,59 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">losses</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">losses</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"R"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
         <span class="c1"># Bootstrap indices since the same bootstrap should be used in the</span>
         <span class="c1"># repeated steps</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
-        <span class="n">bootstrap_meth</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;circular&quot;</span><span class="p">,</span> <span class="s2">&quot;cbb&quot;</span><span class="p">):</span>
+        <span class="n">bootstrap_meth</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"cbb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">CircularBlockBootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stationary&quot;</span><span class="p">,</span> <span class="s2">&quot;sb&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"stationary"</span><span class="p">,</span> <span class="s2">"sb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;moving_block&quot;</span><span class="p">,</span> <span class="s2">&quot;mbb&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">bootstrap_meth</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"moving_block"</span><span class="p">,</span> <span class="s2">"mbb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">MovingBlockBootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_meth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_meth</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IntArray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># For testing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;MCS&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">"MCS"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bootstrap_inst</span><span class="p">),</span>
-            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"bootstrap"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bootstrap_inst</span><span class="p">),</span>
+            <span class="s2">"ID"</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results_computed</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_has_been_computed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_computed</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must call compute before accessing results&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Must call compute before accessing results"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eliminated</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Model index&quot;</span><span class="p">,</span> <span class="s2">&quot;Pvalue&quot;</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Model index"</span><span class="p">,</span> <span class="s2">"Pvalue"</span><span class="p">]</span>
         <span class="n">mcs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">eliminated</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">max_pval</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">max_pval</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">max_pval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">max_pval</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])])</span>
+            <span class="n">max_pval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">max_pval</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])])</span>
             <span class="n">mcs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_pval</span>
-        <span class="n">model_index</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Model index&quot;</span><span class="p">)</span>
+        <span class="n">model_index</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"Model index"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="c1"># Workaround for old pandas/numpy combination</span>
             <span class="c1"># Preferred expression :</span>
             <span class="n">model_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">model_index</span><span class="p">])</span>
             <span class="c1"># model_index = self.losses.iloc[:, model_index.to_numpy()].columns</span>
             <span class="c1"># model_index = pd.Series(model_index)</span>
-            <span class="n">model_index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Model name&quot;</span>
+            <span class="n">model_index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"Model name"</span>
         <span class="n">mcs</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">model_index</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mcs</span>
 
 <div class="viewcode-block" id="MCS.compute">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.MCS.compute.html#arch.bootstrap.MCS.compute">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the set of models in the confidence set.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"r"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_r</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_max</span><span class="p">()</span>
@@ -656,9 +656,9 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_r</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Computes the model confidence set using the R method</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># R method</span>
         <span class="c1"># 1. Compute pairwise difference (k,k)</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_losses_arr</span>
@@ -709,12 +709,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_pvalues</span><span class="p">(</span><span class="n">eliminated</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Computes the model confidence set using the R method</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># max method</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_losses_arr</span>
-        <span class="c1"># 1. compute loss &quot;errors&quot;</span>
+        <span class="c1"># 1. compute loss "errors"</span>
         <span class="n">loss_errors</span> <span class="o">=</span> <span class="n">losses</span> <span class="o">-</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Generate bootstrap samples</span>
         <span class="n">bs_avg_loss_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
@@ -741,11 +741,11 @@
             <span class="n">std_devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">incl_bs_avg_loss_err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">std_devs</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;During computation of a step of the MCS the estimated standard &quot;</span>
-                    <span class="s2">&quot;deviation of at least one loss difference was 0.  This &quot;</span>
-                    <span class="s2">&quot;indicates that the MCS is not valid for this problem. This can &quot;</span>
-                    <span class="s2">&quot;occur if the number of losses is too small, or if there are &quot;</span>
-                    <span class="s2">&quot;repeated (identical) losses in the set under consideration.&quot;</span><span class="p">,</span>
+                    <span class="s2">"During computation of a step of the MCS the estimated standard "</span>
+                    <span class="s2">"deviation of at least one loss difference was 0.  This "</span>
+                    <span class="s2">"indicates that the MCS is not valid for this problem. This can "</span>
+                    <span class="s2">"occur if the number of losses is too small, or if there are "</span>
+                    <span class="s2">"repeated (identical) losses in the set under consideration."</span><span class="p">,</span>
                     <span class="ne">RuntimeWarning</span><span class="p">,</span>
                     <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -772,14 +772,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">included</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        List of model indices that are included in the MCS</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        included : list</span>
 <span class="sd">            List of column indices or names of the included models</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_been_computed</span><span class="p">()</span>
         <span class="n">incl_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">Pvalue</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
         <span class="n">included</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">incl_loc</span><span class="p">])</span>
@@ -788,14 +788,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">excluded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        List of model indices that are excluded from the MCS</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        excluded : list</span>
 <span class="sd">            List of column indices or names of the excluded models</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_been_computed</span><span class="p">()</span>
         <span class="n">excl_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">Pvalue</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
         <span class="n">excluded</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">excl_loc</span><span class="p">])</span>
@@ -804,7 +804,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Model p-values for inclusion in the MCS</span>
 
 <span class="sd">        Returns</span>
@@ -812,7 +812,7 @@
 <span class="sd">        pvalues : DataFrame</span>
 <span class="sd">            DataFrame where the index is the model index (column or name)</span>
 <span class="sd">            containing the smallest size where the model is in the MCS.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_been_computed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span></div>
 
@@ -821,7 +821,7 @@
 <div class="viewcode-block" id="StepM">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StepM</span><span class="p">(</span><span class="n">MultipleComparison</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    StepM multiple comparison procedure of Romano and Wolf.</span>
 
 <span class="sd">    Parameters</span>
@@ -841,9 +841,9 @@
 <span class="sd">        Number of bootstrap replications to uses.  Default is 1000.</span>
 <span class="sd">    bootstrap : str, optional</span>
 <span class="sd">        Bootstrap to use.  Options are</span>
-<span class="sd">        &#39;stationary&#39; or &#39;sb&#39;: Stationary bootstrap (Default)</span>
-<span class="sd">        &#39;circular&#39; or &#39;cbb&#39;: Circular block bootstrap</span>
-<span class="sd">        &#39;moving block&#39; or &#39;mbb&#39;: Moving block bootstrap</span>
+<span class="sd">        'stationary' or 'sb': Stationary bootstrap (Default)</span>
+<span class="sd">        'circular' or 'cbb': Circular block bootstrap</span>
+<span class="sd">        'moving block' or 'mbb': Moving block bootstrap</span>
 <span class="sd">    studentize : bool, optional</span>
 <span class="sd">        Flag indicating to studentize loss differentials. Default is True</span>
 <span class="sd">    nested : bool, optional</span>
@@ -871,7 +871,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Romano, J. P., &amp; Wolf, M. (2005). Stepwise multiple testing as</span>
 <span class="sd">       formalized data snooping. Econometrica, 73(4), 1237-1282.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -881,16 +881,16 @@
         <span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">bootstrap</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;stationary&quot;</span><span class="p">,</span> <span class="s2">&quot;sb&quot;</span><span class="p">,</span> <span class="s2">&quot;circular&quot;</span><span class="p">,</span> <span class="s2">&quot;cbb&quot;</span><span class="p">,</span> <span class="s2">&quot;moving block&quot;</span><span class="p">,</span> <span class="s2">&quot;mbb&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stationary&quot;</span><span class="p">,</span>
+            <span class="s2">"stationary"</span><span class="p">,</span> <span class="s2">"sb"</span><span class="p">,</span> <span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"cbb"</span><span class="p">,</span> <span class="s2">"moving block"</span><span class="p">,</span> <span class="s2">"mbb"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"stationary"</span><span class="p">,</span>
         <span class="n">studentize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">nested</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="s2">&quot;benchmark&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="s2">"models"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="p">:</span> <span class="n">SPA</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span>
             <span class="n">benchmark</span><span class="p">,</span>
             <span class="n">models</span><span class="p">,</span>
@@ -909,24 +909,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;StepM&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">"StepM"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
-            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">&quot;asymptotic&quot;</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">"bootstrap"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">"asymptotic"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">"none"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;FWER (size)&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;studentization&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
-            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
-            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+            <span class="s2">"FWER (size)"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"studentization"</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+            <span class="s2">"bootstrap"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
+            <span class="s2">"ID"</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="StepM.compute">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.StepM.compute.html#arch.bootstrap.StepM.compute">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the set of superior models.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># 1. Run SPA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="c1"># 2. If any models superior, store indices, remove and re-run SPA</span>
@@ -951,7 +951,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">superior_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        List of the indices or column names of the superior models</span>
 
 <span class="sd">        Returns</span>
@@ -959,9 +959,9 @@
 <span class="sd">        list</span>
 <span class="sd">            List of superior models.  Contains column indices if models is an</span>
 <span class="sd">            array or contains column names if models is a DataFrame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;compute must be called before accessing superior_models&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"compute must be called before accessing superior_models"</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">])</span>
@@ -972,7 +972,7 @@
 <div class="viewcode-block" id="SPA">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SPA</span><span class="p">(</span><span class="n">MultipleComparison</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">DocStringInheritor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Test of Superior Predictive Ability (SPA) of White and Hansen.</span>
 
 <span class="sd">    The SPA is also known as the Reality Check or Bootstrap Data Snooper.</span>
@@ -991,9 +991,9 @@
 <span class="sd">        Number of bootstrap replications to uses.  Default is 1000.</span>
 <span class="sd">    bootstrap : str, optional</span>
 <span class="sd">        Bootstrap to use.  Options are</span>
-<span class="sd">        &#39;stationary&#39; or &#39;sb&#39;: Stationary bootstrap (Default)</span>
-<span class="sd">        &#39;circular&#39; or &#39;cbb&#39;: Circular block bootstrap</span>
-<span class="sd">        &#39;moving block&#39; or &#39;mbb&#39;: Moving block bootstrap</span>
+<span class="sd">        'stationary' or 'sb': Stationary bootstrap (Default)</span>
+<span class="sd">        'circular' or 'cbb': Circular block bootstrap</span>
+<span class="sd">        'moving block' or 'mbb': Moving block bootstrap</span>
 <span class="sd">    studentize : bool</span>
 <span class="sd">        Flag indicating to studentize loss differentials. Default is True</span>
 <span class="sd">    nested : bool</span>
@@ -1024,7 +1024,7 @@
 <span class="sd">       Journal of Business &amp; Economic Statistics, 23(4), 365-380.</span>
 <span class="sd">    .. [2] White, H. (2000). A reality check for data snooping. Econometrica,</span>
 <span class="sd">       68(5), 1097-1126.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1033,16 +1033,16 @@
         <span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">bootstrap</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;stationary&quot;</span><span class="p">,</span> <span class="s2">&quot;sb&quot;</span><span class="p">,</span> <span class="s2">&quot;circular&quot;</span><span class="p">,</span> <span class="s2">&quot;cbb&quot;</span><span class="p">,</span> <span class="s2">&quot;moving block&quot;</span><span class="p">,</span> <span class="s2">&quot;mbb&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stationary&quot;</span><span class="p">,</span>
+            <span class="s2">"stationary"</span><span class="p">,</span> <span class="s2">"sb"</span><span class="p">,</span> <span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"cbb"</span><span class="p">,</span> <span class="s2">"moving block"</span><span class="p">,</span> <span class="s2">"mbb"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"stationary"</span><span class="p">,</span>
         <span class="n">studentize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">nested</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="s2">&quot;benchmark&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="s2">"models"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">reps</span>
         <span class="k">if</span> <span class="n">block_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
@@ -1054,43 +1054,43 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">bootstrap_name</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;circular&quot;</span><span class="p">,</span> <span class="s2">&quot;cbb&quot;</span><span class="p">):</span>
+        <span class="n">bootstrap_name</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"circular"</span><span class="p">,</span> <span class="s2">"cbb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">CircularBlockBootstrap</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stationary&quot;</span><span class="p">,</span> <span class="s2">&quot;sb&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"stationary"</span><span class="p">,</span> <span class="s2">"sb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;moving_block&quot;</span><span class="p">,</span> <span class="s2">&quot;mbb&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">bootstrap_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"moving_block"</span><span class="p">,</span> <span class="s2">"mbb"</span><span class="p">):</span>
             <span class="n">bootstrap_inst</span> <span class="o">=</span> <span class="n">MovingBlockBootstrap</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">:</span> <span class="n">BoolArray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;SPA&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">"SPA"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
-            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">&quot;asymptotic&quot;</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">"bootstrap"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span> <span class="k">else</span> <span class="s2">"asymptotic"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">"none"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;studentization&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
-            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
-            <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+            <span class="s2">"studentization"</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+            <span class="s2">"bootstrap"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">),</span>
+            <span class="s2">"ID"</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="SPA.reset">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.SPA.reset.html#arch.bootstrap.SPA.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reset the bootstrap to its initial state.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="p">{}</span></div>
 
@@ -1098,7 +1098,7 @@
 <div class="viewcode-block" id="SPA.subset">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.SPA.subset.html#arch.bootstrap.SPA.subset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="n">BoolArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sets a list of active models to run the SPA on.  Primarily for</span>
 <span class="sd">        internal use.</span>
 
@@ -1107,20 +1107,20 @@
 <span class="sd">        selector : ndarray</span>
 <span class="sd">            Boolean array indicating which columns to use when computing the</span>
 <span class="sd">            p-values.  This is primarily for use by StepM.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span> <span class="o">=</span> <span class="n">selector</span></div>
 
 
 <div class="viewcode-block" id="SPA.compute">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.SPA.compute.html#arch.bootstrap.SPA.compute">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the bootstrap pvalue.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        Must be called before accessing the pvalue.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Plan</span>
         <span class="c1"># 1. Compute variances</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1135,9 +1135,9 @@
         <span class="n">max_loss_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">pvalues</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_simulated_vals</span> <span class="o">&gt;</span> <span class="n">max_loss_diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="s2">&quot;consistent&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s2">"lower"</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">"consistent"</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">"upper"</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
         <span class="p">}</span></div>
 
 
@@ -1163,14 +1163,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimates the variance of the loss differentials</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        var : ndarray</span>
 <span class="sd">            Array containing the variances of each loss differential</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">ld</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span>
         <span class="n">demeaned</span> <span class="o">=</span> <span class="n">ld</span> <span class="o">-</span> <span class="n">ld</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span><span class="p">:</span>
@@ -1189,10 +1189,10 @@
                 <span class="n">variances</span> <span class="o">+=</span> <span class="p">(</span>
                     <span class="mi">2</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">demeaned</span><span class="p">[:</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">i</span><span class="p">),</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">demeaned</span><span class="p">[</span><span class="n">i</span><span class="p">:,</span> <span class="p">:],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
                 <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;np.ndarray&quot;</span><span class="p">,</span> <span class="n">variances</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"np.ndarray"</span><span class="p">,</span> <span class="n">variances</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_column_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolArray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks whether the loss from the model is too low relative to its mean</span>
 <span class="sd">        to be asymptotically relevant.</span>
 
@@ -1201,7 +1201,7 @@
 <span class="sd">        valid : ndarray</span>
 <span class="sd">            Boolean array indicating columns relevant for consistent p-value</span>
 <span class="sd">            calculation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">variances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span>
         <span class="n">mean_loss_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">threshold</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">variances</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
@@ -1209,7 +1209,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        P-values corresponding to the lower, consistent and</span>
 <span class="sd">        upper p-values.</span>
 
@@ -1218,14 +1218,14 @@
 <span class="sd">        pvals : Series</span>
 <span class="sd">            Three p-values corresponding to the lower bound, the consistent</span>
 <span class="sd">            estimator, and the upper bound.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_compute</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="SPA.critical_values">
 <a class="viewcode-back" href="../../../multiple-comparison/generated/generated/arch.bootstrap.SPA.critical_values.html#arch.bootstrap.SPA.critical_values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns data-dependent critical values</span>
 
 <span class="sd">        Parameters</span>
@@ -1238,10 +1238,10 @@
 <span class="sd">        crit_vals : Series</span>
 <span class="sd">            Series containing critical values for the lower, consistent and</span>
 <span class="sd">            upper methodologies</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_compute</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">pvalue</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pvalue must be in (0,1)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"pvalue must be in (0,1)"</span><span class="p">)</span>
         <span class="c1"># Subset if needed</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">simulated_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
@@ -1255,9 +1255,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">better_models</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-        <span class="n">pvalue_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;consistent&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consistent&quot;</span><span class="p">,</span>
+        <span class="n">pvalue_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"consistent"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"consistent"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Int64Array1D</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns set of models rejected as being equal-or-worse than the</span>
 <span class="sd">        benchmark</span>
 
@@ -1266,7 +1266,7 @@
 <span class="sd">        pvalue : float, optional</span>
 <span class="sd">            P-value in (0,1) to use when computing superior models</span>
 <span class="sd">        pvalue_type : str, optional</span>
-<span class="sd">            String in &#39;lower&#39;, &#39;consistent&#39;, or &#39;upper&#39; indicating which</span>
+<span class="sd">            String in 'lower', 'consistent', or 'upper' indicating which</span>
 <span class="sd">            critical value to use.</span>
 
 <span class="sd">        Returns</span>
@@ -1279,10 +1279,10 @@
 <span class="sd">        -----</span>
 <span class="sd">        List of superior models returned is always with respect to the initial</span>
 <span class="sd">        set of models, even when using subset().</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_compute</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">pvalue_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown pvalue type&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown pvalue type"</span><span class="p">)</span>
         <span class="n">crit_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="p">(</span><span class="n">pvalue</span><span class="o">=</span><span class="n">pvalue</span><span class="p">)[</span><span class="n">pvalue_type</span><span class="p">]</span>
         <span class="n">better_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit_val</span>
         <span class="n">better_models</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">better_models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">)</span>
@@ -1292,7 +1292,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;compute must be called before pvalues are available.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"compute must be called before pvalues are available."</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 

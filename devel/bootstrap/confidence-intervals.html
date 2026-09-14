@@ -23,7 +23,7 @@
     
   
       
-        <title>Confidence Intervals - arch v8.0.1 (+45)</title>
+        <title>Confidence Intervals - arch v8.0.1 (+47)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+45)
+            arch v8.0.1 (+47)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+45)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+45)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+47)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+47)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+45)
+    arch v8.0.1 (+47)
   </label>
   
     <div class="md-nav__source">
@@ -1100,12 +1100,12 @@ deviation and the Sharpe ratio.</p>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'^GSPC'</span><span class="p">,</span> <span class="s1">'yahoo'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
 <span class="n">low</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="n">high</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
-<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">'M'</span><span class="p">)</span>
+<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'ffill'</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <p>The main function used will return a 3-element array containing the parameters.</p>
@@ -1134,7 +1134,7 @@ order statistics from these empirical distributions.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'percentile'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="note admonition">
@@ -1169,7 +1169,7 @@ computed element-by-element.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'basic'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <h3 id="percentile-percentile"><a class="toc-backref" href="#id8" role="doc-backlink">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Link to this heading">¶</a></h3>
@@ -1184,7 +1184,7 @@ distribution.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'percentile'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <h3 id="asymptotic-normal-approximation-norm-cov-or-var"><a class="toc-backref" href="#id9" role="doc-backlink">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a><a class="headerlink" href="#asymptotic-normal-approximation-norm-cov-or-var" title="Link to this heading">¶</a></h3>
@@ -1199,7 +1199,7 @@ error.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'norm'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <h3 id="studentized-studentized"><a class="toc-backref" href="#id10" role="doc-backlink">Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</a><a class="headerlink" href="#studentized-studentized" title="Link to this heading">¶</a></h3>
@@ -1221,7 +1221,7 @@ outer bootstraps.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;studentized&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'studentized'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>In order to use the standard error function, it is necessary to estimate the
@@ -1248,7 +1248,7 @@ the mathematical formula is beyond the intent of this document.</p>
 function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;studentized&#39;</span><span class="p">,</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'studentized'</span><span class="p">,</span>
                  <span class="n">std_err_func</span><span class="o">=</span><span class="n">sharpe_ratio_se</span><span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1268,7 +1268,7 @@ of estimated parameters constructed using <code class="docutils literal notransl
 improve confidence intervals.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bc&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'bc'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>The bias-corrected confidence interval is identical to the bias-corrected and
@@ -1282,7 +1282,7 @@ parameter is set to 0.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bca&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'bca'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>The confidence interval is based on the empirical  distribution of the bootstrap
