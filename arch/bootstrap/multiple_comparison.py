@@ -464,7 +464,7 @@ class StepM(MultipleComparison):
         better_models = [int(i) for i in self.spa.better_models(self.size)]
         all_better_models = better_models[:]
         # 3. Stop if nothing superior
-        while better_models and (len(better_models) < self.k):
+        while better_models and (len(all_better_models) < self.k):
             # A. Use Selector to remove better models
             selector = np.ones(self.k, dtype=np.bool_)
             selector[np.array(all_better_models)] = False
