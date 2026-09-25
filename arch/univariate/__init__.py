@@ -8,6 +8,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+from arch.univariate.har import HAR, HARResult
 from arch.univariate.mean import (
     ARX,
     HARX,
@@ -41,6 +42,8 @@ __all__ = [
     "APARCH",
     "ARCH",
     "ARX",
+    "HAR",
+    "HARResult",
     "EGARCH",
     "FIGARCH",
     "GARCH",
