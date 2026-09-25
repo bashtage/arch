@@ -1748,6 +1748,95 @@ class ARCHModelFixedResult(_SummaryRepr):
             stat, df=lags, null=null, alternative=alt, name="ARCH-LM Test"
         )
 
+    def li_mak_test(
+        self, lags: int | None = None, fitdf: int | None = None
+    ) -> WaldTestStatistic:
+        r"""
+        Li-Mak portmanteau test for remaining ARCH effects in standardized residuals
+
+        Applies the Ljung-Box statistic to the *squared* standardized residuals
+        :math:`\hat{e}_t^2 = (r_t / \hat{\sigma}_t)^2` and corrects the degrees
+        of freedom for the number of estimated GARCH variance parameters, as
+        derived in Li and Mak (1994).  Under a correctly specified GARCH model,
+        the statistic is asymptotically :math:`\chi^2(m - \text{fitdf})`, where
+        :math:`m` is the number of lags and *fitdf* is the number of estimated
+        volatility lag parameters.
+
+        Unlike the ARCH-LM test, which only tests raw residuals for heteroskedasticity,
+        the Li-Mak test directly checks whether the fitted volatility model has
+        removed *all* serial dependence in the conditional variance.
+
+        Parameters
+        ----------
+        lags : int, optional
+            Number of autocorrelation lags to include.  Defaults to
+            :math:`\lceil 1.2\,T^{1/4} \rceil`.
+        fitdf : int, optional
+            Number of estimated volatility lag parameters to subtract from the
+            degrees of freedom.  Defaults to ``volatility.num_params - 1``
+            (all variance parameters excluding the constant :math:`\omega`).
+            Pass ``fitdf=0`` to obtain the uncorrected Ljung-Box statistic.
+
+        Returns
+        -------
+        result : WaldTestStatistic
+            Test result with statistic, p-value, and null/alternative descriptions.
+
+        References
+        ----------
+        .. [1] Li, W. K. and Mak, T. K. (1994). On the Squared Residual
+               Autocorrelations in Non-Linear Time Series with Conditional
+               Heteroskedasticity. *Journal of Time Series Analysis*,
+               15(6), 627--636.
+
+        Examples
+        --------
+        >>> from arch import arch_model
+        >>> import numpy as np
+        >>> rng = np.random.default_rng(0)
+        >>> returns = rng.standard_normal(500)
+        >>> res = arch_model(returns, vol="Garch", p=1, q=1).fit(disp="off")
+        >>> li_mak = res.li_mak_test(lags=10)
+        >>> li_mak.stat  # doctest: +SKIP
+        """
+        resids = self.resid / np.asarray(self.conditional_volatility)
+        resids = resids[~np.isnan(resids)]
+        nobs = resids.shape[0]
+        if nobs < 3:
+            raise ValueError("Test requires at least 3 non-nan observations")
+
+        a = resids**2
+        lags = (
+            int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))
+            if lags is None
+            else lags
+        )
+        lags = max(min(nobs // 2 - 1, lags), 1)
+        assert isinstance(lags, int)
+
+        if fitdf is None:
+            fitdf = max(self.model.volatility.num_params - 1, 0)
+
+        # Ljung-Box Q statistic on squared standardized residuals
+        a_mean = a.mean()
+        a_dm = a - a_mean
+        a_var = (a_dm**2).sum()
+
+        stat = 0.0
+        for k in range(1, lags + 1):
+            rk = (a_dm[k:] * a_dm[:-k]).sum() / a_var
+            stat += rk**2 / (nobs - k)
+        stat *= nobs * (nobs + 2)
+
+        df = max(lags - fitdf, 1)
+        return WaldTestStatistic(
+            stat,
+            df=df,
+            null="Squared standardized residuals are uncorrelated.",
+            alternative="Squared standardized residuals are autocorrelated (ARCH effects remain).",
+            name="Li-Mak Test",
+        )
+
 
 class ARCHModelResult(ARCHModelFixedResult):
     """
