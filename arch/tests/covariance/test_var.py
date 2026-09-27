@@ -5,7 +5,7 @@ import pytest
 from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import Float64Array
-import arch.covariance.kernel as kernel_module
+from arch.covariance import kernel as kernel_module
 from arch.covariance.kernel import CovarianceEstimate
 from arch.covariance.var import PreWhitenedRecolored
 

@@ -9,7 +9,7 @@ from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import ArrayLike, Float64Array
-import arch.covariance.kernel as lrcov
+from arch.covariance import kernel as lrcov
 from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
 from arch.vendor._decorators import Appender
 
