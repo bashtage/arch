@@ -1180,7 +1180,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         omega_11 = omega[:1, :1]
         nobs, nvar = z_star.shape
         scale = 1.0 if not df_adjust else nobs / (nobs - nvar)
-        omega_112 = scale * omega_11 - omega_12 @ omega_22_inv @ omega_12.T
+        omega_112 = scale * (omega_11 - omega_12 @ omega_22_inv @ omega_12.T)
         param_cov = omega_112 * np.linalg.inv(z_star.T @ z_star)
         with_trend = add_trend(self._x.iloc[:10], self._trend)
         assert isinstance(with_trend, pd.DataFrame)
@@ -1202,5 +1202,5 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
             df_adjust,
             r2,
             r2_adj,
-            "Fully Modified OLS",
+            "Canonical Cointegrating Regression",
         )
