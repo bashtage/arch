@@ -256,3 +256,73 @@ def test_recolored_kernel_long_run(covariance_data, center, bandwidth, kernel):
     cov = pwrc.cov
     assert_allclose(np.asarray(cov.long_run), expected, rtol=1e-8, atol=1e-10)
     assert_allclose(np.asarray(cov.short_run), resids.T @ resids / nobs)
+
+
+@pytest.mark.parametrize("center", [True, False])
+def test_var_hac_kernel_none(covariance_data, center):
+    # kernel=None is VAR-HAC: the long run is D Sigma_e D' where Sigma_e is the
+    # residual covariance, with no kernel applied to the residuals.
+    lags = 2
+    x = np.asarray(covariance_data, dtype=float)
+    if x.ndim == 1:
+        x = x[:, None]
+    nobs_full, nvar = x.shape
+    lhs = x[lags:]
+    rhs = [x[lags - i : nobs_full - i] for i in range(1, lags + 1)]
+    if center:
+        rhs = [np.ones((nobs_full - lags, 1))] + rhs
+    rhs = np.hstack(rhs)
+    params = np.linalg.lstsq(rhs, lhs, rcond=None)[0].T
+    resids = lhs - rhs @ params.T
+    coef_sum = np.zeros((nvar, nvar))
+    c = int(center)
+    for i in range(lags):
+        coef_sum += params[:, c + i * nvar : c + (i + 1) * nvar]
+    d = np.linalg.inv(np.eye(nvar) - coef_sum)
+    nobs = resids.shape[0]
+    sigma_e = resids.T @ resids / nobs
+    expected = nobs / (nobs - nvar) * d @ sigma_e @ d.T
+
+    pwrc = PreWhitenedRecolored(covariance_data, lags=lags, kernel=None, center=center)
+    assert_allclose(np.asarray(pwrc.cov.long_run), expected, rtol=1e-8, atol=1e-10)
+    assert pwrc.kernel_const == 1.0
+    assert pwrc.bandwidth_scale == 0.0
+    assert pwrc.rate == 0.0
+    assert_allclose(pwrc._weights(), np.ones(1))
+
+    pwrc_zero = PreWhitenedRecolored(
+        covariance_data, lags=lags, kernel=None, bandwidth=0.0, center=center
+    )
+    assert_allclose(pwrc_zero.cov.long_run, pwrc.cov.long_run)
+
+
+def test_zero_lag_kernel():
+    x = np.random.RandomState(0).standard_normal((250, 2))
+    cov = kernel_module.ZeroLag(x).cov
+    assert_allclose(cov.long_run, cov.short_run)
+    assert_allclose(cov.one_sided_strict, np.zeros((2, 2)))
+
+
+def test_kernel_none_bandwidth_error():
+    x = np.random.standard_normal((500, 2))
+    with pytest.raises(ValueError, match="bandwidth must be None"):
+        PreWhitenedRecolored(x, kernel=None, bandwidth=3.0)
+
+
+def test_nonstationary_var_error():
+    rs = np.random.RandomState(0)
+    e = rs.standard_normal((250, 2))
+    x = np.zeros_like(e)
+    for t in range(1, x.shape[0]):
+        x[t] = 1.05 * x[t - 1] + e[t]
+    pwrc = PreWhitenedRecolored(x, lags=1)
+    with pytest.raises(ValueError, match="not compatible with covariance"):
+        _ = pwrc.cov
+
+
+@pytest.mark.parametrize("center", [True, False])
+def test_sample_autocov_center(covariance_data, center):
+    pwrc = PreWhitenedRecolored(
+        covariance_data, lags=2, sample_autocov=True, center=center
+    )
+    assert isinstance(pwrc.cov, CovarianceEstimate)
