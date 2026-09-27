@@ -105,7 +105,8 @@ def test_pvalues_and_critvals(spa_data):
     spa.compute()
     simulated_vals = spa._simulated_vals
     max_stats = np.max(simulated_vals, 0)
-    max_loss_diff = np.max(spa._loss_diff.mean(0), 0)
+    std_err = np.sqrt(spa._loss_diff_var / spa_data.t)
+    max_loss_diff = np.max(spa._loss_diff.mean(0) / std_err, 0)
     pvalues = np.mean(max_loss_diff <= max_stats, 0)
     pvalues = pd.Series(pvalues, index=["lower", "consistent", "upper"])
     assert_series_equal(pvalues, spa.pvalues)
@@ -113,6 +114,32 @@ def test_pvalues_and_critvals(spa_data):
     crit_vals = np.percentile(max_stats, 90.0, axis=0)
     crit_vals = pd.Series(crit_vals, index=["lower", "consistent", "upper"])
     assert_series_equal(spa.critical_values(0.10), crit_vals)
+
+
+def test_studentization():
+    rng = RandomState(0)
+    t = 500
+    benchmark = rng.standard_normal(t) ** 2
+    # Small but precisely estimated improvement and a large noisy improvement
+    precise = benchmark - 0.05 + 0.01 * rng.standard_normal(t)
+    noisy = benchmark - 0.20 + 10.0 * rng.standard_normal(t)
+    models = np.column_stack([precise, noisy])
+
+    spa = SPA(benchmark, models, block_size=10, reps=500, seed=23456)
+    spa.compute()
+    raw = SPA(benchmark, models, block_size=10, reps=500, studentize=False, seed=23456)
+    raw.compute()
+
+    std_err = np.sqrt(spa._loss_diff_var / t)
+    max_stats = np.max(raw._simulated_vals / std_err[:, None, None], 0)
+    max_loss_diff = np.max(raw._loss_diff.mean(0) / std_err)
+    expected = pd.Series(
+        np.mean(max_stats > max_loss_diff, 0), index=["lower", "consistent", "upper"]
+    )
+    assert_series_equal(spa.pvalues, expected)
+    assert np.all(spa.pvalues < 0.05)
+    assert np.all(raw.pvalues > 0.05)
+    assert_equal(spa.better_models(), np.array([0]))
 
 
 def test_errors(spa_data):
