@@ -6,6 +6,7 @@ same inputs.
 
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
+import inspect
 import itertools
 from typing import TYPE_CHECKING, cast
 from warnings import warn
@@ -701,6 +702,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         simulations: int = 1000,
         rng: RNGType | None = None,
         random_state: RandomState | None = None,
+        *,
+        asym_weight: float = 0.5,
     ) -> VarianceForecast:
         """
         Forecast volatility from the model
@@ -760,8 +763,18 @@ class VolatilityProcess(metaclass=ABCMeta):
         self._check_forecasting_method(cast("ForecastingMethod", method_name), horizon)
         start = len(resids) - 1 if start is None else start
         if method_name == "analytic":
-            return self._analytic_forecast(
-                _parameters, resids, backcast, var_bounds, start, horizon
+            analytic = self._analytic_forecast
+            kwargs = {}
+            if "asym_weight" in inspect.signature(analytic).parameters:
+                kwargs["asym_weight"] = asym_weight
+            return analytic(
+                _parameters,
+                resids,
+                backcast,
+                var_bounds,
+                start,
+                horizon,
+                **kwargs,
             )
         elif method == "simulation":
             # TODO: This looks like a design flaw.It is optional above but then must
@@ -1279,6 +1292,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: Float64Array2D,
         start: int,
         horizon: int,
+        asym_weight: float = 0.5,
     ) -> VarianceForecast:
         sigma2, forecasts = self._one_step_forecast(
             parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
@@ -1307,7 +1321,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 _resids[: m - i - 1] = np.sqrt(backcast)
                 _resids[m - i - 1 : m] = resids[0 : i + 1]
                 _asym_resids = cast("np.ndarray", _resids * (_resids < 0))
-                _asym_resids[: m - i - 1] = np.sqrt(0.5 * backcast)
+                _asym_resids[: m - i - 1] = np.sqrt(asym_weight * backcast)
                 _sigma2[:m] = backcast
                 _sigma2[m - i - 1 : m] = sigma2[0 : i + 1]
 
@@ -1328,7 +1342,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                     forecasts[fcast_loc, h] += beta[j] * _sigma2[start_loc - j]
 
                 _resids[h + m] = np.sqrt(forecasts[fcast_loc, h])
-                _asym_resids[h + m] = np.sqrt(0.5 * forecasts[fcast_loc, h])
+                _asym_resids[h + m] = np.sqrt(asym_weight * forecasts[fcast_loc, h])
                 _sigma2[h + m] = forecasts[fcast_loc, h]
 
         return VarianceForecast(forecasts)
@@ -1945,6 +1959,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: Float64Array2D,
         start: int,
         horizon: int,
+        asym_weight: float = 0.5,
     ) -> VarianceForecast:
         omega, aw, gw, resids2, indicator = self._common_forecast_components(
             parameters, to_array_1d(resids), backcast, horizon
@@ -1959,7 +1974,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             if self._asym:
                 resids2_ind = resids2[:, i : (m + i)] * indicator[:, i : (m + i)]
                 resids2[:, m + i] += resids2_ind.dot(gw_rev)
-                indicator[:, m + i] = 0.5
+                indicator[:, m + i] = asym_weight
 
         return VarianceForecast(resids2[:, m:].copy())
 
