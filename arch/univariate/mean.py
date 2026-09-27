@@ -1000,6 +1000,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if rng is None:
             rng = self._distribution.simulate(dp)
         variance_start = max(0, start_index - earliest)
+        asym_weight = 0.5
+        vol = self._volatility
+        asymmetric = bool(getattr(vol, "o", 0)) or bool(getattr(vol, "_asym", False))
+        if method == "analytic" and asymmetric:
+            asym_weight = float(self._distribution.partial_moment(2, 0.0, dp))
         vfcast = self._volatility.forecast(
             vp,
             full_resids,
@@ -1011,6 +1016,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulations=simulations,
             rng=rng,
             random_state=random_state,
+            asym_weight=asym_weight,
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
