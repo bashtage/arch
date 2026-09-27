@@ -579,7 +579,7 @@ def test_bca(bs_setup):
     bs_setup.func(bs_setup.x)
     nobs = bs_setup.x.shape[0]
     jk = _loo_jackknife(bs_setup.func, nobs, [bs_setup.x], {})
-    u = jk.mean() - jk
+    u = jk.mean(0) - jk
     u2 = np.sum(u * u, 0)
     u3 = np.sum(u * u * u, 0)
     a = u3 / (6.0 * (u2**1.5))
@@ -942,6 +942,32 @@ def test_bca_extra_kwarg():
     ci = bs.conf_int(f, extra_kwargs={"b": "anything"}, reps=100, method="bca")
     assert isinstance(ci, np.ndarray)
     assert ci.shape == (2, 1)
+
+
+def test_bca_acceleration_multiple_statistics():
+    rs = RandomState(0)
+    x = rs.chisquare(3, size=(200, 2))
+    x[:, 1] += 100.0
+
+    def single(x):
+        return np.array([x.mean()])
+
+    def multiple(x):
+        return x.mean(0)
+
+    bs = IIDBootstrap(x, seed=0)
+    a = bs._bca_acceleration(multiple, None)
+    for i in range(2):
+        bs_single = IIDBootstrap(x[:, i], seed=0)
+        a_single = bs_single._bca_acceleration(single, None)
+        assert_allclose(a[i], a_single[0])
+
+    ci = IIDBootstrap(x, seed=0).conf_int(multiple, reps=500, method="bca")
+    for i in range(2):
+        ci_single = IIDBootstrap(x[:, i], seed=0).conf_int(
+            single, reps=500, method="bca"
+        )
+        assert_allclose(ci[:, i], ci_single[:, 0])
 
 
 def test_set_randomstate(bs_setup):
