@@ -38,8 +38,6 @@ def covariance_data(request):
     if pandas and dim == 1:
         return pd.Series(rvs, name="x")
     elif pandas:
-        df = pd.DataFrame(rvs, columns=[f"x{i}" for i in range(dim)])
-        df.to_csv(f"cov-data-order-{order}.csv")
-        return df
+        return pd.DataFrame(rvs, columns=[f"x{i}" for i in range(dim)])
 
     return rvs

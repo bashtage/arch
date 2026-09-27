@@ -1,13 +1,13 @@
-from typing import Optional, Tuple
-
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
+from statsmodels.tsa.tsatools import lagmat
 
+from arch._typing import Float64Array
+import arch.covariance.kernel as kernel_module
 from arch.covariance.kernel import CovarianceEstimate
 from arch.covariance.var import PreWhitenedRecolored
-from arch.typing import NDArray
 
 KERNELS = [
     "Bartlett",
@@ -31,8 +31,8 @@ def kernel(request):
 
 
 def direct_var(
-    x, const: bool, full_order: int, diag_order: int, max_order: Optional[int] = None
-) -> Tuple[NDArray, NDArray]:
+    x, const: bool, full_order: int, diag_order: int, max_order: int | None = None
+) -> tuple[Float64Array, Float64Array]:
     x = np.asarray(x)
     if x.ndim == 1:
         x = x[:, None]
@@ -45,8 +45,6 @@ def direct_var(
     if const:
         rhs[:, 0] = 1
         offset = 1
-    from statsmodels.tsa.tsatools import lagmat
-
     for i in range(nvar):
         idx = offset + i + nvar * np.arange(order)
         rhs[:, idx], lhs[:, i : i + 1] = lagmat(
@@ -57,7 +55,7 @@ def direct_var(
         idx += [0]
     idx += (c + np.arange(full_order * nvar)).tolist()
     idx += [-9999] * (diag_order - full_order)
-    locs = np.array(idx, dtype=np.int)
+    locs = np.array(idx, dtype=int)
     diag_start = int(const) + full_order * nvar
     params = np.zeros((nvar, rhs.shape[1]))
     resids = np.empty_like(lhs)
@@ -82,7 +80,7 @@ def direct_ic(
     const: bool,
     full_order: int,
     diag_order: int,
-    max_order: Optional[int] = None,
+    max_order: int | None = None,
 ) -> float:
     _, resids = direct_var(x, const, full_order, diag_order, max_order)
     nobs, nvar = resids.shape
@@ -113,7 +111,11 @@ def test_direct_var(covariance_data, const, full_order, diag_order, max_order, i
 @pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
 def test_ic(covariance_data, center, diagonal, method):
     pwrc = PreWhitenedRecolored(
-        covariance_data, center=center, diagonal=diagonal, method=method, bandwidth=0.0,
+        covariance_data,
+        center=center,
+        diagonal=diagonal,
+        method=method,
+        bandwidth=0.0,
     )
     cov = pwrc.cov
     expected_type = (
@@ -138,8 +140,8 @@ def test_ic(covariance_data, center, diagonal, method):
                 max_order=expected_max_lag,
             )
     assert tuple(sorted(pwrc._ics.keys())) == tuple(sorted(expected_ics.keys()))
-    for key in expected_ics:
-        assert_allclose(pwrc._ics[key], expected_ics[key])
+    for key, value in expected_ics.items():
+        assert_allclose(pwrc._ics[key], value)
     expected_order = pd.Series(expected_ics).idxmin()
     assert pwrc._order == expected_order
 
@@ -215,5 +217,42 @@ def test_pwrc_warnings():
 
 
 def test_unknown_kernel(covariance_data):
-    with pytest.raises(ValueError, match=""):
+    with pytest.raises(ValueError, match="kernel is not a known"):
         PreWhitenedRecolored(covariance_data, kernel="unknown")
+
+
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("bandwidth", [2.0, 7.5])
+def test_recolored_kernel_long_run(covariance_data, center, bandwidth, kernel):
+    # Andrews & Monahan (1992): the long run is D Omega_e D' where Omega_e is
+    # the kernel long-run covariance of the VAR residuals and
+    # D = (I - A_1 - ... - A_p)^-1. Computed here without the estimator.
+    lags = 2
+    x = np.asarray(covariance_data, dtype=float)
+    if x.ndim == 1:
+        x = x[:, None]
+    nobs_full, nvar = x.shape
+    lhs = x[lags:]
+    rhs = [x[lags - i : nobs_full - i] for i in range(1, lags + 1)]
+    if center:
+        rhs = [np.ones((nobs_full - lags, 1))] + rhs
+    rhs = np.hstack(rhs)
+    params = np.linalg.lstsq(rhs, lhs, rcond=None)[0].T
+    resids = lhs - rhs @ params.T
+    coef_sum = np.zeros((nvar, nvar))
+    c = int(center)
+    for i in range(lags):
+        coef_sum += params[:, c + i * nvar : c + (i + 1) * nvar]
+    d = np.linalg.inv(np.eye(nvar) - coef_sum)
+    kern_est = getattr(kernel_module, kernel)
+    omega_e = kern_est(resids, bandwidth=bandwidth, center=False).cov.long_run
+    nobs = resids.shape[0]
+    scale = nobs / (nobs - nvar)
+    expected = scale * d @ omega_e @ d.T
+
+    pwrc = PreWhitenedRecolored(
+        covariance_data, lags=lags, kernel=kernel, bandwidth=bandwidth, center=center
+    )
+    cov = pwrc.cov
+    assert_allclose(np.asarray(cov.long_run), expected, rtol=1e-8, atol=1e-10)
+    assert_allclose(np.asarray(cov.short_run), resids.T @ resids / nobs)

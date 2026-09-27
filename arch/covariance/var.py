@@ -1,33 +1,51 @@
-from typing import Dict, NamedTuple, Optional, Tuple
+from functools import cached_property
+from typing import NamedTuple, cast
+import warnings
 
 import numpy as np
 from numpy.linalg import lstsq
 import pandas as pd
-from pandas.util._decorators import Appender
 from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.covariance import KERNEL_ERR, KERNEL_ESTIMATORS
-from arch.covariance.kernel import (
-    CovarianceEstimate,
-    CovarianceEstimator,
-    normalize_kernel_name,
-)
-from arch.typing import ArrayLike, NDArray
-from arch.vendor import cached_property
+from arch._typing import ArrayLike, Float64Array
+import arch.covariance.kernel as lrcov
+from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
+from arch.vendor._decorators import Appender
 
 __all__ = ["PreWhitenedRecolored"]
 
+# Kernel lookup keyed by normalized name. Built locally rather than imported
+# from arch.unitroot to avoid a circular import. ZeroLag is added so that
+# kernel=None (VAR-HAC) can reuse the kernel machinery.
+_KERNEL_ESTIMATORS: dict[str, type[CovarianceEstimator]] = {
+    name.lower(): getattr(lrcov, name) for name in lrcov.KERNELS
+}
+_KERNEL_ESTIMATORS["zerolag"] = lrcov.ZeroLag
+_KNOWN_KERNELS = "\n".join(sorted(_KERNEL_ESTIMATORS))
+_KERNEL_ERR = (
+    f"kernel is not a known kernel estimator. Must be one of:\n {_KNOWN_KERNELS}"
+)
+
+
+def _normalize_kernel_name(name: str) -> str:
+    """
+    Normalize a kernel name by removing - and _ and converting to lower case.
+
+    Matches the normalization used in arch.unitroot._shared._check_kernel.
+    """
+    return name.replace("-", "").replace("_", "").lower()
+
 
 class VARModel(NamedTuple):
-    resids: NDArray
-    params: NDArray
+    resids: Float64Array
+    params: Float64Array
     var_order: int
     intercept: bool
 
 
 class PreWhitenedRecolored(CovarianceEstimator):
-    """
+    r"""
     VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation.
 
     Andrews & Monahan [1]_ PWRC and DenHaan-Levin's VAR-HAC [2]_ covariance
@@ -43,27 +61,31 @@ class PreWhitenedRecolored(CovarianceEstimator):
     method : {"aic", "hqc", "bic"}, default "aic"
         The information criteria to use in the model specification search.
     diagonal : bool, default True
-        Flag indicating to consider both diagonal parameter coefficient
-        matrices on lags. A diagonal coefficient matrix restricts all
-        off-diagonal coefficient to be zero.
+        Flag indicating whether the specification search also considers
+        models where the coefficient matrices on the final lags are
+        diagonal. A diagonal coefficient matrix restricts all off-diagonal
+        coefficients to be zero. Only used when lags is None and x has more
+        than one column.
     max_lag : int, default None
         The maximum lag to use in the model specification search. If None,
-        then nobs**(1/3) is used.
+        then int(nobs**(1/3)) is used.
     sample_autocov : bool, default False
-        Whether to the the same autocovariance or the theoretical
-        autocovariance implied by the estimated VAR when computing
-        the long-run covairance.
+        Whether to use the sample autocovariance of x or the autocovariance
+        implied by the estimated VAR when computing the one-sided
+        covariances. Does not affect the long-run covariance.
     kernel : {str, None}, default "bartlett".
         The name of the kernel to use. Can be any available kernel. Input
         is normalised using lower casing and any underscores or hyphens
         are removed, so that "QuadraticSpectral", "quadratic-spectral" and
-        "quadratic_spectral" are all the same. Use None to prevent recoloring.
+        "quadratic_spectral" are all the same. Use None to compute the
+        VAR-HAC estimator, which recolors the residual covariance without
+        applying a kernel to the residuals.
     bandwidth : float, default None
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated
+        from the VAR residuals. Must be None or 0 when kernel is None.
     df_adjust : int, default 0
-        Degrees of freedom to remove when adjusting the covariance. Uses the
-        number of observations in x minus df_adjust when dividing
-        inner-products.
+        Degrees of freedom to remove when adjusting the covariance. Currently
+        not used by this estimator, see Notes for the scaling applied.
     center : bool, default True
         A flag indicating whether x should be demeaned before estimating the
         covariance.
@@ -80,10 +102,99 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     Notes
     -----
-    TODO: Add detailed notes
+    The estimator is computed in three steps.
+
+    **Prewhitening.** A VAR is estimated by least squares, equation by
+    equation,
+
+    .. math::
+
+       x_t = c + A_1 x_{t-1} + \ldots + A_P x_{t-P} + \epsilon_t
+
+    where the constant :math:`c` is included only when ``center`` is True.
+    When ``lags`` is provided, a VAR(``lags``) with unrestricted coefficient
+    matrices is used. Otherwise the order is selected by minimizing
+
+    .. math::
+
+       IC = \ln|\hat{\Sigma}| + \lambda \frac{k}{T}
+
+    where :math:`\hat{\Sigma}=T^{-1}\sum_t \hat{\epsilon}_t\hat{\epsilon}_t^\prime`,
+    :math:`k` is the total number of estimated parameters, :math:`T` is the
+    number of observations used in the regressions, which is common to all
+    candidate models, and :math:`\lambda` is 2 (``"aic"``),
+    :math:`2\ln\ln T` (``"hqc"``) or :math:`\ln T` (``"bic"``). Models with
+    0, 1, ..., ``max_lag`` lags are considered. When ``diagonal`` is True
+    and x has more than one column, the search also considers models with
+    unrestricted coefficient matrices on the first :math:`p` lags and
+    diagonal coefficient matrices on lags :math:`p+1, \ldots, q` for
+    :math:`p < q \leq` ``max_lag``, so that each series only uses its own
+    values at the additional lags. ``max_lag`` is limited to
+    ``(nobs - nvar) // nvar``.
+
+    **Kernel estimation.** The long-run covariance of the VAR residuals,
+    :math:`\hat{\Omega}_\epsilon`, is estimated using the selected kernel
+    applied to the residuals without centering and without a degree of
+    freedom adjustment. When ``kernel`` is None, a zero-lag kernel is used
+    so that :math:`\hat{\Omega}_\epsilon=\hat{\Sigma}`, which is the
+    VAR-HAC estimator of den Haan & Levin. This is also the case when the
+    bandwidth is 0.
+
+    **Recoloring.** The long-run covariance of x is
+
+    .. math::
+
+       \hat{\Omega} = \frac{T}{T-N} \hat{D}\hat{\Omega}_\epsilon\hat{D}^\prime,
+       \quad \hat{D} = \left(I_N - \sum_{i=1}^P \hat{A}_i\right)^{-1}
+
+    where :math:`N` is the number of columns in x and :math:`T` is the number
+    of VAR residuals. When the selected order
+    is 0, no VAR is estimated and all returned values are those of the
+    kernel estimator applied to x (demeaned when ``center`` is True)
+    without the scale :math:`T/(T-N)`.
+
+    When the VAR order is positive, the returned
+    :class:`~arch.covariance.kernel.CovarianceEstimate` contains
+
+    * ``long_run``: :math:`\hat{\Omega}`.
+    * ``short_run``: :math:`\hat{\Sigma}`, the covariance of the VAR
+      residuals, not the variance of x.
+    * ``one_sided``: the upper-left :math:`N` by :math:`N` block of
+      :math:`\frac{T}{T-N}(I-F)^{-1}\Gamma_0` where :math:`F` is the
+      companion-form coefficient matrix of the VAR and :math:`\Gamma_0` is
+      the covariance of the stacked vector
+      :math:`[x_t^\prime, \ldots, x_{t-P+1}^\prime]^\prime`, either implied
+      by the estimated VAR and :math:`\hat{\Sigma}` or, when
+      ``sample_autocov`` is True, computed from the sample autocovariances
+      of x.
+    * ``one_sided_strict``: the upper-left :math:`N` by :math:`N` block of
+      :math:`\frac{T}{T-N}F(I-F)^{-1}\Gamma_0`.
+
+    The one-sided covariances do not use the kernel. Since ``short_run`` is
+    the residual covariance, the identities in
+    :class:`~arch.covariance.kernel.CovarianceEstimate` relating the
+    short-run, one-sided and long-run covariances do not hold. When
+    ``sample_autocov`` is False and the kernel is not used (``kernel`` is
+    None or the bandwidth is 0), ``long_run`` equals
+    ``one_sided + one_sided.T - (one_sided - one_sided_strict)``.
 
     Examples
     --------
+    >>> import numpy as np
+    >>> from arch.covariance.var import PreWhitenedRecolored
+    >>> rs = np.random.default_rng(0)
+    >>> e = rs.standard_normal((1001, 2))
+    >>> x = e[1:] + 0.5 * e[:-1]
+
+    Prewhiten with a VAR(1) and use a Bartlett kernel with a bandwidth of 5
+
+    >>> pwrc = PreWhitenedRecolored(x, lags=1, kernel="bartlett", bandwidth=5.0)
+    >>> lrcov = pwrc.cov.long_run
+
+    VAR-HAC with the VAR order selected using BIC
+
+    >>> var_hac = PreWhitenedRecolored(x, kernel=None, method="bic")
+    >>> lrcov = var_hac.cov.long_run
 
     References
     ----------
@@ -99,16 +210,16 @@ class PreWhitenedRecolored(CovarianceEstimator):
         self,
         x: ArrayLike,
         *,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         method: str = "aic",
         diagonal: bool = True,
-        max_lag: Optional[int] = None,
+        max_lag: int | None = None,
         sample_autocov: bool = False,
-        kernel: Optional[str] = "bartlett",
-        bandwidth: Optional[float] = None,
+        kernel: str | None = "bartlett",
+        bandwidth: float | None = None,
         df_adjust: int = 0,
         center: bool = True,
-        weights: Optional[ArrayLike] = None,
+        weights: ArrayLike | None = None,
         force_int: bool = False,
     ) -> None:
         super().__init__(
@@ -129,23 +240,23 @@ class PreWhitenedRecolored(CovarianceEstimator):
         self._format_lags(lags)
         self._sample_autocov = sample_autocov
         if kernel is not None:
-            kernel = normalize_kernel_name(kernel)
+            kernel = _normalize_kernel_name(kernel)
         else:
             if self._bandwidth not in (0, None):
                 raise ValueError("bandwidth must be None when kernel is None")
             self._bandwidth = None
             kernel = "zerolag"
-        if kernel not in KERNEL_ESTIMATORS:
-            raise ValueError(KERNEL_ERR)
+        if kernel not in _KERNEL_ESTIMATORS:
+            raise ValueError(_KERNEL_ERR)
 
-        self._kernel = KERNEL_ESTIMATORS[kernel]
-        self._kernel_instance: Optional[CovarianceEstimator] = None
+        self._kernel = _KERNEL_ESTIMATORS[kernel]
+        self._kernel_instance: CovarianceEstimator | None = None
 
         # Attach for testing only
-        self._ics: Dict[Tuple[int, int], float] = {}
+        self._ics: dict[tuple[int, int], float] = {}
         self._order = (0, 0)
 
-    def _format_lags(self, lags: Optional[int]) -> None:
+    def _format_lags(self, lags: int | None) -> None:
         """
         Check lag inputs and standard values for lags and diagonal lags
         """
@@ -153,13 +264,17 @@ class PreWhitenedRecolored(CovarianceEstimator):
             return
 
         self._auto_lag_selection = False
-        if not np.isscalar(lags) or lags < 0 or int(lags) != lags:
+        if (
+            not np.isscalar(lags)
+            or cast("float", lags) < 0
+            or int(cast("float", lags)) != lags
+        ):
             raise ValueError("lags must be a non-negative integer.")
-        self._lags = int(lags)
+        self._lags = int(cast("float", lags))
         self._diagonal_lags = self._lags
         return
 
-    def _ic(self, sigma: NDArray, nparam: int, nobs: int) -> float:
+    def _ic(self, sigma: Float64Array, nparam: int, nobs: int) -> float:
         _, ld = np.linalg.slogdet(sigma)
         if self._method == "aic":
             return ld + 2 * nparam / nobs
@@ -168,7 +283,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
         else:  # bic
             return ld + np.log(nobs) * nparam / nobs
 
-    def _setup_model_data(self, max_lag: int) -> Tuple[NDArray, NDArray, NDArray]:
+    def _setup_model_data(
+        self, max_lag: int
+    ) -> tuple[Float64Array, Float64Array, Float64Array]:
         nobs, nvar = self._x.shape
         lhs = np.empty((nobs - max_lag, nvar))
         rhs = np.empty((nobs - max_lag, nvar * max_lag))
@@ -184,7 +301,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
         return lhs, rhs, indiv_lags
 
     @staticmethod
-    def _fit_diagonal(x: NDArray, diag_lag: int, lags: NDArray) -> NDArray:
+    def _fit_diagonal(
+        x: Float64Array, diag_lag: int, lags: Float64Array
+    ) -> Float64Array:
         nvar = x.shape[1]
         for i in range(nvar):
             lhs = lags[i, :, :diag_lag]
@@ -193,12 +312,12 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     def _ic_from_vars(
         self,
-        lhs: NDArray,
-        rhs: NDArray,
-        indiv_lags: NDArray,
+        lhs: Float64Array,
+        rhs: Float64Array,
+        indiv_lags: Float64Array,
         full_order: int,
         max_lag: int,
-    ) -> Dict[Tuple[int, int], float]:
+    ) -> dict[tuple[int, int], float]:
         c = int(self._center)
         nobs, nvar = lhs.shape
         _rhs = rhs[:, : (c + full_order * nvar)]
@@ -211,7 +330,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
             resids0 = lhs
         sigma = resids0.T @ resids0 / nobs
         nparam = (c + full_order * nvar) * nvar
-        ics: Dict[Tuple[int, int], float] = {
+        ics: dict[tuple[int, int], float] = {
             (full_order, full_order): self._ic(sigma, nparam, nobs)
         }
         if not self._diagonal or self._x.shape[1] == 1:
@@ -235,7 +354,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
             ics[(full_order, full_order + diag_lag)] = self._ic(sigma, nparam, nobs)
         return ics
 
-    def _select_lags(self) -> Tuple[int, int]:
+    def _select_lags(self) -> tuple[int, int]:
         """Select lags if needed"""
         if not self._auto_lag_selection:
             return self._lags, self._diagonal_lags
@@ -246,13 +365,12 @@ class PreWhitenedRecolored(CovarianceEstimator):
         # Ensure at least nvar obs left over
         max_lag = min(max_lag, (nobs - nvar) // nvar)
         if max_lag == 0 and self._max_lag is None:
-            import warnings
-
             warnings.warn(
                 "The maximum number of lags is 0 since the number of time series "
                 f"observations {nobs} is small relative to the number of time "
                 f"series {nvar}.",
                 RuntimeWarning,
+                stacklevel=2,
             )
         self._max_lag = max_lag
         lhs, rhs, indiv_lags = self._setup_model_data(max_lag)
@@ -260,8 +378,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         for full_order in range(max_lag + 1):
             _ics = self._ic_from_vars(lhs, rhs, indiv_lags, full_order, max_lag)
             self._ics.update(_ics)
-        ic = np.array([crit for crit in self._ics.values()])
-        models = [key for key in self._ics.keys()]
+        ic = np.array(list(self._ics.values()))
+        models = list(self._ics.keys())
         return models[ic.argmin()]
 
     def _estimate_var(self, full_order: int, diag_order: int) -> VARModel:
@@ -291,7 +409,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
         return VARModel(resids, params, max_lag, self._center)
 
-    def _estimate_sample_cov(self, nvar: int, nlag: int) -> NDArray:
+    def _estimate_sample_cov(self, nvar: int, nlag: int) -> Float64Array:
         """
         #  [Gamma0  Gamma1  Gamma2, ... ]
         #  [Gamma1' Gamma0  Gamma1, ... ]
@@ -319,8 +437,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     @staticmethod
     def _estimate_model_cov(
-        nvar: int, nlag: int, coeffs: NDArray, short_run: NDArray
-    ) -> NDArray:
+        nvar: int, nlag: int, coeffs: Float64Array, short_run: Float64Array
+    ) -> Float64Array:
         sigma = np.zeros((nvar * nlag, nvar * nlag))
         sigma[:nvar, :nvar] = short_run
         multiplier = np.linalg.inv(np.eye(coeffs.size) - np.kron(coeffs, coeffs))
@@ -330,8 +448,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         return var_cov
 
     def _companion_form(
-        self, var_model: VARModel, short_run: NDArray
-    ) -> Tuple[NDArray, NDArray]:
+        self, var_model: VARModel, short_run: Float64Array
+    ) -> tuple[Float64Array, Float64Array]:
         nvar = var_model.resids.shape[1]
         nlag = var_model.var_order
         coeffs = np.zeros((nvar * nlag, nvar * nlag))
@@ -363,32 +481,33 @@ class PreWhitenedRecolored(CovarianceEstimator):
             force_int=self._force_int,
         )
         kern_cov = self._kernel_instance.cov
-        short_run = kern_cov.short_run
+        short_run = np.asarray(kern_cov.short_run)
         x_orig = self._x_orig
         columns = x_orig.columns if isinstance(x_orig, pd.DataFrame) else None
         if var_mod.var_order == 0:
-            # Special case VAR(0)
-            # TODO: Docs should reflect different DoF adjustment
-            oss = kern_cov.one_sided_strict
+            # Special case VAR(0): no recoloring and no T/(T-N) scale, see Notes
+            oss = np.asarray(kern_cov.one_sided_strict)
             return CovarianceEstimate(short_run, oss, columns)
         comp_coefs, comp_var_cov = self._companion_form(var_mod, short_run)
         max_eig = np.abs(np.linalg.eigvals(comp_coefs)).max()
         if max_eig >= 1:
-            raise ValueError(
-                f"""\
+            raise ValueError(f"""\
 The parameters of the estimated VAR model are not compatible with covariance \
 stationarity, and the long-run covariance cannot be computed. The model estimated is \
 a VAR({max(common, individual)}) where the final {max(0, individual-common)} lags \
 have diagonal coefficient matrices. The maximum eigenvalue of the companion-form \
-VAR(1) coefficient matrix is {max_eig}."""
-            )
+VAR(1) coefficient matrix is {max_eig}.""")
         coeff_sum = np.zeros((nvar, nvar))
         params = var_mod.params[:, var_mod.intercept :]
         for i in range(var_mod.var_order):
             coeff_sum += params[:, i * nvar : (i + 1) * nvar]
         d = np.linalg.inv(np.eye(nvar) - coeff_sum)
         scale = nobs / (nobs - nvar)
-        long_run = scale * (d @ short_run @ d.T)
+        # Recolor the kernel long-run covariance of the VAR residuals
+        # (Andrews & Monahan 1992). With a zero bandwidth or kernel=None, the
+        # kernel long run equals the residual short run.
+        resid_long_run = np.asarray(kern_cov.long_run)
+        long_run = scale * (d @ resid_long_run @ d.T)
 
         comp_nvar = comp_coefs.shape[0]
         i_minus_coefs_inv = np.linalg.inv(np.eye(comp_nvar) - comp_coefs)
@@ -409,8 +528,7 @@ VAR(1) coefficient matrix is {max_eig}."""
 
     def _ensure_kernel_instantized(self) -> None:
         if self._kernel_instance is None:
-            # Workaround to avoid linting noise
-            getattr(self, "cov")
+            _ = self.cov
 
     @property
     def bandwidth_scale(self) -> float:
@@ -424,7 +542,7 @@ VAR(1) coefficient matrix is {max_eig}."""
         assert self._kernel_instance is not None
         return self._kernel_instance.kernel_const
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         self._ensure_kernel_instantized()
         assert self._kernel_instance is not None
         return self._kernel_instance._weights()

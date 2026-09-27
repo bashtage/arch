@@ -26,8 +26,12 @@ __all__ = [
     "TukeyHamming",
     "TukeyHanning",
     "TukeyParzen",
+    "ZeroLag",
 ]
 
+# Kernels available by name to the long-run covariance consumers. ZeroLag is
+# deliberately excluded since it is only a building block for
+# arch.covariance.var.PreWhitenedRecolored when kernel=None (VAR-HAC).
 KERNELS = [
     "Bartlett",
     "Parzen",
@@ -721,3 +725,30 @@ class NeweyWest(Bartlett):
     --------
     Bartlett
     """
+
+
+_zero_lag_name = "Zero-lag (No autocorrelation)"
+_zero_lag_formula = """\
+w=\\begin{cases} \
+1 & z=0\\\\ \
+0 & z>0 \
+\\end{cases} \
+"""
+
+
+@Substitution(kernel_name=_zero_lag_name, formula=_zero_lag_formula)
+class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
+    @property
+    def kernel_const(self) -> float:
+        return 1.0
+
+    @property
+    def bandwidth_scale(self) -> float:
+        return 0.0
+
+    @property
+    def rate(self) -> float:
+        return 0.0
+
+    def _weights(self) -> Float64Array:
+        return np.ones(1)
