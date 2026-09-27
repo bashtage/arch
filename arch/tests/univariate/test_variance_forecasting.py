@@ -2421,3 +2421,37 @@ def test_external_rng():
         rng=rng,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)
+
+
+def test_gjr_analytic_forecast_uses_skew_partial_moment():
+    from arch.univariate.distribution import SkewStudent
+
+    params = np.array([0.05, 0.02, 0.0, 0.20, 0.88, 7.6, -0.16])
+    data = ConstantMean(
+        None, volatility=GARCH(p=1, o=1, q=1), distribution=SkewStudent(seed=1)
+    ).simulate(params, 400, burn=100)["data"]
+    model = ConstantMean(
+        data, volatility=GARCH(p=1, o=1, q=1), distribution=SkewStudent(seed=2)
+    )
+    res = model.fix(params)
+    k = model.distribution.partial_moment(2, 0.0, params[5:])
+    horizon = 12
+    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()[-1]
+    omega, alpha, gamma, beta = params[1:5]
+    exact = np.empty(horizon)
+    exact[0] = analytic[0]
+    for h in range(1, horizon):
+        exact[h] = omega + (alpha + gamma * k + beta) * exact[h - 1]
+    assert k != pytest.approx(0.5)
+    assert_allclose(analytic, exact)
+
+    normal = ConstantMean(
+        data, volatility=GARCH(p=1, o=1, q=1), distribution=Normal()
+    )
+    normal_forecast = normal.fix(params[:5]).forecast(horizon=horizon, reindex=False)
+    normal_path = normal_forecast.variance.to_numpy()[-1]
+    half = np.empty(horizon)
+    half[0] = normal_path[0]
+    for h in range(1, horizon):
+        half[h] = omega + (alpha + 0.5 * gamma + beta) * half[h - 1]
+    assert_allclose(normal_path, half)
