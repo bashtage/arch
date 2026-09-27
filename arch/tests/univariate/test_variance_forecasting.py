@@ -1852,6 +1852,39 @@ class TestVarianceForecasts:
                 method="bootstrap",
             )
 
+    @pytest.mark.parametrize("method", ["simulation", "bootstrap"])
+    def test_rm2006_simulation_one_step(self, method):
+        vol = RiskMetrics2006()
+        params = np.array([])
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        analytic = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=3, start=900
+        )
+        kwargs = {}
+        if method == "simulation":
+            kwargs["rng"] = Normal(seed=RandomState(12345)).simulate([])
+        else:
+            kwargs["random_state"] = RandomState(12345)
+        sim = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=3,
+            start=900,
+            method=method,
+            simulations=10,
+            **kwargs,
+        )
+        # The one-step-ahead variance is known at the forecast origin
+        assert_allclose(sim.forecasts[:, 0], analytic.forecasts[:, 0])
+        assert_allclose(
+            sim.forecast_paths[:, :, 0],
+            np.tile(analytic.forecasts[:, :1], (1, 10)),
+        )
+
     def test_aparch_one_step(self):
         vol = APARCH()
         resids = self.resid
