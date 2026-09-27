@@ -649,9 +649,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         assert simulated_vals is not None
         simulated_vals = simulated_vals[self._selector, :, :]
         max_simulated_vals = np.max(simulated_vals, 0)
-        loss_diff = self._loss_diff[:, self._selector]
+        loss_diff_mean = self._studentized_mean()[self._selector]
 
-        max_loss_diff = np.max(loss_diff.mean(axis=0))
+        max_loss_diff = np.max(loss_diff_mean)
         pvalues = (max_simulated_vals > max_loss_diff).mean(axis=0)
         self._pvalues = {
             "lower": pvalues[0],
@@ -678,7 +678,18 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             loss_diff_star = pos_arg[0]
             for j, mean in enumerate(means):
                 simulated_vals[:, i, j] = loss_diff_star.mean(axis=0) - mean
-        self._simulated_vals = simulated_vals
+        self._simulated_vals = simulated_vals / self._scale()[:, None, None]
+
+    def _scale(self) -> Float64Array:
+        """Standard errors of the mean loss differentials if studentizing"""
+        if not self.studentize:
+            return np.ones(self.k)
+        std_err = np.sqrt(self._loss_diff_var / self.t)
+        return np.maximum(std_err, np.finfo(float).eps)
+
+    def _studentized_mean(self) -> Float64Array:
+        """Mean loss differentials, studentized if required"""
+        return self._loss_diff.mean(axis=0) / self._scale()
 
     def _compute_variance(self) -> None:
         """
@@ -753,7 +764,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         -------
         crit_vals : Series
             Series containing critical values for the lower, consistent and
-            upper methodologies
+            upper methodologies. When studentize is True, the critical values
+            apply to the studentized mean loss differentials.
         """
         self._check_compute()
         if not (0.0 < pvalue < 1.0):
@@ -797,7 +809,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         if pvalue_type not in self._pvalues:
             raise ValueError("Unknown pvalue type")
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
-        better_models = self._loss_diff.mean(axis=0) > crit_val
+        better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)
         return np.argwhere(better_models).flatten()
 
