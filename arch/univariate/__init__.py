@@ -1,6 +1,7 @@
 import types
 
 from arch.univariate import recursions_python
+from arch.univariate.censored_garch import CensoredGARCH
 from arch.univariate.distribution import (
     Distribution,
     GeneralizedError,
@@ -41,6 +42,7 @@ __all__ = [
     "APARCH",
     "ARCH",
     "ARX",
+    "CensoredGARCH",
     "EGARCH",
     "FIGARCH",
     "GARCH",
