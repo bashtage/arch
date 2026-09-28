@@ -42,11 +42,11 @@ See the accompanying paper referenced in the class docstring for the
 underlying empirical motivation and validation.
 """
 
+import math
 from collections.abc import Sequence
 from typing import cast
 
 import numpy as np
-from scipy.stats import norm
 
 from arch._typing import (
     ArrayLike1D,
@@ -56,14 +56,41 @@ from arch._typing import (
     ForecastingMethod,
     RNGType,
 )
-from arch.univariate.recursions_python import bounds_check_python as bounds_check
+from arch.compat.numba import jit
+from arch.univariate.recursions_python import bounds_check
 from arch.univariate.volatility import VarianceForecast, VolatilityProcess
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 
-__all__ = ["CensoredGARCH"]
+__all__ = ["CensoredGARCH", "censored_garch_recursion", "censored_garch_recursion_python"]
+
+_INV_SQRT_2PI = 1.0 / math.sqrt(2.0 * math.pi)
+_SQRT2 = math.sqrt(2.0)
 
 
-def censored_garch_recursion(
+def _norm_pdf_python(x: float) -> float:
+    """Standard normal pdf, written with only numba-jittable primitives
+    (no scipy dependency) so this can be inlined into a jitted recursion."""
+    return _INV_SQRT_2PI * math.exp(-0.5 * x * x)
+
+
+def _norm_sf_python(x: float) -> float:
+    """Standard normal survival function 1 - Phi(x), via erfc rather than
+    1 - erf, for the same numerical-stability reason scipy uses erfc
+    internally: it avoids catastrophic cancellation for large x, so this
+    underflows to exactly 0.0 only much further into the tail than a naive
+    1 - Phi(x) would."""
+    return 0.5 * math.erfc(x / _SQRT2)
+
+
+# Jitted eagerly (rather than left to numba's lazy inlining) so these are
+# ordinary numba Dispatcher objects the recursion below can call directly
+# in nopython mode -- the same pattern used for `bounds_check` throughout
+# arch.univariate.recursions_python.
+_norm_pdf = jit(_norm_pdf_python, nopython=True, inline="always")
+_norm_sf = jit(_norm_sf_python, nopython=True, inline="always")
+
+
+def censored_garch_recursion_python(
     parameters: Float64Array1D,
     resids: Float64Array1D,
     censored: Float64Array1D,
@@ -76,10 +103,15 @@ def censored_garch_recursion(
     var_bounds: Float64Array2D,
 ) -> Float64Array1D:
     """
-    Pure-Python reference recursion for :class:`CensoredGARCH`.
+    Reference recursion for :class:`CensoredGARCH`.
 
-    Not currently accelerated (no Cython/Numba backend) -- see the class
-    docstring's "Notes" section.
+    This is the pure-Python source; ``censored_garch_recursion`` (no
+    ``_python`` suffix) is this same function JIT-compiled with numba when
+    numba is installed, following the pattern used throughout
+    :mod:`arch.univariate.recursions_python`. When numba is unavailable,
+    ``arch.compat.numba.jit`` falls back to calling this function directly
+    (with a one-time performance warning), so correctness never depends on
+    numba being installed -- only speed does.
 
     Parameters
     ----------
@@ -142,17 +174,22 @@ def censored_garch_recursion(
             if a <= 0:
                 corr = 1.0
             else:
-                one_minus_phi = norm.sf(a)
+                one_minus_phi = _norm_sf(a)
                 if one_minus_phi < 1e-12:
                     # Far into the tail: 1 - Phi(a) underflows before a does.
                     # Asymptotically phi(a)/(1-Phi(a)) ~ a, so the correction
                     # factor 1 + a*hazard(a) -> 1 + a^2.
                     corr = 1.0 + a * a
                 else:
-                    corr = 1.0 + a * norm.pdf(a) / one_minus_phi
+                    corr = 1.0 + a * _norm_pdf(a) / one_minus_phi
             eff2[t] = corr * sigma2[t]
 
     return sigma2
+
+
+# JIT-compiled with numba when available (falls back to the pure-Python
+# function above, with a one-time performance warning, when it isn't).
+censored_garch_recursion = jit(censored_garch_recursion_python, nopython=True)
 
 
 class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
@@ -206,13 +243,24 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     :math:`\int_a^\infty x^2\phi(x)\,dx = a\phi(a) + (1-\Phi(a))`.
 
     Only symmetric (no leverage/asymmetric term) GARCH(p, q) is supported in
-    this first version; ``power`` is fixed at 2.0.  No accelerated
-    (Cython/Numba) recursion is provided yet -- see
-    :func:`censored_garch_recursion`.
+    this first version; ``power`` is fixed at 2.0.  The recursion
+    (:func:`censored_garch_recursion`) is JIT-compiled with numba when numba
+    is installed -- about 100x faster than the pure-Python source it is
+    compiled from (:func:`censored_garch_recursion_python`) in informal
+    benchmarking -- following the same pattern used throughout
+    :mod:`arch.univariate.recursions_python`; correctness does not depend on
+    numba being installed, only speed does. There is no separate Cython
+    backend.
 
     Analytic multi-step forecasting and simulation-based forecasting are not
     yet implemented (only one-step-ahead analytic forecasts, and forward
-    simulation assuming no future censoring, are supported).
+    simulation assuming no future censoring, are supported). Extending
+    analytic forecasting to horizon > 1 is not a simple drop-in of the
+    approach used by :class:`GARCH`: doing it correctly requires threading
+    the corrected effective squared residual (``eff2`` inside the
+    recursion, not the raw truncated residual) through the lag lookback for
+    any censored observation within the forecast origin's lag window, which
+    the recursion does not currently expose.
     """
 
     def __init__(

@@ -205,6 +205,55 @@ def test_recursion_zero_variance_branch():
     assert sigma2[0] == 0.0
 
 
+def test_norm_helpers_match_scipy():
+    """The hand-rolled, numba-jittable _norm_pdf/_norm_sf (built from
+    math.exp/math.erfc rather than scipy.stats.norm, so they can be
+    inlined into the jitted recursion) must agree with scipy across a
+    wide range of inputs, including the deep tail where naive 1 - Phi(x)
+    would underflow long before erfc-based _norm_sf does."""
+    from arch.univariate.censored_garch import _norm_pdf, _norm_sf
+
+    xs = np.array([0.0, 0.1, 0.5, 1.0, 1.96, 3.0, 5.0, 8.0, 15.0, 30.0])
+    for x in xs:
+        assert_allclose(_norm_pdf(x), norm.pdf(x), rtol=1e-12, atol=1e-300)
+        # scipy's own norm.sf underflows well before erfc-based _norm_sf
+        # does, so only compare where scipy itself hasn't hit zero.
+        scipy_sf = norm.sf(x)
+        if scipy_sf > 0:
+            assert_allclose(_norm_sf(x), scipy_sf, rtol=1e-8)
+
+
+def test_jitted_recursion_matches_pure_python():
+    """The numba-jitted censored_garch_recursion (used by compute_variance)
+    must produce bit-identical output to the pure-Python source it's
+    compiled from, censored_garch_recursion_python, across a realistic
+    GARCH(1,1)-then-censored path."""
+    from arch.univariate.censored_garch import (
+        censored_garch_recursion,
+        censored_garch_recursion_python,
+    )
+
+    rng = RandomState(7)
+    nobs = 2000
+    threshold = 1.8
+    resids = rng.standard_normal(nobs)
+    censored = np.abs(resids) >= threshold
+    resids = np.where(censored, np.sign(resids) * threshold, resids)
+    thresh_arr = threshold * np.ones(nobs) * censored
+    parameters = np.array([0.05, 0.1, 0.85])
+    var_bounds = np.tile([1e-12, 1e12], (nobs, 1))
+
+    sigma2_jit = np.zeros(nobs)
+    sigma2_py = np.zeros(nobs)
+    censored_garch_recursion(
+        parameters, resids, censored, thresh_arr, sigma2_jit, 1, 1, nobs, 1.0, var_bounds
+    )
+    censored_garch_recursion_python(
+        parameters, resids, censored, thresh_arr, sigma2_py, 1, 1, nobs, 1.0, var_bounds
+    )
+    assert_allclose(sigma2_jit, sigma2_py, rtol=0, atol=0)
+
+
 def test_correction_matches_truncated_normal_identity():
     """Directly check the recursion's censoring correction against the
     truncated-normal second-moment identity

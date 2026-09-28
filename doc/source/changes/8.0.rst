@@ -8,8 +8,15 @@ Since Last Release
 - Added :class:`~arch.univariate.CensoredGARCH`, a GARCH(p, q) volatility
   process for return series subject to a known, time-varying censoring rule
   (e.g. an exchange price-limit band), using the truncated-normal
-  second-moment correction of Morgan and Trevor (1999).
+  second-moment correction of Morgan and Trevor (1999). The recursion is
+  numba-JIT-compiled when numba is available.
 
 Release 8.0
 ===========
 - Moved to Meson build system from setuptools.
+- Minimum required Python is now 3.10.
+- Improved compatability with future NumPy and pandas, including pandas 3.
+- Many small documentation fixes.
+- Improved typing accuracy across the codebase.
+
+
