@@ -131,6 +131,80 @@ def test_censoring_increases_variance(setup):
     assert np.any(sigma2_censored[censored_idx + 1] > sigma2_naive[censored_idx + 1])
 
 
+def test_recursion_deep_tail_underflow_branch():
+    """When the threshold is many standard deviations out, 1 - Phi(a)
+    underflows to 0 in floating point before a itself does. The recursion
+    should fall back to the asymptotic correction 1 + a^2 rather than
+    dividing by (effectively) zero."""
+    from arch.univariate.censored_garch import censored_garch_recursion
+    from scipy.stats import norm
+
+    a = 40.0  # norm.sf(40) underflows to exactly 0.0 in float64
+    assert norm.sf(a) == 0.0
+
+    threshold = a
+    # omega=0, alpha=1, backcast=1.0 => sigma2[0] = 0 + 1*backcast = 1.0
+    # exactly, so a = threshold / sigma_t = threshold / 1.0 = a as intended.
+    parameters = np.array([0.0, 1.0, 0.0])
+    resids = np.array([threshold, 0.0])
+    censored = np.array([True, False])
+    thresh_arr = np.array([threshold, 0.0])
+    sigma2 = np.zeros(2)
+    var_bounds = np.array([[1e-12, 1e12], [1e-12, 1e12]])
+
+    censored_garch_recursion(
+        parameters, resids, censored, thresh_arr, sigma2, 1, 1, 2, 1.0, var_bounds
+    )
+    assert_allclose(sigma2[0], 1.0)
+    # sigma2[1] = alpha * eff2[0] = 1.0 * (1 + a^2) * sigma2[0] = 1 + a^2
+    assert_allclose(sigma2[1], 1.0 + a * a, rtol=1e-10)
+
+
+def test_recursion_zero_threshold_branch():
+    """A censored observation with a zero threshold (a degenerate edge
+    case not reachable through the public API, which requires threshold >
+    0 wherever censored is True) should fall back to the uncorrected
+    (corr=1.0) branch rather than raising or dividing by zero."""
+    from arch.univariate.censored_garch import censored_garch_recursion
+
+    # omega=0, alpha=1, backcast=1.0 => sigma2[0] = 1.0 exactly (isolates the
+    # step cleanly, same trick as the deep-tail test above).
+    parameters = np.array([0.0, 1.0, 0.0])
+    resids = np.array([0.0, 0.0])
+    censored = np.array([True, False])
+    threshold = np.array([0.0, 0.0])
+    sigma2 = np.zeros(2)
+    var_bounds = np.array([[1e-12, 1e12], [1e-12, 1e12]])
+
+    censored_garch_recursion(
+        parameters, resids, censored, threshold, sigma2, 1, 1, 2, 1.0, var_bounds
+    )
+    assert_allclose(sigma2[0], 1.0)
+    # corr = 1.0 (a <= 0 branch), so eff2[0] = sigma2[0] = 1.0 and
+    # sigma2[1] = alpha * eff2[0] = 1.0
+    assert_allclose(sigma2[1], 1.0)
+
+
+def test_recursion_zero_variance_branch():
+    """When the model's own conditional variance is driven to exactly the
+    (zero) lower bound at a censored step, sigma_t is 0 and a would
+    otherwise be a division by zero; the recursion should fall back to
+    a = 0 (corr = 1.0) instead."""
+    from arch.univariate.censored_garch import censored_garch_recursion
+
+    parameters = np.array([0.0, 0.0, 0.0])  # omega=0 -> sigma2[0] forced to 0
+    resids = np.array([1.5])
+    censored = np.array([True])
+    threshold = np.array([1.5])
+    sigma2 = np.zeros(1)
+    var_bounds = np.array([[0.0, 1e12]])  # lower bound of exactly 0
+
+    censored_garch_recursion(
+        parameters, resids, censored, threshold, sigma2, 1, 1, 1, 0.0, var_bounds
+    )
+    assert sigma2[0] == 0.0
+
+
 def test_correction_matches_truncated_normal_identity():
     """Directly check the recursion's censoring correction against the
     truncated-normal second-moment identity
