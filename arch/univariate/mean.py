@@ -102,6 +102,10 @@ def _ar_forecast(
     arp: Float64Array,
     x: Float64Array,
     exogp: Float64Array,
+    *,
+    kappa: float = 0.0,
+    trans_vol: Callable[[Float64Array], Float64Array] | None = None,
+    var_fcasts: Float64Array | None = None,
 ) -> Float64Array:
     """
     Generate mean forecasts from an AR-X model
@@ -115,6 +119,14 @@ def _ar_forecast(
     arp : ndarray
     exogp : ndarray
     x : ndarray
+    kappa : float
+        Coefficient on the transformed conditional variance in the mean.
+    trans_vol : callable, optional
+        Transform of the conditional variance entering the mean equation.
+        Required when ``kappa`` is non-zero.
+    var_fcasts : ndarray, optional
+        Conditional variance forecasts, aligned with the forecast horizons.
+        Required when ``trans_vol`` is provided.
 
     Returns
     -------
@@ -130,6 +142,9 @@ def _ar_forecast(
     arp_rev = arp[::-1]
     for i in range(p, horizon + p):
         fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
+        if trans_vol is not None:
+            assert var_fcasts is not None
+            fcasts[:, i] += kappa * trans_vol(var_fcasts[:, i - p])
         if x.shape[0] > 0:
             fcasts[:, i] += x[:, :, i - p].T @ exogp
     fcasts = cast("Float64Array2D", fcasts[:, p:])
@@ -1741,8 +1756,146 @@ class ARCHInMean(ARX):
         reindex: bool | None = None,
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
-        raise NotImplementedError(
-            "forecasts are not implemented for (G)ARCH-in-mean models"
+        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1.")
+        # Check start
+        earliest, default_start = self._fit_indices
+        default_start = max(0, default_start - 1)
+        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        if start_index < (earliest - 1):
+            raise ValueError(
+                "Due to backcasting and/or data availability start cannot be less "
+                "than the index of the largest value in the right-hand-side "
+                "variables used to fit the first observation.  In this model, "
+                f"this value is {max(0, earliest - 1)}."
+            )
+        # Parse params
+        params = to_array_1d(params)
+        mp, vp, dp = self._parse_parameters(params)
+
+        #####################################
+        # Compute residual variance forecasts
+        #####################################
+        # Back cast should use only the sample used in fitting
+        resids = self.resids(mp)
+        backcast = self._volatility.backcast(resids)
+        full_resids = to_array_1d(
+            self.resids(
+                mp,
+                cast("Float64Array1D", self._y[earliest:]),
+                cast("Float64Array2D", self.regressors[earliest:]),
+            )
+        )
+        vb = self._volatility.variance_bounds(full_resids, 2.0)
+        if rng is None:
+            rng = self._distribution.simulate(dp)
+        variance_start = max(0, start_index - earliest)
+        vfcast = self._volatility.forecast(
+            vp,
+            full_resids,
+            backcast,
+            vb,
+            start=variance_start,
+            horizon=horizon,
+            method=method,
+            simulations=simulations,
+            rng=rng,
+            random_state=random_state,
+        )
+        var_fcasts = vfcast.forecasts
+        assert var_fcasts is not None
+        if start_index < earliest:
+            # Pad if asking for variance forecast before earliest available
+            var_fcasts = _forecast_pad(earliest - start_index, var_fcasts)
+
+        arp = self._har_to_ar(mp)
+        nexog = 0 if self._x is None else self._x.shape[1]
+        exog_p = np.empty([]) if self._x is None else mp[-nexog - 1 : -1]
+        constant = arp[0] if self.constant else 0.0
+        dynp = arp[int(self.constant) :]
+        kappa = mp[-1]
+        expected_x = self._reformat_forecast_x(x, horizon, start_index)
+
+        def trans_vol(sigma2: Float64Array) -> Float64Array:
+            if self._form_id == 0:
+                return np.log(sigma2)
+            return sigma2 ** (self._form_power / 2.0)
+
+        mean_fcast = _ar_forecast(
+            self._y,
+            horizon,
+            start_index,
+            constant,
+            dynp,
+            expected_x,
+            exog_p,
+            kappa=kappa,
+            trans_vol=trans_vol,
+            var_fcasts=var_fcasts,
+        )
+        # Compute total variance forecasts, which depend on model
+        impulse = _ar_to_impulse(horizon, dynp)
+        longrun_var_fcasts = var_fcasts.copy()
+        for i in range(horizon):
+            lrf = var_fcasts[:, : (i + 1)].dot(impulse[i::-1] ** 2)
+            longrun_var_fcasts[:, i] = lrf
+        variance_paths: Float64Array | None = None
+        mean_paths: Float64Array | None = None
+        shocks: Float64Array | None = None
+        long_run_variance_paths: Float64Array | None = None
+        if method.lower() in ("simulation", "bootstrap"):
+            assert isinstance(vfcast.forecast_paths, np.ndarray)
+            variance_paths = vfcast.forecast_paths
+            assert isinstance(vfcast.shocks, np.ndarray)
+            shocks = vfcast.shocks
+            if start_index < earliest:
+                # Pad if asking for variance forecast before earliest available
+                variance_paths = _forecast_pad(earliest - start_index, variance_paths)
+                shocks = _forecast_pad(earliest - start_index, shocks)
+
+            long_run_variance_paths = variance_paths.copy()
+            for i in range(horizon):
+                _impulses = impulse[i::-1][:, None]
+                lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses**2)
+                lrvp = lrvp[:, :, 0]
+                long_run_variance_paths[:, :, i] = lrvp
+            t, m = self._y.shape[0], self._max_lags
+            mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
+            dynp_rev = dynp[::-1]
+            for i in range(start_index, t):
+                path_loc = i - start_index
+                mean_paths[path_loc, :, :m] = self._y[i - m + 1 : i + 1]
+
+                for j in range(horizon):
+                    mean_paths[path_loc, :, m + j] = (
+                        constant
+                        + mean_paths[path_loc, :, j : m + j].dot(dynp_rev)
+                        + shocks[path_loc, :, j]
+                    )
+                    mean_paths[path_loc, :, m + j] += kappa * trans_vol(
+                        variance_paths[path_loc, :, j]
+                    )
+                    if expected_x.shape[0] > 0:
+                        mean_paths[path_loc, :, m + j] += (
+                            expected_x[:, path_loc, j].T @ exog_p
+                        )
+
+            mean_paths = mean_paths[:, :, m:]
+
+        index = self._y_series.index
+        reindex = True if reindex is None else reindex
+        return ARCHModelForecast(
+            index,
+            start_index,
+            mean_fcast,
+            longrun_var_fcasts,
+            var_fcasts,
+            align=align,
+            simulated_paths=mean_paths,
+            simulated_residuals=shocks,
+            simulated_variances=long_run_variance_paths,
+            simulated_residual_variances=variance_paths,
+            reindex=reindex,
         )
 
     def resids(
