@@ -358,7 +358,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Normal"
@@ -439,7 +439,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: float | Sequence[float] | ArrayLike1D,
         parameters: Sequence[float] | ArrayLike1D | None = None,
-    ) -> Float64Array:
+    ) -> float | Float64Array:
         self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -449,7 +449,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             _pits = asarray(pits, dtype=float)
         ppf = stats.norm.ppf(_pits)
         if scalar:
-            return ppf[0]
+            return float(ppf[0])
         else:
             return ppf
 
@@ -495,7 +495,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Standardized Student's t"
@@ -726,7 +726,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Standardized Skew Student's t"
@@ -928,7 +928,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         resids: Sequence[float] | ArrayLike1D,
         parameters: Sequence[float] | ArrayLike1D | None = None,
-    ) -> Float64Array:
+    ) -> float | Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
         _resids = ensure1d(resids, "resids").astype(float)
@@ -944,7 +944,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         p = (1 - lam) * tcdf(y1) * (_resids < (-a / b))
         p += (_resids >= (-a / b)) * ((1 - lam) / 2 + (1 + lam) * (tcdf(y2) - 0.5))
         if scalar:
-            p = p[0]
+            p = float(p[0])
         return p
 
     def ppf(
@@ -1077,7 +1077,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Generalized Error Distribution"
