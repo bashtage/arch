@@ -65,7 +65,7 @@ def adf_simulation(
     n: int,
     trend: UnitRootTrend,
     b: int,
-    rng: None | RandomState | Generator = None,
+    rng: RandomState | Generator | None = None,
 ) -> float:
     """
     Simulates the empirical distribution of the ADF z-test statistic

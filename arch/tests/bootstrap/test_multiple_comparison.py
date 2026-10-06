@@ -300,6 +300,18 @@ class TestStepM:
         stepm.compute()
         assert_equal(len(stepm.superior_models), self.models.shape[1])
 
+    def test_all_superior_multiple_rounds(self):
+        adj_models = self.models - self.models.mean(0) - 2.0
+        adj_models /= linspace(1.0, 1000.0, self.k)
+        adj_models += self.benchmark[:, None]
+        stepm = StepM(
+            self.benchmark, adj_models, reps=200, studentize=False, seed=23456
+        )
+        stepm.spa.compute()
+        assert 0 < len(stepm.spa.better_models()) < self.k
+        stepm.compute()
+        assert_equal(len(stepm.superior_models), self.models.shape[1])
+
     def test_errors(self):
         stepm = StepM(self.benchmark, self.models, size=0.10)
         with pytest.raises(RuntimeError):

@@ -222,7 +222,10 @@ class TestVarianceForecasts:
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
         expected = params[0] + params[1] * self.resid**2
-        expected.shape = (1000, 1)
+        try:
+            expected = np.reshape(expected, (1000, 1), copy=False)
+        except TypeError:
+            expected = np.reshape(expected, (1000, 1))
         assert_allclose(forecast.forecasts, expected)
 
         forecast = vol.forecast(
