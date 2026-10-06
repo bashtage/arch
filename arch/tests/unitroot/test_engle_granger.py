@@ -43,19 +43,20 @@ NULL_TEST_VALUES = {
 
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 @pytest.mark.parametrize("method", ["aic", "bic"])
-def test_bivariate_eg_null(data, trend, method):
+@pytest.mark.parametrize("low_memory", [None, True, False])
+def test_bivariate_eg_null(data, trend, method, low_memory):
     if isinstance(data, pd.DataFrame):
         y, x = data.y, data.x
     else:
         x = data[:, 0]
         y = data[:, 1]
-    test_yx = engle_granger(y, x, trend=trend, method=method)
+    test_yx = engle_granger(y, x, trend=trend, method=method, low_memory=low_memory)
     key = (trend, "y")
     assert_allclose(test_yx.stat, NULL_TEST_VALUES[key][0], rtol=1e-4)
     assert_allclose(test_yx.rho, 1 + NULL_TEST_VALUES[key][2], rtol=1e-4)
     assert_allclose(test_yx.pvalue, NULL_TEST_VALUES[key][1], rtol=1e-2)
 
-    test_xy = engle_granger(x, y, trend=trend, method=method)
+    test_xy = engle_granger(x, y, trend=trend, method=method, low_memory=low_memory)
     key = (trend, "x")
     assert_allclose(test_xy.stat, NULL_TEST_VALUES[key][0], rtol=1e-4)
     assert_allclose(test_xy.rho, 1 + NULL_TEST_VALUES[key][2], rtol=1e-4)
