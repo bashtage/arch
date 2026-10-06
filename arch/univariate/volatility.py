@@ -2514,7 +2514,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             for k in range(kmax):
-                temp_paths[k, :, 0] = component_one_step[i, k]
+                temp_paths[k, :, 0] = component_one_step[i + 1, k]
             path_loc = i - start
             paths[path_loc, :, 0] = w.dot(temp_paths[:, :, 0])
             shocks[path_loc, :, 0] = std_shocks[:, 0] * np.sqrt(paths[path_loc, :, 0])
