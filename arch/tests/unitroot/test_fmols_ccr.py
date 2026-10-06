@@ -347,3 +347,19 @@ def test_ccr_eviews(trivariate_data, test_key):
     assert_allclose(res.long_run_variance, test_res.long_run, rtol=1e-3)
 
     assert isinstance(res.summary(), Summary)
+
+
+@pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
+@pytest.mark.parametrize(
+    "kernel", ["quadratic-spectral", "Quadratic_Spectral", "Tukey-Hanning"]
+)
+def test_kernel_name_normalization(trivariate_data, estimator, kernel):
+    y, x = trivariate_data
+    mod = estimator(y, x)
+    res = mod.fit(kernel=kernel)
+    canonical = kernel.replace("-", "").replace("_", "").lower()
+    expected = mod.fit(kernel=canonical)
+    assert_allclose(res.params, expected.params)
+    assert_allclose(res.std_errors, expected.std_errors)
+    assert res.kernel == expected.kernel
+    assert isinstance(res.summary(), Summary)
