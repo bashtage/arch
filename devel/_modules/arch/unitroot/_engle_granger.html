@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._engle_granger - arch v8.0.1 (+54)</title>
+        <title>arch.unitroot._engle_granger - arch v8.0.1 (+56)</title>
       
     
 
@@ -49,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+54)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+54)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+56)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+56)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+54)
+            arch v8.0.1 (+56)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+54)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+54)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+56)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+56)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+54)
+    arch v8.0.1 (+56)
   </label>
   
     <div class="md-nav__source">
@@ -491,6 +491,7 @@
     <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"t-stat"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"bic"</span><span class="p">,</span>
+    <span class="n">low_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"EngleGrangerTestResults"</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Test for cointegration within a set of time series.</span>
@@ -517,6 +518,11 @@
 <span class="sd">    method: {"aic", "bic", "tstat"}, default "bic"</span>
 <span class="sd">        The method used to select the number of lags included in the</span>
 <span class="sd">        Augmented Dickey-Fuller regression.</span>
+<span class="sd">    low_memory : bool, default None</span>
+<span class="sd">        Flag indicating whether to use the low memory implementation of the</span>
+<span class="sd">        lag selection algorithm in the Augmented Dickey-Fuller regression.</span>
+<span class="sd">        If None, the algorithm is selected automatically. See</span>
+<span class="sd">        :class:`arch.unitroot.ADF`.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -555,7 +561,14 @@
     <span class="n">xsection</span> <span class="o">=</span> <span class="n">_cross_section</span><span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">setup</span><span class="o">.</span><span class="n">trend</span><span class="p">)</span>
     <span class="n">resid</span> <span class="o">=</span> <span class="n">xsection</span><span class="o">.</span><span class="n">resid</span>
     <span class="c1"># Never pass in the trend here since only used in x-section</span>
-    <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="n">max_lags</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+    <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span>
+        <span class="n">resid</span><span class="p">,</span>
+        <span class="n">lags</span><span class="p">,</span>
+        <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span>
+        <span class="n">max_lags</span><span class="o">=</span><span class="n">max_lags</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+        <span class="n">low_memory</span><span class="o">=</span><span class="n">low_memory</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">stat</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="n">stat</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">resid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">adf</span><span class="o">.</span><span class="n">lags</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">num_x</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
