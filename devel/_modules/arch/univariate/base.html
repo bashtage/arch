@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+76)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+89)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+76)
+            arch v8.0.1 (+89)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+76)
+    arch v8.0.1 (+89)
   </label>
   
     <div class="md-nav__source">
@@ -491,6 +491,11 @@
     <span class="n">ForecastingMethod</span><span class="p">,</span>
     <span class="n">Label</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.diagnostics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">excess_kurtosis</span> <span class="k">as</span> <span class="n">_excess_kurtosis</span><span class="p">,</span>
+    <span class="n">hill_estimator</span> <span class="k">as</span> <span class="n">_hill_estimator</span><span class="p">,</span>
+    <span class="n">var_ratio</span> <span class="k">as</span> <span class="n">_var_ratio</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
@@ -1894,6 +1899,58 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">std_res</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
             <span class="n">std_res</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"std_resid"</span>
         <span class="k">return</span> <span class="n">std_res</span></div>
+
+
+<div class="viewcode-block" id="ARCHModelFixedResult.excess_kurtosis">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.excess_kurtosis.html#arch.univariate.base.ARCHModelFixedResult.excess_kurtosis">[docs]</a>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">excess_kurtosis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Sample excess kurtosis of standardized residuals</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">_excess_kurtosis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std_resid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ARCHModelFixedResult.hill_estimator">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hill_estimator.html#arch.univariate.base.ARCHModelFixedResult.hill_estimator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hill_estimator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Hill tail-index estimator of standardized residuals</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : int, optional</span>
+<span class="sd">            Number of upper order statistics to use. If not provided, uses</span>
+<span class="sd">            ``int(sqrt(n))`` where ``n`` is the number of finite standardized</span>
+<span class="sd">            residuals.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Inverse Hill estimate of the tail index.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">_hill_estimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ARCHModelFixedResult.var_ratio">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.var_ratio.html#arch.univariate.base.ARCHModelFixedResult.var_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">var_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Ratio of Gaussian VaR to model-distribution VaR</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        level : float, optional</span>
+<span class="sd">            VaR confidence level. Must be between 0.5 and 1.0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Ratio of the Gaussian left-tail VaR to the VaR implied by the</span>
+<span class="sd">            fitted model distribution.</span>
+<span class="sd">        """</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_var_ratio</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">dp</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ARCHModelFixedResult.plot">

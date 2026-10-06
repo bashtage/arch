@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelFixedResult.var\_ratio
+====================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelFixedResult.var_ratio

@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+76)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+89)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+76)
+            arch v8.0.1 (+89)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+76)
+    arch v8.0.1 (+89)
   </label>
   
     <div class="md-nav__source">
@@ -1558,6 +1558,7 @@
 <span class="sd">        CointegrationAnalysisResults</span>
 <span class="sd">            The estimation results instance.</span>
 <span class="sd">        """</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">_check_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
         <span class="n">cov_est</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_fit</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
         <span class="n">lmbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">one_sided</span><span class="p">)</span>
@@ -1639,6 +1640,7 @@
         <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CointegrationAnalysisResults</span><span class="p">:</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">_check_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
         <span class="n">cov_est</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_fit</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
         <span class="n">lmbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">one_sided</span><span class="p">)</span>
@@ -1664,7 +1666,7 @@
         <span class="n">omega_11</span> <span class="o">=</span> <span class="n">omega</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">nobs</span><span class="p">,</span> <span class="n">nvar</span> <span class="o">=</span> <span class="n">z_star</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">df_adjust</span> <span class="k">else</span> <span class="n">nobs</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">nvar</span><span class="p">)</span>
-        <span class="n">omega_112</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">omega_11</span> <span class="o">-</span> <span class="n">omega_12</span> <span class="o">@</span> <span class="n">omega_22_inv</span> <span class="o">@</span> <span class="n">omega_12</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">omega_112</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">omega_11</span> <span class="o">-</span> <span class="n">omega_12</span> <span class="o">@</span> <span class="n">omega_22_inv</span> <span class="o">@</span> <span class="n">omega_12</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">param_cov</span> <span class="o">=</span> <span class="n">omega_112</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">z_star</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">z_star</span><span class="p">)</span>
         <span class="n">with_trend</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">with_trend</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
@@ -1686,7 +1688,7 @@
             <span class="n">df_adjust</span><span class="p">,</span>
             <span class="n">r2</span><span class="p">,</span>
             <span class="n">r2_adj</span><span class="p">,</span>
-            <span class="s2">"Fully Modified OLS"</span><span class="p">,</span>
+            <span class="s2">"Canonical Cointegrating Regression"</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

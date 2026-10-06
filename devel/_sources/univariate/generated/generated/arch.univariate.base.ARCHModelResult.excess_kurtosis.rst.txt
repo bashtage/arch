@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.excess\_kurtosis
+=====================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.excess_kurtosis

@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+76)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+89)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+76)
+            arch v8.0.1 (+89)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+76)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+76)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+89)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+89)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+76)
+    arch v8.0.1 (+89)
   </label>
   
     <div class="md-nav__source">
@@ -1130,9 +1130,9 @@
         <span class="k">assert</span> <span class="n">simulated_vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
         <span class="n">max_simulated_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">simulated_vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">loss_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">]</span>
+        <span class="n">loss_diff_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_mean</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">]</span>
 
-        <span class="n">max_loss_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">max_loss_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">loss_diff_mean</span><span class="p">)</span>
         <span class="n">pvalues</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_simulated_vals</span> <span class="o">&gt;</span> <span class="n">max_loss_diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"lower"</span><span class="p">:</span> <span class="n">pvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -1160,7 +1160,18 @@
             <span class="n">loss_diff_star</span> <span class="o">=</span> <span class="n">pos_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">means</span><span class="p">):</span>
                 <span class="n">simulated_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_diff_star</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Standard errors of the mean loss differentials if studentizing"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">std_err</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_studentized_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Mean loss differentials, studentized if required"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1237,7 +1248,8 @@
 <span class="sd">        -------</span>
 <span class="sd">        crit_vals : Series</span>
 <span class="sd">            Series containing critical values for the lower, consistent and</span>
-<span class="sd">            upper methodologies</span>
+<span class="sd">            upper methodologies. When studentize is True, the critical values</span>
+<span class="sd">            apply to the studentized mean loss differentials.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_compute</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">pvalue</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
@@ -1284,7 +1296,7 @@
         <span class="k">if</span> <span class="n">pvalue_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown pvalue type"</span><span class="p">)</span>
         <span class="n">crit_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="p">(</span><span class="n">pvalue</span><span class="o">=</span><span class="n">pvalue</span><span class="p">)[</span><span class="n">pvalue_type</span><span class="p">]</span>
-        <span class="n">better_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit_val</span>
+        <span class="n">better_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">crit_val</span>
         <span class="n">better_models</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">better_models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">better_models</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
 
