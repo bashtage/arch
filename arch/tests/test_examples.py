@@ -18,10 +18,15 @@ try:
     kernels = jupyter_client.kernelspec.find_kernel_specs()
     SKIP = False
 
-    if sys.platform.startswith("win") and sys.version_info >= (
-        3,
-        8,
-    ) and sys.version_info < (3, 14):  # pragma: no cover
+    if (
+        sys.platform.startswith("win")
+        and sys.version_info
+        >= (
+            3,
+            8,
+        )
+        and sys.version_info < (3, 14)
+    ):  # pragma: no cover
         import asyncio
 
         try:
