@@ -21,7 +21,7 @@ try:
     if sys.platform.startswith("win") and sys.version_info >= (
         3,
         8,
-    ):  # pragma: no cover
+    ) and sys.version_info < (3, 14):  # pragma: no cover
         import asyncio
 
         try:
