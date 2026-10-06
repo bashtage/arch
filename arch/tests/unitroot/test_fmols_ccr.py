@@ -373,3 +373,18 @@ def test_ccr_summary_title(trivariate_data):
     y, x = trivariate_data
     res = CanonicalCointegratingReg(y, x).fit()
     assert "Canonical Cointegrating Regression" in str(res.summary())
+
+
+@pytest.mark.parametrize(
+    "kernel", ["quadratic-spectral", "Quadratic_Spectral", "Tukey-Hanning"]
+)
+def test_kernel_name_normalization(trivariate_data, estimator, kernel):
+    y, x = trivariate_data
+    mod = estimator(y, x)
+    res = mod.fit(kernel=kernel)
+    canonical = kernel.replace("-", "").replace("_", "").lower()
+    expected = mod.fit(kernel=canonical)
+    assert_allclose(res.params, expected.params)
+    assert_allclose(res.std_errors, expected.std_errors)
+    assert res.kernel == expected.kernel
+    assert isinstance(res.summary(), Summary)

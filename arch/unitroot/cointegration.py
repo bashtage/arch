@@ -1080,6 +1080,7 @@ class FullyModifiedOLS:
         CointegrationAnalysisResults
             The estimation results instance.
         """
+        kernel = _check_kernel(kernel)
         cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1155,6 +1156,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         diff: bool = False,
         df_adjust: bool = False,
     ) -> CointegrationAnalysisResults:
+        kernel = _check_kernel(kernel)
         cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)

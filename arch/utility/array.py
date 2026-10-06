@@ -290,7 +290,7 @@ def date_to_index(
     return int(loc)
 
 
-def cutoff_to_index(cutoff: None | int | DateLike, index: Index, default: int) -> int:
+def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -> int:
     """
     Converts a cutoff to a numerical index
 
