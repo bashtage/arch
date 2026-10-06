@@ -1,6 +1,7 @@
 import types
 
 from arch.univariate import recursions_python
+from arch.univariate.diagnostics import excess_kurtosis, hill_estimator, var_ratio
 from arch.univariate.distribution import (
     Distribution,
     GeneralizedError,
@@ -61,6 +62,9 @@ __all__ = [
     "StudentsT",
     "ZeroMean",
     "arch_model",
+    "excess_kurtosis",
+    "hill_estimator",
     "recursions",
     "recursions_python",
+    "var_ratio",
 ]

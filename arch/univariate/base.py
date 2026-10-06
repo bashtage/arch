@@ -33,6 +33,11 @@ from arch._typing import (
     Label,
     Literal,
 )
+from arch.univariate.diagnostics import (
+    excess_kurtosis as _excess_kurtosis,
+    hill_estimator as _hill_estimator,
+    var_ratio as _var_ratio,
+)
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import ensure1d, to_array_1d
@@ -1365,6 +1370,49 @@ class ARCHModelFixedResult(_SummaryRepr):
         if isinstance(std_res, pd.Series):
             std_res.name = "std_resid"
         return std_res
+
+    @cached_property
+    def excess_kurtosis(self) -> float:
+        """
+        Sample excess kurtosis of standardized residuals
+        """
+        return _excess_kurtosis(self.std_resid)
+
+    def hill_estimator(self, k: int | None = None) -> float:
+        """
+        Hill tail-index estimator of standardized residuals
+
+        Parameters
+        ----------
+        k : int, optional
+            Number of upper order statistics to use. If not provided, uses
+            ``int(sqrt(n))`` where ``n`` is the number of finite standardized
+            residuals.
+
+        Returns
+        -------
+        float
+            Inverse Hill estimate of the tail index.
+        """
+        return _hill_estimator(self.std_resid, k)
+
+    def var_ratio(self, level: float = 0.999) -> float:
+        """
+        Ratio of Gaussian VaR to model-distribution VaR
+
+        Parameters
+        ----------
+        level : float, optional
+            VaR confidence level. Must be between 0.5 and 1.0.
+
+        Returns
+        -------
+        float
+            Ratio of the Gaussian left-tail VaR to the VaR implied by the
+            fitted model distribution.
+        """
+        _, _, dp = self.model._parse_parameters(self._params)
+        return _var_ratio(level, distribution=self.model.distribution, parameters=dp)
 
     def plot(
         self, annualize: str | None = None, scale: float | None = None
