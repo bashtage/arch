@@ -289,7 +289,11 @@ ignore = [
   "UP",
   "FURB",
   "N",
-  "DTZ"
+  "DTZ",
+  # Missing copyright
+  "CPY001",
+  # Too many positional arguments
+  "PLR0917",
 ]
 
 [tool.ruff.lint.per-file-ignores]
