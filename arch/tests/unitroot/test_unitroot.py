@@ -432,8 +432,22 @@ def test_representations(trend):
 def test_unknown_method():
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.standard_normal(250))
-    with pytest.raises(ValueError, match=r"Unknown method"):
+    with pytest.raises(ValueError, match=r"method must be one"):
         assert np.isfinite(ADF(y, method="unknown").stat)
+    with pytest.raises(TypeError, match=r"method must be a string"):
+        assert np.isfinite(ADF(y, method=1).stat)
+
+
+@pytest.mark.parametrize("method", ["aic", "AIC", "BIC", "bic", "t-stat", "tstat", "t"])
+def test_acceptable_method(method):
+    rnd = np.random.RandomState(12345)
+    y = np.cumsum(rnd.standard_normal(250))
+    used_method = ADF(y, method=method)._method
+    if method in ("t-stat", "t", "tstat"):
+        expected_method = "t-stat"
+    else:
+        expected_method = method.lower()
+    assert used_method == expected_method
 
 
 def test_auto_low_memory():
@@ -593,12 +607,13 @@ def test_zivot_andrews(series_name):
     # Test results from package urca.ur.za (1.13-0)
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
     result = series[series_name]
+    kwargs = {"method": result.method} if result.method is not None else {}
     za = ZivotAndrews(
         y,
         lags=result.lags,
         trend=result.trend,
         max_lags=result.max_lags,
-        method=result.method,
+        **kwargs,
     )
     assert_almost_equal(za.stat, result.stat, decimal=3)
     assert_almost_equal(za.pvalue, result.pvalue, decimal=3)

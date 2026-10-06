@@ -18,7 +18,7 @@ input_data = defaultdict(list)
 for f in files:
     contents = np.load(f)
     temp = contents["quantiles"]
-    temp.shape = temp.shape + (1,)
+    temp = np.reshape(temp, temp.shape + (1,), copy=False)
     input_data[contents["trend"][0]].append(temp)
     sample_sizes = contents["sample_sizes"]
 
