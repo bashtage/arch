@@ -187,8 +187,6 @@ def _select_best_ic(
         large_tstat = abs(tstat) >= stop
         lag = int(squeeze(argwhere(large_tstat)).max())
         icbest = float(tstat[lag])
-    else:
-        raise ValueError("Unknown method")
 
     return icbest, lag
 
@@ -341,10 +339,10 @@ def _autolag_ols(
     exog_singular, exog_rank = _is_reduced_rank(exog)
     if exog_singular:
         if exog_rank is None:
-            exog_rank = matrix_rank(exog)
+            exog_rank = int(matrix_rank(exog))
         raise InfeasibleTestException(
             singular_array_error.format(
-                max_lags=maxlag, lag=max(exog_rank - startlag, 0)
+                max_lags=maxlag, lag=max(int(exog_rank) - startlag, 0)
             )
         )
     _exog = np.asarray(exog, dtype=float)
@@ -548,6 +546,16 @@ class UnitRootTest(metaclass=ABCMeta):
             self._check_specification()
             self._compute_statistic()
 
+    def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat"]:
+        if not isinstance(method, str):
+            raise TypeError("method must be a string")
+        method = method.lower()
+        if method in ("t", "tstat", "t-stat"):
+            return "t-stat"
+        elif method not in ("aic", "bic"):
+            raise ValueError("method must be one of 'aic', 'bic' or 't-stat'")
+        return cast("Literal['aic', 'bic', 't-stat']", method)
+
     @property
     def null_hypothesis(self) -> str:
         """The null hypothesis"""
@@ -683,11 +691,11 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {"AIC", "BIC", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat"}, optional
         The method to use when selecting the lag length
 
-        - "AIC" - Select the minimum of the Akaike IC
-        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "aic" - Select the minimum of the Akaike IC
+        - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
 
     low_memory : bool
@@ -763,7 +771,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         valid_trends = ("n", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
-        self._method = method
+        self._method = self._clean_method(method)
         self._test_name = "Augmented Dickey-Fuller"
         self._regression = None
         self._low_memory = bool(low_memory)
@@ -798,7 +806,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         y, trend, lags = self._y, self._trend, self._lags
         resols = _estimate_df_regression(y, cast("UnitRootTrend", trend), lags)
         self._regression = resols
-        (self._stat, *_) = (stat, *_) = resols.tvalues
+        self._stat, *_ = (stat, *_) = resols.tvalues
         self._nobs = int(resols.nobs)
         self._pvalue = mackinnonp(
             stat,
@@ -851,11 +859,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The maximum number of lags to use when selecting lag length. When using
         automatic lag length selection, the lag is selected using OLS
         detrending rather than GLS detrending ([pq]_).
-    method : {"AIC", "BIC", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat"}, optional
         The method to use when selecting the lag length
 
-        - "AIC" - Select the minimum of the Akaike IC
-        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "aic" - Select the minimum of the Akaike IC
+        - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
 
     Notes
@@ -912,7 +920,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
-        self._method = method
+        self._method = self._clean_method(method)
         self._regression = None
         self._low_memory = low_memory
         if low_memory is None:
@@ -960,7 +968,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             _, bestlag = _df_select_lags(
                 y_ols_detrend, "n", max_lags, method, low_memory=self._low_memory
             )
-            self._lags = bestlag
+            self._lags = int(bestlag)
 
         # 3. Run Regression
         lags = self._lags
@@ -1403,11 +1411,11 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         calculation in range [0, 0.333] (default=0.15)
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {"AIC", "BIC", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat"}, optional
         The method to use when selecting the lag length
 
-        - "AIC" - Select the minimum of the Akaike IC
-        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "aic" - Select the minimum of the Akaike IC
+        - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
 
     Notes
@@ -1457,7 +1465,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             raise ValueError("trim must be a float in range [0, 1/3]")
         self._trim = trim
         self._max_lags = max_lags
-        self._method = method
+        self._method = self._clean_method(method)
+
         self._test_name = "Zivot-Andrews"
         self._all_stats = full(self._y.shape[0], nan)
         self._null_hypothesis = (
@@ -1845,7 +1854,7 @@ def mackinnonp(
             stat = float(log(abs(stat)))  # Transform stat for small p ADF-z
     else:
         poly_coef = large_p
-    return norm.cdf(polyval(poly_coef[::-1], stat))
+    return float(norm.cdf(polyval(poly_coef[::-1], stat)))
 
 
 def mackinnoncrit(

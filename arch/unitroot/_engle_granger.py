@@ -30,6 +30,7 @@ def engle_granger(
     lags: int | None = None,
     max_lags: int | None = None,
     method: Literal["aic", "bic", "t-stat"] = "bic",
+    low_memory: bool | None = None,
 ) -> "EngleGrangerTestResults":
     r"""
     Test for cointegration within a set of time series.
@@ -56,6 +57,11 @@ def engle_granger(
     method: {"aic", "bic", "tstat"}, default "bic"
         The method used to select the number of lags included in the
         Augmented Dickey-Fuller regression.
+    low_memory : bool, default None
+        Flag indicating whether to use the low memory implementation of the
+        lag selection algorithm in the Augmented Dickey-Fuller regression.
+        If None, the algorithm is selected automatically. See
+        :class:`arch.unitroot.ADF`.
 
     Returns
     -------
@@ -94,14 +100,21 @@ def engle_granger(
     xsection = _cross_section(setup.y, setup.x, setup.trend)
     resid = xsection.resid
     # Never pass in the trend here since only used in x-section
-    adf = ADF(resid, lags, trend="n", max_lags=max_lags, method=method)
+    adf = ADF(
+        resid,
+        lags,
+        trend="n",
+        max_lags=max_lags,
+        method=method,
+        low_memory=low_memory,
+    )
     stat = adf.stat
     nobs = resid.shape[0] - adf.lags - 1
     num_x = setup.x.shape[1]
     cv = engle_granger_cv(trend, num_x, nobs)
     pv = engle_granger_pval(stat, trend, num_x)
     return EngleGrangerTestResults(
-        stat, pv, cv, order=num_x, adf=adf, xsection=xsection
+        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=trend
     )
 
 
