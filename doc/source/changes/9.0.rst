@@ -4,9 +4,17 @@ Version 9
 
 Release 9.0 (Unreleased)
 ========================
-- :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` now studentize
-  inside each bootstrap replication when ``studentize=True`` (the default). The
-  standard errors use a kernel long-run variance estimator that matches the
-  bootstrap, so the variances for the circular and moving block bootstraps no
-  longer use the stationary bootstrap kernel. Results differ from previous
-  versions.
+- Fixed :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` so that
+  ``studentize=True`` (the default) studentizes the loss differentials. In
+  previous versions the option had no effect on the results. The loss
+  differentials are now studentized in the original data and inside each
+  bootstrap replication, using the standard error from a kernel long-run
+  variance estimator that matches the bootstrap. P-values, critical values and
+  the superior models differ from previous versions when using the default
+  arguments.
+- The long-run variances in :class:`~arch.bootstrap.SPA` and
+  :class:`~arch.bootstrap.StepM`, which are used to select the models that are
+  re-centered when computing the consistent p-value, now use the kernel that
+  matches the bootstrap. Previously they always used the stationary bootstrap
+  kernel, so the consistent p-value can also change with ``studentize=False``
+  when using the circular or moving block bootstraps.
