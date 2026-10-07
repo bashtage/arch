@@ -9,12 +9,18 @@ Release 9.0 (Unreleased)
   previous versions the option had no effect on the results. The loss
   differentials are now studentized in the original data and inside each
   bootstrap replication, using the standard error from a kernel long-run
-  variance estimator that matches the bootstrap. P-values, critical values and
-  the superior models differ from previous versions when using the default
-  arguments.
-- The long-run variances in :class:`~arch.bootstrap.SPA` and
-  :class:`~arch.bootstrap.StepM`, which are used to select the models that are
-  re-centered when computing the consistent p-value, now use the kernel that
-  matches the bootstrap. Previously they always used the stationary bootstrap
-  kernel, so the consistent p-value can also change with ``studentize=False``
-  when using the circular or moving block bootstraps.
+  variance estimator that matches the bootstrap, or from a nested bootstrap
+  if ``nested=True``. P-values, critical values and the superior models differ
+  from previous versions when using the default arguments.
+- ``nested=True`` in :class:`~arch.bootstrap.SPA` and
+  :class:`~arch.bootstrap.StepM` now computes the variances used to studentize
+  in every bootstrap replication using a nested bootstrap, and not only in the
+  original data, and never uses the kernel estimator. ``nested=True`` requires
+  ``studentize=True`` and raises a ``ValueError`` otherwise.
+- When ``nested=False``, the long-run variances in
+  :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM`, which are
+  used to select the models that are re-centered when computing the consistent
+  p-value, now use the kernel that matches the bootstrap. Previously they
+  always used the stationary bootstrap kernel, so the consistent p-value can
+  also change with ``studentize=False`` when using the circular or moving
+  block bootstraps.
