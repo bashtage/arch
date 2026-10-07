@@ -4,7 +4,7 @@ import datetime as dt
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
-from pandas import DataFrame, Series, Timedelta, date_range
+from pandas import DataFrame, Series, Timedelta, Timestamp, date_range
 import pytest
 
 from arch import doc
@@ -179,6 +179,15 @@ def test_date_to_index():
     date_index = date_range("20000101", periods=3000, freq="W", tz="Europe/Berlin")
     index = date_to_index(date_index[0], date_index)
     assert_equal(index, 0)
+
+    # A naive Timestamp gives the same result as the equivalent string
+    utc_index = date_range("20000101", periods=3000, freq="W", tz="UTC")
+    index = date_to_index(Timestamp("2009-08-02"), utc_index)
+    assert_equal(index, date_to_index("2009-08-02", utc_index))
+    assert_equal(index, 500)
+    # A Series of dates is accepted for Timestamps as it is for strings
+    index = date_to_index(Timestamp("2009-08-02"), Series(dr))
+    assert_equal(index, 500)
 
 
 def test_date_to_index_timestamp():
