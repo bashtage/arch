@@ -952,10 +952,10 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
         delta_z = z.copy()
         delta_z[1:, :] = delta_z[1:, :] - (1 + ct) * delta_z[:-1, :]
-        delta_y = self._y.copy()[:, None]
+        y = asarray(self._y, dtype=float64)
+        delta_y = y.copy()[:, None]
         delta_y[1:] = delta_y[1:] - (1 + ct) * delta_y[:-1]
         detrend_coef = pinv(delta_z) @ delta_y
-        y = self._y
         y_detrended = y - (z @ detrend_coef).ravel()
 
         # 2. determine lag length, if needed
