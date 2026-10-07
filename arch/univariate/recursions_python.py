@@ -567,6 +567,81 @@ def figarch_recursion_python(
 figarch_recursion = jit(figarch_recursion_python, nopython=True)
 
 
+def fiaparch_recursion_python(
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    abs_resids: Float64Array1D,
+    sigma2: Float64Array1D,
+    sigma_delta: Float64Array1D,
+    p: int,
+    q: int,
+    nobs: int,
+    trunc_lag: int,
+    backcast: float,
+    var_bounds: Float64Array2D,
+    gamma: float,
+    delta: float,
+) -> Float64Array:
+    """
+    Parameters
+    ----------
+    parameters : ndarray
+        Model parameters of the form (omega, phi, d, beta) where omega is the
+        intercept, d is the fractional integration coefficient and phi and beta
+        are parameters of the volatility process.
+    resids : ndarray
+        Residuals to use in the recursion.
+    abs_resids : ndarray
+        Absolute value of residuals.
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    sigma_delta : ndarray
+        Conditional variance to the power delta with same shape as resids
+    p : int
+        0 or 1 to indicate whether the model contains phi
+    q : int
+        0 or 1 to indicate whether the model contains beta
+    nobs : int
+        Length of resids
+    trunc_lag : int
+        Truncation lag for the ARCH approximations
+    backcast : float
+        Value to use when initializing the recursion (in sigma^delta scale)
+    var_bounds : ndarray
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    gamma : float
+        Asymmetry parameter
+    delta : float
+        Power parameter
+
+    Returns
+    -------
+    sigma2 : ndarray
+        Conditional variances
+    """
+    omega = parameters[0]
+    beta = parameters[1 + p + q] if q else 0.0
+    omega_tilde = omega / (1 - beta)
+    lam = figarch_weights(parameters[1:], p, q, trunc_lag)
+    for t in range(nobs):
+        bc_weight = 0.0
+        for i in range(t, trunc_lag):
+            bc_weight += lam[i]
+        sigma_delta[t] = omega_tilde + bc_weight * backcast
+        for i in range(min(t, trunc_lag)):
+            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
+            sigma_delta[t] += lam[i] * (shock**delta)
+        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+
+    return sigma2
+
+
+fiaparch_recursion = jit(fiaparch_recursion_python, nopython=True)
+
+
 def aparch_recursion_python(
     parameters: Float64Array1D,
     resids: Float64Array1D,
@@ -985,6 +1060,106 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         for i in range(min(t, trunc_lag)):
             sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+
+class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
+    def __init__(
+        self,
+        p: int,
+        q: int,
+        o: int,
+        truncation: int,
+        est_delta: bool,
+        delta: float,
+    ) -> None:
+        self.p = p
+        self.q = q
+        self.o = o
+        self.truncation = truncation
+        self.est_delta = est_delta
+        self.delta = delta
+        self.lam = np.empty(0)
+        self.resids = np.empty(0)
+        self.abs_resids = np.empty(0)
+        self.sigma_delta = np.empty(0)
+
+    def __setstate__(self, state: tuple) -> None:
+        self.backcast = state[0]
+        self.delta = state[1]
+        lam = np.asarray(state[2], dtype=np.float64)
+        assert lam.shape[0] == self.truncation
+        self.lam = lam.copy()
+        self.resids = np.asarray(state[3], dtype=np.float64).copy()
+        self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
+        self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
+
+    def __reduce__(self):
+        return (
+            FIAPARCHUpdater,
+            (
+                self.p,
+                self.q,
+                self.o,
+                self.truncation,
+                bool(self.est_delta),
+                float(self.delta),
+            ),
+            (
+                self.backcast,
+                self.delta,
+                np.asarray(self.lam),
+                np.asarray(self.resids),
+                np.asarray(self.abs_resids),
+                np.asarray(self.sigma_delta),
+            ),
+        )
+
+    def initialize_update(
+        self,
+        parameters: Float64Array1D,
+        backcast: float | Float64Array1D,
+        nobs: int,
+    ) -> None:
+        self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
+        self.backcast = backcast
+        if self.resids.shape[0] < nobs:
+            self.resids = np.empty(nobs)
+            self.abs_resids = np.empty(nobs)
+            self.sigma_delta = np.empty(nobs)
+
+    def update(
+        self,
+        t: int,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> None:
+        p = self.p
+        q = self.q
+        o = self.o
+        trunc_lag = self.truncation
+        gamma = parameters[2 + p + q] if o else 0.0
+        delta = parameters[-1] if self.est_delta else self.delta
+
+        omega = parameters[0]
+        beta = parameters[1 + p + q] if q else 0.0
+        omega_tilde = omega / (1 - beta)
+
+        if t > 0:
+            self.resids[t - 1] = resids[t - 1]
+            self.abs_resids[t - 1] = np.abs(resids[t - 1])
+
+        bc_weight = 0.0
+        for i in range(t, trunc_lag):
+            bc_weight += self.lam[i]
+        self.sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        for i in range(min(t, trunc_lag)):
+            shock = self.abs_resids[t - i - 1] - gamma * self.resids[t - i - 1]
+            self.sigma_delta[t] += self.lam[i] * (shock**delta)
+        sigma2[t] = self.sigma_delta[t] ** (2.0 / delta)
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+        self.sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
