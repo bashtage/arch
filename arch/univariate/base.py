@@ -245,27 +245,121 @@ class ARCHModel(metaclass=ABCMeta):
         """The name of the model."""
         return self._name
 
-    def append(self, y: ArrayLike) -> None:
+    def _prepare_append(
+        self, y: ArrayLike | float
+    ) -> tuple[ArrayLike, pd.Series, Float64Array1D]:
         """
-        Append data to the model
+        Validate new observations and construct the extended data
 
         Parameters
         ----------
-        y : ndarray or Series
-            Data to append
+        y : {ndarray, Series, DataFrame, list, float}
+            The new observations. See ``append``.
 
         Returns
         -------
-        ARCHModel
-            Model with data appended
-        """
-        _y = ensure1d(y, "y", series=True)
-        self._y_original = append_same_type(self._y_original, y)
-        self._y_series = pd.concat([self._y_series, _y])
-        self._y = np.concatenate([self._y, np.asarray(_y)])
+        y_original : {ndarray, Series, DataFrame, list}
+            The original data extended with the new observations.
+        y_series : Series
+            The extended data as a Series.
+        y_new : ndarray
+            The new observations, converted to floats and not rescaled.
 
-        self._fit_indices: [0, int(self._y.shape[0])]
+        Notes
+        -----
+        The model is not modified so that a failure leaves it unchanged.
+        """
+        if self._y_original is None:
+            raise RuntimeError("Cannot append to a model created without data.")
+        nobs = self._y.shape[0]
+        y_original = append_same_type(self._y_original, y)
+        y_series = cast("pd.Series", ensure1d(y_original, "y", series=True))
+        y_values = to_array_1d(np.ascontiguousarray(y_series.to_numpy()).astype(float))
+        y_new = to_array_1d(y_values[nobs:])
+        if not np.all(np.isfinite(y_new)):
+            raise ValueError(
+                "NaN or inf values found in y. y must contains only finite values."
+            )
+        if self._is_pandas:
+            index = y_series.index
+            old_index, new_index = index[:nobs], index[nobs:]
+            if new_index.isin(old_index).any():
+                raise ValueError(
+                    "The index of the appended data overlaps the index of the "
+                    "existing data."
+                )
+            if old_index.is_monotonic_increasing and not (
+                index.is_monotonic_increasing
+            ):
+                raise ValueError(
+                    "The index of the existing data is increasing, and so the "
+                    "index of the appended data must be increasing and must come "
+                    "after the last observation in the existing data."
+                )
+        return y_original, y_series, y_new
+
+    def _commit_append(
+        self,
+        y_original: ArrayLike,
+        y_series: pd.Series,
+        y_new: Float64Array1D,
+    ) -> None:
+        """
+        Update the data stored in the model using the output of _prepare_append
+        """
+        self._y_original = y_original
+        self._y_series = y_series
+        # Any rescaling that was applied when fitting must also be applied to new
+        # data so that it is consistent with parameters estimated using the model
+        self._y = to_array_1d(np.concatenate((self._y, self.scale * y_new)))
+
+        # Everything computed using the previous sample is out-of-date
+        self._backcast = None
+        self._var_bounds = None
+        self._fit_indices = [0, int(self._y.shape[0])]
         self._fit_y = self._y
+
+    def append(self, y: ArrayLike | float) -> None:
+        """
+        Append observations to the model in-place
+
+        Parameters
+        ----------
+        y : {ndarray, Series, DataFrame, list, float}
+            The observations to append. Must have the same type as the data
+            used to construct the model. If the model was constructed using a
+            pandas object, then the index of the new data must be increasing
+            and must not overlap the existing data. When the model was
+            constructed using an ndarray or a list, a scalar can be appended
+            to add a single observation.
+
+        Raises
+        ------
+        TypeError
+            If the type of ``y`` differs from the type of the data in the model.
+        ValueError
+            If ``y`` is empty, contains non-finite values or, when using pandas,
+            has an index that does not follow the index of the existing data.
+        RuntimeError
+            If the model was created without data.
+
+        Notes
+        -----
+        Parameters are not re-estimated. Use ``fit`` to re-estimate the model
+        using the extended sample, or ``fix`` or ``forecast`` to use parameters
+        estimated previously. Appending resets the estimation sample to the
+        complete extended sample and clears values that were computed using the
+        previous sample, such as the backcast. Results objects returned before
+        appending are not affected.
+
+        If the data was rescaled when fitting the model, the new data is
+        rescaled using the same factor.
+
+        Subclasses that store data derived from ``y`` must override this method
+        to update these values.
+        """
+        y_original, y_series, y_new = self._prepare_append(y)
+        self._commit_append(y_original, y_series, y_new)
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """

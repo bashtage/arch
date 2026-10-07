@@ -312,24 +312,132 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         self._init_model()
 
-    def append(self, y: ArrayLike, x: ArrayLike2D | None = None) -> None:
-        super().append(y)
-        if x is not None:
-            if self._x is None:
-                raise ValueError("x was not provided in the original model")
-            _x = np.atleast_2d(np.asarray(x))
-            if _x.ndim != 2:
-                raise ValueError("x must be 2-d")
-            elif _x.shape[1] != self._x.shape[1]:
-                raise ValueError(
-                    "x must have the same number of columns as the original x"
-                )
-            self._x_original = append_same_type(self._x_original, x)
-            self._x = np.asarray(self._x_original)
-            if self._x.shape[0] != self._y.shape[0]:
-                raise ValueError("x must have the same number of observations as y")
+    def _prepare_append_x(
+        self, x: ArrayLike | ArrayLike2D | None, nobs_new: int
+    ) -> ArrayLike | ArrayLike2D | None:
+        """
+        Validate new exogenous regressors and construct the extended regressors
 
+        Parameters
+        ----------
+        x : {ndarray, Series, DataFrame, None}
+            The new exogenous regressors.
+        nobs_new : int
+            The number of new observations of y.
+
+        Returns
+        -------
+        {ndarray, Series, DataFrame, None}
+            The original regressors extended with the new regressors. None if the
+            model does not include exogenous regressors.
+
+        Notes
+        -----
+        The model is not modified so that a failure leaves it unchanged.
+        """
+        if self._x_original is None:
+            if x is not None:
+                raise ValueError(
+                    "x was not provided in the original model, and so x cannot be "
+                    "appended."
+                )
+            return None
+        if x is None:
+            raise ValueError(
+                "x must be provided when appending to a model that includes "
+                "exogenous regressors."
+            )
+        x_original = append_same_type(self._x_original, x)
+        nobs_x_new = np.shape(x_original)[0] - np.shape(self._x_original)[0]
+        if nobs_x_new != nobs_new:
+            raise ValueError(
+                "x must have the same number of observations as y. Got "
+                f"{nobs_x_new} new observations of x and {nobs_new} new "
+                "observations of y."
+            )
+        return x_original
+
+    def append(
+        self,
+        y: ArrayLike | float,
+        x: ArrayLike | ArrayLike2D | None = None,
+    ) -> None:
+        """
+        Append observations to the model in-place
+
+        Parameters
+        ----------
+        y : {ndarray, Series, DataFrame, list, float}
+            The observations to append. Must have the same type as the data
+            used to construct the model. If the model was constructed using a
+            pandas object, then the index of the new data must be increasing
+            and must not overlap the existing data. When the model was
+            constructed using an ndarray or a list, a scalar can be appended
+            to add a single observation.
+        x : {ndarray, Series, DataFrame}, optional
+            The values of the exogenous regressors for the new observations.
+            Must be provided if, and only if, the model includes exogenous
+            regressors, must have the same type and number of columns as the
+            exogenous regressors used to construct the model, and must have the
+            same number of observations as ``y``. When the exogenous
+            regressors are stored in an ndarray, a 1-d array with one value
+            for each regressor is treated as a single observation.
+
+        Raises
+        ------
+        TypeError
+            If the type of ``y`` or ``x`` differs from the type of the data in
+            the model.
+        ValueError
+            If ``y`` is empty, contains non-finite values or, when using
+            pandas, has an index that does not follow the index of the existing
+            data. Also raised if ``x`` is provided when the model does not have
+            exogenous regressors, is not provided when the model does, or does
+            not have the same number of observations as ``y``.
+        RuntimeError
+            If the model was created without data.
+
+        Notes
+        -----
+        Parameters are not re-estimated. Use ``fit`` to re-estimate the model
+        using the extended sample, or ``fix`` or ``forecast`` to use parameters
+        estimated previously. Appending resets the estimation sample to the
+        complete extended sample, subject to ``hold_back``, and clears values
+        that were computed using the previous sample, such as the backcast.
+        Results objects returned before appending are not affected.
+
+        If the data was rescaled when fitting the model, the new data is
+        rescaled using the same factor. Exogenous regressors are never
+        rescaled.
+
+        If the new data is not valid, an exception is raised and the model is
+        not modified.
+
+        Examples
+        --------
+        Estimate the model using the first part of a sample, and then use the
+        estimated parameters to forecast after observing more data.
+
+        >>> import numpy as np
+        >>> from arch.univariate import ARX, GARCH
+        >>> y = np.random.RandomState(1234).standard_normal(1000)
+        >>> mod = ARX(y[:800], lags=1, volatility=GARCH())
+        >>> res = mod.fit(disp="off")
+        >>> mod.append(y[800:])
+        >>> forecasts = mod.forecast(res.params, horizon=3, reindex=False)
+
+        Adding a single observation to a model that uses an ndarray.
+
+        >>> mod.append(0.1)
+        """
+        y_original, y_series, y_new = self._prepare_append(y)
+        x_original = self._prepare_append_x(x, y_new.shape[0])
+        self._commit_append(y_original, y_series, y_new)
+        self._x_original = x_original
         self._init_model()
+        if self._y.shape[0] > self._hold_back:
+            # Match the default sample used by fit
+            self._adjust_sample(None, None)
 
     def _scale_changed(self) -> None:
         """

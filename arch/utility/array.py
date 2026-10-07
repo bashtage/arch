@@ -11,7 +11,6 @@ from functools import cached_property
 from typing import Any, Literal, Union, cast, overload
 
 import numpy as np
-import pandas as pd
 from pandas import (
     DataFrame,
     DatetimeIndex,
@@ -358,29 +357,132 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     return int(loc)
 
 
-def append_same_type(original, new):
-    append_ok = isinstance(original, (list, np.ndarray)) and isinstance(
-        new, (float, np.floating)
+def _is_real_scalar(value: Any) -> bool:
+    """Check for a real scalar. Booleans are not treated as scalars here"""
+    return isinstance(value, (int, float, np.integer, np.floating)) and not isinstance(
+        value, (bool, np.bool_)
     )
-    append_ok = append_ok or isinstance(new, type(original))
-    if not append_ok:
+
+
+def _conform_new_to_array(original: NDArray, new: Any) -> NDArray:
+    """
+    Reshape new observations so that they can be stacked below original
+
+    Parameters
+    ----------
+    original : ndarray
+        The existing data. Must be 1-d or 2-d.
+    new : scalar or array_like
+        The new data. Scalars are treated as a single observation, 1-d data
+        is treated as multiple observations unless original has more than one
+        column, in which case it is treated as one observation of all columns.
+
+    Returns
+    -------
+    ndarray
+        New data with the same number of dimensions as original, and, if 2-d,
+        the same number of columns as original.
+    """
+    new_arr = np.asarray(new)
+    if original.ndim == 1:
+        if sum(s > 1 for s in new_arr.shape) > 1:
+            raise ValueError(
+                "The appended data must be 1-dimensional since the original data "
+                f"is 1-dimensional. Got an array with shape {new_arr.shape}."
+            )
+        return new_arr.ravel()
+    ncol = original.shape[1]
+    if new_arr.ndim == 0 or (new_arr.ndim == 1 and ncol == 1):
+        new_arr = new_arr.reshape((-1, 1))
+    elif new_arr.ndim == 1:
+        # A single observation containing a value for every column
+        new_arr = new_arr.reshape((1, -1))
+    if new_arr.ndim != 2 or new_arr.shape[1] != ncol:
+        raise ValueError(
+            "The appended data must have the same number of columns as the "
+            f"original data ({ncol}). Got an array with shape {new_arr.shape}."
+        )
+    return new_arr
+
+
+def append_same_type(
+    original: ArrayLike | list[Any] | tuple[Any, ...],
+    new: ArrayLike | list[Any] | tuple[Any, ...] | float,
+) -> Any:
+    """
+    Append observations to existing data, preserving the type of the data
+
+    Parameters
+    ----------
+    original : {ndarray, Series, DataFrame, list, tuple}
+        The existing data.
+    new : {ndarray, Series, DataFrame, list, tuple, float}
+        The data to append. This must have the same type as original, unless
+        original is an ndarray, list or tuple, in which case a scalar can be
+        appended as a single observation. 1-d data appended to a 2-d ndarray
+        with more than one column is treated as a single observation.
+
+    Returns
+    -------
+    {ndarray, Series, DataFrame, list, tuple}
+        The extended data. Has the same type as original. The inputs are never
+        modified.
+
+    Raises
+    ------
+    TypeError
+        If the types of original and new are not compatible.
+    ValueError
+        If new does not contain any observations, has a different number of
+        columns from original, or, when using a DataFrame, has different
+        column labels.
+    """
+    if not isinstance(original, (Series, DataFrame, list, tuple, np.ndarray)):
+        raise TypeError(
+            "The original data must be a pandas Series, DataFrame, numpy ndarray, "
+            f"list or tuple. Got {type(original)}."
+        )
+    scalar = _is_real_scalar(new)
+    scalar_ok = isinstance(original, (list, tuple, np.ndarray))
+    if not ((scalar and scalar_ok) or isinstance(new, type(original))):
         raise TypeError(
             "Input data must be the same type as the original data, unless the "
-            "original was an NDArray or a list, in which case the input data can "
-            f"be a scalar float. Got {type(new)}, expected {type(original)}."
+            "original was an ndarray, list or tuple, in which case the input data "
+            f"can be a scalar. Got {type(new)}, expected {type(original)}."
         )
-    if isinstance(original, (Series, DataFrame)):
-        extended = concat([original, new], axis=0)
+    if not scalar and np.size(new) == 0:
+        raise ValueError("Input data must contain at least one observation.")
+
+    extended: Any
+    if isinstance(original, Series):
+        extended = concat([original, cast("Series", new)], axis=0)
+        # concat drops the name when the names differ, e.g., if new is unnamed
+        extended.name = original.name
+    elif isinstance(original, DataFrame):
+        new_frame = cast("DataFrame", new)
+        new_columns = new_frame.columns
+        if not original.columns.equals(new_columns):
+            raise ValueError(
+                "The columns of the appended data must match the columns of the "
+                f"original data. Got {list(new_columns)}, expected "
+                f"{list(original.columns)}."
+            )
+        extended = concat([original, new_frame], axis=0)
     elif isinstance(original, np.ndarray):
-        extended = np.concatenate([original, np.atleast_1d(new)])
-    elif isinstance(original, list):
-        if isinstance(new, list):
-            extended = original + new
-        else:
-            extended = original + [new]
-    else:
-        raise TypeError(
-            "Input data must be a pandas Series, DataFrame, numpy ndarray, or "
-            f"list. Got {type(original)}."
+        _original = np.atleast_1d(original)
+        if _original.ndim > 2:
+            raise ValueError("The original data must be 1-d or 2-d.")
+        extended = np.concatenate(
+            (_original, _conform_new_to_array(_original, new)), axis=0
         )
+    else:
+        # list or tuple, converted to an array to validate shapes
+        _original = np.asarray(original, dtype=float)
+        if _original.ndim > 2:
+            raise ValueError("The original data must be 1-d or 2-d.")
+        new_rows = _conform_new_to_array(_original, np.asarray(new, dtype=float))
+        rows = new_rows.tolist()
+        if _original.ndim == 2:
+            rows = [type(original)(row) for row in rows]
+        extended = type(original)(list(original) + rows)
     return extended
