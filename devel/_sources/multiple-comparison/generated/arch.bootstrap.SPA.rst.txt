@@ -28,6 +28,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~SPA.bootstrap
       ~SPA.pvalues
    
    

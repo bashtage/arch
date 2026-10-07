@@ -1,0 +1,6 @@
+arch.bootstrap.StepM.bootstrap
+==============================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StepM.bootstrap

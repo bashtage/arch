@@ -25,6 +25,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~MCS.bootstrap
       ~MCS.excluded
       ~MCS.included
       ~MCS.pvalues

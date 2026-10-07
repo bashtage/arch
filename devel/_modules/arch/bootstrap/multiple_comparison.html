@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+92)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+102)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+92)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+92)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+92)
+            arch v8.0.1 (+102)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+92)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+92)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+92)
+    arch v8.0.1 (+102)
   </label>
   
     <div class="md-nav__source">
@@ -464,6 +464,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.fft</span><span class="w"> </span><span class="kn">import</span> <span class="n">next_fast_len</span><span class="p">,</span> <span class="n">rfft</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArrayLike</span><span class="p">,</span>
@@ -478,6 +479,7 @@
     <span class="n">CircularBlockBootstrap</span><span class="p">,</span>
     <span class="n">MovingBlockBootstrap</span><span class="p">,</span>
     <span class="n">StationaryBootstrap</span><span class="p">,</span>
+    <span class="n">_get_random_integers</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure2d</span>
 
@@ -499,6 +501,124 @@
     <span class="k">return</span> <span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">")"</span>
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">_KernelVariance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Long-run variance of the mean using the kernel implied by a bootstrap</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bootstrap : CircularBlockBootstrap</span>
+<span class="sd">        The bootstrap that determines the kernel.</span>
+<span class="sd">    t : int</span>
+<span class="sd">        Number of observations in the data that will be passed when the</span>
+<span class="sd">        instance is called.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Computes only the variance of each column, not the covariance, using a</span>
+<span class="sd">    single FFT so that the cost is O(t log t) rather than O(t * bandwidth)</span>
+<span class="sd">    for each column.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_implied_kernel</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">kernel</span><span class="p">:</span> <span class="n">Float64Array</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">,</span> <span class="n">MovingBlockBootstrap</span><span class="p">):</span>
+            <span class="c1"># Sample autocovariances without wrap-around. Padding avoids</span>
+            <span class="c1"># aliasing of the lags in the support of the kernel.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">next_fast_len</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">weights</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">real</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span>
+            <span class="n">kernel</span><span class="p">[:</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights</span>
+            <span class="n">kernel</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">-</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Weights are symmetric, w[i] = w[t - i], so circular</span>
+            <span class="c1"># autocovariances give the same sum without padding.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">multiplicity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">multiplicity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">multiplicity</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectral_weights</span> <span class="o">=</span> <span class="n">multiplicity</span> <span class="o">*</span> <span class="n">spectrum</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_implied_kernel</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Autocovariance weights of the variance of the mean implied by a bootstrap</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bootstrap : CircularBlockBootstrap</span>
+<span class="sd">            The bootstrap. Stationary, circular and moving block bootstraps are</span>
+<span class="sd">            recognized, and any other subclass of CircularBlockBootstrap is</span>
+<span class="sd">            treated as a circular block bootstrap.</span>
+<span class="sd">        t : int</span>
+<span class="sd">            Number of observations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Array with t elements containing the weights, w, so that the variance</span>
+<span class="sd">            of the sample mean times t is estimated using</span>
+<span class="sd">            ``R(0) + 2 * sum(w[i] * R(i))`` where ``R`` is the sample</span>
+<span class="sd">            autocovariance.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The weights for the stationary bootstrap and the circular block bootstrap</span>
+<span class="sd">        are the weights that produce the exact bootstrap variance of the sample</span>
+<span class="sd">        mean [1]_. The circular block bootstrap weights are the Bartlett kernel</span>
+<span class="sd">        with a bandwidth of the block size, adjusted for the wrap-around of the</span>
+<span class="sd">        data and for the truncation of the final block when the block size does</span>
+<span class="sd">        not divide t. The weights for the moving block bootstrap are the Bartlett</span>
+<span class="sd">        kernel without the wrap-around adjustment, which is asymptotically</span>
+<span class="sd">        equivalent to the variance of the mean from the moving block bootstrap.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Politis, D. N., &amp; Romano, J. P. (1994). The stationary bootstrap.</span>
+<span class="sd">           Journal of the American Statistical Association, 89(428), 1303-1313.</span>
+<span class="sd">        """</span>
+        <span class="n">lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">block_size</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">block_size</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">,</span> <span class="n">StationaryBootstrap</span><span class="p">):</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">block_size</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">lags</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">lags</span> <span class="o">+</span> <span class="p">(</span><span class="n">lags</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">lags</span><span class="p">)</span>
+
+        <span class="n">num_blocks</span><span class="p">,</span> <span class="n">remainder</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">bartlett</span><span class="p">(</span><span class="n">lag</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+            <span class="c1"># Blocks of block_size and a final block truncated to remainder</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="n">num_blocks</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">block_size</span> <span class="o">-</span> <span class="n">lag</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">full</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">remainder</span> <span class="o">-</span> <span class="n">lag</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">/</span> <span class="n">t</span>
+
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">bartlett</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">,</span> <span class="n">MovingBlockBootstrap</span><span class="p">):</span>
+            <span class="c1"># Blocks wrap around the end of the sample</span>
+            <span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+=</span> <span class="n">bartlett</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">lags</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">weights</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Estimate the long-run variance of the mean of each column</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : ndarray</span>
+<span class="sd">            Array with t rows. The mean of each column is removed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            The estimated variance of the sample mean times t of each column.</span>
+<span class="sd">        """</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">periodogram</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">transform</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span>
+        <span class="c1"># Rounding can produce tiny negative values when variance is 0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectral_weights</span> <span class="o">@</span> <span class="n">periodogram</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+
 <span class="k">class</span><span class="w"> </span><span class="nc">MultipleComparison</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Abstract class for inheritance</span>
@@ -507,9 +627,24 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">CircularBlockBootstrap</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">CircularBlockBootstrap</span><span class="p">(</span>
             <span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
         <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CircularBlockBootstrap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The bootstrap used in the comparison</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CircularBlockBootstrap</span>
+<span class="sd">            The stationary, circular block or moving block bootstrap. The</span>
+<span class="sd">            bootstrap cannot be replaced since quantities that depend on it,</span>
+<span class="sd">            such as the kernel used to studentize, are computed when the</span>
+<span class="sd">            instance is created.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_info_to_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -610,7 +745,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_meth</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IntArray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># For testing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">"MCS"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="p">{</span>
@@ -845,11 +980,17 @@
 <span class="sd">        'circular' or 'cbb': Circular block bootstrap</span>
 <span class="sd">        'moving block' or 'mbb': Moving block bootstrap</span>
 <span class="sd">    studentize : bool, optional</span>
-<span class="sd">        Flag indicating to studentize loss differentials. Default is True</span>
+<span class="sd">        Flag indicating to studentize loss differentials. Default is True.</span>
+<span class="sd">        Studentization is also applied inside each bootstrap replication,</span>
+<span class="sd">        see :class:`~arch.bootstrap.SPA`. If False, the loss differentials</span>
+<span class="sd">        are not studentized.</span>
 <span class="sd">    nested : bool, optional</span>
-<span class="sd">        Flag indicating to use a nested bootstrap to compute variances for</span>
-<span class="sd">        studentization.  Default is False.  Note that this can be slow since</span>
-<span class="sd">        the procedure requires k extra bootstraps.</span>
+<span class="sd">        Flag indicating to use a nested bootstrap to compute the variances</span>
+<span class="sd">        used to studentize, instead of the kernel estimator of the long-run</span>
+<span class="sd">        variance that matches the bootstrap. The variances are computed in</span>
+<span class="sd">        the original data and in each bootstrap replication, so the</span>
+<span class="sd">        procedure uses reps squared resamples and can be very slow. Default</span>
+<span class="sd">        is False. Can only be True when studentize is True.</span>
 <span class="sd">    seed : {int, Generator, RandomState}, optional</span>
 <span class="sd">        Seed value to use when creating the bootstrap used in the comparison.</span>
 <span class="sd">        If an integer or None, the NumPy default_rng is used with the seed</span>
@@ -860,6 +1001,9 @@
 <span class="sd">    The size controls the Family Wise Error Rate (FWER) since this is a</span>
 <span class="sd">    multiple comparison procedure.  Uses SPA and the consistent selection</span>
 <span class="sd">    procedure.</span>
+
+<span class="sd">    See :class:`~arch.bootstrap.SPA` for a description of how loss</span>
+<span class="sd">    differentials are studentized.</span>
 
 <span class="sd">    See [1]_ for detail.</span>
 
@@ -907,7 +1051,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">reps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">"StepM"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
@@ -995,11 +1139,17 @@
 <span class="sd">        'circular' or 'cbb': Circular block bootstrap</span>
 <span class="sd">        'moving block' or 'mbb': Moving block bootstrap</span>
 <span class="sd">    studentize : bool</span>
-<span class="sd">        Flag indicating to studentize loss differentials. Default is True</span>
+<span class="sd">        Flag indicating to studentize loss differentials. Default is True.</span>
+<span class="sd">        Studentization is also applied inside each bootstrap replication,</span>
+<span class="sd">        see Notes. If False, the loss differentials are not studentized in</span>
+<span class="sd">        the original data or in the bootstrap replications.</span>
 <span class="sd">    nested : bool</span>
-<span class="sd">        Flag indicating to use a nested bootstrap to compute variances for</span>
-<span class="sd">        studentization.  Default is False.  Note that this can be slow since</span>
-<span class="sd">        the procedure requires k extra bootstraps.</span>
+<span class="sd">        Flag indicating to use a nested bootstrap to compute the variances</span>
+<span class="sd">        used to studentize, instead of the kernel estimator of the long-run</span>
+<span class="sd">        variance that matches the bootstrap. The variances are computed in</span>
+<span class="sd">        the original data and in each bootstrap replication, so the</span>
+<span class="sd">        procedure uses reps squared resamples and can be very slow. Default</span>
+<span class="sd">        is False. Can only be True when studentize is True.</span>
 <span class="sd">    seed : {int, Generator, RandomState}, optional</span>
 <span class="sd">        Seed value to use when creating the bootstrap used in the comparison.</span>
 <span class="sd">        If an integer or None, the NumPy default_rng is used with the seed</span>
@@ -1011,6 +1161,40 @@
 <span class="sd">        - Upper : Never recenter to all models are relevant to distribution</span>
 <span class="sd">        - Consistent : Only recenter if closer than a log(log(t)) bound</span>
 <span class="sd">        - Lower : Never recenter a model if worse than benchmark</span>
+
+<span class="sd">    When ``studentize`` is True, the statistic for each model is the average</span>
+<span class="sd">    loss differential divided by an estimate of its standard error. The</span>
+<span class="sd">    standard error is also estimated in each bootstrap replication, using the</span>
+<span class="sd">    bootstrap sample, and used to studentize the re-centered average of the</span>
+<span class="sd">    bootstrap sample [3]_. Studentizing inside the bootstrap makes the</span>
+<span class="sd">    bootstrap distribution reflect the sampling variation in the estimated</span>
+<span class="sd">    standard errors that is present in the statistic from the original data.</span>
+<span class="sd">    If the loss differential of a model is constant in a bootstrap sample,</span>
+<span class="sd">    which can occur when the model differs from the benchmark in very few</span>
+<span class="sd">    periods, the standard error from the original data is used for that</span>
+<span class="sd">    model in that replication.</span>
+
+<span class="sd">    If ``nested`` is False, the standard errors are the square root of a</span>
+<span class="sd">    kernel estimator of the long-run variance divided by T. The kernel is</span>
+<span class="sd">    chosen to match the bootstrap, so that the estimator is the variance of</span>
+<span class="sd">    the sample mean that is implied by the bootstrap, using the average block</span>
+<span class="sd">    size as the bandwidth.</span>
+
+<span class="sd">        - Stationary bootstrap : The lag :math:`i` autocovariance has weight</span>
+<span class="sd">          :math:`(1-i/T)(1-p)^i + (i/T)(1-p)^{T-i}` where :math:`p` is the</span>
+<span class="sd">          inverse of the block size [4]_.</span>
+<span class="sd">        - Circular block bootstrap : The Bartlett kernel applied to the</span>
+<span class="sd">          circular autocovariances.</span>
+<span class="sd">        - Moving block bootstrap : The Bartlett kernel.</span>
+
+<span class="sd">    If ``nested`` is True, the kernel is not used. The variance is instead the</span>
+<span class="sd">    variance of the sample mean across ``reps`` replications of a bootstrap of</span>
+<span class="sd">    the data, which is a bootstrap of the original loss differentials in the</span>
+<span class="sd">    original data and a bootstrap of the bootstrap sample in each replication.</span>
+
+<span class="sd">    The same variances are used to select the models that are re-centered</span>
+<span class="sd">    when computing the consistent p-value, even if ``studentize`` is False.</span>
+<span class="sd">    No other studentization is done when ``studentize`` is False.</span>
 
 <span class="sd">    See [1]_ and [2]_ for details.</span>
 
@@ -1024,6 +1208,11 @@
 <span class="sd">       Journal of Business &amp; Economic Statistics, 23(4), 365-380.</span>
 <span class="sd">    .. [2] White, H. (2000). A reality check for data snooping. Econometrica,</span>
 <span class="sd">       68(5), 1097-1126.</span>
+<span class="sd">    .. [3] Götze, F., &amp; Künsch, H. R. (1996). Second-order correctness of the</span>
+<span class="sd">       blockwise bootstrap for stationary observations. The Annals of</span>
+<span class="sd">       Statistics, 24(5), 1914-1933.</span>
+<span class="sd">    .. [4] Politis, D. N., &amp; Romano, J. P. (1994). The stationary bootstrap.</span>
+<span class="sd">       Journal of the American Statistical Association, 89(428), 1303-1313.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -1040,6 +1229,8 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nested</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">studentize</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"nested can only be True when studentize is True"</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="s2">"models"</span><span class="p">)</span>
@@ -1070,7 +1261,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown bootstrap: </span><span class="si">{</span><span class="n">bootstrap_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span> <span class="o">=</span> <span class="n">bootstrap_inst</span>
+        <span class="c1"># Instantiate the kernel long-run variance estimator, which is used to</span>
+        <span class="c1"># studentize the loss differentials and the bootstrap samples, and to</span>
+        <span class="c1"># select the models to re-center. It depends on the bootstrap, which</span>
+        <span class="c1"># cannot be replaced. A nested bootstrap replaces the kernel.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_variance</span><span class="p">:</span> <span class="n">_KernelVariance</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_variance</span> <span class="o">=</span> <span class="n">_KernelVariance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalues</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">:</span> <span class="n">BoolArray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
@@ -1155,19 +1353,44 @@
         <span class="n">lower_mean</span><span class="p">[</span><span class="n">lower_mean</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">means</span> <span class="o">=</span> <span class="p">[</span><span class="n">lower_mean</span><span class="p">,</span> <span class="n">consistent_mean</span><span class="p">,</span> <span class="n">upper_mean</span><span class="p">]</span>
         <span class="n">simulated_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="n">full_sample_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bs_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)):</span>
             <span class="n">pos_arg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bs_data</span>
-            <span class="n">loss_diff_star</span> <span class="o">=</span> <span class="n">pos_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">loss_diff_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pos_arg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="c1"># Studentize using the bootstrap sample, as in the statistic</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
+                <span class="n">nested_seed</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span><span class="p">:</span>
+                    <span class="c1"># Seed the bootstrap of this sample from the generator, as</span>
+                    <span class="c1"># when studentizing confidence intervals</span>
+                    <span class="n">nested_seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                        <span class="n">_get_random_integers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="n">variances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span><span class="n">loss_diff_star</span><span class="p">,</span> <span class="n">nested_seed</span><span class="p">)</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std_err</span><span class="p">(</span><span class="n">variances</span><span class="p">)</span>
+                <span class="c1"># A column that is constant in the bootstrap sample, which</span>
+                <span class="c1"># happens when a model differs from the benchmark in few</span>
+                <span class="c1"># periods, has no standard error to studentize with</span>
+                <span class="n">degenerate</span> <span class="o">=</span> <span class="n">variances</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">degenerate</span><span class="p">,</span> <span class="n">full_sample_scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">loss_diff_star_mean</span> <span class="o">=</span> <span class="n">loss_diff_star</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">means</span><span class="p">):</span>
-                <span class="n">simulated_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_diff_star</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="n">simulated_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">loss_diff_star_mean</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulated_vals</span> <span class="o">=</span> <span class="n">simulated_vals</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_std_err</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variances</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Standard errors of the mean loss differentials, bounded above zero"""</span>
+        <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variances</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">std_err</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Standard errors of the mean loss differentials if studentizing"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">studentize</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
-        <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">std_err</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std_err</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_studentized_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Mean loss differentials, studentized if required"""</span>
@@ -1184,23 +1407,37 @@
 <span class="sd">        """</span>
         <span class="n">ld</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span>
         <span class="n">demeaned</span> <span class="o">=</span> <span class="n">ld</span> <span class="o">-</span> <span class="n">ld</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span><span class="p">:</span>
-            <span class="c1"># Use bootstrap to estimate variances</span>
-            <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">demeaned</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">))</span>
-            <span class="n">means</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">reps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)</span>
-            <span class="n">variances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">*</span> <span class="n">means</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span>
-            <span class="n">variances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">demeaned</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-                <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span>
-                    <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span>
-                <span class="p">)</span>
-                <span class="n">variances</span> <span class="o">+=</span> <span class="p">(</span>
-                    <span class="mi">2</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">demeaned</span><span class="p">[:</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">i</span><span class="p">),</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">demeaned</span><span class="p">[</span><span class="n">i</span><span class="p">:,</span> <span class="p">:],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
-                <span class="p">)</span>
+        <span class="n">variances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span><span class="n">demeaned</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff_var</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"np.ndarray"</span><span class="p">,</span> <span class="n">variances</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_variance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Estimates the variance of the mean of each column of data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ndarray</span>
+<span class="sd">            Data with t rows.</span>
+<span class="sd">        seed : {int, Generator, RandomState}, optional</span>
+<span class="sd">            Seed of the nested bootstrap. Not used unless nested is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            The variance of the sample mean times t of each column, estimated</span>
+<span class="sd">            using a bootstrap of the data if nested is True, and otherwise</span>
+<span class="sd">            using the kernel estimator that matches the bootstrap.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested</span><span class="p">:</span>
+            <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">reps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">*</span> <span class="n">means</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_variance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_variance</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_column_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolArray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
