@@ -692,8 +692,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         else:
             reg_x = np.empty((nobs_orig, 0), dtype=np.double)
 
+        # hstack preserves F-ordering if x is F-ordered, which is the case when
+        # x is a DataFrame. Compiled recursions require C-ordered regressors.
         self.regressors = cast(
-            "Float64Array2D", np.hstack((reg_constant, reg_lags, reg_x))
+            "Float64Array2D",
+            np.ascontiguousarray(np.hstack((reg_constant, reg_lags, reg_x))),
         )
 
     def _r2(self, params: ArrayLike1D) -> float:
