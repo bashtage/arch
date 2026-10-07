@@ -235,6 +235,42 @@ which produces
 The output will always have as many rows as the data input.  Values
 that are not forecast are ``nan`` filled.
 
+Forecasting After New Data Arrive
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Models do not need to be re-estimated each time new data are available.
+:meth:`~arch.univariate.mean.HARX.append` adds observations to a model
+in-place without changing any parameters, so that forecasts can be produced
+from the latest observation using parameters estimated previously.
+
+.. code-block:: python
+
+   am = arch_model(returns[:split_date], vol='Garch', p=1, o=0, q=1, dist='Normal')
+   res = am.fit(disp='off')
+   # Observations arrive, and are added to the model
+   am.append(returns[split_date + dt.timedelta(1):])
+   # Forecast using the model parameters and the extended sample
+   forecasts = am.forecast(res.params, horizon=5, reindex=False)
+
+The type of the new data must be the same as the type used to construct the
+model. If the model was constructed using a pandas ``Series``, the index of
+the new data must follow the index of the existing data. Individual
+observations can be appended to models that were constructed using an
+``ndarray`` or a list. Models that include exogenous variables require the
+values of the exogenous variables for the new observations.
+
+.. code-block:: python
+
+   am = arch_model(returns.to_numpy()[:1000])
+   res = am.fit(disp='off')
+   am.append(returns.iloc[1000])
+   forecasts = am.forecast(res.params, horizon=5, reindex=False)
+
+Calling ``fit`` after ``append`` re-estimates the model using the extended
+sample. :meth:`~arch.univariate.base.ARCHModel.fix` can be used to construct a
+results object that uses the extended sample and parameters estimated
+previously. Results objects produced before calling ``append`` are not changed.
+
 Output Classes
 ~~~~~~~~~~~~~~
 .. currentmodule:: arch.univariate.base

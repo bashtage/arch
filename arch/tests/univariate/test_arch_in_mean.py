@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
@@ -99,6 +100,22 @@ def test_exog_smoke(x):
     res = gim.fit(disp="off")
     x_shape = 1 if isinstance(x, pd.Series) else x.shape[1]
     assert res.params.shape[0] == 4 + x_shape
+
+
+@pytest.mark.parametrize("constant", [True, False])
+@pytest.mark.parametrize("lags", [None, 1])
+@pytest.mark.parametrize("x_type", ["frame", "fortran"])
+def test_exog_not_c_contiguous(constant, lags, x_type):
+    # DataFrames, and some arrays, are F-ordered, and the compiled
+    # recursions require C-ordered regressors
+    x_f = X if x_type == "frame" else np.asfortranarray(X.to_numpy())
+    x_c = np.ascontiguousarray(X.to_numpy())
+    mod = ARCHInMean(SP500, x=x_f, lags=lags, constant=constant, volatility=GARCH())
+    assert mod.regressors.flags.c_contiguous
+    res = mod.fit(disp="off")
+    mod_c = ARCHInMean(SP500, x=x_c, lags=lags, constant=constant, volatility=GARCH())
+    res_c = mod_c.fit(disp="off")
+    assert_allclose(res.params, res_c.params)
 
 
 def test_simulate():
