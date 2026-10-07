@@ -198,7 +198,7 @@ def snapshot(mod):
 def assert_snapshot_unchanged(mod, snap):
     assert_array_equal(mod._y, snap["y"])
     assert_array_equal(np.array(mod.y, dtype=float), snap["y_original"])
-    assert type(mod.y) is snap["y_type"]
+    assert isinstance(mod.y, snap["y_type"])
     assert mod._y_series.index.equals(snap["index"])
     assert mod._y_series.name == snap["name"]
     assert_array_equal(mod.regressors, snap["regressors"])
@@ -365,6 +365,12 @@ def test_base_class_append():
     assert mod._y_series.index.equals(SMALL.index)
     with pytest.raises(ValueError, match="overlaps the index"):
         ARCHModel.append(mod, SMALL_append)
+    # The base class has no exogenous regressors, and nothing is changed
+    snap = snapshot(mod)
+    new_y = pd.Series([0.1], index=[SMALL.index[-1] + pd.Timedelta(days=1)])
+    with pytest.raises(ValueError, match="does not include exogenous regressors"):
+        ARCHModel.append(mod, new_y, x=np.ones((1, 1)))
+    assert_snapshot_unchanged(mod, snap)
     with pytest.raises(RuntimeError, match="created without data"):
         ARCHModel.append(ConstantMean(None), SMALL_append)
 

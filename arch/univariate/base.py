@@ -319,7 +319,11 @@ class ARCHModel(metaclass=ABCMeta):
         self._fit_indices = [0, int(self._y.shape[0])]
         self._fit_y = self._y
 
-    def append(self, y: ArrayLike | float) -> None:
+    def append(
+        self,
+        y: ArrayLike | float,
+        x: ArrayLike | ArrayLike2D | None = None,
+    ) -> None:
         """
         Append observations to the model in-place
 
@@ -332,6 +336,11 @@ class ARCHModel(metaclass=ABCMeta):
             and must not overlap the existing data. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
+        x : {ndarray, Series, DataFrame}, optional
+            The values of the exogenous regressors for the new observations.
+            The base class does not include exogenous regressors, and so this
+            must be None. Models that include exogenous regressors override
+            this method.
 
         Raises
         ------
@@ -340,6 +349,7 @@ class ARCHModel(metaclass=ABCMeta):
         ValueError
             If ``y`` is empty, contains non-finite values or, when using pandas,
             has an index that does not follow the index of the existing data.
+            Also raised if ``x`` is not None.
         RuntimeError
             If the model was created without data.
 
@@ -359,6 +369,11 @@ class ARCHModel(metaclass=ABCMeta):
         to update these values.
         """
         y_original, y_series, y_new = self._prepare_append(y)
+        if x is not None:
+            raise ValueError(
+                f"{type(self).__name__} does not include exogenous regressors, "
+                "and so x cannot be appended."
+            )
         self._commit_append(y_original, y_series, y_new)
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
