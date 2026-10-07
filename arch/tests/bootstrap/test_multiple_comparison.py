@@ -472,6 +472,21 @@ def test_str_repr(spa_data):
     assert_equal(str(spa), expected)
 
 
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_bootstrap_cannot_be_replaced(spa_data, bootstrap):
+    models = spa_data.models[:, :5]
+    spa = SPA(spa_data.benchmark, models, bootstrap=bootstrap, reps=10)
+    stepm = StepM(spa_data.benchmark, models, bootstrap=bootstrap, reps=10)
+    mcs = MCS(models, 0.05, bootstrap=bootstrap, reps=10)
+    replacement = CircularBlockBootstrap(10, np.ones(100))
+    for procedure in (spa, stepm, mcs):
+        assert isinstance(procedure.bootstrap, BOOTSTRAPS[bootstrap])
+        with pytest.raises(AttributeError):
+            procedure.bootstrap = replacement
+        assert procedure.bootstrap is not replacement
+    assert stepm.bootstrap is stepm.spa.bootstrap
+
+
 def test_seed_reset(spa_data):
     spa = SPA(spa_data.benchmark, spa_data.models, reps=10, seed=23456)
     initial_state = spa.bootstrap.state

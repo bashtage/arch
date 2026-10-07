@@ -166,9 +166,24 @@ class MultipleComparison:
     def __init__(self) -> None:
         self._model = ""
         self._info: dict[str, str] = {}
-        self.bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
+        self._bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
             10, np.ones(100)
         )
+
+    @property
+    def bootstrap(self) -> CircularBlockBootstrap:
+        """
+        The bootstrap used in the comparison
+
+        Returns
+        -------
+        CircularBlockBootstrap
+            The stationary, circular block or moving block bootstrap. The
+            bootstrap cannot be replaced since quantities that depend on it,
+            such as the kernel used to studentize, are computed when the
+            instance is created.
+        """
+        return self._bootstrap
 
     def __str__(self) -> str:
         return _info_to_str(self._model, self._info, False)
@@ -267,7 +282,7 @@ class MCS(MultipleComparison):
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
         self._seed = seed
-        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
+        self._bootstrap = bootstrap_inst
         self._bootstrap_indices: list[IntArray] = []  # For testing
         self._model = "MCS"
         self._info = {
@@ -566,7 +581,7 @@ class StepM(MultipleComparison):
         self.reps: int = reps
         self.size: float = size
         self._superior_models: list[int] | None = None
-        self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
+        self._bootstrap = self.spa.bootstrap
 
         self._model = "StepM"
         if self.spa.studentize:
@@ -759,10 +774,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self._seed = seed
-        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
-        # Instantize the long-run variance estimator used
-        # to studentize the loss differentials and the bootstrap samples
-        self._kernel_variance = _KernelVariance(self.bootstrap, self.t)
+        self._bootstrap = bootstrap_inst
+        # Instantiate the long-run variance estimator used to studentize the
+        # loss differentials and the bootstrap samples. It depends on the
+        # bootstrap, which cannot be replaced.
+        self._kernel_variance = _KernelVariance(self._bootstrap, self.t)
         self._pvalues: dict[str, float] = {}
         self._simulated_vals: Float64Array | None = None
         self._selector: BoolArray = np.ones(self.k, dtype=np.bool_)
