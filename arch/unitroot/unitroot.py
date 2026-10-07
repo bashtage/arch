@@ -1505,7 +1505,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         trend = self._trend
 
         y = self._y
-        y_2d = ensure2d(y, "y")
+        y_2d = asarray(ensure2d(y, "y"), dtype=float64)
         nobs = y_2d.shape[0]
 
         if self._lags is not None:
