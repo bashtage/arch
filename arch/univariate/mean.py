@@ -5,7 +5,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
 import numpy as np
@@ -777,7 +777,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y = self._fit_y
 
         # Fake convergence results, see GH #87
-        opt = OptimizeResult({"status": 0, "message": ""})
+        opt = cast("Any", OptimizeResult())
+        opt.status = 0
+        opt.message = ""
 
         if x.shape[1] > 0:
             regression_params: Float64Array1D = cast(
@@ -1037,7 +1039,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         shocks: Float64Array | None = None
         long_run_variance_paths: Float64Array | None = None
         if method.lower() in ("simulation", "bootstrap"):
-            # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
             variance_paths = vfcast.forecast_paths
             assert isinstance(vfcast.shocks, np.ndarray)
@@ -2040,7 +2041,7 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
+    if vol_model in ("arch", "garch", "figarch", "fiaparch", "egarch", "aparch") and not isinstance(
         p, int
     ):
         raise TypeError(

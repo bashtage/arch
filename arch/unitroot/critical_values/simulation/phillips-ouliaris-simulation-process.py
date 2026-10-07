@@ -162,7 +162,7 @@ for file_type in FILE_TYPES:
                 # TODO: Bug in pandas-stubs prevents valid index types
                 index_slice = pd.IndexSlice[:, :, stat]
                 single = temp.loc[:, index_slice]
-                single.columns = single.columns.droplevel(2)
+                single.columns = single.columns.droplevel(level=2)
                 results[(stat, trend)].append(single)
 
 assert len(num_files) > 0
@@ -178,7 +178,7 @@ for key in results:
         for df in result_dfs:
             # TODO: Bug in pandas-stubs prevents valid index types
             single = df.loc[:, pd.IndexSlice[:, st]]
-            single.columns = single.columns.droplevel(1)
+            single.columns = single.columns.droplevel(level=1)
             single = single.dropna(axis=1, how="all")
             joined[key + (st,)].append(single)
 
@@ -215,7 +215,7 @@ for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
     # TODO: Bug in pandas-stubs prevents valid index types
     pval_data[multi_key] = final[multi_key].loc[:, 2000]
     # TODO: Bug in pandas-stubs prevents valid index types
-    temp_series = final[multi_key].loc[:, 2000].mean(1)
+    temp_series = final[multi_key].loc[:, 2000].mean(axis=1)
     # This is a series since there are many columns with 2000
     temp_series.name = multi_key[-1]
     quantiles_d[multi_key[:-1]].append(temp_series)

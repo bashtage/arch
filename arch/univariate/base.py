@@ -33,6 +33,11 @@ from arch._typing import (
     Label,
     Literal,
 )
+from arch.univariate.diagnostics import (
+    excess_kurtosis as _excess_kurtosis,
+    hill_estimator as _hill_estimator,
+    var_ratio as _var_ratio,
+)
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import ensure1d, to_array_1d
@@ -380,7 +385,9 @@ class ARCHModel(metaclass=ABCMeta):
         """
         y = self._fit_y
         # Fake convergence results, see GH #87
-        opt = OptimizeResult({"status": 0, "message": ""})
+        opt = cast("Any", OptimizeResult())
+        opt.status = 0
+        opt.message = ""
 
         params = np.empty(0)
         param_cov = np.empty((0, 0))
@@ -1364,6 +1371,49 @@ class ARCHModelFixedResult(_SummaryRepr):
             std_res.name = "std_resid"
         return std_res
 
+    @cached_property
+    def excess_kurtosis(self) -> float:
+        """
+        Sample excess kurtosis of standardized residuals
+        """
+        return _excess_kurtosis(self.std_resid)
+
+    def hill_estimator(self, k: int | None = None) -> float:
+        """
+        Hill tail-index estimator of standardized residuals
+
+        Parameters
+        ----------
+        k : int, optional
+            Number of upper order statistics to use. If not provided, uses
+            ``int(sqrt(n))`` where ``n`` is the number of finite standardized
+            residuals.
+
+        Returns
+        -------
+        float
+            Inverse Hill estimate of the tail index.
+        """
+        return _hill_estimator(self.std_resid, k)
+
+    def var_ratio(self, level: float = 0.999) -> float:
+        """
+        Ratio of Gaussian VaR to model-distribution VaR
+
+        Parameters
+        ----------
+        level : float, optional
+            VaR confidence level. Must be between 0.5 and 1.0.
+
+        Returns
+        -------
+        float
+            Ratio of the Gaussian left-tail VaR to the VaR implied by the
+            fitted model distribution.
+        """
+        _, _, dp = self.model._parse_parameters(self._params)
+        return _var_ratio(level, distribution=self.model.distribution, parameters=dp)
+
     def plot(
         self, annualize: str | None = None, scale: float | None = None
     ) -> "Figure":
@@ -1701,13 +1751,14 @@ class ARCHModelFixedResult(_SummaryRepr):
     def arch_lm_test(
         self, lags: int | None = None, standardized: bool = False
     ) -> WaldTestStatistic:
-        """
+        r"""
         ARCH LM test for conditional heteroskedasticity
 
         Parameters
         ----------
         lags : int, optional
             Number of lags to include in the model.  If not specified,
+            uses $\lceil 1.2 T^{1/4} \rceil$.
         standardized : bool, optional
             Flag indicating to test the model residuals divided by their
             conditional standard deviations.  If False, directly tests the

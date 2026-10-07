@@ -628,6 +628,25 @@ def test_zivot_andrews_error():
         ZivotAndrews(y, trim=0.5)
 
 
+def test_zivot_andrews_integer_data():
+    rs = np.random.RandomState(0)
+    y = rs.randint(0, 10, size=250).cumsum()
+    za_int = ZivotAndrews(y, lags=2)
+    za_float = ZivotAndrews(y.astype(np.float64), lags=2)
+    assert_almost_equal(za_int.stat, za_float.stat)
+    assert_almost_equal(za_int.pvalue, za_float.pvalue)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct"])
+def test_dfgls_integer_data(trend):
+    rs = np.random.RandomState(0)
+    y = rs.randint(0, 10, size=250).cumsum()
+    dfgls_int = DFGLS(y, trend=trend, lags=2)
+    dfgls_float = DFGLS(y.astype(np.float64), trend=trend, lags=2)
+    assert_almost_equal(dfgls_int.stat, dfgls_float.stat)
+    assert_almost_equal(dfgls_int.pvalue, dfgls_float.pvalue)
+
+
 def test_zivot_andrews_reduced_rank():
     y = np.random.standard_normal(1000)
     y[1:] = 3.0

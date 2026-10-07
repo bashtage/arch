@@ -339,10 +339,10 @@ def _autolag_ols(
     exog_singular, exog_rank = _is_reduced_rank(exog)
     if exog_singular:
         if exog_rank is None:
-            exog_rank = matrix_rank(exog)
+            exog_rank = int(matrix_rank(exog))
         raise InfeasibleTestException(
             singular_array_error.format(
-                max_lags=maxlag, lag=max(exog_rank - startlag, 0)
+                max_lags=maxlag, lag=max(int(exog_rank) - startlag, 0)
             )
         )
     _exog = np.asarray(exog, dtype=float)
@@ -554,7 +554,7 @@ class UnitRootTest(metaclass=ABCMeta):
             return "t-stat"
         elif method not in ("aic", "bic"):
             raise ValueError("method must be one of 'aic', 'bic' or 't-stat'")
-        return method
+        return cast("Literal['aic', 'bic', 't-stat']", method)
 
     @property
     def null_hypothesis(self) -> str:
@@ -952,10 +952,10 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
         delta_z = z.copy()
         delta_z[1:, :] = delta_z[1:, :] - (1 + ct) * delta_z[:-1, :]
-        delta_y = self._y.copy()[:, None]
+        y = asarray(self._y, dtype=float64)
+        delta_y = y.copy()[:, None]
         delta_y[1:] = delta_y[1:] - (1 + ct) * delta_y[:-1]
         detrend_coef = pinv(delta_z) @ delta_y
-        y = self._y
         y_detrended = y - (z @ detrend_coef).ravel()
 
         # 2. determine lag length, if needed
@@ -968,7 +968,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             _, bestlag = _df_select_lags(
                 y_ols_detrend, "n", max_lags, method, low_memory=self._low_memory
             )
-            self._lags = bestlag
+            self._lags = int(bestlag)
 
         # 3. Run Regression
         lags = self._lags
@@ -1505,7 +1505,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         trend = self._trend
 
         y = self._y
-        y_2d = ensure2d(y, "y")
+        y_2d = asarray(ensure2d(y, "y"), dtype=float64)
         nobs = y_2d.shape[0]
 
         if self._lags is not None:
@@ -1854,7 +1854,7 @@ def mackinnonp(
             stat = float(log(abs(stat)))  # Transform stat for small p ADF-z
     else:
         poly_coef = large_p
-    return norm.cdf(polyval(poly_coef[::-1], stat))
+    return float(norm.cdf(polyval(poly_coef[::-1], stat)))
 
 
 def mackinnoncrit(

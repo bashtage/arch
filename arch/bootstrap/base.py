@@ -218,7 +218,7 @@ def _get_acceleration(jk_params: Float64Array) -> Float64Array2D:
     float
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
-    u = jk_params.mean() - jk_params
+    u = jk_params.mean(0) - jk_params
     numer = np.sum(u**3, 0)
     denom = 6 * (np.sum(u**2, 0) ** (3.0 / 2.0))
     small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
