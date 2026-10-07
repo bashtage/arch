@@ -2010,15 +2010,13 @@ class TestVarianceForecasts:
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = [0.1, 0.2, 0.4, 0.2]
         if o == 0:
-            params = [0.1, 0.2, 0.4, 0.2]
+            params_ = [0.1, 0.2, 0.4, 0.2]
         else:
-            params = [0.1, 0.2, 0.4, 0.2, -0.3]
+            params_ = [0.1, 0.2, 0.4, 0.2, -0.3]
         if delta is None:
-            params = np.array(params + [1.5])
-        else:
-            params = np.array(params)
+            params_ += [1.5]
+        params = np.array(params_)
         sigma2 = np.empty_like(resids)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
         forecast = vol.forecast(
