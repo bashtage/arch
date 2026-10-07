@@ -46,3 +46,8 @@ urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
 fonttools>=4.62.0 # not directly required, pinned by Snyk to avoid a vulnerability
 jupyter-server>=2.20.0 # not directly required, pinned by Snyk to avoid a vulnerability
 tornado>=6.5.7 # not directly required, pinned by Snyk to avoid a vulnerability
+
+
+# typing
+pandas-stubs
+scipy-stubs
