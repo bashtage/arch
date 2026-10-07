@@ -1505,7 +1505,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         trend = self._trend
 
         y = self._y
-        y_2d = ensure2d(y, "y")
+        y_2d = asarray(ensure2d(y, "y"), dtype=float64)
         nobs = y_2d.shape[0]
 
         if self._lags is not None:
@@ -1523,7 +1523,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             basecols = 4
         # first-diff y and standardize for numerical stability
         dy = diff(y_2d, axis=0)[:, 0]
-        dy = dy / sqrt(dy.T @ dy)
+        dy /= sqrt(dy.T @ dy)
         y_2d = y_2d / sqrt(y_2d.T @ y_2d)
         # reserve exog space
         exog = empty((dy[baselags:].shape[0], basecols + baselags))
