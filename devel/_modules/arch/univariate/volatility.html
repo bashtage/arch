@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v8.0.1 (+102)</title>
+        <title>arch.univariate.volatility - arch v8.0.1 (+122)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+102)
+            arch v8.0.1 (+122)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+102)
+    arch v8.0.1 (+122)
   </label>
   
     <div class="md-nav__source">
@@ -501,6 +501,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"ARCH"</span><span class="p">,</span>
     <span class="s2">"EGARCH"</span><span class="p">,</span>
+    <span class="s2">"FIAPARCH"</span><span class="p">,</span>
     <span class="s2">"FIGARCH"</span><span class="p">,</span>
     <span class="s2">"GARCH"</span><span class="p">,</span>
     <span class="s2">"HARCH"</span><span class="p">,</span>
@@ -4126,6 +4127,500 @@
 
         <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span></div>
 
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FIAPARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : {0, 1}</span>
+<span class="sd">        Order of the symmetric innovation</span>
+<span class="sd">    o : {0, 1}</span>
+<span class="sd">        Order of the asymmetric innovation</span>
+<span class="sd">    q : {0, 1}</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    delta : float, optional</span>
+<span class="sd">        Value to use for a fixed delta in the model. If not provided,</span>
+<span class="sd">        the value of delta is jointly estimated with other model parameters.</span>
+<span class="sd">        User provided delta is restricted to lie in (0.05, 4.0).</span>
+<span class="sd">    truncation : int, optional</span>
+<span class="sd">        Truncation point to use in ARCH(:math:`\infty`) representation.</span>
+<span class="sd">        Default is 1000.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIAPARCH</span>
+
+<span class="sd">    Standard FIAPARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH()</span>
+
+<span class="sd">    Without asymmetry (reduces to FIGARCH-like)</span>
+
+<span class="sd">    &gt;&gt;&gt; fi = FIAPARCH(o=0)</span>
+
+<span class="sd">    Fixed power parameter</span>
+
+<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH(delta=1.0)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In this class of processes, the variance dynamics are</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_t^{\delta} = \omega</span>
+<span class="sd">        + [1-\beta L - (1-\phi L)(1-L)^d]</span>
+<span class="sd">        (|\epsilon_{t}| - \gamma \epsilon_{t})^{\delta}</span>
+<span class="sd">        + \beta \sigma_{t-1}^{\delta}</span>
+
+<span class="sd">    where ``L`` is the lag operator, ``d`` is the fractional differencing</span>
+<span class="sd">    parameter, and ``gamma`` controls asymmetry. The model is estimated</span>
+<span class="sd">    using the ARCH(:math:`\infty`) representation,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_t^{\delta} = (1-\beta)^{-1} \omega</span>
+<span class="sd">        + \sum_{i=1}^{\infty} \lambda_i</span>
+<span class="sd">        (|\epsilon_{t-i}| - \gamma \epsilon_{t-i})^{\delta}</span>
+
+<span class="sd">    The weights :math:`\lambda_i` are identical to those used in FIGARCH.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">o</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">q</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">truncation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="o">=</span> <span class="n">delta</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"delta must be convertible to a float."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.05</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta must be between 0.05 and 4"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p and q must be either 0 or 1."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">o</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">o</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"o must be either 0 or 1."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"truncation must be a positive integer"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_params</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span> <span class="n">o</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_name</span><span class="p">()</span>
+        <span class="n">delta_init</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volatility_updater</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">FIAPARCHUpdater</span><span class="p">(</span>
+            <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">,</span> <span class="n">delta_init</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">truncation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Truncation lag for the ARCH-infinity approximation"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The value of delta in the model. NaN if delta is estimated."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">descr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    p: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="si">}</span><span class="s2">, o: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="si">}</span><span class="s2">, q: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">descr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">", delta: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">:</span><span class="s2">0.1f</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">descr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">", truncation: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">truncation</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="n">descr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"FIAPARCH"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"FI Power ARCH"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="n">eps_half</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">delta</span><span class="p">)),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resids</span><span class="o">**</span><span class="mi">2</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">))]</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># phi</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">eps_half</span><span class="p">)])</span>  <span class="c1"># d</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">eps_half</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># beta</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="o">-</span><span class="mf">0.9997</span><span class="p">,</span> <span class="mf">0.9997</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">)</span>  <span class="c1"># gamma</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">bounds</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="c1"># omega &gt; 0</span>
+        <span class="c1"># 0 &lt;= phi &lt;= (1-d)/2  (if p)</span>
+        <span class="c1"># 0 &lt;= d &lt;= 1</span>
+        <span class="c1"># 0 &lt;= beta &lt;= d+phi  (if q)</span>
+        <span class="c1"># -1 &lt; gamma &lt; 1  (if o)</span>
+        <span class="c1"># 0.05 &lt; delta &lt; 4  (if est_delta)</span>
+        <span class="n">n_figarch</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>  <span class="c1"># omega, [phi], d, [beta]</span>
+        <span class="n">n_gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span>
+        <span class="n">n_delta</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">)</span>
+        <span class="n">n_params</span> <span class="o">=</span> <span class="n">n_figarch</span> <span class="o">+</span> <span class="n">n_gamma</span> <span class="o">+</span> <span class="n">n_delta</span>
+
+        <span class="c1"># FIGARCH constraints first (identical to FIGARCH.constraints())</span>
+        <span class="n">a_fig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">b_fig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span>
+            <span class="n">a_fig</span> <span class="o">=</span> <span class="n">a_fig</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">b_fig</span> <span class="o">=</span> <span class="n">b_fig</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+            <span class="n">a_fig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">a_fig</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">a_fig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">a_fig</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">b_fig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">b_fig</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">n_fig_constraints</span> <span class="o">=</span> <span class="n">a_fig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_gamma_constraints</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_gamma</span>  <span class="c1"># gamma &gt; -0.9997, gamma &lt; 0.9997</span>
+        <span class="n">n_delta_constraints</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_delta</span>  <span class="c1"># delta &gt; 0.05, delta &lt; 4</span>
+        <span class="n">n_total_constraints</span> <span class="o">=</span> <span class="n">n_fig_constraints</span> <span class="o">+</span> <span class="n">n_gamma_constraints</span> <span class="o">+</span> <span class="n">n_delta_constraints</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_total_constraints</span><span class="p">,</span> <span class="n">n_params</span><span class="p">))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total_constraints</span><span class="p">)</span>
+
+        <span class="c1"># FIGARCH block</span>
+        <span class="n">a</span><span class="p">[:</span><span class="n">n_fig_constraints</span><span class="p">,</span> <span class="p">:</span><span class="n">n_figarch</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_fig</span>
+        <span class="n">b</span><span class="p">[:</span><span class="n">n_fig_constraints</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_fig</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">n_fig_constraints</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">n_figarch</span>
+
+        <span class="c1"># Gamma constraints: gamma &gt; -0.9997, gamma &lt; 0.9997</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_gamma</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9997</span>
+            <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9997</span>
+            <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">col</span> <span class="o">+=</span> <span class="n">n_gamma</span>
+
+        <span class="c1"># Delta constraints: delta &gt; 0.05, delta &lt; 4</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_delta</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.05</span>
+            <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.0</span>
+            <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_variance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">abs_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_delta</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nobs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">sigma_delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_delta</span>
+
+        <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">]</span> <span class="k">if</span> <span class="n">o</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+
+        <span class="n">fig_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">]</span>
+
+        <span class="n">rec</span><span class="o">.</span><span class="n">fiaparch_recursion</span><span class="p">(</span>
+            <span class="n">fig_params</span><span class="p">,</span>
+            <span class="n">resids</span><span class="p">,</span>
+            <span class="n">abs_resids</span><span class="p">,</span>
+            <span class="n">sigma2</span><span class="p">,</span>
+            <span class="n">sigma_delta</span><span class="p">,</span>
+            <span class="n">p</span><span class="p">,</span>
+            <span class="n">q</span><span class="p">,</span>
+            <span class="n">nobs</span><span class="p">,</span>
+            <span class="n">truncation</span><span class="p">,</span>
+            <span class="n">backcast</span><span class="p">,</span>
+            <span class="n">var_bounds</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">delta</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sigma2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">backcast_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+        <span class="n">_backcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span> <span class="o">**</span> <span class="n">delta</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">_backcast</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"np.float64"</span><span class="p">,</span> <span class="n">_backcast</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_backcast</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mf">0.94</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">backcast</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">RNGType</span><span class="p">,</span>
+        <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">"parameters"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+
+        <span class="n">fig_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">]</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">])</span> <span class="k">if</span> <span class="n">o</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">figarch_weights</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+        <span class="n">lam_rev</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">persistence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+            <span class="n">initial_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">initial_value</span> <span class="o">/=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span>
+            <span class="k">if</span> <span class="n">persistence</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">initial_value</span> <span class="o">/=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">persistence</span>
+            <span class="k">if</span> <span class="n">persistence</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">beta</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">sigma_delta_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+
+        <span class="n">sigma_delta_arr</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span>
+        <span class="n">sigma2</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[:</span><span class="n">truncation</span><span class="p">])</span> <span class="o">*</span> <span class="n">errors</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span>
+
+        <span class="n">omega</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s2">"beta &gt;= 1.0, using omega as intercept since long-run variance "</span>
+                <span class="s2">"is ill-defined."</span><span class="p">,</span>
+                <span class="n">ValueWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">):</span>
+            <span class="n">fshocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">):</span>
+                <span class="n">shock</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
+                <span class="n">fshocks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">shock</span><span class="o">**</span><span class="n">delta</span>
+            <span class="n">sigma_delta_arr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lam_rev</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fshocks</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_delta_arr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span> <span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span> <span class="p">:]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+        <span class="n">phi_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gammas</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="k">if</span> <span class="n">o</span> <span class="k">else</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">]</span>
+
+        <span class="n">all_starting_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pr</span> <span class="ow">in</span> <span class="n">phi_ratio</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pr</span>
+                <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">beta_ratio</span><span class="p">:</span>
+                    <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">br</span>
+                    <span class="k">for</span> <span class="n">gam</span> <span class="ow">in</span> <span class="n">gammas</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">delt</span> <span class="ow">in</span> <span class="n">deltas</span><span class="p">:</span>
+                            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">delt</span><span class="p">)</span>
+                            <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resids</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">target</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delt</span><span class="p">))</span>
+                            <span class="n">target</span> <span class="o">*=</span> <span class="n">scale</span> <span class="o">**</span> <span class="p">(</span><span class="n">delt</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                            <span class="n">temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">beta</span><span class="p">]</span>
+                            <span class="n">lam</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">figarch_weights</span><span class="p">(</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">truncation</span>
+                            <span class="p">)</span>
+                            <span class="n">omega</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lam</span><span class="p">))</span>
+                            <span class="n">sv</span> <span class="o">=</span> <span class="p">[</span><span class="n">omega</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">p</span><span class="p">:</span>
+                                <span class="n">sv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+                            <span class="n">sv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">q</span><span class="p">:</span>
+                                <span class="n">sv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">o</span><span class="p">:</span>
+                                <span class="n">sv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gam</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+                                <span class="n">sv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delt</span><span class="p">)</span>
+                            <span class="n">all_starting_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">sv</span><span class="p">))</span>
+
+        <span class="n">distinct_svs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_starting_vals</span><span class="p">))</span>
+        <span class="n">starting_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distinct_svs</span><span class="p">)</span>
+
+        <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">llfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">starting_vals</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">starting_vals</span><span class="p">):</span>
+            <span class="n">llfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gaussian_loglikelihood</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">llfs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">starting_vals</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="p">)]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"phi"</span><span class="p">]</span>
+        <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"beta"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"gamma"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"delta"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">variance_bounds</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array2D</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_forecasting_method</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span><span class="p">,</span> <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">horizon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"analytic"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Analytic forecasts not available for horizon &gt; 1"</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_analytic_forecast</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarianceForecast</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_forecast</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">resids</span><span class="p">),</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">start</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulation_forecast</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">RNGType</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarianceForecast</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_forecast</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">resids</span><span class="p">),</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">start</span>
+        <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">t</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="n">shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">t</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
+
+        <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+
+        <span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">])</span> <span class="k">if</span> <span class="n">o</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_est_delta</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+
+        <span class="n">fig_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">]</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">figarch_weights</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+        <span class="n">lam_rev</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig_params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+
+        <span class="n">abs_resids_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">fshocks_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">fshocks_hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">abs_resids_full</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">resids</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span>
+
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">std_shocks</span> <span class="o">=</span> <span class="n">rng</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
+            <span class="n">available</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span> <span class="p">:</span> <span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fshocks_hist</span><span class="p">[</span>
+                <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">)</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">truncation</span><span class="p">:</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+                <span class="n">lagged_fshocks</span> <span class="o">=</span> <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span> <span class="p">:</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
+                <span class="n">temp_sigma_delta</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lagged_fshocks</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam_rev</span><span class="p">)</span>
+                <span class="n">sigma2_h</span> <span class="o">=</span> <span class="n">temp_sigma_delta</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
+                <span class="n">path_loc</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">start</span>
+                <span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2_h</span><span class="p">)</span>
+                <span class="n">paths</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2_h</span>
+                <span class="n">forecasts</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2_h</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                <span class="n">new_shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">new_shocks</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">**</span> <span class="n">delta</span>
+
+        <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="APARCH">

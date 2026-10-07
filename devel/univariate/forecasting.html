@@ -23,7 +23,7 @@
     
   
       
-        <title>Forecasting - arch v8.0.1 (+102)</title>
+        <title>Forecasting - arch v8.0.1 (+122)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+122)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+102)
+            arch v8.0.1 (+122)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+122)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+102)
+    arch v8.0.1 (+122)
   </label>
   
     <div class="md-nav__source">
@@ -586,6 +586,16 @@
     
     <span class="md-ellipsis">
       <span title="/univariate/forecasting.rst#understanding-forecast-output (reference label)"><span>Understanding Forecast Output</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forecasting-after-new-data-arrive" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/forecasting.rst#forecasting-after-new-data-arrive (reference label)"><span>Forecasting After New Data Arrive</span></span>
     </span>
   </a>
   
@@ -1178,6 +1188,16 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#forecasting-after-new-data-arrive" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/forecasting.rst#forecasting-after-new-data-arrive (reference label)"><span>Forecasting After New Data Arrive</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#output-classes" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1382,6 +1402,35 @@ observation used to estimate the model.</p>
 </div>
 <p>The output will always have as many rows as the data input.  Values
 that are not forecast are <code class="docutils literal notranslate"><span class="pre">nan</span></code> filled.</p>
+<h2 id="forecasting-after-new-data-arrive">Forecasting After New Data Arrive<a class="headerlink" href="#forecasting-after-new-data-arrive" title="Link to this heading">¶</a></h2>
+<p>Models do not need to be re-estimated each time new data are available.
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code> adds observations to a model
+in-place without changing any parameters, so that forecasts can be produced
+from the latest observation using parameters estimated previously.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="n">split_date</span><span class="p">],</span> <span class="n">vol</span><span class="o">=</span><span class="s1">'Garch'</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="c1"># Observations arrive, and are added to the model</span>
+<span class="n">am</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">returns</span><span class="p">[</span><span class="n">split_date</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">):])</span>
+<span class="c1"># Forecast using the model parameters and the extended sample</span>
+<span class="n">forecasts</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>The type of the new data must be the same as the type used to construct the
+model. If the model was constructed using a pandas <code class="docutils literal notranslate"><span class="pre">Series</span></code>, the index of
+the new data must follow the index of the existing data. Individual
+observations can be appended to models that were constructed using an
+<code class="docutils literal notranslate"><span class="pre">ndarray</span></code> or a list. Models that include exogenous variables require the
+values of the exogenous variables for the new observations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:</span><span class="mi">1000</span><span class="p">])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">am</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">returns</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1000</span><span class="p">])</span>
+<span class="n">forecasts</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">fit</span></code> after <code class="docutils literal notranslate"><span class="pre">append</span></code> re-estimates the model using the extended
+sample. <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix" title="arch.univariate.base.ARCHModel.fix (Python method) — Allows an ARCHModelFixedResult to be constructed from fixed parameters."><code class="xref py py-meth docutils literal notranslate"><span class="pre">fix()</span></code></a> can be used to construct a
+results object that uses the extended sample and parameters estimated
+previously. Results objects produced before calling <code class="docutils literal notranslate"><span class="pre">append</span></code> are not changed.</p>
 <h2 id="output-classes">Output Classes<a class="headerlink" href="#output-classes" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>

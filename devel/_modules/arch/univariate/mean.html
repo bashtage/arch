@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v8.0.1 (+102)</title>
+        <title>arch.univariate.mean - arch v8.0.1 (+122)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+102)
+            arch v8.0.1 (+122)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+102)
+    arch v8.0.1 (+122)
   </label>
   
     <div class="md-nav__source">
@@ -501,7 +501,7 @@
     <span class="n">SkewStudent</span><span class="p">,</span>
     <span class="n">StudentsT</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_array_1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">append_same_type</span><span class="p">,</span> <span class="n">to_array_1d</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="c1"># Fake path to satisfy mypy</span>
@@ -522,6 +522,7 @@
     <span class="n">APARCH</span><span class="p">,</span>
     <span class="n">ARCH</span><span class="p">,</span>
     <span class="n">EGARCH</span><span class="p">,</span>
+    <span class="n">FIAPARCH</span><span class="p">,</span>
     <span class="n">FIGARCH</span><span class="p">,</span>
     <span class="n">GARCH</span><span class="p">,</span>
     <span class="n">HARCH</span><span class="p">,</span>
@@ -772,6 +773,147 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">=</span> <span class="n">max_lags</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_model</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_append_x</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nobs_new</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate new exogenous regressors and construct the extended regressors</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : {ndarray, Series, DataFrame, None}</span>
+<span class="sd">            The new exogenous regressors.</span>
+<span class="sd">        nobs_new : int</span>
+<span class="sd">            The number of new observations of y.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        {ndarray, Series, DataFrame, None}</span>
+<span class="sd">            The original regressors extended with the new regressors. None if the</span>
+<span class="sd">            model does not include exogenous regressors.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The model is not modified so that a failure leaves it unchanged.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"x was not provided in the original model, and so x cannot be "</span>
+                    <span class="s2">"appended."</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"x must be provided when appending to a model that includes "</span>
+                <span class="s2">"exogenous regressors."</span>
+            <span class="p">)</span>
+        <span class="n">x_original</span> <span class="o">=</span> <span class="n">append_same_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Same conversion as used when constructing the model</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"x must contain only values that can be converted to float."</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="n">nobs_x_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x_original</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nobs_x_new</span> <span class="o">!=</span> <span class="n">nobs_new</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"x must have the same number of observations as y. Got "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nobs_x_new</span><span class="si">}</span><span class="s2"> new observations of x and </span><span class="si">{</span><span class="n">nobs_new</span><span class="si">}</span><span class="s2"> new "</span>
+                <span class="s2">"observations of y."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">x_original</span>
+
+<div class="viewcode-block" id="HARX.append">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.append.html#arch.univariate.HARX.append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Append observations to the model in-place</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : {ndarray, Series, DataFrame, list, float}</span>
+<span class="sd">            The observations to append. Must have the same type as the data</span>
+<span class="sd">            used to construct the model. If the model was constructed using a</span>
+<span class="sd">            pandas object, then the index of the new data must be unique and</span>
+<span class="sd">            must not overlap the existing index. If the existing index is</span>
+<span class="sd">            increasing, the index of the new data must also be increasing and</span>
+<span class="sd">            must follow the existing observations. When the model was</span>
+<span class="sd">            constructed using an ndarray or a list, a scalar can be appended</span>
+<span class="sd">            to add a single observation.</span>
+<span class="sd">        x : {ndarray, Series, DataFrame}, optional</span>
+<span class="sd">            The values of the exogenous regressors for the new observations.</span>
+<span class="sd">            Must be provided if, and only if, the model includes exogenous</span>
+<span class="sd">            regressors, must have the same type and number of columns as the</span>
+<span class="sd">            exogenous regressors used to construct the model, and must have the</span>
+<span class="sd">            same number of observations as ``y``. When the exogenous</span>
+<span class="sd">            regressors are stored in an ndarray, a 1-d array with one value</span>
+<span class="sd">            for each regressor is treated as a single observation.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If the type of ``y`` or ``x`` differs from the type of the data in</span>
+<span class="sd">            the model.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``y`` is empty, contains non-finite values or, when using</span>
+<span class="sd">            pandas, has an index that is not unique, overlaps the existing</span>
+<span class="sd">            index, or does not follow an increasing index of the existing data.</span>
+<span class="sd">            Also raised if ``x`` is provided when the model does not have</span>
+<span class="sd">            exogenous regressors, is not provided when the model does, cannot</span>
+<span class="sd">            be converted to float, or does not have the same number of</span>
+<span class="sd">            observations as ``y``.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the model was created without data.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Parameters are not re-estimated. Use ``fit`` to re-estimate the model</span>
+<span class="sd">        using the extended sample, or ``fix`` or ``forecast`` to use parameters</span>
+<span class="sd">        estimated previously. Appending resets the estimation sample to the</span>
+<span class="sd">        complete extended sample, subject to ``hold_back``, and clears values</span>
+<span class="sd">        that were computed using the previous sample, such as the backcast.</span>
+<span class="sd">        Results objects returned before appending are not affected.</span>
+
+<span class="sd">        If the data was rescaled when fitting the model, the new data is</span>
+<span class="sd">        rescaled using the same factor. Exogenous regressors are never</span>
+<span class="sd">        rescaled.</span>
+
+<span class="sd">        If the new data is not valid, an exception is raised and the model is</span>
+<span class="sd">        not modified.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Estimate the model using the first part of a sample, and then use the</span>
+<span class="sd">        estimated parameters to forecast after observing more data.</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from arch.univariate import ARX, GARCH</span>
+<span class="sd">        &gt;&gt;&gt; y = np.random.RandomState(1234).standard_normal(1000)</span>
+<span class="sd">        &gt;&gt;&gt; mod = ARX(y[:800], lags=1, volatility=GARCH())</span>
+<span class="sd">        &gt;&gt;&gt; res = mod.fit(disp="off")</span>
+<span class="sd">        &gt;&gt;&gt; mod.append(y[800:])</span>
+<span class="sd">        &gt;&gt;&gt; forecasts = mod.forecast(res.params, horizon=3, reindex=False)</span>
+
+<span class="sd">        Adding a single observation to a model that uses an ndarray.</span>
+
+<span class="sd">        &gt;&gt;&gt; mod.append(0.1)</span>
+<span class="sd">        """</span>
+        <span class="n">y_original</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span> <span class="n">y_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">x_original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_append_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_commit_append</span><span class="p">(</span><span class="n">y_original</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="o">=</span> <span class="n">x_original</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_model</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span><span class="p">:</span>
+            <span class="c1"># Match the default sample used by fit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1146,8 +1288,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">reg_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nobs_orig</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 
+        <span class="c1"># hstack preserves F-ordering if x is F-ordered, which is the case when</span>
+        <span class="c1"># x is a DataFrame. Compiled recursions require C-ordered regressors.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-            <span class="s2">"Float64Array2D"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">reg_constant</span><span class="p">,</span> <span class="n">reg_lags</span><span class="p">,</span> <span class="n">reg_x</span><span class="p">))</span>
+            <span class="s2">"Float64Array2D"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">reg_constant</span><span class="p">,</span> <span class="n">reg_lags</span><span class="p">,</span> <span class="n">reg_x</span><span class="p">))),</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -2422,7 +2567,9 @@
         <span class="s2">"Constant"</span><span class="p">,</span> <span class="s2">"Zero"</span><span class="p">,</span> <span class="s2">"LS"</span><span class="p">,</span> <span class="s2">"AR"</span><span class="p">,</span> <span class="s2">"ARX"</span><span class="p">,</span> <span class="s2">"HAR"</span><span class="p">,</span> <span class="s2">"HARX"</span><span class="p">,</span> <span class="s2">"constant"</span><span class="p">,</span> <span class="s2">"zero"</span>
     <span class="p">]</span> <span class="o">=</span> <span class="s2">"Constant"</span><span class="p">,</span>
     <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">Int32Array</span> <span class="o">|</span> <span class="n">Int64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">vol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"GARCH"</span><span class="p">,</span> <span class="s2">"ARCH"</span><span class="p">,</span> <span class="s2">"EGARCH"</span><span class="p">,</span> <span class="s2">"FIGARCH"</span><span class="p">,</span> <span class="s2">"APARCH"</span><span class="p">,</span> <span class="s2">"HARCH"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"GARCH"</span><span class="p">,</span>
+    <span class="n">vol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+        <span class="s2">"GARCH"</span><span class="p">,</span> <span class="s2">"ARCH"</span><span class="p">,</span> <span class="s2">"EGARCH"</span><span class="p">,</span> <span class="s2">"FIGARCH"</span><span class="p">,</span> <span class="s2">"FIAPARCH"</span><span class="p">,</span> <span class="s2">"APARCH"</span><span class="p">,</span> <span class="s2">"HARCH"</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="s2">"GARCH"</span><span class="p">,</span>
     <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">o</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">q</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -2458,7 +2605,8 @@
 <span class="sd">        integers specifying lag locations.</span>
 <span class="sd">    vol : str, optional</span>
 <span class="sd">        Name of the volatility model.  Currently supported options are:</span>
-<span class="sd">        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'APARCH' and 'HARCH'</span>
+<span class="sd">        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'</span>
+<span class="sd">        and 'HARCH'</span>
 <span class="sd">    p : int, optional</span>
 <span class="sd">        Lag order of the symmetric innovation</span>
 <span class="sd">    o : int, optional</span>
@@ -2525,6 +2673,7 @@
     <span class="n">known_vol</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">"arch"</span><span class="p">,</span>
         <span class="s2">"figarch"</span><span class="p">,</span>
+        <span class="s2">"fiaparch"</span><span class="p">,</span>
         <span class="s2">"aparch"</span><span class="p">,</span>
         <span class="s2">"garch"</span><span class="p">,</span>
         <span class="s2">"harch"</span><span class="p">,</span>
@@ -2566,7 +2715,7 @@
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># mean == "zero"</span>
         <span class="n">am</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">vol_model</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"arch"</span><span class="p">,</span> <span class="s2">"garch"</span><span class="p">,</span> <span class="s2">"figarch"</span><span class="p">,</span> <span class="s2">"egarch"</span><span class="p">,</span> <span class="s2">"aparch"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+    <span class="k">if</span> <span class="n">vol_model</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"arch"</span><span class="p">,</span> <span class="s2">"garch"</span><span class="p">,</span> <span class="s2">"figarch"</span><span class="p">,</span> <span class="s2">"fiaparch"</span><span class="p">,</span> <span class="s2">"egarch"</span><span class="p">,</span> <span class="s2">"aparch"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
         <span class="n">p</span><span class="p">,</span> <span class="nb">int</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -2587,6 +2736,9 @@
     <span class="k">elif</span> <span class="n">vol_model</span> <span class="o">==</span> <span class="s2">"egarch"</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">EGARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="n">o</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">vol_model</span> <span class="o">==</span> <span class="s2">"fiaparch"</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">FIAPARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="n">o</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">vol_model</span> <span class="o">==</span> <span class="s2">"aparch"</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">APARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="n">o</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>

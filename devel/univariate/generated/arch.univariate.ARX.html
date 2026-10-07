@@ -15,7 +15,7 @@
         <link rel="prev" href="generated/arch.univariate.ConstantMean.y.html">
       
       
-        <link rel="next" href="generated/arch.univariate.ARX.bounds.html">
+        <link rel="next" href="generated/arch.univariate.ARX.append.html">
       
       
       <link rel="icon" href="../../_static/favicon.ico">
@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.ARX - arch v8.0.1 (+102)</title>
+        <title>arch.univariate.ARX - arch v8.0.1 (+122)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+122)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+102)
+            arch v8.0.1 (+122)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+122)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+102)
+    arch v8.0.1 (+122)
   </label>
   
     <div class="md-nav__source">
@@ -621,6 +621,30 @@
             <span title="arch.univariate.ARX (Python class) — Autoregressive model with optional exogenous regressors estimation and simulation"><span>arch.<wbr>univariate.<wbr>ARX</span></span>
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="generated/arch.univariate.ARX.append.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/generated/generated/arch.univariate.arx.append.rst (reference label)"><span>arch.<wbr>univariate.<wbr>ARX.<wbr>append</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1190,6 +1214,16 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="generated/arch.univariate.ARX.append.html" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/generated/generated/arch.univariate.arx.append.rst (reference label)"><span>arch.<wbr>univariate.<wbr>ARX.<wbr>append</span></span>
+    </span>
+  </a>
   
 </li>
         
@@ -2036,34 +2070,37 @@ then y is rescaled and the new scale is reported in the estimation results.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.bounds.html#arch.univariate.ARX.bounds" title="arch.univariate.ARX.bounds (Python method) — Construct bounds for parameters to use in non-linear optimization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.append.html#arch.univariate.ARX.append" title="arch.univariate.ARX.append (Python method) — Append observations to the model in-place"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(y[, x])</p></td>
+<td><p>Append observations to the model in-place</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.bounds.html#arch.univariate.ARX.bounds" title="arch.univariate.ARX.bounds (Python method) — Construct bounds for parameters to use in non-linear optimization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a>()</p></td>
 <td><p>Construct bounds for parameters to use in non-linear optimization</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.compute_param_cov.html#arch.univariate.ARX.compute_param_cov" title="arch.univariate.ARX.compute_param_cov (Python method) — Computes parameter covariances using numerical derivatives."><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_param_cov</span></code></a>(params[, backcast, robust])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.compute_param_cov.html#arch.univariate.ARX.compute_param_cov" title="arch.univariate.ARX.compute_param_cov (Python method) — Computes parameter covariances using numerical derivatives."><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_param_cov</span></code></a>(params[, backcast, robust])</p></td>
 <td><p>Computes parameter covariances using numerical derivatives.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.constraints.html#arch.univariate.ARX.constraints" title="arch.univariate.ARX.constraints (Python method) — Construct linear constraint arrays  for use in non-linear optimization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constraints</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.constraints.html#arch.univariate.ARX.constraints" title="arch.univariate.ARX.constraints (Python method) — Construct linear constraint arrays  for use in non-linear optimization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constraints</span></code></a>()</p></td>
 <td><p>Construct linear constraint arrays  for use in non-linear optimization</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.fit.html#arch.univariate.ARX.fit" title="arch.univariate.ARX.fit (Python method) — Estimate model parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([update_freq, disp, starting_values, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.fit.html#arch.univariate.ARX.fit" title="arch.univariate.ARX.fit (Python method) — Estimate model parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([update_freq, disp, starting_values, ...])</p></td>
 <td><p>Estimate model parameters</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.fix.html#arch.univariate.ARX.fix" title="arch.univariate.ARX.fix (Python method) — Allows an ARCHModelFixedResult to be constructed from fixed parameters."><code class="xref py py-obj docutils literal notranslate"><span class="pre">fix</span></code></a>(params[, first_obs, last_obs])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.fix.html#arch.univariate.ARX.fix" title="arch.univariate.ARX.fix (Python method) — Allows an ARCHModelFixedResult to be constructed from fixed parameters."><code class="xref py py-obj docutils literal notranslate"><span class="pre">fix</span></code></a>(params[, first_obs, last_obs])</p></td>
 <td><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.forecast.html#arch.univariate.ARX.forecast" title="arch.univariate.ARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forecast</span></code></a>(params[, horizon, start, align, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.forecast.html#arch.univariate.ARX.forecast" title="arch.univariate.ARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forecast</span></code></a>(params[, horizon, start, align, ...])</p></td>
 <td><p>Construct forecasts from estimated model</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.parameter_names.html#arch.univariate.ARX.parameter_names" title="arch.univariate.ARX.parameter_names (Python method) — List of parameters names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameter_names</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.parameter_names.html#arch.univariate.ARX.parameter_names" title="arch.univariate.ARX.parameter_names (Python method) — List of parameters names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameter_names</span></code></a>()</p></td>
 <td><p>List of parameters names</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.resids.html#arch.univariate.ARX.resids" title="arch.univariate.ARX.resids (Python method) — Compute model residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resids</span></code></a>(params[, y, regressors])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.resids.html#arch.univariate.ARX.resids" title="arch.univariate.ARX.resids (Python method) — Compute model residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resids</span></code></a>(params[, y, regressors])</p></td>
 <td><p>Compute model residuals</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.simulate.html#arch.univariate.ARX.simulate" title="arch.univariate.ARX.simulate (Python method) — Simulates data from a linear regression, AR or HAR models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code></a>(params, nobs[, burn, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.simulate.html#arch.univariate.ARX.simulate" title="arch.univariate.ARX.simulate (Python method) — Simulates data from a linear regression, AR or HAR models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code></a>(params, nobs[, burn, ...])</p></td>
 <td><p>Simulates data from a linear regression, AR or HAR models</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.starting_values.html#arch.univariate.ARX.starting_values" title="arch.univariate.ARX.starting_values (Python method) — Returns starting values for the mean model, often the same as the values returned from fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">starting_values</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ARX.starting_values.html#arch.univariate.ARX.starting_values" title="arch.univariate.ARX.starting_values (Python method) — Returns starting values for the mean model, often the same as the values returned from fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">starting_values</span></code></a>()</p></td>
 <td><p>Returns starting values for the mean model, often the same as the values returned from fit</p></td>
 </tr>
 </tbody>

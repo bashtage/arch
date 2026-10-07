@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModel.append
+=====================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModel.append

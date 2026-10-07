@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+102)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+122)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+102)
+            arch v8.0.1 (+122)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+102)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+102)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+122)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+122)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+102)
+    arch v8.0.1 (+122)
   </label>
   
     <div class="md-nav__source">
@@ -499,7 +499,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">append_same_type</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ConvergenceWarning</span><span class="p">,</span>
     <span class="n">DataScaleWarning</span><span class="p">,</span>
@@ -705,6 +705,148 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""The name of the model."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate new observations and construct the extended data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : {ndarray, Series, DataFrame, list, float}</span>
+<span class="sd">            The new observations. See ``append``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_original : {ndarray, Series, DataFrame, list}</span>
+<span class="sd">            The original data extended with the new observations.</span>
+<span class="sd">        y_series : Series</span>
+<span class="sd">            The extended data as a Series.</span>
+<span class="sd">        y_new : ndarray</span>
+<span class="sd">            The new observations, converted to floats and not rescaled.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The model is not modified so that a failure leaves it unchanged.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot append to a model created without data."</span><span class="p">)</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># y is a single sequence, and so may be stored as a row or a column</span>
+        <span class="n">y_original</span> <span class="o">=</span> <span class="n">append_same_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"pd.Series"</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y_original</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">y_values</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">y_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
+        <span class="n">y_new</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">y_values</span><span class="p">[</span><span class="n">nobs</span><span class="p">:])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_new</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"NaN or inf values found in y. y must contains only finite values."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">y_series</span><span class="o">.</span><span class="n">index</span>
+            <span class="n">old_index</span><span class="p">,</span> <span class="n">new_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[:</span><span class="n">nobs</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="n">nobs</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_index</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"The index of the appended data contains duplicate values."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">old_index</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"The index of the appended data overlaps the index of the "</span>
+                    <span class="s2">"existing data."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">old_index</span><span class="o">.</span><span class="n">is_monotonic_increasing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"The index of the existing data is increasing, and so the "</span>
+                    <span class="s2">"index of the appended data must be increasing and must come "</span>
+                    <span class="s2">"after the last observation in the existing data."</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">y_original</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span> <span class="n">y_new</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_commit_append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y_original</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">y_series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">y_new</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Update the data stored in the model using the output of _prepare_append</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="o">=</span> <span class="n">y_original</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span> <span class="o">=</span> <span class="n">y_series</span>
+        <span class="c1"># Any rescaling that was applied when fitting must also be applied to new</span>
+        <span class="c1"># data so that it is consistent with parameters estimated using the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">y_new</span><span class="p">)))</span>
+
+        <span class="c1"># Everything computed using the previous sample is out-of-date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+<div class="viewcode-block" id="ARCHModel.append">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.append.html#arch.univariate.base.ARCHModel.append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Append observations to the model in-place</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : {ndarray, Series, DataFrame, list, float}</span>
+<span class="sd">            The observations to append. Must have the same type as the data</span>
+<span class="sd">            used to construct the model. If the model was constructed using a</span>
+<span class="sd">            pandas object, then the index of the new data must be unique and</span>
+<span class="sd">            must not overlap the existing index. If the existing index is</span>
+<span class="sd">            increasing, the index of the new data must also be increasing and</span>
+<span class="sd">            must follow the existing observations. When the model was</span>
+<span class="sd">            constructed using an ndarray or a list, a scalar can be appended</span>
+<span class="sd">            to add a single observation.</span>
+<span class="sd">        x : {ndarray, Series, DataFrame}, optional</span>
+<span class="sd">            The values of the exogenous regressors for the new observations.</span>
+<span class="sd">            The base class does not include exogenous regressors, and so this</span>
+<span class="sd">            must be None. Models that include exogenous regressors override</span>
+<span class="sd">            this method.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If the type of ``y`` differs from the type of the data in the model.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``y`` is empty, contains non-finite values or, when using pandas,</span>
+<span class="sd">            has an index that is not unique, overlaps the existing index, or</span>
+<span class="sd">            does not follow an increasing index of the existing data. Also</span>
+<span class="sd">            raised if ``x`` is not None.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the model was created without data.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Parameters are not re-estimated. Use ``fit`` to re-estimate the model</span>
+<span class="sd">        using the extended sample, or ``fix`` or ``forecast`` to use parameters</span>
+<span class="sd">        estimated previously. Appending resets the estimation sample to the</span>
+<span class="sd">        complete extended sample and clears values that were computed using the</span>
+<span class="sd">        previous sample, such as the backcast. Results objects returned before</span>
+<span class="sd">        appending are not affected.</span>
+
+<span class="sd">        If the data was rescaled when fitting the model, the new data is</span>
+<span class="sd">        rescaled using the same factor.</span>
+
+<span class="sd">        Subclasses that store data derived from ``y`` must override this method</span>
+<span class="sd">        to update these values.</span>
+<span class="sd">        """</span>
+        <span class="n">y_original</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span> <span class="n">y_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not include exogenous regressors, "</span>
+                <span class="s2">"and so x cannot be appended."</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_commit_append</span><span class="p">(</span><span class="n">y_original</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="ARCHModel.constraints">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.constraints.html#arch.univariate.base.ARCHModel.constraints">[docs]</a>

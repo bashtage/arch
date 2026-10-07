@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.append
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.append
