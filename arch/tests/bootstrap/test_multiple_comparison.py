@@ -1,3 +1,4 @@
+import itertools
 from typing import NamedTuple
 
 import numpy as np
@@ -14,7 +15,71 @@ from arch.bootstrap import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
-from arch.bootstrap.multiple_comparison import MCS, SPA, StepM
+from arch.bootstrap.multiple_comparison import MCS, SPA, StepM, _KernelVariance
+from arch.covariance.kernel import Bartlett
+
+BOOTSTRAPS = {
+    "sb": StationaryBootstrap,
+    "cbb": CircularBlockBootstrap,
+    "mbb": MovingBlockBootstrap,
+}
+
+
+def direct_long_run_variance(x, weights):
+    """Weighted sum of the sample autocovariances computed lag by lag"""
+    t = x.shape[0]
+    x = x - x.mean(0)
+    variances = (x**2).sum(0) / t
+    for i in range(1, t):
+        variances = variances + 2 * weights[i] * (x[: t - i] * x[i:]).sum(0) / t
+    return variances
+
+
+def stationary_bootstrap_variance(x, block_size):
+    """
+    Exact t * Var(mean) of the stationary bootstrap
+
+    The indices of the stationary bootstrap are a Markov chain that moves to
+    the next observation (circularly) with probability 1 - p and otherwise
+    draws an index uniformly.
+    """
+    t = x.shape[0]
+    p = 1.0 / block_size
+    x = x - x.mean()
+    transition = (1 - p) * np.roll(np.eye(t), 1, axis=1) + p / t
+    power = np.eye(t)
+    variance = 0.0
+    for lag in range(t):
+        covariance = np.mean(x * (power @ x))
+        variance += (t if lag == 0 else 2.0 * (t - lag)) * covariance
+        power = power @ transition
+    return variance / t
+
+
+def circular_block_bootstrap_variance(x, block_size):
+    """Exact t * E[(mean* - mean)**2] of the CBB by enumerating all samples"""
+    t = x.shape[0]
+    num_blocks = -(-t // block_size)
+    offsets = np.arange(block_size)
+    means = []
+    for starts in itertools.product(range(t), repeat=num_blocks):
+        indices = (np.array(starts)[:, None] + offsets).ravel()[:t] % t
+        means.append(x[indices].mean())
+    return t * np.mean((np.array(means) - x.mean()) ** 2)
+
+
+def moving_block_bootstrap_variance(x, block_size):
+    """Exact t * Var(mean) of the MBB using independent, non-wrapping blocks"""
+    t = x.shape[0]
+    num_blocks, remainder = divmod(t, block_size)
+    cumsum = np.concatenate([[0.0], np.cumsum(x)])
+
+    def window_variance(length):
+        if length == 0:
+            return 0.0
+        return (cumsum[length:] - cumsum[:-length]).var()
+
+    return (num_blocks * window_variance(block_size) + window_variance(remainder)) / t
 
 
 class SPAData(NamedTuple):
@@ -130,16 +195,226 @@ def test_studentization():
     raw = SPA(benchmark, models, block_size=10, reps=500, studentize=False, seed=23456)
     raw.compute()
 
-    std_err = np.sqrt(spa._loss_diff_var / t)
-    max_stats = np.max(raw._simulated_vals / std_err[:, None, None], 0)
-    max_loss_diff = np.max(raw._loss_diff.mean(0) / std_err)
-    expected = pd.Series(
-        np.mean(max_stats > max_loss_diff, 0), index=["lower", "consistent", "upper"]
-    )
-    assert_series_equal(spa.pvalues, expected)
     assert np.all(spa.pvalues < 0.05)
     assert np.all(raw.pvalues > 0.05)
     assert_equal(spa.better_models(), np.array([0]))
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_studentization_inside_bootstrap(bootstrap):
+    rng = np.random.default_rng(12345)
+    t, k, reps, block_size = 60, 3, 25, 4
+    benchmark = rng.standard_normal(t)
+    models = rng.standard_normal((t, k)) * np.array([0.5, 1.0, 3.0]) + 0.1
+    spa = SPA(
+        benchmark,
+        models,
+        block_size=block_size,
+        reps=reps,
+        bootstrap=bootstrap,
+        seed=23456,
+    )
+    spa.compute()
+
+    # Recompute using the same bootstrap draws, a standard error computed
+    # from each bootstrap sample and direct sums
+    loss_diff = benchmark[:, None] - models
+    bs = BOOTSTRAPS[bootstrap](block_size, loss_diff, seed=23456)
+    weights = _KernelVariance._implied_kernel(bs, t)
+    mean = loss_diff.mean(0)
+    means = [np.maximum(mean, 0.0), np.where(spa._valid_columns, mean, 0.0), mean]
+    std_errs = []
+    for i, bs_data in enumerate(bs.bootstrap(reps)):
+        sample = bs_data[0][0]
+        std_err = np.sqrt(direct_long_run_variance(sample, weights) / t)
+        std_errs.append(std_err)
+        for j, center in enumerate(means):
+            expected = (sample.mean(0) - center) / std_err
+            assert_allclose(spa._simulated_vals[:, i, j], expected)
+    # The scale changes across bootstrap samples
+    assert np.all(np.ptp(np.array(std_errs), axis=0) > 0)
+
+    # The observed statistic uses the same estimator in the full sample
+    full_sample_std_err = np.sqrt(direct_long_run_variance(loss_diff, weights) / t)
+    assert_allclose(spa._scale(), full_sample_std_err)
+    max_stats = np.max(spa._simulated_vals, 0)
+    pvalues = np.mean(max_stats > np.max(mean / full_sample_std_err), 0)
+    assert_allclose(spa.pvalues.to_numpy(), pvalues)
+
+
+def test_no_studentization_inside_bootstrap():
+    rng = np.random.default_rng(12345)
+    t, reps = 60, 25
+    benchmark = rng.standard_normal(t)
+    models = rng.standard_normal((t, 3))
+    spa = SPA(benchmark, models, block_size=4, reps=reps, studentize=False, seed=1)
+    spa.compute()
+    loss_diff = benchmark[:, None] - models
+    bs = StationaryBootstrap(4, loss_diff, seed=1)
+    mean = loss_diff.mean(0)
+    means = [np.maximum(mean, 0.0), np.where(spa._valid_columns, mean, 0.0), mean]
+    for i, bs_data in enumerate(bs.bootstrap(reps)):
+        for j, center in enumerate(means):
+            expected = bs_data[0][0].mean(0) - center
+            assert_allclose(spa._simulated_vals[:, i, j], expected)
+    assert_equal(spa._scale(), np.ones(3))
+
+
+def test_nested_studentization_inside_bootstrap(spa_data):
+    kwargs = {"block_size": 10, "reps": 50, "seed": 1}
+    models = spa_data.models[:, :20]
+    spa = SPA(spa_data.benchmark, models, **kwargs)
+    spa.compute()
+    nested = SPA(spa_data.benchmark, models, nested=True, **kwargs)
+    nested.compute()
+    # Bootstrap variances in the full sample only
+    assert not np.allclose(nested._loss_diff_var, spa._loss_diff_var)
+    assert_allclose(
+        nested._simulated_vals[:, :, [0, 2]], spa._simulated_vals[:, :, 0::2]
+    )
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_variance_uses_kernel_of_bootstrap(spa_data, bootstrap):
+    spa = SPA(
+        spa_data.benchmark,
+        spa_data.models[:, :10],
+        block_size=12,
+        reps=10,
+        bootstrap=bootstrap,
+        seed=1,
+    )
+    spa.compute()
+    weights = _KernelVariance._implied_kernel(spa.bootstrap, spa_data.t)
+    assert_allclose(
+        spa._loss_diff_var, direct_long_run_variance(spa._loss_diff, weights)
+    )
+
+
+def test_bootstrap_kernels_differ(spa_data):
+    variances = {}
+    for bootstrap in BOOTSTRAPS:
+        spa = SPA(
+            spa_data.benchmark,
+            spa_data.models[:, :10],
+            block_size=12,
+            reps=10,
+            bootstrap=bootstrap,
+        )
+        spa.compute()
+        variances[bootstrap] = spa._loss_diff_var
+    assert not np.allclose(variances["sb"], variances["cbb"])
+    assert not np.allclose(variances["cbb"], variances["mbb"])
+
+
+def test_zero_loss_differential():
+    rng = np.random.default_rng(0)
+    benchmark = rng.standard_normal(100)
+    models = np.column_stack([benchmark, benchmark - 0.1 + rng.standard_normal(100)])
+    spa = SPA(benchmark, models, block_size=5, reps=50, seed=1)
+    spa.compute()
+    assert np.all(np.isfinite(spa._simulated_vals))
+    assert_equal(spa._simulated_vals[0], np.zeros((50, 3)))
+    assert np.all(np.isfinite(spa.pvalues))
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_sparse_loss_differential(bootstrap):
+    rng = np.random.default_rng(0)
+    t, reps = 200, 300
+    benchmark = rng.standard_normal(t)
+    models = benchmark[:, None] + rng.standard_normal((t, 3))
+    models[:, 0] -= 0.5
+    # This model differs from the benchmark in a single period, so its loss
+    # differential is constant in the bootstrap samples that omit this period
+    sparse = benchmark.copy()
+    sparse[17] += 1.0
+    models = np.column_stack([models, sparse])
+    spa = SPA(benchmark, models, block_size=10, reps=reps, bootstrap=bootstrap, seed=1)
+    spa.compute()
+
+    loss_diff = benchmark[:, None] - models
+    bs = BOOTSTRAPS[bootstrap](10, loss_diff, seed=1)
+    mean = loss_diff.mean(0)
+    full_sample_std_err = spa._scale()
+    num_constant = 0
+    for i, bs_data in enumerate(bs.bootstrap(reps)):
+        sample = bs_data[0][0]
+        if np.ptp(sample[:, 3]) == 0.0:
+            num_constant += 1
+            # Lower and upper
+            for j, center in ((0, np.maximum(mean, 0.0)), (2, mean)):
+                expected = (sample[:, 3].mean() - center[3]) / full_sample_std_err[3]
+                assert_allclose(spa._simulated_vals[3, i, j], expected)
+    assert num_constant > 25
+    assert np.max(np.abs(spa._simulated_vals)) < 100
+    # The sparse model does not affect the ability to detect the better model
+    assert np.all(spa.pvalues < 0.05)
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+@pytest.mark.parametrize(
+    ("t", "block_size"), [(50, 5), (53, 7), (40, 40), (30, 1), (25, 40)]
+)
+def test_kernel_variance_matches_direct_sum(bootstrap, t, block_size):
+    rng = np.random.default_rng(t * block_size)
+    x = rng.standard_normal((t, 4)).cumsum(0) * 0.1 + rng.standard_normal((t, 4))
+    bs = BOOTSTRAPS[bootstrap](block_size, x)
+    weights = _KernelVariance._implied_kernel(bs, t)
+    assert_equal(weights.shape, (t,))
+    assert_allclose(weights[0], 1.0)
+    expected = direct_long_run_variance(x, weights)
+    assert_allclose(_KernelVariance(bs, t)(x), expected, rtol=1e-10, atol=1e-12)
+
+
+@pytest.mark.parametrize("block_size", [1, 3, 12, 20])
+def test_stationary_kernel_is_bootstrap_variance(block_size):
+    rng = np.random.default_rng(block_size)
+    t = 12
+    x = rng.standard_normal(t) + np.sin(np.arange(t))
+    bs = StationaryBootstrap(block_size, x)
+    estimate = _KernelVariance(bs, t)(x[:, None])[0]
+    assert_allclose(estimate, stationary_bootstrap_variance(x, block_size))
+
+
+@pytest.mark.parametrize(("t", "block_size"), [(6, 3), (7, 3), (8, 4), (5, 7), (6, 1)])
+def test_circular_kernel_is_bootstrap_variance(t, block_size):
+    rng = np.random.default_rng(t * block_size)
+    x = rng.standard_normal(t) + np.sin(np.arange(t))
+    bs = CircularBlockBootstrap(block_size, x)
+    estimate = _KernelVariance(bs, t)(x[:, None])[0]
+    expected = circular_block_bootstrap_variance(x, block_size)
+    # The mean is constant when block_size > t, so the variance is 0
+    assert_allclose(estimate, expected, atol=1e-12)
+
+
+def test_moving_block_kernel_is_bartlett():
+    rng = np.random.default_rng(0)
+    t, block_size = 60, 5
+    x = rng.standard_normal((t, 3)).cumsum(0) * 0.2 + rng.standard_normal((t, 3))
+    bs = MovingBlockBootstrap(block_size, x)
+    bartlett = Bartlett(x, bandwidth=block_size - 1, center=True, force_int=True)
+    expected = np.diag(bartlett.cov.long_run)
+    assert_allclose(_KernelVariance(bs, t)(x), expected)
+
+
+@pytest.mark.parametrize(("t", "block_size"), [(250, 16), (100, 10)])
+def test_moving_block_kernel_approximates_bootstrap_variance(t, block_size):
+    rng = np.random.default_rng(t)
+    ratios = []
+    for _ in range(100):
+        shocks = rng.standard_normal(t + 50)
+        x = np.zeros(t + 50)
+        for i in range(1, t + 50):
+            x[i] = 0.5 * x[i - 1] + shocks[i]
+        x = x[50:]
+        bs = MovingBlockBootstrap(block_size, x)
+        ratios.append(
+            _KernelVariance(bs, t)(x[:, None])[0]
+            / moving_block_bootstrap_variance(x, block_size)
+        )
+    # Equal up to edge effects that vanish as block_size / t -> 0
+    assert abs(np.mean(ratios) - 1.0) < 0.04
 
 
 def test_errors(spa_data):

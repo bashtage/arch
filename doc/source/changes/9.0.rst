@@ -1,0 +1,12 @@
+=========
+Version 9
+=========
+
+Release 9.0 (Unreleased)
+========================
+- :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` now studentize
+  inside each bootstrap replication when ``studentize=True`` (the default). The
+  standard errors use a kernel long-run variance estimator that matches the
+  bootstrap, so the variances for the circular and moving block bootstraps no
+  longer use the stationary bootstrap kernel. Results differ from previous
+  versions.

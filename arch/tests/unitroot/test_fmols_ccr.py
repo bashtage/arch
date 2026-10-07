@@ -375,6 +375,7 @@ def test_ccr_summary_title(trivariate_data):
     assert "Canonical Cointegrating Regression" in str(res.summary())
 
 
+@pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
 @pytest.mark.parametrize(
     "kernel", ["quadratic-spectral", "Quadratic_Spectral", "Tukey-Hanning"]
 )
