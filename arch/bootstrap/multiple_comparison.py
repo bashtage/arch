@@ -62,6 +62,7 @@ class _KernelVariance:
 
     def __init__(self, bootstrap: CircularBlockBootstrap, t: int) -> None:
         weights = self._implied_kernel(bootstrap, t)
+        kernel: Float64Array
         if isinstance(bootstrap, MovingBlockBootstrap):
             # Sample autocovariances without wrap-around. Padding avoids
             # aliasing of the lags in the support of the kernel.
@@ -858,7 +859,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         full_sample_scale = self._scale()
         for i, bs_data in enumerate(self.bootstrap.bootstrap(self.reps)):
             pos_arg, _ = bs_data
-            loss_diff_star = pos_arg[0]
+            loss_diff_star = np.asarray(pos_arg[0], dtype=float)
             # Studentize using the bootstrap sample, as in the statistic
             if self.studentize:
                 variances = self._kernel_variance(loss_diff_star)
