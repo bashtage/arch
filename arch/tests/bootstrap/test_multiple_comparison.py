@@ -15,6 +15,7 @@ from arch.bootstrap import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
+from arch.bootstrap.base import _get_random_integers
 from arch.bootstrap.multiple_comparison import MCS, SPA, StepM, _KernelVariance
 from arch.covariance.kernel import Bartlett
 
@@ -151,14 +152,14 @@ def test_variances_and_selection(spa_data):
     # Bootstrap variances
     spa = SPA(
         spa_data.benchmark,
-        spa_data.models,
+        spa_data.models[:, :20],
         block_size=10,
         reps=100,
         nested=True,
         seed=23456,
     )
-    spa.compute()
-    spa.reset()
+    spa._compute_variance()
+    demeaned = spa._loss_diff - spa._loss_diff.mean(0)
     bs = spa.bootstrap.clone(demeaned, seed=23456)
     variances = spa._loss_diff_var
     bootstrap_variances = t * bs.var(lambda x: x.mean(0), reps=100, recenter=True)
@@ -242,36 +243,191 @@ def test_studentization_inside_bootstrap(bootstrap):
     assert_allclose(spa.pvalues.to_numpy(), pvalues)
 
 
-def test_no_studentization_inside_bootstrap():
-    rng = np.random.default_rng(12345)
-    t, reps = 60, 25
+class CountingKernel:
+    """Wraps a kernel variance estimator and counts the calls"""
+
+    def __init__(self, kernel):
+        self.kernel = kernel
+        self.calls = 0
+
+    def __call__(self, x):
+        self.calls += 1
+        return self.kernel(x)
+
+
+def forbidden(*args, **kwargs):
+    raise AssertionError("This must not be used")
+
+
+def small_problem(t=40, k=3, seed=12345):
+    rng = np.random.default_rng(seed)
     benchmark = rng.standard_normal(t)
-    models = rng.standard_normal((t, 3))
-    spa = SPA(benchmark, models, block_size=4, reps=reps, studentize=False, seed=1)
+    models = rng.standard_normal((t, k)) * np.linspace(0.5, 2.0, k) + 0.1
+    return benchmark, models
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_kernel_used_if_studentized_and_not_nested(bootstrap, monkeypatch):
+    benchmark, models = small_problem()
+    reps = 12
+    spa = SPA(
+        benchmark, models, block_size=4, reps=reps, bootstrap=bootstrap, seed=23456
+    )
+    assert spa.studentize
+    assert not spa.nested
+    assert isinstance(spa._kernel_variance, _KernelVariance)
+    counter = CountingKernel(spa._kernel_variance)
+    spa._kernel_variance = counter
+    # A nested bootstrap clones the bootstrap
+    monkeypatch.setattr(CircularBlockBootstrap, "clone", forbidden)
     spa.compute()
+    # Once for the original data, and once in each bootstrap replication
+    assert counter.calls == reps + 1
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_nested_bootstrap_replaces_kernel(bootstrap, monkeypatch):
+    benchmark, models = small_problem()
+    t = benchmark.shape[0]
+    reps, block_size = 12, 4
+    with monkeypatch.context() as patch:
+        # The kernel must not even be constructed
+        patch.setattr(_KernelVariance, "__init__", forbidden)
+        spa = SPA(
+            benchmark,
+            models,
+            block_size=block_size,
+            reps=reps,
+            bootstrap=bootstrap,
+            nested=True,
+            seed=23456,
+        )
+        assert spa.studentize
+        assert spa._kernel_variance is None
+        spa.compute()
+
+    # Full sample variance: bootstrap of the demeaned loss differentials
     loss_diff = benchmark[:, None] - models
-    bs = StationaryBootstrap(4, loss_diff, seed=1)
+    demeaned = loss_diff - loss_diff.mean(0)
+    full_sample = BOOTSTRAPS[bootstrap](block_size, demeaned, seed=23456)
+    expected_var = t * full_sample.var(lambda x: x.mean(0), reps=reps, recenter=True)
+    assert_allclose(spa._loss_diff_var, expected_var)
+    assert_allclose(spa._scale(), np.sqrt(expected_var / t))
+
+    # In each replication, the variance is from a bootstrap of the sample.
+    # This is seeded from the generator of the bootstrap, as in confidence
+    # intervals that are studentized using a nested bootstrap
+    bs = BOOTSTRAPS[bootstrap](block_size, loss_diff, seed=23456)
     mean = loss_diff.mean(0)
+    means = [np.maximum(mean, 0.0), np.where(spa._valid_columns, mean, 0.0), mean]
+    std_errs = []
+    for i, bs_data in enumerate(bs.bootstrap(reps)):
+        sample = bs_data[0][0]
+        seed = int(_get_random_integers(bs.generator, 2**31 - 1)[0])
+        nested_bs = BOOTSTRAPS[bootstrap](block_size, sample, seed=seed)
+        variances = t * nested_bs.var(lambda x: x.mean(0), reps=reps, recenter=True)
+        std_err = np.sqrt(variances / t)
+        std_errs.append(std_err)
+        for j, center in enumerate(means):
+            expected = (sample.mean(0) - center) / std_err
+            assert_allclose(spa._simulated_vals[:, i, j], expected)
+    assert np.all(np.ptp(np.array(std_errs), axis=0) > 0)
+
+    # And it differs from using the kernel
+    kernel = SPA(
+        benchmark,
+        models,
+        block_size=block_size,
+        reps=reps,
+        bootstrap=bootstrap,
+        seed=23456,
+    )
+    kernel.compute()
+    assert not np.allclose(kernel._loss_diff_var, spa._loss_diff_var)
+    assert not np.allclose(kernel._simulated_vals, spa._simulated_vals)
+
+
+def test_nested_is_reproducible():
+    benchmark, models = small_problem()
+    spa = SPA(benchmark, models, block_size=4, reps=10, nested=True, seed=1)
+    spa.compute()
+    first = spa._simulated_vals.copy()
+    pvalues = spa.pvalues.copy()
+    again = SPA(benchmark, models, block_size=4, reps=10, nested=True, seed=1)
+    again.compute()
+    assert_allclose(again._simulated_vals, first)
+    assert_series_equal(again.pvalues, pvalues)
+
+
+@pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
+def test_no_studentization_if_not_studentized(bootstrap, monkeypatch):
+    benchmark, models = small_problem()
+    k = models.shape[1]
+    reps, block_size = 25, 4
+    spa = SPA(
+        benchmark,
+        models,
+        block_size=block_size,
+        reps=reps,
+        bootstrap=bootstrap,
+        studentize=False,
+        seed=1,
+    )
+    assert not spa.studentize
+    assert not spa.nested
+    counter = CountingKernel(spa._kernel_variance)
+    spa._kernel_variance = counter
+    monkeypatch.setattr(CircularBlockBootstrap, "clone", forbidden)
+    spa.compute()
+    # The variance is only used to select the models to re-center, once
+    assert counter.calls == 1
+
+    # Nothing is studentized in the original data
+    loss_diff = benchmark[:, None] - models
+    mean = loss_diff.mean(0)
+    assert_equal(spa._scale(), np.ones(k))
+    assert_equal(spa._studentized_mean(), mean)
+
+    # Or in the bootstrap samples
+    bs = BOOTSTRAPS[bootstrap](block_size, loss_diff, seed=1)
     means = [np.maximum(mean, 0.0), np.where(spa._valid_columns, mean, 0.0), mean]
     for i, bs_data in enumerate(bs.bootstrap(reps)):
         for j, center in enumerate(means):
             expected = bs_data[0][0].mean(0) - center
             assert_allclose(spa._simulated_vals[:, i, j], expected)
-    assert_equal(spa._scale(), np.ones(3))
+
+    # So the results are in the units of the loss differentials
+    max_stats = np.max(spa._simulated_vals, 0)
+    assert_allclose(spa.pvalues.to_numpy(), np.mean(max_stats > np.max(mean), 0))
+    crit_vals = np.percentile(max_stats, 95.0, axis=0)
+    assert_allclose(spa.critical_values(0.05).to_numpy(), crit_vals)
+    expected_better = np.argwhere(mean > crit_vals[1]).flatten()
+    assert_equal(spa.better_models(0.05), expected_better)
 
 
-def test_nested_studentization_inside_bootstrap(spa_data):
-    kwargs = {"block_size": 10, "reps": 50, "seed": 1}
-    models = spa_data.models[:, :20]
-    spa = SPA(spa_data.benchmark, models, **kwargs)
-    spa.compute()
-    nested = SPA(spa_data.benchmark, models, nested=True, **kwargs)
-    nested.compute()
-    # Bootstrap variances in the full sample only
-    assert not np.allclose(nested._loss_diff_var, spa._loss_diff_var)
-    assert_allclose(
-        nested._simulated_vals[:, :, [0, 2]], spa._simulated_vals[:, :, 0::2]
-    )
+@pytest.mark.parametrize("procedure", [SPA, StepM])
+def test_nested_requires_studentize(procedure):
+    benchmark, models = small_problem()
+    with pytest.raises(
+        ValueError, match=r"nested can only be True when studentize is True"
+    ):
+        procedure(benchmark, models, studentize=False, nested=True)
+    for studentize, nested in ((True, False), (True, True), (False, False)):
+        procedure(benchmark, models, studentize=studentize, nested=nested)
+
+
+def test_stepm_studentization_options():
+    benchmark, models = small_problem()
+    stepm = StepM(benchmark, models, reps=10, studentize=False, seed=1)
+    assert not stepm.spa.studentize
+    assert_equal(stepm.spa._scale(), np.ones(models.shape[1]))
+    stepm = StepM(benchmark, models, reps=10, nested=True, seed=1)
+    assert stepm.spa.nested
+    assert stepm.spa._kernel_variance is None
+    stepm.compute()
+    stepm = StepM(benchmark, models, reps=10, seed=1)
+    assert isinstance(stepm.spa._kernel_variance, _KernelVariance)
+    stepm.compute()
 
 
 @pytest.mark.parametrize("bootstrap", ["sb", "cbb", "mbb"])
@@ -500,8 +656,9 @@ def test_seed_reset(spa_data):
 
 
 def test_spa_nested(spa_data):
-    spa = SPA(spa_data.benchmark, spa_data.models, nested=True, reps=100)
+    spa = SPA(spa_data.benchmark, spa_data.models[:, :10], nested=True, reps=20)
     spa.compute()
+    assert np.all((spa.pvalues >= 0.0) & (spa.pvalues <= 1.0))
 
 
 def test_bootstrap_selection(spa_data):

@@ -20,6 +20,7 @@ from arch.bootstrap.base import (
     CircularBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
+    _get_random_integers,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 
@@ -514,14 +515,15 @@ class StepM(MultipleComparison):
     studentize : bool, optional
         Flag indicating to studentize loss differentials. Default is True.
         Studentization is also applied inside each bootstrap replication,
-        see :class:`~arch.bootstrap.SPA`.
+        see :class:`~arch.bootstrap.SPA`. If False, the loss differentials
+        are not studentized.
     nested : bool, optional
         Flag indicating to use a nested bootstrap to compute the variances
-        of the loss differentials in the original data. Default is False,
-        which uses a kernel estimator of the long-run variance that matches
-        the bootstrap. Note that this can be slow since the procedure requires
-        an extra bootstrap. Studentization inside each bootstrap replication
-        always uses the kernel estimator.
+        used to studentize, instead of the kernel estimator of the long-run
+        variance that matches the bootstrap. The variances are computed in
+        the original data and in each bootstrap replication, so the
+        procedure uses reps squared resamples and can be very slow. Default
+        is False. Can only be True when studentize is True.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -666,15 +668,15 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     studentize : bool
         Flag indicating to studentize loss differentials. Default is True.
         Studentization is also applied inside each bootstrap replication,
-        see Notes.
+        see Notes. If False, the loss differentials are not studentized in
+        the original data or in the bootstrap replications.
     nested : bool
         Flag indicating to use a nested bootstrap to compute the variances
-        of the loss differentials in the original data. Default is False,
-        which uses a kernel estimator of the long-run variance that matches
-        the bootstrap. Note that this can be slow since the procedure requires
-        an extra bootstrap. Studentization inside each bootstrap replication
-        always uses the kernel estimator since a nested bootstrap in each
-        replication would be prohibitively slow.
+        used to studentize, instead of the kernel estimator of the long-run
+        variance that matches the bootstrap. The variances are computed in
+        the original data and in each bootstrap replication, so the
+        procedure uses reps squared resamples and can be very slow. Default
+        is False. Can only be True when studentize is True.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -699,11 +701,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     periods, the standard error from the original data is used for that
     model in that replication.
 
-    The standard errors are the square root of a kernel estimator of the
-    long-run variance divided by T. The kernel is chosen to match the
-    bootstrap, so that the estimator is the variance of the sample mean that
-    is implied by the bootstrap, using the average block size as the
-    bandwidth.
+    If ``nested`` is False, the standard errors are the square root of a
+    kernel estimator of the long-run variance divided by T. The kernel is
+    chosen to match the bootstrap, so that the estimator is the variance of
+    the sample mean that is implied by the bootstrap, using the average block
+    size as the bandwidth.
 
         - Stationary bootstrap : The lag :math:`i` autocovariance has weight
           :math:`(1-i/T)(1-p)^i + (i/T)(1-p)^{T-i}` where :math:`p` is the
@@ -711,6 +713,15 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         - Circular block bootstrap : The Bartlett kernel applied to the
           circular autocovariances.
         - Moving block bootstrap : The Bartlett kernel.
+
+    If ``nested`` is True, the kernel is not used. The variance is instead the
+    variance of the sample mean across ``reps`` replications of a bootstrap of
+    the data, which is a bootstrap of the original loss differentials in the
+    original data and a bootstrap of the bootstrap sample in each replication.
+
+    The same variances are used to select the models that are re-centered
+    when computing the consistent p-value, even if ``studentize`` is False.
+    No other studentization is done when ``studentize`` is False.
 
     See [1]_ and [2]_ for details.
 
@@ -745,6 +756,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         *,
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
+        if nested and not studentize:
+            raise ValueError("nested can only be True when studentize is True")
         super().__init__()
         self.benchmark = ensure2d(benchmark, "benchmark")
         self.models = ensure2d(models, "models")
@@ -776,10 +789,13 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self._seed = seed
         self._bootstrap = bootstrap_inst
-        # Instantiate the long-run variance estimator used to studentize the
-        # loss differentials and the bootstrap samples. It depends on the
-        # bootstrap, which cannot be replaced.
-        self._kernel_variance = _KernelVariance(self._bootstrap, self.t)
+        # Instantiate the kernel long-run variance estimator, which is used to
+        # studentize the loss differentials and the bootstrap samples, and to
+        # select the models to re-center. It depends on the bootstrap, which
+        # cannot be replaced. A nested bootstrap replaces the kernel.
+        self._kernel_variance: _KernelVariance | None = None
+        if not self.nested:
+            self._kernel_variance = _KernelVariance(self._bootstrap, self.t)
         self._pvalues: dict[str, float] = {}
         self._simulated_vals: Float64Array | None = None
         self._selector: BoolArray = np.ones(self.k, dtype=np.bool_)
@@ -862,7 +878,14 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             loss_diff_star = np.asarray(pos_arg[0], dtype=float)
             # Studentize using the bootstrap sample, as in the statistic
             if self.studentize:
-                variances = self._kernel_variance(loss_diff_star)
+                nested_seed = None
+                if self.nested:
+                    # Seed the bootstrap of this sample from the generator, as
+                    # when studentizing confidence intervals
+                    nested_seed = int(
+                        _get_random_integers(self.bootstrap.generator, 2**31 - 1)[0]
+                    )
+                variances = self._variance(loss_diff_star, nested_seed)
                 scale = self._std_err(variances)
                 # A column that is constant in the bootstrap sample, which
                 # happens when a model differs from the benchmark in few
@@ -902,14 +925,37 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         """
         ld = self._loss_diff
         demeaned = ld - ld.mean(axis=0)
-        if self.nested:
-            # Use bootstrap to estimate variances
-            bs = self.bootstrap.clone(demeaned, seed=copy.deepcopy(self._seed))
-            means = bs.apply(lambda x: x.mean(axis=0), reps=self.reps)
-            variances = self.t * means.var(axis=0)
-        else:
-            variances = self._kernel_variance(demeaned)
+        variances = self._variance(demeaned, copy.deepcopy(self._seed))
         self._loss_diff_var = cast("np.ndarray", variances)
+
+    def _variance(
+        self,
+        data: Float64Array,
+        seed: int | np.random.Generator | np.random.RandomState | None = None,
+    ) -> Float64Array:
+        """
+        Estimates the variance of the mean of each column of data
+
+        Parameters
+        ----------
+        data : ndarray
+            Data with t rows.
+        seed : {int, Generator, RandomState}, optional
+            Seed of the nested bootstrap. Not used unless nested is True.
+
+        Returns
+        -------
+        ndarray
+            The variance of the sample mean times t of each column, estimated
+            using a bootstrap of the data if nested is True, and otherwise
+            using the kernel estimator that matches the bootstrap.
+        """
+        if self.nested:
+            bs = self.bootstrap.clone(data, seed=seed)
+            means = bs.apply(lambda x: x.mean(axis=0), reps=self.reps)
+            return self.t * means.var(axis=0)
+        assert self._kernel_variance is not None
+        return self._kernel_variance(data)
 
     def _check_column_validity(self) -> BoolArray:
         """
