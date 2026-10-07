@@ -806,21 +806,20 @@ def test_failed_append_is_atomic_with_exog(failure):
     fit(mod)
     snap = snapshot(mod)
     new_x = x.iloc[500:]
+    bad_y, bad_x, exc = SMALL_append, new_x, ValueError
     if failure == "y-type":
-        args, kwargs, exc = (SMALL_append.to_numpy(),), {"x": new_x}, TypeError
+        bad_y, exc = SMALL_append.to_numpy(), TypeError
     elif failure == "y-nan":
-        bad = SMALL_append.copy()
-        bad.iloc[-1] = np.nan
-        args, kwargs, exc = (bad,), {"x": new_x}, ValueError
+        bad_y = SMALL_append.copy()
+        bad_y.iloc[-1] = np.nan
     elif failure == "y-index":
-        args, kwargs, exc = (SMALL.iloc[490:]), {"x": new_x}, ValueError
-        args = (args,)
+        bad_y = SMALL.iloc[490:]
     elif failure == "x-rows":
-        args, kwargs, exc = (SMALL_append,), {"x": new_x.iloc[:-1]}, ValueError
+        bad_x = new_x.iloc[:-1]
     else:
-        args, kwargs, exc = (SMALL_append,), {"x": new_x.to_numpy()}, TypeError
+        bad_x, exc = new_x.to_numpy(), TypeError
     with pytest.raises(exc):
-        mod.append(*args, **kwargs)
+        mod.append(bad_y, x=bad_x)
     assert_snapshot_unchanged(mod, snap)
     # The model is still functioning and can be appended to
     mod.append(SMALL_append, x=new_x)
