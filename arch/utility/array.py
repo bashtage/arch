@@ -405,9 +405,53 @@ def _conform_new_to_array(original: NDArray, new: Any) -> NDArray:
     return new_arr
 
 
+def _append_sequence(original: NDArray, new: Any) -> NDArray:
+    """
+    Append to a single sequence of observations in any squeezable layout
+
+    Parameters
+    ----------
+    original : ndarray
+        The existing observations. At most one dimension can have more than one
+        element, e.g., (n,), (n, 1) or (1, n).
+    new : scalar or array_like
+        The new observations. At most one dimension can have more than one
+        element.
+
+    Returns
+    -------
+    ndarray
+        The extended observations with the same layout as original, so that
+        a row stays a row and a column stays a column.
+    """
+    original = np.atleast_1d(original)
+    new_arr = np.asarray(new)
+    if sum(s > 1 for s in original.shape) > 1 or sum(s > 1 for s in new_arr.shape) > 1:
+        raise ValueError(
+            "The original and appended data must both be 1-dimensional, or "
+            "squeezable to 1 dimension, since they contain a single sequence of "
+            f"observations. Got shapes {original.shape} and {new_arr.shape}."
+        )
+    long_axes = [i for i, size in enumerate(original.shape) if size > 1]
+    axis = long_axes[0] if long_axes else 0
+    new_shape = [1] * original.ndim
+    new_shape[axis] = -1
+    return np.concatenate((original, new_arr.reshape(new_shape)), axis=axis)
+
+
+def _nested_container(container: type, values: list[Any]) -> Any:
+    """Convert nested lists to list or tuple, using tuples at every level"""
+    if container is list:
+        return values
+    return tuple(
+        _nested_container(container, v) if isinstance(v, list) else v for v in values
+    )
+
+
 def append_same_type(
     original: ArrayLike | list[Any] | tuple[Any, ...],
     new: ArrayLike | list[Any] | tuple[Any, ...] | float,
+    sequence: bool = False,
 ) -> Any:
     """
     Append observations to existing data, preserving the type of the data
@@ -421,6 +465,12 @@ def append_same_type(
         original is an ndarray, list or tuple, in which case a scalar can be
         appended as a single observation. 1-d data appended to a 2-d ndarray
         with more than one column is treated as a single observation.
+    sequence : bool, optional
+        If True, ndarray, list and tuple data are a single sequence of
+        observations that can be stored in any layout that can be squeezed to
+        1 dimension, e.g., (n,), (n, 1) or (1, n), and the layout of original
+        is preserved. If False, 2-d data are observations (rows) by variables
+        (columns), and new must have the same number of columns as original.
 
     Returns
     -------
@@ -435,7 +485,8 @@ def append_same_type(
     ValueError
         If new does not contain any observations, has a different number of
         columns from original, or, when using a DataFrame, has different
-        column labels.
+        column labels. If sequence is True, also raised if original or new
+        cannot be squeezed to 1 dimension.
     """
     if not isinstance(original, (Series, DataFrame, list, tuple, np.ndarray)):
         raise TypeError(
@@ -469,20 +520,32 @@ def append_same_type(
             )
         extended = concat([original, new_frame], axis=0)
     elif isinstance(original, np.ndarray):
-        _original = np.atleast_1d(original)
-        if _original.ndim > 2:
-            raise ValueError("The original data must be 1-d or 2-d.")
-        extended = np.concatenate(
-            (_original, _conform_new_to_array(_original, new)), axis=0
-        )
+        if sequence:
+            extended = _append_sequence(original, new)
+        else:
+            _original = np.atleast_1d(original)
+            if _original.ndim > 2:
+                raise ValueError("The original data must be 1-d or 2-d.")
+            extended = np.concatenate(
+                (_original, _conform_new_to_array(_original, new)), axis=0
+            )
     else:
         # list or tuple, converted to an array to validate shapes
         _original = np.asarray(original, dtype=float)
-        if _original.ndim > 2:
-            raise ValueError("The original data must be 1-d or 2-d.")
-        new_rows = _conform_new_to_array(_original, np.asarray(new, dtype=float))
-        rows = new_rows.tolist()
-        if _original.ndim == 2:
-            rows = [type(original)(row) for row in rows]
-        extended = type(original)(list(original) + rows)
+        new_arr = np.asarray(new, dtype=float)
+        if sequence:
+            stacked = _append_sequence(_original, new_arr)
+            if _original.ndim <= 1:
+                rows = stacked.ravel()[_original.size :].tolist()
+                extended = type(original)(list(original) + rows)
+            else:
+                # Row or column layouts, e.g., [[1.0, 2.0, 3.0]]
+                extended = _nested_container(type(original), stacked.tolist())
+        else:
+            if _original.ndim > 2:
+                raise ValueError("The original data must be 1-d or 2-d.")
+            rows = _conform_new_to_array(_original, new_arr).tolist()
+            if _original.ndim == 2:
+                rows = [type(original)(row) for row in rows]
+            extended = type(original)(list(original) + rows)
     return extended

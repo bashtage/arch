@@ -348,6 +348,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "exogenous regressors."
             )
         x_original = append_same_type(self._x_original, x)
+        try:
+            # Same conversion as used when constructing the model
+            np.asarray(x, dtype=float)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "x must contain only values that can be converted to float."
+            ) from exc
         nobs_x_new = np.shape(x_original)[0] - np.shape(self._x_original)[0]
         if nobs_x_new != nobs_new:
             raise ValueError(
@@ -370,8 +377,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y : {ndarray, Series, DataFrame, list, float}
             The observations to append. Must have the same type as the data
             used to construct the model. If the model was constructed using a
-            pandas object, then the index of the new data must be increasing
-            and must not overlap the existing data. When the model was
+            pandas object, then the index of the new data must be unique and
+            must not overlap the existing index. If the existing index is
+            increasing, the index of the new data must also be increasing and
+            must follow the existing observations. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
         x : {ndarray, Series, DataFrame}, optional
@@ -390,10 +399,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             the model.
         ValueError
             If ``y`` is empty, contains non-finite values or, when using
-            pandas, has an index that does not follow the index of the existing
-            data. Also raised if ``x`` is provided when the model does not have
-            exogenous regressors, is not provided when the model does, or does
-            not have the same number of observations as ``y``.
+            pandas, has an index that is not unique, overlaps the existing
+            index, or does not follow an increasing index of the existing data.
+            Also raised if ``x`` is provided when the model does not have
+            exogenous regressors, is not provided when the model does, cannot
+            be converted to float, or does not have the same number of
+            observations as ``y``.
         RuntimeError
             If the model was created without data.
 

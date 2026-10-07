@@ -190,6 +190,7 @@ def snapshot(mod):
         "fit_indices": list(mod._fit_indices),
         "fit_y": mod._fit_y.copy(),
         "x": x,
+        "x_original_len": None if mod._x_original is None else len(mod._x_original),
         "backcast": mod._backcast,
         "scale": mod.scale,
     }
@@ -208,6 +209,10 @@ def assert_snapshot_unchanged(mod, snap):
         assert mod.x is None
     else:
         assert_array_equal(np.array(mod.x, dtype=float), snap["x"])
+    if snap["x_original_len"] is None:
+        assert mod._x_original is None
+    else:
+        assert len(mod._x_original) == snap["x_original_len"]
     assert mod._backcast is snap["backcast"]
     assert mod.scale == snap["scale"]
 
@@ -490,8 +495,56 @@ def test_append_array_2d_column():
     assert_results_equal(fit(mod), fit(direct))
 
     mod = ConstantMean(orig)
-    with pytest.raises(ValueError, match="same number of columns"):
+    with pytest.raises(ValueError, match="squeezable to 1 dimension"):
         mod.append(np.ones((5, 2)))
+
+
+def as_layout(values, container, shape):
+    """Container holding values as a flat, row or column sequence"""
+    arr = np.asarray(values, dtype=float)
+    if shape == "row":
+        arr = arr[None, :]
+    elif shape == "column":
+        arr = arr[:, None]
+    if container == "array":
+        return arr
+    nested = arr.tolist()
+    if container == "list":
+        return nested
+    return tuple(tuple(v) if isinstance(v, list) else v for v in nested)
+
+
+@pytest.mark.parametrize("container", ["array", "list", "tuple"])
+@pytest.mark.parametrize("orig_shape", ["flat", "row", "column"])
+@pytest.mark.parametrize("new_shape", ["flat", "row", "column", "scalar"])
+def test_append_sequence_layouts(container, orig_shape, new_shape):
+    # y can be stored as a row or column, and the layout is preserved
+    values = SMALL.to_numpy()[:110]
+    mod = ConstantMean(
+        as_layout(values[:100], container, orig_shape), volatility=GARCH()
+    )
+    if new_shape == "scalar":
+        for val in values[100:]:
+            mod.append(float(val))
+    else:
+        mod.append(as_layout(values[100:], container, new_shape))
+    direct = ConstantMean(as_layout(values, container, orig_shape), volatility=GARCH())
+    assert type(mod.y) is type(direct.y)
+    assert_array_equal(np.asarray(mod.y), np.asarray(direct.y))
+    assert np.shape(mod.y) == np.shape(direct.y)
+    assert_array_equal(mod._y, direct._y)
+    assert_results_equal(fit(mod), fit(direct))
+
+
+@pytest.mark.parametrize("orig_shape", ["row", "column"])
+def test_append_sequence_not_squeezable(orig_shape):
+    mod = ConstantMean(as_layout(SMALL.to_numpy()[:100], "array", orig_shape))
+    snap = snapshot(mod)
+    with pytest.raises(ValueError, match="squeezable to 1 dimension"):
+        mod.append(np.ones((3, 2)))
+    with pytest.raises(ValueError, match="squeezable to 1 dimension"):
+        mod.append(np.ones((2, 2, 2)))
+    assert_snapshot_unchanged(mod, snap)
 
 
 class TestIndex:
@@ -504,6 +557,33 @@ class TestIndex:
         # Complete overlap
         with pytest.raises(ValueError, match="overlaps the index"):
             mod.append(SMALL_initial)
+        assert_snapshot_unchanged(mod, snap)
+
+    def test_duplicates_in_new_data(self):
+        # Date based cutoffs require unique dates
+        mod = ARXWrapper(SMALL_initial, volatility=GARCH())
+        snap = snapshot(mod)
+        new = SMALL_append.iloc[:5].copy()
+        new.index = new.index[[0, 0, 1, 2, 3]]
+        with pytest.raises(ValueError, match="duplicate values"):
+            mod.append(new)
+        assert_snapshot_unchanged(mod, snap)
+        # Also when the existing index is not increasing
+        rs = np.random.RandomState(8942)
+        orig = SMALL_initial.iloc[rs.permutation(SMALL_initial.shape[0])]
+        mod = ARXWrapper(orig, volatility=GARCH())
+        snap = snapshot(mod)
+        with pytest.raises(ValueError, match="duplicate values"):
+            mod.append(new)
+        assert_snapshot_unchanged(mod, snap)
+
+    def test_duplicates_in_new_frame(self):
+        mod = ConstantMean(SMALL_initial.to_frame())
+        snap = snapshot(mod)
+        new = SMALL_append.iloc[:5].to_frame()
+        new.index = new.index[[0, 1, 1, 2, 3]]
+        with pytest.raises(ValueError, match="duplicate values"):
+            mod.append(new)
         assert_snapshot_unchanged(mod, snap)
 
     def test_before(self):
@@ -701,6 +781,44 @@ def test_append_exog_x_type_mismatch():
     with pytest.raises(TypeError, match="Input data must be the same"):
         mod.append(SMALL_append, x=xs.iloc[500:].to_frame())
     assert_snapshot_unchanged(mod, snap)
+
+
+@pytest.mark.parametrize("mean", [ARXWrapper, LSWrapper, ARCHInMeanWrapper])
+@pytest.mark.parametrize(
+    "kind", ["str-array", "object-array", "object-frame", "object-series"]
+)
+def test_append_exog_non_numeric(mean, kind):
+    # Values that cannot be converted to float must not leave a partial update
+    x = make_x(SMALL.index)
+    if kind == "object-series":
+        x_orig = x["a"].iloc[:500]
+        bad_x = x["a"].iloc[500:].astype(object)
+        bad_x.iloc[3] = "oops"
+        good_x = x["a"].iloc[500:]
+    elif kind == "object-frame":
+        x_orig = x.iloc[:500]
+        bad_x = x.iloc[500:].astype(object)
+        bad_x.iloc[3, 0] = "oops"
+        good_x = x.iloc[500:]
+    elif kind == "str-array":
+        x_orig = x.to_numpy()[:500]
+        bad_x = np.full((200, 2), "a")
+        good_x = x.to_numpy()[500:]
+    else:
+        x_orig = x.to_numpy()[:500]
+        bad_x = x.to_numpy()[500:].astype(object)
+        bad_x[3, 0] = "oops"
+        good_x = x.to_numpy()[500:]
+    mod = mean(SMALL_initial, x=x_orig, volatility=GARCH())
+    fit(mod)
+    snap = snapshot(mod)
+    with pytest.raises(ValueError, match="converted to float"):
+        mod.append(SMALL_append, x=bad_x)
+    assert_snapshot_unchanged(mod, snap)
+    # The model can still be appended to
+    mod.append(SMALL_append, x=good_x)
+    assert mod._y.shape[0] == SMALL.shape[0]
+    assert mod.x.shape[0] == SMALL.shape[0]
 
 
 @pytest.mark.parametrize("mean", X_MEAN_MODELS)
@@ -1419,6 +1537,62 @@ class TestAppendSameType:
         ):
             with pytest.raises(ValueError, match="at least one observation"):
                 append_same_type(original, new)
+
+    def test_sequence_array_layouts(self):
+        flat = np.arange(4.0)
+        row = flat[None, :]
+        column = flat[:, None]
+        new = np.array([4.0, 5.0])
+        for orig, shape in ((flat, (6,)), (row, (1, 6)), (column, (6, 1))):
+            for form in (new, new[None, :], new[:, None]):
+                out = append_same_type(orig, form, sequence=True)
+                assert out.shape == shape
+                assert_array_equal(out.ravel(), np.arange(6.0))
+            out = append_same_type(orig, 4.0, sequence=True)
+            assert out.shape == tuple(s + 1 if s > 1 else s for s in orig.shape)
+        # The inputs are never changed
+        assert_array_equal(row, np.arange(4.0)[None, :])
+
+    def test_sequence_single_element(self):
+        out = append_same_type(np.array([[1.0]]), np.array([2.0, 3.0]), sequence=True)
+        assert out.shape == (3, 1)
+        out = append_same_type(np.array(1.0), 2.0, sequence=True)
+        assert_array_equal(out, [1.0, 2.0])
+
+    def test_sequence_not_squeezable(self):
+        with pytest.raises(ValueError, match="squeezable to 1 dimension"):
+            append_same_type(np.arange(4.0)[None, :], np.ones((2, 2)), sequence=True)
+        with pytest.raises(ValueError, match="squeezable to 1 dimension"):
+            append_same_type(np.ones((2, 2)), np.ones(2), sequence=True)
+        with pytest.raises(ValueError, match="squeezable to 1 dimension"):
+            append_same_type([[1.0, 2.0], [3.0, 4.0]], [1.0], sequence=True)
+
+    def test_sequence_list_and_tuple(self):
+        assert append_same_type([1.0, 2.0], [3.0], sequence=True) == [1.0, 2.0, 3.0]
+        assert append_same_type([1.0, 2.0], 3.0, sequence=True) == [1.0, 2.0, 3.0]
+        assert append_same_type([[1.0, 2.0]], [3.0, 4.0], sequence=True) == [
+            [1.0, 2.0, 3.0, 4.0]
+        ]
+        assert append_same_type([[1.0], [2.0]], [[3.0], [4.0]], sequence=True) == [
+            [1.0],
+            [2.0],
+            [3.0],
+            [4.0],
+        ]
+        assert append_same_type(((1.0, 2.0),), ((3.0,),), sequence=True) == (
+            (1.0, 2.0, 3.0),
+        )
+        assert append_same_type(((1.0,), (2.0,)), 3.0, sequence=True) == (
+            (1.0,),
+            (2.0,),
+            (3.0,),
+        )
+        assert append_same_type((1.0, 2.0), (3.0,), sequence=True) == (1.0, 2.0, 3.0)
+
+    def test_sequence_pandas_unchanged(self):
+        s = pd.Series([1.0, 2.0])
+        out = append_same_type(s, pd.Series([3.0], index=[5]), sequence=True)
+        assert_array_equal(out.to_numpy(), [1.0, 2.0, 3.0])
 
     def test_non_numeric_list(self):
         with pytest.raises(ValueError, match="could not convert"):

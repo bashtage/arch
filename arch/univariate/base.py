@@ -272,7 +272,8 @@ class ARCHModel(metaclass=ABCMeta):
         if self._y_original is None:
             raise RuntimeError("Cannot append to a model created without data.")
         nobs = self._y.shape[0]
-        y_original = append_same_type(self._y_original, y)
+        # y is a single sequence, and so may be stored as a row or a column
+        y_original = append_same_type(self._y_original, y, sequence=True)
         y_series = cast("pd.Series", ensure1d(y_original, "y", series=True))
         y_values = to_array_1d(np.ascontiguousarray(y_series.to_numpy()).astype(float))
         y_new = to_array_1d(y_values[nobs:])
@@ -283,6 +284,10 @@ class ARCHModel(metaclass=ABCMeta):
         if self._is_pandas:
             index = y_series.index
             old_index, new_index = index[:nobs], index[nobs:]
+            if not new_index.is_unique:
+                raise ValueError(
+                    "The index of the appended data contains duplicate values."
+                )
             if new_index.isin(old_index).any():
                 raise ValueError(
                     "The index of the appended data overlaps the index of the "
@@ -332,8 +337,10 @@ class ARCHModel(metaclass=ABCMeta):
         y : {ndarray, Series, DataFrame, list, float}
             The observations to append. Must have the same type as the data
             used to construct the model. If the model was constructed using a
-            pandas object, then the index of the new data must be increasing
-            and must not overlap the existing data. When the model was
+            pandas object, then the index of the new data must be unique and
+            must not overlap the existing index. If the existing index is
+            increasing, the index of the new data must also be increasing and
+            must follow the existing observations. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
         x : {ndarray, Series, DataFrame}, optional
@@ -348,8 +355,9 @@ class ARCHModel(metaclass=ABCMeta):
             If the type of ``y`` differs from the type of the data in the model.
         ValueError
             If ``y`` is empty, contains non-finite values or, when using pandas,
-            has an index that does not follow the index of the existing data.
-            Also raised if ``x`` is not None.
+            has an index that is not unique, overlaps the existing index, or
+            does not follow an increasing index of the existing data. Also
+            raised if ``x`` is not None.
         RuntimeError
             If the model was created without data.
 
