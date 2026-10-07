@@ -1523,7 +1523,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             basecols = 4
         # first-diff y and standardize for numerical stability
         dy = diff(y_2d, axis=0)[:, 0]
-        dy /= sqrt(dy.T @ dy)
+        dy = dy / sqrt(dy.T @ dy)
         y_2d = y_2d / sqrt(y_2d.T @ y_2d)
         # reserve exog space
         exog = empty((dy[baselags:].shape[0], basecols + baselags))
