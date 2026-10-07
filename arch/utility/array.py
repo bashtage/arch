@@ -264,8 +264,8 @@ def date_to_index(
         raise ValueError("date must be a datetime, datetime64, Timestamp or string")
 
     if isinstance(date, Timestamp):
-        assert isinstance(date_index, DatetimeIndex)
-        if date_index.tzinfo is not None:
+        # A naive Timestamp is used as is, like a date string
+        if date.tzinfo is not None:
             date = date.tz_convert("GMT").tz_localize(None)
         date_64 = date.to_datetime64()
     elif isinstance(date, dt.datetime):
