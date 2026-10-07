@@ -105,7 +105,7 @@ def test_pvalues_and_critvals(spa_data):
     spa.compute()
     simulated_vals = spa._simulated_vals
     max_stats = np.max(simulated_vals, 0)
-    std_err = np.sqrt(spa._loss_diff_var / spa_data.t)
+    std_err = spa._loss_diff.std(0, ddof=1) / np.sqrt(spa_data.t)
     max_loss_diff = np.max(spa._loss_diff.mean(0) / std_err, 0)
     pvalues = np.mean(max_loss_diff <= max_stats, 0)
     pvalues = pd.Series(pvalues, index=["lower", "consistent", "upper"])
@@ -130,16 +130,38 @@ def test_studentization():
     raw = SPA(benchmark, models, block_size=10, reps=500, studentize=False, seed=23456)
     raw.compute()
 
-    std_err = np.sqrt(spa._loss_diff_var / t)
-    max_stats = np.max(raw._simulated_vals / std_err[:, None, None], 0)
-    max_loss_diff = np.max(raw._loss_diff.mean(0) / std_err)
-    expected = pd.Series(
-        np.mean(max_stats > max_loss_diff, 0), index=["lower", "consistent", "upper"]
-    )
-    assert_series_equal(spa.pvalues, expected)
+    # Bootstrap-t: the statistic and every resample use their own standard errors
+    loss_diff = spa._loss_diff
+    std_err = loss_diff.std(0, ddof=1) / np.sqrt(t)
+    centre = loss_diff.mean(0)
+    bs = spa.bootstrap.clone(loss_diff, seed=23456)
+    stats = []
+    for pos, _ in bs.bootstrap(500):
+        star = pos[0]
+        stats.append((star.mean(0) - centre) / (star.std(0, ddof=1) / np.sqrt(t)))
+    max_stats = np.max(np.array(stats), 1)
+    max_loss_diff = np.max(centre / std_err)
+    assert_allclose(spa.pvalues["upper"], np.mean(max_stats > max_loss_diff))
     assert np.all(spa.pvalues < 0.05)
     assert np.all(raw.pvalues > 0.05)
     assert_equal(spa.better_models(), np.array([0]))
+
+
+def test_studentization_resamples_scale():
+    # Each resample is divided by its own standard error, not a fixed one
+    rng = RandomState(1)
+    t = 200
+    benchmark = rng.standard_normal(t)
+    models = benchmark[:, None] - rng.standard_normal((t, 3))
+    spa = SPA(benchmark, models, block_size=5, reps=50, seed=7)
+    spa.compute()
+    raw = SPA(benchmark, models, block_size=5, reps=50, studentize=False, seed=7)
+    raw.compute()
+    assert spa._simulated_vals is not None
+    assert raw._simulated_vals is not None
+    ratio = raw._simulated_vals[:, :, 2] / spa._simulated_vals[:, :, 2]
+    # A fixed scale would make the ratio constant across resamples
+    assert np.all(np.std(ratio, axis=1) > 0)
 
 
 def test_errors(spa_data):

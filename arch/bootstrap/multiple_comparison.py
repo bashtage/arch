@@ -378,11 +378,14 @@ class StepM(MultipleComparison):
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
     studentize : bool, optional
-        Flag indicating to studentize loss differentials. Default is True
+        Flag indicating to studentize loss differentials. Default is True.
+        When True, the mean loss differentials and every bootstrap resample
+        are divided by their own standard errors (a bootstrap-t).
     nested : bool, optional
-        Flag indicating to use a nested bootstrap to compute variances for
-        studentization.  Default is False.  Note that this can be slow since
-        the procedure requires k extra bootstraps.
+        Flag indicating to use a nested bootstrap to compute the long-run
+        variances used to identify models that are too poor to be relevant
+        for the consistent p-value.  Default is False.  Note that this can be
+        slow since the procedure requires k extra bootstraps.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -522,11 +525,14 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
     studentize : bool
-        Flag indicating to studentize loss differentials. Default is True
+        Flag indicating to studentize loss differentials. Default is True.
+        When True, the mean loss differentials and every bootstrap resample
+        are divided by their own standard errors (a bootstrap-t).
     nested : bool
-        Flag indicating to use a nested bootstrap to compute variances for
-        studentization.  Default is False.  Note that this can be slow since
-        the procedure requires k extra bootstraps.
+        Flag indicating to use a nested bootstrap to compute the long-run
+        variances used to identify models that are too poor to be relevant
+        for the consistent p-value.  Default is False.  Note that this can be
+        slow since the procedure requires k extra bootstraps.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -676,15 +682,37 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         for i, bs_data in enumerate(self.bootstrap.bootstrap(self.reps)):
             pos_arg, _ = bs_data
             loss_diff_star = pos_arg[0]
+            # Each resample is studentized by its own standard error (a bootstrap-t),
+            # so the simulated distribution reflects the noise in the scale estimate.
+            scale_star = self._scale(loss_diff_star)
+            mean_star = loss_diff_star.mean(axis=0)
             for j, mean in enumerate(means):
-                simulated_vals[:, i, j] = loss_diff_star.mean(axis=0) - mean
-        self._simulated_vals = simulated_vals / self._scale()[:, None, None]
+                simulated_vals[:, i, j] = (mean_star - mean) / scale_star
+        self._simulated_vals = simulated_vals
 
-    def _scale(self) -> Float64Array:
-        """Standard errors of the mean loss differentials if studentizing"""
+    def _scale(self, loss_diff: Float64Array | None = None) -> Float64Array:
+        """
+        Standard errors of the mean loss differentials if studentizing
+
+        Parameters
+        ----------
+        loss_diff : ndarray, optional
+            Loss differentials to compute the standard errors from. Defaults to
+            the original loss differentials.
+
+        Notes
+        -----
+        The same estimator, the sample standard deviation divided by the square
+        root of the sample size, is used for the original data and for each
+        bootstrap resample. Dividing every resample by a single standard error
+        estimated once from the original data ignores the sampling variation of
+        that estimate and over-rejects in finite samples.
+        """
         if not self.studentize:
             return np.ones(self.k)
-        std_err = np.sqrt(self._loss_diff_var / self.t)
+        if loss_diff is None:
+            loss_diff = self._loss_diff
+        std_err = np.std(loss_diff, axis=0, ddof=1) / np.sqrt(loss_diff.shape[0])
         return np.maximum(std_err, np.finfo(float).eps)
 
     def _studentized_mean(self) -> Float64Array:
