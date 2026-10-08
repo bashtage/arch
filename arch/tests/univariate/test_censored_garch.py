@@ -136,7 +136,10 @@ def test_recursion_deep_tail_underflow_branch():
     underflows to 0 in floating point before a itself does. The recursion
     should fall back to the asymptotic correction 1 + a^2 rather than
     dividing by (effectively) zero."""
-    from arch.univariate.censored_garch import censored_garch_recursion
+    from arch.univariate.censored_garch import (
+        censored_garch_recursion,
+        censored_garch_recursion_python,
+    )
     from scipy.stats import norm
 
     a = 40.0  # norm.sf(40) underflows to exactly 0.0 in float64
@@ -149,15 +152,17 @@ def test_recursion_deep_tail_underflow_branch():
     resids = np.array([threshold, 0.0])
     censored = np.array([True, False])
     thresh_arr = np.array([threshold, 0.0])
-    sigma2 = np.zeros(2)
     var_bounds = np.array([[1e-12, 1e12], [1e-12, 1e12]])
 
-    censored_garch_recursion(
-        parameters, resids, censored, thresh_arr, sigma2, 1, 1, 2, 1.0, var_bounds
-    )
-    assert_allclose(sigma2[0], 1.0)
-    # sigma2[1] = alpha * eff2[0] = 1.0 * (1 + a^2) * sigma2[0] = 1 + a^2
-    assert_allclose(sigma2[1], 1.0 + a * a, rtol=1e-10)
+    # Exercise both the (possibly jitted) recursion and the pure-Python source.
+    for recursion in (censored_garch_recursion, censored_garch_recursion_python):
+        sigma2 = np.zeros(2)
+        recursion(
+            parameters, resids, censored, thresh_arr, sigma2, 1, 1, 2, 1.0, var_bounds
+        )
+        assert_allclose(sigma2[0], 1.0)
+        # sigma2[1] = alpha * eff2[0] = 1.0 * (1 + a^2) * sigma2[0] = 1 + a^2
+        assert_allclose(sigma2[1], 1.0 + a * a, rtol=1e-10)
 
 
 def test_recursion_zero_threshold_branch():
@@ -165,7 +170,10 @@ def test_recursion_zero_threshold_branch():
     case not reachable through the public API, which requires threshold >
     0 wherever censored is True) should fall back to the uncorrected
     (corr=1.0) branch rather than raising or dividing by zero."""
-    from arch.univariate.censored_garch import censored_garch_recursion
+    from arch.univariate.censored_garch import (
+        censored_garch_recursion,
+        censored_garch_recursion_python,
+    )
 
     # omega=0, alpha=1, backcast=1.0 => sigma2[0] = 1.0 exactly (isolates the
     # step cleanly, same trick as the deep-tail test above).
@@ -173,16 +181,18 @@ def test_recursion_zero_threshold_branch():
     resids = np.array([0.0, 0.0])
     censored = np.array([True, False])
     threshold = np.array([0.0, 0.0])
-    sigma2 = np.zeros(2)
     var_bounds = np.array([[1e-12, 1e12], [1e-12, 1e12]])
 
-    censored_garch_recursion(
-        parameters, resids, censored, threshold, sigma2, 1, 1, 2, 1.0, var_bounds
-    )
-    assert_allclose(sigma2[0], 1.0)
-    # corr = 1.0 (a <= 0 branch), so eff2[0] = sigma2[0] = 1.0 and
-    # sigma2[1] = alpha * eff2[0] = 1.0
-    assert_allclose(sigma2[1], 1.0)
+    # Exercise both the (possibly jitted) recursion and the pure-Python source.
+    for recursion in (censored_garch_recursion, censored_garch_recursion_python):
+        sigma2 = np.zeros(2)
+        recursion(
+            parameters, resids, censored, threshold, sigma2, 1, 1, 2, 1.0, var_bounds
+        )
+        assert_allclose(sigma2[0], 1.0)
+        # corr = 1.0 (a <= 0 branch), so eff2[0] = sigma2[0] = 1.0 and
+        # sigma2[1] = alpha * eff2[0] = 1.0
+        assert_allclose(sigma2[1], 1.0)
 
 
 def test_recursion_zero_variance_branch():
@@ -211,16 +221,24 @@ def test_norm_helpers_match_scipy():
     inlined into the jitted recursion) must agree with scipy across a
     wide range of inputs, including the deep tail where naive 1 - Phi(x)
     would underflow long before erfc-based _norm_sf does."""
-    from arch.univariate.censored_garch import _norm_pdf, _norm_sf
+    from arch.univariate.censored_garch import (
+        _norm_pdf,
+        _norm_pdf_python,
+        _norm_sf,
+        _norm_sf_python,
+    )
 
     xs = np.array([0.0, 0.1, 0.5, 1.0, 1.96, 3.0, 5.0, 8.0, 15.0, 30.0])
     for x in xs:
-        assert_allclose(_norm_pdf(x), norm.pdf(x), rtol=1e-12, atol=1e-300)
+        # Check both the (possibly jitted) helpers and their pure-Python source.
+        for pdf in (_norm_pdf, _norm_pdf_python):
+            assert_allclose(pdf(x), norm.pdf(x), rtol=1e-12, atol=1e-300)
         # scipy's own norm.sf underflows well before erfc-based _norm_sf
         # does, so only compare where scipy itself hasn't hit zero.
         scipy_sf = norm.sf(x)
         if scipy_sf > 0:
-            assert_allclose(_norm_sf(x), scipy_sf, rtol=1e-8)
+            for sf in (_norm_sf, _norm_sf_python):
+                assert_allclose(sf(x), scipy_sf, rtol=1e-8)
 
 
 def test_jitted_recursion_matches_pure_python():
@@ -349,3 +367,66 @@ def test_unsupported_forecast_options():
             10,
             RandomState(0).standard_normal,
         )
+
+
+def test_compute_variance_length_mismatch():
+    """A censored/threshold series that doesn't line up with the data being
+    fit (neither nobs nor nobs - 1) must raise rather than silently misalign."""
+    vol = CensoredGARCH(censored=np.zeros(10, dtype=bool), threshold=1.0)
+    vol._start, vol._stop = 0, 10
+    resids = np.zeros(5)
+    var_bounds = np.tile([1e-8, 1e8], (5, 1))
+    with pytest.raises(ValueError, match="does not match the data"):
+        vol.compute_variance(
+            np.array([0.05, 0.1, 0.85]), resids, np.zeros(5), 1.0, var_bounds
+        )
+
+
+@pytest.mark.parametrize("p, q", [(1, 0), (0, 1), (2, 2)])
+def test_starting_values_orders(setup, p, q):
+    """starting_values must handle models with no ARCH term (p=0) or no
+    GARCH term (q=0), as well as higher orders."""
+    resids = setup["resids"]
+    t = setup["t"]
+    vol = CensoredGARCH(
+        censored=setup["censored"], threshold=setup["threshold"], p=p, q=q
+    )
+    vol._start, vol._stop = 0, t
+    sv = vol.starting_values(resids)
+    assert sv.shape == (1 + p + q,)
+    assert np.all(np.isfinite(sv))
+    assert sv[0] > 0
+    assert np.all(sv[1:] >= 0)
+
+
+def test_simulate_initial_value():
+    """A user-supplied initial_value is used as-is for the first variance."""
+    vol = CensoredGARCH(censored=np.zeros(10, dtype=bool), threshold=1.0)
+    rng = RandomState(0)
+    parameters = np.array([0.05, 0.1, 0.85])
+    data, sigma2 = vol.simulate(
+        parameters, 20, rng.standard_normal, burn=0, initial_value=0.5
+    )
+    assert data.shape == (20,)
+    assert_allclose(sigma2[0], 0.5)
+
+
+def test_simulate_default_initial_value_stationary():
+    """With persistence < 1 the default start is the unconditional variance."""
+    vol = CensoredGARCH(censored=np.zeros(10, dtype=bool), threshold=1.0)
+    rng = RandomState(0)
+    parameters = np.array([0.05, 0.1, 0.85])
+    _, sigma2 = vol.simulate(parameters, 20, rng.standard_normal, burn=0)
+    assert_allclose(sigma2[0], 0.05 / (1.0 - 0.95))
+
+
+def test_simulate_default_initial_value_unit_root():
+    """With persistence >= 1 there is no unconditional variance, so the
+    default start falls back to omega."""
+    vol = CensoredGARCH(censored=np.zeros(10, dtype=bool), threshold=1.0)
+    rng = RandomState(0)
+    parameters = np.array([0.05, 0.5, 0.5])
+    data, sigma2 = vol.simulate(parameters, 20, rng.standard_normal, burn=0)
+    assert_allclose(sigma2[0], 0.05)
+    assert np.all(np.isfinite(data))
+    assert np.all(sigma2 > 0)
