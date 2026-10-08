@@ -257,7 +257,8 @@ def _autolag_ols_low_memory(
     y = asarray(y)
     lower_method = method.lower()
     deltay = diff(y)
-    deltay = deltay / sqrt(deltay @ deltay)
+    deltay_ss = deltay @ deltay
+    deltay = deltay / sqrt(deltay_ss)
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
     level = level / sqrt(level @ level)
@@ -319,6 +320,9 @@ def _autolag_ols_low_memory(
         elif lower_method == "maic":
             tau[i - m] = squeeze(b[0]) ** 2 * level_ss / sigma2[i - m]
 
+    # The residual variances are of the rescaled differences; restore the scale
+    # of the data so the criteria match those of the full-memory search
+    sigma2 *= deltay_ss
     return _select_best_ic(method, nobs, sigma2, tstat, tau)
 
 
