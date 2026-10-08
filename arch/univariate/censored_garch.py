@@ -42,8 +42,10 @@ See the accompanying paper referenced in the class docstring for the
 underlying empirical motivation and validation.
 """
 
-import math
+from arch.compat.numba import jit
+
 from collections.abc import Sequence
+import math
 from typing import cast
 
 import numpy as np
@@ -56,10 +58,10 @@ from arch._typing import (
     ForecastingMethod,
     RNGType,
 )
-from arch.compat.numba import jit
 from arch.univariate.recursions_python import bounds_check
 from arch.univariate.volatility import VarianceForecast, VolatilityProcess
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
+
 
 __all__ = ["CensoredGARCH", "censored_garch_recursion", "censored_garch_recursion_python"]
 
