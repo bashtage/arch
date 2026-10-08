@@ -962,7 +962,6 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
             assert self._low_memory is not None
-            self._lags = ADF(self._y, method=method, max_lags=max_lags).lags
             ols_detrend_coef = lstsq(z, y, rcond=None)[0]
             y_ols_detrend = y - z @ ols_detrend_coef
             _, bestlag = _df_select_lags(
