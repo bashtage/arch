@@ -145,17 +145,18 @@ def _is_reduced_rank(
 
 
 def _select_best_ic(
-    method: Literal["aic", "bic", "t-stat"],
+    method: Literal["aic", "bic", "t-stat", "maic"],
     nobs: float,
     sigma2: Float64Array,
     tstat: Float64Array,
+    tau: Float64Array,
 ) -> tuple[float, int]:
     """
     Computes the best information criteria
 
     Parameters
     ----------
-    method : {"aic", "bic", "t-stat"}
+    method : {"aic", "bic", "t-stat", "maic"}
         Method to use when finding the lag length
     nobs : float
         Number of observations in time series
@@ -164,6 +165,9 @@ def _select_best_ic(
     tstat : ndarray
         maxlag + 1 array containing t-statistic values. Only used if method
         is "t-stat"
+    tau : ndarray
+        maxlag + 1 array containing the penalty term of the modified
+        information criteria. Only used if method is "maic"
 
     Returns
     -------
@@ -171,6 +175,21 @@ def _select_best_ic(
         Minimum value of the information criteria
     lag : int
         The lag length that maximizes the information criterion.
+
+    Notes
+    -----
+    The modified AIC is (13) of Ng and Perron (2001) with :math:`C_T=2`,
+
+    .. math::
+
+       MAIC(k) = \\ln(\\hat{\\sigma}_k^2) + \\frac{2(\\tau_T(k) + k)}{T - k_{max}},
+       \\qquad
+       \\tau_T(k) = \\hat{\\sigma}_k^{-2}\\hat{\\beta}_0^2
+                    \\sum_{t=k_{max}+1}^{T}\\tilde{y}_{t-1}^2,
+
+    where :math:`\\hat{\\beta}_0` is the coefficient on the lagged level and
+    :math:`\\tilde{y}_{t-1}` is the lagged level after the trend terms are
+    removed, both over the common sample of :math:`T - k_{max}` observations.
     """
     llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
     maxlag = len(sigma2) - 1
@@ -187,6 +206,10 @@ def _select_best_ic(
         large_tstat = abs(tstat) >= stop
         lag = int(squeeze(argwhere(large_tstat)).max())
         icbest = float(tstat[lag])
+    elif method == "maic":
+        crit = log(sigma2) + 2 * (tau + arange(maxlag + 1)) / nobs
+        icbest, _lag = min(zip(crit, arange(maxlag + 1), strict=False))
+        lag = int(_lag)
 
     return icbest, lag
 
@@ -204,7 +227,7 @@ def _autolag_ols_low_memory(
     y: Float64Array,
     maxlag: int,
     trend: UnitRootTrend,
-    method: Literal["aic", "bic", "t-stat"],
+    method: Literal["aic", "bic", "t-stat", "maic"],
 ) -> tuple[float, int]:
     """
     Computes the lag length that minimizes an info criterion .
@@ -217,7 +240,7 @@ def _autolag_ols_low_memory(
         The highest lag order for lag length selection.
     trend : {"n", "c", "ct", "ctt"}
         Trend in the model
-    method : {"aic", "bic", "t-stat"}
+    method : {"aic", "bic", "t-stat", "maic"}
         Method to use when finding the lag length
 
     Returns
@@ -274,9 +297,12 @@ def _autolag_ols_low_memory(
             xpx[m + j, m + i] = x1px2
     ypy = lhs.T @ lhs
     sigma2 = empty(maxlag + 1)
+    # The level is the first column and the trend terms follow it
+    level_ss = xpx[0, 0] - xpx[0, 1:m] @ solve(xpx[1:m, 1:m], xpx[1:m, 0])
 
     tstat = empty(maxlag + 1)
     tstat[0] = inf
+    tau = full(maxlag + 1, nan)
     for i in range(m, m + maxlag + 1):
         xpx_sub = xpx[:i, :i]
         try:
@@ -290,8 +316,10 @@ def _autolag_ols_low_memory(
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
             tstat[i - m] = squeeze(b[-1]) / stderr
+        elif lower_method == "maic":
+            tau[i - m] = squeeze(b[0]) ** 2 * level_ss / sigma2[i - m]
 
-    return _select_best_ic(method, nobs, sigma2, tstat)
+    return _select_best_ic(method, nobs, sigma2, tstat, tau)
 
 
 def _autolag_ols(
@@ -299,7 +327,7 @@ def _autolag_ols(
     exog: ArrayLike2D,
     startlag: int,
     maxlag: int,
-    method: Literal["aic", "bic", "t-stat"],
+    method: Literal["aic", "bic", "t-stat", "maic"],
 ) -> tuple[float, int]:
     """
     Returns the results for the lag length that maximizes the info criterion.
@@ -315,11 +343,12 @@ def _autolag_ols(
         The first zero-indexed column to hold a lag.  See Notes.
     maxlag : int
         The highest lag order for lag length selection.
-    method : {"aic", "bic", "t-stat"}
+    method : {"aic", "bic", "t-stat", "maic"}
 
         * aic - Akaike Information Criterion
         * bic - Bayes Information Criterion
         * t-stat - Based on last lag
+        * maic - Ng and Perron's modified Akaike Information Criterion
 
     Returns
     -------
@@ -356,6 +385,10 @@ def _autolag_ols(
     tstat = empty(maxlag + 1)
     nobs = float(endog.shape[0])
     tstat[0] = inf
+    tau = full(maxlag + 1, nan)
+    # The level is the last column before the lags, so the square of its
+    # diagonal element of R is its sum of squares after the trend terms
+    level = startlag - 1
     for i in range(startlag, startlag + maxlag + 1):
         b = solve(r[:i, :i], qpy[:i])
         sigma2[i - startlag] = squeeze(ypy - b.T @ xpx[:i, :i] @ b) / nobs
@@ -363,15 +396,19 @@ def _autolag_ols(
             xpxi = inv(xpx[:i, :i])
             stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
             tstat[i - startlag] = squeeze(b[-1]) / stderr
+        elif lower_method == "maic":
+            tau[i - startlag] = (
+                squeeze(b[level]) ** 2 * r[level, level] ** 2 / sigma2[i - startlag]
+            )
 
-    return _select_best_ic(method, nobs, sigma2, tstat)
+    return _select_best_ic(method, nobs, sigma2, tstat, tau)
 
 
 def _df_select_lags(
     y: Float64Array,
     trend: Literal["n", "c", "ct", "ctt"],
     max_lags: int | None,
-    method: Literal["aic", "bic", "t-stat"],
+    method: Literal["aic", "bic", "t-stat", "maic"],
     low_memory: bool = False,
 ) -> tuple[float, int]:
     """
@@ -387,7 +424,7 @@ def _df_select_lags(
         The maximum number of lags to check.  This setting affects all
         estimation since the sample is adjusted by max_lags when
         fitting the models
-    method : {"aic", "bic", "t-stat"}
+    method : {"aic", "bic", "t-stat", "maic"}
         The method to use when estimating the model
     low_memory : bool
         Flag indicating whether to use the low-memory algorithm for
@@ -546,15 +583,15 @@ class UnitRootTest(metaclass=ABCMeta):
             self._check_specification()
             self._compute_statistic()
 
-    def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat"]:
+    def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat", "maic"]:
         if not isinstance(method, str):
             raise TypeError("method must be a string")
         method = method.lower()
         if method in ("t", "tstat", "t-stat"):
             return "t-stat"
-        elif method not in ("aic", "bic"):
-            raise ValueError("method must be one of 'aic', 'bic' or 't-stat'")
-        return cast("Literal['aic', 'bic', 't-stat']", method)
+        elif method not in ("aic", "bic", "maic"):
+            raise ValueError("method must be one of 'aic', 'bic', 't-stat' or 'maic'")
+        return cast("Literal['aic', 'bic', 't-stat', 'maic']", method)
 
     @property
     def null_hypothesis(self) -> str:
@@ -691,12 +728,13 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {"aic", "bic", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "maic" - Select the minimum of Ng and Perron's modified Akaike IC ([5]_)
 
     low_memory : bool
         Flag indicating whether to use a low memory implementation of the
@@ -757,6 +795,9 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     .. [4] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
        Queen's University, Dept of Economics, Working Papers.  Available at
        https://ideas.repec.org/p/qed/wpaper/1227.html
+    .. [5] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
+       Construction of Unit Root Tests with Good Size and Power."
+       Econometrica 69, 1519-1554.
     """
 
     def __init__(
@@ -765,7 +806,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         lags: int | None = None,
         trend: UnitRootTrend = "c",
         max_lags: int | None = None,
-        method: Literal["aic", "bic", "t-stat"] = "aic",
+        method: Literal["aic", "bic", "t-stat", "maic"] = "aic",
         low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("n", "c", "ct", "ctt")
@@ -859,12 +900,13 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The maximum number of lags to use when selecting lag length. When using
         automatic lag length selection, the lag is selected using OLS
         detrending rather than GLS detrending ([pq]_).
-    method : {"aic", "bic", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "maic" - Select the minimum of Ng and Perron's modified Akaike IC ([np]_)
 
     Notes
     -----
@@ -906,6 +948,9 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     .. [pq] Perron, P., & Qu, Z. (2007). A simple modification to improve the
            finite sample properties of Ng and Perron's unit root tests.
            Economics letters, 94(1), 12-19.
+    .. [np] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
+           Construction of Unit Root Tests with Good Size and Power."
+           Econometrica 69, 1519-1554.
     """
 
     def __init__(
@@ -914,7 +959,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         lags: int | None = None,
         trend: Literal["c", "ct"] = "c",
         max_lags: int | None = None,
-        method: Literal["aic", "bic", "t-stat"] = "aic",
+        method: Literal["aic", "bic", "t-stat", "maic"] = "aic",
         low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("c", "ct")
@@ -1411,12 +1456,13 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         calculation in range [0, 0.333] (default=0.15)
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {"aic", "bic", "t-stat"}, optional
+    method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
         - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "maic" - Select the minimum of Ng and Perron's modified Akaike IC
 
     Notes
     -----
@@ -1458,7 +1504,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         trend: Literal["c", "ct", "t"] = "c",
         trim: float = 0.15,
         max_lags: int | None = None,
-        method: Literal["aic", "bic", "t-stat"] = "aic",
+        method: Literal["aic", "bic", "t-stat", "maic"] = "aic",
     ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
         if not isinstance(trim, float) or not 0 <= trim <= (1 / 3):
