@@ -1067,7 +1067,7 @@ class FullyModifiedOLS:
             "unadjusted" produces the classic OLS covariance estimator.
             Setting the bandwidth to 0 and using "robust" produces White's
             covariance estimator.
-        force_int : bool, default False
+        force_int : bool, default True
             Whether the force the estimated optimal bandwidth to be an integer.
         df_adjust : bool, default False
             Whether the adjust the parameter covariance to account for the
