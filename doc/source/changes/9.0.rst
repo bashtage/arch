@@ -24,3 +24,7 @@ Release 9.0 (Unreleased)
   always used the stationary bootstrap kernel, so the consistent p-value can
   also change with ``studentize=False`` when using the circular or moving
   block bootstraps.
+- Fixed :func:`~arch.unitroot.auto_bandwidth` so that the autocovariances are
+  not truncated to integers. In previous versions any series with
+  non-integer values could return an incorrect bandwidth or raise
+  ``ZeroDivisionError``.

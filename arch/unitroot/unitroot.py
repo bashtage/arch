@@ -34,7 +34,6 @@ from numpy import (
     sort,
     sqrt,
     squeeze,
-    sum as npsum,
 )
 from numpy.linalg import LinAlgError, inv, lstsq, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
@@ -1998,7 +1997,7 @@ def auto_bandwidth(
     float
         The estimated optimal bandwidth.
     """
-    y_arr = ensure1d(y, "y")
+    y_arr = to_array_1d(ensure1d(y, "y"))
     if y_arr.shape[0] < 2:
         raise ValueError("Data must contain more than one observation")
 
@@ -2016,18 +2015,13 @@ def auto_bandwidth(
         raise ValueError("Unknown kernel")
 
     n = int(4 * ((len(y_arr) / 100) ** n_power))
-    sig = (n + 1) * [0]
-
-    for i in range(n + 1):
-        a = list(y_arr[i:])
-        b = list(y_arr[: len(y_arr) - i])
-        sig[i] = int(npsum([i * j for (i, j) in zip(a, b, strict=False)]))
+    sig = [float(y_arr[i:] @ y_arr[: len(y_arr) - i]) for i in range(n + 1)]
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)
 
     if kernel == "ba":
-        s1 = 0
+        s1 = 0.0
         for j in range(len(sigma_m1)):
             s1 += (j + 1) * sigma_m1[j]
         s1 *= 2
@@ -2035,7 +2029,7 @@ def auto_bandwidth(
         t_power = 1 / (2 * q + 1)
         gamma = 1.1447 * (((s1 / s0) ** 2) ** t_power)
     else:
-        s2 = 0
+        s2 = 0.0
         for j in range(len(sigma_m1)):
             s2 += ((j + 1) ** 2) * sigma_m1[j]
         s2 *= 2

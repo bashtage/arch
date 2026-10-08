@@ -673,6 +673,11 @@ def test_bw_selection():
         auto_bandwidth([1])
 
 
+@pytest.mark.parametrize("kernel", ["ba", "pa", "qs"])
+def test_bw_selection_non_integer(kernel):
+    auto_bandwidth(np.array([0.5, 0.0]), kernel=kernel)
+
+
 def test_invalid_trend():
     with pytest.raises(ValueError, match=r"trend not understood"):
         ADF(np.random.standard_normal(100), trend="unknown")
