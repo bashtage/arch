@@ -128,6 +128,8 @@ dev = [
   "flake8",
   "flake8-bugbear",
   "mypy>=1.3",
+  "pandas-stubs",
+  "scipy-stubs",
   "ruff>=0.8.6",
   "pyupgrade>=3.4.0",
   "jupyterlab-code-formatter",
@@ -289,7 +291,11 @@ ignore = [
   "UP",
   "FURB",
   "N",
-  "DTZ"
+  "DTZ",
+  # Missing copyright
+  "CPY001",
+  # Too many positional arguments
+  "PLR0917",
 ]
 
 [tool.ruff.lint.per-file-ignores]

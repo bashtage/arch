@@ -16,6 +16,11 @@ Release 8.0
 - Moved to Meson build system from setuptools.
 - Minimum required Python is now 3.10.
 - Improved compatability with future NumPy and pandas, including pandas 3.
+- Added ``append`` to the mean models, which adds new observations to a model
+  in-place so that parameters estimated using earlier data can be used to
+  produce forecasts or fixed results without re-estimating the model.
+  Models can only be appended to using data of the same type as the data used
+  to construct the model.
 - Many small documentation fixes.
 - Improved typing accuracy across the codebase.
 
