@@ -84,8 +84,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
         The kernel's bandwidth.  If None, optimal bandwidth is estimated
         from the VAR residuals. Must be None or 0 when kernel is None.
     df_adjust : int, default 0
-        Degrees of freedom to remove when adjusting the covariance. Currently
-        not used by this estimator, see Notes for the scaling applied.
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products, see Notes.
     center : bool, default True
         A flag indicating whether x should be demeaned before estimating the
         covariance.
@@ -134,24 +135,28 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     **Kernel estimation.** The long-run covariance of the VAR residuals,
     :math:`\hat{\Omega}_\epsilon`, is estimated using the selected kernel
-    applied to the residuals without centering and without a degree of
-    freedom adjustment. When ``kernel`` is None, a zero-lag kernel is used
-    so that :math:`\hat{\Omega}_\epsilon=\hat{\Sigma}`, which is the
-    VAR-HAC estimator of den Haan & Levin. This is also the case when the
-    bandwidth is 0.
+    applied to the residuals without centering. When ``kernel`` is None, a
+    zero-lag kernel is used so that
+    :math:`\hat{\Omega}_\epsilon=\hat{\Sigma}`, which is the VAR-HAC
+    estimator of den Haan & Levin. This is also the case when the bandwidth is
+    0. The products of the residuals are divided by :math:`T-` ``df_adjust``,
+    where :math:`T` is the number of observations in x, rather than by the
+    number of residuals, which is smaller when the order is positive. This
+    matches the ``sandwich`` package in R: the estimator is identical to
+    ``sandwich::meatHAC(prewhite=P, adjust=FALSE)`` when ``df_adjust`` is 0
+    and to ``sandwich::meatHAC(prewhite=P, adjust=TRUE)`` when ``df_adjust`` is
+    the number of columns in x, if the kernel weights are the same.
 
     **Recoloring.** The long-run covariance of x is
 
     .. math::
 
-       \hat{\Omega} = \frac{T}{T-N} \hat{D}\hat{\Omega}_\epsilon\hat{D}^\prime,
+       \hat{\Omega} = \hat{D}\hat{\Omega}_\epsilon\hat{D}^\prime,
        \quad \hat{D} = \left(I_N - \sum_{i=1}^P \hat{A}_i\right)^{-1}
 
-    where :math:`N` is the number of columns in x and :math:`T` is the number
-    of VAR residuals. When the selected order
+    where :math:`N` is the number of columns in x. When the selected order
     is 0, no VAR is estimated and all returned values are those of the
-    kernel estimator applied to x (demeaned when ``center`` is True)
-    without the scale :math:`T/(T-N)`.
+    kernel estimator applied to x (demeaned when ``center`` is True).
 
     When the VAR order is positive, the returned
     :class:`~arch.covariance.kernel.CovarianceEstimate` contains
@@ -160,7 +165,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
     * ``short_run``: :math:`\hat{\Sigma}`, the covariance of the VAR
       residuals, not the variance of x.
     * ``one_sided``: the upper-left :math:`N` by :math:`N` block of
-      :math:`\frac{T}{T-N}(I-F)^{-1}\Gamma_0` where :math:`F` is the
+      :math:`(I-F)^{-1}\Gamma_0` where :math:`F` is the
       companion-form coefficient matrix of the VAR and :math:`\Gamma_0` is
       the covariance of the stacked vector
       :math:`[x_t^\prime, \ldots, x_{t-P+1}^\prime]^\prime`, either implied
@@ -168,7 +173,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
       ``sample_autocov`` is True, computed from the sample autocovariances
       of x.
     * ``one_sided_strict``: the upper-left :math:`N` by :math:`N` block of
-      :math:`\frac{T}{T-N}F(I-F)^{-1}\Gamma_0`.
+      :math:`F(I-F)^{-1}\Gamma_0`.
 
     The one-sided covariances do not use the kernel. Since ``short_run`` is
     the residual covariance, the identities in
@@ -442,7 +447,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         var_cov = np.zeros((nvar * nlag, nvar * nlag))
         gamma = np.zeros((nlag, nvar, nvar))
         for i in range(nlag):
-            gamma[i] = (x[i:].T @ x[: (nobs - i)]) / nobs
+            gamma[i] = (x[i:].T @ x[: (nobs - i)]) / self._df
         for r in range(nlag):
             for c in range(nlag):
                 g = gamma[np.abs(r - c)]
@@ -511,12 +516,15 @@ class PreWhitenedRecolored(CovarianceEstimator):
         resids = var_mod.resids
         nobs, nvar = resids.shape
         kern_cov = kernel_instance.cov
-        short_run = np.asarray(kern_cov.short_run)
+        # The kernel divides by the number of residuals. Divide by the number
+        # of observations in x less df_adjust, as the other estimators do.
+        scale = nobs / self._df
+        short_run = scale * np.asarray(kern_cov.short_run)
         x_orig = self._x_orig
         columns = x_orig.columns if isinstance(x_orig, pd.DataFrame) else None
         if var_mod.var_order == 0:
-            # Special case VAR(0): no recoloring and no T/(T-N) scale, see Notes
-            oss = np.asarray(kern_cov.one_sided_strict)
+            # Special case VAR(0): no recoloring
+            oss = scale * np.asarray(kern_cov.one_sided_strict)
             return CovarianceEstimate(short_run, oss, columns)
         comp_coefs, comp_var_cov = self._companion_form(var_mod, short_run)
         max_eig = np.abs(np.linalg.eigvals(comp_coefs)).max()
@@ -532,17 +540,16 @@ VAR(1) coefficient matrix is {max_eig}.""")
         for i in range(var_mod.var_order):
             coeff_sum += params[:, i * nvar : (i + 1) * nvar]
         d = np.linalg.inv(np.eye(nvar) - coeff_sum)
-        scale = nobs / (nobs - nvar)
         # Recolor the kernel long-run covariance of the VAR residuals
         # (Andrews & Monahan 1992). With a zero bandwidth or kernel=None, the
         # kernel long run equals the residual short run.
-        resid_long_run = np.asarray(kern_cov.long_run)
-        long_run = scale * (d @ resid_long_run @ d.T)
+        resid_long_run = scale * np.asarray(kern_cov.long_run)
+        long_run = d @ resid_long_run @ d.T
 
         comp_nvar = comp_coefs.shape[0]
         i_minus_coefs_inv = np.linalg.inv(np.eye(comp_nvar) - comp_coefs)
 
-        one_sided = scale * i_minus_coefs_inv @ comp_var_cov
+        one_sided = i_minus_coefs_inv @ comp_var_cov
         one_sided_strict = comp_coefs @ one_sided
 
         one_sided = one_sided[:nvar, :nvar]

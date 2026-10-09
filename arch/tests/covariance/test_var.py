@@ -162,7 +162,10 @@ def test_short_long_run(covariance_data, center, diagonal, method, lags):
     cov = pwrc.cov
     full_order, diag_order = pwrc._order
     params, resids = direct_var(covariance_data, center, full_order, diag_order)
-    nobs, nvar = resids.shape
+    nvar = resids.shape[1]
+    # The residual covariance divides by all observations in x, not by the
+    # number of residuals
+    nobs = np.asarray(covariance_data).shape[0]
     expected_short_run = resids.T @ resids / nobs
     assert_allclose(cov.short_run, expected_short_run)
     d = np.eye(nvar)
@@ -170,8 +173,7 @@ def test_short_long_run(covariance_data, center, diagonal, method, lags):
     for i in range(max(full_order, diag_order)):
         d -= params[:, c + i * nvar : c + (i + 1) * nvar]
     d_inv = np.linalg.inv(d)
-    scale = nobs / (nobs - nvar * (pwrc._order != (0, 0)))
-    expected_long_run = scale * d_inv @ expected_short_run @ d_inv.T
+    expected_long_run = d_inv @ expected_short_run @ d_inv.T
     assert_allclose(cov.long_run, expected_long_run)
 
 
@@ -246,8 +248,9 @@ def test_recolored_kernel_long_run(covariance_data, center, bandwidth, kernel):
     d = np.linalg.inv(np.eye(nvar) - coef_sum)
     kern_est = getattr(kernel_module, kernel)
     omega_e = kern_est(resids, bandwidth=bandwidth, center=False).cov.long_run
-    nobs = resids.shape[0]
-    scale = nobs / (nobs - nvar)
+    # The kernel divides by the number of residuals, the estimator divides by
+    # the number of observations in x
+    scale = resids.shape[0] / nobs_full
     expected = scale * d @ omega_e @ d.T
 
     pwrc = PreWhitenedRecolored(
@@ -255,7 +258,7 @@ def test_recolored_kernel_long_run(covariance_data, center, bandwidth, kernel):
     )
     cov = pwrc.cov
     assert_allclose(np.asarray(cov.long_run), expected, rtol=1e-8, atol=1e-10)
-    assert_allclose(np.asarray(cov.short_run), resids.T @ resids / nobs)
+    assert_allclose(np.asarray(cov.short_run), resids.T @ resids / nobs_full)
 
 
 @pytest.mark.parametrize("center", [True, False])
@@ -279,9 +282,8 @@ def test_var_hac_kernel_none(covariance_data, center):
     for i in range(lags):
         coef_sum += params[:, c + i * nvar : c + (i + 1) * nvar]
     d = np.linalg.inv(np.eye(nvar) - coef_sum)
-    nobs = resids.shape[0]
-    sigma_e = resids.T @ resids / nobs
-    expected = nobs / (nobs - nvar) * d @ sigma_e @ d.T
+    sigma_e = resids.T @ resids / nobs_full
+    expected = d @ sigma_e @ d.T
 
     pwrc = PreWhitenedRecolored(covariance_data, lags=lags, kernel=None, center=center)
     assert_allclose(np.asarray(pwrc.cov.long_run), expected, rtol=1e-8, atol=1e-10)
@@ -477,3 +479,32 @@ def test_bandwidth_kernel_none(var_data, bandwidth):
     assert "Automatic Bandwidth: False" in str(pwrc)
     assert kernel_module.ZeroLag(var_data).bandwidth == 0.0
     assert kernel_module.ZeroLag(var_data, force_int=True).bandwidth == 0.0
+
+
+@pytest.mark.parametrize("sample_autocov", [True, False])
+@pytest.mark.parametrize("kernel,bandwidth", [(None, None), ("Bartlett", 5.0)])
+@pytest.mark.parametrize("lags", [0, 2])
+@pytest.mark.parametrize("df_adjust", [1, 3, 10])
+def test_df_adjust(var_data, df_adjust, lags, kernel, bandwidth, sample_autocov):
+    # Every covariance divides by the number of observations in x less
+    # df_adjust, as the other covariance estimators do.
+    kwargs = {
+        "lags": lags,
+        "kernel": kernel,
+        "bandwidth": bandwidth,
+        "sample_autocov": sample_autocov,
+    }
+    base = PreWhitenedRecolored(var_data, **kwargs)
+    adjusted = PreWhitenedRecolored(var_data, df_adjust=df_adjust, **kwargs)
+    nobs = var_data.shape[0]
+    factor = nobs / (nobs - df_adjust)
+    for attr in ("long_run", "short_run", "one_sided", "one_sided_strict"):
+        assert_allclose(getattr(adjusted.cov, attr), factor * getattr(base.cov, attr))
+    assert adjusted.bandwidth == base.bandwidth
+    assert f"Degree of Freedom Adjustment: {df_adjust}" in str(adjusted)
+
+
+@pytest.mark.parametrize("df_adjust", [-1, 500, 600])
+def test_df_adjust_errors(var_data, df_adjust):
+    with pytest.raises(ValueError, match="df_adjust|Degrees of freedom"):
+        PreWhitenedRecolored(var_data, df_adjust=df_adjust)
