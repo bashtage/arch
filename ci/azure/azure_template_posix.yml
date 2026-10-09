@@ -16,69 +16,104 @@ jobs:
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
+    # Python 3.14, the newest release, has the most jobs. The jobs with older Python
+    # versions have exact versions of numpy, scipy, pandas, statsmodels and matplotlib,
+    # from the oldest that arch supports (3.10) to the last releases before the newest
+    # (3.13). Together with the newest versions in the 3.14 jobs they cover numpy 1.x
+    # and 2.x, pandas 1.x, 2.x and 3.x, and both sides of the pandas 2.2 and
+    # matplotlib 3.10 checks in arch/compat and arch/univariate. The sdist and the
+    # wheel are built with the newest numpy and tested with an older one.
+    #
+    # Variables of an entry
+    #   python.version   Version of Python. 3.15-dev is the newest 3.15, including
+    #                    release candidates.
+    #   NUMPY, SCIPY, PANDAS, STATSMODELS, MATPLOTLIB, NUMBA
+    #                    Exact versions. Everything is installed in one command so
+    #                    that the installer also picks versions of seaborn, ... that
+    #                    work with them.
+    #   USE_NUMBA        Install numba, which runs the recursions when the Cython
+    #                    extensions are not built
+    #   use.conda        Install with conda instead of pip
+    #   PYTEST_PATTERN   (slow or not slow) also runs the slow tests, which include
+    #                    the example notebooks
+    #   test.sdist, test.wheel
+    #                    Build and install the package in site-packages and test it
+    #   BUILD_FLAGS      Options for building the Cython extensions
+    #   cython.coverage  Create the C files that coverage uses to report on the Cython
+    #                    code and run a few tests. This only works up to Python 3.12
+    #                    and with COVERAGE_CORE=ctrace.
+    #   STATSMODELS_MAIN Install statsmodels from its main branch
+    #   style            Run the style checks
+    #   nightly          Install nightly builds of numpy, scipy, pandas, ...
+    #   experimental     Do not fail when the tests fail and do not collect coverage
     matrix:
-      python_313:
-        python.version: '3.13'
+      python_314:
+        python.version: '3.14'
         PYTEST_PATTERN: "(slow or not slow)"
-      python_312:
-        python.version: '3.12'
-      python_311:
-        python.version: '3.11'
-      python_310:
-        python.version: '3.10'
-        test.wheel: true
-      python_311_copy_on_write:
-        python.version: '3.11'
-        ARCH_TEST_COPY_ON_WRITE: 1
-      python_minimums:
-        python.version: '3.10'
-        NUMPY: 1.23.0
-        SCIPY: 1.9.0
-        MATPLOTLIB: 3.4.0
-        PANDAS: 1.4.0
-        test.sdist: true
-      python_310_conda_numba:
-        python.version: '3.10'
-        use.conda: 'true'
-        NUMPY: 2.0.0
+        style: true
+      # Without the Cython extensions, so numba runs the recursions
+      python_314_no_binary:
+        python.version: '3.14'
+        BUILD_FLAGS: '-Csetup-args=-Dno-binary=true'
         USE_NUMBA: true
-        MATPLOTLIB: 3.0
+      python_314_statsmodels_main:
+        python.version: '3.14'
+        STATSMODELS_MAIN: true
+      # pandas 2.3, the last 2.x, with copy-on-write, which pandas 3 always uses.
+      # The wheel is built with the newest numpy 2 headers.
+      python_313_copy_on_write_wheel:
+        python.version: '3.13'
+        NUMPY: 2.2.6
+        SCIPY: 1.15.3
+        PANDAS: 2.3.3
+        STATSMODELS: 0.14.5
+        ARCH_TEST_COPY_ON_WRITE: 1
+        test.wheel: true
+      # Coverage of the Cython code, from the tests of the extensions. Coverage only
+      # reports Cython lines with its ctrace core, which does not work after Python
+      # 3.12. Tracing every line is slow, so the tests that fit models (test_mean.py
+      # and test_arch_in_mean.py), which take more than an hour in one process, are
+      # not run.
+      python_312_cython_coverage:
+        python.version: '3.12'
+        BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
+        cython.coverage: true
+        COVERAGE_CORE: ctrace
+      # numpy 2.0, the first 2.x, with numba from conda
+      python_312_conda_numba:
+        python.version: '3.12'
+        use.conda: 'true'
+        NUMPY: 2.0.2
+        USE_NUMBA: true
         PYTEST_PATTERN: "(slow or not slow)"
-      python310_numpy120:
+      # pandas 1.5, the last 1.x, with versions of the other packages from 2023. The
+      # sdist is built with the newest numpy 2 headers.
+      python_311_sdist:
+        python.version: '3.11'
+        NUMPY: 1.24.4
+        SCIPY: 1.10.1
+        PANDAS: 1.5.3
+        STATSMODELS: 0.14.0
+        MATPLOTLIB: 3.7.5
+        test.sdist: true
+      # The oldest versions that arch supports. statsmodels 0.13.1 is the oldest
+      # with a wheel for Python 3.10, and matplotlib 3.5.0 the oldest with one for
+      # Python 3.10. numba is not installed.
+      python_310_minimums:
         python.version: '3.10'
-        MATPLOTLIB: 3.3.0
         NUMPY: 1.22.3
         SCIPY: 1.8.0
         PANDAS: 1.4.0
-      python_314_cython_coverage:
-        python.version: '3.14'
-        BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
-        cython.coverage: true
-      python_311_no_binary:
-        python.version: '3.11'
-        BUILD_FLAGS: '-Csetup-args=-Dno-binary=true'
-        PYTEST_OPTS: '--skip-slow'
-        PANDAS: 2.2.2
-        USE_NUMBA: true
-      python_312_no_binary_environment:
-        python.version: '3.12'
-        ARCH_NO_BINARY: true
-        use.conda: 'true'
-        USE_NUMBA: true
-        PYTEST_OPTS: '--skip-slow'
-      python_310_no_numba:
-        python.version: '3.10'
-        NUMPY: 1.24.0
-        USE_NUMBA: false
+        STATSMODELS: 0.13.1
         MATPLOTLIB: 3.5.0
-        PANDAS: 1.5.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python_312_statsmodels_main:
-        python.version: '3.10'
-        STATSMODELS_MAIN: true
-      python312_pre:
-        python.version: '3.12'
-        pip.pre: true
+      python_314_pre:
+        python.version: '3.14'
+        nightly: true
+        experimental: true
+      python_315:
+        python.version: '3.15-dev'
+        experimental: true
 
     maxParallel: 10
 
@@ -87,6 +122,8 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
+      # Needed to download a release candidate
+      allowUnstable: true
     displayName: 'Use Python $(python.version)'
 
   - bash: |
@@ -116,17 +153,7 @@ jobs:
      black --check arch
      isort --check arch
     displayName: 'Check style and formatting'
-
-  - script: python -m pip list
-    displayName: 'List Configuration (PyPI)'
-    condition: ne(variables['use.conda'], 'true')
-
-  - script: |
-     source ci/azure/update_path.sh
-     conda list
-    displayName: 'List Configuration (conda)'
-    condition: eq(variables['use.conda'], 'true')
-
+    condition: eq(variables['style'], 'true')
 
   - script: |
       echo "Installing to site packages (sdist)"
@@ -140,7 +167,7 @@ jobs:
   - script: |
       echo "Installing to site packages (wheel)
       python -m pip install pip wheel --upgrade"
-      python -m pip wheel . --wheel-dir ./dist/
+      python -m pip wheel . --no-deps --wheel-dir ./dist/
       WHL=$(ls -t ./dist/arch-*.whl | head -1)
       pip install ${WHL} -v
     displayName: 'Install arch (site-packages, wheel)'
@@ -162,6 +189,17 @@ jobs:
     displayName: 'Transpile Cython to C for coverage support'
     condition: eq(variables['cython.coverage'], 'true')
 
+  # After arch is installed so that these show what is tested
+  - script: python -m pip list
+    displayName: 'List Configuration (PyPI)'
+    condition: ne(variables['use.conda'], 'true')
+
+  - script: |
+     source ci/azure/update_path.sh
+     conda list
+    displayName: 'List Configuration (conda)'
+    condition: eq(variables['use.conda'], 'true')
+
   - script: |
       echo "Testing site packages"
       mkdir test_run_dir
@@ -177,15 +215,14 @@ jobs:
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
     displayName: 'Run tests (editable)'
-    condition: and(and(and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true')), ne(variables['pip.pre'], 'true')), ne(variables['cython.coverage'], 'true'))
+    condition: and(and(and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true')), ne(variables['experimental'], 'true')), ne(variables['cython.coverage'], 'true'))
 
   - script: |
-      echo "Testing pip-pre"
-      export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
-      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
-      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
-    displayName: 'Run tests (pip pre)'
-    condition: eq(variables['pip.pre'], 'true')
+      echo "Testing experimental configuration"
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 arch/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 arch/tests
+    displayName: 'Run tests (experimental)'
+    condition: eq(variables['experimental'], 'true')
     continueOnError: true
 
   - script: |
@@ -193,8 +230,8 @@ jobs:
       # Uninstall xdist to avoid issues with coverage and Cython
       python -m pip uninstall pytest-xdist -y || true
       export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
-      echo pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_mean.py arch/tests/univariate/test_arch_in_mean.py
-      pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_mean.py arch/tests/univariate/test_arch_in_mean.py
+      echo pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py
+      pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py
     displayName: 'Run tests (cython coverage)'
     condition: eq(variables['cython.coverage'], 'true')
 
@@ -207,11 +244,11 @@ jobs:
   - task: PublishCodeCoverageResults@2
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'))
+    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'), ne(variables['experimental'], 'true'))
 
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'
-    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'))
+    condition: and(ne(variables['test.sdist'], 'true'), ne(variables['test.wheel'], 'true'), ne(variables['experimental'], 'true'))
