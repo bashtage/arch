@@ -2492,12 +2492,14 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             )
         # Each EWMA component is updated with the squared residual, whose
         # expected value is the combined variance, so the expected values of
-        # the components follow a linear recursion.
+        # the components follow a linear recursion. The forecasts are then
+        # reweighted combinations of the final component values, with weights
+        # w(h + 1) = mus * w(h) + w * sum((1 - mus) * w(h)) and w(1) = w.
         components = components.T[start + 1 :]
+        weights = w
         for i in range(1, horizon):
-            sigma2 = components @ w
-            components = mus * components + (1 - mus) * sigma2[:, None]
-            forecasts[:, i] = components @ w
+            weights = mus * weights + w * ((1 - mus) @ weights)
+            forecasts[:, i] = components @ weights
         return VarianceForecast(forecasts)
 
     def _simulation_forecast(
