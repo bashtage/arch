@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v8.0.1 (+137)</title>
+        <title>arch.univariate.volatility - arch v8.0.1 (+141)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+137)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+137)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+141)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+141)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+137)
+            arch v8.0.1 (+141)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+137)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+137)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+141)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+141)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+137)
+    arch v8.0.1 (+141)
   </label>
   
     <div class="md-nav__source">
@@ -4304,7 +4304,9 @@
         <span class="n">n_fig_constraints</span> <span class="o">=</span> <span class="n">a_fig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">n_gamma_constraints</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_gamma</span>  <span class="c1"># gamma &gt; -0.9997, gamma &lt; 0.9997</span>
         <span class="n">n_delta_constraints</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_delta</span>  <span class="c1"># delta &gt; 0.05, delta &lt; 4</span>
-        <span class="n">n_total_constraints</span> <span class="o">=</span> <span class="n">n_fig_constraints</span> <span class="o">+</span> <span class="n">n_gamma_constraints</span> <span class="o">+</span> <span class="n">n_delta_constraints</span>
+        <span class="n">n_total_constraints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">n_fig_constraints</span> <span class="o">+</span> <span class="n">n_gamma_constraints</span> <span class="o">+</span> <span class="n">n_delta_constraints</span>
+        <span class="p">)</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_total_constraints</span><span class="p">,</span> <span class="n">n_params</span><span class="p">))</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total_constraints</span><span class="p">)</span>
@@ -4396,9 +4398,7 @@
         <span class="n">tau</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">0.94</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">backcast</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
@@ -4488,9 +4488,7 @@
                             <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resids</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">target</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delt</span><span class="p">))</span>
                             <span class="n">target</span> <span class="o">*=</span> <span class="n">scale</span> <span class="o">**</span> <span class="p">(</span><span class="n">delt</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
                             <span class="n">temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">beta</span><span class="p">]</span>
-                            <span class="n">lam</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">figarch_weights</span><span class="p">(</span>
-                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">truncation</span>
-                            <span class="p">)</span>
+                            <span class="n">lam</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">figarch_weights</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
                             <span class="n">omega</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lam</span><span class="p">))</span>
                             <span class="n">sv</span> <span class="o">=</span> <span class="p">[</span><span class="n">omega</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">p</span><span class="p">:</span>
