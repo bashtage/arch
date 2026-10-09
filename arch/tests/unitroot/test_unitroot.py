@@ -673,6 +673,21 @@ def test_bw_selection():
         auto_bandwidth([1])
 
 
+@pytest.mark.parametrize("kernel", ["ba", "pa", "qs"])
+def test_bw_selection_non_integer(kernel):
+    auto_bandwidth(np.array([0.5, 0.0]), kernel=kernel)
+
+
+@pytest.mark.parametrize(
+    ("kernel", "expected"),
+    [("ba", TRUE_BW_FROM_R_BA), ("pa", TRUE_BW_FROM_R_PA), ("qs", TRUE_BW_FROM_R_QS)],
+)
+def test_bw_selection_scale_invariant(kernel, expected):
+    # cointReg::getBandwidthNW gives the same bandwidths for the series over 10
+    scaled = np.asarray(REAL_TIME_SERIES) / 10
+    assert_allclose(auto_bandwidth(scaled, kernel=kernel), expected, rtol=1e-6)
+
+
 def test_invalid_trend():
     with pytest.raises(ValueError, match=r"trend not understood"):
         ADF(np.random.standard_normal(100), trend="unknown")
