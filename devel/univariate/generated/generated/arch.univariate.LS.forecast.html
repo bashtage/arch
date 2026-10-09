@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.LS.forecast - arch v8.0.1 (+135)</title>
+        <title>arch.univariate.LS.forecast - arch v8.0.1 (+137)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+135)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+135)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+137)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+137)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+135)
+            arch v8.0.1 (+137)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+135)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+135)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+137)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+137)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+135)
+    arch v8.0.1 (+137)
   </label>
   
     <div class="md-nav__source">
@@ -1961,11 +1961,9 @@ the 2-element tuple (simulations, horizon).</p>
 <dt id="arch.univariate.LS.forecast.random_state"><span class="n sig-name">random_state</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)">RandomState</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.LS.forecast.random_state" title="Permalink to this definition">¶</a></dt><dd><p>NumPy RandomState instance to use when method is ‘bootstrap’</p>
 </dd>
 <dt id="arch.univariate.LS.forecast.reindex"><span class="n sig-name">reindex</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)">bool</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code><a class="headerlink" href="#arch.univariate.LS.forecast.reindex" title="Permalink to this definition">¶</a></dt><dd><p><p>Whether to reindex the forecasts to have the same dimension as the series
-being forecast. Prior to 4.18 this was the default. As of 4.19 this is
-now optional. If not provided, a warning is raised about the future
-change in the default which will occur after September 2021.</p>
-<div class="admonition versionadded">
-<p class="admonition-title"><span class="versionmodified added">Added in version 4.19.</span></p>
+being forecast.</p>
+<div class="admonition versionchanged">
+<p class="admonition-title"><span class="versionmodified changed">Changed in version 6.2: </span>The default has been changed to False.</p>
 </div>
 </p>
 </dd>
