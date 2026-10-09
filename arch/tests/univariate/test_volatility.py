@@ -1929,8 +1929,8 @@ def test_fiaparch(setup):
         sigma_delta_sim[t] = omega_tilde + lam_rev.dot(fshocks[::-1])
         sigma2[t] = sigma_delta_sim[t] ** (2.0 / delta)
         data[t] = e[t] * np.sqrt(sigma2[t])
-    data = data[trunc_lag + 500:]
-    sigma2 = sigma2[trunc_lag + 500:]
+    data = data[trunc_lag + 500 :]
+    sigma2 = sigma2[trunc_lag + 500 :]
     assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
     assert_almost_equal(data / sim_data[0], np.ones_like(data))
 
@@ -2197,7 +2197,7 @@ def test_fiaparch_simulate_persistence_ge_1(setup):
 
 
 @pytest.mark.parametrize(
-    "p,o,q",
+    ("p", "o", "q"),
     [(0, 1, 1), (1, 0, 1), (1, 1, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 0, 0)],
 )
 def test_fiaparch_simulate_reduced(setup, p, o, q):
@@ -2240,9 +2240,7 @@ def test_fiaparch_backcast_transform(setup):
     expected_fd = float(np.sqrt(backcast_fd) ** 1.5)
     assert_allclose(result_fd, expected_fd)
 
-    result_fd_arr = fiaparch_fd.backcast_transform(
-        np.array([backcast_fd, backcast_fd])
-    )
+    result_fd_arr = fiaparch_fd.backcast_transform(np.array([backcast_fd, backcast_fd]))
     assert result_fd_arr.shape == (2,)
     assert_allclose(result_fd_arr, np.array([expected_fd, expected_fd]))
 

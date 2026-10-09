@@ -3566,7 +3566,9 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         n_fig_constraints = a_fig.shape[0]
         n_gamma_constraints = 2 * n_gamma  # gamma > -0.9997, gamma < 0.9997
         n_delta_constraints = 2 * n_delta  # delta > 0.05, delta < 4
-        n_total_constraints = n_fig_constraints + n_gamma_constraints + n_delta_constraints
+        n_total_constraints = (
+            n_fig_constraints + n_gamma_constraints + n_delta_constraints
+        )
 
         a = np.zeros((n_total_constraints, n_params))
         b = np.zeros(n_total_constraints)
@@ -3658,9 +3660,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
         w = w / sum(w)
-        backcast = float(
-            np.sum((np.absolute(resids[:tau]) ** delta) * w)
-        )
+        backcast = float(np.sum((np.absolute(resids[:tau]) ** delta) * w))
         return backcast
 
     def simulate(
@@ -3750,9 +3750,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                             scale = np.mean(resids**2) / (target ** (2.0 / delt))
                             target *= scale ** (delt / 2)
                             temp = [phi, d, beta]
-                            lam = rec.figarch_weights(
-                                np.array(temp), 1, 1, truncation
-                            )
+                            lam = rec.figarch_weights(np.array(temp), 1, 1, truncation)
                             omega = (1 - beta) * target * (1 - np.sum(lam))
                             sv = [omega]
                             if p:
