@@ -8,6 +8,8 @@ from arch._typing import Float64Array
 from arch.covariance import kernel as kernel_module
 from arch.covariance.kernel import CovarianceEstimate
 from arch.covariance.var import PreWhitenedRecolored
+import arch.data.default as default
+from arch.tests.covariance.sandwich_results import SANDWICH_LONG_RUN
 
 KERNELS = [
     "Bartlett",
@@ -238,7 +240,7 @@ def test_data(covariance_data, sample_autocov, kernel):
 
 
 def test_pwrc_errors():
-    x = np.random.standard_normal((500, 2))
+    x = np.random.default_rng(0).standard_normal((500, 2))
     with pytest.raises(ValueError, match="lags must be a"):
         PreWhitenedRecolored(x, lags=-1)
     with pytest.raises(ValueError, match="lags must be a"):
@@ -248,7 +250,7 @@ def test_pwrc_errors():
 
 
 def test_pwrc_warnings():
-    x = np.random.standard_normal((9, 5))
+    x = np.random.default_rng(1).standard_normal((9, 5))
     with pytest.warns(RuntimeWarning, match="The maximum number of lags is 0"):
         assert isinstance(PreWhitenedRecolored(x).cov, CovarianceEstimate)
 
@@ -365,7 +367,7 @@ def test_zero_lag_kernel():
 
 
 def test_kernel_none_bandwidth_error():
-    x = np.random.standard_normal((500, 2))
+    x = np.random.default_rng(2).standard_normal((500, 2))
     with pytest.raises(ValueError, match="bandwidth must be None"):
         PreWhitenedRecolored(x, kernel=None, bandwidth=3.0)
 
@@ -726,3 +728,33 @@ def test_large_order_runs():
     cov = PreWhitenedRecolored(x, lags=30).cov
     assert np.all(np.isfinite(np.asarray(cov.long_run)))
     assert_allclose(cov.one_sided, cov.short_run + cov.one_sided_strict)
+
+
+@pytest.fixture(scope="module")
+def yield_changes() -> pd.DataFrame:
+    # Real, weakly dependent data with a stationary VAR
+    changes = default.load().diff().dropna()
+    return changes - changes.mean()
+
+
+@pytest.mark.parametrize("df_adjust", [0, 2])
+@pytest.mark.parametrize("order", [1, 2, 3])
+@pytest.mark.parametrize(
+    "kernel,bandwidth",
+    [("bartlett", 6.0), ("parzen", 8.0), ("quadratic-spectral", 5.0), (None, None)],
+)
+def test_sandwich_reference(yield_changes, order, kernel, bandwidth, df_adjust):
+    # R sandwich::kernHAC (meatHAC for kernel=None) with prewhite=order. The
+    # values in R use R's kernel weights, VAR and recoloring, and adjust=TRUE
+    # is df_adjust=2, the number of series. See sandwich_results.py.
+    expected = np.array(SANDWICH_LONG_RUN[(bool(df_adjust), order, kernel, bandwidth)])
+    pwrc = PreWhitenedRecolored(
+        yield_changes,
+        lags=order,
+        kernel=kernel,
+        bandwidth=bandwidth,
+        center=False,
+        df_adjust=df_adjust,
+    )
+    assert_allclose(pwrc.cov.long_run, expected, rtol=1e-10)
+    assert list(pwrc.cov.long_run.columns) == ["AAA", "BAA"]
