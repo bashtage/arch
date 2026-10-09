@@ -27,6 +27,7 @@ from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import (
     _autolag_ols,
     _autolag_ols_low_memory,
+    _df_select_lags,
     _is_reduced_rank,
     auto_bandwidth,
     mackinnoncrit,
@@ -207,6 +208,25 @@ class TestUnitRoot:
             DFGLS(self.inflation, method="bic", max_lags=3, trend="n")
 
         assert dfgls != 0.0
+
+    @pytest.mark.parametrize("low_memory", [False, True])
+    @pytest.mark.parametrize(
+        ("max_lags", "lag", "criterion"),
+        [(14, 13, -10.1539438645049476), (4, 2, -10.1896734885054840)],
+    )
+    def test_dfgls_auto_maic(self, low_memory, max_lags, lag, criterion):
+        # select_lag_maic of R's boundedur 1.0.3 on the same series, which
+        # demeans by OLS and selects on the common sample as DFGLS does
+        demeaned = self.inflation - self.inflation.mean()
+        selected = _df_select_lags(
+            demeaned, "n", max_lags, "maic", low_memory=low_memory
+        )
+        assert_allclose(selected[0], criterion)
+        assert_equal(selected[1], lag)
+        dfgls = DFGLS(
+            self.inflation, max_lags=max_lags, method="MAIC", low_memory=low_memory
+        )
+        assert_equal(dfgls.lags, lag)
 
     def test_dfgls_auto_low_memory(self):
         y = np.cumsum(self.rng.standard_normal(200000))
@@ -779,7 +799,7 @@ def test_low_memory_singular():
         _ = ADF(x, max_lags=10, low_memory=True).stat
 
 
-@pytest.mark.parametrize("method", ["aic", "bic", "t-stat"])
+@pytest.mark.parametrize("method", ["aic", "bic", "t-stat", "maic"])
 @pytest.mark.parametrize("trend", ["c", "t", "ct", "ctt"])
 def test_autolag_ols_low_memory_smoke(trend, method):
     data = dataset_loader(macrodata)
