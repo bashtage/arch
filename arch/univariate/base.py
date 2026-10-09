@@ -1187,11 +1187,11 @@ class ARCHModel(metaclass=ABCMeta):
             NumPy RandomState instance to use when method is 'bootstrap'
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
-            being forecast. Prior to 4.18 this was the default. As of 4.19 this is
-            now optional. If not provided, a warning is raised about the future
-            change in the default which will occur after September 2021.
+            being forecast.
 
-            .. versionadded:: 4.19
+            .. versionchanged:: 6.2
+
+               The default has been changed to False.
 
         x : {dict[label, array_like], array_like}
             Values to use for exogenous regressors if any are included in the
