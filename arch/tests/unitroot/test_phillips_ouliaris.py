@@ -4,6 +4,7 @@ import pytest
 from statsmodels.iolib.summary import Summary
 
 from arch._typing import Float64Array, UnitRootTrend
+from arch.covariance.kernel import KERNELS
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
     phillips_ouliaris_cv,
@@ -88,7 +89,7 @@ def test_smoke(trivariate_data, trend, test_type, kernel, bandwidth, force_int):
 
 def test_errors(trivariate_data):
     y, x = trivariate_data
-    with pytest.raises(ValueError, match=r"kernel is not a known estimator."):
+    with pytest.raises(ValueError, match=r"kernel is not a known kernel estimator"):
         phillips_ouliaris(y, x, kernel="fancy-kernel")
     with pytest.raises(ValueError, match=r"Unknown test_type: z-alpha."):
         phillips_ouliaris(y, x, test_type="z-alpha")
@@ -165,3 +166,11 @@ def test_auto_bandwidth(trivariate_data):
     assert int(res.bandwidth) != res.bandwidth
     res = phillips_ouliaris(y, x, force_int=True)
     assert int(res.bandwidth) == res.bandwidth
+
+
+@pytest.mark.parametrize("kernel", KERNELS)
+def test_all_kernels(trivariate_data, kernel):
+    y, x = trivariate_data
+    res = phillips_ouliaris(y, x, kernel=kernel)
+    # The names of the kernels are the names of the classes
+    assert res.kernel == kernel

@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 from statsmodels.iolib.summary import Summary
 
+from arch.covariance.kernel import KERNELS
 from arch.unitroot.cointegration import CanonicalCointegratingReg, FullyModifiedOLS
 
 
@@ -389,3 +390,13 @@ def test_kernel_name_normalization(trivariate_data, estimator, kernel):
     assert_allclose(res.std_errors, expected.std_errors)
     assert res.kernel == expected.kernel
     assert isinstance(res.summary(), Summary)
+
+
+@pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
+@pytest.mark.parametrize("kernel", KERNELS)
+def test_all_kernels(trivariate_data, estimator, kernel):
+    y, x = trivariate_data
+    res = estimator(y, x).fit(kernel=kernel)
+    # The names of the kernels are the names of the classes
+    assert res.kernel == kernel
+    assert res.kernel == estimator(y, x).fit(kernel=kernel.lower()).kernel

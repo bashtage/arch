@@ -6,25 +6,10 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import Float64Array
 from arch.covariance import kernel as kernel_module
-from arch.covariance.kernel import CovarianceEstimate
+from arch.covariance.kernel import KERNELS, CovarianceEstimate
 from arch.covariance.var import PreWhitenedRecolored
 from arch.data import default
 from arch.tests.covariance.sandwich_results import SANDWICH_LONG_RUN
-
-KERNELS = [
-    "Bartlett",
-    "Parzen",
-    "ParzenCauchy",
-    "ParzenGeometric",
-    "ParzenRiesz",
-    "TukeyHamming",
-    "TukeyHanning",
-    "TukeyParzen",
-    "QuadraticSpectral",
-    "Andrews",
-    "Gallant",
-    "NeweyWest",
-]
 
 
 @pytest.fixture(params=KERNELS)
@@ -271,9 +256,21 @@ def test_unknown_method(var_data, method):
         PreWhitenedRecolored(var_data, method=method)
 
 
-def test_unknown_kernel(covariance_data):
-    with pytest.raises(ValueError, match="kernel is not a known"):
-        PreWhitenedRecolored(covariance_data, kernel="unknown")
+@pytest.mark.parametrize("kernel", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
+def test_unknown_kernel(covariance_data, kernel):
+    # ZeroLag is used by kernel=None and is not available by name
+    with pytest.raises(ValueError, match="kernel is not a known kernel estimator"):
+        PreWhitenedRecolored(covariance_data, kernel=kernel)
+
+
+@pytest.mark.parametrize(
+    "name", ["quadratic-spectral", "Quadratic_Spectral", "QUADRATICSPECTRAL"]
+)
+def test_kernel_name_forms(var_data, name):
+    # Same normalization as the other estimators
+    expected = PreWhitenedRecolored(var_data, lags=1, kernel="QuadraticSpectral")
+    res = PreWhitenedRecolored(var_data, lags=1, kernel=name)
+    assert_allclose(res.cov.long_run, expected.cov.long_run)
 
 
 @pytest.mark.parametrize("center", [True, False])

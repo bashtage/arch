@@ -11,23 +11,15 @@ from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import ArrayLike, Float64Array
-from arch.covariance import kernel as lrcov
-from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
+from arch.covariance.kernel import (
+    CovarianceEstimate,
+    CovarianceEstimator,
+    ZeroLag,
+    get_kernel_estimator,
+)
 from arch.vendor._decorators import Appender
 
 __all__ = ["PreWhitenedRecolored"]
-
-# Kernel lookup keyed by normalized name. Built locally rather than imported
-# from arch.unitroot to avoid a circular import. ZeroLag is added so that
-# kernel=None (VAR-HAC) can reuse the kernel machinery.
-_KERNEL_ESTIMATORS: dict[str, type[CovarianceEstimator]] = {
-    name.lower(): getattr(lrcov, name) for name in lrcov.KERNELS
-}
-_KERNEL_ESTIMATORS["zerolag"] = lrcov.ZeroLag
-_KNOWN_KERNELS = "\n".join(sorted(_KERNEL_ESTIMATORS))
-_KERNEL_ERR = (
-    f"kernel is not a known kernel estimator. Must be one of:\n {_KNOWN_KERNELS}"
-)
 
 
 def _is_non_negative_integer(value: object) -> bool:
@@ -38,15 +30,6 @@ def _is_non_negative_integer(value: object) -> bool:
         return cast("int", value) >= 0
     number = cast("float", value)
     return bool(np.isfinite(number)) and number >= 0 and int(number) == number
-
-
-def _normalize_kernel_name(name: str) -> str:
-    """
-    Normalize a kernel name by removing - and _ and converting to lower case.
-
-    Matches the normalization used in arch.unitroot._shared._check_kernel.
-    """
-    return name.replace("-", "").replace("_", "").lower()
 
 
 class VARModel(NamedTuple):
@@ -89,12 +72,13 @@ class PreWhitenedRecolored(CovarianceEstimator):
         implied by the estimated VAR when computing the short-run and
         one-sided covariances. Does not affect the long-run covariance.
     kernel : {str, None}, default "bartlett"
-        The name of the kernel to use. Can be any available kernel. Input
-        is normalised using lower casing and any underscores or hyphens
-        are removed, so that "QuadraticSpectral", "quadratic-spectral" and
-        "quadratic_spectral" are all the same. Use None to compute the
-        VAR-HAC estimator, which recolors the residual covariance without
-        applying a kernel to the residuals.
+        The name of the kernel to use, which can be the name of any of the
+        kernels in ``arch.covariance.kernel.KERNELS``. The name is not case
+        sensitive and any underscores or hyphens are ignored, so that
+        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are
+        all the same. Use None to compute the VAR-HAC estimator, which
+        recolors the residual covariance without applying a kernel to the
+        residuals.
     bandwidth : float, default None
         The kernel's bandwidth.  If None, optimal bandwidth is estimated
         from the VAR residuals. Must be None or 0 when kernel is None.
@@ -275,7 +259,6 @@ class PreWhitenedRecolored(CovarianceEstimator):
             weights=weights,
             force_int=force_int,
         )
-        self._kernel_name = kernel
         self._lags = 0
         self._diagonal_lags = 0
         if not isinstance(method, str) or method.lower() not in ("aic", "hqc", "bic"):
@@ -288,18 +271,14 @@ class PreWhitenedRecolored(CovarianceEstimator):
         self._auto_lag_selection = True
         self._format_lags(lags)
         self._sample_autocov = sample_autocov
-        if kernel is not None:
-            kernel = _normalize_kernel_name(kernel)
-        else:
+        if kernel is None:
             if self._bandwidth not in (0, None):
                 raise ValueError("bandwidth must be None or 0 when kernel is None")
             self._bandwidth = 0.0
             self._auto_bandwidth = False
-            kernel = "zerolag"
-        if kernel not in _KERNEL_ESTIMATORS:
-            raise ValueError(_KERNEL_ERR)
-
-        self._kernel = _KERNEL_ESTIMATORS[kernel]
+            self._kernel: type[CovarianceEstimator] = ZeroLag
+        else:
+            self._kernel = get_kernel_estimator(kernel)
         self._kernel_instance: CovarianceEstimator | None = None
         self._var_model: VARModel | None = None
 
