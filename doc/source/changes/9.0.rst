@@ -28,3 +28,15 @@ Release 9.0 (Unreleased)
   not truncated to integers. In previous versions any series with
   non-integer values could return an incorrect bandwidth or raise
   ``ZeroDivisionError``.
+- Added :class:`~arch.covariance.var.PreWhitenedRecolored`, which
+  implements the VAR-HAC (den Haan and Levin) and pre-whitened recolored
+  (Andrews and Monahan) long-run covariance estimators, and the
+  :class:`~arch.covariance.kernel.ZeroLag` kernel that it uses for VAR-HAC.
+  The order, residuals and residual covariance of the VAR are available
+  as ``order``, ``resid`` and ``resid_cov``.
+- Kernel names are now looked up in one place,
+  :func:`arch.covariance.kernel.get_kernel_estimator`, using the canonical
+  list ``arch.covariance.kernel.KERNELS``. All estimators that take a
+  ``kernel`` accept the same names, in any case and with hyphens or
+  underscores ignored, and raise the same error, which lists the available
+  kernels, for an unknown name.

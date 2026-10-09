@@ -9,13 +9,8 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
-from arch.covariance.kernel import CovarianceEstimator
-from arch.unitroot._shared import (
-    KERNEL_ERR,
-    KERNEL_ESTIMATORS,
-    ResidualCointegrationTestResult,
-    _cross_section,
-)
+from arch.covariance.kernel import CovarianceEstimator, get_kernel_estimator
+from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
 from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_PARAMETERS,
     CV_TAU_MIN,
@@ -40,7 +35,7 @@ def _po_ptests(
     xsection: RegressionResults,
     test_type: Literal["Pu", "Pz"],
     trend: UnitRootTrend,
-    kernel: str,
+    kernel_est: type[CovarianceEstimator],
     bandwidth: int | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
@@ -50,8 +45,7 @@ def _po_ptests(
     phi = np.linalg.lstsq(z_lag, z_lead, rcond=None)[0]
     xi = z_lead - np.asarray(z_lag @ phi)
 
-    ker_est = KERNEL_ESTIMATORS[kernel]
-    cov_est = ker_est(xi, bandwidth=bandwidth, center=False, force_int=force_int)
+    cov_est = kernel_est(xi, bandwidth=bandwidth, center=False, force_int=force_int)
     cov = cov_est.cov
     # Rescale to match definition in PO
     omega = (nobs - 1) / nobs * np.asarray(cov.long_run)
@@ -92,7 +86,7 @@ def _po_ztests(
     xsection: RegressionResults,
     test_type: Literal["Za", "Zt"],
     trend: UnitRootTrend,
-    kernel: str,
+    kernel_est: type[CovarianceEstimator],
     bandwidth: int | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
@@ -104,8 +98,7 @@ def _po_ztests(
     alpha = np.linalg.lstsq(u[:-1], u[1:, 0], rcond=None)[0]
     k = u[1:] - alpha * u[:-1]
     u2 = np.squeeze(u[:-1].T @ u[:-1])
-    kern_est = KERNEL_ESTIMATORS[kernel]
-    cov_est = kern_est(k, bandwidth=bandwidth, center=False, force_int=force_int)
+    cov_est = kernel_est(k, bandwidth=bandwidth, center=False, force_int=force_int)
     cov = cov_est.cov
     one_sided_strict = k_scale * cov.one_sided_strict
 
@@ -280,9 +273,7 @@ def phillips_ouliaris(
         raise ValueError(
             f"Unknown test_type: {test_type}. Only Za, Zt, Pu and Pz are supported."
         )
-    kernel = kernel.lower().replace("-", "").replace("_", "")
-    if kernel not in KERNEL_ESTIMATORS:
-        raise ValueError(KERNEL_ERR)
+    kernel_est = get_kernel_estimator(kernel)
     y_2d = ensure2d(y, "y")
     x = ensure2d(x, "x")
     xsection = _cross_section(y_2d, x, trend)
@@ -295,7 +286,7 @@ def phillips_ouliaris(
             xsection,
             cast("Literal['Pu', 'Pz']", test_type),
             trend,
-            kernel,
+            kernel_est,
             bandwidth,
             force_int,
         )
@@ -304,7 +295,7 @@ def phillips_ouliaris(
         xsection,
         cast("Literal['Za', 'Zt']", test_type),
         trend,
-        kernel,
+        kernel_est,
         bandwidth,
         force_int,
     )

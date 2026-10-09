@@ -5,7 +5,6 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
-import arch.covariance.kernel as lrcov
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -15,28 +14,11 @@ try:
 except ImportError:
     pass
 
-KERNEL_ESTIMATORS: dict[str, type[lrcov.CovarianceEstimator]] = {
-    kernel.lower(): getattr(lrcov, kernel) for kernel in lrcov.KERNELS
-}
-KERNEL_ESTIMATORS.update({kernel: getattr(lrcov, kernel) for kernel in lrcov.KERNELS})
-KNOWN_KERNELS = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
-KERNEL_ERR = f"kernel is not a known estimator. Must be one of:\n {KNOWN_KERNELS}"
-
 
 class CointegrationSetup(NamedTuple):
     y: pd.Series
     x: pd.DataFrame
     trend: UnitRootTrend
-
-
-def _check_kernel(kernel: str) -> str:
-    kernel = kernel.replace("-", "").replace("_", "").lower()
-    if kernel not in KERNEL_ESTIMATORS:
-        est = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
-        raise ValueError(
-            f"kernel is not a known kernel estimator. Must be one of:\n {est}"
-        )
-    return kernel
 
 
 def _check_cointegrating_regression(

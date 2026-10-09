@@ -1,4 +1,5 @@
 from itertools import product
+import re
 
 import numpy as np
 from numpy.testing import assert_allclose
@@ -6,7 +7,10 @@ import pandas as pd
 import pytest
 
 from arch._typing import ArrayLike
+from arch.covariance import kernel as kernel_module
 from arch.covariance.kernel import (
+    KERNEL_ESTIMATORS,
+    KERNELS,
     Andrews,
     Bartlett,
     CovarianceEstimate,
@@ -21,6 +25,9 @@ from arch.covariance.kernel import (
     TukeyHamming,
     TukeyHanning,
     TukeyParzen,
+    ZeroLag,
+    get_kernel_estimator,
+    normalize_kernel_name,
 )
 
 ESTIMATORS = [
@@ -283,3 +290,58 @@ def test_center(data: ArrayLike, estimator: type[CovarianceEstimator]):
     centered_cov = estimator(data, center=False, force_int=False)
     cov = estimator(data, force_int=False)
     assert centered_cov.bandwidth != cov.bandwidth
+
+
+def test_kernel_names():
+    # The canonical list is the estimators tested here, each of which is a
+    # public class, and excludes ZeroLag which is only used when kernel=None
+    assert sorted(KERNELS) == sorted(est.__name__ for est in ESTIMATORS)
+    assert len(set(KERNELS)) == len(KERNELS) == 12
+    assert "ZeroLag" not in KERNELS
+    assert ZeroLag.__name__ in kernel_module.__all__
+    for name in KERNELS:
+        assert name in kernel_module.__all__
+        assert issubclass(getattr(kernel_module, name), CovarianceEstimator)
+
+
+def test_kernel_estimators():
+    # One entry for each canonical name, with distinct normalized names
+    assert len(KERNEL_ESTIMATORS) == len(KERNELS)
+    assert set(KERNEL_ESTIMATORS) == {name.lower() for name in KERNELS}
+    for name in KERNELS:
+        assert KERNEL_ESTIMATORS[name.lower()] is getattr(kernel_module, name)
+    assert ZeroLag not in KERNEL_ESTIMATORS.values()
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("Bartlett", "bartlett"),
+        ("quadratic-spectral", "quadraticspectral"),
+        ("Quadratic_Spectral", "quadraticspectral"),
+        ("TUKEY-hanning", "tukeyhanning"),
+        ("parzen_cauchy", "parzencauchy"),
+    ],
+)
+def test_normalize_kernel_name(name, expected):
+    assert normalize_kernel_name(name) == expected
+
+
+@pytest.mark.parametrize("name", KERNELS)
+def test_get_kernel_estimator(name):
+    estimator = getattr(kernel_module, name)
+    # Class names, lower case, upper case, hyphenated and underscored
+    words = re.sub(r"(?<!^)(?=[A-Z])", "-", name)
+    for variant in (name, name.lower(), name.upper(), words, words.replace("-", "_")):
+        assert get_kernel_estimator(variant) is estimator
+        assert get_kernel_estimator(variant.lower()) is estimator
+
+
+@pytest.mark.parametrize("name", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
+def test_get_kernel_estimator_errors(name):
+    with pytest.raises(ValueError, match="kernel is not a known kernel estimator") as e:
+        get_kernel_estimator(name)
+    # The message lists every available kernel
+    for known in KERNELS:
+        assert known in str(e.value)
+    assert "ZeroLag" not in str(e.value)

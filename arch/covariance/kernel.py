@@ -26,8 +26,16 @@ __all__ = [
     "TukeyHamming",
     "TukeyHanning",
     "TukeyParzen",
+    "ZeroLag",
 ]
 
+# The canonical names of the kernels that are available by name to the
+# long-run covariance consumers, which are the names of the classes. This is the
+# only list of kernel names: KERNEL_ESTIMATORS is built from it, and the
+# estimators in arch.unitroot and arch.covariance.var look up kernels using
+# get_kernel_estimator. ZeroLag is deliberately excluded since it is only a
+# building block for arch.covariance.var.PreWhitenedRecolored when kernel=None
+# (VAR-HAC).
 KERNELS = [
     "Bartlett",
     "Parzen",
@@ -42,6 +50,25 @@ KERNELS = [
     "Gallant",
     "NeweyWest",
 ]
+
+
+def normalize_kernel_name(kernel: str) -> str:
+    """
+    Normalize the name of a kernel.
+
+    Parameters
+    ----------
+    kernel : str
+        The name of a kernel.
+
+    Returns
+    -------
+    str
+        The name in lower case without hyphens or underscores, so that
+        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are
+        all the same.
+    """
+    return kernel.replace("-", "").replace("_", "").lower()
 
 
 class CovarianceEstimate:
@@ -721,3 +748,79 @@ class NeweyWest(Bartlett):
     --------
     Bartlett
     """
+
+
+_zero_lag_name = "Zero-lag (No autocorrelation)"
+_zero_lag_formula = """\
+w=\\begin{cases} \
+1 & z=0\\\\ \
+0 & z>0 \
+\\end{cases} \
+"""
+
+
+@Substitution(kernel_name=_zero_lag_name, formula=_zero_lag_formula)
+class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
+    @property
+    def kernel_const(self) -> float:
+        return 1.0
+
+    @property
+    def bandwidth_scale(self) -> float:
+        return 0.0
+
+    @property
+    def rate(self) -> float:
+        return 0.0
+
+    @cached_property
+    def opt_bandwidth(self) -> float:
+        """
+        The optimal bandwidth, which is always 0 since no lags are used.
+
+        Returns
+        -------
+        float
+            The bandwidth, always 0.
+        """
+        return 0.0
+
+    def _weights(self) -> Float64Array:
+        return np.ones(1)
+
+
+KERNEL_ESTIMATORS: dict[str, type[CovarianceEstimator]] = {
+    normalize_kernel_name(name): globals()[name] for name in KERNELS
+}
+"""The kernel estimators in KERNELS, keyed by their normalized names."""
+
+
+def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
+    """
+    Find a kernel estimator using its name.
+
+    Parameters
+    ----------
+    kernel : str
+        The name of a kernel estimator. The name is not case sensitive and
+        hyphens and underscores are ignored, so that "QuadraticSpectral",
+        "quadratic-spectral" and "quadratic_spectral" are all the same. The
+        available kernels are those in ``KERNELS``.
+
+    Returns
+    -------
+    type[CovarianceEstimator]
+        The kernel estimator class.
+
+    Raises
+    ------
+    ValueError
+        If the name is not one of the names in ``KERNELS``.
+    """
+    key = normalize_kernel_name(kernel) if isinstance(kernel, str) else None
+    if key not in KERNEL_ESTIMATORS:
+        known = "\n ".join(sorted(KERNELS))
+        raise ValueError(
+            f"kernel is not a known kernel estimator. Must be one of:\n {known}"
+        )
+    return KERNEL_ESTIMATORS[key]

@@ -11,20 +11,18 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
-from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
+from arch.covariance.kernel import (
+    CovarianceEstimate,
+    CovarianceEstimator,
+    get_kernel_estimator,
+)
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
     PhillipsOuliarisTestResults,
     phillips_ouliaris,
 )
-from arch.unitroot._shared import (
-    KERNEL_ERR,
-    KERNEL_ESTIMATORS,
-    _check_cointegrating_regression,
-    _check_kernel,
-    _cross_section,
-)
+from arch.unitroot._shared import _check_cointegrating_regression, _cross_section
 from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
 from arch.utility.array import ensure2d
 from arch.utility.io import pval_format, str_format
@@ -790,15 +788,12 @@ class DynamicOLS:
         resids: Series,
     ) -> tuple[pd.DataFrame, CovarianceEstimator]:
         """Estimate the covariance"""
-        kernel = kernel.lower().replace("-", "").replace("_", "")
-        if kernel not in KERNEL_ESTIMATORS:
-            raise ValueError(KERNEL_ERR)
+        kernel_est = get_kernel_estimator(kernel)
         x = np.asarray(rhs)
         eps = ensure2d(np.asarray(resids), "eps")
         nobs, nx = x.shape
         sigma_xx = x.T @ x / nobs
         sigma_xx_inv = np.linalg.inv(sigma_xx)
-        kernel_est = KERNEL_ESTIMATORS[kernel]
         scale = nobs / (nobs - nx) if df_adjust else 1.0
         if cov_type in ("unadjusted", "homoskedastic"):
             est = kernel_est(eps, bandwidth, center=False, force_int=force_int)
@@ -996,7 +991,7 @@ class FullyModifiedOLS:
     def _common_fit(
         self, kernel: str, bandwidth: float | None, force_int: bool, diff: bool
     ) -> tuple[CovarianceEstimator, Float64Array, Float64Array]:
-        kernel = _check_kernel(kernel)
+        kern_est = get_kernel_estimator(kernel)
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)
         eta_1 = np.asarray(res.resid)
@@ -1018,8 +1013,6 @@ class FullyModifiedOLS:
                 eps = x
             eta_2 = np.diff(eps, axis=0)
         eta = np.column_stack([eta_1[1:], eta_2])
-        kernel = _check_kernel(kernel)
-        kern_est = KERNEL_ESTIMATORS[kernel]
         cov_est = kern_est(eta, bandwidth=bandwidth, center=False, force_int=force_int)
         beta = np.asarray(res.params)[: x.shape[1]]
         return cov_est, eta, beta
@@ -1080,7 +1073,6 @@ class FullyModifiedOLS:
         CointegrationAnalysisResults
             The estimation results instance.
         """
-        kernel = _check_kernel(kernel)
         cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1117,7 +1109,7 @@ class FullyModifiedOLS:
         params_s = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params_s)
-        resid_kern = KERNEL_ESTIMATORS[kernel](
+        resid_kern = type(cov_est)(
             resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
         )
         return CointegrationAnalysisResults(
@@ -1156,7 +1148,6 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         diff: bool = False,
         df_adjust: bool = False,
     ) -> CointegrationAnalysisResults:
-        kernel = _check_kernel(kernel)
         cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1190,7 +1181,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         params = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params)
-        resid_kern = KERNEL_ESTIMATORS[kernel](
+        resid_kern = type(cov_est)(
             resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
         )
         return CointegrationAnalysisResults(
