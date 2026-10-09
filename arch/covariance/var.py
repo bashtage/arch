@@ -188,7 +188,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
       variance of x implied by the VAR. When ``sample_autocov`` is True,
       :math:`\Gamma_0` is computed from the sample autocovariances of x and
       ``short_run`` is the sample variance of x. It is not the covariance of
-      the VAR residuals.
+      the VAR residuals, which is available as :attr:`resid_cov`.
     * ``one_sided_strict``: the upper-left :math:`N` by :math:`N` block of
       :math:`F(I-F)^{-1}\Gamma_0` where :math:`F` is the companion-form
       coefficient matrix of the VAR. This is
@@ -202,8 +202,17 @@ class PreWhitenedRecolored(CovarianceEstimator):
     satisfies ``long_run = short_run + one_sided_strict + one_sided_strict.T``
     when the autocovariances are those of the VAR and the kernel is not used,
     that is when ``sample_autocov`` is False and ``kernel`` is None or the
-    bandwidth is 0. Otherwise ``long_run`` differs from this sum. The
-    covariance of the residuals of the VAR is not returned.
+    bandwidth is 0. Otherwise ``long_run`` differs from this sum.
+
+    **Inspecting the VAR.** The prewhitening step determines the estimate, so
+    its results are available. :attr:`order` is the order of the VAR, which is
+    the only way to learn which order was chosen when ``lags`` is None.
+    :attr:`resid` are the residuals of the VAR, which are the series that the
+    kernel is applied to and can be tested to check that the VAR removed the
+    serial correlation in x. :attr:`resid_cov` is their covariance, which is
+    the matrix that is recolored into the long-run covariance of x. None of
+    these require the VAR to be covariance stationary, so they are available
+    even when :attr:`cov` raises an error because it is not.
 
     Examples
     --------
@@ -217,6 +226,13 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     >>> pwrc = PreWhitenedRecolored(x, lags=1, kernel="bartlett", bandwidth=5.0)
     >>> lrcov = pwrc.cov.long_run
+
+    The order, residuals and residual covariance of the VAR are available
+
+    >>> pwrc.order
+    (1, 1)
+    >>> resid = pwrc.resid
+    >>> resid_cov = pwrc.resid_cov
 
     VAR-HAC with the VAR order selected using BIC
 
@@ -653,3 +669,111 @@ VAR(1) coefficient matrix is {max_eig}.""")
     @property
     def rate(self) -> float:
         return self._setup()[1].rate
+
+    def _wrap_matrix(self, value: Float64Array) -> Float64Array | pd.DataFrame:
+        """Label a covariance matrix when x is a DataFrame or Series"""
+        x_orig = self._x_orig
+        if isinstance(x_orig, pd.DataFrame):
+            return pd.DataFrame(value, columns=x_orig.columns, index=x_orig.columns)
+        return value
+
+    @property
+    def order(self) -> tuple[int, int]:
+        """
+        The order of the VAR used to prewhiten x.
+
+        Returns
+        -------
+        tuple of int
+            A tuple ``(p, q)`` where the VAR has unrestricted coefficient
+            matrices on lags 1, ..., ``p`` and, when ``q > p``, diagonal
+            coefficient matrices on lags ``p + 1``, ..., ``q`` so that each
+            series only depends on its own values at these lags. ``p`` equals
+            ``q`` when the lags are provided, when ``diagonal`` is False or
+            when x has a single column. ``q`` is the number of observations
+            lost to the VAR.
+
+        Notes
+        -----
+        When ``lags`` is None the order is selected using an information
+        criterion, and this is the only way to find the selected order. An
+        order of ``(0, 0)`` means that no VAR is used, so that the estimates
+        are those of the kernel estimator applied to x. Larger orders mean that
+        the kernel is applied to residuals with less serial dependence than x,
+        which is the purpose of prewhitening. The order does not require the
+        VAR to be covariance stationary.
+        """
+        self._setup()
+        return self._order
+
+    @property
+    def resid(self) -> Float64Array | pd.DataFrame:
+        """
+        The residuals of the VAR used to prewhiten x.
+
+        Returns
+        -------
+        ndarray or DataFrame
+            The ``nobs - q`` by ``nvar`` residuals, where ``q`` is the second
+            element of :attr:`order`, so that the first ``q`` observations of x
+            are lost. A DataFrame with the dates or index of the final
+            observations of x and the same columns is returned if x is a
+            DataFrame or a Series, and an ndarray otherwise.
+
+        Notes
+        -----
+        The kernel estimator is applied to these residuals and not to x, with
+        the autocovariances computed without demeaning them. They can be used
+        to check that the prewhitening was adequate. If the residuals are still
+        serially correlated, a larger ``lags`` or ``max_lag`` should be used.
+        When the order is 0 and ``center`` is True the residuals are x less its
+        mean, and when the order is 0 and ``center`` is False they are x. If
+        ``center`` is True the VAR includes a constant, so the residuals have
+        mean zero. The residuals do not require the VAR to be covariance
+        stationary.
+        """
+        var_mod, _ = self._setup()
+        resids = var_mod.resids.copy()
+        x_orig = self._x_orig
+        if isinstance(x_orig, pd.DataFrame):
+            return pd.DataFrame(
+                resids, index=x_orig.index[var_mod.var_order :], columns=x_orig.columns
+            )
+        return resids
+
+    @property
+    def resid_cov(self) -> Float64Array | pd.DataFrame:
+        r"""
+        The covariance of the residuals of the VAR used to prewhiten x.
+
+        Returns
+        -------
+        ndarray or DataFrame
+            The ``nvar`` by ``nvar`` covariance of the residuals,
+            :math:`\hat{\Sigma}`. A DataFrame with the columns of x as its
+            index and columns is returned if x is a DataFrame or a Series,
+            and an ndarray otherwise.
+
+        Notes
+        -----
+        This is the innovation covariance of the VAR and is not the
+        short-run covariance in :attr:`cov`, which is the covariance of x
+        implied by the VAR. For a VAR(1) with coefficient matrix :math:`A` and
+        ``sample_autocov`` False, ``cov.short_run`` equals
+        ``A @ cov.short_run @ A.T + resid_cov``.
+
+        Like all covariances computed by this estimator, the sum of the
+        products of the residuals is divided by ``nobs - df_adjust`` where
+        ``nobs`` is the number of observations in x, and not by the number of
+        residuals. This is the covariance that is recolored to estimate the
+        long-run covariance of x. Without a kernel, that is when ``kernel`` is
+        None or the bandwidth is 0, ``cov.long_run`` equals
+        :math:`\hat{D}\hat{\Sigma}\hat{D}^\prime`, which is the VAR-HAC
+        estimator. When a kernel is used, the long-run covariance of the
+        residuals is :math:`\hat{\Omega}_\epsilon` instead of
+        :math:`\hat{\Sigma}`. The residual covariance does not require the VAR
+        to be covariance stationary.
+        """
+        var_mod, _ = self._setup()
+        resids = var_mod.resids
+        return self._wrap_matrix(resids.T @ resids / self._df)

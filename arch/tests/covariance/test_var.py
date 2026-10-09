@@ -854,6 +854,187 @@ def test_default_max_lag_limited_small_sample():
     # Default max_lag of int(3 ** (1 / 3)) = 1 needs more observations than
     # parameters; with 3 observations and a constant it is not estimable
     x = np.random.default_rng(0).standard_normal((3, 1))
+    pwrc = PreWhitenedRecolored(x)
     with pytest.warns(RuntimeWarning, match="The maximum number of lags is 0"):
-        pwrc = PreWhitenedRecolored(x)
-        assert pwrc._select_lags() == (0, 0)
+        order = pwrc._select_lags()
+    assert order == (0, 0)
+
+
+def simulate_diagonal_var(nobs: int = 1500) -> Float64Array:
+    # Own-lag dependence of series 0 at lag 1 and of series 1 at lag 3, so that
+    # diagonal lags are selected: (0, 3)
+    rng = np.random.default_rng(3)
+    eps = rng.standard_normal((nobs + 100, 3))
+    x = np.zeros_like(eps)
+    for t in range(3, nobs + 100):
+        x[t] = eps[t] + np.array([0.5, 0.0, 0.0]) * x[t - 1]
+        x[t] += np.array([0.0, 0.3, 0.0]) * x[t - 3]
+    return x[100:]
+
+
+def as_kind(x, kind):
+    index = pd.date_range("2001-01-01", periods=x.shape[0], freq="D")
+    if kind == "frame":
+        return pd.DataFrame(x, index=index, columns=["a", "b", "c"])
+    elif kind == "series":
+        return pd.Series(x[:, 1], index=index, name="b")
+    return x
+
+
+@pytest.mark.parametrize("kind", ["ndarray", "frame", "series"])
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("lags", [0, 1, 2, 3])
+def test_resid(var_data, lags, center, kind):
+    # Compared to the residuals of a VAR estimated directly
+    x = as_kind(var_data, kind)
+    pwrc = PreWhitenedRecolored(x, lags=lags, center=center)
+    resid = pwrc.resid
+    _, expected = direct_var(x, center, lags, lags)
+    assert_allclose(resid, expected, atol=1e-12)
+    assert resid.shape == (var_data.shape[0] - lags, expected.shape[1])
+    if kind == "ndarray":
+        assert isinstance(resid, np.ndarray)
+    else:
+        assert isinstance(resid, pd.DataFrame)
+        assert resid.index.equals(x.index[lags:])
+        assert list(resid.columns) == list(pd.DataFrame(x).columns)
+
+
+@pytest.mark.parametrize("center", [True, False])
+def test_resid_normal_equations(var_data, center):
+    # OLS residuals are orthogonal to the regressors, and have mean zero if
+    # there is a constant
+    lags = 2
+    nobs = var_data.shape[0]
+    resid = PreWhitenedRecolored(var_data, lags=lags, center=center).resid
+    regressors = [var_data[lags - i : nobs - i] for i in range(1, lags + 1)]
+    if center:
+        regressors = [np.ones((nobs - lags, 1))] + regressors
+    regressors = np.hstack(regressors)
+    assert_allclose(regressors.T @ resid, 0, atol=1e-8)
+    if center:
+        assert_allclose(resid.mean(0), 0, atol=1e-12)
+
+
+def test_resid_order_zero(var_data):
+    centered = PreWhitenedRecolored(var_data, lags=0).resid
+    assert_allclose(centered, var_data - var_data.mean(0))
+    uncentered = PreWhitenedRecolored(var_data, lags=0, center=False).resid
+    assert_allclose(uncentered, var_data)
+
+
+def test_resid_copy(var_data):
+    pwrc = PreWhitenedRecolored(var_data, lags=2)
+    resid = pwrc.resid
+    resid[:] = 0.0
+    assert np.all(pwrc.resid != 0.0)
+    assert_allclose(
+        pwrc.cov.long_run, PreWhitenedRecolored(var_data, lags=2).cov.long_run
+    )
+
+
+@pytest.mark.parametrize("lags", [0, 1, 4])
+def test_order_provided(var_data, lags):
+    order = PreWhitenedRecolored(var_data, lags=lags).order
+    assert order == (lags, lags)
+    assert all(type(value) is int for value in order)
+
+
+@pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
+def test_order_selected(var_data, method):
+    pwrc = PreWhitenedRecolored(var_data, method=method, diagonal=False)
+    # Available before the covariance, and the same afterwards
+    order = pwrc.order
+    assert pwrc.order == order
+    _ = pwrc.cov
+    assert pwrc.order == order
+    assert order[0] == order[1]
+    ics = {p: direct_ic(var_data, method, True, p, p, pwrc._max_lag) for p in range(8)}
+    assert order[0] == min(ics, key=ics.get)
+    assert all(type(value) is int for value in order)
+
+
+def test_order_diagonal():
+    x = simulate_diagonal_var()
+    pwrc = PreWhitenedRecolored(x)
+    assert pwrc.order == (0, 3)
+    assert all(type(value) is int for value in pwrc.order)
+    # Residuals are those of a VAR with diagonal lags 1 to 3 only
+    _, expected = direct_var(x, True, 0, 3)
+    assert_allclose(pwrc.resid, expected, atol=1e-12)
+    assert pwrc.resid.shape == (x.shape[0] - 3, 3)
+    # which is also the case when the VAR is not restricted to diagonal lags
+    unrestricted = PreWhitenedRecolored(x, diagonal=False)
+    assert unrestricted.order[0] == unrestricted.order[1]
+
+
+def test_order_single_series(var_data):
+    order = PreWhitenedRecolored(var_data[:, 1]).order
+    assert order[0] == order[1]
+
+
+@pytest.mark.parametrize("kind", ["ndarray", "frame", "series"])
+@pytest.mark.parametrize("df_adjust", [0, 3])
+@pytest.mark.parametrize("lags", [0, 2])
+def test_resid_cov(var_data, lags, df_adjust, kind):
+    x = as_kind(var_data, kind)
+    pwrc = PreWhitenedRecolored(x, lags=lags, df_adjust=df_adjust)
+    resid_cov = pwrc.resid_cov
+    _, resids = direct_var(x, True, lags, lags)
+    # divides by the number of observations in x less df_adjust
+    expected = resids.T @ resids / (var_data.shape[0] - df_adjust)
+    assert_allclose(resid_cov, expected, atol=1e-12)
+    if kind == "ndarray":
+        assert isinstance(resid_cov, np.ndarray)
+    else:
+        assert isinstance(resid_cov, pd.DataFrame)
+        columns = list(pd.DataFrame(x).columns)
+        assert list(resid_cov.columns) == columns
+        assert list(resid_cov.index) == columns
+    if lags == 0:
+        # no VAR so the residual covariance is the short run
+        assert_allclose(resid_cov, pwrc.cov.short_run, atol=1e-12)
+
+
+@pytest.mark.parametrize(("kernel", "bandwidth"), [(None, None), ("Parzen", 0.0)])
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("lags", [1, 2, 3])
+def test_resid_cov_recolored(var_data, lags, center, kernel, bandwidth):
+    # Without a kernel, long_run is the residual covariance recolored
+    pwrc = PreWhitenedRecolored(
+        var_data, lags=lags, kernel=kernel, bandwidth=bandwidth, center=center
+    )
+    coefs, _ = fitted_var(var_data, lags, center)
+    d_inv = np.linalg.inv(np.eye(var_data.shape[1]) - sum(coefs))
+    assert_allclose(pwrc.cov.long_run, d_inv @ pwrc.resid_cov @ d_inv.T)
+
+
+@pytest.mark.parametrize("center", [True, False])
+def test_resid_cov_var1_lyapunov(var_data, center):
+    # For a VAR(1), Gamma_0 = A Gamma_0 A' + Sigma
+    pwrc = PreWhitenedRecolored(var_data, lags=1, center=center)
+    coefs, _ = fitted_var(var_data, 1, center)
+    gamma0 = np.asarray(pwrc.cov.short_run)
+    assert_allclose(pwrc.resid_cov, gamma0 - coefs[0] @ gamma0 @ coefs[0].T)
+
+
+def test_resid_cov_sample_autocov(var_data):
+    # Only the VAR determines the residual covariance
+    base = PreWhitenedRecolored(var_data, lags=2)
+    sample = PreWhitenedRecolored(var_data, lags=2, sample_autocov=True)
+    assert_allclose(sample.resid_cov, base.resid_cov)
+
+
+def test_var_results_nonstationary_var():
+    # No stationarity is needed for the results of the VAR
+    rs = np.random.RandomState(0)
+    e = rs.standard_normal((250, 2))
+    x = np.zeros_like(e)
+    for t in range(1, x.shape[0]):
+        x[t] = 1.05 * x[t - 1] + e[t]
+    pwrc = PreWhitenedRecolored(x, lags=1)
+    assert pwrc.order == (1, 1)
+    assert pwrc.resid.shape == (249, 2)
+    assert pwrc.resid_cov.shape == (2, 2)
+    with pytest.raises(ValueError, match="not compatible with covariance"):
+        _ = pwrc.cov
