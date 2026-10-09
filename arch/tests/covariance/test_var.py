@@ -758,3 +758,102 @@ def test_sandwich_reference(yield_changes, order, kernel, bandwidth, df_adjust):
     )
     assert_allclose(pwrc.cov.long_run, expected, rtol=1e-10)
     assert list(pwrc.cov.long_run.columns) == ["AAA", "BAA"]
+
+
+@pytest.mark.parametrize("kind", ["ndarray", "frame", "series"])
+@pytest.mark.parametrize("bad", [np.nan, np.inf, -np.inf])
+@pytest.mark.parametrize("kernel", ["bartlett", None])
+def test_non_finite_x(var_data, kind, bad, kernel):
+    x = var_data.copy()
+    x[17, 1] = bad
+    if kind == "frame":
+        x = pd.DataFrame(x, columns=["a", "b", "c"])
+    elif kind == "series":
+        x = pd.Series(x[:, 1], name="b")
+    with pytest.raises(ValueError, match="x must not contain NaN or infinite"):
+        PreWhitenedRecolored(x, lags=1, kernel=kernel)
+    with pytest.raises(ValueError, match="x must not contain NaN or infinite"):
+        PreWhitenedRecolored(x)
+
+
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize(("nobs", "nvar"), [(250, 2), (60, 3), (40, 1), (12, 4)])
+def test_lags_limit(nobs, nvar, center):
+    # A VAR(P) has nobs - P observations and P * nvar + center parameters per
+    # equation, and needs more observations than parameters
+    x = np.random.default_rng(nobs).standard_normal((nobs, nvar))
+    feasible = [p for p in range(nobs) if nobs - p - (p * nvar + int(center)) > 0]
+    largest = max(feasible)
+    assert feasible == list(range(largest + 1))
+    PreWhitenedRecolored(x, lags=largest, center=center)
+    message = f"lags must be at most {largest} when x has {nobs} observations"
+    with pytest.raises(ValueError, match=message):
+        PreWhitenedRecolored(x, lags=largest + 1, center=center)
+
+
+@pytest.mark.parametrize("lags", [300, 250, 249, 125])
+def test_lags_too_large(lags):
+    # Previously "negative dimensions are not allowed" or a 458 GiB allocation
+    x = np.random.default_rng(0).standard_normal((250, 2))
+    with pytest.raises(ValueError, match="lags must be at most 82 when x has 250"):
+        PreWhitenedRecolored(x, lags=lags)
+
+
+@pytest.mark.parametrize("center", [True, False])
+def test_lags_limit_estimates(center):
+    # The VAR with the largest allowed order can be estimated, with a
+    # positive number of degrees of freedom in each equation
+    x = simulate_var(60)
+    pwrc = PreWhitenedRecolored(x, center=center)
+    largest = pwrc._largest_lag()
+    var_mod, _ = PreWhitenedRecolored(x, lags=largest, center=center)._setup()
+    nobs, nvar = x.shape
+    assert var_mod.resids.shape == (nobs - largest, nvar)
+    assert var_mod.params.shape[1] == int(center) + largest * nvar
+    assert nobs - largest > int(center) + largest * nvar
+
+
+@pytest.mark.parametrize("lags", ["2", True, False, np.inf, np.nan, -1, 2.5, [2]])
+def test_lags_invalid(var_data, lags):
+    with pytest.raises(ValueError, match="lags must be a non-negative integer"):
+        PreWhitenedRecolored(var_data, lags=lags)
+
+
+@pytest.mark.parametrize(
+    "lags",
+    [2, 2.0, np.int64(2), np.int8(2), np.float64(2.0)],
+    ids=["int", "float", "int64", "int8", "float64"],
+)
+def test_lags_valid_types(var_data, lags):
+    expected = PreWhitenedRecolored(var_data, lags=2).cov.long_run
+    assert_allclose(PreWhitenedRecolored(var_data, lags=lags).cov.long_run, expected)
+
+
+@pytest.mark.parametrize("max_lag", ["2", True, np.inf, np.nan, -1, 2.5, [2]])
+def test_max_lag_invalid(var_data, max_lag):
+    with pytest.raises(ValueError, match="max_lag must be a non-negative integer"):
+        PreWhitenedRecolored(var_data, max_lag=max_lag)
+
+
+def test_max_lag_limited():
+    # A larger max_lag is limited to what can be estimated instead of
+    # producing a VAR with more parameters than observations
+    x = np.random.default_rng(0).standard_normal((250, 2))
+    pwrc = PreWhitenedRecolored(x, max_lag=300, diagonal=False)
+    assert pwrc._select_lags()[0] <= 82
+    assert pwrc._max_lag == 82
+    pwrc = PreWhitenedRecolored(x, max_lag=5, diagonal=False)
+    pwrc._select_lags()
+    assert pwrc._max_lag == 5
+    pwrc = PreWhitenedRecolored(x, max_lag=0)
+    assert pwrc._select_lags() == (0, 0)
+    assert pwrc._max_lag == 0
+
+
+def test_default_max_lag_limited_small_sample():
+    # Default max_lag of int(3 ** (1 / 3)) = 1 needs more observations than
+    # parameters; with 3 observations and a constant it is not estimable
+    x = np.random.default_rng(0).standard_normal((3, 1))
+    with pytest.warns(RuntimeWarning, match="The maximum number of lags is 0"):
+        pwrc = PreWhitenedRecolored(x)
+        assert pwrc._select_lags() == (0, 0)

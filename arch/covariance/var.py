@@ -1,4 +1,5 @@
 from functools import cached_property
+from numbers import Integral, Real
 from typing import NamedTuple, cast
 import warnings
 
@@ -29,6 +30,16 @@ _KERNEL_ERR = (
 )
 
 
+def _is_non_negative_integer(value: object) -> bool:
+    """Test for a real, finite, non-negative value that is a whole number"""
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return False
+    if isinstance(value, Integral):
+        return cast("int", value) >= 0
+    number = cast("float", value)
+    return bool(np.isfinite(number)) and number >= 0 and int(number) == number
+
+
 def _normalize_kernel_name(name: str) -> str:
     """
     Normalize a kernel name by removing - and _ and converting to lower case.
@@ -55,10 +66,12 @@ class PreWhitenedRecolored(CovarianceEstimator):
     Parameters
     ----------
     x : array_like
-        The data to use in covariance estimation.
+        The data to use in covariance estimation. Must not contain NaN or
+        infinite values.
     lags : int, default None
         The number of lags to include in the VAR. If None, a specification
-        search is used to select the order.
+        search is used to select the order. Must be small enough that each
+        equation of the VAR has more observations than parameters, see Notes.
     method : {"aic", "hqc", "bic"}, default "aic"
         The information criteria to use in the model specification search.
         Input is not case sensitive.
@@ -70,7 +83,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         than one column.
     max_lag : int, default None
         The maximum lag to use in the model specification search. If None,
-        then int(nobs**(1/3)) is used.
+        then int(nobs**(1/3)) is used. The value used is limited, see Notes.
     sample_autocov : bool, default False
         Whether to use the sample autocovariance of x or the autocovariance
         implied by the estimated VAR when computing the short-run and
@@ -133,7 +146,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
     diagonal coefficient matrices on lags :math:`p+1, \ldots, q` for
     :math:`p < q \leq` ``max_lag``, so that each series only uses its own
     values at the additional lags. ``max_lag`` is limited to
-    ``(nobs - nvar) // nvar``.
+    ``(nobs - nvar) // nvar`` and to the largest order for which each equation
+    of the VAR has more observations than parameters. ``lags`` must also
+    satisfy this restriction.
 
     **Kernel estimation.** The long-run covariance of the VAR residuals,
     :math:`\hat{\Omega}_\epsilon`, is estimated using the selected kernel
@@ -234,6 +249,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ) -> None:
+        if not np.all(np.isfinite(np.asarray(x, dtype=float))):
+            raise ValueError("x must not contain NaN or infinite values.")
         super().__init__(
             x,
             bandwidth=bandwidth,
@@ -249,7 +266,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
             raise ValueError("method must be one of 'aic', 'hqc' or 'bic'")
         self._method = method.lower()
         self._diagonal = diagonal
-        self._max_lag = max_lag
+        if max_lag is not None and not _is_non_negative_integer(max_lag):
+            raise ValueError("max_lag must be a non-negative integer.")
+        self._max_lag = None if max_lag is None else int(max_lag)
         self._auto_lag_selection = True
         self._format_lags(lags)
         self._sample_autocov = sample_autocov
@@ -280,15 +299,30 @@ class PreWhitenedRecolored(CovarianceEstimator):
             return
 
         self._auto_lag_selection = False
-        if (
-            not np.isscalar(lags)
-            or cast("float", lags) < 0
-            or int(cast("float", lags)) != lags
-        ):
+        if not _is_non_negative_integer(lags):
             raise ValueError("lags must be a non-negative integer.")
         self._lags = int(cast("float", lags))
+        largest = self._largest_lag()
+        if self._lags > largest:
+            nobs, nvar = self._x.shape
+            raise ValueError(
+                f"lags must be at most {largest} when x has {nobs} observations "
+                f"and {nvar} series so that each equation of the VAR has more "
+                "observations than parameters."
+            )
         self._diagonal_lags = self._lags
         return
+
+    def _largest_lag(self) -> int:
+        """
+        Largest VAR order that can be estimated.
+
+        A VAR(P) uses nobs - P observations and has P * nvar + center
+        parameters in each equation, so that a VAR is only estimable if
+        nobs - P > P * nvar + center.
+        """
+        nobs, nvar = self._x.shape
+        return max(0, (nobs - int(self._center) - 1) // (nvar + 1))
 
     def _ic(self, sigma: Float64Array, nparam: int, nobs: int) -> float:
         _, ld = np.linalg.slogdet(sigma)
@@ -378,8 +412,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         nobs, nvar = self._x.shape
         # Use rule-of-thumb is not provided
         max_lag = int(nobs ** (1 / 3)) if self._max_lag is None else self._max_lag
-        # Ensure at least nvar obs left over
-        max_lag = min(max_lag, (nobs - nvar) // nvar)
+        # Ensure at least nvar obs left over and that the VAR can be estimated
+        max_lag = min(max_lag, (nobs - nvar) // nvar, self._largest_lag())
         if max_lag == 0 and self._max_lag is None:
             warnings.warn(
                 "The maximum number of lags is 0 since the number of time series "
