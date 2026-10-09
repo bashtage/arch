@@ -177,7 +177,7 @@ jobs:
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
     displayName: 'Run tests (editable)'
-    condition: and(and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true')), ne(variables['pip.pre'], 'true'))
+    condition: and(and(and(ne(variables['test.wheel'], 'true'), ne(variables['test.sdist'], 'true')), ne(variables['pip.pre'], 'true')), ne(variables['cython.coverage'], 'true'))
 
   - script: |
       echo "Testing pip-pre"
@@ -187,6 +187,14 @@ jobs:
     displayName: 'Run tests (pip pre)'
     condition: eq(variables['pip.pre'], 'true')
     continueOnError: true
+
+  - script: |
+      echo "Testing with Cython coverage"
+      export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py 
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py
+    displayName: 'Run tests (cython coverage)'
+    condition: eq(variables['cython.coverage'], 'true')
 
   - task: PublishTestResults@2
     inputs:

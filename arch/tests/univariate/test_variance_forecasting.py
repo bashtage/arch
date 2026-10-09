@@ -1985,9 +1985,7 @@ class TestVarianceForecasts:
         vol_fixed = FIAPARCH(truncation=trunc, delta=delta)
         params_fixed = np.array([0.1, 0.2, 0.4, 0.2, -0.3])
         sigma2_f = np.empty_like(resids)
-        vol_fixed.compute_variance(
-            params_fixed, resids, sigma2_f, backcast, var_bounds
-        )
+        vol_fixed.compute_variance(params_fixed, resids, sigma2_f, backcast, var_bounds)
         forecast_f = vol_fixed.forecast(
             params_fixed, resids, backcast, var_bounds, horizon=1, start=0
         )
@@ -2044,7 +2042,7 @@ class TestVarianceForecasts:
                 method="analytic",
             )
 
-    @pytest.mark.parametrize("p,q", [(0, 1), (1, 0), (0, 0)])
+    @pytest.mark.parametrize(("p", "q"), [(0, 1), (1, 0), (0, 0)])
     def test_fiaparch_one_step_reduced(self, p, q):
         trunc = 50
         vol = FIAPARCH(p=p, q=q, truncation=trunc)
@@ -2066,7 +2064,7 @@ class TestVarianceForecasts:
         )
         assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
 
-    @pytest.mark.parametrize("p,q", [(0, 1), (1, 0), (0, 0)])
+    @pytest.mark.parametrize(("p", "q"), [(0, 1), (1, 0), (0, 0)])
     def test_fiaparch_simulation_reduced(self, p, q):
         dist = Normal(seed=self.rng)
         rng = dist.simulate([])
