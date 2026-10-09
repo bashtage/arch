@@ -380,3 +380,100 @@ def test_sample_cov_stacked(center, nlag):
     # transposed layout differs by about 0.3.
     stacked = np.hstack([xc[nlag - 1 - j : nobs - j] for j in range(nlag)])
     assert_allclose(expected, stacked.T @ stacked / stacked.shape[0], atol=0.02)
+
+
+def residual_kernel(x, kernel, center, order, **kwargs):
+    # The kernel estimator applied to the residuals of a directly estimated VAR
+    full_order, diag_order = (order, order) if np.isscalar(order) else order
+    _, resids = direct_var(x, center, full_order, diag_order)
+    return getattr(kernel_module, kernel)(resids, center=False, **kwargs)
+
+
+@pytest.mark.parametrize("force_int", [True, False])
+@pytest.mark.parametrize("center", [True, False])
+def test_bandwidth_is_residual_bandwidth(var_data, kernel, center, force_int):
+    # The kernel runs on the VAR residuals, so the bandwidth is the optimal
+    # bandwidth estimated using the residuals and not using x
+    lags = 2
+    expected = residual_kernel(var_data, kernel, center, lags, force_int=force_int)
+    pwrc = PreWhitenedRecolored(
+        var_data, lags=lags, kernel=kernel, center=center, force_int=force_int
+    )
+    assert_allclose(pwrc.bandwidth, expected.bandwidth)
+    assert_allclose(pwrc.opt_bandwidth, expected.opt_bandwidth)
+    assert_allclose(pwrc.kernel_weights, expected.kernel_weights)
+    assert f"Bandwidth: {pwrc.bandwidth}\n" in str(pwrc)
+    assert "Automatic Bandwidth: True" in str(pwrc)
+    if force_int:
+        assert pwrc.bandwidth == np.ceil(pwrc.bandwidth)
+
+
+def test_bandwidth_differs_from_x_bandwidth(var_data):
+    # Guards against reporting the bandwidth estimated using x
+    lags = 2
+    x_kernel = kernel_module.Bartlett(var_data)
+    resid_kernel = residual_kernel(var_data, "Bartlett", True, lags)
+    pwrc = PreWhitenedRecolored(var_data, lags=lags)
+    assert abs(x_kernel.bandwidth - resid_kernel.bandwidth) > 1.0
+    assert pwrc.bandwidth != pytest.approx(x_kernel.bandwidth, abs=0.5)
+    assert pwrc.bandwidth == pytest.approx(resid_kernel.bandwidth)
+
+
+@pytest.mark.parametrize("force_int", [True, False])
+@pytest.mark.parametrize("bandwidth", [0.0, 2.5, 7.0])
+def test_bandwidth_user_provided(var_data, bandwidth, force_int):
+    pwrc = PreWhitenedRecolored(
+        var_data, lags=1, bandwidth=bandwidth, force_int=force_int
+    )
+    expected = np.ceil(bandwidth) if force_int else bandwidth
+    assert pwrc.bandwidth == expected
+    assert "Automatic Bandwidth: False" in str(pwrc)
+    # Weights are those of the bandwidth that is reported
+    direct = residual_kernel(
+        var_data, "Bartlett", True, 1, bandwidth=bandwidth, force_int=force_int
+    )
+    assert_allclose(pwrc.kernel_weights, direct.kernel_weights)
+
+
+def test_bandwidth_access_order(var_data):
+    # Reading the bandwidth before cov does not change cov
+    first = PreWhitenedRecolored(var_data, lags=2)
+    bandwidth = first.bandwidth
+    second = PreWhitenedRecolored(var_data, lags=2)
+    assert_allclose(first.cov.long_run, second.cov.long_run)
+    assert second.bandwidth == bandwidth
+
+
+@pytest.mark.parametrize("method", ["aic", "bic"])
+def test_bandwidth_automatic_order(var_data, method):
+    # The bandwidth is for the residuals of the VAR with the selected order
+    pwrc = PreWhitenedRecolored(var_data, kernel="Parzen", method=method)
+    bandwidth = pwrc.bandwidth
+    assert pwrc._order != (0, 0)
+    expected = residual_kernel(var_data, "Parzen", True, pwrc._order)
+    assert_allclose(bandwidth, expected.bandwidth)
+
+
+def test_bandwidth_nonstationary_var():
+    # The bandwidth only needs the VAR residuals
+    rs = np.random.RandomState(0)
+    e = rs.standard_normal((250, 2))
+    x = np.zeros_like(e)
+    for t in range(1, x.shape[0]):
+        x[t] = 1.05 * x[t - 1] + e[t]
+    pwrc = PreWhitenedRecolored(x, lags=1)
+    assert pwrc.bandwidth > 0
+    with pytest.raises(ValueError, match="not compatible with covariance"):
+        _ = pwrc.cov
+
+
+@pytest.mark.parametrize("bandwidth", [None, 0.0])
+def test_bandwidth_kernel_none(var_data, bandwidth):
+    pwrc = PreWhitenedRecolored(var_data, lags=2, kernel=None, bandwidth=bandwidth)
+    assert pwrc.bandwidth == 0.0
+    assert pwrc.opt_bandwidth == 0.0
+    assert_allclose(pwrc.kernel_weights, np.ones(1))
+    assert "Bandwidth: 0.0\n" in str(pwrc)
+    assert "Automatic Bandwidth: False" in str(pwrc)
+    assert kernel_module.ZeroLag(var_data).bandwidth == 0.0
+    assert kernel_module.ZeroLag(var_data, force_int=True).bandwidth == 0.0

@@ -232,7 +232,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         )
         self._kernel_name = kernel
         self._lags = 0
-        self._diagonal_lags = (0,) * self._x.shape[0]
+        self._diagonal_lags = 0
         self._method = method
         self._diagonal = diagonal
         self._max_lag = max_lag
@@ -243,14 +243,16 @@ class PreWhitenedRecolored(CovarianceEstimator):
             kernel = _normalize_kernel_name(kernel)
         else:
             if self._bandwidth not in (0, None):
-                raise ValueError("bandwidth must be None when kernel is None")
-            self._bandwidth = None
+                raise ValueError("bandwidth must be None or 0 when kernel is None")
+            self._bandwidth = 0.0
+            self._auto_bandwidth = False
             kernel = "zerolag"
         if kernel not in _KERNEL_ESTIMATORS:
             raise ValueError(_KERNEL_ERR)
 
         self._kernel = _KERNEL_ESTIMATORS[kernel]
         self._kernel_instance: CovarianceEstimator | None = None
+        self._var_model: VARModel | None = None
 
         # Attach for testing only
         self._ics: dict[tuple[int, int], float] = {}
@@ -478,23 +480,37 @@ class PreWhitenedRecolored(CovarianceEstimator):
             var_cov = self._estimate_model_cov(nvar, nlag, coeffs, short_run)
         return coeffs, var_cov
 
+    def _setup(self) -> tuple[VARModel, CovarianceEstimator]:
+        """
+        Select the VAR order, estimate the VAR and set up the residual kernel.
+
+        The kernel estimator is applied to the VAR residuals, so its bandwidth
+        is selected using the residuals and not using x. Only the VAR is
+        needed, and so the bandwidth is available even if the VAR is not
+        covariance stationary.
+        """
+        if self._var_model is None or self._kernel_instance is None:
+            common, individual = self._select_lags()
+            self._order = (common, individual)
+            self._var_model = self._estimate_var(common, individual)
+            self._kernel_instance = self._kernel(
+                self._var_model.resids,
+                bandwidth=self._bandwidth,
+                df_adjust=0,
+                center=False,
+                weights=self._x_weights,
+                force_int=self._force_int,
+            )
+        return self._var_model, self._kernel_instance
+
     @cached_property
     @Appender(CovarianceEstimator.cov.__doc__)
     def cov(self) -> CovarianceEstimate:
-        common, individual = self._select_lags()
-        self._order = (common, individual)
-        var_mod = self._estimate_var(common, individual)
+        var_mod, kernel_instance = self._setup()
+        common, individual = self._order
         resids = var_mod.resids
         nobs, nvar = resids.shape
-        self._kernel_instance = self._kernel(
-            resids,
-            bandwidth=self._bandwidth,
-            df_adjust=0,
-            center=False,
-            weights=self._x_weights,
-            force_int=self._force_int,
-        )
-        kern_cov = self._kernel_instance.cov
+        kern_cov = kernel_instance.cov
         short_run = np.asarray(kern_cov.short_run)
         x_orig = self._x_orig
         columns = x_orig.columns if isinstance(x_orig, pd.DataFrame) else None
@@ -540,29 +556,45 @@ VAR(1) coefficient matrix is {max_eig}.""")
             one_sided=one_sided,
         )
 
-    def _ensure_kernel_instantized(self) -> None:
-        if self._kernel_instance is None:
-            _ = self.cov
+    @property
+    def bandwidth(self) -> float:
+        """
+        The bandwidth used by the kernel estimator.
+
+        Returns
+        -------
+        float
+            The user-provided bandwidth or the estimated optimal bandwidth.
+            The kernel is applied to the residuals of the VAR, and so the
+            estimated bandwidth is the optimal bandwidth for the residuals
+            and not for x. It is 0 when kernel is None.
+        """
+        return self._setup()[1].bandwidth
+
+    @cached_property
+    def opt_bandwidth(self) -> float:
+        """
+        Estimate optimal bandwidth.
+
+        Returns
+        -------
+        float
+            The estimated optimal bandwidth of the residuals of the VAR.
+            This is the bandwidth used when bandwidth is not provided.
+        """
+        return self._setup()[1].opt_bandwidth
 
     @property
     def bandwidth_scale(self) -> float:
-        self._ensure_kernel_instantized()
-        assert self._kernel_instance is not None
-        return self._kernel_instance.bandwidth_scale
+        return self._setup()[1].bandwidth_scale
 
     @property
     def kernel_const(self) -> float:
-        self._ensure_kernel_instantized()
-        assert self._kernel_instance is not None
-        return self._kernel_instance.kernel_const
+        return self._setup()[1].kernel_const
 
     def _weights(self) -> Float64Array:
-        self._ensure_kernel_instantized()
-        assert self._kernel_instance is not None
-        return self._kernel_instance._weights()
+        return self._setup()[1]._weights()
 
     @property
     def rate(self) -> float:
-        self._ensure_kernel_instantized()
-        assert self._kernel_instance is not None
-        return self._kernel_instance.rate
+        return self._setup()[1].rate

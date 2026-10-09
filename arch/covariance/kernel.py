@@ -750,5 +750,17 @@ class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 0.0
 
+    @cached_property
+    def opt_bandwidth(self) -> float:
+        """
+        The optimal bandwidth, which is always 0 since no lags are used.
+
+        Returns
+        -------
+        float
+            The bandwidth, always 0.
+        """
+        return 0.0
+
     def _weights(self) -> Float64Array:
         return np.ones(1)
