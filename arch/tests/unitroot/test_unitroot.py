@@ -218,11 +218,11 @@ class TestUnitRoot:
         # select_lag_maic of R's boundedur 1.0.3 on the same series, which
         # demeans by OLS and selects on the common sample as DFGLS does
         demeaned = self.inflation - self.inflation.mean()
-        ic_best, best_lag = _df_select_lags(
+        selected = _df_select_lags(
             demeaned, "n", max_lags, "maic", low_memory=low_memory
         )
-        assert_equal(best_lag, lag)
-        assert_allclose(ic_best, criterion)
+        assert_allclose(selected[0], criterion)
+        assert_equal(selected[1], lag)
         dfgls = DFGLS(
             self.inflation, max_lags=max_lags, method="MAIC", low_memory=low_memory
         )
