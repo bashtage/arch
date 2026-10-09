@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 from numpy.linalg import lstsq
 import pandas as pd
+from scipy.linalg import solve_discrete_lyapunov
 from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
@@ -467,13 +468,17 @@ class PreWhitenedRecolored(CovarianceEstimator):
     def _estimate_model_cov(
         nvar: int, nlag: int, coeffs: Float64Array, short_run: Float64Array
     ) -> Float64Array:
+        """
+        Covariance of the stacked vector implied by the VAR in companion form
+
+        Solves Gamma = F Gamma F' + Sigma where F is the companion-form
+        coefficient matrix and Sigma has the residual covariance in its
+        upper-left block and 0 elsewhere.
+        """
         sigma = np.zeros((nvar * nlag, nvar * nlag))
         sigma[:nvar, :nvar] = short_run
-        multiplier = np.linalg.inv(np.eye(coeffs.size) - np.kron(coeffs, coeffs))
-        vec_sigma = sigma.ravel()[:, None]
-        vec_var_cov = multiplier @ vec_sigma
-        var_cov = vec_var_cov.reshape((nvar * nlag, nvar * nlag)).T
-        return var_cov
+        var_cov = solve_discrete_lyapunov(coeffs, sigma)
+        return (var_cov + var_cov.T) / 2
 
     @staticmethod
     def _companion_coefs(var_model: VARModel) -> Float64Array:

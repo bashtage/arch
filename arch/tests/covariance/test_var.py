@@ -677,3 +677,52 @@ def test_sample_autocov_values(var_data, lags, center):
     model = PreWhitenedRecolored(var_data, lags=lags, center=center, kernel=None)
     assert_allclose(cov.long_run, model.cov.long_run)
     assert not np.allclose(cov.one_sided_strict, model.cov.one_sided_strict)
+
+
+def stable_companion(nvar: int, nlag: int, seed: int) -> Float64Array:
+    rng = np.random.default_rng(seed)
+    dim = nvar * nlag
+    comp = np.zeros((dim, dim))
+    comp[:nvar] = rng.standard_normal((nvar, dim)) * 0.8 / dim
+    comp[nvar:, :-nvar] = np.eye(dim - nvar)
+    assert np.abs(np.linalg.eigvals(comp)).max() < 1
+    return comp
+
+
+@pytest.mark.parametrize("nvar,nlag", [(1, 1), (1, 4), (2, 3), (3, 2), (3, 12)])
+def test_estimate_model_cov(nvar, nlag):
+    # Gamma = F Gamma F' + Sigma has the closed form vec(Gamma) =
+    # (I - F kron F)^{-1} vec(Sigma) which is too large to use for big VARs
+    comp = stable_companion(nvar, nlag, 100 * nvar + nlag)
+    rng = np.random.default_rng(nvar)
+    root = rng.standard_normal((nvar, nvar))
+    resid_cov = root @ root.T + np.eye(nvar)
+    dim = nvar * nlag
+    sigma = np.zeros((dim, dim))
+    sigma[:nvar, :nvar] = resid_cov
+    vec = np.linalg.solve(np.eye(dim**2) - np.kron(comp, comp), sigma.ravel())
+    pwrc = PreWhitenedRecolored(np.zeros((10, nvar)), lags=1)
+    result = pwrc._estimate_model_cov(nvar, nlag, comp, resid_cov)
+    assert_allclose(result, vec.reshape(dim, dim), atol=1e-12)
+    assert_allclose(result, result.T, atol=0, rtol=0)
+
+
+def test_estimate_model_cov_large_var():
+    # 120 by 120 companion matrix, which a Kronecker product formulation
+    # cannot handle, satisfies the discrete Lyapunov equation
+    nvar, nlag = 3, 40
+    comp = stable_companion(nvar, nlag, 11)
+    resid_cov = np.diag([1.0, 2.0, 0.5])
+    result = PreWhitenedRecolored._estimate_model_cov(nvar, nlag, comp, resid_cov)
+    sigma = np.zeros_like(comp)
+    sigma[:nvar, :nvar] = resid_cov
+    assert_allclose(result, comp @ result @ comp.T + sigma, atol=1e-12)
+    assert np.all(np.linalg.eigvalsh(result) > 0)
+
+
+def test_large_order_runs():
+    # A VAR(30) with 3 series has a 90 by 90 companion form
+    x = simulate_var(1500)
+    cov = PreWhitenedRecolored(x, lags=30).cov
+    assert np.all(np.isfinite(np.asarray(cov.long_run)))
+    assert_allclose(cov.one_sided, cov.short_run + cov.one_sided_strict)
