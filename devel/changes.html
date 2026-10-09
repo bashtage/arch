@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v8.0.1 (+126)</title>
+        <title>Change Logs - arch v8.0.1 (+135)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+126)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+126)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+135)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+135)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+126)
+            arch v8.0.1 (+135)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+126)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+126)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+135)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+135)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+126)
+    arch v8.0.1 (+135)
   </label>
   
     <div class="md-nav__source">
@@ -1001,6 +1001,10 @@ p-value, now use the kernel that matches the bootstrap. Previously they
 always used the stationary bootstrap kernel, so the consistent p-value can
 also change with <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> when using the circular or moving
 block bootstraps.</p></li>
+<li><p>Fixed <a class="reference internal" href="unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> so that the autocovariances are
+not truncated to integers. In previous versions any series with
+non-integer values could return an incorrect bandwidth or raise
+<code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code>.</p></li>
 </ul>
 <h2 id="version-8">Version 8<a class="headerlink" href="#version-8" title="Link to this heading">¶</a></h2>
 <h3 id="release-8-0">Release 8.0<a class="headerlink" href="#release-8-0" title="Link to this heading">¶</a></h3>
