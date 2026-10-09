@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.kernel\_weights
+========================================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.kernel_weights

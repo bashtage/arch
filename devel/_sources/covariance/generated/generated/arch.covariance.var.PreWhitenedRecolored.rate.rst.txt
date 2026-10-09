@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.rate
+=============================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.rate

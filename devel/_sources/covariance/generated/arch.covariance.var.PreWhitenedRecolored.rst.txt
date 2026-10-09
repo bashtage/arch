@@ -1,0 +1,41 @@
+﻿arch.covariance.var.PreWhitenedRecolored
+========================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoclass:: PreWhitenedRecolored
+   :exclude-members: 
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~PreWhitenedRecolored.bandwidth
+      ~PreWhitenedRecolored.bandwidth_scale
+      ~PreWhitenedRecolored.centered
+      ~PreWhitenedRecolored.cov
+      ~PreWhitenedRecolored.force_int
+      ~PreWhitenedRecolored.kernel_const
+      ~PreWhitenedRecolored.kernel_weights
+      ~PreWhitenedRecolored.name
+      ~PreWhitenedRecolored.opt_bandwidth
+      ~PreWhitenedRecolored.order
+      ~PreWhitenedRecolored.rate
+      ~PreWhitenedRecolored.resid
+      ~PreWhitenedRecolored.resid_cov
+   
+   
+   

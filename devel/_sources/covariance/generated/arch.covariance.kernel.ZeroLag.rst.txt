@@ -1,0 +1,38 @@
+﻿arch.covariance.kernel.ZeroLag
+==============================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: ZeroLag
+   :exclude-members: 
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ZeroLag.bandwidth
+      ~ZeroLag.bandwidth_scale
+      ~ZeroLag.centered
+      ~ZeroLag.cov
+      ~ZeroLag.force_int
+      ~ZeroLag.kernel_const
+      ~ZeroLag.kernel_weights
+      ~ZeroLag.name
+      ~ZeroLag.opt_bandwidth
+      ~ZeroLag.rate
+   
+   
+   

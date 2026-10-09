@@ -1,0 +1,6 @@
+arch.covariance.kernel.ZeroLag.bandwidth
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ZeroLag.bandwidth

@@ -1,0 +1,6 @@
+arch.covariance.kernel.ZeroLag.centered
+=======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ZeroLag.centered

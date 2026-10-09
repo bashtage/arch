@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.order
+==============================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.order

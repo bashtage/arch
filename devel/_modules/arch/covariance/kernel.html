@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+141)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+160)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+141)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+141)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+160)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+160)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+141)
+            arch v8.0.1 (+160)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+141)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+141)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+160)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+160)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+141)
+    arch v8.0.1 (+160)
   </label>
   
     <div class="md-nav__source">
@@ -485,8 +485,16 @@
     <span class="s2">"TukeyHamming"</span><span class="p">,</span>
     <span class="s2">"TukeyHanning"</span><span class="p">,</span>
     <span class="s2">"TukeyParzen"</span><span class="p">,</span>
+    <span class="s2">"ZeroLag"</span><span class="p">,</span>
 <span class="p">]</span>
 
+<span class="c1"># The canonical names of the kernels that are available by name to the</span>
+<span class="c1"># long-run covariance consumers, which are the names of the classes. This is the</span>
+<span class="c1"># only list of kernel names: KERNEL_ESTIMATORS is built from it, and the</span>
+<span class="c1"># estimators in arch.unitroot and arch.covariance.var look up kernels using</span>
+<span class="c1"># get_kernel_estimator. ZeroLag is deliberately excluded since it is only a</span>
+<span class="c1"># building block for arch.covariance.var.PreWhitenedRecolored when kernel=None</span>
+<span class="c1"># (VAR-HAC).</span>
 <span class="n">KERNELS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"Bartlett"</span><span class="p">,</span>
     <span class="s2">"Parzen"</span><span class="p">,</span>
@@ -501,6 +509,25 @@
     <span class="s2">"Gallant"</span><span class="p">,</span>
     <span class="s2">"NeweyWest"</span><span class="p">,</span>
 <span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_kernel_name</span><span class="p">(</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Normalize the name of a kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel : str</span>
+<span class="sd">        The name of a kernel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The name in lower case without hyphens or underscores, so that</span>
+<span class="sd">        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are</span>
+<span class="sd">        all the same.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">kernel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="CovarianceEstimate">
@@ -1243,6 +1270,88 @@
 <span class="sd">    Bartlett</span>
 <span class="sd">    """</span></div>
 
+
+
+<span class="n">_zero_lag_name</span> <span class="o">=</span> <span class="s2">"Zero-lag (No autocorrelation)"</span>
+<span class="n">_zero_lag_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
+<span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">1 &amp; z=0</span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">0 &amp; z&gt;0 </span><span class="se">\</span>
+<span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">"""</span>
+
+
+<div class="viewcode-block" id="ZeroLag">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ZeroLag.html#arch.covariance.kernel.ZeroLag">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_zero_lag_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_zero_lag_formula</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZeroLag</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="ZeroLag.opt_bandwidth">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.ZeroLag.opt_bandwidth.html#arch.covariance.kernel.ZeroLag.opt_bandwidth">[docs]</a>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">opt_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The optimal bandwidth, which is always 0 since no lags are used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The bandwidth, always 0.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">normalize_kernel_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">KERNELS</span>
+<span class="p">}</span>
+<span class="sd">"""The kernel estimators in KERNELS, keyed by their normalized names."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_kernel_estimator</span><span class="p">(</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Find a kernel estimator using its name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel : str</span>
+<span class="sd">        The name of a kernel estimator. The name is not case sensitive and</span>
+<span class="sd">        hyphens and underscores are ignored, so that "QuadraticSpectral",</span>
+<span class="sd">        "quadratic-spectral" and "quadratic_spectral" are all the same. The</span>
+<span class="sd">        available kernels are those in ``KERNELS``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type[CovarianceEstimator]</span>
+<span class="sd">        The kernel estimator class.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the name is not one of the names in ``KERNELS``.</span>
+<span class="sd">    """</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">normalize_kernel_name</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span>
+        <span class="n">known</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2"> "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">KERNELS</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"kernel is not a known kernel estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">known</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div>
 
 

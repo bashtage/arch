@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.kernel\_const
+======================================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.kernel_const
