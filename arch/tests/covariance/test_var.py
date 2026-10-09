@@ -253,6 +253,22 @@ def test_pwrc_warnings():
         assert isinstance(PreWhitenedRecolored(x).cov, CovarianceEstimate)
 
 
+@pytest.mark.parametrize("method", ["aic", "hqc", "bic"])
+def test_method_case(var_data, method):
+    lower = PreWhitenedRecolored(var_data, method=method)
+    upper = PreWhitenedRecolored(var_data, method=method.upper())
+    assert_allclose(upper.cov.long_run, lower.cov.long_run)
+    assert upper._order == lower._order
+    assert upper._ics == lower._ics
+
+
+@pytest.mark.parametrize("method", ["unknown", "t-stat", "", None, 1])
+def test_unknown_method(var_data, method):
+    # Previously any value other than "aic" and "hqc" used BIC
+    with pytest.raises(ValueError, match="method must be one of"):
+        PreWhitenedRecolored(var_data, method=method)
+
+
 def test_unknown_kernel(covariance_data):
     with pytest.raises(ValueError, match="kernel is not a known"):
         PreWhitenedRecolored(covariance_data, kernel="unknown")

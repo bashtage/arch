@@ -60,6 +60,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         search is used to select the order.
     method : {"aic", "hqc", "bic"}, default "aic"
         The information criteria to use in the model specification search.
+        Input is not case sensitive.
     diagonal : bool, default True
         Flag indicating whether the specification search also considers
         models where the coefficient matrices on the final lags are
@@ -242,7 +243,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
         self._kernel_name = kernel
         self._lags = 0
         self._diagonal_lags = 0
-        self._method = method
+        if not isinstance(method, str) or method.lower() not in ("aic", "hqc", "bic"):
+            raise ValueError("method must be one of 'aic', 'hqc' or 'bic'")
+        self._method = method.lower()
         self._diagonal = diagonal
         self._max_lag = max_lag
         self._auto_lag_selection = True
