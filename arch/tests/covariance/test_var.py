@@ -8,7 +8,7 @@ from arch._typing import Float64Array
 from arch.covariance import kernel as kernel_module
 from arch.covariance.kernel import CovarianceEstimate
 from arch.covariance.var import PreWhitenedRecolored
-import arch.data.default as default
+from arch.data import default
 from arch.tests.covariance.sandwich_results import SANDWICH_LONG_RUN
 
 KERNELS = [
@@ -543,7 +543,7 @@ def test_bandwidth_kernel_none(var_data, bandwidth):
 
 
 @pytest.mark.parametrize("sample_autocov", [True, False])
-@pytest.mark.parametrize("kernel,bandwidth", [(None, None), ("Bartlett", 5.0)])
+@pytest.mark.parametrize(("kernel", "bandwidth"), [(None, None), ("Bartlett", 5.0)])
 @pytest.mark.parametrize("lags", [0, 2])
 @pytest.mark.parametrize("df_adjust", [1, 3, 10])
 def test_df_adjust(var_data, df_adjust, lags, kernel, bandwidth, sample_autocov):
@@ -567,7 +567,7 @@ def test_df_adjust(var_data, df_adjust, lags, kernel, bandwidth, sample_autocov)
 
 @pytest.mark.parametrize("df_adjust", [-1, 500, 600])
 def test_df_adjust_errors(var_data, df_adjust):
-    with pytest.raises(ValueError, match="df_adjust|Degrees of freedom"):
+    with pytest.raises(ValueError, match=r"df_adjust|Degrees of freedom"):
         PreWhitenedRecolored(var_data, df_adjust=df_adjust)
 
 
@@ -580,7 +580,7 @@ def fitted_var(x, lags, center):
     return coefs, resids.T @ resids / np.asarray(x).shape[0]
 
 
-@pytest.mark.parametrize("kernel,bandwidth", [(None, None), ("Parzen", 0.0)])
+@pytest.mark.parametrize(("kernel", "bandwidth"), [(None, None), ("Parzen", 0.0)])
 @pytest.mark.parametrize("center", [True, False])
 @pytest.mark.parametrize("lags", [1, 2, 3])
 def test_one_sided_model_implied(var_data, lags, center, kernel, bandwidth):
@@ -691,7 +691,7 @@ def stable_companion(nvar: int, nlag: int, seed: int) -> Float64Array:
     return comp
 
 
-@pytest.mark.parametrize("nvar,nlag", [(1, 1), (1, 4), (2, 3), (3, 2), (3, 12)])
+@pytest.mark.parametrize(("nvar", "nlag"), [(1, 1), (1, 4), (2, 3), (3, 2), (3, 12)])
 def test_estimate_model_cov(nvar, nlag):
     # Gamma = F Gamma F' + Sigma has the closed form vec(Gamma) =
     # (I - F kron F)^{-1} vec(Sigma) which is too large to use for big VARs
@@ -740,7 +740,7 @@ def yield_changes() -> pd.DataFrame:
 @pytest.mark.parametrize("df_adjust", [0, 2])
 @pytest.mark.parametrize("order", [1, 2, 3])
 @pytest.mark.parametrize(
-    "kernel,bandwidth",
+    ("kernel", "bandwidth"),
     [("bartlett", 6.0), ("parzen", 8.0), ("quadratic-spectral", 5.0), (None, None)],
 )
 def test_sandwich_reference(yield_changes, order, kernel, bandwidth, df_adjust):
