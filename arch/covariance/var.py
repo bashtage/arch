@@ -75,7 +75,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         Whether to use the sample autocovariance of x or the autocovariance
         implied by the estimated VAR when computing the short-run and
         one-sided covariances. Does not affect the long-run covariance.
-    kernel : {str, None}, default "bartlett".
+    kernel : {str, None}, default "bartlett"
         The name of the kernel to use. Can be any available kernel. Input
         is normalised using lower casing and any underscores or hyphens
         are removed, so that "QuadraticSpectral", "quadratic-spectral" and
@@ -147,7 +147,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
     matches the ``sandwich`` package in R: the estimator is identical to
     ``sandwich::meatHAC(prewhite=P, adjust=FALSE)`` when ``df_adjust`` is 0
     and to ``sandwich::meatHAC(prewhite=P, adjust=TRUE)`` when ``df_adjust`` is
-    the number of columns in x, if the kernel weights are the same.
+    the number of columns in x, if the kernel weights are the same, x has been
+    demeaned and ``center`` is False, since the VAR in R has no intercept.
 
     **Recoloring.** The long-run covariance of x is
 
