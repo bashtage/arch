@@ -5,6 +5,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from scipy.fft import next_fast_len, rfft
 
 from arch._typing import (
     ArrayLike,
@@ -19,6 +20,7 @@ from arch.bootstrap.base import (
     CircularBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
+    _get_random_integers,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 
@@ -40,6 +42,124 @@ def _info_to_str(
     return _str[:-2] + ")"
 
 
+class _KernelVariance:
+    """
+    Long-run variance of the mean using the kernel implied by a bootstrap
+
+    Parameters
+    ----------
+    bootstrap : CircularBlockBootstrap
+        The bootstrap that determines the kernel.
+    t : int
+        Number of observations in the data that will be passed when the
+        instance is called.
+
+    Notes
+    -----
+    Computes only the variance of each column, not the covariance, using a
+    single FFT so that the cost is O(t log t) rather than O(t * bandwidth)
+    for each column.
+    """
+
+    def __init__(self, bootstrap: CircularBlockBootstrap, t: int) -> None:
+        weights = self._implied_kernel(bootstrap, t)
+        kernel: Float64Array
+        if isinstance(bootstrap, MovingBlockBootstrap):
+            # Sample autocovariances without wrap-around. Padding avoids
+            # aliasing of the lags in the support of the kernel.
+            self._n = next_fast_len(t + int(np.flatnonzero(weights)[-1]), real=True)
+            kernel = np.zeros(self._n)
+            kernel[:t] = weights
+            kernel[self._n - t + 1 :] += weights[:0:-1]
+        else:
+            # Weights are symmetric, w[i] = w[t - i], so circular
+            # autocovariances give the same sum without padding.
+            self._n = t
+            kernel = weights
+        spectrum = rfft(kernel).real
+        multiplicity = np.full(spectrum.shape[0], 2.0)
+        multiplicity[0] = 1.0
+        if self._n % 2 == 0:
+            multiplicity[-1] = 1.0
+        self._spectral_weights = multiplicity * spectrum / (t * self._n)
+
+    @staticmethod
+    def _implied_kernel(bootstrap: CircularBlockBootstrap, t: int) -> Float64Array:
+        """
+        Autocovariance weights of the variance of the mean implied by a bootstrap
+
+        Parameters
+        ----------
+        bootstrap : CircularBlockBootstrap
+            The bootstrap. Stationary, circular and moving block bootstraps are
+            recognized, and any other subclass of CircularBlockBootstrap is
+            treated as a circular block bootstrap.
+        t : int
+            Number of observations.
+
+        Returns
+        -------
+        ndarray
+            Array with t elements containing the weights, w, so that the variance
+            of the sample mean times t is estimated using
+            ``R(0) + 2 * sum(w[i] * R(i))`` where ``R`` is the sample
+            autocovariance.
+
+        Notes
+        -----
+        The weights for the stationary bootstrap and the circular block bootstrap
+        are the weights that produce the exact bootstrap variance of the sample
+        mean [1]_. The circular block bootstrap weights are the Bartlett kernel
+        with a bandwidth of the block size, adjusted for the wrap-around of the
+        data and for the truncation of the final block when the block size does
+        not divide t. The weights for the moving block bootstrap are the Bartlett
+        kernel without the wrap-around adjustment, which is asymptotically
+        equivalent to the variance of the mean from the moving block bootstrap.
+
+        References
+        ----------
+        .. [1] Politis, D. N., & Romano, J. P. (1994). The stationary bootstrap.
+           Journal of the American Statistical Association, 89(428), 1303-1313.
+        """
+        lags = np.arange(t, dtype=float)
+        block_size = bootstrap.block_size
+        if isinstance(bootstrap, StationaryBootstrap):
+            rho = 1.0 - 1.0 / block_size
+            return (1.0 - lags / t) * rho**lags + (lags / t) * rho ** (t - lags)
+
+        num_blocks, remainder = divmod(t, block_size)
+
+        def bartlett(lag: Float64Array) -> Float64Array:
+            # Blocks of block_size and a final block truncated to remainder
+            full = num_blocks * np.maximum(block_size - lag, 0.0)
+            return (full + np.maximum(remainder - lag, 0.0)) / t
+
+        weights = bartlett(lags)
+        if not isinstance(bootstrap, MovingBlockBootstrap):
+            # Blocks wrap around the end of the sample
+            weights[1:] += bartlett(t - lags[1:])
+        return weights
+
+    def __call__(self, x: Float64Array) -> Float64Array:
+        """
+        Estimate the long-run variance of the mean of each column
+
+        Parameters
+        ----------
+        x : ndarray
+            Array with t rows. The mean of each column is removed.
+
+        Returns
+        -------
+        ndarray
+            The estimated variance of the sample mean times t of each column.
+        """
+        transform = rfft(x - x.mean(axis=0), n=self._n, axis=0)
+        periodogram = transform.real**2 + transform.imag**2
+        # Rounding can produce tiny negative values when variance is 0
+        return np.maximum(self._spectral_weights @ periodogram, 0.0)
+
+
 class MultipleComparison:
     """
     Abstract class for inheritance
@@ -48,9 +168,24 @@ class MultipleComparison:
     def __init__(self) -> None:
         self._model = ""
         self._info: dict[str, str] = {}
-        self.bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
+        self._bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
             10, np.ones(100)
         )
+
+    @property
+    def bootstrap(self) -> CircularBlockBootstrap:
+        """
+        The bootstrap used in the comparison
+
+        Returns
+        -------
+        CircularBlockBootstrap
+            The stationary, circular block or moving block bootstrap. The
+            bootstrap cannot be replaced since quantities that depend on it,
+            such as the kernel used to studentize, are computed when the
+            instance is created.
+        """
+        return self._bootstrap
 
     def __str__(self) -> str:
         return _info_to_str(self._model, self._info, False)
@@ -149,7 +284,7 @@ class MCS(MultipleComparison):
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
         self._seed = seed
-        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
+        self._bootstrap = bootstrap_inst
         self._bootstrap_indices: list[IntArray] = []  # For testing
         self._model = "MCS"
         self._info = {
@@ -378,11 +513,17 @@ class StepM(MultipleComparison):
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
     studentize : bool, optional
-        Flag indicating to studentize loss differentials. Default is True
+        Flag indicating to studentize loss differentials. Default is True.
+        Studentization is also applied inside each bootstrap replication,
+        see :class:`~arch.bootstrap.SPA`. If False, the loss differentials
+        are not studentized.
     nested : bool, optional
-        Flag indicating to use a nested bootstrap to compute variances for
-        studentization.  Default is False.  Note that this can be slow since
-        the procedure requires k extra bootstraps.
+        Flag indicating to use a nested bootstrap to compute the variances
+        used to studentize, instead of the kernel estimator of the long-run
+        variance that matches the bootstrap. The variances are computed in
+        the original data and in each bootstrap replication, so the
+        procedure uses reps squared resamples and can be very slow. Default
+        is False. Can only be True when studentize is True.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -393,6 +534,9 @@ class StepM(MultipleComparison):
     The size controls the Family Wise Error Rate (FWER) since this is a
     multiple comparison procedure.  Uses SPA and the consistent selection
     procedure.
+
+    See :class:`~arch.bootstrap.SPA` for a description of how loss
+    differentials are studentized.
 
     See [1]_ for detail.
 
@@ -440,7 +584,7 @@ class StepM(MultipleComparison):
         self.reps: int = reps
         self.size: float = size
         self._superior_models: list[int] | None = None
-        self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
+        self._bootstrap = self.spa.bootstrap
 
         self._model = "StepM"
         if self.spa.studentize:
@@ -522,11 +666,17 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
     studentize : bool
-        Flag indicating to studentize loss differentials. Default is True
+        Flag indicating to studentize loss differentials. Default is True.
+        Studentization is also applied inside each bootstrap replication,
+        see Notes. If False, the loss differentials are not studentized in
+        the original data or in the bootstrap replications.
     nested : bool
-        Flag indicating to use a nested bootstrap to compute variances for
-        studentization.  Default is False.  Note that this can be slow since
-        the procedure requires k extra bootstraps.
+        Flag indicating to use a nested bootstrap to compute the variances
+        used to studentize, instead of the kernel estimator of the long-run
+        variance that matches the bootstrap. The variances are computed in
+        the original data and in each bootstrap replication, so the
+        procedure uses reps squared resamples and can be very slow. Default
+        is False. Can only be True when studentize is True.
     seed : {int, Generator, RandomState}, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
@@ -538,6 +688,40 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         - Upper : Never recenter to all models are relevant to distribution
         - Consistent : Only recenter if closer than a log(log(t)) bound
         - Lower : Never recenter a model if worse than benchmark
+
+    When ``studentize`` is True, the statistic for each model is the average
+    loss differential divided by an estimate of its standard error. The
+    standard error is also estimated in each bootstrap replication, using the
+    bootstrap sample, and used to studentize the re-centered average of the
+    bootstrap sample [3]_. Studentizing inside the bootstrap makes the
+    bootstrap distribution reflect the sampling variation in the estimated
+    standard errors that is present in the statistic from the original data.
+    If the loss differential of a model is constant in a bootstrap sample,
+    which can occur when the model differs from the benchmark in very few
+    periods, the standard error from the original data is used for that
+    model in that replication.
+
+    If ``nested`` is False, the standard errors are the square root of a
+    kernel estimator of the long-run variance divided by T. The kernel is
+    chosen to match the bootstrap, so that the estimator is the variance of
+    the sample mean that is implied by the bootstrap, using the average block
+    size as the bandwidth.
+
+        - Stationary bootstrap : The lag :math:`i` autocovariance has weight
+          :math:`(1-i/T)(1-p)^i + (i/T)(1-p)^{T-i}` where :math:`p` is the
+          inverse of the block size [4]_.
+        - Circular block bootstrap : The Bartlett kernel applied to the
+          circular autocovariances.
+        - Moving block bootstrap : The Bartlett kernel.
+
+    If ``nested`` is True, the kernel is not used. The variance is instead the
+    variance of the sample mean across ``reps`` replications of a bootstrap of
+    the data, which is a bootstrap of the original loss differentials in the
+    original data and a bootstrap of the bootstrap sample in each replication.
+
+    The same variances are used to select the models that are re-centered
+    when computing the consistent p-value, even if ``studentize`` is False.
+    No other studentization is done when ``studentize`` is False.
 
     See [1]_ and [2]_ for details.
 
@@ -551,6 +735,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
        Journal of Business & Economic Statistics, 23(4), 365-380.
     .. [2] White, H. (2000). A reality check for data snooping. Econometrica,
        68(5), 1097-1126.
+    .. [3] Götze, F., & Künsch, H. R. (1996). Second-order correctness of the
+       blockwise bootstrap for stationary observations. The Annals of
+       Statistics, 24(5), 1914-1933.
+    .. [4] Politis, D. N., & Romano, J. P. (1994). The stationary bootstrap.
+       Journal of the American Statistical Association, 89(428), 1303-1313.
     """
 
     def __init__(
@@ -567,6 +756,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         *,
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
+        if nested and not studentize:
+            raise ValueError("nested can only be True when studentize is True")
         super().__init__()
         self.benchmark = ensure2d(benchmark, "benchmark")
         self.models = ensure2d(models, "models")
@@ -597,7 +788,14 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self._seed = seed
-        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
+        self._bootstrap = bootstrap_inst
+        # Instantiate the kernel long-run variance estimator, which is used to
+        # studentize the loss differentials and the bootstrap samples, and to
+        # select the models to re-center. It depends on the bootstrap, which
+        # cannot be replaced. A nested bootstrap replaces the kernel.
+        self._kernel_variance: _KernelVariance | None = None
+        if not self.nested:
+            self._kernel_variance = _KernelVariance(self._bootstrap, self.t)
         self._pvalues: dict[str, float] = {}
         self._simulated_vals: Float64Array | None = None
         self._selector: BoolArray = np.ones(self.k, dtype=np.bool_)
@@ -649,9 +847,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         assert simulated_vals is not None
         simulated_vals = simulated_vals[self._selector, :, :]
         max_simulated_vals = np.max(simulated_vals, 0)
-        loss_diff = self._loss_diff[:, self._selector]
+        loss_diff_mean = self._studentized_mean()[self._selector]
 
-        max_loss_diff = np.max(loss_diff.mean(axis=0))
+        max_loss_diff = np.max(loss_diff_mean)
         pvalues = (max_simulated_vals > max_loss_diff).mean(axis=0)
         self._pvalues = {
             "lower": pvalues[0],
@@ -673,12 +871,48 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         lower_mean[lower_mean < 0] = 0.0
         means = [lower_mean, consistent_mean, upper_mean]
         simulated_vals = np.zeros((self.k, self.reps, 3))
+
+        full_sample_scale = self._scale()
         for i, bs_data in enumerate(self.bootstrap.bootstrap(self.reps)):
             pos_arg, _ = bs_data
-            loss_diff_star = pos_arg[0]
+            loss_diff_star = np.asarray(pos_arg[0], dtype=float)
+            # Studentize using the bootstrap sample, as in the statistic
+            if self.studentize:
+                nested_seed = None
+                if self.nested:
+                    # Seed the bootstrap of this sample from the generator, as
+                    # when studentizing confidence intervals
+                    nested_seed = int(
+                        _get_random_integers(self.bootstrap.generator, 2**31 - 1)[0]
+                    )
+                variances = self._variance(loss_diff_star, nested_seed)
+                scale = self._std_err(variances)
+                # A column that is constant in the bootstrap sample, which
+                # happens when a model differs from the benchmark in few
+                # periods, has no standard error to studentize with
+                degenerate = variances <= np.finfo(float).eps * self._loss_diff_var
+                scale = np.where(degenerate, full_sample_scale, scale)
+            else:
+                scale = np.ones(self.k)
+            loss_diff_star_mean = loss_diff_star.mean(axis=0)
             for j, mean in enumerate(means):
-                simulated_vals[:, i, j] = loss_diff_star.mean(axis=0) - mean
+                simulated_vals[:, i, j] = (loss_diff_star_mean - mean) / scale
         self._simulated_vals = simulated_vals
+
+    def _std_err(self, variances: Float64Array) -> Float64Array:
+        """Standard errors of the mean loss differentials, bounded above zero"""
+        std_err = np.sqrt(variances / self.t)
+        return np.maximum(std_err, np.finfo(float).eps)
+
+    def _scale(self) -> Float64Array:
+        """Standard errors of the mean loss differentials if studentizing"""
+        if not self.studentize:
+            return np.ones(self.k)
+        return self._std_err(self._loss_diff_var)
+
+    def _studentized_mean(self) -> Float64Array:
+        """Mean loss differentials, studentized if required"""
+        return self._loss_diff.mean(axis=0) / self._scale()
 
     def _compute_variance(self) -> None:
         """
@@ -691,23 +925,37 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         """
         ld = self._loss_diff
         demeaned = ld - ld.mean(axis=0)
-        if self.nested:
-            # Use bootstrap to estimate variances
-            bs = self.bootstrap.clone(demeaned, seed=copy.deepcopy(self._seed))
-            means = bs.apply(lambda x: x.mean(axis=0), reps=self.reps)
-            variances = self.t * means.var(axis=0)
-        else:
-            t = self.t
-            p = 1.0 / self.block_size
-            variances = np.sum(demeaned**2, 0) / t
-            for i in range(1, t):
-                kappa = ((1.0 - (i / t)) * ((1 - p) ** i)) + (
-                    (i / t) * ((1 - p) ** (t - i))
-                )
-                variances += (
-                    2 * kappa * np.sum(demeaned[: (t - i), :] * demeaned[i:, :], 0) / t
-                )
+        variances = self._variance(demeaned, copy.deepcopy(self._seed))
         self._loss_diff_var = cast("np.ndarray", variances)
+
+    def _variance(
+        self,
+        data: Float64Array,
+        seed: int | np.random.Generator | np.random.RandomState | None = None,
+    ) -> Float64Array:
+        """
+        Estimates the variance of the mean of each column of data
+
+        Parameters
+        ----------
+        data : ndarray
+            Data with t rows.
+        seed : {int, Generator, RandomState}, optional
+            Seed of the nested bootstrap. Not used unless nested is True.
+
+        Returns
+        -------
+        ndarray
+            The variance of the sample mean times t of each column, estimated
+            using a bootstrap of the data if nested is True, and otherwise
+            using the kernel estimator that matches the bootstrap.
+        """
+        if self.nested:
+            bs = self.bootstrap.clone(data, seed=seed)
+            means = bs.apply(lambda x: x.mean(axis=0), reps=self.reps)
+            return self.t * means.var(axis=0)
+        assert self._kernel_variance is not None
+        return self._kernel_variance(data)
 
     def _check_column_validity(self) -> BoolArray:
         """
@@ -753,7 +1001,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         -------
         crit_vals : Series
             Series containing critical values for the lower, consistent and
-            upper methodologies
+            upper methodologies. When studentize is True, the critical values
+            apply to the studentized mean loss differentials.
         """
         self._check_compute()
         if not (0.0 < pvalue < 1.0):
@@ -797,7 +1046,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         if pvalue_type not in self._pvalues:
             raise ValueError("Unknown pvalue type")
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
-        better_models = self._loss_diff.mean(axis=0) > crit_val
+        better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)
         return np.argwhere(better_models).flatten()
 

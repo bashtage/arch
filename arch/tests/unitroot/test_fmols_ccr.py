@@ -1,5 +1,6 @@
 from typing import NamedTuple
 
+import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
@@ -344,6 +345,47 @@ def test_ccr_eviews(trivariate_data, test_key):
     assert_allclose(res.rsquared_adj, test_res.rsquared_adj, rtol=1e-4)
     # Loose tolerance since I use 1000 obs while Eviews drops 1
     assert_allclose(res.residual_variance, test_res.short_run, rtol=2e-3)
-    assert_allclose(res.long_run_variance, test_res.long_run, rtol=1e-3)
+    assert_allclose(res.long_run_variance, test_res.long_run, rtol=1e-5)
 
+    assert isinstance(res.summary(), Summary)
+
+
+@pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
+def test_df_adjust_scaling(estimator):
+    rs = np.random.RandomState(0)
+    nobs = 100
+    u = rs.standard_normal((nobs, 2))
+    x = np.cumsum(u, axis=0)
+    # Strongly endogenous regressors so that omega_12 is large
+    y = x @ np.array([1.0, 0.5]) + u @ np.array([2.0, -2.0])
+    y += 0.1 * rs.standard_normal(nobs)
+    mod = estimator(y, x)
+    res = mod.fit(bandwidth=4, df_adjust=False)
+    res_adj = mod.fit(bandwidth=4, df_adjust=True)
+    nobs_used = nobs - 1
+    scale = nobs_used / (nobs_used - res.params.shape[0])
+    assert_allclose(res_adj.long_run_variance, scale * res.long_run_variance)
+    assert_allclose(res_adj.cov, scale * res.cov)
+    assert_allclose(res_adj.params, res.params)
+
+
+def test_ccr_summary_title(trivariate_data):
+    y, x = trivariate_data
+    res = CanonicalCointegratingReg(y, x).fit()
+    assert "Canonical Cointegrating Regression" in str(res.summary())
+
+
+@pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
+@pytest.mark.parametrize(
+    "kernel", ["quadratic-spectral", "Quadratic_Spectral", "Tukey-Hanning"]
+)
+def test_kernel_name_normalization(trivariate_data, estimator, kernel):
+    y, x = trivariate_data
+    mod = estimator(y, x)
+    res = mod.fit(kernel=kernel)
+    canonical = kernel.replace("-", "").replace("_", "").lower()
+    expected = mod.fit(kernel=canonical)
+    assert_allclose(res.params, expected.params)
+    assert_allclose(res.std_errors, expected.std_errors)
+    assert res.kernel == expected.kernel
     assert isinstance(res.summary(), Summary)

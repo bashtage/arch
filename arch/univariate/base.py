@@ -33,9 +33,14 @@ from arch._typing import (
     Label,
     Literal,
 )
+from arch.univariate.diagnostics import (
+    excess_kurtosis as _excess_kurtosis,
+    hill_estimator as _hill_estimator,
+    var_ratio as _var_ratio,
+)
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility.array import ensure1d, to_array_1d
+from arch.utility.array import append_same_type, ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
     DataScaleWarning,
@@ -239,6 +244,145 @@ class ARCHModel(metaclass=ABCMeta):
     def name(self) -> str:
         """The name of the model."""
         return self._name
+
+    def _prepare_append(
+        self, y: ArrayLike | float
+    ) -> tuple[ArrayLike, pd.Series, Float64Array1D]:
+        """
+        Validate new observations and construct the extended data
+
+        Parameters
+        ----------
+        y : {ndarray, Series, DataFrame, list, float}
+            The new observations. See ``append``.
+
+        Returns
+        -------
+        y_original : {ndarray, Series, DataFrame, list}
+            The original data extended with the new observations.
+        y_series : Series
+            The extended data as a Series.
+        y_new : ndarray
+            The new observations, converted to floats and not rescaled.
+
+        Notes
+        -----
+        The model is not modified so that a failure leaves it unchanged.
+        """
+        if self._y_original is None:
+            raise RuntimeError("Cannot append to a model created without data.")
+        nobs = self._y.shape[0]
+        # y is a single sequence, and so may be stored as a row or a column
+        y_original = append_same_type(self._y_original, y, sequence=True)
+        y_series = cast("pd.Series", ensure1d(y_original, "y", series=True))
+        y_values = to_array_1d(np.ascontiguousarray(y_series.to_numpy()).astype(float))
+        y_new = to_array_1d(y_values[nobs:])
+        if not np.all(np.isfinite(y_new)):
+            raise ValueError(
+                "NaN or inf values found in y. y must contains only finite values."
+            )
+        if self._is_pandas:
+            index = y_series.index
+            old_index, new_index = index[:nobs], index[nobs:]
+            if not new_index.is_unique:
+                raise ValueError(
+                    "The index of the appended data contains duplicate values."
+                )
+            if new_index.isin(old_index).any():
+                raise ValueError(
+                    "The index of the appended data overlaps the index of the "
+                    "existing data."
+                )
+            if old_index.is_monotonic_increasing and not (
+                index.is_monotonic_increasing
+            ):
+                raise ValueError(
+                    "The index of the existing data is increasing, and so the "
+                    "index of the appended data must be increasing and must come "
+                    "after the last observation in the existing data."
+                )
+        return y_original, y_series, y_new
+
+    def _commit_append(
+        self,
+        y_original: ArrayLike,
+        y_series: pd.Series,
+        y_new: Float64Array1D,
+    ) -> None:
+        """
+        Update the data stored in the model using the output of _prepare_append
+        """
+        self._y_original = y_original
+        self._y_series = y_series
+        # Any rescaling that was applied when fitting must also be applied to new
+        # data so that it is consistent with parameters estimated using the model
+        self._y = to_array_1d(np.concatenate((self._y, self.scale * y_new)))
+
+        # Everything computed using the previous sample is out-of-date
+        self._backcast = None
+        self._var_bounds = None
+        self._fit_indices = [0, int(self._y.shape[0])]
+        self._fit_y = self._y
+
+    def append(
+        self,
+        y: ArrayLike | float,
+        x: ArrayLike | ArrayLike2D | None = None,
+    ) -> None:
+        """
+        Append observations to the model in-place
+
+        Parameters
+        ----------
+        y : {ndarray, Series, DataFrame, list, float}
+            The observations to append. Must have the same type as the data
+            used to construct the model. If the model was constructed using a
+            pandas object, then the index of the new data must be unique and
+            must not overlap the existing index. If the existing index is
+            increasing, the index of the new data must also be increasing and
+            must follow the existing observations. When the model was
+            constructed using an ndarray or a list, a scalar can be appended
+            to add a single observation.
+        x : {ndarray, Series, DataFrame}, optional
+            The values of the exogenous regressors for the new observations.
+            The base class does not include exogenous regressors, and so this
+            must be None. Models that include exogenous regressors override
+            this method.
+
+        Raises
+        ------
+        TypeError
+            If the type of ``y`` differs from the type of the data in the model.
+        ValueError
+            If ``y`` is empty, contains non-finite values or, when using pandas,
+            has an index that is not unique, overlaps the existing index, or
+            does not follow an increasing index of the existing data. Also
+            raised if ``x`` is not None.
+        RuntimeError
+            If the model was created without data.
+
+        Notes
+        -----
+        Parameters are not re-estimated. Use ``fit`` to re-estimate the model
+        using the extended sample, or ``fix`` or ``forecast`` to use parameters
+        estimated previously. Appending resets the estimation sample to the
+        complete extended sample and clears values that were computed using the
+        previous sample, such as the backcast. Results objects returned before
+        appending are not affected.
+
+        If the data was rescaled when fitting the model, the new data is
+        rescaled using the same factor.
+
+        Subclasses that store data derived from ``y`` must override this method
+        to update these values.
+        """
+        y_original, y_series, y_new = self._prepare_append(y)
+        if x is not None:
+            raise ValueError(
+                f"{type(self).__name__} does not include exogenous regressors, "
+                "and so x cannot be appended."
+            )
+        self._commit_append(y_original, y_series, y_new)
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """
@@ -1043,11 +1187,11 @@ class ARCHModel(metaclass=ABCMeta):
             NumPy RandomState instance to use when method is 'bootstrap'
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
-            being forecast. Prior to 4.18 this was the default. As of 4.19 this is
-            now optional. If not provided, a warning is raised about the future
-            change in the default which will occur after September 2021.
+            being forecast.
 
-            .. versionadded:: 4.19
+            .. versionchanged:: 6.2
+
+               The default has been changed to False.
 
         x : {dict[label, array_like], array_like}
             Values to use for exogenous regressors if any are included in the
@@ -1365,6 +1509,49 @@ class ARCHModelFixedResult(_SummaryRepr):
         if isinstance(std_res, pd.Series):
             std_res.name = "std_resid"
         return std_res
+
+    @cached_property
+    def excess_kurtosis(self) -> float:
+        """
+        Sample excess kurtosis of standardized residuals
+        """
+        return _excess_kurtosis(self.std_resid)
+
+    def hill_estimator(self, k: int | None = None) -> float:
+        """
+        Hill tail-index estimator of standardized residuals
+
+        Parameters
+        ----------
+        k : int, optional
+            Number of upper order statistics to use. If not provided, uses
+            ``int(sqrt(n))`` where ``n`` is the number of finite standardized
+            residuals.
+
+        Returns
+        -------
+        float
+            Inverse Hill estimate of the tail index.
+        """
+        return _hill_estimator(self.std_resid, k)
+
+    def var_ratio(self, level: float = 0.999) -> float:
+        """
+        Ratio of Gaussian VaR to model-distribution VaR
+
+        Parameters
+        ----------
+        level : float, optional
+            VaR confidence level. Must be between 0.5 and 1.0.
+
+        Returns
+        -------
+        float
+            Ratio of the Gaussian left-tail VaR to the VaR implied by the
+            fitted model distribution.
+        """
+        _, _, dp = self.model._parse_parameters(self._params)
+        return _var_ratio(level, distribution=self.model.distribution, parameters=dp)
 
     def plot(
         self, annualize: str | None = None, scale: float | None = None

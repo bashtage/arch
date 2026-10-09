@@ -42,7 +42,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.utility.array import to_array_1d
+from arch.utility.array import append_same_type, to_array_1d
 
 if TYPE_CHECKING:
     # Fake path to satisfy mypy
@@ -63,6 +63,7 @@ from arch.univariate.volatility import (
     APARCH,
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -311,6 +312,144 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             self._hold_back = max_lags
 
         self._init_model()
+
+    def _prepare_append_x(
+        self, x: ArrayLike | ArrayLike2D | None, nobs_new: int
+    ) -> ArrayLike | ArrayLike2D | None:
+        """
+        Validate new exogenous regressors and construct the extended regressors
+
+        Parameters
+        ----------
+        x : {ndarray, Series, DataFrame, None}
+            The new exogenous regressors.
+        nobs_new : int
+            The number of new observations of y.
+
+        Returns
+        -------
+        {ndarray, Series, DataFrame, None}
+            The original regressors extended with the new regressors. None if the
+            model does not include exogenous regressors.
+
+        Notes
+        -----
+        The model is not modified so that a failure leaves it unchanged.
+        """
+        if self._x_original is None:
+            if x is not None:
+                raise ValueError(
+                    "x was not provided in the original model, and so x cannot be "
+                    "appended."
+                )
+            return None
+        if x is None:
+            raise ValueError(
+                "x must be provided when appending to a model that includes "
+                "exogenous regressors."
+            )
+        x_original = append_same_type(self._x_original, x)
+        try:
+            # Same conversion as used when constructing the model
+            np.asarray(x, dtype=float)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "x must contain only values that can be converted to float."
+            ) from exc
+        nobs_x_new = np.shape(x_original)[0] - np.shape(self._x_original)[0]
+        if nobs_x_new != nobs_new:
+            raise ValueError(
+                "x must have the same number of observations as y. Got "
+                f"{nobs_x_new} new observations of x and {nobs_new} new "
+                "observations of y."
+            )
+        return x_original
+
+    def append(
+        self,
+        y: ArrayLike | float,
+        x: ArrayLike | ArrayLike2D | None = None,
+    ) -> None:
+        """
+        Append observations to the model in-place
+
+        Parameters
+        ----------
+        y : {ndarray, Series, DataFrame, list, float}
+            The observations to append. Must have the same type as the data
+            used to construct the model. If the model was constructed using a
+            pandas object, then the index of the new data must be unique and
+            must not overlap the existing index. If the existing index is
+            increasing, the index of the new data must also be increasing and
+            must follow the existing observations. When the model was
+            constructed using an ndarray or a list, a scalar can be appended
+            to add a single observation.
+        x : {ndarray, Series, DataFrame}, optional
+            The values of the exogenous regressors for the new observations.
+            Must be provided if, and only if, the model includes exogenous
+            regressors, must have the same type and number of columns as the
+            exogenous regressors used to construct the model, and must have the
+            same number of observations as ``y``. When the exogenous
+            regressors are stored in an ndarray, a 1-d array with one value
+            for each regressor is treated as a single observation.
+
+        Raises
+        ------
+        TypeError
+            If the type of ``y`` or ``x`` differs from the type of the data in
+            the model.
+        ValueError
+            If ``y`` is empty, contains non-finite values or, when using
+            pandas, has an index that is not unique, overlaps the existing
+            index, or does not follow an increasing index of the existing data.
+            Also raised if ``x`` is provided when the model does not have
+            exogenous regressors, is not provided when the model does, cannot
+            be converted to float, or does not have the same number of
+            observations as ``y``.
+        RuntimeError
+            If the model was created without data.
+
+        Notes
+        -----
+        Parameters are not re-estimated. Use ``fit`` to re-estimate the model
+        using the extended sample, or ``fix`` or ``forecast`` to use parameters
+        estimated previously. Appending resets the estimation sample to the
+        complete extended sample, subject to ``hold_back``, and clears values
+        that were computed using the previous sample, such as the backcast.
+        Results objects returned before appending are not affected.
+
+        If the data was rescaled when fitting the model, the new data is
+        rescaled using the same factor. Exogenous regressors are never
+        rescaled.
+
+        If the new data is not valid, an exception is raised and the model is
+        not modified.
+
+        Examples
+        --------
+        Estimate the model using the first part of a sample, and then use the
+        estimated parameters to forecast after observing more data.
+
+        >>> import numpy as np
+        >>> from arch.univariate import ARX, GARCH
+        >>> y = np.random.RandomState(1234).standard_normal(1000)
+        >>> mod = ARX(y[:800], lags=1, volatility=GARCH())
+        >>> res = mod.fit(disp="off")
+        >>> mod.append(y[800:])
+        >>> forecasts = mod.forecast(res.params, horizon=3, reindex=False)
+
+        Adding a single observation to a model that uses an ndarray.
+
+        >>> mod.append(0.1)
+        """
+        y_original, y_series, y_new = self._prepare_append(y)
+        x_original = self._prepare_append_x(x, y_new.shape[0])
+        self._commit_append(y_original, y_series, y_new)
+        self._x_original = x_original
+        self._init_model()
+        if self._y.shape[0] > self._hold_back:
+            # Match the default sample used by fit
+            self._adjust_sample(None, None)
 
     def _scale_changed(self) -> None:
         """
@@ -673,8 +812,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         else:
             reg_x = np.empty((nobs_orig, 0), dtype=np.double)
 
+        # hstack preserves F-ordering if x is F-ordered, which is the case when
+        # x is a DataFrame. Compiled recursions require C-ordered regressors.
         self.regressors = cast(
-            "Float64Array2D", np.hstack((reg_constant, reg_lags, reg_x))
+            "Float64Array2D",
+            np.ascontiguousarray(np.hstack((reg_constant, reg_lags, reg_x))),
         )
 
     def _r2(self, params: ArrayLike1D) -> float:
@@ -1038,7 +1180,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         shocks: Float64Array | None = None
         long_run_variance_paths: Float64Array | None = None
         if method.lower() in ("simulation", "bootstrap"):
-            # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
             variance_paths = vfcast.forecast_paths
             assert isinstance(vfcast.shocks, np.ndarray)
@@ -1893,7 +2034,9 @@ def arch_model(
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
-    vol: Literal["GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH"] = "GARCH",
+    vol: Literal[
+        "GARCH", "ARCH", "EGARCH", "FIGARCH", "FIAPARCH", "APARCH", "HARCH"
+    ] = "GARCH",
     p: int | list[int] = 1,
     o: int = 0,
     q: int = 1,
@@ -1929,7 +2072,8 @@ def arch_model(
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'APARCH' and 'HARCH'
+        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
+        and 'HARCH'
     p : int, optional
         Lag order of the symmetric innovation
     o : int, optional
@@ -1996,6 +2140,7 @@ def arch_model(
     known_vol = (
         "arch",
         "figarch",
+        "fiaparch",
         "aparch",
         "garch",
         "harch",
@@ -2037,9 +2182,14 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol_model in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(
-        p, int
-    ):
+    if vol_model in (
+        "arch",
+        "garch",
+        "figarch",
+        "fiaparch",
+        "egarch",
+        "aparch",
+    ) and not isinstance(p, int):
         raise TypeError(
             "p must be a scalar int for all volatility processes except HARCH."
         )
@@ -2058,6 +2208,9 @@ def arch_model(
     elif vol_model == "egarch":
         assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
+    elif vol_model == "fiaparch":
+        assert isinstance(p, int)
+        v = FIAPARCH(p=p, o=o, q=q)
     elif vol_model == "aparch":
         assert isinstance(p, int)
         v = APARCH(p=p, o=o, q=q)

@@ -358,7 +358,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Normal"
@@ -495,7 +495,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Standardized Student's t"
@@ -726,7 +726,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Standardized Skew Student's t"
@@ -1077,7 +1077,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         *,
-        seed: None | int | RandomState | Generator = None,
+        seed: int | RandomState | Generator | None = None,
     ) -> None:
         super().__init__(seed=seed)
         self._name = "Generalized Error Distribution"

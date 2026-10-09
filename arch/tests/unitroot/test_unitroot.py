@@ -27,6 +27,7 @@ from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import (
     _autolag_ols,
     _autolag_ols_low_memory,
+    _df_select_lags,
     _is_reduced_rank,
     auto_bandwidth,
     mackinnoncrit,
@@ -207,6 +208,25 @@ class TestUnitRoot:
             DFGLS(self.inflation, method="bic", max_lags=3, trend="n")
 
         assert dfgls != 0.0
+
+    @pytest.mark.parametrize("low_memory", [False, True])
+    @pytest.mark.parametrize(
+        ("max_lags", "lag", "criterion"),
+        [(14, 13, -10.1539438645049476), (4, 2, -10.1896734885054840)],
+    )
+    def test_dfgls_auto_maic(self, low_memory, max_lags, lag, criterion):
+        # select_lag_maic of R's boundedur 1.0.3 on the same series, which
+        # demeans by OLS and selects on the common sample as DFGLS does
+        demeaned = self.inflation - self.inflation.mean()
+        selected = _df_select_lags(
+            demeaned, "n", max_lags, "maic", low_memory=low_memory
+        )
+        assert_allclose(selected[0], criterion)
+        assert_equal(selected[1], lag)
+        dfgls = DFGLS(
+            self.inflation, max_lags=max_lags, method="MAIC", low_memory=low_memory
+        )
+        assert_equal(dfgls.lags, lag)
 
     def test_dfgls_auto_low_memory(self):
         y = np.cumsum(self.rng.standard_normal(200000))
@@ -628,6 +648,25 @@ def test_zivot_andrews_error():
         ZivotAndrews(y, trim=0.5)
 
 
+def test_zivot_andrews_integer_data():
+    rs = np.random.RandomState(0)
+    y = rs.randint(0, 10, size=250).cumsum()
+    za_int = ZivotAndrews(y, lags=2)
+    za_float = ZivotAndrews(y.astype(np.float64), lags=2)
+    assert_almost_equal(za_int.stat, za_float.stat)
+    assert_almost_equal(za_int.pvalue, za_float.pvalue)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct"])
+def test_dfgls_integer_data(trend):
+    rs = np.random.RandomState(0)
+    y = rs.randint(0, 10, size=250).cumsum()
+    dfgls_int = DFGLS(y, trend=trend, lags=2)
+    dfgls_float = DFGLS(y.astype(np.float64), trend=trend, lags=2)
+    assert_almost_equal(dfgls_int.stat, dfgls_float.stat)
+    assert_almost_equal(dfgls_int.pvalue, dfgls_float.pvalue)
+
+
 def test_zivot_andrews_reduced_rank():
     y = np.random.standard_normal(1000)
     y[1:] = 3.0
@@ -652,6 +691,21 @@ def test_bw_selection():
         ValueError, match=r"Data must contain more than one observation"
     ):
         auto_bandwidth([1])
+
+
+@pytest.mark.parametrize("kernel", ["ba", "pa", "qs"])
+def test_bw_selection_non_integer(kernel):
+    auto_bandwidth(np.array([0.5, 0.0]), kernel=kernel)
+
+
+@pytest.mark.parametrize(
+    ("kernel", "expected"),
+    [("ba", TRUE_BW_FROM_R_BA), ("pa", TRUE_BW_FROM_R_PA), ("qs", TRUE_BW_FROM_R_QS)],
+)
+def test_bw_selection_scale_invariant(kernel, expected):
+    # cointReg::getBandwidthNW gives the same bandwidths for the series over 10
+    scaled = np.asarray(REAL_TIME_SERIES) / 10
+    assert_allclose(auto_bandwidth(scaled, kernel=kernel), expected, rtol=1e-6)
 
 
 def test_invalid_trend():
@@ -745,7 +799,7 @@ def test_low_memory_singular():
         _ = ADF(x, max_lags=10, low_memory=True).stat
 
 
-@pytest.mark.parametrize("method", ["aic", "bic", "t-stat"])
+@pytest.mark.parametrize("method", ["aic", "bic", "t-stat", "maic"])
 @pytest.mark.parametrize("trend", ["c", "t", "ct", "ctt"])
 def test_autolag_ols_low_memory_smoke(trend, method):
     data = dataset_loader(macrodata)

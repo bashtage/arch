@@ -1067,7 +1067,7 @@ class FullyModifiedOLS:
             "unadjusted" produces the classic OLS covariance estimator.
             Setting the bandwidth to 0 and using "robust" produces White's
             covariance estimator.
-        force_int : bool, default False
+        force_int : bool, default True
             Whether the force the estimated optimal bandwidth to be an integer.
         df_adjust : bool, default False
             Whether the adjust the parameter covariance to account for the
@@ -1080,6 +1080,7 @@ class FullyModifiedOLS:
         CointegrationAnalysisResults
             The estimation results instance.
         """
+        kernel = _check_kernel(kernel)
         cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1155,6 +1156,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         diff: bool = False,
         df_adjust: bool = False,
     ) -> CointegrationAnalysisResults:
+        kernel = _check_kernel(kernel)
         cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1180,7 +1182,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         omega_11 = omega[:1, :1]
         nobs, nvar = z_star.shape
         scale = 1.0 if not df_adjust else nobs / (nobs - nvar)
-        omega_112 = scale * omega_11 - omega_12 @ omega_22_inv @ omega_12.T
+        omega_112 = scale * (omega_11 - omega_12 @ omega_22_inv @ omega_12.T)
         param_cov = omega_112 * np.linalg.inv(z_star.T @ z_star)
         with_trend = add_trend(self._x.iloc[:10], self._trend)
         assert isinstance(with_trend, pd.DataFrame)
@@ -1202,5 +1204,5 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
             df_adjust,
             r2,
             r2_adj,
-            "Fully Modified OLS",
+            "Canonical Cointegrating Regression",
         )
