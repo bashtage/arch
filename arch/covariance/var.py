@@ -71,8 +71,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         then int(nobs**(1/3)) is used.
     sample_autocov : bool, default False
         Whether to use the sample autocovariance of x or the autocovariance
-        implied by the estimated VAR when computing the one-sided
-        covariances. Does not affect the long-run covariance.
+        implied by the estimated VAR when computing the short-run and
+        one-sided covariances. Does not affect the long-run covariance.
     kernel : {str, None}, default "bartlett".
         The name of the kernel to use. Can be any available kernel. Input
         is normalised using lower casing and any underscores or hyphens
@@ -162,26 +162,30 @@ class PreWhitenedRecolored(CovarianceEstimator):
     :class:`~arch.covariance.kernel.CovarianceEstimate` contains
 
     * ``long_run``: :math:`\hat{\Omega}`.
-    * ``short_run``: :math:`\hat{\Sigma}`, the covariance of the VAR
-      residuals, not the variance of x.
-    * ``one_sided``: the upper-left :math:`N` by :math:`N` block of
-      :math:`(I-F)^{-1}\Gamma_0` where :math:`F` is the
-      companion-form coefficient matrix of the VAR and :math:`\Gamma_0` is
-      the covariance of the stacked vector
-      :math:`[x_t^\prime, \ldots, x_{t-P+1}^\prime]^\prime`, either implied
-      by the estimated VAR and :math:`\hat{\Sigma}` or, when
-      ``sample_autocov`` is True, computed from the sample autocovariances
-      of x.
+    * ``short_run``: the upper-left :math:`N` by :math:`N` block of
+      :math:`\Gamma_0`, the covariance of the stacked vector
+      :math:`[x_t^\prime, \ldots, x_{t-P+1}^\prime]^\prime`. By default
+      :math:`\Gamma_0` is implied by the estimated VAR and the covariance of
+      its residuals, :math:`\hat{\Sigma}`, so that ``short_run`` is the
+      variance of x implied by the VAR. When ``sample_autocov`` is True,
+      :math:`\Gamma_0` is computed from the sample autocovariances of x and
+      ``short_run`` is the sample variance of x. It is not the covariance of
+      the VAR residuals.
     * ``one_sided_strict``: the upper-left :math:`N` by :math:`N` block of
-      :math:`F(I-F)^{-1}\Gamma_0`.
+      :math:`F(I-F)^{-1}\Gamma_0` where :math:`F` is the companion-form
+      coefficient matrix of the VAR. This is
+      :math:`\sum_{j\geq 1}\Gamma_j` where :math:`\Gamma_j=E[x_tx_{t-j}^\prime]`.
+    * ``one_sided``: ``short_run`` plus ``one_sided_strict``.
 
-    The one-sided covariances do not use the kernel. Since ``short_run`` is
-    the residual covariance, the identities in
-    :class:`~arch.covariance.kernel.CovarianceEstimate` relating the
-    short-run, one-sided and long-run covariances do not hold. When
-    ``sample_autocov`` is False and the kernel is not used (``kernel`` is
-    None or the bandwidth is 0), ``long_run`` equals
-    ``one_sided + one_sided.T - (one_sided - one_sided_strict)``.
+    The one-sided covariances do not use the kernel. The identities in
+    :class:`~arch.covariance.kernel.CovarianceEstimate` that define the
+    one-sided covariances hold, so that
+    ``one_sided = short_run + one_sided_strict``. The long-run covariance
+    satisfies ``long_run = short_run + one_sided_strict + one_sided_strict.T``
+    when the autocovariances are those of the VAR and the kernel is not used,
+    that is when ``sample_autocov`` is False and ``kernel`` is None or the
+    bandwidth is 0. Otherwise ``long_run`` differs from this sum. The
+    covariance of the residuals of the VAR is not returned.
 
     Examples
     --------
@@ -468,9 +472,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
         var_cov = vec_var_cov.reshape((nvar * nlag, nvar * nlag)).T
         return var_cov
 
-    def _companion_form(
-        self, var_model: VARModel, short_run: Float64Array
-    ) -> tuple[Float64Array, Float64Array]:
+    @staticmethod
+    def _companion_coefs(var_model: VARModel) -> Float64Array:
+        """Coefficient matrix of the VAR(1) in companion form"""
         nvar = var_model.resids.shape[1]
         nlag = var_model.var_order
         coeffs = np.zeros((nvar * nlag, nvar * nlag))
@@ -479,11 +483,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
             coeffs[(i + 1) * nvar : (i + 2) * nvar, i * nvar : (i + 1) * nvar] = np.eye(
                 nvar
             )
-        if self._sample_autocov:
-            var_cov = self._estimate_sample_cov(nvar, nlag)
-        else:
-            var_cov = self._estimate_model_cov(nvar, nlag, coeffs, short_run)
-        return coeffs, var_cov
+        return coeffs
 
     def _setup(self) -> tuple[VARModel, CovarianceEstimator]:
         """
@@ -519,20 +519,20 @@ class PreWhitenedRecolored(CovarianceEstimator):
         # The kernel divides by the number of residuals. Divide by the number
         # of observations in x less df_adjust, as the other estimators do.
         scale = nobs / self._df
-        short_run = scale * np.asarray(kern_cov.short_run)
         x_orig = self._x_orig
         columns = x_orig.columns if isinstance(x_orig, pd.DataFrame) else None
         if var_mod.var_order == 0:
             # Special case VAR(0): no recoloring
+            short_run = scale * np.asarray(kern_cov.short_run)
             oss = scale * np.asarray(kern_cov.one_sided_strict)
             return CovarianceEstimate(short_run, oss, columns)
-        comp_coefs, comp_var_cov = self._companion_form(var_mod, short_run)
+        comp_coefs = self._companion_coefs(var_mod)
         max_eig = np.abs(np.linalg.eigvals(comp_coefs)).max()
         if max_eig >= 1:
             raise ValueError(f"""\
 The parameters of the estimated VAR model are not compatible with covariance \
 stationarity, and the long-run covariance cannot be computed. The model estimated is \
-a VAR({max(common, individual)}) where the final {max(0, individual-common)} lags \
+a VAR({max(common, individual)}) where the final {max(0, individual - common)} lags \
 have diagonal coefficient matrices. The maximum eigenvalue of the companion-form \
 VAR(1) coefficient matrix is {max_eig}.""")
         coeff_sum = np.zeros((nvar, nvar))
@@ -542,25 +542,30 @@ VAR(1) coefficient matrix is {max_eig}.""")
         d = np.linalg.inv(np.eye(nvar) - coeff_sum)
         # Recolor the kernel long-run covariance of the VAR residuals
         # (Andrews & Monahan 1992). With a zero bandwidth or kernel=None, the
-        # kernel long run equals the residual short run.
+        # kernel long run equals the residual covariance.
         resid_long_run = scale * np.asarray(kern_cov.long_run)
         long_run = d @ resid_long_run @ d.T
 
+        # Covariance of the stacked [x_t, ..., x_{t-P+1}], which has Gamma_0
+        # of x as its upper-left block
+        if self._sample_autocov:
+            comp_var_cov = self._estimate_sample_cov(nvar, var_mod.var_order)
+        else:
+            resid_cov = scale * np.asarray(kern_cov.short_run)
+            comp_var_cov = self._estimate_model_cov(
+                nvar, var_mod.var_order, comp_coefs, resid_cov
+            )
+        # F (I - F)^-1 Gamma_0 = F Gamma_0 + F^2 Gamma_0 + ..., and its
+        # upper-left block is the sum of the autocovariances of x at lags 1, 2,
+        # ... The one-sided covariance is then short_run + one_sided_strict.
         comp_nvar = comp_coefs.shape[0]
-        i_minus_coefs_inv = np.linalg.inv(np.eye(comp_nvar) - comp_coefs)
-
-        one_sided = i_minus_coefs_inv @ comp_var_cov
-        one_sided_strict = comp_coefs @ one_sided
-
-        one_sided = one_sided[:nvar, :nvar]
-        one_sided_strict = one_sided_strict[:nvar, :nvar]
+        i_minus_coefs = np.eye(comp_nvar) - comp_coefs
+        comp_oss = comp_coefs @ np.linalg.solve(i_minus_coefs, comp_var_cov)
+        short_run = comp_var_cov[:nvar, :nvar]
+        one_sided_strict = comp_oss[:nvar, :nvar]
 
         return CovarianceEstimate(
-            short_run,
-            one_sided_strict,
-            columns=columns,
-            long_run=long_run,
-            one_sided=one_sided,
+            short_run, one_sided_strict, columns=columns, long_run=long_run
         )
 
     @property

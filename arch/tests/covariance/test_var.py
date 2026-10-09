@@ -146,6 +146,33 @@ def test_ic(covariance_data, center, diagonal, method):
     assert pwrc._order == expected_order
 
 
+def theoretical_autocov(
+    coefs: list[Float64Array],
+    sigma: Float64Array,
+    lag: int | list[int],
+    terms: int = 600,
+) -> Float64Array | list[Float64Array]:
+    """
+    Gamma_lag = E[x_t x_{t-lag}'] of a VAR with the coefficients and innovation
+    covariance, computed from the MA(infinity) representation
+    x_t = sum_k Psi_k e_{t-k} so that Gamma_j = sum_k Psi_{k+j} Sigma Psi_k'.
+    """
+    nvar = sigma.shape[0]
+    psi = np.zeros((terms, nvar, nvar))
+    psi[0] = np.eye(nvar)
+    for k in range(1, terms):
+        for i, coef in enumerate(coefs, 1):
+            if i <= k:
+                psi[k] += coef @ psi[k - i]
+
+    def gamma(j: int) -> Float64Array:
+        return np.einsum("kab,bc,kdc->ad", psi[j:], sigma, psi[: terms - j])
+
+    if isinstance(lag, int):
+        return gamma(lag)
+    return [gamma(j) for j in lag]
+
+
 @pytest.mark.parametrize("center", [True, False])
 @pytest.mark.parametrize("diagonal", [True, False])
 @pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
@@ -166,15 +193,23 @@ def test_short_long_run(covariance_data, center, diagonal, method, lags):
     # The residual covariance divides by all observations in x, not by the
     # number of residuals
     nobs = np.asarray(covariance_data).shape[0]
-    expected_short_run = resids.T @ resids / nobs
-    assert_allclose(cov.short_run, expected_short_run)
-    d = np.eye(nvar)
+    resid_cov = resids.T @ resids / nobs
     c = int(center)
-    for i in range(max(full_order, diag_order)):
-        d -= params[:, c + i * nvar : c + (i + 1) * nvar]
+    order = max(full_order, diag_order)
+    coefs = [params[:, c + i * nvar : c + (i + 1) * nvar] for i in range(order)]
+    d = np.eye(nvar) - sum(coefs, np.zeros((nvar, nvar)))
     d_inv = np.linalg.inv(d)
-    expected_long_run = d_inv @ expected_short_run @ d_inv.T
-    assert_allclose(cov.long_run, expected_long_run)
+    assert_allclose(cov.long_run, d_inv @ resid_cov @ d_inv.T)
+    # Without a kernel, the short run is the variance of x implied by the VAR
+    assert_allclose(cov.short_run, theoretical_autocov(coefs, resid_cov, 0))
+    # and so the covariance identities hold
+    one_sided_strict = np.asarray(cov.one_sided_strict)
+    assert_allclose(cov.one_sided, np.asarray(cov.short_run) + one_sided_strict)
+    assert_allclose(
+        cov.long_run,
+        np.asarray(cov.short_run) + one_sided_strict + one_sided_strict.T,
+        atol=1e-10,
+    )
 
 
 @pytest.mark.parametrize("force_int", [True, False])
@@ -258,7 +293,15 @@ def test_recolored_kernel_long_run(covariance_data, center, bandwidth, kernel):
     )
     cov = pwrc.cov
     assert_allclose(np.asarray(cov.long_run), expected, rtol=1e-8, atol=1e-10)
-    assert_allclose(np.asarray(cov.short_run), resids.T @ resids / nobs_full)
+    # The short run is the variance of x implied by the VAR for all kernels
+    coefs = [params[:, c + i * nvar : c + (i + 1) * nvar] for i in range(lags)]
+    resid_cov = resids.T @ resids / nobs_full
+    assert_allclose(
+        np.asarray(cov.short_run),
+        theoretical_autocov(coefs, resid_cov, 0),
+        rtol=1e-8,
+        atol=1e-10,
+    )
 
 
 @pytest.mark.parametrize("center", [True, False])
@@ -508,3 +551,113 @@ def test_df_adjust(var_data, df_adjust, lags, kernel, bandwidth, sample_autocov)
 def test_df_adjust_errors(var_data, df_adjust):
     with pytest.raises(ValueError, match="df_adjust|Degrees of freedom"):
         PreWhitenedRecolored(var_data, df_adjust=df_adjust)
+
+
+def fitted_var(x, lags, center):
+    """VAR coefficients and the residual covariance dividing by all of x"""
+    params, resids = direct_var(x, center, lags, lags)
+    nvar = resids.shape[1]
+    c = int(center)
+    coefs = [params[:, c + i * nvar : c + (i + 1) * nvar] for i in range(lags)]
+    return coefs, resids.T @ resids / np.asarray(x).shape[0]
+
+
+@pytest.mark.parametrize("kernel,bandwidth", [(None, None), ("Parzen", 0.0)])
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("lags", [1, 2, 3])
+def test_one_sided_model_implied(var_data, lags, center, kernel, bandwidth):
+    # One-sided covariances are sums of the autocovariances of the VAR:
+    # os_strict = sum_{j>=1} Gamma_j, os = sum_{j>=0} Gamma_j. The Gamma_j come
+    # from the MA(infinity) representation of the estimated VAR.
+    pwrc = PreWhitenedRecolored(
+        var_data, lags=lags, kernel=kernel, bandwidth=bandwidth, center=center
+    )
+    cov = pwrc.cov
+    coefs, resid_cov = fitted_var(var_data, lags, center)
+    gamma = theoretical_autocov(coefs, resid_cov, list(range(300)))
+    one_sided_strict = sum(gamma[1:], np.zeros_like(resid_cov))
+    assert_allclose(cov.short_run, gamma[0], rtol=1e-9, atol=1e-10)
+    assert_allclose(cov.one_sided_strict, one_sided_strict, rtol=1e-9, atol=1e-10)
+    assert_allclose(cov.one_sided, gamma[0] + one_sided_strict, rtol=1e-9, atol=1e-10)
+    assert_allclose(
+        cov.long_run, gamma[0] + one_sided_strict + one_sided_strict.T, rtol=1e-9
+    )
+
+
+def test_one_sided_scalar_ar1():
+    # x_t = a x_{t-1} + e_t has Gamma_0 = s2 / (1 - a^2), Gamma_j = a^j Gamma_0
+    # so that os_strict = a Gamma_0 / (1 - a), and long run = s2 / (1 - a)^2.
+    a, nobs = 0.6, 100000
+    rng = np.random.default_rng(1234)
+    eps = rng.standard_normal(nobs + 200)
+    x = np.zeros(nobs + 200)
+    for t in range(1, x.shape[0]):
+        x[t] = a * x[t - 1] + eps[t]
+    x = x[200:]
+    pwrc = PreWhitenedRecolored(x, lags=1, kernel=None, center=False)
+    cov = pwrc.cov
+    coefs, resid_cov = fitted_var(x, 1, False)
+    a_hat = coefs[0][0, 0]
+    assert a_hat == pytest.approx(a, abs=0.01)
+    gamma0 = resid_cov[0, 0] / (1 - a_hat**2)
+    assert_allclose(np.squeeze(cov.short_run), gamma0)
+    assert_allclose(np.squeeze(cov.one_sided_strict), a_hat * gamma0 / (1 - a_hat))
+    assert_allclose(np.squeeze(cov.one_sided), gamma0 / (1 - a_hat))
+    assert_allclose(np.squeeze(cov.long_run), resid_cov[0, 0] / (1 - a_hat) ** 2)
+
+
+@pytest.mark.parametrize("sample_autocov", [True, False])
+@pytest.mark.parametrize("kernel", ["Bartlett", "QuadraticSpectral"])
+@pytest.mark.parametrize("center", [True, False])
+def test_one_sided_identity_with_kernel(var_data, center, kernel, sample_autocov):
+    # one_sided = short_run + one_sided_strict holds for every configuration,
+    # also when the kernel and sample autocovariance are used
+    pwrc = PreWhitenedRecolored(
+        var_data,
+        lags=2,
+        kernel=kernel,
+        bandwidth=6.0,
+        center=center,
+        sample_autocov=sample_autocov,
+    )
+    cov = pwrc.cov
+    assert_allclose(cov.one_sided, cov.short_run + cov.one_sided_strict, atol=1e-12)
+
+
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("lags", [1, 2, 3])
+def test_sample_autocov_values(var_data, lags, center):
+    # With sample_autocov, Gamma_0 is the sample covariance of the stacked
+    # [x_t, ..., x_{t-P+1}], so that short_run is the sample variance of x and
+    # os_strict is the upper-left block of sum_{m>=1} F^m Gamma_0.
+    nobs, nvar = var_data.shape
+    xc = var_data - var_data.mean(0) if center else var_data
+
+    def gamma(j: int) -> Float64Array:
+        if j < 0:
+            return gamma(-j).T
+        return sum(np.outer(xc[t], xc[t - j]) for t in range(j, nobs)) / nobs
+
+    stacked_cov = np.block([[gamma(c - r) for c in range(lags)] for r in range(lags)])
+    coefs, _ = fitted_var(var_data, lags, center)
+    comp = np.zeros((nvar * lags, nvar * lags))
+    comp[:nvar] = np.hstack(coefs)
+    comp[nvar:, :-nvar] = np.eye(nvar * (lags - 1))
+    total = np.zeros_like(comp)
+    power = np.eye(nvar * lags)
+    for _ in range(500):
+        power = power @ comp
+        total += power @ stacked_cov
+    expected_strict = total[:nvar, :nvar]
+
+    pwrc = PreWhitenedRecolored(
+        var_data, lags=lags, center=center, kernel=None, sample_autocov=True
+    )
+    cov = pwrc.cov
+    assert_allclose(cov.short_run, gamma(0), rtol=1e-9)
+    assert_allclose(cov.one_sided_strict, expected_strict, rtol=1e-9, atol=1e-10)
+    assert_allclose(cov.one_sided, gamma(0) + expected_strict, rtol=1e-9, atol=1e-10)
+    # The long run does not depend on the source of the autocovariances
+    model = PreWhitenedRecolored(var_data, lags=lags, center=center, kernel=None)
+    assert_allclose(cov.long_run, model.cov.long_run)
+    assert not np.allclose(cov.one_sided_strict, model.cov.one_sided_strict)
