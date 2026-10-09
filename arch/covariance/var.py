@@ -411,13 +411,27 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     def _estimate_sample_cov(self, nvar: int, nlag: int) -> Float64Array:
         """
-        #  [Gamma0  Gamma1  Gamma2, ... ]
-        #  [Gamma1' Gamma0  Gamma1, ... ]
-        #  [Gamma2' Gamma1' Gamma0, ... ]
+        Sample covariance of the stacked vector [x_t', ..., x_{t-nlag+1}']'.
 
-        :param nvar:
-        :param nlag:
-        :return:
+        With Gamma_j = E[x_t x_{t-j}'], block (r, c) of the covariance is
+        E[x_{t-r} x_{t-c}'] = Gamma_{c-r}, so that the blocks above the
+        diagonal are Gamma_1, Gamma_2, ... and those below are their transposes
+
+            [Gamma0  Gamma1  Gamma2, ... ]
+            [Gamma1' Gamma0  Gamma1, ... ]
+            [Gamma2' Gamma1' Gamma0, ... ]
+
+        Parameters
+        ----------
+        nvar : int
+            The number of series in x.
+        nlag : int
+            The number of lags stacked.
+
+        Returns
+        -------
+        ndarray
+            The nvar * nlag by nvar * nlag sample covariance.
         """
         x = self._x
         if self._center:
@@ -430,7 +444,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         for r in range(nlag):
             for c in range(nlag):
                 g = gamma[np.abs(r - c)]
-                if c > r:
+                if r > c:
                     g = g.T
                 var_cov[r * nvar : (r + 1) * nvar, c * nvar : (c + 1) * nvar] = g
         return var_cov

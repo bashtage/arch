@@ -326,3 +326,57 @@ def test_sample_autocov_center(covariance_data, center):
         covariance_data, lags=2, sample_autocov=True, center=center
     )
     assert isinstance(pwrc.cov, CovarianceEstimate)
+
+
+VAR_COEFS = (
+    np.array([[0.5, 0.2, 0.0], [0.0, 0.4, 0.3], [0.1, 0.0, 0.3]]),
+    np.array([[0.1, 0.0, 0.2], [0.0, 0.1, 0.0], [0.0, 0.1, 0.1]]),
+    np.array([[0.05, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.05]]),
+)
+INNOVATION_SCALE = np.array([1.0, 2.0, 0.5])
+
+
+def simulate_var(
+    nobs: int, coefs: tuple[Float64Array, ...] = VAR_COEFS, seed: int = 20261009
+) -> Float64Array:
+    """Simulate a Gaussian VAR with asymmetric coefficient matrices"""
+    rng = np.random.default_rng(seed)
+    burn = 200
+    nvar = coefs[0].shape[0]
+    eps = rng.standard_normal((nobs + burn, nvar)) * INNOVATION_SCALE
+    x = np.zeros_like(eps)
+    for t in range(len(coefs), nobs + burn):
+        x[t] = eps[t]
+        for j, coef in enumerate(coefs):
+            x[t] += coef @ x[t - 1 - j]
+    return x[burn:]
+
+
+@pytest.fixture(scope="module")
+def var_data() -> Float64Array:
+    return simulate_var(500)
+
+
+@pytest.mark.parametrize("center", [True, False])
+@pytest.mark.parametrize("nlag", [1, 2, 3])
+def test_sample_cov_stacked(center, nlag):
+    # The stacked vector is [x_t, x_{t-1}, ...] so that block (r, c) of its
+    # covariance is E[x_{t-r} x_{t-c}'] = Gamma_{c-r}. The cross-covariances
+    # are not symmetric so a transposed layout is detectable.
+    x = simulate_var(4000)
+    nobs, nvar = x.shape
+    xc = x - x.mean(0) if center else x
+
+    def gamma(j: int) -> Float64Array:
+        # E[x_t x_{t-j}'] using the definition
+        if j < 0:
+            return gamma(-j).T
+        return sum(np.outer(xc[t], xc[t - j]) for t in range(j, nobs)) / nobs
+
+    expected = np.block([[gamma(c - r) for c in range(nlag)] for r in range(nlag)])
+    pwrc = PreWhitenedRecolored(x, center=center)
+    assert_allclose(pwrc._estimate_sample_cov(nvar, nlag), expected, atol=1e-12)
+    # Same up to end effects as the second moment of the stacked data. The
+    # transposed layout differs by about 0.3.
+    stacked = np.hstack([xc[nlag - 1 - j : nobs - j] for j in range(nlag)])
+    assert_allclose(expected, stacked.T @ stacked / stacked.shape[0], atol=0.02)
