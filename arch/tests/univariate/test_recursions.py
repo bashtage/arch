@@ -10,7 +10,7 @@ import pytest
 from scipy.special import gamma
 
 import arch.univariate.recursions_python as recpy
-from arch.univariate.volatility import RiskMetrics2006
+from arch.univariate.volatility import FIAPARCH, RiskMetrics2006
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "") in ("true", "1", "True")
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", "") in ("1", "true", "True")
@@ -1502,3 +1502,76 @@ def test_bounds_check():
         recpy.bounds_check_python(20.0, var_bounds), 10 + np.log(20.0 / 10.0)
     )
     assert_almost_equal(recpy.bounds_check_python(np.inf, var_bounds), 1010.0)
+
+
+def test_fiaparch():
+    rng = RandomState(1234)
+    t = 1000
+    resids = rng.standard_normal(t)
+
+    trunc_lag = 750
+    fiaparch = FIAPARCH(truncation=trunc_lag)
+    abs_resids = np.abs(resids)
+    sigma2 = np.ones_like(resids)
+    sigma_delta = np.ones_like(resids)
+    p = 1
+    q = 1
+    nobs = t
+    backcast = fiaparch.backcast(resids)
+    var_bounds = fiaparch.variance_bounds(resids)
+    parameters = np.array([1.0, 0.2, 0.4, 0.2, -0.3, 1.5])
+    gamma = parameters[4]
+    delta = parameters[5]
+
+    recpy.fiaparch_recursion_python(
+        parameters,
+        resids,
+        abs_resids,
+        sigma2,
+        sigma_delta,
+        p,
+        q,
+        nobs,
+        trunc_lag,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    python_sigma2 = sigma2.copy()
+    recpy.fiaparch_recursion(
+        parameters,
+        resids,
+        abs_resids,
+        sigma2,
+        sigma_delta,
+        p,
+        q,
+        nobs,
+        trunc_lag,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    numba_sigma2 = sigma2.copy()
+    assert_allclose(python_sigma2, numba_sigma2)
+
+    if not MISSING_EXTENSION:
+        rec_cython.fiaparch_recursion(
+            parameters,
+            resids,
+            abs_resids,
+            sigma2,
+            sigma_delta,
+            p,
+            q,
+            nobs,
+            trunc_lag,
+            backcast,
+            var_bounds,
+            gamma,
+            delta,
+        )
+        cython_sigma2 = sigma2.copy()
+        assert_allclose(python_sigma2, cython_sigma2)

@@ -9,6 +9,7 @@ from arch.univariate.recursions_python import ARCHInMeanRecursion
 from arch.univariate.volatility import (
     ARCH,
     EGARCH,
+    FIAPARCH,
     FIGARCH,
     GARCH,
     HARCH,
@@ -24,7 +25,7 @@ X = pd.DataFrame(
     RANDOMSTATE.standard_normal((SP500.shape[0], 2)), columns=[0, 1], index=SP500.index
 )
 
-
+# FIAPARCH intentionally left out
 SUPPORTED = [
     HARCH,
     ARCH,
@@ -134,6 +135,18 @@ def test_simulate():
     np.testing.assert_allclose(rescaled_vol, sim.volatility)
     with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
+
+
+@pytest.mark.slow
+def test_fiaparch():
+    # Special case for FIAPARCH which is very slow
+    aim = ARCHInMean(SP500, volatility=FIAPARCH(), form="log")
+    assert isinstance(aim, ARCHInMean)
+    sv = np.array(
+        [0.051519, 0.019036, 0.102975, 0.188827, 0.528414, 0.600234, 0.999700, 0.894997]
+    )
+    res = aim.fit(disp=True, starting_values=sv)
+    print(res.params)
 
 
 @pytest.mark.slow

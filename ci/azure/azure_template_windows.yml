@@ -16,15 +16,16 @@ jobs:
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
+    # The newest Python with the newest packages, and the oldest Python with numpy 1.x
+    # (the default integer is 32 bits on Windows) and pandas 2.1. PACKAGES is installed
+    # in a single pip command with requirements.txt, so that pip also picks versions
+    # of the other packages that work with the pins.
     matrix:
-      python310_win_latest:
+      python314_win_latest:
+        python.version: '3.14'
+      python310_win_numpy126:
         python.version: '3.10'
-      python311_win_latest:
-        python.version: '3.11'
-      python312_win_latest:
-        python.version: '3.12'
-      python313_win_latest:
-        python.version: '3.13'
+        PACKAGES: 'numpy==1.26.4 scipy==1.11.4 pandas==2.1.4 statsmodels==0.14.1 matplotlib seaborn numba'
     maxParallel: 10
 
   steps:
@@ -39,7 +40,7 @@ jobs:
       call arch-test\Scripts\activate.bat
       python -m pip install --upgrade pip wheel
       python -m pip install -r requirements-dev.txt -U
-      python -m pip install -r requirements.txt -U
+      python -m pip install %PACKAGES% -r requirements.txt -U || exit /b 1
       python -m pip list
     displayName: 'Create Venv and Install dependencies'
 
