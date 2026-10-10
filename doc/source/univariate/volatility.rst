@@ -21,6 +21,7 @@ volatility.
    MIDASHyperbolic
    ARCH
    APARCH
+   CensoredGARCH
 
 Parameterless Variance Processes
 --------------------------------

@@ -1,6 +1,7 @@
 import types
 
 from arch.univariate import recursions_python
+from arch.univariate.censored_garch import CensoredGARCH
 from arch.univariate.diagnostics import excess_kurtosis, hill_estimator, var_ratio
 from arch.univariate.distribution import (
     Distribution,
@@ -43,6 +44,7 @@ __all__ = [
     "APARCH",
     "ARCH",
     "ARX",
+    "CensoredGARCH",
     "EGARCH",
     "FIAPARCH",
     "FIGARCH",
