@@ -339,8 +339,10 @@ class MCS(MultipleComparison):
         # In each bootstrap, save the average difference of each pair (b,k,k)
         bootstrapped_mean_losses = np.zeros((self.reps, self.k, self.k))
         bs = self.bootstrap
-        for j, data in enumerate(bs.bootstrap(self.reps)):
-            bs_index = data[0][0]  # Only element in pos data
+        for j in range(self.reps):
+            # The bootstrapped data are the indices themselves, so the indices
+            # are drawn directly rather than resampled from np.arange(t)
+            bs_index = bs.update_indices()
             self._bootstrap_indices.append(
                 np.asarray(bs_index, dtype=int)
             )  # For testing
@@ -392,8 +394,8 @@ class MCS(MultipleComparison):
         loss_errors = losses - losses.mean(axis=0)
         # Generate bootstrap samples
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
-        for i, data in enumerate(self.bootstrap.bootstrap(self.reps)):
-            bs_index = data[0][0]
+        for i in range(self.reps):
+            bs_index = self.bootstrap.update_indices()
             self._bootstrap_indices.append(
                 np.asarray(bs_index, dtype=int)
             )  # For testing
