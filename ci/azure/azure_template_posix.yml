@@ -230,8 +230,8 @@ jobs:
       # Uninstall xdist to avoid issues with coverage and Cython
       python -m pip uninstall pytest-xdist -y || true
       export COVERAGE_OPTS="--cov-config=.coveragerc --cov=arch --cov-branch --cov-report xml:coverage.xml --cov-report term"
-      echo pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_mean.py arch/tests/univariate/test_arch_in_mean.py
-      pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_mean.py arch/tests/univariate/test_arch_in_mean.py
+      echo pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_arch_in_mean.py
+      pytest --junitxml=junit/test-results.xml --durations=25 ${COVERAGE_OPTS} arch/tests/univariate/test_recursions.py arch/tests/bootstrap/test_samplers.py arch/tests/univariate/test_arch_in_mean.py
     displayName: 'Run tests (cython coverage)'
     condition: eq(variables['cython.coverage'], 'true')
 
