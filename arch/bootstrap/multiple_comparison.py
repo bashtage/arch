@@ -339,12 +339,17 @@ class MCS(MultipleComparison):
         # In each bootstrap, save the average difference of each pair (b,k,k)
         bootstrapped_mean_losses = np.zeros((self.reps, self.k, self.k))
         bs = self.bootstrap
-        for j, data in enumerate(bs.bootstrap(self.reps)):
-            bs_index = data[0][0]  # Only element in pos data
+        for j in range(self.reps):
+            # The bootstrapped data are the indices themselves, so the indices
+            # are drawn directly rather than resampled from np.arange(t)
+            bs_index = bs.update_indices()
             self._bootstrap_indices.append(
                 np.asarray(bs_index, dtype=int)
             )  # For testing
-            mean_losses_star = losses[bs_index].mean(axis=0)[:, None]
+            # The mean of the resampled rows weights each row by the number of
+            # times it is drawn, which avoids copying the resampled losses
+            counts = np.bincount(bs_index, minlength=self.t)
+            mean_losses_star = (counts @ losses / self.t)[:, None]
             bootstrapped_mean_losses[j] = mean_losses_star - mean_losses_star.T
         # Recenter
         bootstrapped_mean_losses -= loss_diffs
@@ -389,13 +394,13 @@ class MCS(MultipleComparison):
         loss_errors = losses - losses.mean(axis=0)
         # Generate bootstrap samples
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
-        for i, data in enumerate(self.bootstrap.bootstrap(self.reps)):
-            bs_index = data[0][0]
+        for i in range(self.reps):
+            bs_index = self.bootstrap.update_indices()
             self._bootstrap_indices.append(
                 np.asarray(bs_index, dtype=int)
             )  # For testing
-            bs_errors = loss_errors[bs_index]
-            avg_bs_errors = bs_errors.mean(axis=0)
+            counts = np.bincount(bs_index, minlength=self.t)
+            avg_bs_errors = counts @ loss_errors / self.t
             avg_bs_errors -= avg_bs_errors.mean()
             bs_avg_loss_errors[i] = avg_bs_errors
             # Initialize the set
