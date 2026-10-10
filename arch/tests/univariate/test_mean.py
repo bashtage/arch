@@ -1,6 +1,6 @@
 from arch.compat.matplotlib import HAS_MATPLOTLIB
 from arch.compat.pandas import MONTH_END
-from arch.univariate.mean import MAMean
+
 from io import StringIO
 import itertools
 from itertools import product
@@ -41,7 +41,15 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.univariate.mean import ARX, HARX, LS, ConstantMean, ZeroMean, arch_model
+from arch.univariate.mean import (
+    ARX,
+    HARX,
+    LS,
+    ConstantMean,
+    MAMean,
+    ZeroMean,
+    arch_model,
+)
 from arch.univariate.volatility import (
     APARCH,
     ARCH,
@@ -100,7 +108,7 @@ simple_mean_models = [
     HARX(SP500, lags=[1, 5]),
     ConstantMean(SP500),
     ZeroMean(SP500),
-    MAMean(SP500,lags=2)
+    MAMean(SP500, lags=2),
 ]
 
 mean_models = [
@@ -240,28 +248,27 @@ class TestMeanModel:
             res.forecast(horizon=0, start=20)
 
     def test_ma_mean(self):
-        with np.errstate(over="ignore", invalid="ignore"):
-            ma = MAMean(self.y, lags=2)
-            assert ma.name == "MA"
-            assert_equal(ma.num_params, 3)
-            assert_equal(ma.constant, True)
-            bounds = ma.bounds()
-            assert_equal(len(bounds), 3)
-            params = np.array(
-                [0.5, 0.3, -0.2, 0.1, 0.5, 0.2]
-            )  # mu, theta_1, theta_2 + GARCH
+        ma = MAMean(self.y, lags=2)
+        assert ma.name == "MA"
+        assert_equal(ma.num_params, 3)
+        assert_equal(ma.constant, True)
+        bounds = ma.bounds()
+        assert_equal(len(bounds), 3)
+        params = np.array(
+            [0.5, 0.3, -0.2, 0.1, 0.5, 0.2]
+        )  # mu, theta_1, theta_2 + GARCH
 
-            ma.volatility = GARCH()
-            sim_data = ma.simulate(params, self.T)
-            assert isinstance(sim_data, pd.DataFrame)
-            assert sim_data.shape == (self.T, 3)
+        ma.volatility = GARCH()
+        sim_data = ma.simulate(params, self.T)
+        assert isinstance(sim_data, pd.DataFrame)
+        assert sim_data.shape == (self.T, 3)
 
-            res = ma.fit(disp=DISPLAY)
-            assert isinstance(res.__str__(), str)
-            assert isinstance(ma.__repr__(), str)
+        res = ma.fit(disp=DISPLAY)
+        assert isinstance(res.__str__(), str)
+        assert isinstance(ma.__repr__(), str)
 
-            forecasts = res.forecast(horizon=5, start=5)
-            assert isinstance(forecasts, ARCHModelForecast)
+        forecasts = res.forecast(horizon=5, start=5)
+        assert isinstance(forecasts, ARCHModelForecast)
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
