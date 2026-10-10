@@ -1808,8 +1808,20 @@ class TestVarianceForecasts:
         assert forecasts.forecast_paths is None
         assert forecasts.shocks is None
         one_step = _sigma2[1:]
+        assert_allclose(forecasts.forecasts[:, 0], one_step, rtol=1e-4)
+        # The components are EWMAs of squared residuals, and the expected
+        # squared residual is the combined variance
+        w = vol._ewma_combination_weights()
+        mus = vol._ewma_smoothing_parameters()
+        resids2 = np.asarray(resids) ** 2
+        components = np.empty((resids2.shape[0] + 1, mus.shape[0]))
+        components[0] = backcast
+        for t in range(resids2.shape[0]):
+            components[t + 1] = mus * components[t] + (1 - mus) * resids2[t]
+        expected = components[1:]
         for i in range(10):
-            assert_allclose(forecasts.forecasts[:, i], one_step, rtol=1e-4)
+            assert_allclose(forecasts.forecasts[:, i], expected @ w, rtol=1e-4)
+            expected = mus * expected + (1 - mus) * (expected @ w)[:, None]
 
         alt_forecasts = vol.forecast(
             params, resids, backcast, var_bounds, horizon=10, start=500

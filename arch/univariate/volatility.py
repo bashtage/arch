@@ -2472,8 +2472,34 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             horizon,
             start_index=start,
         )
+        if horizon == 1:
+            return VarianceForecast(forecasts)
+
+        kmax = self.kmax
+        w = self._ewma_combination_weights()
+        mus = self._ewma_smoothing_parameters()
+        backcast = cast("Float64Array1D", to_array_1d(np.asarray(backcast)))
+        t = resids.shape[0]
+        components = np.empty((kmax, t + 1))
+        _resids = np.ascontiguousarray(resids)
+        for k in range(kmax):
+            ewma_recursion(
+                mus[k],
+                to_array_1d(_resids),
+                to_array_1d(components[k, :]),
+                t + 1,
+                backcast[k],
+            )
+        # Each EWMA component is updated with the squared residual, whose
+        # expected value is the combined variance, so the expected values of
+        # the components follow a linear recursion. The forecasts are then
+        # reweighted combinations of the final component values, with weights
+        # w(h + 1) = mus * w(h) + w * sum((1 - mus) * w(h)) and w(1) = w.
+        components = components.T[start + 1 :]
+        weights = w
         for i in range(1, horizon):
-            forecasts[:, i] = forecasts[:, 0]
+            weights = mus * weights + w * ((1 - mus) @ weights)
+            forecasts[:, i] = components @ weights
         return VarianceForecast(forecasts)
 
     def _simulation_forecast(
