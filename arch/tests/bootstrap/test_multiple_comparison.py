@@ -641,6 +641,8 @@ def test_bootstrap_cannot_be_replaced(spa_data, bootstrap):
             procedure.bootstrap = replacement
         assert procedure.bootstrap is not replacement
     assert stepm.bootstrap is stepm.spa.bootstrap
+    assert not mcs._store_index
+    assert not mcs._bootstrap_indices
 
 
 def test_seed_reset(spa_data):
@@ -848,6 +850,9 @@ class TestMCS:
 
         losses = self.losses[:, :10]  # Limit size
         mcs = MCS(losses, 0.05, reps=200, seed=23456)
+        mcs._testing = True
+        assert mcs._store_index
+        assert mcs._bootstrap_indices == []
         mcs.compute()
         m = 5  # Number of direct
         pvals = np.zeros(m) * np.nan
@@ -891,6 +896,7 @@ class TestMCS:
 
         losses = self.losses[:, :10]  # Limit size
         mcs = MCS(losses, 0.05, reps=200, method="max", seed=23456)
+        mcs._testing = True
         mcs.compute()
         m = 8  # Number of direct
         pvals = np.zeros(m) * np.nan

@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 import matplotlib.font_manager
 import matplotlib.pyplot as plt
@@ -12,8 +12,8 @@ NBINS = 7
 
 plt.rcParams["figure.figsize"] = (10, 10)
 
-start = datetime.datetime(1980, 1, 1)
-end = datetime.datetime(2020, 1, 1)
+start = dt.datetime(1980, 1, 1)
+end = dt.datetime(2020, 1, 1)
 data = pdr.get_data_yahoo("^GSPC", start, end)
 price = data["Adj Close"]
 rets = 100 * price.resample("M").last().pct_change()
