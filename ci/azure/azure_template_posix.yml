@@ -55,6 +55,7 @@ jobs:
       python_314_no_binary:
         python.version: '3.14'
         BUILD_FLAGS: '-Csetup-args=-Dno-binary=true'
+        PYTEST_PATTERN: "(slow or not slow)"
         USE_NUMBA: true
       python_314_statsmodels_main:
         python.version: '3.14'
