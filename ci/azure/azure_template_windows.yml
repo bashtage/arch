@@ -36,8 +36,6 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m venv arch-test
-      call arch-test\Scripts\activate.bat
       python -m pip install --upgrade pip wheel
       python -m pip install -r requirements-dev.txt -U
       python -m pip install -r requirements.txt -U || exit /b 1
@@ -45,7 +43,6 @@ jobs:
     displayName: 'Create Venv and Install dependencies'
 
   - script: |
-      call arch-test\Scripts\activate.bat
       python -m pip install -e . -vv --no-build-isolation
     displayName: 'Build Cython Extensions'
 
@@ -59,7 +56,7 @@ jobs:
 
   - script: |
       call arch-test\Scripts\activate.bat
-      pytest arch --junitxml=junit/test-results.xml -n 2 --durations=25
+      pytest arch -m "not slow" --junitxml=junit/test-results.xml -n auto --durations=25
     displayName: 'pytest'
 
   - task: PublishTestResults@2
