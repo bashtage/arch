@@ -4,7 +4,7 @@ to MacKinnon (2010).  Makes use of parallel_fun which works
 best when joblib is installed.
 """
 
-import datetime
+import datetime as dt
 from typing import cast
 
 import numpy as np
@@ -137,14 +137,14 @@ if __name__ == "__main__":
 
         for i in range(EX_NUM):
             print(f"Experiment Number {i + 1} of {EX_NUM} (trend {tr})")
-            now = datetime.datetime.now()
+            now = dt.datetime.now()
             parallel, p_func, n_jobs = parallel_func(
                 wrapper, n_jobs=NUM_JOBS, verbose=2
             )
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
             quantiles = [np.percentile(x, percentiles) for x in out]
             results[:, :, i] = np.array(quantiles).T
-            print(f"Elapsed time {datetime.datetime.now() - now} seconds")
+            print(f"Elapsed time {dt.datetime.now() - now} seconds")
 
             if i % 50 == 0:
                 np.savez(

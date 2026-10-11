@@ -8,7 +8,7 @@ on the local machine.  This can be started using a command similar to
 Remote clusters can be used by modifying the call to Client.
 """
 
-import datetime
+import datetime as dt
 from typing import Literal, cast
 
 from ipyparallel import Client
@@ -115,12 +115,12 @@ for tr in trends:
         # Non parallel version
         # args = (T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # out = [wrapper(a, b, c, d) for a, b, c, d in args]
-        now = datetime.datetime.now()
+        now = dt.datetime.now()
         out = lview.map_sync(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # Prevent unnecessary results from accumulating
         lview.purge_results("all")
         rc.purge_everything()
-        print(datetime.datetime.now() - now)
+        print(dt.datetime.now() - now)
         quantiles = [percentile(x, percentiles) for x in out]
         results[:, :, i] = cast("ndarray", array(quantiles).T)
 

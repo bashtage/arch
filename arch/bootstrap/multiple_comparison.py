@@ -285,7 +285,9 @@ class MCS(MultipleComparison):
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
         self._seed = seed
         self._bootstrap = bootstrap_inst
-        self._bootstrap_indices: list[IntArray] = []  # For testing
+        # Optional index retention, for testing
+        self._store_index: bool = False
+        self._bootstrap_indices: list[IntArray] = []
         self._model = "MCS"
         self._info = {
             "size": f"{self.size:0.2f}",
@@ -293,6 +295,15 @@ class MCS(MultipleComparison):
             "ID": hex(id(self)),
         }
         self._results_computed = False
+
+    @property
+    def _testing(self) -> bool:
+        """Flag indicating to store bootstrap indices for testing purposes"""
+        return self._store_index
+
+    @_testing.setter
+    def _testing(self, value: bool) -> None:
+        self._store_index = bool(value)
 
     def _has_been_computed(self) -> None:
         if not self._results_computed:
@@ -343,9 +354,9 @@ class MCS(MultipleComparison):
             # The bootstrapped data are the indices themselves, so the indices
             # are drawn directly rather than resampled from np.arange(t)
             bs_index = bs.update_indices()
-            self._bootstrap_indices.append(
-                np.asarray(bs_index, dtype=int)
-            )  # For testing
+            if self._store_index:
+                # For testing
+                self._bootstrap_indices.append(np.asarray(bs_index, dtype=int))
             # The mean of the resampled rows weights each row by the number of
             # times it is drawn, which avoids copying the resampled losses
             counts = np.bincount(bs_index, minlength=self.t)
@@ -396,9 +407,9 @@ class MCS(MultipleComparison):
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
         for i in range(self.reps):
             bs_index = self.bootstrap.update_indices()
-            self._bootstrap_indices.append(
-                np.asarray(bs_index, dtype=int)
-            )  # For testing
+            if self._store_index:
+                # For testing
+                self._bootstrap_indices.append(np.asarray(bs_index, dtype=int))
             counts = np.bincount(bs_index, minlength=self.t)
             avg_bs_errors = counts @ loss_errors / self.t
             avg_bs_errors -= avg_bs_errors.mean()
