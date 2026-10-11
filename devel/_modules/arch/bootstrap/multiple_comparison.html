@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+164)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v8.0.1 (+167)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+164)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+164)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+167)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+167)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+164)
+            arch v8.0.1 (+167)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+164)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+164)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+167)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+167)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+164)
+    arch v8.0.1 (+167)
   </label>
   
     <div class="md-nav__source">
@@ -803,12 +803,17 @@
         <span class="c1"># In each bootstrap, save the average difference of each pair (b,k,k)</span>
         <span class="n">bootstrapped_mean_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span>
-        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bs</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)):</span>
-            <span class="n">bs_index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Only element in pos data</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">):</span>
+            <span class="c1"># The bootstrapped data are the indices themselves, so the indices</span>
+            <span class="c1"># are drawn directly rather than resampled from np.arange(t)</span>
+            <span class="n">bs_index</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">update_indices</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bs_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="p">)</span>  <span class="c1"># For testing</span>
-            <span class="n">mean_losses_star</span> <span class="o">=</span> <span class="n">losses</span><span class="p">[</span><span class="n">bs_index</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="c1"># The mean of the resampled rows weights each row by the number of</span>
+            <span class="c1"># times it is drawn, which avoids copying the resampled losses</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">bs_index</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">mean_losses_star</span> <span class="o">=</span> <span class="p">(</span><span class="n">counts</span> <span class="o">@</span> <span class="n">losses</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
             <span class="n">bootstrapped_mean_losses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_losses_star</span> <span class="o">-</span> <span class="n">mean_losses_star</span><span class="o">.</span><span class="n">T</span>
         <span class="c1"># Recenter</span>
         <span class="n">bootstrapped_mean_losses</span> <span class="o">-=</span> <span class="n">loss_diffs</span>
@@ -853,13 +858,13 @@
         <span class="n">loss_errors</span> <span class="o">=</span> <span class="n">losses</span> <span class="o">-</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Generate bootstrap samples</span>
         <span class="n">bs_avg_loss_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">)):</span>
-            <span class="n">bs_index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">):</span>
+            <span class="n">bs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">update_indices</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bs_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="p">)</span>  <span class="c1"># For testing</span>
-            <span class="n">bs_errors</span> <span class="o">=</span> <span class="n">loss_errors</span><span class="p">[</span><span class="n">bs_index</span><span class="p">]</span>
-            <span class="n">avg_bs_errors</span> <span class="o">=</span> <span class="n">bs_errors</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">bs_index</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">avg_bs_errors</span> <span class="o">=</span> <span class="n">counts</span> <span class="o">@</span> <span class="n">loss_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
             <span class="n">avg_bs_errors</span> <span class="o">-=</span> <span class="n">avg_bs_errors</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
             <span class="n">bs_avg_loss_errors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg_bs_errors</span>
             <span class="c1"># Initialize the set</span>
