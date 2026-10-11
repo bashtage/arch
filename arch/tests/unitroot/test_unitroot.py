@@ -738,7 +738,8 @@ def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
     skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
-    y = np.zeros((nobs,))
+    rs = np.random.RandomState(328823)
+    y = rs.standard_normal((nobs,))
     y[-1] = 1.0
     try:
         assert np.isfinite(stat(y, trend=trend).stat)
@@ -768,7 +769,8 @@ def test_rank_checker(x):
 @pytest.mark.parametrize("nobs", list(range(1, 11)))
 @pytest.mark.parametrize("trend", ["c", "ct", "t"])
 def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
-    y = np.zeros((nobs,))
+    rs = np.random.RandomState(328823)
+    y = rs.standard_normal((nobs,))
     y[-1] = 1.0
     try:
         assert np.isfinite(ZivotAndrews(y, lags=2, trend=trend).stat)
