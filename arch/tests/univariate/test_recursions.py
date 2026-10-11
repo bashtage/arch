@@ -1460,6 +1460,15 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q,
         fu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
+    def test_fiaparch_updater_pickle(self):
+        # A newly constructed updater must round trip before
+        # initialize_update has been called, as happens when
+        # ARCHModel.fit copies the model
+        for module in (recpy, rec):
+            fu = module.FIAPARCHUpdater(1, 1, 1, 1000, True, 1.5)
+            fu = pickle.loads(pickle.dumps(fu))
+            assert isinstance(fu, module.FIAPARCHUpdater)
+
     def test_rm_2006(self):
         rm2006 = RiskMetrics2006()
         params = np.empty(0)

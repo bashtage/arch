@@ -40,3 +40,8 @@ Release 9.0 (Unreleased)
   ``kernel`` accept the same names, in any case and with hyphens or
   underscores ignored, and raise the same error, which lists the available
   kernels, for an unknown name.
+- Fixed ``FIAPARCH`` so that models can be estimated when the Cython
+  extension is not available. In previous versions ``fit`` raised an
+  ``AttributeError`` in pure-Python builds, since copying the model
+  pickles the volatility updater using an attribute that was only set
+  once the recursion had been initialized.
