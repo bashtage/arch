@@ -337,7 +337,8 @@ filterwarnings = [
   "error:seed is deprecated:FutureWarning",
   "error:get_state is deprecated:FutureWarning",
   "error:Conversion of an array with ndim:DeprecationWarning:arch",
-  "error:invalid value encountered in divide:RuntimeWarning"
+  "error:invalid value encountered in divide:RuntimeWarning",
+  # "error:DatetimeIndex.values returning an ndarray::",
 ]
 junit_family = "xunit2"
 markers = [
