@@ -25,7 +25,9 @@ jobs:
         python.version: '3.14'
       python310_win_numpy126:
         python.version: '3.10'
-        PACKAGES: 'numpy==1.26.4 scipy==1.11.4 pandas==2.1.4 statsmodels==0.14.1 matplotlib seaborn numba'
+        PACKAGES: 'numpy==1.26.4 scipy==1.11.4 pandas==2.1.4 statsmodels==0.14.1 matplotlib seaborn numba build'
+        # Legacy indicates uses numpy < 2
+        legacy: true
     maxParallel: 10
 
   steps:
@@ -36,28 +38,40 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
+      python -m venv arch-test
+      call arch-test\Scripts\activate.bat
       python -m pip install --upgrade pip wheel
       python -m pip install -r requirements-dev.txt -U
-      python -m pip install -r requirements.txt -U || exit /b 1
+      python -m pip install %PACKAGES% -r requirements.txt -U || exit /b 1
       python -m pip list
     displayName: 'Create Venv and Install dependencies'
 
   - script: |
+      call arch-test\Scripts\activate.bat
       python -m pip install -e . -vv --no-build-isolation
     displayName: 'Build Cython Extensions'
+    condition: ne(variables['legacy'], 'true')
 
   - script: |
       call arch-test\Scripts\activate.bat
-      if defined PACKAGES (
-        python -m pip install %PACKAGES%
-        python -m pip list
-      )
-    displayName: 'Install Legacy Packages'
+      python -m pip install . -v
+    displayName: 'Build Legacy Packages'
+    condition: eq(variables['legacy'], 'true')
 
   - script: |
       call arch-test\Scripts\activate.bat
       pytest arch -m "not slow" --junitxml=junit/test-results.xml -n auto --durations=25
     displayName: 'pytest'
+    condition: ne(variables['legacy'], 'true')
+
+  - script: |
+      call arch-test\Scripts\activate.bat
+      mkdir test_runner
+      cd test_runner
+      python -c "import arch; arch.test(['-n', 'auto', '-m', 'not slow', '--junitxml=junit/test-results.xml', '--durations=25'])"
+    displayName: 'pytest'
+    condition: eq(variables['legacy'], 'true')
+
 
   - task: PublishTestResults@2
     inputs:
