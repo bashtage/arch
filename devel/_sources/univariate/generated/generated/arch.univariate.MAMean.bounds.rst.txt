@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MAMean.bounds
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MAMean.bounds

@@ -1,0 +1,6 @@
+arch.univariate.MAMean.distribution
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MAMean.distribution

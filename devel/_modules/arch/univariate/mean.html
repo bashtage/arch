@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v8.0.1 (+183)</title>
+        <title>arch.univariate.mean - arch v8.0.1 (+191)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+183)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+183)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+191)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+191)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+183)
+            arch v8.0.1 (+191)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+183)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+183)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+191)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+191)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+183)
+    arch v8.0.1 (+191)
   </label>
   
     <div class="md-nav__source">
@@ -468,8 +468,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.lib.stride_tricks</span><span class="w"> </span><span class="kn">import</span> <span class="n">sliding_window_view</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizeResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">lfilter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.tsatools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lagmat</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -536,7 +538,16 @@
     <span class="n">parse_dataframe</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ARX"</span><span class="p">,</span> <span class="s2">"HARX"</span><span class="p">,</span> <span class="s2">"LS"</span><span class="p">,</span> <span class="s2">"ARCHInMean"</span><span class="p">,</span> <span class="s2">"ConstantMean"</span><span class="p">,</span> <span class="s2">"ZeroMean"</span><span class="p">,</span> <span class="s2">"arch_model"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"ARX"</span><span class="p">,</span>
+    <span class="s2">"HARX"</span><span class="p">,</span>
+    <span class="s2">"LS"</span><span class="p">,</span>
+    <span class="s2">"ARCHInMean"</span><span class="p">,</span>
+    <span class="s2">"ConstantMean"</span><span class="p">,</span>
+    <span class="s2">"MAMean"</span><span class="p">,</span>
+    <span class="s2">"ZeroMean"</span><span class="p">,</span>
+    <span class="s2">"arch_model"</span><span class="p">,</span>
+<span class="p">]</span>
 
 <span class="n">COV_TYPES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"white"</span><span class="p">:</span> <span class="s2">"White's Heteroskedasticity Consistent Estimator"</span><span class="p">,</span>
@@ -2555,6 +2566,649 @@
             <span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">*</span> <span class="n">trans_vol</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">y</span></div>
+
+
+
+<span class="c1"># The largest residual that is used when computing the likelihood of an MA</span>
+<span class="n">_MAX_MA_RESID</span> <span class="o">=</span> <span class="mf">1e100</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_invertible</span><span class="p">(</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">min_modulus</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.01</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Make the moving average polynomial invertible</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    theta : ndarray</span>
+<span class="sd">        The coefficients of the moving average polynomial</span>
+<span class="sd">        1 + theta[0] z + ... + theta[q-1] z^q.</span>
+<span class="sd">    min_modulus : float</span>
+<span class="sd">        The smallest modulus allowed for any root of the polynomial.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The coefficients of the polynomial where roots inside the unit circle</span>
+<span class="sd">        are reflected to the outside, and roots closer to the unit circle than</span>
+<span class="sd">        min_modulus are moved to min_modulus. This is theta if all roots</span>
+<span class="sd">        are already at least min_modulus away from the origin.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Reflecting a root, r -&gt; 1 / conj(r), keeps the autocovariance of the</span>
+<span class="sd">    process unchanged up to a scale for the innovation variance.</span>
+<span class="sd">    """</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roots</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">theta</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">roots</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">modulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">modulus</span> <span class="o">&gt;=</span> <span class="n">min_modulus</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">modulus</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">roots</span><span class="p">),</span> <span class="n">roots</span><span class="p">)</span>
+    <span class="n">modulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">modulus</span> <span class="o">&lt;</span> <span class="n">min_modulus</span><span class="p">,</span> <span class="n">roots</span> <span class="o">/</span> <span class="n">modulus</span> <span class="o">*</span> <span class="n">min_modulus</span><span class="p">,</span> <span class="n">roots</span><span class="p">)</span>
+    <span class="n">coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">roots</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[:</span> <span class="n">coefficients</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coefficients</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ma_starting_values</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">constant</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Starting values for a moving average using the Hannan-Rissanen method</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : ndarray</span>
+<span class="sd">        The data</span>
+<span class="sd">    lags : int</span>
+<span class="sd">        The order of the moving average</span>
+<span class="sd">    constant : bool</span>
+<span class="sd">        Whether the mean is estimated</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The sample mean, if constant, and the moving average coefficients</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    A long autoregression is estimated by OLS and its residuals are used in</span>
+<span class="sd">    place of the unobserved innovations in an OLS regression of y on lags</span>
+<span class="sd">    of the residuals. The coefficients are then made invertible. If the sample</span>
+<span class="sd">    is too small to estimate the regressions, the coefficients are 0.</span>
+<span class="sd">    """</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="k">if</span> <span class="n">constant</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">demeaned</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">mu</span>
+    <span class="n">long_ar</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">lags</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">nobs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))),</span> <span class="n">nobs</span> <span class="o">//</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">long_ar</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">nobs</span> <span class="o">-</span> <span class="n">long_ar</span> <span class="o">-</span> <span class="n">lags</span> <span class="o">&gt;</span> <span class="n">lags</span><span class="p">:</span>
+        <span class="n">ar_lags</span> <span class="o">=</span> <span class="n">sliding_window_view</span><span class="p">(</span><span class="n">demeaned</span><span class="p">,</span> <span class="n">long_ar</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ar_target</span> <span class="o">=</span> <span class="n">demeaned</span><span class="p">[</span><span class="n">long_ar</span><span class="p">:]</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">ar_lags</span><span class="p">,</span> <span class="n">ar_target</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">innovations</span> <span class="o">=</span> <span class="n">ar_target</span> <span class="o">-</span> <span class="n">ar_lags</span> <span class="o">@</span> <span class="n">phi</span>
+        <span class="n">ma_lags</span> <span class="o">=</span> <span class="n">sliding_window_view</span><span class="p">(</span><span class="n">innovations</span><span class="p">,</span> <span class="n">lags</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">ma_lags</span><span class="p">,</span> <span class="n">demeaned</span><span class="p">[</span><span class="n">long_ar</span> <span class="o">+</span> <span class="n">lags</span> <span class="p">:],</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">_make_invertible</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">mu</span><span class="p">,</span> <span class="n">theta</span><span class="p">]</span> <span class="k">if</span> <span class="n">constant</span> <span class="k">else</span> <span class="n">theta</span>
+
+
+<div class="viewcode-block" id="MAMean">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MAMean</span><span class="p">(</span><span class="n">ARCHModel</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Moving average (MA) mean model, with optional constant, model estimation,</span>
+<span class="sd">    simulation and forecasting</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : {ndarray, Series}, optional</span>
+<span class="sd">        nobs element vector containing the dependent variable</span>
+<span class="sd">    lags : int, optional</span>
+<span class="sd">        The order of the moving average, q. Must be at least 1.</span>
+<span class="sd">    constant : bool, optional</span>
+<span class="sd">        Flag whether the model should include a constant</span>
+<span class="sd">    hold_back : int, optional</span>
+<span class="sd">        Number of observations at the start of the sample to exclude when</span>
+<span class="sd">        estimating model parameters.</span>
+<span class="sd">    volatility : VolatilityProcess, optional</span>
+<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">    distribution : Distribution, optional</span>
+<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lags : int</span>
+<span class="sd">        The order of the moving average</span>
+<span class="sd">    constant : bool</span>
+<span class="sd">        Whether the model includes a constant</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The MA(q) model is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \ldots +</span>
+<span class="sd">             \theta_q \epsilon_{t-q}</span>
+
+<span class="sd">    where the innovations :math:`\epsilon_t=\sigma_t e_t` have the conditional</span>
+<span class="sd">    variance :math:`\sigma^2_t` of the volatility process and :math:`e_t` has</span>
+<span class="sd">    the distribution of the model. The parameters are ordered</span>
+<span class="sd">    :math:`[\mu, \theta_1, \ldots, \theta_q]`, and :math:`\mu` is not included</span>
+<span class="sd">    when ``constant`` is False.</span>
+
+<span class="sd">    The innovations are not observed. They are computed recursively using</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \epsilon_t = y_t - \mu - \theta_1 \epsilon_{t-1} - \ldots -</span>
+<span class="sd">                    \theta_q \epsilon_{t-q}</span>
+
+<span class="sd">    where the innovations before the first observation in the estimation sample</span>
+<span class="sd">    are 0. This is the conditional likelihood, and its effect vanishes when the</span>
+<span class="sd">    process is invertible, that is when all roots of</span>
+<span class="sd">    :math:`1+\theta_1 z+\ldots+\theta_q z^q` are outside of the unit circle.</span>
+<span class="sd">    Starting values are invertible. Invertibility is imposed when q is 1 or 2</span>
+<span class="sd">    (by bounds and linear constraints, respectively), but is not imposed for</span>
+<span class="sd">    larger q since the restrictions are nonlinear. The sample used to estimate</span>
+<span class="sd">    the parameters is also the sample used to compute the innovations, and so</span>
+<span class="sd">    observations excluded using ``hold_back`` or when fitting are not used.</span>
+
+<span class="sd">    The mean forecast of :math:`y_{T+h}` is</span>
+<span class="sd">    :math:`\mu + \sum_{j=h}^{q}\theta_j\epsilon_{T+h-j}`, which uses the last</span>
+<span class="sd">    :math:`q-h+1` innovations if :math:`h \leq q`, and is :math:`\mu` after</span>
+<span class="sd">    that. The forecast variance is</span>
+<span class="sd">    :math:`\sum_{j=0}^{h-1}\psi_j^2\sigma^2_{T+h-j}` with :math:`\psi_0=1`,</span>
+<span class="sd">    :math:`\psi_j=\theta_j` for :math:`j\leq q` and 0 otherwise.</span>
+
+<span class="sd">    Exogenous regressors are not supported.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Simulate an MA(2) with GARCH errors and estimate the parameters</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import GARCH, MAMean</span>
+<span class="sd">    &gt;&gt;&gt; model = MAMean(lags=2, volatility=GARCH())</span>
+<span class="sd">    &gt;&gt;&gt; params = np.array([0.1, 0.6, 0.2, 0.05, 0.1, 0.85])</span>
+<span class="sd">    &gt;&gt;&gt; sim_data = model.simulate(params, 1000)</span>
+<span class="sd">    &gt;&gt;&gt; model = MAMean(sim_data["data"], lags=2, volatility=GARCH())</span>
+<span class="sd">    &gt;&gt;&gt; res = model.fit(disp="off")</span>
+
+<span class="sd">    Forecasts from an MA(q) are not constant for the first q steps</span>
+
+<span class="sd">    &gt;&gt;&gt; forecasts = res.forecast(horizon=4, reindex=False)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">constant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">hold_back</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">volatility</span><span class="p">:</span> <span class="n">VolatilityProcess</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span>
+            <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span>
+            <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span>
+            <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">lags</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">))</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lags</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span>
+            <span class="ow">or</span> <span class="n">lags</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"lags must be a positive integer."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">constant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">"MA"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Generates the model description for use by __str__ and related</span>
+<span class="sd">        functions"""</span>
+        <span class="n">od</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"constant"</span><span class="p">:</span> <span class="s2">"yes"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="k">else</span> <span class="s2">"no"</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">include_lags</span><span class="p">:</span>
+            <span class="n">od</span><span class="p">[</span><span class="s2">"lags"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">)</span>
+        <span class="n">od</span><span class="p">[</span><span class="s2">"volatility"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="n">od</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">od</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_description</span><span class="p">()</span>
+        <span class="n">descr_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"("</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">descr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">and</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">descr_str</span> <span class="o">+=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">": "</span> <span class="o">+</span> <span class="n">val</span> <span class="o">+</span> <span class="s2">", "</span>
+        <span class="n">descr_str</span> <span class="o">=</span> <span class="n">descr_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Strip final ', '</span>
+        <span class="n">descr_str</span> <span class="o">+=</span> <span class="s2">")"</span>
+
+        <span class="k">return</span> <span class="n">descr_str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">", id: "</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""HTML representation for IPython Notebook"""</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_description</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"&lt;/strong&gt;("</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">descr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">": &lt;/strong&gt;"</span> <span class="o">+</span> <span class="n">val</span> <span class="o">+</span> <span class="s2">",</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="s2">"&lt;strong&gt;ID: &lt;/strong&gt; "</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">+</span> <span class="s2">")"</span>
+        <span class="k">return</span> <span class="n">html</span>
+
+<div class="viewcode-block" id="MAMean.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.parameter_names.html#arch.univariate.MAMean.parameter_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"mu"</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">names</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"theta[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="MAMean.num_params">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.num_params.html#arch.univariate.MAMean.num_params">[docs]</a>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the number of parameters</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span></div>
+
+
+<div class="viewcode-block" id="MAMean.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.bounds.html#arch.univariate.MAMean.bounds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct bounds for parameters to use in non-linear optimization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bounds : list (2-tuple of float)</span>
+<span class="sd">            Bounds for parameters to use in estimation. The coefficient of</span>
+<span class="sd">            an MA(1) is restricted to [-1, 1], which makes it invertible.</span>
+<span class="sd">        """</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bounds</span></div>
+
+
+<div class="viewcode-block" id="MAMean.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.constraints.html#arch.univariate.MAMean.constraints">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct linear constraint arrays for use in non-linear optimization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        a : ndarray</span>
+<span class="sd">            Number of constraints by number of parameters loading array</span>
+<span class="sd">        b : ndarray</span>
+<span class="sd">            Number of constraints array of lower bounds</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Parameters satisfy a.dot(parameters) - b &gt;= 0. The constraints make an</span>
+<span class="sd">        MA(2) invertible. There are no constraints for other orders.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">constraints</span><span class="p">()</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">))</span>
+        <span class="c1"># theta_1 + theta_2 &gt; -1, theta_2 - theta_1 &gt; -1, theta_2 &lt; 1</span>
+        <span class="n">a</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MAMean.resids">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.resids.html#arch.univariate.MAMean.resids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resids</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">regressors</span><span class="p">:</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike1D</span><span class="p">:</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="p">:]</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">lfilter</span><span class="p">([</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="p">],</span> <span class="n">_y</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">_MAX_MA_RESID</span><span class="p">):</span>
+            <span class="c1"># Parameters that are not invertible produce explosive residuals,</span>
+            <span class="c1"># which can be reached when the numerical optimizer takes a large</span>
+            <span class="c1"># step. Keep them finite so that the likelihood is very small</span>
+            <span class="c1"># instead of overflowing.</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+                <span class="n">resids</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="n">_MAX_MA_RESID</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="n">_MAX_MA_RESID</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="n">_MAX_MA_RESID</span>
+            <span class="p">)</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="o">-</span><span class="n">_MAX_MA_RESID</span><span class="p">,</span> <span class="n">_MAX_MA_RESID</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">tss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">tss</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">to_array_1d</span><span class="p">(</span><span class="n">params</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="o">/</span> <span class="n">tss</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_adjust_sample</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">first_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">last_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">_first_obs_index</span> <span class="o">=</span> <span class="n">cutoff_to_index</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">_first_obs_index</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span>
+        <span class="n">_last_obs_index</span> <span class="o">=</span> <span class="n">cutoff_to_index</span><span class="p">(</span><span class="n">last_obs</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">_last_obs_index</span> <span class="o">&lt;=</span> <span class="n">_first_obs_index</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"first_obs and last_obs produce an empty array."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">_first_obs_index</span><span class="p">,</span> <span class="n">_last_obs_index</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array1D"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">_first_obs_index</span><span class="p">:</span><span class="n">_last_obs_index</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Nothing is computed from the data when the model is created</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="MAMean.append">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.append.html#arch.univariate.MAMean.append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span><span class="p">:</span>
+            <span class="c1"># Match the default sample used by fit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Starting values of the model parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        params : ndarray</span>
+<span class="sd">            Array of parameters estimated by the Hannan-Rissanen method</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        There is no closed form estimator of an MA model, and so these are</span>
+<span class="sd">        used as starting values for the numerical optimizer.</span>
+<span class="sd">        """</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nobs</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Insufficient data, "</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">" parameters, "</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">" data points available"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_ma_starting_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"classic"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"robust"</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelResult</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">"MA models do not have a closed form estimator. The parameters are "</span>
+            <span class="s2">"estimated using numerical optimization."</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="MAMean.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.simulate.html#arch.univariate.MAMean.simulate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Simulates data from a moving average model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : array_like</span>
+<span class="sd">            Parameters to use when simulating the model.  Parameter order is</span>
+<span class="sd">            [mean volatility distribution] where the parameters of the mean</span>
+<span class="sd">            model are ordered [mu theta[1] ... theta[q]], and mu is not</span>
+<span class="sd">            included when the model does not have a constant.</span>
+<span class="sd">        nobs : int</span>
+<span class="sd">            Length of series to simulate</span>
+<span class="sd">        burn : int, optional</span>
+<span class="sd">            Number of values to simulate to initialize the model and remove</span>
+<span class="sd">            dependence on initial values.</span>
+<span class="sd">        initial_value : None</span>
+<span class="sd">            This value is not used. The innovations before the first</span>
+<span class="sd">            observation are 0.</span>
+<span class="sd">        x : None</span>
+<span class="sd">            This value is not used.</span>
+<span class="sd">        initial_value_vol : {ndarray, float}, optional</span>
+<span class="sd">            An array or scalar to use when initializing the volatility process.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        simulated_data : DataFrame</span>
+<span class="sd">            DataFrame with columns data containing the simulated values,</span>
+<span class="sd">            volatility, containing the conditional volatility and errors</span>
+<span class="sd">            containing the errors used in the simulation</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The innovations are the errors of the volatility process, and so the</span>
+<span class="sd">        conditional variance of the simulated data is a function of the</span>
+<span class="sd">        simulated innovations. With ``burn`` equal to 0, ``resids`` applied to</span>
+<span class="sd">        the simulated data returns the errors.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from arch.univariate import GARCH, MAMean</span>
+<span class="sd">        &gt;&gt;&gt; ma = MAMean(lags=2, volatility=GARCH())</span>
+<span class="sd">        &gt;&gt;&gt; ma_params = np.array([1.0, 0.5, 0.2])</span>
+<span class="sd">        &gt;&gt;&gt; garch_params = np.array([0.01, 0.07, 0.92])</span>
+<span class="sd">        &gt;&gt;&gt; params = np.concatenate((ma_params, garch_params))</span>
+<span class="sd">        &gt;&gt;&gt; sim_data = ma.simulate(params, 1000)</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Both initial value and x must be none when simulating a "</span>
+                <span class="s2">"moving average process."</span>
+            <span class="p">)</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span>
+        <span class="n">vc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">num_params</span>
+        <span class="n">dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">num_params</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array1D"</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mc</span> <span class="o">+</span> <span class="n">vc</span> <span class="o">+</span> <span class="n">dc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"params has the wrong number of elements. "</span>
+                <span class="sa">f</span><span class="s2">"Expected </span><span class="si">{</span><span class="n">mc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dc</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">sim_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
+            <span class="n">vp</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">dp</span><span class="p">),</span> <span class="n">burn</span><span class="p">,</span> <span class="n">initial_value_vol</span>
+        <span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">sim_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sim_values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">mp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">mp</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="p">:]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">lfilter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">errors</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"data"</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">burn</span><span class="p">:],</span> <span class="s2">"volatility"</span><span class="p">:</span> <span class="n">vol</span><span class="p">[</span><span class="n">burn</span><span class="p">:],</span> <span class="s2">"errors"</span><span class="p">:</span> <span class="n">errors</span><span class="p">[</span><span class="n">burn</span><span class="p">:]}</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MAMean.forecast">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.forecast.html#arch.univariate.MAMean.forecast">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">"analytic"</span><span class="p">,</span>
+        <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">reindex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelForecast</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">horizon</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="n">horizon</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"horizon must be an integer &gt;= 1."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">"x is not None but the model does not contain any exogenous variables."</span>
+            <span class="p">)</span>
+        <span class="c1"># Check start</span>
+        <span class="n">earliest</span><span class="p">,</span> <span class="n">default_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+        <span class="n">default_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">default_start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">start_index</span> <span class="o">=</span> <span class="n">cutoff_to_index</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">default_start</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">earliest</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Due to backcasting and/or data availability start cannot be less "</span>
+                <span class="s2">"than the index of the largest value in the right-hand-side "</span>
+                <span class="s2">"variables used to fit the first observation.  In this model, "</span>
+                <span class="sa">f</span><span class="s2">"this value is </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">earliest</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="c1"># Parse params</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">mp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">mp</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="p">:]</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span>
+
+        <span class="c1">#####################################</span>
+        <span class="c1"># Compute residual variance forecasts</span>
+        <span class="c1">#####################################</span>
+        <span class="c1"># Back cast should use only the sample used in fitting</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="c1"># The innovations start at 0 in the first observation of the fit sample</span>
+        <span class="n">full_resids</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array1D"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">earliest</span><span class="p">:]))</span>
+        <span class="p">)</span>
+        <span class="n">vb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">full_resids</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
+        <span class="n">variance_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">-</span> <span class="n">earliest</span><span class="p">)</span>
+        <span class="n">vfcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
+            <span class="n">vp</span><span class="p">,</span>
+            <span class="n">full_resids</span><span class="p">,</span>
+            <span class="n">backcast</span><span class="p">,</span>
+            <span class="n">vb</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">variance_start</span><span class="p">,</span>
+            <span class="n">horizon</span><span class="o">=</span><span class="n">horizon</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">simulations</span><span class="o">=</span><span class="n">simulations</span><span class="p">,</span>
+            <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">var_fcasts</span> <span class="o">=</span> <span class="n">vfcast</span><span class="o">.</span><span class="n">forecasts</span>
+        <span class="k">assert</span> <span class="n">var_fcasts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="n">earliest</span><span class="p">:</span>
+            <span class="c1"># Pad if asking for variance forecast before earliest available</span>
+            <span class="n">var_fcasts</span> <span class="o">=</span> <span class="n">_forecast_pad</span><span class="p">(</span><span class="n">earliest</span> <span class="o">-</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">var_fcasts</span><span class="p">)</span>
+
+        <span class="c1">######################</span>
+        <span class="c1"># Compute mean forecasts</span>
+        <span class="c1">######################</span>
+        <span class="c1"># padded[s + q] is the innovation at observation s, which is 0 before</span>
+        <span class="c1"># the first observation in the fit sample</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span>
+        <span class="n">padded</span><span class="p">[</span><span class="n">earliest</span> <span class="o">+</span> <span class="n">q</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">full_resids</span>
+        <span class="n">norigins</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="n">start_index</span>
+        <span class="n">mean_fcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">norigins</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">mu</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">first</span> <span class="o">=</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">h</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="n">q</span>
+                <span class="n">mean_fcast</span><span class="p">[:,</span> <span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">theta</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">padded</span><span class="p">[</span><span class="n">first</span> <span class="p">:</span> <span class="n">first</span> <span class="o">+</span> <span class="n">norigins</span><span class="p">]</span>
+
+        <span class="c1"># Compute total variance forecasts, which depend on model</span>
+        <span class="n">impulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">horizon</span><span class="p">)</span>
+        <span class="n">impulse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">nma</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">horizon</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">impulse</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">nma</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:</span><span class="n">nma</span><span class="p">]</span>
+        <span class="n">longrun_var_fcasts</span> <span class="o">=</span> <span class="n">var_fcasts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+            <span class="n">lrf</span> <span class="o">=</span> <span class="n">var_fcasts</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">impulse</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">longrun_var_fcasts</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lrf</span>
+        <span class="n">variance_paths</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mean_paths</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">shocks</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">long_run_variance_paths</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"simulation"</span><span class="p">,</span> <span class="s2">"bootstrap"</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vfcast</span><span class="o">.</span><span class="n">forecast_paths</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="n">variance_paths</span> <span class="o">=</span> <span class="n">vfcast</span><span class="o">.</span><span class="n">forecast_paths</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vfcast</span><span class="o">.</span><span class="n">shocks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="n">shocks</span> <span class="o">=</span> <span class="n">vfcast</span><span class="o">.</span><span class="n">shocks</span>
+            <span class="k">if</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="n">earliest</span><span class="p">:</span>
+                <span class="c1"># Pad if asking for variance forecast before earliest available</span>
+                <span class="n">variance_paths</span> <span class="o">=</span> <span class="n">_forecast_pad</span><span class="p">(</span><span class="n">earliest</span> <span class="o">-</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">variance_paths</span><span class="p">)</span>
+                <span class="n">shocks</span> <span class="o">=</span> <span class="n">_forecast_pad</span><span class="p">(</span><span class="n">earliest</span> <span class="o">-</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span>
+
+            <span class="n">long_run_variance_paths</span> <span class="o">=</span> <span class="n">variance_paths</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+                <span class="n">_impulses</span> <span class="o">=</span> <span class="n">impulse</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="n">lrvp</span> <span class="o">=</span> <span class="n">variance_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_impulses</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">lrvp</span> <span class="o">=</span> <span class="n">lrvp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">long_run_variance_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lrvp</span>
+
+            <span class="c1"># The last q innovations at each origin followed by the shocks</span>
+            <span class="n">nsim</span> <span class="o">=</span> <span class="n">shocks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">sliding_window_view</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="n">q</span><span class="p">)[</span><span class="n">start_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:][:</span><span class="n">norigins</span><span class="p">]</span>
+            <span class="n">all_shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">norigins</span><span class="p">,</span> <span class="n">nsim</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+            <span class="n">all_shocks</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">history</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">all_shocks</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">q</span><span class="p">:]</span> <span class="o">=</span> <span class="n">shocks</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">horizon</span><span class="p">]</span>
+            <span class="n">mean_paths</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">all_shocks</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">q</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">mean_paths</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">mean_paths</span>
+                    <span class="o">+</span> <span class="n">theta</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">all_shocks</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">q</span> <span class="o">-</span> <span class="n">j</span> <span class="p">:</span> <span class="n">q</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">reindex</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">reindex</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">reindex</span>
+        <span class="k">return</span> <span class="n">ARCHModelForecast</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span>
+            <span class="n">start_index</span><span class="p">,</span>
+            <span class="n">mean_fcast</span><span class="p">,</span>
+            <span class="n">longrun_var_fcasts</span><span class="p">,</span>
+            <span class="n">var_fcasts</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="n">align</span><span class="p">,</span>
+            <span class="n">simulated_paths</span><span class="o">=</span><span class="n">mean_paths</span><span class="p">,</span>
+            <span class="n">simulated_residuals</span><span class="o">=</span><span class="n">shocks</span><span class="p">,</span>
+            <span class="n">simulated_variances</span><span class="o">=</span><span class="n">long_run_variance_paths</span><span class="p">,</span>
+            <span class="n">simulated_residual_variances</span><span class="o">=</span><span class="n">variance_paths</span><span class="p">,</span>
+            <span class="n">reindex</span><span class="o">=</span><span class="n">reindex</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
 
 
 

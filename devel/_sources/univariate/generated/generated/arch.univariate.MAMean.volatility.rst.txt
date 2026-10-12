@@ -1,0 +1,6 @@
+arch.univariate.MAMean.volatility
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MAMean.volatility
