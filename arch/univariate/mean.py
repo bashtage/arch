@@ -9,8 +9,10 @@ from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 import pandas as pd
 from scipy.optimize import OptimizeResult
+from scipy.signal import lfilter
 from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import (
@@ -77,7 +79,16 @@ from arch.utility.array import (
     parse_dataframe,
 )
 
-__all__ = ["ARX", "HARX", "LS", "ARCHInMean", "ConstantMean", "ZeroMean", "arch_model"]
+__all__ = [
+    "ARX",
+    "HARX",
+    "LS",
+    "ARCHInMean",
+    "ConstantMean",
+    "MAMean",
+    "ZeroMean",
+    "arch_model",
+]
 
 COV_TYPES = {
     "white": "White's Heteroskedasticity Consistent Estimator",
@@ -2025,6 +2036,622 @@ class ARCHInMean(ARX):
             y[t] += parameters[ind] * trans_vol[t] + errors[t]
 
         return y
+
+
+# The largest residual that is used when computing the likelihood of an MA
+_MAX_MA_RESID = 1e100
+
+
+def _make_invertible(
+    theta: Float64Array1D, min_modulus: float = 1.01
+) -> Float64Array1D:
+    """
+    Make the moving average polynomial invertible
+
+    Parameters
+    ----------
+    theta : ndarray
+        The coefficients of the moving average polynomial
+        1 + theta[0] z + ... + theta[q-1] z^q.
+    min_modulus : float
+        The smallest modulus allowed for any root of the polynomial.
+
+    Returns
+    -------
+    ndarray
+        The coefficients of the polynomial where roots inside the unit circle
+        are reflected to the outside, and roots closer to the unit circle than
+        min_modulus are moved to min_modulus. This is theta if all roots
+        are already at least min_modulus away from the origin.
+
+    Notes
+    -----
+    Reflecting a root, r -> 1 / conj(r), keeps the autocovariance of the
+    process unchanged up to a scale for the innovation variance.
+    """
+    theta = np.asarray(theta, dtype=float)
+    q = theta.shape[0]
+    if q == 0:
+        return theta.copy()
+    if not np.all(np.isfinite(theta)):
+        return np.zeros(q)
+    roots = np.roots(np.r_[theta[::-1], 1.0])
+    if roots.shape[0] == 0:
+        return theta.copy()
+    modulus = np.abs(roots)
+    if np.all(modulus >= min_modulus):
+        return theta.copy()
+    roots = np.where(modulus < 1.0, 1.0 / np.conj(roots), roots)
+    modulus = np.abs(roots)
+    roots = np.where(modulus < min_modulus, roots / modulus * min_modulus, roots)
+    coefficients = np.poly(1.0 / roots).real
+    out = np.zeros(q)
+    out[: coefficients.shape[0] - 1] = coefficients[1:]
+    return out
+
+
+def _ma_starting_values(y: Float64Array1D, lags: int, constant: bool) -> Float64Array1D:
+    """
+    Starting values for a moving average using the Hannan-Rissanen method
+
+    Parameters
+    ----------
+    y : ndarray
+        The data
+    lags : int
+        The order of the moving average
+    constant : bool
+        Whether the mean is estimated
+
+    Returns
+    -------
+    ndarray
+        The sample mean, if constant, and the moving average coefficients
+
+    Notes
+    -----
+    A long autoregression is estimated by OLS and its residuals are used in
+    place of the unobserved innovations in an OLS regression of y on lags
+    of the residuals. The coefficients are then made invertible. If the sample
+    is too small to estimate the regressions, the coefficients are 0.
+    """
+    nobs = y.shape[0]
+    mu = float(np.mean(y)) if constant else 0.0
+    demeaned = y - mu
+    long_ar = int(min(max(2 * lags, round(10 * np.log10(max(nobs, 1)))), nobs // 4))
+    theta = np.zeros(lags)
+    if long_ar >= 1 and nobs - long_ar - lags > lags:
+        ar_lags = sliding_window_view(demeaned, long_ar)[:-1, ::-1]
+        ar_target = demeaned[long_ar:]
+        phi = np.linalg.lstsq(ar_lags, ar_target, rcond=None)[0]
+        innovations = ar_target - ar_lags @ phi
+        ma_lags = sliding_window_view(innovations, lags)[:-1, ::-1]
+        theta = np.linalg.lstsq(ma_lags, demeaned[long_ar + lags :], rcond=None)[0]
+        theta = _make_invertible(theta)
+    return np.r_[mu, theta] if constant else theta
+
+
+class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
+    r"""
+    Moving average (MA) mean model, with optional constant, model estimation,
+    simulation and forecasting
+
+    Parameters
+    ----------
+    y : {ndarray, Series}, optional
+        nobs element vector containing the dependent variable
+    lags : int, optional
+        The order of the moving average, q. Must be at least 1.
+    constant : bool, optional
+        Flag whether the model should include a constant
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        then y is rescaled and the new scale is reported in the estimation results.
+
+    Attributes
+    ----------
+    lags : int
+        The order of the moving average
+    constant : bool
+        Whether the model includes a constant
+
+    Notes
+    -----
+    The MA(q) model is
+
+    .. math::
+
+       y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \ldots +
+             \theta_q \epsilon_{t-q}
+
+    where the innovations :math:`\epsilon_t=\sigma_t e_t` have the conditional
+    variance :math:`\sigma^2_t` of the volatility process and :math:`e_t` has
+    the distribution of the model. The parameters are ordered
+    :math:`[\mu, \theta_1, \ldots, \theta_q]`, and :math:`\mu` is not included
+    when ``constant`` is False.
+
+    The innovations are not observed. They are computed recursively using
+
+    .. math::
+
+       \epsilon_t = y_t - \mu - \theta_1 \epsilon_{t-1} - \ldots -
+                    \theta_q \epsilon_{t-q}
+
+    where the innovations before the first observation in the estimation sample
+    are 0. This is the conditional likelihood, and its effect vanishes when the
+    process is invertible, that is when all roots of
+    :math:`1+\theta_1 z+\ldots+\theta_q z^q` are outside of the unit circle.
+    Starting values are invertible. Invertibility is imposed when q is 1 or 2
+    (by bounds and linear constraints, respectively), but is not imposed for
+    larger q since the restrictions are nonlinear. The sample used to estimate
+    the parameters is also the sample used to compute the innovations, and so
+    observations excluded using ``hold_back`` or when fitting are not used.
+
+    The mean forecast of :math:`y_{T+h}` is
+    :math:`\mu + \sum_{j=h}^{q}\theta_j\epsilon_{T+h-j}`, which uses the last
+    :math:`q-h+1` innovations if :math:`h \leq q`, and is :math:`\mu` after
+    that. The forecast variance is
+    :math:`\sum_{j=0}^{h-1}\psi_j^2\sigma^2_{T+h-j}` with :math:`\psi_0=1`,
+    :math:`\psi_j=\theta_j` for :math:`j\leq q` and 0 otherwise.
+
+    Exogenous regressors are not supported.
+
+    Examples
+    --------
+    Simulate an MA(2) with GARCH errors and estimate the parameters
+
+    >>> import numpy as np
+    >>> from arch.univariate import GARCH, MAMean
+    >>> model = MAMean(lags=2, volatility=GARCH())
+    >>> params = np.array([0.1, 0.6, 0.2, 0.05, 0.1, 0.85])
+    >>> sim_data = model.simulate(params, 1000)
+    >>> model = MAMean(sim_data["data"], lags=2, volatility=GARCH())
+    >>> res = model.fit(disp="off")
+
+    Forecasts from an MA(q) are not constant for the first q steps
+
+    >>> forecasts = res.forecast(horizon=4, reindex=False)
+    """
+
+    def __init__(
+        self,
+        y: ArrayLike | None = None,
+        lags: int = 1,
+        constant: bool = True,
+        hold_back: int | None = None,
+        volatility: VolatilityProcess | None = None,
+        distribution: Distribution | None = None,
+        rescale: bool | None = None,
+    ) -> None:
+        super().__init__(
+            y,
+            hold_back=hold_back,
+            volatility=volatility,
+            distribution=distribution,
+            rescale=rescale,
+        )
+        if (
+            isinstance(lags, (bool, np.bool_))
+            or not isinstance(lags, (int, np.integer))
+            or lags < 1
+        ):
+            raise ValueError("lags must be a positive integer.")
+        self.lags: int = int(lags)
+        self.constant: bool = bool(constant)
+        self._name = "MA"
+
+    def _model_description(self, include_lags: bool = True) -> dict[str, str]:
+        """Generates the model description for use by __str__ and related
+        functions"""
+        od = {"constant": "yes" if self.constant else "no"}
+        if include_lags:
+            od["lags"] = str(self.lags)
+        od["volatility"] = self.volatility.__str__()
+        od["distribution"] = self.distribution.__str__()
+        return od
+
+    def __str__(self) -> str:
+        descr = self._model_description()
+        descr_str = self.name + "("
+        for key, val in descr.items():
+            if val and key:
+                descr_str += key + ": " + val + ", "
+        descr_str = descr_str[:-2]  # Strip final ', '
+        descr_str += ")"
+
+        return descr_str
+
+    def __repr__(self) -> str:
+        return self.__str__() + ", id: " + hex(id(self))
+
+    def _repr_html_(self) -> str:
+        """HTML representation for IPython Notebook"""
+        descr = self._model_description()
+        html = "<strong>" + self.name + "</strong>("
+        for key, val in descr.items():
+            html += "<strong>" + key + ": </strong>" + val + ",\n"
+        html += "<strong>ID: </strong> " + hex(id(self)) + ")"
+        return html
+
+    def parameter_names(self) -> list[str]:
+        names = ["mu"] if self.constant else []
+        return names + [f"theta[{i}]" for i in range(1, self.lags + 1)]
+
+    @cached_property
+    def num_params(self) -> int:
+        """
+        Returns the number of parameters
+        """
+        return int(self.constant) + self.lags
+
+    def bounds(self) -> list[tuple[float, float]]:
+        """
+        Construct bounds for parameters to use in non-linear optimization
+
+        Returns
+        -------
+        bounds : list (2-tuple of float)
+            Bounds for parameters to use in estimation. The coefficient of
+            an MA(1) is restricted to [-1, 1], which makes it invertible.
+        """
+        bounds = super().bounds()
+        if self.lags == 1:
+            bounds[-1] = (-1.0, 1.0)
+        return bounds
+
+    def constraints(self) -> tuple[Float64Array, Float64Array1D]:
+        """
+        Construct linear constraint arrays for use in non-linear optimization
+
+        Returns
+        -------
+        a : ndarray
+            Number of constraints by number of parameters loading array
+        b : ndarray
+            Number of constraints array of lower bounds
+
+        Notes
+        -----
+        Parameters satisfy a.dot(parameters) - b >= 0. The constraints make an
+        MA(2) invertible. There are no constraints for other orders.
+        """
+        if self.lags != 2:
+            return super().constraints()
+        a = np.zeros((3, self.num_params))
+        # theta_1 + theta_2 > -1, theta_2 - theta_1 > -1, theta_2 < 1
+        a[:, -2:] = np.array([[1.0, 1.0], [-1.0, 1.0], [0.0, -1.0]])
+        return a, np.array([-1.0, -1.0, -1.0])
+
+    def resids(
+        self,
+        params: Float64Array1D,
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
+        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
+        mu = params[0] if self.constant else 0.0
+        theta = params[int(self.constant) :]
+        resids = lfilter([1.0], np.r_[1.0, theta], _y - mu)
+        if not np.all(np.abs(resids) < _MAX_MA_RESID):
+            # Parameters that are not invertible produce explosive residuals,
+            # which can be reached when the numerical optimizer takes a large
+            # step. Keep them finite so that the likelihood is very small
+            # instead of overflowing.
+            resids = np.nan_to_num(
+                resids, nan=_MAX_MA_RESID, posinf=_MAX_MA_RESID, neginf=-_MAX_MA_RESID
+            )
+            resids = np.clip(resids, -_MAX_MA_RESID, _MAX_MA_RESID)
+        return to_array_1d(resids)
+
+    def _r2(self, params: ArrayLike1D) -> float:
+        y = self._fit_y
+        if self.constant:
+            y = y - np.mean(y)
+        tss = float(y.dot(y))
+        if tss <= 0.0:
+            return np.nan
+        e = to_array_1d(self.resids(to_array_1d(params)))
+
+        return 1.0 - float(e.T.dot(e)) / tss
+
+    def _adjust_sample(
+        self,
+        first_obs: int | DateLike | None,
+        last_obs: int | DateLike | None,
+    ) -> None:
+        index = self._y_series.index
+        _first_obs_index = cutoff_to_index(first_obs, index, 0)
+        _first_obs_index += self._hold_back
+        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
+        if _last_obs_index <= _first_obs_index:
+            raise ValueError("first_obs and last_obs produce an empty array.")
+        self._fit_indices = [_first_obs_index, _last_obs_index]
+        self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
+        self.volatility.start, self.volatility.stop = self._fit_indices
+
+    def _scale_changed(self) -> None:
+        # Nothing is computed from the data when the model is created
+        pass
+
+    def append(
+        self,
+        y: ArrayLike | float,
+        x: ArrayLike | ArrayLike2D | None = None,
+    ) -> None:
+        super().append(y, x)
+        if self._y.shape[0] > self._hold_back:
+            # Match the default sample used by fit
+            self._adjust_sample(None, None)
+
+    def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
+        """
+        Starting values of the model parameters
+
+        Returns
+        -------
+        params : ndarray
+            Array of parameters estimated by the Hannan-Rissanen method
+
+        Notes
+        -----
+        There is no closed form estimator of an MA model, and so these are
+        used as starting values for the numerical optimizer.
+        """
+        nobs = self._fit_y.shape[0]
+        if nobs < self.num_params:
+            raise ValueError(
+                "Insufficient data, "
+                + str(self.num_params)
+                + " parameters, "
+                + str(nobs)
+                + " data points available"
+            )
+        return _ma_starting_values(self._fit_y, self.lags, self.constant)
+
+    def _fit_no_arch_normal_errors(
+        self, cov_type: Literal["robust", "classic"] = "robust"
+    ) -> ARCHModelResult:
+        raise NotImplementedError(
+            "MA models do not have a closed form estimator. The parameters are "
+            "estimated using numerical optimization."
+        )
+
+    def simulate(
+        self,
+        params: ArrayLike1D | Sequence[float],
+        nobs: int,
+        burn: int = 500,
+        initial_value: float | Float64Array | None = None,
+        x: ArrayLike | ArrayLike2D | None = None,
+        initial_value_vol: float | Float64Array | None = None,
+    ) -> pd.DataFrame:
+        """
+        Simulates data from a moving average model
+
+        Parameters
+        ----------
+        params : array_like
+            Parameters to use when simulating the model.  Parameter order is
+            [mean volatility distribution] where the parameters of the mean
+            model are ordered [mu theta[1] ... theta[q]], and mu is not
+            included when the model does not have a constant.
+        nobs : int
+            Length of series to simulate
+        burn : int, optional
+            Number of values to simulate to initialize the model and remove
+            dependence on initial values.
+        initial_value : None
+            This value is not used. The innovations before the first
+            observation are 0.
+        x : None
+            This value is not used.
+        initial_value_vol : {ndarray, float}, optional
+            An array or scalar to use when initializing the volatility process.
+
+        Returns
+        -------
+        simulated_data : DataFrame
+            DataFrame with columns data containing the simulated values,
+            volatility, containing the conditional volatility and errors
+            containing the errors used in the simulation
+
+        Notes
+        -----
+        The innovations are the errors of the volatility process, and so the
+        conditional variance of the simulated data is a function of the
+        simulated innovations. With ``burn`` equal to 0, ``resids`` applied to
+        the simulated data returns the errors.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from arch.univariate import GARCH, MAMean
+        >>> ma = MAMean(lags=2, volatility=GARCH())
+        >>> ma_params = np.array([1.0, 0.5, 0.2])
+        >>> garch_params = np.array([0.01, 0.07, 0.92])
+        >>> params = np.concatenate((ma_params, garch_params))
+        >>> sim_data = ma.simulate(params, 1000)
+        """
+        if initial_value is not None or x is not None:
+            raise ValueError(
+                "Both initial value and x must be none when simulating a "
+                "moving average process."
+            )
+        mc = self.num_params
+        vc = self.volatility.num_params
+        dc = self.distribution.num_params
+        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
+        if params.shape[0] != mc + vc + dc:
+            raise ValueError(
+                "params has the wrong number of elements. "
+                f"Expected {mc + vc + dc}, got {params.shape[0]}"
+            )
+        mp, vp, dp = self._parse_parameters(params)
+
+        sim_values = self.volatility.simulate(
+            vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol
+        )
+        errors = sim_values[0]
+        vol = np.sqrt(sim_values[1])
+        mu = mp[0] if self.constant else 0.0
+        theta = mp[int(self.constant) :]
+        y = mu + lfilter(np.r_[1.0, theta], [1.0], errors)
+        df = {"data": y[burn:], "volatility": vol[burn:], "errors": errors[burn:]}
+
+        return pd.DataFrame(df)
+
+    def forecast(
+        self,
+        params: ArrayLike1D,
+        horizon: int = 1,
+        start: int | DateLike | None = None,
+        align: Literal["origin", "target"] = "origin",
+        method: ForecastingMethod = "analytic",
+        simulations: int = 1000,
+        rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
+        random_state: np.random.RandomState | None = None,
+        *,
+        reindex: bool = False,
+        x: dict[Label, ArrayLike] | ArrayLike | None = None,
+    ) -> ARCHModelForecast:
+        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1.")
+        if x is not None:
+            raise TypeError(
+                "x is not None but the model does not contain any exogenous variables."
+            )
+        # Check start
+        earliest, default_start = self._fit_indices
+        default_start = max(0, default_start - 1)
+        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        if start_index < (earliest - 1):
+            raise ValueError(
+                "Due to backcasting and/or data availability start cannot be less "
+                "than the index of the largest value in the right-hand-side "
+                "variables used to fit the first observation.  In this model, "
+                f"this value is {max(0, earliest - 1)}."
+            )
+        # Parse params
+        params = to_array_1d(params)
+        mp, vp, dp = self._parse_parameters(params)
+        mu = mp[0] if self.constant else 0.0
+        theta = mp[int(self.constant) :]
+        q = self.lags
+
+        #####################################
+        # Compute residual variance forecasts
+        #####################################
+        # Back cast should use only the sample used in fitting
+        resids = self.resids(mp)
+        backcast = self._volatility.backcast(resids)
+        # The innovations start at 0 in the first observation of the fit sample
+        full_resids = to_array_1d(
+            self.resids(mp, cast("Float64Array1D", self._y[earliest:]))
+        )
+        vb = self._volatility.variance_bounds(full_resids, 2.0)
+        if rng is None:
+            rng = self._distribution.simulate(dp)
+        variance_start = max(0, start_index - earliest)
+        vfcast = self._volatility.forecast(
+            vp,
+            full_resids,
+            backcast,
+            vb,
+            start=variance_start,
+            horizon=horizon,
+            method=method,
+            simulations=simulations,
+            rng=rng,
+            random_state=random_state,
+        )
+        var_fcasts = vfcast.forecasts
+        assert var_fcasts is not None
+        if start_index < earliest:
+            # Pad if asking for variance forecast before earliest available
+            var_fcasts = _forecast_pad(earliest - start_index, var_fcasts)
+
+        ######################
+        # Compute mean forecasts
+        ######################
+        # padded[s + q] is the innovation at observation s, which is 0 before
+        # the first observation in the fit sample
+        nobs = self._y.shape[0]
+        padded = np.zeros(nobs + q)
+        padded[earliest + q :] = full_resids
+        norigins = nobs - start_index
+        mean_fcast = np.full((norigins, horizon), mu)
+        for h in range(1, min(q, horizon) + 1):
+            for j in range(h, q + 1):
+                first = start_index + h - j + q
+                mean_fcast[:, h - 1] += theta[j - 1] * padded[first : first + norigins]
+
+        # Compute total variance forecasts, which depend on model
+        impulse = np.zeros(horizon)
+        impulse[0] = 1.0
+        nma = min(q, horizon - 1)
+        impulse[1 : nma + 1] = theta[:nma]
+        longrun_var_fcasts = var_fcasts.copy()
+        for i in range(horizon):
+            lrf = var_fcasts[:, : (i + 1)].dot(impulse[i::-1] ** 2)
+            longrun_var_fcasts[:, i] = lrf
+        variance_paths: Float64Array | None = None
+        mean_paths: Float64Array | None = None
+        shocks: Float64Array | None = None
+        long_run_variance_paths: Float64Array | None = None
+        if method.lower() in ("simulation", "bootstrap"):
+            assert isinstance(vfcast.forecast_paths, np.ndarray)
+            variance_paths = vfcast.forecast_paths
+            assert isinstance(vfcast.shocks, np.ndarray)
+            shocks = vfcast.shocks
+            if start_index < earliest:
+                # Pad if asking for variance forecast before earliest available
+                variance_paths = _forecast_pad(earliest - start_index, variance_paths)
+                shocks = _forecast_pad(earliest - start_index, shocks)
+
+            long_run_variance_paths = variance_paths.copy()
+            for i in range(horizon):
+                _impulses = impulse[i::-1][:, None]
+                lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses**2)
+                lrvp = lrvp[:, :, 0]
+                long_run_variance_paths[:, :, i] = lrvp
+
+            # The last q innovations at each origin followed by the shocks
+            nsim = shocks.shape[1]
+            history = sliding_window_view(padded, q)[start_index + 1 :][:norigins]
+            all_shocks = np.empty((norigins, nsim, q + horizon))
+            all_shocks[:, :, :q] = history[:, None, :]
+            all_shocks[:, :, q:] = shocks[:, :, :horizon]
+            mean_paths = mu + all_shocks[:, :, q:]
+            for j in range(1, q + 1):
+                mean_paths = (
+                    mean_paths
+                    + theta[j - 1] * all_shocks[:, :, q - j : q - j + horizon]
+                )
+
+        index = self._y_series.index
+        reindex = True if reindex is None else reindex
+        return ARCHModelForecast(
+            index,
+            start_index,
+            mean_fcast,
+            longrun_var_fcasts,
+            var_fcasts,
+            align=align,
+            simulated_paths=mean_paths,
+            simulated_residuals=shocks,
+            simulated_variances=long_run_variance_paths,
+            simulated_residual_variances=variance_paths,
+            reindex=reindex,
+        )
 
 
 def arch_model(

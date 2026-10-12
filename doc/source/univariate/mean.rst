@@ -17,6 +17,7 @@ All ARCH models start by specifying a mean model.
    ARX
    HARX
    LS
+   MAMean
 
 (G)ARCH-in-mean Models
 ----------------------

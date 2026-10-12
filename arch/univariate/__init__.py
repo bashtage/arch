@@ -15,6 +15,7 @@ from arch.univariate.mean import (
     LS,
     ARCHInMean,
     ConstantMean,
+    MAMean,
     ZeroMean,
     arch_model,
 )
@@ -57,6 +58,7 @@ __all__ = [
     "EWMAVariance",
     "FixedVariance",
     "GeneralizedError",
+    "MAMean",
     "MIDASHyperbolic",
     "Normal",
     "RiskMetrics2006",

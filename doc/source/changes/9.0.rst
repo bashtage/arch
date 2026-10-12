@@ -45,3 +45,7 @@ Release 9.0 (Unreleased)
   ``AttributeError`` in pure-Python builds, since copying the model
   pickles the volatility updater using an attribute that was only set
   once the recursion had been initialized.
+- Added :class:`~arch.univariate.MAMean`, a moving average mean model of
+  order q with an optional constant that can be used with any volatility
+  process and distribution. Analytic, simulation and bootstrap forecasts
+  include the moving average terms for the first q steps.
