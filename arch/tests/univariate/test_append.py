@@ -1045,7 +1045,8 @@ def test_arch_in_mean(vol, form):
 
 def test_hold_back():
     mod = HARXWrapper(SMALL_initial, volatility=GARCH(), hold_back=20)
-    assert mod._fit_indices == [0, 500]
+    # The default sample is set when the model is created
+    assert mod._fit_indices == [20, 500]
     mod.append(SMALL_append)
     assert mod._fit_indices == [20, 700]
     assert mod._fit_y.shape[0] == 680

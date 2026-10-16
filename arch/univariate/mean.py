@@ -5,6 +5,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
+import operator
 from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
@@ -162,6 +163,24 @@ def _ar_to_impulse(steps: int, params: Float64Array) -> Float64Array:
         impulse[i] = impulse[st:i].dot(params[k::-1])
 
     return impulse
+
+
+def _check_simulation_params(
+    model: ARCHModel, params: ArrayLike1D | Sequence[float]
+) -> Float64Array1D:
+    """Convert params to a 1-d array and check the number of parameters"""
+    _params = cast("Float64Array1D", ensure1d(params, "params", False).astype(float))
+    num_params = (
+        int(model.num_params)
+        + int(model.volatility.num_params)
+        + int(model.distribution.num_params)
+    )
+    if _params.shape[0] != num_params:
+        raise ValueError(
+            "params has the wrong number of elements. "
+            f"Expected {num_params}, got {_params.shape[0]}"
+        )
+    return _params
 
 
 class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
@@ -323,6 +342,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             self._hold_back = max_lags
 
         self._init_model()
+        if self._y.shape[0] > self._hold_back:
+            # Use the complete sample, subject to hold_back, as fit does by
+            # default, so that the model can be used before it is fit
+            self._adjust_sample(None, None)
 
     def _prepare_append_x(
         self, x: ArrayLike | ArrayLike2D | None, nobs_new: int
@@ -614,6 +637,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulation.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1333,11 +1359,16 @@ class ConstantMean(HARX):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used.
+            Must be None, since there are no mean dynamics. A ValueError is
+            raised if it is not None.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1365,7 +1396,7 @@ class ConstantMean(HARX):
                 "simulating a constant mean process."
             )
 
-        mp, vp, dp = self._parse_parameters(params)
+        mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
         sim_values = self.volatility.simulate(
             vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol
@@ -1480,11 +1511,16 @@ class ZeroMean(HARX):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used.
+            Must be None, since there are no mean dynamics. A ValueError is
+            raised if it is not None.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1509,11 +1545,11 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
-        _params = ensure1d(params, "params", False).astype(float)
+        _params = _check_simulation_params(self, params)
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "
-                "simulating a constant mean process."
+                "simulating a zero mean process."
             )
 
         _, vp, dp = self._parse_parameters(_params)
@@ -2473,12 +2509,16 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used. The innovations before the first
-            observation are 0.
+            Must be None. A ValueError is raised if it is not None. The
+            innovations before the first observation are 0.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -2677,6 +2717,14 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
 
 
+def _scalar_int(value: Any, name: str, suffix: str = "") -> int:
+    """Convert an integer or NumPy integer to int, otherwise raise a TypeError"""
+    try:
+        return operator.index(value)
+    except TypeError as exc:
+        raise TypeError(f"{name} must be a scalar int{suffix}.") from exc
+
+
 def arch_model(
     y: ArrayLike | None,
     x: ArrayLike | ArrayLike2D | None = None,
@@ -2831,40 +2879,29 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol_model in (
-        "arch",
-        "garch",
-        "figarch",
-        "fiaparch",
-        "egarch",
-        "aparch",
-    ) and not isinstance(p, int):
-        raise TypeError(
-            "p must be a scalar int for all volatility processes except HARCH."
-        )
-
     if vol_model == "constant":
         v: VolatilityProcess = ConstantVariance()
-    elif vol_model == "arch":
-        assert isinstance(p, int)
-        v = ARCH(p=p)
-    elif vol_model == "figarch":
-        assert isinstance(p, int)
-        v = FIGARCH(p=p, q=q, power=power)
-    elif vol_model == "garch":
-        assert isinstance(p, int)
-        v = GARCH(p=p, o=o, q=q, power=power)
-    elif vol_model == "egarch":
-        assert isinstance(p, int)
-        v = EGARCH(p=p, o=o, q=q)
-    elif vol_model == "fiaparch":
-        assert isinstance(p, int)
-        v = FIAPARCH(p=p, o=o, q=q)
-    elif vol_model == "aparch":
-        assert isinstance(p, int)
-        v = APARCH(p=p, o=o, q=q)
-    else:  # vol == 'harch'
+    elif vol_model == "harch":
         v = HARCH(lags=p)
+    else:
+        # p, o and q must be integers, which includes NumPy integers
+        p = _scalar_int(p, "p", " for all volatility processes except HARCH")
+        if vol_model in ("garch", "egarch", "aparch", "fiaparch"):
+            o = _scalar_int(o, "o")
+        if vol_model != "arch":
+            q = _scalar_int(q, "q")
+        if vol_model == "arch":
+            v = ARCH(p=p)
+        elif vol_model == "figarch":
+            v = FIGARCH(p=p, q=q, power=power)
+        elif vol_model == "garch":
+            v = GARCH(p=p, o=o, q=q, power=power)
+        elif vol_model == "egarch":
+            v = EGARCH(p=p, o=o, q=q)
+        elif vol_model == "fiaparch":
+            v = FIAPARCH(p=p, o=o, q=q)
+        else:  # vol == 'aparch'
+            v = APARCH(p=p, o=o, q=q)
 
     if dist_name in ("skewstudent", "skewt"):
         d: Distribution = SkewStudent()

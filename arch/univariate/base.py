@@ -992,7 +992,8 @@ class ARCHModel(metaclass=ABCMeta):
         args = (sigma2, backcast, var_bounds)
         ineq_constraints = constraint(a, b)
 
-        options = {} if options is None else options
+        # Copy so that the caller's dict is not modified
+        options = {} if options is None else dict(options)
         options.setdefault("disp", disp_flag)
         with warnings.catch_warnings():
             warnings.filterwarnings(
@@ -1295,10 +1296,10 @@ class ARCHModel(metaclass=ABCMeta):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (model.x is not None), then
-        only 1-step ahead forecasts are available.  Using horizon > 1 will
-        produce a warning and all columns, except the first, will be
-        nan-filled.
+        If the model contains exogenous variables (``model.x is not None``),
+        then `x` must be provided with the expected values of the exogenous
+        variables for each step of the forecast horizon. Forecasts for any
+        horizon are available.
 
         If `align` is 'origin', forecast[t,h] contains the forecast made using
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
@@ -1780,10 +1781,10 @@ class ARCHModelFixedResult(_SummaryRepr):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (`model.x is not None`), then
-        only 1-step ahead forecasts are available.  Using horizon > 1 will
-        produce a warning and all columns, except the first, will be
-        nan-filled.
+        If the model contains exogenous variables (``model.x is not None``),
+        then `x` must be provided with the expected values of the exogenous
+        variables for each step of the forecast horizon. Forecasts for any
+        horizon are available.
 
         If `align` is 'origin', forecast[t,h] contains the forecast made using
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
