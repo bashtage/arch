@@ -211,9 +211,11 @@ class MCS(MultipleComparison):
     ----------
     losses : {ndarray, DataFrame}
         T by k array containing losses from a set of models
-    size : float, optional
+    size : float
         Value in (0,1) to use as the test size when implementing the
-        mcs. Default value is 0.05.
+        MCS. There is no default value.
+    reps : int, optional
+        Number of bootstrap replications to uses.  Default is 1000.
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
@@ -221,8 +223,6 @@ class MCS(MultipleComparison):
     method : {'max', 'R'}, optional
         MCS test and elimination implementation method, either 'max' or 'R'.
         Default is 'R'.
-    reps : int, optional
-        Number of bootstrap replications to uses.  Default is 1000.
     bootstrap : str, optional
         Bootstrap to use.  Options are
         'stationary' or 'sb': Stationary bootstrap (Default)
@@ -502,7 +502,10 @@ class MCS(MultipleComparison):
         -------
         pvalues : DataFrame
             DataFrame where the index is the model index (column or name)
-            containing the smallest size where the model is in the MCS.
+            and the column Pvalue contains the MCS p-value of the model. The
+            model is in the MCS of size alpha, and so in ``included``, if its
+            p-value is greater than alpha. The models are in the order that
+            they were eliminated and the p-value of the remaining model is 1.
         """
         self._has_been_computed()
         return self._pvalues
@@ -1053,9 +1056,10 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
         Returns
         -------
-        indices : list
-            List of column names or indices of the superior models.  Column
-            names are returned if models is a DataFrame.
+        indices : ndarray
+            Array containing the integer positions of the columns of the
+            superior models. Positions are returned, and not column names, even
+            if models is a DataFrame.
 
         Notes
         -----
