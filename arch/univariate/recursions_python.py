@@ -703,7 +703,9 @@ def fiaparch_recursion_python(
     sigma2 : ndarray
         Conditional variances with same shape as resids
     sigma_delta : ndarray
-        Conditional variance to the power delta with same shape as resids
+        Work array with same shape as resids. On return it contains the
+        conditional variance to the power delta before the variance bounds
+        are applied
     p : int
         0 or 1 to indicate whether the model contains phi
     q : int
@@ -749,10 +751,12 @@ def fiaparch_recursion_python(
         trunc_lag,
         sigma_delta,
     )
+    # sigma_delta is a work array that holds sigma ** delta before the variance
+    # bounds are applied. It is not read by any caller, so it is not recomputed from
+    # the bounded variance, which would cost a call to pow for each observation.
     for t in range(nobs):
         sigma2[t] = sigma_delta[t] ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
-        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
     return sigma2
 

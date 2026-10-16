@@ -664,10 +664,12 @@ def fiaparch_recursion(const double[::1] parameters,
         lam, fshocks, bc_weights, omega_tilde, backcast_delta, nobs, trunc_lag,
         sigma_delta
     )
+    # sigma_delta is a work array that holds sigma ** delta before the variance
+    # bounds are applied. It is not read by any caller, so it is not recomputed from
+    # the bounded variance, which would cost a call to pow for each observation.
     for t in range(nobs):
         sigma2[t] = sigma_delta[t] ** (2.0 / delta)
         bounds_check(&sigma2[t], &var_bounds[t, 0])
-        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
     return np.asarray(sigma2)
 

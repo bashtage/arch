@@ -197,8 +197,8 @@ def test_fiaparch_recursion_bounds(func):
     assert_allclose(sigma2[lower], 1.5)
     assert_allclose(sigma2[upper], 2.0 + np.log(unbounded[upper] / 2.0))
     assert_allclose(sigma2[inside], unbounded[inside])
-    # sigma_delta holds the bounded value on the sigma ** delta scale
-    assert_allclose(sigma_delta, sigma2**0.75)
+    # sigma_delta holds sigma ** delta before the bounds are applied
+    assert_allclose(sigma_delta, unbounded**0.75)
 
 
 @pytest.mark.parametrize("module", [recpy, rec], ids=["python", "default"])
