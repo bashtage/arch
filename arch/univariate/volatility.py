@@ -1336,42 +1336,49 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         beta = parameters[p + o + 1 :]
 
         m = np.max([p, o, q])
-        _resids = np.zeros(m + horizon)
-        _asym_resids = np.zeros(m + horizon)
-        _sigma2 = np.zeros(m + horizon)
+        n_origins = t - start
+        # The forecasts from every origin are computed together. Row k holds the
+        # last m residuals, asymmetric residuals and variances up to origin
+        # start + k, which are followed by the forecasts of each horizon
+        _resids = np.zeros((n_origins, m + horizon))
+        _asym_resids = np.zeros((n_origins, m + horizon))
+        _sigma2 = np.zeros((n_origins, m + horizon))
 
-        for i in range(start, t):
-            if i - m + 1 >= 0:
-                _resids[:m] = resids[i - m + 1 : i + 1]
-                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
-                _sigma2[:m] = sigma2[i - m + 1 : i + 1]
-            else:  # Back-casting needed
-                _resids[: m - i - 1] = np.sqrt(backcast)
-                _resids[m - i - 1 : m] = resids[0 : i + 1]
-                _asym_resids = cast("np.ndarray", _resids * (_resids < 0))
-                _asym_resids[: m - i - 1] = np.sqrt(asym_weight * backcast)
-                _sigma2[:m] = backcast
-                _sigma2[m - i - 1 : m] = sigma2[0 : i + 1]
+        _all_resids = np.asarray(resids)
+        origins = np.arange(start, t)
+        loc = origins[:, None] - m + 1 + np.arange(m)[None, :]
+        # Locations before the start of the sample use the backcast
+        available = loc >= 0
+        loc = np.where(available, loc, 0)
+        lagged_resids = _all_resids[loc]
+        _resids[:, :m] = np.where(available, lagged_resids, np.sqrt(backcast))
+        _asym_resids[:, :m] = np.where(
+            available,
+            lagged_resids * (lagged_resids < 0),
+            np.sqrt(asym_weight * backcast),
+        )
+        _sigma2[:, :m] = np.where(available, sigma2[loc], backcast)
 
-            for h in range(horizon):
-                fcast_loc = i - start
-                forecasts[fcast_loc, h] = omega
-                start_loc = h + m - 1
+        # np.power with an array of exponents is pow, which is the same as the
+        # scalar power used in a loop over origins. A scalar exponent of 2 uses
+        # a product, which is not identical in the last bit for some values
+        two = np.full(n_origins, 2.0)
+        for h in range(horizon):
+            start_loc = h + m - 1
+            forecast_h = np.full(n_origins, omega, dtype=float)
+            for j in range(p):
+                forecast_h += alpha[j] * np.power(_resids[:, start_loc - j], two)
 
-                for j in range(p):
-                    forecasts[fcast_loc, h] += alpha[j] * _resids[start_loc - j] ** 2
+            for j in range(o):
+                forecast_h += gamma[j] * np.power(_asym_resids[:, start_loc - j], two)
 
-                for j in range(o):
-                    forecasts[fcast_loc, h] += (
-                        gamma[j] * _asym_resids[start_loc - j] ** 2
-                    )
+            for j in range(q):
+                forecast_h += beta[j] * _sigma2[:, start_loc - j]
 
-                for j in range(q):
-                    forecasts[fcast_loc, h] += beta[j] * _sigma2[start_loc - j]
-
-                _resids[h + m] = np.sqrt(forecasts[fcast_loc, h])
-                _asym_resids[h + m] = np.sqrt(asym_weight * forecasts[fcast_loc, h])
-                _sigma2[h + m] = forecasts[fcast_loc, h]
+            forecasts[:, h] = forecast_h
+            _resids[:, h + m] = np.sqrt(forecast_h)
+            _asym_resids[:, h + m] = np.sqrt(asym_weight * forecast_h)
+            _sigma2[:, h + m] = forecast_h
 
         return VarianceForecast(forecasts)
 
