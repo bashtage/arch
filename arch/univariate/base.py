@@ -972,11 +972,6 @@ class ARCHModel(metaclass=ABCMeta):
                 options=options,
             )
 
-        if show_warning:
-            warnings.filterwarnings("always", "", ConvergenceWarning)
-        else:
-            warnings.filterwarnings("ignore", "", ConvergenceWarning)
-
         if opt.status != 0 and show_warning:
             warnings.warn(
                 convergence_warning.format(code=opt.status, string_message=opt.message),

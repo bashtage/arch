@@ -1,4 +1,5 @@
 import datetime as dt
+import warnings
 
 import numpy as np
 from numpy.testing import assert_allclose
@@ -6,7 +7,7 @@ import pandas as pd
 import pytest
 
 from arch.univariate import GARCH, ConstantMean, MAMean, arch_model
-from arch.utility.exceptions import StartingValueWarning
+from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning
 
 
 @pytest.fixture(scope="module")
@@ -218,3 +219,37 @@ def test_date_cutoff_requires_datetime_index(value):
     res = ConstantMean(y).fit(disp="off")
     with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
         res.forecast(start=value)
+
+
+@pytest.mark.parametrize("show_warning", [True, False])
+def test_fit_does_not_change_warning_filters(returns, show_warning):
+    mod = arch_model(returns)
+    # catch_warnings restores the filters on exit, so a change would be undone
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        before = list(warnings.filters)
+        mod.fit(disp="off", show_warning=show_warning, options={"maxiter": 2})
+        mod.fit(disp="off", show_warning=show_warning)
+        assert warnings.filters == before
+
+
+def test_fit_respects_error_filter(returns):
+    mod = arch_model(returns)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        # A previous fit must not stop a later fit from raising
+        mod.fit(disp="off", show_warning=False, options={"maxiter": 2})
+        with pytest.raises(ConvergenceWarning):
+            mod.fit(disp="off", options={"maxiter": 2})
+        mod.fit(disp="off", show_warning=True)
+
+
+def test_fit_show_warning_false_is_silent_and_local(returns):
+    mod = arch_model(returns)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        mod.fit(disp="off", show_warning=False, options={"maxiter": 2})
+    assert not [w for w in caught if issubclass(w.category, ConvergenceWarning)]
+    # Warnings after a call with show_warning=False are not silenced
+    with pytest.warns(ConvergenceWarning, match="optimizer returned code"):
+        mod.fit(disp="off", options={"maxiter": 2})
