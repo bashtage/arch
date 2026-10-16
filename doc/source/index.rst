@@ -37,6 +37,7 @@ routines relevant for the analysis of financial data.
     Long-run Covariance Estimation <covariance/covariance>
     API Reference <api>
     Common Type Definitions <types>
+    Contributing <contributing>
     Change Log <changes>
 
 Citation
