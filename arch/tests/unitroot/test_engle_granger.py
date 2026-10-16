@@ -229,16 +229,18 @@ def test_plot(data, agg_backend):
 
 
 def test_cross_section_exceptions():
-    y = np.random.standard_normal(1000)
-    x = np.random.standard_normal((1000, 2))
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
+    x = rng.standard_normal((1000, 2))
     with pytest.raises(ValueError, match=r"trend must be one of "):
         _cross_section(y, x, "unknown")
 
 
 def test_base_summary():
     cv = pd.Series([1.0, 2, 3], index=[1, 5, 10])
-    y = np.random.standard_normal(1000)
-    x = np.random.standard_normal((1000, 2))
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
+    x = rng.standard_normal((1000, 2))
     xsection = _cross_section(y, x, "ct")
     res = ResidualCointegrationTestResult(1.0, 0.05, cv, xsection=xsection)
     assert isinstance(res.summary(), Summary)

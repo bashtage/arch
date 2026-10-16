@@ -1359,11 +1359,12 @@ def test_backcast_restricted(simulated_data):
 
 
 def test_missing_data_exception():
-    y = np.random.standard_normal(1000)
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
     y[::29] = np.nan
     with pytest.raises(ValueError, match=r"NaN or inf values"):
         arch_model(y)
-    y = np.random.standard_normal(1000)
+    y = rng.standard_normal(1000)
     y[::53] = np.inf
     with pytest.raises(ValueError, match=r"NaN or inf values"):
         arch_model(y)

@@ -101,7 +101,7 @@ import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
 
 nobs = 10000
-resids = np.random.standard_normal(nobs)
+resids = np.random.default_rng(1234).standard_normal(nobs)
 sigma2 = np.zeros_like(resids)
 var = resids.var()
 backcast = 1.0
