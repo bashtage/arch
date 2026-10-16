@@ -593,7 +593,7 @@ class TestMeanModel:
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
     def test_ar_plot(self, agg_backend):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="mle")
+        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="classic")
         res.plot()
         res.plot(annualize="D")
         res.plot(annualize="W")

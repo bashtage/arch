@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
-from arch.univariate import GARCH, ConstantMean, MAMean, arch_model
+from arch.univariate import ARX, GARCH, ConstantMean, FixedVariance, MAMean, arch_model
 from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning
 
 
@@ -253,3 +253,38 @@ def test_fit_show_warning_false_is_silent_and_local(returns):
     # Warnings after a call with show_warning=False are not silenced
     with pytest.warns(ConvergenceWarning, match="optimizer returned code"):
         mod.fit(disp="off", options={"maxiter": 2})
+
+
+@pytest.mark.parametrize("bad", ["White", "HC0", "foo", "Robust", "CLASSIC", "mle", ""])
+@pytest.mark.parametrize(
+    "model", ["constant", "garch", "arx-garch", "ma", "fixed-variance"]
+)
+def test_unknown_cov_type(returns, model, bad):
+    if model == "constant":
+        mod = ConstantMean(returns)
+    elif model == "garch":
+        mod = ConstantMean(returns, volatility=GARCH())
+    elif model == "arx-garch":
+        mod = ARX(returns, lags=1, volatility=GARCH())
+    elif model == "ma":
+        mod = MAMean(returns, lags=1, volatility=GARCH())
+    else:
+        mod = ConstantMean(returns, volatility=FixedVariance(np.ones(returns.shape[0])))
+    with pytest.raises(ValueError, match=r"Unknown cov_type.*'robust'.*'classic'"):
+        mod.fit(disp="off", cov_type=bad)
+
+
+@pytest.mark.parametrize("cov_type", ["robust", "classic"])
+def test_valid_cov_type(returns, cov_type):
+    mod = ConstantMean(returns, volatility=GARCH())
+    res = mod.fit(disp="off", cov_type=cov_type)
+    assert res.cov_type == cov_type
+
+
+def test_cov_type_changes_standard_errors(returns):
+    mod = ConstantMean(returns, volatility=GARCH())
+    robust = mod.fit(disp="off", cov_type="robust")
+    classic = mod.fit(disp="off", cov_type="classic")
+    # robust covariance: H^{-1} S H^{-1}, classic: H^{-1}, from the same estimates
+    assert_allclose(robust.params, classic.params, rtol=1e-8)
+    assert np.all(np.abs(robust.std_err / classic.std_err - 1) > 1e-4)

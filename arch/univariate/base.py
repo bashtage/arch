@@ -796,7 +796,8 @@ class ARCHModel(metaclass=ABCMeta):
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimator.
+            corresponds to Bollerslev-Wooldridge covariance estimator. Any
+            other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
         first_obs : {int, str, date, datetime, Timestamp, Period}
@@ -829,6 +830,11 @@ class ARCHModel(metaclass=ABCMeta):
         """
         if self._y_original is None:
             raise RuntimeError("Cannot estimate model without data.")
+        if cov_type not in ("robust", "classic"):
+            raise ValueError(
+                f"Unknown cov_type: {cov_type!r}. The valid values are 'robust' "
+                "and 'classic'."
+            )
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
