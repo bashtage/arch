@@ -4,7 +4,7 @@ import datetime as dt
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
-from pandas import DataFrame, Series, Timedelta, Timestamp, date_range
+from pandas import DataFrame, DatetimeIndex, Series, Timedelta, Timestamp, date_range
 import pytest
 
 from arch import doc
@@ -20,6 +20,25 @@ from arch.utility.array import (
     parse_dataframe,
     to_array_1d,
 )
+
+# Pandas deprecations (the Pandas4Warning class only exists in recent pandas) must not
+# be triggered by date_to_index
+NO_DEPRECATIONS = ["error::DeprecationWarning", "error::FutureWarning"]
+try:
+    from pandas.errors import Pandas4Warning  # noqa: F401
+
+    NO_DEPRECATIONS.append("error::pandas.errors.Pandas4Warning")
+except ImportError:  # pragma: no cover
+    pass
+
+TIME_ZONES = [
+    "UTC",
+    "Europe/Berlin",
+    "America/New_York",
+    "Asia/Kolkata",
+    "Pacific/Auckland",
+    "Etc/GMT+5",
+]
 
 
 @pytest.fixture
@@ -137,6 +156,7 @@ def test_docstring_inheritor():
     assert_equal(B.__doc__, A.__doc__)
 
 
+@pytest.mark.filterwarnings(*NO_DEPRECATIONS)
 def test_date_to_index():
     dr = date_range("20000101", periods=3000, freq="W")
     y = Series(np.arange(3000.0), index=dr)
@@ -188,6 +208,75 @@ def test_date_to_index():
     # A Series of dates is accepted for Timestamps as it is for strings
     index = date_to_index(Timestamp("2009-08-02"), Series(dr))
     assert_equal(index, 500)
+
+
+@pytest.mark.filterwarnings(*NO_DEPRECATIONS)
+@pytest.mark.parametrize("tz", TIME_ZONES)
+def test_date_to_index_tz_aware(tz):
+    # The instants are fixed in UTC, and so are the dates, which are naive or
+    # carry a time zone. The positions are found by hand: the position of the date
+    # if it is in the index, otherwise the position where it would be inserted.
+    utc = [
+        "2021-03-13 12:00",
+        "2021-03-14 12:00",
+        "2021-03-15 12:00",
+        "2021-03-16 12:00",
+        "2021-03-17 12:00",
+    ]
+    date_index = DatetimeIndex(utc).tz_localize("UTC").tz_convert(tz)
+    assert date_index.tz is not None
+    expected = {
+        "2021-03-12": 0,
+        "2021-03-13 11:59": 0,
+        "2021-03-13 12:00": 0,
+        "2021-03-13 12:01": 1,
+        "2021-03-14": 1,
+        "2021-03-14 12:00": 1,
+        "2021-03-14 12:01": 2,
+        "2021-03-16 12:00": 3,
+        "2021-03-17 11:59": 4,
+        "2021-03-17 12:00": 4,
+        "2021-03-18": 5,
+    }
+    for date, position in expected.items():
+        assert date_to_index(date, date_index) == position
+        assert date_to_index(Timestamp(date), date_index) == position
+        assert date_to_index(np.datetime64(date), date_index) == position
+        assert date_to_index(Timestamp(date).to_pydatetime(), date_index) == position
+        # A Timestamp with a time zone is converted to UTC
+        local = Timestamp(date).tz_localize("UTC").tz_convert(tz)
+        assert date_to_index(local, date_index) == position
+
+
+@pytest.mark.filterwarnings(*NO_DEPRECATIONS)
+def test_date_to_index_tz_aware_timestamp_other_zone():
+    utc = ["2021-03-13 12:00", "2021-03-14 12:00", "2021-03-15 12:00"]
+    date_index = DatetimeIndex(utc).tz_localize("UTC").tz_convert("Europe/Berlin")
+    # 08:00 in New York is 12:00 UTC on 2021-03-14, since the DST change
+    # happened at 02:00 that day
+    assert (
+        date_to_index(Timestamp("2021-03-14 08:00", tz="America/New_York"), date_index)
+        == 1
+    )
+    # 13:00 in Kolkata (UTC+5:30) is 07:30 UTC on 2021-03-14
+    assert (
+        date_to_index(Timestamp("2021-03-14 13:00", tz="Asia/Kolkata"), date_index) == 1
+    )
+    # 18:00 in Kolkata is 12:30 UTC on 2021-03-14
+    assert (
+        date_to_index(Timestamp("2021-03-14 18:00", tz="Asia/Kolkata"), date_index) == 2
+    )
+
+
+@pytest.mark.filterwarnings(*NO_DEPRECATIONS)
+def test_date_to_index_tz_aware_not_monotonic():
+    utc = ["2021-03-13 12:00", "2021-03-14 12:00", "2021-03-14 12:00"]
+    date_index = DatetimeIndex(utc).tz_localize("UTC").tz_convert("Asia/Kolkata")
+    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+        date_to_index("2021-03-14", date_index)
+    date_index = DatetimeIndex(utc[::-1]).tz_localize("UTC").tz_convert("Asia/Kolkata")
+    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+        date_to_index("2021-03-14", date_index)
 
 
 def test_date_to_index_timestamp():
