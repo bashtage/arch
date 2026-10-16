@@ -1742,7 +1742,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __str__(self) -> str:
         descr = self.name
-        descr += f"(lags: {self.m}, asym: {self._asym}"
+        descr += f"(lags: {self.m}, asym: {self._asym})"
 
         return descr
 
@@ -1830,6 +1830,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         aw = weights * alpha
         gw = weights * gamma
 
+        m = weights.shape[0]
+        # The first m values are initial values and are always discarded
+        burn = max(burn, m)
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -1839,8 +1842,6 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 warn(initial_value_warning, InitialValueWarning, stacklevel=2)
                 initial_value = _parameters[0]
 
-        m = weights.shape[0]
-        burn = max(burn, m)
         sigma2 = np.empty(nobs + burn)
         data = np.empty(nobs + burn)
 
