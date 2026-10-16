@@ -11,8 +11,8 @@ cc = meson.get_compiler('c')
 cy = meson.get_compiler('cython')
 cython = find_program(cy.cmd_array()[0])
 
-if not cy.version().version_compare('>=3.0.10')
-  error('arch requires Cython >= 3.0.10')
+if not cy.version().version_compare('>=3.1.0')
+  error('arch requires Cython >= 3.1.0')
 endif
 
 py = import('python').find_installation(pure: false)

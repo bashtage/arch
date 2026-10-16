@@ -255,11 +255,14 @@ def date_to_index(
     """
     if not is_datetime64_any_dtype(date_index):
         raise ValueError("date_index must be a datetime64 array")
-    values = (
-        date_index.values
-        if isinstance(date_index, DatetimeIndex)
-        else np.asarray(date_index)
-    )
+    if isinstance(date_index, DatetimeIndex):
+        if date_index.tzinfo is not None:
+            # The same UTC values without a time zone that .values returned. Using
+            # .values is deprecated for time zone aware indices.
+            date_index = date_index.tz_convert("GMT").tz_localize(None)
+        values = date_index.to_numpy()
+    else:
+        values = np.asarray(date_index)
     if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
         raise ValueError("date_index is not monotonic and unique")
     if not isinstance(date, (dt.datetime, np.datetime64, str, Timestamp)):
@@ -282,19 +285,12 @@ def date_to_index(
         assert isinstance(date, np.datetime64)
         date_64 = date
 
-    if isinstance(date_index, DatetimeIndex):
-        if date_index.tzinfo is not None:
-            date_index = date_index.tz_convert("GMT").tz_localize(None)
-        date_index = date_index.to_numpy()
-
-    date_index = np.asarray(date_index)
-
-    locs = np.nonzero(date_index <= date_64)[0]
+    locs = np.nonzero(values <= date_64)[0]
     if locs.shape[0] == 0:
         return 0
 
     loc = locs.max()
-    in_array = np.any(date_index == date_64)
+    in_array = np.any(values == date_64)
     if not in_array:
         loc += 1
 
