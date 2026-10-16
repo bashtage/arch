@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+326)</title>
+        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+339)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+326)
+            arch v8.0.1 (+339)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+326)
+    arch v8.0.1 (+339)
   </label>
   
     <div class="md-nav__source">
@@ -838,6 +838,36 @@
 <div class="viewcode-block" id="PhillipsOuliarisTestResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.PhillipsOuliarisTestResults.html#arch.unitroot.cointegration.PhillipsOuliarisTestResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PhillipsOuliarisTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Results class for Phillips-Ouliaris cointegration tests.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stat : float</span>
+<span class="sd">        The Phillips-Ouliaris test statistic.</span>
+<span class="sd">    pvalue : float</span>
+<span class="sd">        The pvalue of the Phillips-Ouliaris test statistic.</span>
+<span class="sd">    crit_vals : Series</span>
+<span class="sd">        The critical values of the Phillips-Ouliaris test specific to the sample</span>
+<span class="sd">        size and model dimension.</span>
+<span class="sd">    null : str, default "No Cointegration"</span>
+<span class="sd">        The null hypothesis.</span>
+<span class="sd">    alternative : str, default "Cointegration"</span>
+<span class="sd">        The alternative hypothesis.</span>
+<span class="sd">    trend : str, default "c"</span>
+<span class="sd">        The model's trend description.</span>
+<span class="sd">    order : int, default 2</span>
+<span class="sd">        The number of stochastic trends in the null distribution.</span>
+<span class="sd">    xsection : RegressionResults</span>
+<span class="sd">        The OLS results used in the cross-sectional regression.</span>
+<span class="sd">    test_type : str, default "Za"</span>
+<span class="sd">        The type of the test, one of "Za", "Zt", "Pu" and "Pz".</span>
+<span class="sd">    kernel_est : CovarianceEstimator</span>
+<span class="sd">        The long-run covariance estimator used to compute the test statistic.</span>
+<span class="sd">    rho : float, default 0.0</span>
+<span class="sd">        Not used.</span>
+<span class="sd">    """</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>

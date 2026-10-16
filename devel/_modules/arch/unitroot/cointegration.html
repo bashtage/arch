@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+326)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+339)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+326)
+            arch v8.0.1 (+339)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+326)
+    arch v8.0.1 (+339)
   </label>
   
     <div class="md-nav__source">
@@ -1353,6 +1353,38 @@
 <div class="viewcode-block" id="CointegrationAnalysisResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.CointegrationAnalysisResults.html#arch.unitroot.cointegration.CointegrationAnalysisResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CointegrationAnalysisResults</span><span class="p">(</span><span class="n">_CommonCointegrationResults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Estimation results for cointegrating vector estimators.</span>
+
+<span class="sd">    Returned by the ``fit`` method of FullyModifiedOLS and CanonicalCointegratingReg.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : Series</span>
+<span class="sd">        The estimated model parameters.</span>
+<span class="sd">    cov : DataFrame</span>
+<span class="sd">        The estimated parameter covariance.</span>
+<span class="sd">    resid : Series</span>
+<span class="sd">        The model residuals.</span>
+<span class="sd">    omega_112 : float</span>
+<span class="sd">        The long-run variance estimate used in the parameter covariance estimator.</span>
+<span class="sd">    kernel_est : CovarianceEstimator</span>
+<span class="sd">        The covariance estimator instance used to estimate the long-run variance</span>
+<span class="sd">        of the residuals.</span>
+<span class="sd">    num_x : int</span>
+<span class="sd">        The number of right-hand-side variables in the cointegrating regression.</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
+<span class="sd">        The trend included in the cointegrating regression.</span>
+<span class="sd">    df_adjust : bool</span>
+<span class="sd">        Whether the parameter covariance was adjusted for degrees of freedom.</span>
+<span class="sd">    rsquared : float</span>
+<span class="sd">        The model R-squared.</span>
+<span class="sd">    rsquared_adj : float</span>
+<span class="sd">        The degree-of-freedom adjusted R-squared.</span>
+<span class="sd">    estimator_type : str</span>
+<span class="sd">        The name of the estimator, which is used in the summary.</span>
+<span class="sd">    """</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span>

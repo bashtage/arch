@@ -1,0 +1,6 @@
+﻿arch.test
+=========
+
+.. currentmodule:: arch
+
+.. autofunction:: test

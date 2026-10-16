@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v8.0.1 (+326)</title>
+        <title>arch.univariate.volatility - arch v8.0.1 (+339)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+326)
+            arch v8.0.1 (+339)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+339)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+339)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+326)
+    arch v8.0.1 (+339)
   </label>
   
     <div class="md-nav__source">
@@ -4589,14 +4589,18 @@
             <span class="p">)</span>
             <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span>
 
+        <span class="c1"># The transformed shock of each observation is computed once, when the</span>
+        <span class="c1"># observation is generated, and then reused for every lag</span>
+        <span class="n">fshocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">):</span>
+            <span class="n">shock</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="n">fshocks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">shock</span><span class="o">**</span><span class="n">delta</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">):</span>
-            <span class="n">fshocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">):</span>
-                <span class="n">shock</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
-                <span class="n">fshocks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">shock</span><span class="o">**</span><span class="n">delta</span>
-            <span class="n">sigma_delta_arr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lam_rev</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fshocks</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">sigma_delta_arr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lam_rev</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fshocks</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">truncation</span> <span class="p">:</span> <span class="n">t</span><span class="p">])</span>
             <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_delta_arr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
             <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">shock</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="n">fshocks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">shock</span><span class="o">**</span><span class="n">delta</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span> <span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span> <span class="p">:]</span></div>
 
@@ -4736,9 +4740,7 @@
         <span class="n">backcast_delta</span> <span class="o">=</span> <span class="n">backcast</span> <span class="o">**</span> <span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
 
         <span class="n">abs_resids_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
-        <span class="n">fshocks_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">fshocks_hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">abs_resids_full</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">resids</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span>
+        <span class="n">fshocks_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">abs_resids_full</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">resids</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
 
         <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
 
