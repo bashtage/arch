@@ -296,18 +296,18 @@ def _add_extra_kwargs(
     Returns
     -------
     dict
-        Keyword dictionary with added keyword arguments
+        A new keyword dictionary with the added keyword arguments.  The input
+        dictionary is never returned, so the caller can modify the result
+        without changing the input.
 
     Notes
     -----
     There is no checking for duplicate keys
     """
-    if extra_kwargs is None:
-        return kwargs
-    else:
-        kwargs_copy = kwargs.copy()
+    kwargs_copy = kwargs.copy()
+    if extra_kwargs is not None:
         kwargs_copy.update(extra_kwargs)
-        return kwargs_copy
+    return kwargs_copy
 
 
 class IIDBootstrap(metaclass=DocStringInheritor):
@@ -664,7 +664,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             std_err_func(params, *args, **kwargs)
 
         where ``params`` is the vector of estimated parameters using the same
-        bootstrap data as in args and kwargs.
+        bootstrap data as in args and kwargs.  When ``sampling`` is
+        ``"semi-parametric"`` or ``"parametric"``, the keyword arguments
+        ``params`` and ``state`` that are passed to ``func`` to simulate the
+        data are not passed to ``std_err_func``, which only receives the
+        data and ``extra_kwargs``.  The studentized bootstrap with a nested
+        bootstrap simulates the data in the nested bootstrap in the same way
+        as in the outer bootstrap.
 
         The bootstraps are:
 
@@ -963,7 +969,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         count = 0
         for pos_data, kw_data in self.bootstrap(reps):
-            kwargs = _add_extra_kwargs(kw_data, extra_kwargs)
+            # Data and extra keywords only, without the simulation keywords
+            data_kwargs = _add_extra_kwargs(kw_data, extra_kwargs)
+            kwargs = data_kwargs.copy()
             if parametric:
                 kwargs["state"] = self._generator
                 kwargs["params"] = base
@@ -971,14 +979,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 kwargs["params"] = base
             results[count] = func(*pos_data, **kwargs)
             if std_err_func is not None:
-                std_err = std_err_func(results[count], *pos_data, **kwargs)
+                # params and state are only used to simulate data, and params
+                # would conflict with the first argument of std_err_func
+                std_err = std_err_func(results[count], *pos_data, **data_kwargs)
                 studentized_results[count] = (results[count] - base) / std_err
             elif studentize_reps > 0:
                 # Set the seed to ensure reproducibility
                 seed = _get_random_integers(self._generator, 2**31 - 1, size=1)
                 # Need new bootstrap of same type
                 nested_bs = self.clone(*pos_data, **kw_data, seed=seed[0])
-                cov = nested_bs.cov(func, studentize_reps, extra_kwargs=extra_kwargs)
+                # The nested draws are simulated like the outer draws
+                cov = nested_bs._bootstrap_cov(
+                    func, studentize_reps, extra_kwargs=extra_kwargs, sampling=sampling
+                )
                 std_err = np.sqrt(np.diag(cov))
                 err = results[count] - base
                 if np.any(std_err <= (eps * np.abs(err))):
@@ -1060,7 +1073,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             name of the required bootstrap
 
         """
-        self._construct_bootstrap_estimates(func, reps, extra_kwargs)
+        return self._bootstrap_cov(func, reps, recenter, extra_kwargs)
+
+    def _bootstrap_cov(
+        self,
+        func: Callable[..., ArrayLike],
+        reps: int,
+        recenter: bool = True,
+        extra_kwargs: dict[str, Any] | None = None,
+        sampling: Literal[
+            "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
+        ] = "nonparametric",
+    ) -> Float64Array:
+        self._construct_bootstrap_estimates(func, reps, extra_kwargs, sampling=sampling)
         base, results = self._base, self._results
         assert results is not None
         assert base is not None
