@@ -12,6 +12,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
+from arch.univariate import ConstantMean
 import arch.univariate.recursions_python as recpy
 from arch.univariate.volatility import FIAPARCH
 
@@ -272,3 +273,26 @@ def test_fiaparch_simulate_matches_reference(truncation, est_delta):
     )
     assert_allclose(data, ref_data, rtol=1e-12)
     assert_allclose(sigma2, ref_sigma2, rtol=1e-12)
+
+
+@pytest.mark.parametrize("est_delta", [True, False], ids=["est_delta", "fixed_delta"])
+def test_fiaparch_simulation_forecast_first_step(est_delta):
+    # The first step of a simulation forecast depends only on observed data, and so
+    # it must match the one-step analytic forecast, which uses the recursion
+    y = np.random.default_rng(3).standard_normal(300)
+    vol = FIAPARCH(1, 1, 1, delta=None if est_delta else 1.3, truncation=40)
+    params = np.array([0.0, 0.1, 0.1, 0.3, 0.3, 0.4] + ([1.4] if est_delta else []))
+    res = ConstantMean(y, volatility=vol).fix(params)
+    analytic = res.forecast(horizon=1, start=250, reindex=False)
+    sim = res.forecast(
+        horizon=3,
+        start=250,
+        method="simulation",
+        simulations=20,
+        reindex=False,
+        random_state=np.random.RandomState(1),
+    )
+    first_step = sim.simulations.variances[:, :, 0]
+    expected = np.broadcast_to(analytic.variance.to_numpy(), first_step.shape)
+    assert_allclose(first_step, expected, rtol=1e-12)
+    assert_allclose(sim.variance.to_numpy()[:, 0], analytic.variance.to_numpy()[:, 0])
