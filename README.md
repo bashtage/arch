@@ -198,38 +198,32 @@ cov_est.cov.long_run
 These requirements reflect the testing environment. It is possible
 that arch will work with older versions.
 
-- Python (3.9+)
-- NumPy (1.19+)
-- SciPy (1.5+)
-- Pandas (1.1+)
-- statsmodels (0.12+)
+- Python (3.10-3.15)
+- NumPy (1.22.3+)
+- SciPy (1.8+)
+- pandas (1.4+)
+- statsmodels (0.13.1+)
 - matplotlib (3+), optional
+
+arch 9.0 is the last release that supports Python 3.10.
 
 
 ### Optional Requirements
 
-- Numba (0.49+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable `ARCH_NO_BINARY=1` and install without the wheel.
+- Numba (0.55+) will be used if available **and** when arch is installed without building the binary modules. To make sure that they are not built, install from the source distribution with the `no-binary` build option:
 
 ```shell
-export ARCH_NO_BINARY=1
-python -m pip install arch
-```
-
-or if using Powershell on windows
-
-```powershell
-$env:ARCH_NO_BINARY=1
-python -m pip install arch
+python -m pip install arch --no-binary arch -Csetup-args="-Dno-binary=true"
 ```
 
 - jupyter and notebook are required to run the notebooks
 
 ## Installing
 
-Standard installation with a compiler requires Cython. If you do not
-have a compiler installed, the `arch` should still install. You will
-see a warning but this can be ignored. If you don't have a compiler,
-`numba` is strongly recommended.
+Wheels are available for Linux, macOS and Windows, so installing with
+`pip` does not need a compiler. Building from source needs a C compiler;
+`pip` installs the build requirements (Cython, meson-python and NumPy)
+automatically.
 
 ### pip
 
@@ -245,8 +239,8 @@ You can alternatively install the latest version from GitHub
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-Setting the environment variable `ARCH_NO_BINARY=1` can be used to
-disable compilation of the extensions.
+Adding `-Csetup-args="-Dno-binary=true"` to the `pip install` command
+disables compilation of the extensions.
 
 ### Anaconda
 
@@ -260,24 +254,23 @@ conda install arch-py -c conda-forge
 
 ### Windows
 
-Building extension using the community edition of Visual Studio is
-simple when using Python 3.8 or later. Building is not necessary when numba
-is installed since just-in-time compiled code (numba) runs as fast as
-ahead-of-time compiled extensions.
+Building the extensions from source needs the Visual Studio Build Tools
+(the free community edition is enough).
 
 ### Developing
 
 The development requirements are:
 
-- Cython (0.29+, if not using ARCH_NO_BINARY=1, supports 3.0.0b2+)
-- pytest (For tests)
+- Cython (3.1+), meson-python and ninja, unless building without the binary
+  modules
+- pytest (9+, for tests)
 - sphinx (to build docs)
 - sphinx-immaterial (to build docs)
 - jupyter, notebook and nbsphinx (to build docs)
 
 ### Installation Notes
 
-1. If Cython is not installed, the package will be installed
-    as-if `ARCH_NO_BINARY=1` was set.
-2. Setup does not verify these requirements. Please ensure these are
-    installed.
+1. Building without the binary modules (`-Csetup-args="-Dno-binary=true"`)
+   still needs a C compiler and Cython, since the build checks for them.
+   The recursions then run in numba if it is installed, and in pure
+   Python otherwise, which is much slower.
