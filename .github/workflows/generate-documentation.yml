@@ -45,8 +45,7 @@ jobs:
     - name: Build documentation
       run: |
         pushd doc
-        make html
-        make html
+        make html SPHINXOPTS="-j 1"
         popd
 
     - name: Deploy documentation
