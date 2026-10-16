@@ -1,7 +1,8 @@
 """
-Volatility processes for ARCH model estimation.  All volatility processes must
-inherit from :class:`VolatilityProcess` and provide the same methods with the
-same inputs.
+Volatility processes for ARCH model estimation.
+
+All volatility processes must inherit from :class:`VolatilityProcess` and provide
+the same methods with the same inputs.
 """
 
 from abc import ABCMeta, abstractmethod
@@ -67,17 +68,19 @@ def _common_names(p: int, o: int, q: int) -> list[str]:
 
 class BootstrapRng:
     """
-    Simple fake RNG used to transform bootstrap-based forecasting into a standard
-    simulation forecasting problem
+    Simple fake RNG for bootstrap-based forecasting.
+
+    It is used to transform bootstrap-based forecasting into a standard
+    simulation forecasting problem.
 
     Parameters
     ----------
     std_resid : ndarray
-        Array containing standardized residuals
+        Array containing standardized residuals.
     start : int
-        Location of first forecast
+        Location of first forecast.
     random_state : RandomState, optional
-        NumPy RandomState instance
+        NumPy RandomState instance.
     """
 
     def __init__(
@@ -101,9 +104,23 @@ class BootstrapRng:
 
     @property
     def random_state(self) -> RandomState:
+        """The NumPy RandomState instance used to draw the bootstrap samples."""
         return self._random_state
 
     def rng(self) -> RNGType:
+        """
+        Construct the random number generator.
+
+        Returns
+        -------
+        callable
+            Callable that takes a size and returns random draws of the
+            standardized residuals. The draws are sampled with replacement from
+            the residuals up to and including a position that starts at ``start``
+            and increases by one with each call. An IndexError is raised when
+            there are no more data points.
+        """
+
         def _rng(size: int | tuple[int, ...]) -> Float64Array:
             if self._index >= self.std_resid.shape[0]:
                 raise IndexError("not enough data points.")
@@ -124,20 +141,25 @@ def ewma_recursion(
     backcast: float,
 ) -> Float64Array1D:
     """
-    Compute variance recursion for EWMA/RiskMetrics Variance
+    Compute variance recursion for EWMA/RiskMetrics Variance.
 
     Parameters
     ----------
     lam : float
-        Smoothing parameter
+        Smoothing parameter.
     resids : ndarray
-        Residuals to use in the recursion
+        Residuals to use in the recursion.
     sigma2 : ndarray
-        Conditional variances with same shape as resids
+        Conditional variances with same shape as resids.
     nobs : int
-        Length of resids
+        Length of resids.
     backcast : float
-        Value to use when initializing the recursion
+        Value to use when initializing the recursion.
+
+    Returns
+    -------
+    ndarray
+        The conditional variances, sigma2, which are also modified in place.
     """
 
     # Throw away bounds
@@ -159,17 +181,17 @@ def ewma_recursion(
 
 class VarianceForecast:
     """
-    Container for variance forecasts
+    Container for variance forecasts.
 
     Parameters
     ----------
     forecasts : ndarray
-        Array containing the forecasts
+        Array containing the forecasts.
     forecast_paths : ndarray, optional
-        Array containing the forecast paths if using simulation or bootstrap
+        Array containing the forecast paths if using simulation or bootstrap.
     shocks : ndarray, optional
         Array containing the shocks used to generate the forecast paths if
-        using simulation or bootstrap
+        using simulation or bootstrap.
     """
 
     _forecasts = None
@@ -187,25 +209,26 @@ class VarianceForecast:
 
     @property
     def forecasts(self) -> Float64Array | None:
-        """The variance forecasts"""
+        """The variance forecasts."""
         return self._forecasts
 
     @property
     def forecast_paths(self) -> Float64Array | None:
-        """The variance forecast paths"""
+        """The variance forecast paths."""
         return self._forecast_paths
 
     @property
     def shocks(self) -> Float64Array | None:
-        """The shocks used to construct the variance forecast paths"""
+        """The shocks used to construct the variance forecast paths."""
         return self._shocks
 
 
 class VolatilityProcess(metaclass=ABCMeta):
     """
-    Abstract base class for ARCH models.  Allows the conditional mean model to be
-    specified separately from the conditional variance, even though parameters
-    are estimated jointly.
+    Abstract base class for ARCH models.
+
+    Allows the conditional mean model to be specified separately from the
+    conditional variance, even though parameters are estimated jointly.
     """
 
     _updatable: bool = True
@@ -228,12 +251,12 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        """The name of the volatility process"""
+        """The name of the volatility process."""
         return self._name
 
     @property
     def start(self) -> int:
-        """Index to use to start variance subarray selection"""
+        """Index to use to start variance subarray selection."""
         return self._start
 
     @start.setter
@@ -242,7 +265,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     @property
     def stop(self) -> int:
-        """Index to use to stop variance subarray selection"""
+        """Index to use to stop variance subarray selection."""
         return self._stop
 
     @stop.setter
@@ -251,23 +274,23 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     @property
     def num_params(self) -> int:
-        """The number of parameters in the model"""
+        """The number of parameters in the model."""
         return self._num_params
 
     @property
     def updateable(self) -> bool:
-        """Flag indicating that the volatility process supports update"""
+        """Flag indicating that the volatility process supports update."""
         return self._updatable
 
     @property
     def volatility_updater(self) -> rec.VolatilityUpdater:
         """
-        Get the volatility updater associated with the volatility process
+        Get the volatility updater associated with the volatility process.
 
         Returns
         -------
         VolatilityUpdater
-            The updater class
+            The updater class.
 
         Raises
         ------
@@ -289,30 +312,30 @@ class VolatilityProcess(metaclass=ABCMeta):
         var_bounds: Float64Array2D,
     ) -> float:
         """
-        Compute the variance for a single observation
+        Compute the variance for a single observation.
 
         Parameters
         ----------
         index : int
-            The numerical index of the variance to compute
+            The numerical index of the variance to compute.
         parameters : ndarray
-            The variance model parameters
-        resids :
+            The variance model parameters.
+        resids : ndarray
             The residual array. Only uses ``resids[:index]`` when computing
-            ``sigma2[index]``
+            ``sigma2[index]``.
         sigma2 : ndarray
             The array containing the variances. Only uses ``sigma2[:index]``
             when computing ``sigma2[index]``. The computed value is stored
             in ``sigma2[index]``.
-        backcast : {float, ndarray}
-            Value to use when initializing the recursion
+        backcast : float or ndarray
+            Value to use when initializing the recursion.
         var_bounds : ndarray
-            Array containing columns of lower and upper bounds
+            Array containing columns of lower and upper bounds.
 
         Returns
         -------
         float
-            The variance computed for location ``index``
+            The variance computed for location ``index``.
         """
         raise NotImplementedError("Subclasses may optionally implement")
 
@@ -537,7 +560,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         ----------
         resids : ndarray
             Approximate residuals to use to compute the lower and upper bounds
-            on the conditional variance
+            on the conditional variance.
         power : float, optional
             Power used in the model. 2.0, the default corresponds to standard
             ARCH models that evolve in squares.
@@ -546,7 +569,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         -------
         var_bounds : ndarray
             Array containing columns of lower and upper bounds with the same
-            number of elements as resids
+            number of elements as resids.
         """
         nobs = resids.shape[0]
 
@@ -575,33 +598,33 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
         """
-        Returns starting values for the ARCH model
+        Return starting values for the ARCH model.
 
         Parameters
         ----------
         resids : ndarray
             Array of (approximate) residuals to use when computing starting
-            values
+            values.
 
         Returns
         -------
         sv : ndarray
-            Array of starting values
+            Array of starting values.
         """
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
         """
-        Construct values for backcasting to start the recursion
+        Construct values for backcasting to start the recursion.
 
         Parameters
         ----------
         resids : ndarray
-            Vector of (approximate) residuals
+            Vector of (approximate) residuals.
 
         Returns
         -------
-        backcast : float
-            Value to use in backcasting in the volatility recursion
+        backcast : float or ndarray
+            Value to use in backcasting in the volatility recursion.
         """
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
@@ -613,17 +636,17 @@ class VolatilityProcess(metaclass=ABCMeta):
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
         """
-        Transformation to apply to user-provided backcast values
+        Transform user-provided backcast values.
 
         Parameters
         ----------
-        backcast : {float, ndarray}
+        backcast : float or ndarray
             User-provided ``backcast`` that approximates sigma2[0].
 
         Returns
         -------
-        backcast : {float, ndarray}
-            Backcast transformed to the model-appropriate scale
+        backcast : float or ndarray
+            Backcast transformed to the model-appropriate scale.
         """
         if np.any(backcast < 0):
             raise ValueError("User backcast value must be strictly positive.")
@@ -632,16 +655,16 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         """
-        Returns bounds for parameters
+        Return bounds for parameters.
 
         Parameters
         ----------
         resids : ndarray
-            Vector of (approximate) residuals
+            Vector of (approximate) residuals.
 
         Returns
         -------
-        bounds : list[tuple[float,float]]
+        bounds : list of tuple of float
             List of bounds where each element is (lower, upper).
         """
 
@@ -655,35 +678,40 @@ class VolatilityProcess(metaclass=ABCMeta):
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         """
-        Compute the variance for the ARCH model
+        Compute the variance for the ARCH model.
 
         Parameters
         ----------
         parameters : ndarray
-            Model parameters
+            Model parameters.
         resids : ndarray
-            Vector of mean zero residuals
+            Vector of mean zero residuals.
         sigma2 : ndarray
-            Array with same size as resids to store the conditional variance
-        backcast : {float, ndarray}
+            Array with same size as resids to store the conditional variance.
+        backcast : float or ndarray
             Value to use when initializing ARCH recursion. Can be an ndarray
             when the model contains multiple components.
         var_bounds : ndarray
-            Array containing columns of lower and upper bounds
+            Array containing columns of lower and upper bounds.
+
+        Returns
+        -------
+        sigma2 : ndarray
+            The array of conditional variances, which is also modified in place.
         """
 
     @abstractmethod
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         """
-        Construct parameter constraints arrays for parameter estimation
+        Construct parameter constraints arrays for parameter estimation.
 
         Returns
         -------
         A : ndarray
             Parameters loadings in constraint. Shape is number of constraints
-            by number of parameters
+            by number of parameters.
         b : ndarray
-            Constraint values, one for each constraint
+            Constraint values, one for each constraint.
 
         Notes
         -----
@@ -707,35 +735,35 @@ class VolatilityProcess(metaclass=ABCMeta):
         asym_weight: float = 0.5,
     ) -> VarianceForecast:
         """
-        Forecast volatility from the model
+        Forecast volatility from the model.
 
         Parameters
         ----------
-        parameters : {ndarray, Series}
-            Parameters required to forecast the volatility model
+        parameters : ndarray or Series
+            Parameters required to forecast the volatility model.
         resids : ndarray
-            Residuals to use in the recursion
-        backcast : float
-            Value to use when initializing the recursion
-        var_bounds : ndarray, 2-d
-            Array containing columns of lower and upper bounds
-        start : {None, int}
+            Residuals to use in the recursion.
+        backcast : float or ndarray
+            Value to use when initializing the recursion.
+        var_bounds : ndarray
+            2-d array containing columns of lower and upper bounds.
+        start : int, optional
             Index of the first observation to use as the starting point for
             the forecast.  Default is len(resids).
-        horizon : int
+        horizon : int, optional
             Forecast horizon.  Must be 1 or larger.  Forecasts are produced
             for horizons in [1, horizon].
-        method : {'analytic', 'simulation', 'bootstrap'}
+        method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
-        simulations : int
+        simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
-        rng : callable
+        rng : callable, optional
             Callable random number generator required if method is
             'simulation'. Must take a single shape input and return random
             samples numbers with that shape.
         random_state : RandomState, optional
-            NumPy RandomState instance to use when method is 'bootstrap'
+            NumPy RandomState instance to use when method is 'bootstrap'.
         asym_weight : float, optional
             Expected value of z**2 when z < 0, E[z**2 1(z < 0)], for the
             standardized distribution, which weights the variance in the expected
@@ -831,30 +859,30 @@ class VolatilityProcess(metaclass=ABCMeta):
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
         r"""
-        Simulate data from the model
+        Simulate data from the model.
 
         Parameters
         ----------
-        parameters : {ndarray, Series}
-            Parameters required to simulate the volatility model
+        parameters : array_like
+            Parameters required to simulate the volatility model.
         nobs : int
-            Number of data points to simulate
+            Number of data points to simulate.
         rng : callable
             Callable function that takes a single integer input and returns
-            a vector of random numbers
+            a vector of random numbers.
         burn : int, optional
             Number of additional observations to generate when initializing
-            the simulation
-        initial_value : {float, ndarray}, optional
+            the simulation.
+        initial_value : float or ndarray, optional
             Scalar or array of initial values to use when initializing the
             simulation. The units depend on the process, see Notes.
 
         Returns
         -------
         resids : ndarray
-            The simulated residuals
+            The simulated residuals.
         variance : ndarray
-            The simulated variance
+            The simulated variance.
 
         Notes
         -----
@@ -892,18 +920,18 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def parameter_names(self) -> list[str]:
         """
-        Names of model parameters
+        Return the names of the model parameters.
 
         Returns
         -------
-        names : list (str)
-            Variables names
+        names : list of str
+            Variables names.
         """
 
 
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Constant volatility process
+    Constant volatility process.
 
     Notes
     -----
@@ -1010,7 +1038,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    GARCH and related model estimation
+    GARCH and related model estimation.
 
     The following models can be specified using GARCH:
         * ARCH(p)
@@ -1023,17 +1051,30 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     Parameters
     ----------
-    p : int
-        Order of the symmetric innovation
-    o : int
-        Order of the asymmetric innovation
-    q : int
-        Order of the lagged (transformed) conditional variance
+    p : int, optional
+        Order of the symmetric innovation.
+    o : int, optional
+        Order of the asymmetric innovation.
+    q : int, optional
+        Order of the lagged (transformed) conditional variance.
     power : float, optional
         Power to use with the innovations, abs(e) ** power.  Default is 2.0, which
         produces ARCH and related models. Using 1.0 produces AVARCH and related
         models.  Other powers can be specified, although these should be strictly
         positive, and usually larger than 0.25.
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}^{\lambda}=\omega
+        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
+        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
+        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+
+    where :math:`\lambda` is the ``power``.
 
     Examples
     --------
@@ -1050,19 +1091,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Asymmetric TARCH process
 
     >>> tarch = GARCH(p=1, o=1, q=1, power=1.0)
-
-    Notes
-    -----
-    In this class of processes, the variance dynamics are
-
-    .. math::
-
-        \sigma_{t}^{\lambda}=\omega
-        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
-        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
-        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
-
-    where :math:`\lambda` is the ``power``.
     """
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
@@ -1493,25 +1521,13 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Heterogeneous ARCH process
+    Heterogeneous ARCH process.
 
     Parameters
     ----------
-    lags : {list, array, int}
-        List of lags to include in the model, or if scalar, includes all lags up the
-        value
-
-    Examples
-    --------
-    >>> from arch.univariate import HARCH
-
-    Lag-1 HARCH, which is identical to an ARCH(1)
-
-    >>> harch = HARCH()
-
-    More useful and realistic lag lengths
-
-    >>> harch = HARCH(lags=[1, 5, 22])
+    lags : int or array_like, optional
+        List of lags to include in the model, or if scalar, includes all lags up to
+        the value.
 
     Notes
     -----
@@ -1532,6 +1548,18 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     A HARCH process is a special case of an ARCH process where parameters in the
     more general ARCH process have been restricted.
+
+    Examples
+    --------
+    >>> from arch.univariate import HARCH
+
+    Lag-1 HARCH, which is identical to an ARCH(1)
+
+    >>> harch = HARCH()
+
+    More useful and realistic lag lengths
+
+    >>> harch = HARCH(lags=[1, 5, 22])
     """
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
@@ -1743,30 +1771,14 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    MIDAS Hyperbolic ARCH process
+    MIDAS Hyperbolic ARCH process.
 
     Parameters
     ----------
-    m : int
-        Length of maximum lag to include in the model
-    asym : bool
-        Flag indicating whether to include an asymmetric term
-
-    Examples
-    --------
-    >>> from arch.univariate import MIDASHyperbolic
-
-    22-lag MIDAS Hyperbolic process
-
-    >>> harch = MIDASHyperbolic()
-
-    Longer 66-period lag
-
-    >>> harch = MIDASHyperbolic(m=66)
-
-    Asymmetric MIDAS Hyperbolic process
-
-    >>> harch = MIDASHyperbolic(asym=True)
+    m : int, optional
+        Length of maximum lag to include in the model.
+    asym : bool, optional
+        Flag indicating whether to include an asymmetric term.
 
     Notes
     -----
@@ -1793,6 +1805,22 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     .. [1] Foroni, Claudia, and Massimiliano Marcellino. "A survey of
        Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
     .. [2] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
+
+    Examples
+    --------
+    >>> from arch.univariate import MIDASHyperbolic
+
+    22-lag MIDAS Hyperbolic process
+
+    >>> harch = MIDASHyperbolic()
+
+    Longer 66-period lag
+
+    >>> harch = MIDASHyperbolic(m=66)
+
+    Asymmetric MIDAS Hyperbolic process
+
+    >>> harch = MIDASHyperbolic(asym=True)
     """
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
@@ -1820,7 +1848,15 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         """
-        Constraints
+        Construct parameter constraints arrays for parameter estimation.
+
+        Returns
+        -------
+        A : ndarray
+            Parameters loadings in constraint. Shape is number of constraints
+            by number of parameters.
+        b : ndarray
+            Constraint values, one for each constraint.
 
         Notes
         -----
@@ -2090,12 +2126,20 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class ARCH(GARCH):
     r"""
-    ARCH process
+    ARCH process.
 
     Parameters
     ----------
-    p : int
-        Order of the symmetric innovation
+    p : int, optional
+        Order of the symmetric innovation.
+
+    Notes
+    -----
+    The variance dynamics of the model estimated
+
+    .. math::
+
+        \sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}
 
     Examples
     --------
@@ -2106,15 +2150,6 @@ class ARCH(GARCH):
     ARCH(5) process
 
     >>> arch = ARCH(p=5)
-
-    Notes
-    -----
-    The variance dynamics of the model estimated
-
-    .. math::
-
-        \sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}
-
     """
 
     def __init__(self, p: int = 1) -> None:
@@ -2142,20 +2177,13 @@ class ARCH(GARCH):
 
 class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Exponentially Weighted Moving-Average (RiskMetrics) Variance process
+    Exponentially Weighted Moving-Average (RiskMetrics) Variance process.
 
     Parameters
     ----------
-    lam : {float, None}, optional
+    lam : float or None, optional
         Smoothing parameter. Default is 0.94. Set to None to estimate lam
-        jointly with other model parameters
-
-    Examples
-    --------
-    Daily RiskMetrics EWMA process
-
-    >>> from arch.univariate import EWMAVariance
-    >>> rm = EWMAVariance(0.94)
+        jointly with other model parameters.
 
     Notes
     -----
@@ -2168,6 +2196,13 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     When lam is provided, this model has no parameters since the smoothing
     parameter is treated as fixed. Set lam to ``None`` to jointly estimate this
     parameter when fitting the model.
+
+    Examples
+    --------
+    Daily RiskMetrics EWMA process
+
+    >>> from arch.univariate import EWMAVariance
+    >>> rm = EWMAVariance(0.94)
     """
 
     def __init__(self, lam: float | None = 0.94) -> None:
@@ -2323,25 +2358,18 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     """
-    RiskMetrics 2006 Variance process
+    RiskMetrics 2006 Variance process.
 
     Parameters
     ----------
-    tau0 : {int, float}, optional
+    tau0 : int or float, optional
         Length of long cycle. Default is 1560.
-    tau1 : {int, float}, optional
+    tau1 : int or float, optional
         Length of short cycle. Default is 4.
     kmax : int, optional
         Number of components. Default is 14.
     rho : float, optional
-        Relative scale of adjacent cycles. Default is sqrt(2)
-
-    Examples
-    --------
-    Daily RiskMetrics 2006 process
-
-    >>> from arch.univariate import RiskMetrics2006
-    >>> rm = RiskMetrics2006()
+        Relative scale of adjacent cycles. Default is sqrt(2).
 
     Notes
     -----
@@ -2350,6 +2378,13 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     tau0, tau1 and rho.
 
     This model has no parameters since the smoothing parameter is fixed.
+
+    Examples
+    --------
+    Daily RiskMetrics 2006 process
+
+    >>> from arch.univariate import RiskMetrics2006
+    >>> rm = RiskMetrics2006()
     """
 
     def __init__(
@@ -2412,17 +2447,17 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
         """
-        Construct values for backcasting to start the recursion
+        Construct values for backcasting to start the recursion.
 
         Parameters
         ----------
         resids : ndarray
-            Vector of (approximate) residuals
+            Vector of (approximate) residuals.
 
         Returns
         -------
         backcast : ndarray
-            Backcast values for each EWMA component
+            Backcast values for each EWMA component.
         """
 
         nobs = resids.shape[0]
@@ -2638,16 +2673,30 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    EGARCH model estimation
+    EGARCH model estimation.
 
     Parameters
     ----------
-    p : int
-        Order of the symmetric innovation
-    o : int
-        Order of the asymmetric innovation
-    q : int
-        Order of the lagged (transformed) conditional variance
+    p : int, optional
+        Order of the symmetric innovation.
+    o : int, optional
+        Order of the asymmetric innovation.
+    q : int, optional
+        Order of the lagged (transformed) conditional variance.
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \ln\sigma_{t}^{2}=\omega
+        +\sum_{i=1}^{p}\alpha_{i}
+        \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)
+        +\sum_{j=1}^{o}\gamma_{j} e_{t-j}
+        +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}
+
+    where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.
 
     Examples
     --------
@@ -2664,20 +2713,6 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Exponential ARCH process
 
     >>> earch = EGARCH(p=5)
-
-    Notes
-    -----
-    In this class of processes, the variance dynamics are
-
-    .. math::
-
-        \ln\sigma_{t}^{2}=\omega
-        +\sum_{i=1}^{p}\alpha_{i}
-        \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)
-        +\sum_{j=1}^{o}\gamma_{j} e_{t-j}
-        +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}
-
-    where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.
     """
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1) -> None:
@@ -2947,18 +2982,18 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     """
-    Fixed volatility process
+    Fixed volatility process.
 
     Parameters
     ----------
-    variance : {array, Series}
+    variance : ndarray or Series
         Array containing the variances to use.  Should have the same shape as the
         data used in the model. This is not checked since the model is not
         available when the FixedVariance process is created.
     unit_scale : bool, optional
         Flag whether to enforce a unit scale.  If False, a scale parameter will be
         estimated so that the model variance will be proportional to ``variance``.
-        If True, the model variance is set of ``variance``
+        If True, the model variance is set to ``variance``.
 
     Notes
     -----
@@ -3109,14 +3144,14 @@ def _lagged_path_sums(
 
 class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    FIGARCH model
+    FIGARCH model.
 
     Parameters
     ----------
-    p : {0, 1}
-        Order of the symmetric innovation
-    q : {0, 1}
-        Order of the lagged (transformed) conditional variance
+    p : {0, 1}, optional
+        Order of the symmetric innovation.
+    q : {0, 1}, optional
+        Order of the lagged (transformed) conditional variance.
     power : float, optional
         Power to use with the innovations, abs(e) ** power.  Default is 2.0,
         which produces FIGARCH and related models. Using 1.0 produces
@@ -3125,22 +3160,6 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
         Default is 1000.
-
-    Examples
-    --------
-    >>> from arch.univariate import FIGARCH
-
-    Standard FIGARCH
-
-    >>> figarch = FIGARCH()
-
-    FIARCH
-
-    >>> fiarch = FIGARCH(p=0)
-
-    FIAVGARCH process
-
-    >>> fiavarch = FIGARCH(power=1.0)
 
     Notes
     -----
@@ -3175,6 +3194,22 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     When `power` is not 2, the ARCH(:math:`\infty`) representation is still used
     where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and
     ``p`` is the power.
+
+    Examples
+    --------
+    >>> from arch.univariate import FIGARCH
+
+    Standard FIGARCH
+
+    >>> figarch = FIGARCH()
+
+    FIARCH
+
+    >>> fiarch = FIGARCH(p=0)
+
+    FIAVGARCH process
+
+    >>> fiavarch = FIGARCH(power=1.0)
     """
 
     def __init__(
@@ -3199,7 +3234,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     @property
     def truncation(self) -> int:
-        """Truncation lag for the ARCH-infinity approximation"""
+        """Truncation lag for the ARCH-infinity approximation."""
         return self._truncation
 
     def __str__(self) -> str:
@@ -3536,16 +3571,16 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process
+    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process.
 
     Parameters
     ----------
-    p : {0, 1}
-        Order of the symmetric innovation
-    o : {0, 1}
-        Order of the asymmetric innovation
-    q : {0, 1}
-        Order of the lagged (transformed) conditional variance
+    p : {0, 1}, optional
+        Order of the symmetric innovation.
+    o : {0, 1}, optional
+        Order of the asymmetric innovation.
+    q : {0, 1}, optional
+        Order of the lagged (transformed) conditional variance.
     delta : float, optional
         Value to use for a fixed delta in the model. If not provided,
         the value of delta is jointly estimated with other model parameters.
@@ -3553,22 +3588,6 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
         Default is 1000.
-
-    Examples
-    --------
-    >>> from arch.univariate import FIAPARCH
-
-    Standard FIAPARCH
-
-    >>> fiaparch = FIAPARCH()
-
-    Without asymmetry (reduces to FIGARCH-like)
-
-    >>> fi = FIAPARCH(o=0)
-
-    Fixed power parameter
-
-    >>> fiaparch = FIAPARCH(delta=1.0)
 
     Notes
     -----
@@ -3592,6 +3611,22 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         (|\epsilon_{t-i}| - \gamma \epsilon_{t-i})^{\delta}
 
     The weights :math:`\lambda_i` are identical to those used in FIGARCH.
+
+    Examples
+    --------
+    >>> from arch.univariate import FIAPARCH
+
+    Standard FIAPARCH
+
+    >>> fiaparch = FIAPARCH()
+
+    Without asymmetry (reduces to FIGARCH-like)
+
+    >>> fi = FIAPARCH(o=0)
+
+    Fixed power parameter
+
+    >>> fiaparch = FIAPARCH(delta=1.0)
     """
 
     def __init__(
@@ -3633,7 +3668,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     @property
     def truncation(self) -> int:
-        """Truncation lag for the ARCH-infinity approximation"""
+        """Truncation lag for the ARCH-infinity approximation."""
         return self._truncation
 
     @property
@@ -4020,16 +4055,16 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
 class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Asymmetric Power ARCH (APARCH) volatility process
+    Asymmetric Power ARCH (APARCH) volatility process.
 
     Parameters
     ----------
-    p : int
+    p : int, optional
         Order of the symmetric innovation. Must satisfy p>=o.
-    o : int
+    o : int, optional
         Order of the asymmetric innovation. Must satisfy o<=p.
-    q : int
-        Order of the lagged (transformed) conditional variance
+    q : int, optional
+        Order of the lagged (transformed) conditional variance.
     delta : float, optional
         Value to use for a fixed delta in the APARCH model. If
         not provided, the value of delta is jointly estimated
@@ -4039,6 +4074,21 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Restrict all asymmetry terms to share the same asymmetry
         parameter. If False (default), then there are no restrictions
         on the ``o`` asymmetry parameters.
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}^{\delta}=\omega
+        +\sum_{i=1}^{p}\alpha_{i}
+        \left(\left|\epsilon_{t-i}\right|
+        -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}
+        +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}
+
+    If ``common_asym`` is ``True``, then all of :math:`\gamma_i`
+    are restricted to have a common value.
 
     Examples
     --------
@@ -4055,21 +4105,6 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Fixed power parameters
 
     >>> aparch = APARCH(p=1, o=1, q=1, delta=1.3)
-
-    Notes
-    -----
-    In this class of processes, the variance dynamics are
-
-    .. math::
-
-        \sigma_{t}^{\delta}=\omega
-        +\sum_{i=1}^{p}\alpha_{i}
-        \left(\left|\epsilon_{t-i}\right|
-        -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}
-        +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}
-
-    If ``common_asym`` is ``True``, then all of :math:`\gamma_i`
-    are restricted to have a common value.
     """
 
     def __init__(
