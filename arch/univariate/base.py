@@ -478,12 +478,53 @@ class ARCHModel(metaclass=ABCMeta):
         e.g., any logged values.
         """
 
-    def _r2(self, params: ArrayLike1D) -> float | None:
+    def _r2(
+        self, params: ArrayLike1D, resids: Float64Array1D | None = None
+    ) -> float | None:
         """
         Computes the model r-square.  Optional to over-ride.  Must match
         signature.
+
+        If provided, resids are the residuals at params. Otherwise they are
+        computed from the mean model.
         """
         raise NotImplementedError("Subclasses optionally may provide.")
+
+    def _fitted_resids_variance(
+        self,
+        params: Float64Array1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> tuple[Float64Array1D, Float64Array1D]:
+        """
+        Residuals and conditional variance at params
+
+        Parameters
+        ----------
+        params
+            All model parameters
+        backcast
+            Value to use for pre-sample observations
+        var_bounds
+            Bounds on the conditional variance
+
+        Returns
+        -------
+        resids
+            Residuals
+        variance
+            Conditional variance
+
+        Notes
+        -----
+        Models where the residuals depend on the conditional variance must
+        override this method so that both are computed jointly.
+        """
+        mp, vp, _ = self._parse_parameters(params)
+        resids = to_array_1d(self.resids(mp))
+        variance = np.zeros(resids.shape[0], dtype=float)
+        self.volatility.compute_variance(vp, resids, variance, backcast, var_bounds)
+        return resids, variance
 
     @abstractmethod
     def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
@@ -713,11 +754,7 @@ class ARCHModel(metaclass=ABCMeta):
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
         assert isinstance(loglikelihood, float)
 
-        mp, vp, _ = self._parse_parameters(params)
-
-        resids = to_array_1d(self.resids(mp))
-        vol = np.zeros(resids.shape[0], dtype=float)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
         vol = to_array_1d(np.sqrt(vol))
 
         names = self._all_parameter_names()
@@ -979,15 +1016,13 @@ class ARCHModel(metaclass=ABCMeta):
         params = opt.x
         loglikelihood = -1.0 * opt.fun
 
-        mp, vp, _ = self._parse_parameters(params)
+        mp, _, _ = self._parse_parameters(params)
 
-        resids = self.resids(mp)
-        vol = np.zeros(resids.shape[0], dtype=float)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
         vol = cast("Float64Array1D", np.sqrt(vol))
 
         try:
-            r2 = self._r2(mp)
+            r2 = self._r2(mp, resids)
         except NotImplementedError:
             r2 = np.nan
 
