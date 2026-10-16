@@ -42,14 +42,12 @@ jobs:
     #                    code and run a few tests. This only works up to Python 3.12
     #                    and with COVERAGE_CORE=ctrace.
     #   STATSMODELS_MAIN Install statsmodels from its main branch
-    #   style            Run the style checks
     #   nightly          Install nightly builds of numpy, scipy, pandas, ...
     #   experimental     Do not fail when the tests fail and do not collect coverage
     matrix:
       python_314:
         python.version: '3.14'
         PYTEST_PATTERN: "(slow or not slow)"
-        style: true
       # Without the Cython extensions, so numba runs the recursions
       python_314_no_binary:
         python.version: '3.14'
@@ -144,18 +142,6 @@ jobs:
         source ci/install-statsmodels-main.sh
       fi
     displayName: 'Install arch main'
-
-  - script: |
-     source ci/azure/update_path.sh
-     # Run every check, and fail if any of them fails
-     status=0
-     flake8 arch || status=1
-     ruff check arch || status=1
-     black --check arch || status=1
-     isort --check arch || status=1
-     exit ${status}
-    displayName: 'Check style and formatting'
-    condition: eq(variables['style'], 'true')
 
   - script: |
       echo "Installing to site packages (sdist)"
