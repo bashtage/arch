@@ -1137,3 +1137,38 @@ def test_spa_stepm_non_finite_losses(finite_losses, bad_value, procedure, where,
         models = pd.DataFrame(models, columns=list("abc"))
     with pytest.raises(ValueError, match=f"{where} must be finite"):
         run_with_timeout(lambda: procedure(benchmark, models, reps=5, seed=1))
+
+
+@pytest.mark.parametrize(
+    ("procedure", "better_rate"), [(SPA, 0.3), (StepM, 0.1)], ids=["SPA", "StepM"]
+)
+@pytest.mark.parametrize("dtype", [np.uint8, np.uint16, np.uint64, np.bool_])
+def test_unsigned_integer_and_bool_losses(procedure, better_rate, dtype):
+    # Unsigned integer differences wrap around and bool cannot be subtracted
+    rng = np.random.default_rng(0)
+    t = 150
+    benchmark = (rng.random(t) < 0.4).astype(float)
+    # The second model has a smaller rate of 1s, the loss, than the benchmark
+    models = np.column_stack(
+        [
+            (rng.random(t) < 0.4),
+            (rng.random(t) < better_rate),
+            (rng.random(t) < 0.4),
+        ]
+    ).astype(float)
+    kwargs = {"reps": 200, "seed": 3, "block_size": 5}
+    expected = procedure(benchmark, models, **kwargs)
+    expected.compute()
+    actual = procedure(benchmark.astype(dtype), models.astype(dtype), **kwargs)
+    actual.compute()
+    if procedure is SPA:
+        assert_allclose(actual.pvalues.to_numpy(), expected.pvalues.to_numpy())
+        assert_allclose(actual.critical_values(), expected.critical_values())
+        # The p-values are informative, neither 0 nor 1
+        assert np.all((expected.pvalues > 0.05) & (expected.pvalues < 0.95))
+        loss_diff = actual._loss_diff
+    else:
+        assert actual.superior_models == expected.superior_models
+        assert expected.superior_models == [1]
+        loss_diff = actual.spa._loss_diff
+    assert_allclose(loss_diff, benchmark[:, None] - models)

@@ -802,16 +802,20 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             self.block_size = block_size
         self.studentize: bool = studentize
         self.nested: bool = nested
-        if not np.all(np.isfinite(np.asarray(self.benchmark, dtype=float))):
+        # Subtract in floating point. Unsigned integer losses would wrap around
+        # and boolean losses cannot be subtracted.
+        benchmark_arr = np.asarray(self.benchmark, dtype=float)
+        models_arr = np.asarray(self.models, dtype=float)
+        if not np.all(np.isfinite(benchmark_arr)):
             raise ValueError(
                 "benchmark must be finite. The benchmark contains NaN or infinite "
                 "values."
             )
-        if not np.all(np.isfinite(np.asarray(self.models, dtype=float))):
+        if not np.all(np.isfinite(models_arr)):
             raise ValueError(
                 "models must be finite. The models contain NaN or infinite values."
             )
-        self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
+        self._loss_diff = benchmark_arr - models_arr
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
