@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch v8.0.1 (+294)</title>
+        <title>arch.bootstrap.base - arch v8.0.1 (+316)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+294)
+            arch v8.0.1 (+316)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+294)
+    arch v8.0.1 (+316)
   </label>
   
     <div class="md-nav__source">
@@ -666,9 +666,11 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    DataFrame</span>
-<span class="sd">        A DataFrame with two columns `b_sb`, the estimated optimal block size</span>
-<span class="sd">        for the Stationary Bootstrap and `b_cb`, the estimated optimal block</span>
-<span class="sd">        size for the circular bootstrap.</span>
+<span class="sd">        A DataFrame with two columns `stationary`, the estimated optimal block</span>
+<span class="sd">        size for the Stationary Bootstrap, and `circular`, the estimated</span>
+<span class="sd">        optimal block size for the circular bootstrap. The index contains the</span>
+<span class="sd">        column names of x if it is a DataFrame, the name of x if it is a Series</span>
+<span class="sd">        and the column positions otherwise.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -749,11 +751,22 @@
 <span class="sd">    float</span>
 <span class="sd">        Value of the acceleration parameter "a" used in the BCa bootstrap.</span>
 <span class="sd">    """</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">jk_params</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"The jackknife estimates are not finite, so the acceleration used by "</span>
+            <span class="s2">"BCa cannot be computed."</span>
+        <span class="p">)</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">jk_params</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">jk_params</span>
     <span class="n">numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">denom</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
-    <span class="n">small</span> <span class="o">=</span> <span class="n">denom</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">numer</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">small</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+    <span class="c1"># The jackknife estimates are all equal, up to rounding error, if the</span>
+    <span class="c1"># spread is tiny relative to their size. The rounding error would</span>
+    <span class="c1"># determine the acceleration (or 0/0 when they are exactly equal).</span>
+    <span class="n">spread</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">jk_params</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jk_params</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">small</span> <span class="o">=</span> <span class="p">(</span><span class="n">denom</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">numer</span><span class="p">)</span> <span class="o">*</span> <span class="n">eps</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">spread</span> <span class="o">&lt;=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">small</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">"Jackknife variance estimate </span><span class="si">{jk_var}</span><span class="s2"> is too small to use BCa"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jk_var</span><span class="o">=</span><span class="n">denom</span><span class="p">))</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span>
@@ -811,6 +824,64 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_block_size</span><span class="p">(</span><span class="n">block_size</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">integer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Check that the block size of a block bootstrap is valid</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    block_size : {int, float}</span>
+<span class="sd">        The block size</span>
+<span class="sd">    integer : bool, default True</span>
+<span class="sd">        Whether the block size must be an integer. The block size of the</span>
+<span class="sd">        stationary bootstrap is the mean block length, which can be any</span>
+<span class="sd">        number that is at least 1.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If the block size is not an integer (or a number if integer is False)</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the block size is less than 1 or not finite</span>
+<span class="sd">    """</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="s2">"an integer"</span> <span class="k">if</span> <span class="n">integer</span> <span class="k">else</span> <span class="s2">"a number"</span>
+    <span class="n">valid_types</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="k">if</span> <span class="n">integer</span> <span class="k">else</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="n">valid_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"block_size must be </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">block_size</span><span class="si">!r}</span><span class="s2"> has type "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span> <span class="ow">or</span> <span class="n">block_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"block_size must be </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2"> that is at least 1."</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_extra_kwargs</span><span class="p">(</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Check that the extra keyword arguments do not replace bootstrapped data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Keyword argument dictionary containing the bootstrapped data</span>
+<span class="sd">    extra_kwargs : dict, default None</span>
+<span class="sd">        Extra keyword arguments</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If extra_kwargs contains a key used for the data in kwargs</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">extra_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">extra_kwargs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"extra_kwargs contains keys used for variable names in the bootstrap"</span>
+            <span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_add_extra_kwargs</span><span class="p">(</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -827,18 +898,18 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
-<span class="sd">        Keyword dictionary with added keyword arguments</span>
+<span class="sd">        A new keyword dictionary with the added keyword arguments.  The input</span>
+<span class="sd">        dictionary is never returned, so the caller can modify the result</span>
+<span class="sd">        without changing the input.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    There is no checking for duplicate keys</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">extra_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">kwargs</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">kwargs_copy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">kwargs_copy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">extra_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">kwargs_copy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">kwargs_copy</span>
+    <span class="k">return</span> <span class="n">kwargs_copy</span>
 
 
 <div class="viewcode-block" id="IIDBootstrap">
@@ -852,8 +923,8 @@
 <span class="sd">    args</span>
 <span class="sd">        Positional arguments to bootstrap</span>
 <span class="sd">    seed : {Generator, RandomState, int}, optional</span>
-<span class="sd">        Seed to use to ensure reproducable results. If an int, passes the</span>
-<span class="sd">        value to value to ``np.random.default_rng``. If None, a fresh</span>
+<span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
+<span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
 <span class="sd">    kwargs</span>
 <span class="sd">        Keyword arguments to bootstrap</span>
@@ -876,8 +947,8 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
-<span class="sd">    To ensure a reproducible bootstrap, you must set the ``seed``</span>
-<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
+<span class="sd">    argument when the bootstrap is created. See the example below.</span>
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
@@ -987,7 +1058,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">", ID: "</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">+</span> <span class="s2">")"</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">"&lt;/strong&gt;("</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">"&lt;strong&gt;no. pos. inputs&lt;/strong&gt;: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_data</span><span class="p">))</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">", &lt;strong&gt;no. keyword inputs&lt;/strong&gt;: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kw_data</span><span class="p">))</span>
@@ -1051,14 +1122,17 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.reset.html#arch.bootstrap.IIDBootstrap.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Resets the bootstrap to either its initial state or the last seed.</span>
+<span class="sd">        Resets the bootstrap to its initial state.</span>
+
+<span class="sd">        The generator is reset to the state it had when the bootstrap was</span>
+<span class="sd">        created, which is the state determined by the seed if one was provided,</span>
+<span class="sd">        and the data are restored to their original order.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        use_seed : bool, default True</span>
-<span class="sd">            Flag indicating whether to use the last seed if provided.  If</span>
-<span class="sd">            False or if no seed has been set, the bootstrap will be reset</span>
-<span class="sd">            to the initial state.  Default is True</span>
+<span class="sd">            This argument is not used. The generator is always reset to the</span>
+<span class="sd">            state it had when the bootstrap was created.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_items</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resample</span><span class="p">()</span>
@@ -1150,11 +1224,14 @@
 <span class="sd">            results.  This allows alternative methods to be compared without</span>
 <span class="sd">            rerunning the bootstrap simulation.  Reuse is ignored if reps is</span>
 <span class="sd">            not the same across multiple runs, func changes across calls, or</span>
-<span class="sd">            method is 'studentized'.</span>
+<span class="sd">            method is 'studentized'.  Otherwise the previous results are</span>
+<span class="sd">            reused even if extra_kwargs or sampling have changed, so use a new</span>
+<span class="sd">            call without reuse (or ``reset``) after changing them.</span>
 <span class="sd">        sampling : str, default "nonparametric"</span>
 <span class="sd">            Type of sampling to use: 'nonparametric', 'semi-parametric' (or</span>
 <span class="sd">            'semi') or 'parametric'.  The default is 'nonparametric'.  See</span>
-<span class="sd">            notes about the changes to func required when using 'semi' or</span>
+<span class="sd">            :ref:`semiparametric-bootstraps` and :ref:`parametric-bootstraps`</span>
+<span class="sd">            for the changes to func required when using 'semi' or</span>
 <span class="sd">            'parametric'.</span>
 <span class="sd">        extra_kwargs : dict, default None</span>
 <span class="sd">            Extra keyword arguments to use when calling func and std_err_func,</span>
@@ -1205,7 +1282,13 @@
 <span class="sd">            std_err_func(params, *args, **kwargs)</span>
 
 <span class="sd">        where ``params`` is the vector of estimated parameters using the same</span>
-<span class="sd">        bootstrap data as in args and kwargs.</span>
+<span class="sd">        bootstrap data as in args and kwargs.  When ``sampling`` is</span>
+<span class="sd">        ``"semi-parametric"`` or ``"parametric"``, the keyword arguments</span>
+<span class="sd">        ``params`` and ``state`` that are passed to ``func`` to simulate the</span>
+<span class="sd">        data are not passed to ``std_err_func``, which only receives the</span>
+<span class="sd">        data and ``extra_kwargs``.  The studentized bootstrap with a nested</span>
+<span class="sd">        bootstrap simulates the data in the nested bootstrap in the same way</span>
+<span class="sd">        as in the outer bootstrap.</span>
 
 <span class="sd">        The bootstraps are:</span>
 
@@ -1222,6 +1305,19 @@
 <span class="sd">        * 'bca' - Bias corrected and accelerated, adding acceleration parameter</span>
 <span class="sd">          to 'bc' method</span>
 
+<span class="sd">        The acceleration parameter used by 'bca' is estimated using a</span>
+<span class="sd">        leave-one-out jackknife of the observations in the original data. It is</span>
+<span class="sd">        the iid jackknife for all bootstraps, including the block bootstraps,</span>
+<span class="sd">        and so does not take account of serial dependence or the block size.</span>
+
+<span class="sd">        When ``std_err_func`` is not provided, the standard error used by</span>
+<span class="sd">        'studentized' is estimated in each bootstrap sample using a nested</span>
+<span class="sd">        bootstrap of the same type as this bootstrap, which applies the same</span>
+<span class="sd">        block size to the bootstrap sample. The block size of the nested</span>
+<span class="sd">        bootstrap is not selected separately from the block size of this</span>
+<span class="sd">        bootstrap. Provide ``std_err_func`` to use a different method, for</span>
+<span class="sd">        example, a nested block bootstrap with a different block size.</span>
+
 <span class="sd">        """</span>
         <span class="n">studentized</span> <span class="o">=</span> <span class="s2">"studentized"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
@@ -1229,6 +1325,11 @@
         <span class="n">tail_name</span> <span class="o">=</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">tail_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"tail must be one of two-sided, lower or upper"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span> <span class="ow">and</span> <span class="n">std_err_func</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">studentize_reps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"studentize_reps must be at least 1 when std_err_func is not "</span>
+                <span class="s2">"provided and method is 'studentized'."</span>
+            <span class="p">)</span>
         <span class="n">studentize_reps</span> <span class="o">=</span> <span class="n">studentize_reps</span> <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">sampling</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"semi"</span><span class="p">,</span> <span class="s2">"semi-parametric"</span><span class="p">,</span> <span class="s2">"semiparametric"</span><span class="p">):</span>
             <span class="n">sampling</span> <span class="o">=</span> <span class="s2">"semiparametric"</span>
@@ -1369,7 +1470,7 @@
         <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">p</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">"Empirical probability used in bias correction is 0 or 1, and so"</span>
+                <span class="s2">"Empirical probability used in bias correction is 0 or 1, and so "</span>
                 <span class="s2">"bias cannot be corrected. This may occur in extremum statistics "</span>
                 <span class="s2">"that are not well approximated by a normal in a finite sample."</span>
             <span class="p">)</span>
@@ -1445,11 +1546,12 @@
 
 <span class="sd">        .. code:: python</span>
 
-<span class="sd">            func(params, *args, **kwargs)</span>
+<span class="sd">            func(*args, **kwargs)</span>
 
 <span class="sd">        where args and kwargs are the bootstrap version of the data provided</span>
 <span class="sd">        when setting up the bootstrap.  When extra keyword arguments are used,</span>
-<span class="sd">        these are appended to kwargs before calling func</span>
+<span class="sd">        these are appended to kwargs before calling func.  The function can</span>
+<span class="sd">        return a scalar, a 0-dimensional array or a 1-dimensional array-like.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1461,12 +1563,10 @@
 <span class="sd">        ...     return y.mean(0)</span>
 <span class="sd">        &gt;&gt;&gt; results = bs.apply(func, 100)</span>
 <span class="sd">        """</span>
+        <span class="n">_check_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">num_params</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
-            <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">pos_data</span><span class="p">,</span> <span class="n">kw_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
@@ -1496,22 +1596,20 @@
         <span class="k">elif</span> <span class="n">sampling</span> <span class="o">==</span> <span class="s2">"semiparametric"</span><span class="p">:</span>
             <span class="n">semi</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">extra_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">extra_kwargs</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">"extra_kwargs contains keys used for variable"</span>
-                    <span class="s2">" names in the bootstrap"</span>
-                <span class="p">)</span>
+        <span class="n">_check_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Allows lists, tuples, scalars and 0-d arrays</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
         <span class="n">studentized_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
 
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">pos_data</span><span class="p">,</span> <span class="n">kw_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
-            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="n">kw_data</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+            <span class="c1"># Data and extra keywords only, without the simulation keywords</span>
+            <span class="n">data_kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="n">kw_data</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">data_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">parametric</span><span class="p">:</span>
                 <span class="n">kwargs</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span>
                 <span class="n">kwargs</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span>
@@ -1519,14 +1617,19 @@
                 <span class="n">kwargs</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span>
             <span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">pos_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">std_err_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">std_err</span> <span class="o">=</span> <span class="n">std_err_func</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="p">],</span> <span class="o">*</span><span class="n">pos_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="c1"># params and state are only used to simulate data, and params</span>
+                <span class="c1"># would conflict with the first argument of std_err_func</span>
+                <span class="n">std_err</span> <span class="o">=</span> <span class="n">std_err_func</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="p">],</span> <span class="o">*</span><span class="n">pos_data</span><span class="p">,</span> <span class="o">**</span><span class="n">data_kwargs</span><span class="p">)</span>
                 <span class="n">studentized_results</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">-</span> <span class="n">base</span><span class="p">)</span> <span class="o">/</span> <span class="n">std_err</span>
             <span class="k">elif</span> <span class="n">studentize_reps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Set the seed to ensure reproducibility</span>
                 <span class="n">seed</span> <span class="o">=</span> <span class="n">_get_random_integers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                 <span class="c1"># Need new bootstrap of same type</span>
                 <span class="n">nested_bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="o">*</span><span class="n">pos_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kw_data</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="n">cov</span> <span class="o">=</span> <span class="n">nested_bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">studentize_reps</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="n">extra_kwargs</span><span class="p">)</span>
+                <span class="c1"># The nested draws are simulated like the outer draws</span>
+                <span class="n">cov</span> <span class="o">=</span> <span class="n">nested_bs</span><span class="o">.</span><span class="n">_bootstrap_cov</span><span class="p">(</span>
+                    <span class="n">func</span><span class="p">,</span> <span class="n">studentize_reps</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="n">extra_kwargs</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span>
+                <span class="p">)</span>
                 <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
                 <span class="n">err</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">-</span> <span class="n">base</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">std_err</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">eps</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err</span><span class="p">))):</span>
@@ -1534,7 +1637,7 @@
                 <span class="n">studentized_results</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">err</span> <span class="o">/</span> <span class="n">std_err</span>
             <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">base</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">studentized_results</span><span class="p">)</span>
 
@@ -1575,13 +1678,13 @@
 
 <span class="sd">        .. code:: python</span>
 
-<span class="sd">            func(params, *args, **kwargs)</span>
+<span class="sd">            func(*args, **kwargs)</span>
 
-<span class="sd">        where params are a 1-dimensional array, and `*args` and `**kwargs` are</span>
-<span class="sd">        data used in the the bootstrap.  The first argument, params, will be</span>
-<span class="sd">        none when called using the original data, and will contain the estimate</span>
-<span class="sd">        computed using the original data in bootstrap replications.  This</span>
-<span class="sd">        parameter is passed to allow parametric bootstrap simulation.</span>
+<span class="sd">        where `*args` and `**kwargs` are the bootstrap version of the data</span>
+<span class="sd">        used in the bootstrap, and any ``extra_kwargs`` are appended to</span>
+<span class="sd">        `**kwargs`. The function returns a scalar, a 0-dimensional array or a</span>
+<span class="sd">        1-dimensional array-like. A ``params`` argument is not passed, so only</span>
+<span class="sd">        the nonparametric bootstrap can be used.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1610,7 +1713,20 @@
 <span class="sd">            name of the required bootstrap</span>
 
 <span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_construct_bootstrap_estimates</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_cov</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">recenter</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bootstrap_cov</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span>
+        <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">recenter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+            <span class="s2">"nonparametric"</span><span class="p">,</span> <span class="s2">"semi-parametric"</span><span class="p">,</span> <span class="s2">"semi"</span><span class="p">,</span> <span class="s2">"parametric"</span><span class="p">,</span> <span class="s2">"semiparametric"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"nonparametric"</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_construct_bootstrap_estimates</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
         <span class="n">base</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
         <span class="k">assert</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1619,8 +1735,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">errors</span> <span class="o">=</span> <span class="n">results</span> <span class="o">-</span> <span class="n">base</span>
 
-        <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span></div>
-
+        <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span>
 
 <div class="viewcode-block" id="IIDBootstrap.var">
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.var.html#arch.bootstrap.IIDBootstrap.var">[docs]</a>
@@ -1659,13 +1774,13 @@
 
 <span class="sd">        .. code:: python</span>
 
-<span class="sd">            func(params, *args, **kwargs)</span>
+<span class="sd">            func(*args, **kwargs)</span>
 
-<span class="sd">        where params are a 1-dimensional array, and `*args` and `**kwargs` are</span>
-<span class="sd">        data used in the the bootstrap.  The first argument, params, will be</span>
-<span class="sd">        none when called using the original data, and will contain the estimate</span>
-<span class="sd">        computed using the original data in bootstrap replications.  This</span>
-<span class="sd">        parameter is passed to allow parametric bootstrap simulation.</span>
+<span class="sd">        where `*args` and `**kwargs` are the bootstrap version of the data</span>
+<span class="sd">        used in the bootstrap, and any ``extra_kwargs`` are appended to</span>
+<span class="sd">        `**kwargs`. The function returns a scalar, a 0-dimensional array or a</span>
+<span class="sd">        1-dimensional array-like. A ``params`` argument is not passed, so only</span>
+<span class="sd">        the nonparametric bootstrap can be used.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1758,6 +1873,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    args</span>
 <span class="sd">        Positional arguments to bootstrap</span>
+<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
+<span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
+<span class="sd">        Generator is constructed with system-provided entropy.</span>
 <span class="sd">    kwargs</span>
 <span class="sd">        Keyword arguments to bootstrap</span>
 
@@ -1786,10 +1905,10 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
-<span class="sd">    To ensure a reproducible bootstrap, you must set the ``seed``</span>
-<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
+<span class="sd">    argument when the bootstrap is created. See the example below.</span>
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
-<span class="sd">    passed using this keyword must be an instance of a NumPy ``Generator`` or</span>
+<span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
 
 <span class="sd">    Examples</span>
@@ -1878,14 +1997,17 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IndependentSamplesBootstrap.reset.html#arch.bootstrap.IndependentSamplesBootstrap.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Resets the bootstrap to either its initial state or the last seed.</span>
+<span class="sd">        Resets the bootstrap to its initial state.</span>
+
+<span class="sd">        The generator is reset to the state it had when the bootstrap was</span>
+<span class="sd">        created, which is the state determined by the seed if one was provided,</span>
+<span class="sd">        and the data are restored to their original order.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        use_seed : bool, default True</span>
-<span class="sd">            Flag indicating whether to use the last seed if provided.  If</span>
-<span class="sd">            False or if no seed has been set, the bootstrap will be reset</span>
-<span class="sd">            to the initial state.  Default is True</span>
+<span class="sd">            This argument is not used. The generator is always reset to the</span>
+<span class="sd">            state it had when the bootstrap was created.</span>
 <span class="sd">        """</span>
         <span class="n">pos_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Int64Array1D</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_arg_items</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
@@ -1940,12 +2062,12 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    block_size : int</span>
-<span class="sd">        Size of block to use</span>
+<span class="sd">        Size of block to use. Must be an integer that is at least 1.</span>
 <span class="sd">    args</span>
 <span class="sd">        Positional arguments to bootstrap</span>
 <span class="sd">    seed : {Generator, RandomState, int}, optional</span>
-<span class="sd">        Seed to use to ensure reproducable results. If an int, passes the</span>
-<span class="sd">        value to value to ``np.random.default_rng``. If None, a fresh</span>
+<span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
+<span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
 <span class="sd">    kwargs</span>
 <span class="sd">        Keyword arguments to bootstrap</span>
@@ -1968,8 +2090,8 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
-<span class="sd">    To ensure a reproducible bootstrap, you must set the ``seed``</span>
-<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
+<span class="sd">    argument when the bootstrap is created. See the example below.</span>
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
@@ -2007,6 +2129,7 @@
 <span class="sd">    """</span>
 
     <span class="n">_name</span> <span class="o">=</span> <span class="s2">"Circular Block Bootstrap"</span>
+    <span class="n">_integer_block_size</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2015,6 +2138,7 @@
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_check_block_size</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integer_block_size</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">block_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">block_size</span><span class="p">]</span>
@@ -2055,7 +2179,7 @@
         <span class="n">txt</span> <span class="o">+=</span> <span class="s2">", no. keyword inputs: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kw_data</span><span class="p">))</span> <span class="o">+</span> <span class="s2">")"</span>
         <span class="k">return</span> <span class="n">txt</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s2">"&lt;strong&gt;"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">"&lt;/strong&gt;("</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">"&lt;strong&gt;block size&lt;/strong&gt;: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">", &lt;strong&gt;no. pos. inputs&lt;/strong&gt;: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_data</span><span class="p">))</span>
@@ -2092,13 +2216,14 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    block_size : int</span>
-<span class="sd">        Average size of block to use</span>
+<span class="sd">    block_size : {int, float}</span>
+<span class="sd">        Average size of block to use. Can be any number that is at least 1,</span>
+<span class="sd">        for example, the value estimated by ``optimal_block_length``.</span>
 <span class="sd">    args</span>
 <span class="sd">        Positional arguments to bootstrap</span>
 <span class="sd">    seed : {Generator, RandomState, int}, optional</span>
-<span class="sd">        Seed to use to ensure reproducable results. If an int, passes the</span>
-<span class="sd">        value to value to ``np.random.default_rng``. If None, a fresh</span>
+<span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
+<span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
 <span class="sd">    kwargs</span>
 <span class="sd">        Keyword arguments to bootstrap</span>
@@ -2121,8 +2246,8 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
-<span class="sd">    To ensure a reproducible bootstrap, you must set the ``seed``</span>
-<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
+<span class="sd">    argument when the bootstrap is created. See the example below.</span>
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
@@ -2160,6 +2285,8 @@
 <span class="sd">    """</span>
 
     <span class="n">_name</span> <span class="o">=</span> <span class="s2">"Stationary Bootstrap"</span>
+    <span class="c1"># The block size is the mean of the geometric block length</span>
+    <span class="n">_integer_block_size</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2197,12 +2324,12 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    block_size : int</span>
-<span class="sd">        Size of block to use</span>
+<span class="sd">        Size of block to use. Must be an integer that is at least 1.</span>
 <span class="sd">    args</span>
 <span class="sd">        Positional arguments to bootstrap</span>
 <span class="sd">    seed : {Generator, RandomState, int}, optional</span>
-<span class="sd">        Seed to use to ensure reproducable results. If an int, passes the</span>
-<span class="sd">        value to value to ``np.random.default_rng``. If None, a fresh</span>
+<span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
+<span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
 <span class="sd">    kwargs</span>
 <span class="sd">        Keyword arguments to bootstrap</span>
@@ -2225,8 +2352,8 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
-<span class="sd">    To ensure a reproducible bootstrap, you must set the ``seed``</span>
-<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
+<span class="sd">    argument when the bootstrap is created. See the example below.</span>
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>

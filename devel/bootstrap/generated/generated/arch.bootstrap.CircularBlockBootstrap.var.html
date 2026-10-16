@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.bootstrap.CircularBlockBootstrap.var - arch v8.0.1 (+294)</title>
+        <title>arch.bootstrap.CircularBlockBootstrap.var - arch v8.0.1 (+316)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+294)
+            arch v8.0.1 (+316)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+294)
+    arch v8.0.1 (+316)
   </label>
   
     <div class="md-nav__source">
@@ -1563,14 +1563,14 @@ estimate (False).  Default is True.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
 </div>
-<p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
-data used in the the bootstrap.  The first argument, params, will be
-none when called using the original data, and will contain the estimate
-computed using the original data in bootstrap replications.  This
-parameter is passed to allow parametric bootstrap simulation.</p>
+<p>where <cite>*args</cite> and <cite>**kwargs</cite> are the bootstrap version of the data
+used in the bootstrap, and any <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> are appended to
+<cite>**kwargs</cite>. The function returns a scalar, a 0-dimensional array or a
+1-dimensional array-like. A <code class="docutils literal notranslate"><span class="pre">params</span></code> argument is not passed, so only
+the nonparametric bootstrap can be used.</p>
 <p class="example rubric">Examples</p>
 <p>Bootstrap covariance of the mean</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>

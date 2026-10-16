@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.covariance.kernel.Parzen - arch v8.0.1 (+294)</title>
+        <title>arch.covariance.kernel.Parzen - arch v8.0.1 (+316)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+294)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+316)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+294)
+            arch v8.0.1 (+316)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+294)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+316)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+294)
+    arch v8.0.1 (+316)
   </label>
   
     <div class="md-nav__source">
@@ -1786,6 +1786,22 @@ If not provided, a vector of 1s is used. Must have nvar elements.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}w=\begin{cases}1-6z^{2}\left(1-z\right) &amp; z\leq\frac{1}{2} \\ 2\left(1-z\right)^{3} &amp; \frac{1}{2}&lt;z\leq1 \\ 0 &amp; z&gt;1 \end{cases}\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(z=\frac{h}{H}, h=0, 1, \ldots, H\)</span> where H is the bandwidth.</p>
+<p>If the bandwidth is not provided, it is estimated using the constants of
+<a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the automatic lag selection of <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. See <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> for
+details.</p>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+consistent covariance matrix estimation. Econometrica, 59(3), 817-858.</p>
+</aside>
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Newey, W. K., &amp; West, K. D. (1994). Automatic lag selection in
+covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.</p>
+</aside>
+</aside>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils data align-default">
 <tbody>

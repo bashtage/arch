@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.bootstrap.IIDBootstrap.apply - arch v8.0.1 (+294)</title>
+        <title>arch.bootstrap.IIDBootstrap.apply - arch v8.0.1 (+316)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+294)
+            arch v8.0.1 (+316)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+294)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+294)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+294)
+    arch v8.0.1 (+316)
   </label>
   
     <div class="md-nav__source">
@@ -1464,12 +1464,13 @@ corresponds to a bootstrap iteration</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
 when setting up the bootstrap.  When extra keyword arguments are used,
-these are appended to kwargs before calling func</p>
+these are appended to kwargs before calling func.  The function can
+return a scalar, a 0-dimensional array or a 1-dimensional array-like.</p>
 <p class="example rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
