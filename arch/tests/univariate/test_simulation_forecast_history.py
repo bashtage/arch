@@ -9,7 +9,12 @@ from numpy.testing import assert_allclose
 import pytest
 
 from arch.univariate import FIAPARCH, FIGARCH
-import arch.univariate.recursions as rec
+import arch.univariate.recursions_python as recpy
+
+try:
+    import arch.univariate.recursions as rec
+except ImportError:
+    rec = recpy
 
 
 def figarch_reference(
