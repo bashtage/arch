@@ -811,6 +811,38 @@ class DynamicOLS:
 
 
 class CointegrationAnalysisResults(_CommonCointegrationResults):
+    """
+    Estimation results for cointegrating vector estimators.
+
+    Returned by the ``fit`` method of FullyModifiedOLS and CanonicalCointegratingReg.
+
+    Parameters
+    ----------
+    params : Series
+        The estimated model parameters.
+    cov : DataFrame
+        The estimated parameter covariance.
+    resid : Series
+        The model residuals.
+    omega_112 : float
+        The long-run variance estimate used in the parameter covariance estimator.
+    kernel_est : CovarianceEstimator
+        The covariance estimator instance used to estimate the long-run variance
+        of the residuals.
+    num_x : int
+        The number of right-hand-side variables in the cointegrating regression.
+    trend : {"n", "c", "ct", "ctt"}
+        The trend included in the cointegrating regression.
+    df_adjust : bool
+        Whether the parameter covariance was adjusted for degrees of freedom.
+    rsquared : float
+        The model R-squared.
+    rsquared_adj : float
+        The degree-of-freedom adjusted R-squared.
+    estimator_type : str
+        The name of the estimator, which is used in the summary.
+    """
+
     def __init__(
         self,
         params: Series,

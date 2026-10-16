@@ -302,6 +302,36 @@ def phillips_ouliaris(
 
 
 class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
+    """
+    Results class for Phillips-Ouliaris cointegration tests.
+
+    Parameters
+    ----------
+    stat : float
+        The Phillips-Ouliaris test statistic.
+    pvalue : float
+        The pvalue of the Phillips-Ouliaris test statistic.
+    crit_vals : Series
+        The critical values of the Phillips-Ouliaris test specific to the sample
+        size and model dimension.
+    null : str, default "No Cointegration"
+        The null hypothesis.
+    alternative : str, default "Cointegration"
+        The alternative hypothesis.
+    trend : str, default "c"
+        The model's trend description.
+    order : int, default 2
+        The number of stochastic trends in the null distribution.
+    xsection : RegressionResults
+        The OLS results used in the cross-sectional regression.
+    test_type : str, default "Za"
+        The type of the test, one of "Za", "Zt", "Pu" and "Pz".
+    kernel_est : CovarianceEstimator
+        The long-run covariance estimator used to compute the test statistic.
+    rho : float, default 0.0
+        Not used.
+    """
+
     def __init__(
         self,
         stat: float,
