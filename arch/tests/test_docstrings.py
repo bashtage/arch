@@ -268,13 +268,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.data.vix": frozenset({"GL08"}),
     "arch.data.wti": frozenset({"GL08"}),
     "arch.doc": frozenset({"GL08"}),
-    "arch.unitroot._engle_granger.EngleGrangerTestResults.summary": frozenset({"RT01"}),
-    "arch.unitroot._engle_granger.engle_granger": frozenset(
-        {"PR01", "PR02", "PR04", "PR10"}
-    ),
-    "arch.unitroot._phillips_ouliaris.PhillipsOuliarisTestResults.summary": frozenset(
-        {"RT01"}
-    ),
     "arch.unitroot.cointegration.CanonicalCointegratingReg.fit": frozenset({"PR03"}),
     "arch.unitroot.cointegration.DynamicOLSResults": frozenset({"PR01"}),
     "arch.unitroot.cointegration.FullyModifiedOLS.fit": frozenset({"PR03"}),

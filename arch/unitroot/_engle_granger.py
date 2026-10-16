@@ -39,25 +39,35 @@ def engle_granger(
     ----------
     y : array_like
         The left-hand-side variable in the cointegrating regression.
-    x : array_like
+    x : ndarray, Series or DataFrame
         The right-hand-side variables in the cointegrating regression.
-    trend : {"n","c","ct","ctt"}, default "c"
+    trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
-    lags : int, default None
+
+    lags : int, optional
         The number of lagged differences to include in the Augmented
-        Dickey-Fuller test used on the residuals of the
-    max_lags : int, default None
+        Dickey-Fuller test used on the residuals of the cointegrating
+        regression. If None, the number of lags is selected using ``method``.
+    max_lags : int, optional
         The maximum number of lags to consider when using automatic
         lag-length in the Augmented Dickey-Fuller regression.
-    method: {"aic", "bic", "tstat"}, default "bic"
+    method : {"aic", "bic", "t-stat", "maic"}, optional
         The method used to select the number of lags included in the
         Augmented Dickey-Fuller regression.
-    low_memory : bool, default None
+
+        * "aic": Select the minimum of the Akaike IC
+        * "bic": Select the minimum of the Schwarz/Bayesian IC
+        * "t-stat": Select the largest lag length for which the t-statistic
+          of the last lag is significant, using a cut-off of 1.645 for the
+          absolute value of the t-statistic
+        * "maic": Select the minimum of Ng and Perron's modified Akaike IC
+
+    low_memory : bool, optional
         Flag indicating whether to use the low memory implementation of the
         lag selection algorithm in the Augmented Dickey-Fuller regression.
         If None, the algorithm is selected automatically. See
@@ -131,18 +141,20 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
     crit_vals : Series
         The critical values of the Engle-Granger specific to the sample size
         and model dimension.
-    null : str
+    null : str, optional
         The null hypothesis.
-    alternative : str
+    alternative : str, optional
         The alternative hypothesis.
-    trend : str
+    trend : str, optional
         The model's trend description.
-    order : int
+    order : int, optional
         The number of stochastic trends in the null distribution.
-    adf : ADF
-        The ADF instance used to perform the test and lag selection.
-    xsection : RegressionResults
-        The OLS results used in the cross-sectional regression.
+    adf : ADF, optional
+        The ADF instance used to perform the test and lag selection. It must
+        be provided.
+    xsection : RegressionResults, optional
+        The OLS results used in the cross-sectional regression. They must be
+        provided.
     """
 
     def __init__(
@@ -185,7 +197,7 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
     @property
     def rho(self) -> float:
         r"""
-        The estimated coefficient in the Dickey-Fuller Test
+        The estimated coefficient in the Dickey-Fuller Test.
 
         Returns
         -------
@@ -207,7 +219,15 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
         return 1 + param0
 
     def summary(self) -> Summary:
-        """Summary of test, containing statistic, p-value and critical values"""
+        """
+        Summary of test, containing statistic, p-value and critical values.
+
+        Returns
+        -------
+        Summary
+            A summary instance with methods that support export to text, csv
+            or latex.
+        """
         table_data = [
             ("Test Statistic", f"{self.stat:0.3f}"),
             ("P-value", f"{self.pvalue:0.3f}"),
@@ -251,13 +271,14 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
 
 def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     """
-    Critical Values for Engle-Granger t-tests
+    Critical values for Engle-Granger t-tests.
 
     Parameters
     ----------
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
-    num_x : The number of cross-sectional regressors in the model.
+        The trend included in the model.
+    num_x : int
+        The number of cross-sectional regressors in the model.
         Must be between 1 and 12.
     nobs : int
         The number of observations in the time series.
@@ -265,7 +286,7 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     Returns
     -------
     Series
-        The critical values for 1, 5 and 10%
+        The critical values for 1, 5 and 10%.
     """
     trends = ("n", "c", "ct", "ctt")
     if trend not in trends:
@@ -288,21 +309,22 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
 
 def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     """
-    Asymptotic P-values for Engle-Granger t-tests
+    Asymptotic P-values for Engle-Granger t-tests.
 
     Parameters
     ----------
     stat : float
-        The test statistic
+        The test statistic.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
-    num_x : The number of cross-sectional regressors in the model.
+        The trend included in the model.
+    num_x : int
+        The number of cross-sectional regressors in the model.
         Must be between 1 and 12.
 
     Returns
     -------
-    Series
-        The critical values for 1, 5 and 10%
+    float
+        The asymptotic p-value.
     """
     trends = ("n", "c", "ct", "ctt")
     if trend not in trends:
