@@ -3768,14 +3768,18 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             )
             omega_tilde = omega
 
+        # The transformed shock of each observation is computed once, when the
+        # observation is generated, and then reused for every lag
+        fshocks = np.empty(truncation + nobs + burn)
+        for t in range(truncation):
+            shock = abs(data[t]) - gamma * data[t]
+            fshocks[t] = shock**delta
         for t in range(truncation, truncation + nobs + burn):
-            fshocks = np.empty(truncation)
-            for i in range(truncation):
-                shock = abs(data[t - 1 - i]) - gamma * data[t - 1 - i]
-                fshocks[i] = shock**delta
-            sigma_delta_arr[t] = omega_tilde + lam_rev.dot(fshocks[::-1])
+            sigma_delta_arr[t] = omega_tilde + lam_rev.dot(fshocks[t - truncation : t])
             sigma2[t] = sigma_delta_arr[t] ** (2.0 / delta)
             data[t] = errors[t] * np.sqrt(sigma2[t])
+            shock = abs(data[t]) - gamma * data[t]
+            fshocks[t] = shock**delta
 
         return data[truncation + burn :], sigma2[truncation + burn :]
 
@@ -3905,9 +3909,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast_delta = backcast ** (delta / 2.0)
 
         abs_resids_full = np.absolute(resids)
-        fshocks_hist = np.empty(resids.shape[0])
-        for i in range(resids.shape[0]):
-            fshocks_hist[i] = (abs_resids_full[i] - gamma * resids[i]) ** delta
+        fshocks_hist = np.power(abs_resids_full - gamma * resids, delta)
 
         fpath = np.empty((simulations, truncation + horizon))
 
