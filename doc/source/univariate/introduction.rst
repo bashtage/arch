@@ -24,15 +24,12 @@ function :meth:`~arch.univariate.arch_model`
 
 .. code-block:: python
 
-    import datetime as dt
-
-    import pandas_datareader.data as web
+    import arch.data.sp500
 
     from arch import arch_model
 
-    start = dt.datetime(2000, 1, 1)
-    end = dt.datetime(2014, 1, 1)
-    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    sp500 = arch.data.sp500.load()
+    sp500 = sp500.loc['2000-01-01':'2014-01-01']
     returns = 100 * sp500['Adj Close'].pct_change().dropna()
     am = arch_model(returns)
 
@@ -58,22 +55,22 @@ with the following output
 
 ::
 
-    Iteration:      1,   Func. Count:      6,   Neg. LLF: 5159.58323938
-    Iteration:      2,   Func. Count:     16,   Neg. LLF: 5156.09760149
-    Iteration:      3,   Func. Count:     24,   Neg. LLF: 5152.29989336
-    Iteration:      4,   Func. Count:     31,   Neg. LLF: 5146.47531817
-    Iteration:      5,   Func. Count:     38,   Neg. LLF: 5143.86337547
-    Iteration:      6,   Func. Count:     45,   Neg. LLF: 5143.02096168
-    Iteration:      7,   Func. Count:     52,   Neg. LLF: 5142.24105141
-    Iteration:      8,   Func. Count:     60,   Neg. LLF: 5142.07138907
-    Iteration:      9,   Func. Count:     67,   Neg. LLF: 5141.416653
-    Iteration:     10,   Func. Count:     73,   Neg. LLF: 5141.39212288
-    Iteration:     11,   Func. Count:     79,   Neg. LLF: 5141.39023885
-    Iteration:     12,   Func. Count:     85,   Neg. LLF: 5141.39023359
-    Optimization terminated successfully.    (Exit mode 0)
-                Current function value: 5141.39023359
+    Iteration:      1,   Func. Count:      6,   Neg. LLF: 68805886954919.59
+    Iteration:      2,   Func. Count:     15,   Neg. LLF: 1575359856.4496076
+    Iteration:      3,   Func. Count:     22,   Neg. LLF: 5194.449409971215
+    Iteration:      4,   Func. Count:     28,   Neg. LLF: 5190.7422748202325
+    Iteration:      5,   Func. Count:     34,   Neg. LLF: 5191.570045895966
+    Iteration:      6,   Func. Count:     40,   Neg. LLF: 5150.829260399659
+    Iteration:      7,   Func. Count:     46,   Neg. LLF: 6474.487216207122
+    Iteration:      8,   Func. Count:     53,   Neg. LLF: 5143.161859778254
+    Iteration:      9,   Func. Count:     59,   Neg. LLF: 5141.392123039943
+    Iteration:     10,   Func. Count:     64,   Neg. LLF: 5141.390238848524
+    Iteration:     11,   Func. Count:     69,   Neg. LLF: 5141.390233587619
+    Iteration:     12,   Func. Count:     73,   Neg. LLF: 5141.390233588856
+    Optimization terminated successfully    (Exit mode 0)
+                Current function value: 5141.390233587619
                 Iterations: 12
-                Function evaluations: 85
+                Function evaluations: 73
                 Gradient evaluations: 12
 
 .. code-block:: python
@@ -86,27 +83,27 @@ yields
 
                          Constant Mean - GARCH Model Results
     ==============================================================================
-    Dep. Variable:              Adj Close   R-squared:                      -0.001
-    Mean Model:             Constant Mean   Adj. R-squared:                 -0.001
+    Dep. Variable:              Adj Close   R-squared:                       0.000
+    Mean Model:             Constant Mean   Adj. R-squared:                  0.000
     Vol Model:                      GARCH   Log-Likelihood:               -5141.39
     Distribution:                  Normal   AIC:                           10290.8
     Method:            Maximum Likelihood   BIC:                           10315.4
                                             No. Observations:                 3520
-    Date:                Fri, Dec 02 2016   Df Residuals:                     3516
-    Time:                        22:22:28   Df Model:                            4
-                                      Mean Model
-    ==============================================================================
-                     coef    std err          t      P>|t|        95.0% Conf. Int.
-    ------------------------------------------------------------------------------
-    mu             0.0531  1.487e-02      3.569  3.581e-04   [2.392e-02,8.220e-02]
-                                   Volatility Model
-    ==============================================================================
-                     coef    std err          t      P>|t|        95.0% Conf. Int.
-    ------------------------------------------------------------------------------
-    omega          0.0156  4.932e-03      3.155  1.606e-03   [5.892e-03,2.523e-02]
-    alpha[1]       0.0879  1.140e-02      7.710  1.260e-14     [6.554e-02,  0.110]
-    beta[1]        0.9014  1.183e-02     76.163      0.000       [  0.878,  0.925]
-    ==============================================================================
+    Date:                Fri, Oct 16 2026   Df Residuals:                     3519
+    Time:                        11:57:57   Df Model:                            1
+                                     Mean Model
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu             0.0531  1.487e-02      3.569  3.581e-04 [2.392e-02,8.220e-02]
+                                  Volatility Model
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    omega          0.0156  4.932e-03      3.155  1.606e-03 [5.892e-03,2.523e-02]
+    alpha[1]       0.0879  1.140e-02      7.710  1.260e-14   [6.554e-02,  0.110]
+    beta[1]        0.9014  1.183e-02     76.163      0.000     [  0.878,  0.925]
+    ============================================================================
 
     Covariance estimator: robust
 

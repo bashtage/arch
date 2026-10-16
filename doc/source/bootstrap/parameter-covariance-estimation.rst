@@ -5,18 +5,17 @@ analytical computation is challenging, or simply as an alternative to
 traditional estimators.
 
 This example estimates the covariance of the mean, standard deviation and
-Sharpe ratio of the S&P 500 using Yahoo! Finance data.
+Sharpe ratio of the S&P 500 using monthly returns computed from the daily
+prices distributed with ``arch``.
 
 .. code-block:: python
 
-    import datetime as dt
     import numpy as np
     import pandas as pd
-    import pandas_datareader.data as web
 
-    start = dt.datetime(1951, 1, 1)
-    end = dt.datetime(2014, 1, 1)
-    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    import arch.data.sp500
+
+    sp500 = arch.data.sp500.load()
     low = sp500.index.min()
     high = sp500.index.max()
     monthly_dates = pd.date_range(low, high, freq='ME')
@@ -54,16 +53,16 @@ The output is
 .. code-block:: python
 
     >>> params
-    mu        8.148534
-    sigma    14.508540
-    SR        0.561637
+    mu        4.439391
+    sigma    14.468318
+    SR        0.306835
     dtype: float64
 
     >>> param_cov
-                 mu     sigma        SR
-    mu     3.729435 -0.442891  0.273945
-    sigma -0.442891  0.495087 -0.049454
-    SR     0.273945 -0.049454  0.020830
+                  mu     sigma        SR
+    mu     12.521785 -3.272164  0.941381
+    sigma  -3.272164  2.137770 -0.280233
+    SR      0.941381 -0.280233  0.072791
 
 .. note::
 

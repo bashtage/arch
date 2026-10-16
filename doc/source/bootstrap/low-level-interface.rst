@@ -10,14 +10,11 @@ This example makes use of monthly S&P 500 data.
 
 .. code-block:: python
 
-    import datetime as dt
-
     import pandas as pd
-    import pandas_datareader.data as web
 
-    start = dt.datetime(1951, 1, 1)
-    end = dt.datetime(2014, 1, 1)
-    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    import arch.data.sp500
+
+    sp500 = arch.data.sp500.load()
     low = sp500.index.min()
     high = sp500.index.max()
     monthly_dates = pd.date_range(low, high, freq='ME')
