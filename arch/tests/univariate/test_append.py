@@ -141,16 +141,24 @@ def fit(mod, **kwargs):
     return mod.fit(disp="off", show_warning=False, **kwargs)
 
 
-def assert_results_equal(res, direct):
-    assert_allclose(res.params, direct.params, rtol=1e-7, atol=1e-9)
-    assert_allclose(res.loglikelihood, direct.loglikelihood, rtol=1e-8)
-    assert_allclose(res.resid, direct.resid, equal_nan=True, rtol=1e-7, atol=1e-9)
+def assert_results_equal(res, direct, **fix_kwargs):
+    # res and direct come from two separate optimizations, which can stop at
+    # slightly different points depending on the platform's floating point. On
+    # Intel macOS the largest differences seen were 5.3e-4 relative, 3.4e-3 in
+    # a Student's t degree of freedom near 16.5, and 8e-5 in parameters close
+    # to 0, so they are compared loosely
+    assert_allclose(res.params, direct.params, rtol=2e-3, atol=5e-4)
+    assert_allclose(res.loglikelihood, direct.loglikelihood, rtol=1e-6)
+    # At the same parameters, the appended and the direct model must agree
+    fixed = res.model.fix(direct.params, **fix_kwargs)
+    assert_allclose(fixed.loglikelihood, direct.loglikelihood, rtol=1e-10)
+    assert_allclose(fixed.resid, direct.resid, equal_nan=True, rtol=1e-10, atol=1e-12)
     assert_allclose(
-        res.conditional_volatility,
+        fixed.conditional_volatility,
         direct.conditional_volatility,
         equal_nan=True,
-        rtol=1e-7,
-        atol=1e-9,
+        rtol=1e-10,
+        atol=1e-12,
     )
     assert res.nobs == direct.nobs
     if isinstance(res.resid, pd.Series):
@@ -1089,7 +1097,9 @@ def test_append_then_fit_subsample():
     res = fit(mod, first_obs=SMALL.index[100], last_obs=SMALL.index[650])
     direct = ARXWrapper(SMALL, volatility=GARCH())
     res_direct = fit(direct, first_obs=SMALL.index[100], last_obs=SMALL.index[650])
-    assert_results_equal(res, res_direct)
+    assert_results_equal(
+        res, res_direct, first_obs=SMALL.index[100], last_obs=SMALL.index[650]
+    )
 
 
 def test_cached_values_reset():
