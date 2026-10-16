@@ -1,4 +1,4 @@
-from numpy import asarray, squeeze
+from numpy import asarray, inexact, issubdtype, squeeze
 
 from arch._typing import Float64Array
 
@@ -30,7 +30,9 @@ def cov_nw(
     ndarray
         The estimated covariance
     """
-    z = asarray(y, dtype=float)
+    z = asarray(y)
+    if not issubdtype(z.dtype, inexact):
+        z = z.astype(float)
     is_1d = False
     if axis > z.ndim:
         raise ValueError("axis must be less than the dimension of y")
