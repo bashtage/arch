@@ -1285,6 +1285,78 @@ def test_arch_lm(simulated_data):
     assert "H0: Standardized" in wald.__repr__()
 
 
+def _reference_arch_lm(resids, lags):
+    """Independent T * R^2 of the regression of e^2 on a constant and its lags"""
+    e2 = np.asarray(resids, dtype=float) ** 2
+    nobs = e2.shape[0]
+    lhs = e2[lags:]
+    rhs = np.column_stack(
+        [np.ones(nobs - lags)] + [e2[lags - i : nobs - i] for i in range(1, lags + 1)]
+    )
+    coef = np.linalg.lstsq(rhs, lhs, rcond=None)[0]
+    resid = lhs - rhs @ coef
+    r2 = 1.0 - resid @ resid / np.sum((lhs - lhs.mean()) ** 2)
+    # T is the number of residuals, not the number used in the regression
+    stat = nobs * r2
+    return stat, stats.chi2(lags).sf(stat)
+
+
+@pytest.mark.parametrize("standardized", [False, True], ids=["raw", "standardized"])
+@pytest.mark.parametrize("lags", [1, 5, 12], ids=["lags-1", "lags-5", "lags-12"])
+def test_arch_lm_reference(simulated_data, lags, standardized):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    resids = np.asarray(res.resid)
+    if standardized:
+        resids = resids / np.asarray(res.conditional_volatility)
+    stat, pval = _reference_arch_lm(resids, lags)
+    wald = res.arch_lm_test(lags=lags, standardized=standardized)
+    assert wald.df == lags
+    assert_allclose(wald.stat, stat, rtol=1e-8)
+    assert_allclose(wald.pval, pval, rtol=1e-8, atol=1e-12)
+
+
+@pytest.mark.parametrize("nobs", [250, 1000], ids=["nobs-250", "nobs-1000"])
+def test_arch_lm_default_lags(nobs):
+    rs = RandomState(0)
+    res = ZeroMean(rs.standard_normal(nobs)).fit(disp=DISPLAY)
+    expected = int(np.ceil(12 * (nobs / 100) ** 0.25))
+    wald = res.arch_lm_test()
+    assert wald.df == expected
+    stat, _ = _reference_arch_lm(np.asarray(res.resid), expected)
+    assert_allclose(wald.stat, stat, rtol=1e-8)
+
+
+@pytest.mark.parametrize(
+    "lags",
+    [np.int64(5), np.int32(5), np.uint8(5), np.array(5)],
+    ids=["int64", "int32", "uint8", "0d-array"],
+)
+def test_arch_lm_integer_like_lags(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    expected = res.arch_lm_test(lags=5)
+    wald = res.arch_lm_test(lags=lags)
+    assert wald.df == 5
+    assert isinstance(wald.df, int)
+    assert_allclose(wald.stat, expected.stat, rtol=1e-12)
+    assert_allclose(wald.pval, expected.pval, rtol=1e-12)
+
+
+@pytest.mark.parametrize(
+    "lags", [2.5, 5.0, "3", [3], (3,)], ids=["2.5", "5.0", "str", "list", "tuple"]
+)
+def test_arch_lm_invalid_lags_type(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    with pytest.raises(TypeError, match="lags must be an integer"):
+        res.arch_lm_test(lags=lags)
+
+
+@pytest.mark.parametrize("lags", [0, -1, np.int64(0)], ids=["0", "-1", "np-0"])
+def test_arch_lm_invalid_lags_value(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    with pytest.raises(ValueError, match="lags must be a positive integer"):
+        res.arch_lm_test(lags=lags)
+
+
 def test_autoscale():
     rs = np.random.RandomState(34254321)
     dist = Normal(seed=rs)
