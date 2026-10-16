@@ -505,6 +505,115 @@ def figarch_weights_python(
 figarch_weights = jit(figarch_weights_python, nopython=True)
 
 
+def backcast_weights_python(
+    lam: Float64Array1D, nobs: int, trunc_lag: int
+) -> Float64Array1D:
+    """
+    Weights on the backcast in the ARCH(inf) representation
+
+    Element t is lam[t] + ... + lam[trunc_lag - 1], the weight on the lags that
+    are before the start of the sample, which is 0 for t >= trunc_lag. Each sum
+    adds the terms in increasing order of the lag.
+    """
+    # The sums for different t are independent. Four are accumulated at a time so
+    # that the floating point adds of different sums overlap, rather than each
+    # add waiting for the previous one. Every sum still adds its terms one at a
+    # time in the same order as a single loop would, so the results do not change.
+    n_bc = min(nobs, trunc_lag)
+    bc_weights = np.zeros(nobs)
+    t = 0
+    while t + 3 < n_bc:
+        a0 = 0.0
+        a1 = 0.0
+        a2 = 0.0
+        a3 = 0.0
+        a0 += lam[t]
+        a0 += lam[t + 1]
+        a1 += lam[t + 1]
+        a0 += lam[t + 2]
+        a1 += lam[t + 2]
+        a2 += lam[t + 2]
+        for i in range(t + 3, trunc_lag):
+            w = lam[i]
+            a0 += w
+            a1 += w
+            a2 += w
+            a3 += w
+        bc_weights[t] = a0
+        bc_weights[t + 1] = a1
+        bc_weights[t + 2] = a2
+        bc_weights[t + 3] = a3
+        t += 4
+    while t < n_bc:
+        a0 = 0.0
+        for i in range(t, trunc_lag):
+            a0 += lam[i]
+        bc_weights[t] = a0
+        t += 1
+    return bc_weights
+
+
+backcast_weights = jit(backcast_weights_python, nopython=True)
+
+
+def arch_inf_sums_python(
+    lam: Float64Array1D,
+    shocks: Float64Array1D,
+    bc_weights: Float64Array1D,
+    omega_tilde: float,
+    backcast: float,
+    nobs: int,
+    trunc_lag: int,
+    sums: Float64Array1D,
+) -> None:
+    """
+    Truncated ARCH(inf) sums of FIGARCH-type models
+
+    Sets sums[t] to
+
+        omega_tilde + bc_weights[t] * backcast + sum_i lam[i] * shocks[t - i - 1]
+
+    where the sum is over i < min(t, trunc_lag) and is accumulated in increasing
+    order of i, after the first two terms.
+    """
+    # As in backcast_weights, four sums are accumulated at a time
+    t = 0
+    while t + 3 < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast
+        a1 = omega_tilde + bc_weights[t + 1] * backcast
+        a2 = omega_tilde + bc_weights[t + 2] * backcast
+        a3 = omega_tilde + bc_weights[t + 3] * backcast
+        # Lags available to all four, t, t + 1, t + 2 and t + 3
+        m = min(t, trunc_lag)
+        for i in range(m):
+            w = lam[i]
+            a0 += w * shocks[t - i - 1]
+            a1 += w * shocks[t - i]
+            a2 += w * shocks[t - i + 1]
+            a3 += w * shocks[t - i + 2]
+        # Additional lags only available to the later observations
+        for i in range(m, min(t + 1, trunc_lag)):
+            a1 += lam[i] * shocks[t - i]
+        for i in range(m, min(t + 2, trunc_lag)):
+            a2 += lam[i] * shocks[t - i + 1]
+        for i in range(m, min(t + 3, trunc_lag)):
+            a3 += lam[i] * shocks[t - i + 2]
+        sums[t] = a0
+        sums[t + 1] = a1
+        sums[t + 2] = a2
+        sums[t + 3] = a3
+        t += 4
+    while t < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast
+        for i in range(min(t, trunc_lag)):
+            a0 += lam[i] * shocks[t - i - 1]
+        sums[t] = a0
+        t += 1
+
+
+arch_inf_sums = jit(arch_inf_sums_python, nopython=True)
+
+
 def figarch_recursion_python(
     parameters: Float64Array1D,
     fresids: Float64Array1D,
@@ -631,80 +740,21 @@ def fiaparch_recursion_python(
     fshocks = np.empty(nobs)
     for t in range(nobs - 1):
         fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
-
-    # The sums below are independent across t. Four are accumulated at a time so
-    # that the floating point adds of different sums overlap, rather than each
-    # add waiting for the previous one. Every sum still adds its terms one at a
-    # time in the same order as a single loop would, so the results do not change.
-
-    # Weight on the backcast for t < trunc_lag, sum(lam[t:trunc_lag]), is 0 after
-    n_bc = min(nobs, trunc_lag)
-    bc_weights = np.zeros(nobs)
-    t = 0
-    while t + 3 < n_bc:
-        a0 = 0.0
-        a1 = 0.0
-        a2 = 0.0
-        a3 = 0.0
-        a0 += lam[t]
-        a0 += lam[t + 1]
-        a1 += lam[t + 1]
-        a0 += lam[t + 2]
-        a1 += lam[t + 2]
-        a2 += lam[t + 2]
-        for i in range(t + 3, trunc_lag):
-            w = lam[i]
-            a0 += w
-            a1 += w
-            a2 += w
-            a3 += w
-        bc_weights[t] = a0
-        bc_weights[t + 1] = a1
-        bc_weights[t + 2] = a2
-        bc_weights[t + 3] = a3
-        t += 4
-    while t < n_bc:
-        a0 = 0.0
-        for i in range(t, trunc_lag):
-            a0 += lam[i]
-        bc_weights[t] = a0
-        t += 1
-
-    t = 0
-    while t + 3 < nobs:
-        a0 = omega_tilde + bc_weights[t] * backcast_delta
-        a1 = omega_tilde + bc_weights[t + 1] * backcast_delta
-        a2 = omega_tilde + bc_weights[t + 2] * backcast_delta
-        a3 = omega_tilde + bc_weights[t + 3] * backcast_delta
-        # Lags available to all four, t, t + 1, t + 2 and t + 3
-        m = min(t, trunc_lag)
-        for i in range(m):
-            w = lam[i]
-            a0 += w * fshocks[t - i - 1]
-            a1 += w * fshocks[t - i]
-            a2 += w * fshocks[t - i + 1]
-            a3 += w * fshocks[t - i + 2]
-        # Additional lags only available to the later observations
-        for i in range(m, min(t + 1, trunc_lag)):
-            a1 += lam[i] * fshocks[t - i]
-        for i in range(m, min(t + 2, trunc_lag)):
-            a2 += lam[i] * fshocks[t - i + 1]
-        for i in range(m, min(t + 3, trunc_lag)):
-            a3 += lam[i] * fshocks[t - i + 2]
-        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
-        sigma2[t + 1] = bounds_check(a1 ** (2.0 / delta), var_bounds[t + 1])
-        sigma2[t + 2] = bounds_check(a2 ** (2.0 / delta), var_bounds[t + 2])
-        sigma2[t + 3] = bounds_check(a3 ** (2.0 / delta), var_bounds[t + 3])
-        for k in range(4):
-            sigma_delta[t + k] = sigma2[t + k] ** (delta / 2.0)
-        t += 4
-    while t < nobs:
-        a0 = omega_tilde + bc_weights[t] * backcast_delta
-        for i in range(min(t, trunc_lag)):
-            a0 += lam[i] * fshocks[t - i - 1]
-        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
+    bc_weights = backcast_weights(lam, nobs, trunc_lag)
+    arch_inf_sums(
+        lam,
+        fshocks,
+        bc_weights,
+        omega_tilde,
+        backcast_delta,
+        nobs,
+        trunc_lag,
+        sigma_delta,
+    )
+    for t in range(nobs):
+        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
         sigma_delta[t] = sigma2[t] ** (delta / 2.0)
-        t += 1
 
     return sigma2
 
