@@ -283,7 +283,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
         {"GL07", "PR01", "PR02", "PR04"}
     ),
     "arch.bootstrap.base.StationaryBootstrap.update_indices": frozenset({"RT01"}),
-    "arch.bootstrap.multiple_comparison.MCS": frozenset({"PR03"}),
     "arch.bootstrap.multiple_comparison.RealityCheck": frozenset({"GL07"}),
     "arch.bootstrap.multiple_comparison.SPA": frozenset({"GL07"}),
     "arch.bootstrap.multiple_comparison.StepM": frozenset({"GL07"}),
