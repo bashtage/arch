@@ -93,8 +93,10 @@ to enter the conditional mean.
 
 Special Requirements
 ~~~~~~~~~~~~~~~~~~~~
-Not all volatility processes support application to AIM modeling.
-Specifically, the property ``updateable`` must be ``True``.
+A volatility process can only be used in AIM modeling if it supports updating.
+Specifically, the property ``updateable`` must be ``True``. All of the volatility
+processes in the package support updating. A process that is written by the
+user must provide a volatility updater, see :ref:`volatility-processes`.
 
 .. ipython::
 

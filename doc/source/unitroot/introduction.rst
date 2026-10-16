@@ -9,10 +9,13 @@ All tests share a common structure.  The key elements are:
 
 - `stat` - Returns the test statistic
 - `pvalue` - Returns the p-value of the test statistic
-- `lags` - Sets or gets the number of lags used in the model.  In most test, can be ``None`` to trigger automatic selection.
-- `trend` - Sets or gets the trend used in the model.  Supported trends vary by model, but include:
+- `lags` - Returns the number of lags used in the model.  It is set when the test is constructed, and
+  in most tests it can be ``None`` to trigger automatic selection.
+- `trend` - Returns the trend used in the model.  It is set when the test is constructed, and the
+  properties of a test cannot be changed afterwards.  Create a new test to use a different
+  specification, e.g., ``ADF(y, trend='ct')``.  Supported trends vary by model, but include:
 
-   - `'nc'`: No constant
+   - `'n'`: No constant
    - `'c'`: Constant
    - `'ct'`: Constant and time trend
    - `'ctt'`: Constant, time trend and quadratic time trend
