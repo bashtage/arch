@@ -4,7 +4,16 @@ import pandas as pd
 import pytest
 from scipy.special import gammaln
 
-from arch.univariate import HARCH, ConstantMean, MIDASHyperbolic, Normal, arch_model
+from arch.univariate import (
+    GARCH,
+    HARCH,
+    ConstantMean,
+    MIDASHyperbolic,
+    Normal,
+    StudentsT,
+    ZeroMean,
+    arch_model,
+)
 
 
 def midas_weights(theta, m):
@@ -125,3 +134,38 @@ def test_harch_array_lags_arch_model():
 def test_harch_invalid_lags(lags):
     with pytest.raises(ValueError, match="lags must be a positive integer"):
         HARCH(lags)
+
+
+@pytest.mark.parametrize("mean", [ConstantMean, ZeroMean])
+@pytest.mark.parametrize("dist", [Normal, StudentsT])
+def test_simulate_params_length(mean, dist):
+    # [mu] + [omega, alpha, beta] + [nu]
+    nmean = 1 if mean is ConstantMean else 0
+    valid = [0.5] * nmean + [0.05, 0.1, 0.8] + ([8.0] if dist is StudentsT else [])
+    mod = mean(volatility=GARCH(), distribution=dist(seed=np.random.RandomState(0)))
+    sim = mod.simulate(valid, 25, burn=10)
+    assert sim.shape == (25, 3)
+    if nmean:
+        assert_allclose(sim["data"] - 0.5, sim["errors"])
+    else:
+        assert_allclose(sim["data"], sim["errors"])
+    for extra in (1, 2):
+        with pytest.raises(ValueError, match=f"Expected {len(valid)}, got "):
+            mod.simulate([*valid, *([0.5] * extra)], 25)
+    for missing in (1, 2):
+        with pytest.raises(ValueError, match=f"Expected {len(valid)}, got "):
+            mod.simulate(valid[:-missing], 25)
+    with pytest.raises(ValueError, match="Expected"):
+        mod.simulate([], 25)
+
+
+@pytest.mark.parametrize("mean", [ConstantMean, ZeroMean])
+def test_simulate_params_shape(mean):
+    mod = mean(volatility=GARCH())
+    n = 4 if mean is ConstantMean else 3
+    params = np.array([0.5, 0.05, 0.1, 0.8])[-n:]
+    # a column or row vector is fine
+    assert mod.simulate(params[:, None], 10, burn=5).shape[0] == 10
+    assert mod.simulate(params[None, :], 10, burn=5).shape[0] == 10
+    with pytest.raises(ValueError, match=r"1D|squeezable"):
+        mod.simulate(np.tile(params, (2, 2)), 10)

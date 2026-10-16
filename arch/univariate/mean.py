@@ -164,6 +164,24 @@ def _ar_to_impulse(steps: int, params: Float64Array) -> Float64Array:
     return impulse
 
 
+def _check_simulation_params(
+    model: ARCHModel, params: ArrayLike1D | Sequence[float]
+) -> Float64Array1D:
+    """Convert params to a 1-d array and check the number of parameters"""
+    _params = cast("Float64Array1D", ensure1d(params, "params", False).astype(float))
+    num_params = (
+        int(model.num_params)
+        + int(model.volatility.num_params)
+        + int(model.distribution.num_params)
+    )
+    if _params.shape[0] != num_params:
+        raise ValueError(
+            "params has the wrong number of elements. "
+            f"Expected {num_params}, got {_params.shape[0]}"
+        )
+    return _params
+
+
 class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
     Heterogeneous Autoregression (HAR), with optional exogenous regressors,
@@ -1365,7 +1383,7 @@ class ConstantMean(HARX):
                 "simulating a constant mean process."
             )
 
-        mp, vp, dp = self._parse_parameters(params)
+        mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
         sim_values = self.volatility.simulate(
             vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol
@@ -1509,7 +1527,7 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
-        _params = ensure1d(params, "params", False).astype(float)
+        _params = _check_simulation_params(self, params)
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "
