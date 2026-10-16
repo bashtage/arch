@@ -3070,6 +3070,43 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
 
+def _lagged_path_sums(
+    lam_rev: Float64Array1D,
+    history: Float64Array1D,
+    simulated: Float64Array2D,
+    h: int,
+    truncation: int,
+) -> Float64Array1D:
+    """
+    Weighted sums of the last ``truncation`` values for each simulated path
+
+    Parameters
+    ----------
+    lam_rev : ndarray
+        Weights, ordered from the oldest to the newest lag
+    history : ndarray
+        The ``truncation`` values before the forecast origin, which are the same
+        in all of the paths
+    simulated : ndarray
+        The simulated values of the first ``h`` horizons for each path
+    h : int
+        The zero-based horizon
+    truncation : int
+        Number of lags
+
+    Returns
+    -------
+    ndarray
+        The sum for each path. The sum is the weighted sum of the history, which
+        is computed once, plus the weighted sum of the simulated values.
+    """
+    n_history = max(truncation - h, 0)
+    total = np.full(simulated.shape[0], lam_rev[:n_history].dot(history[h:]))
+    if h:
+        total += simulated[:, max(h - truncation, 0) : h].dot(lam_rev[n_history:])
+    return total
+
+
 class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     FIGARCH model
@@ -3465,21 +3502,25 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         omega = parameters[0]
         beta = parameters[-1] if q else 0.0
         omega_tilde = omega / (1 - beta)
-        fpath = np.empty((simulations, truncation + horizon))
+        # The transformed residuals before the origin are the same in all of the
+        # paths, so they are not repeated for each path
+        history = np.empty(truncation)
+        fpath = np.empty((simulations, horizon))
         fresids = np.absolute(resids) ** power
 
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             available = i + 1 - max(0, i - truncation + 1)
-            fpath[:, truncation - available : truncation] = fresids[
+            history[truncation - available : truncation] = fresids[
                 max(0, i + 1 - truncation) : i + 1
             ]
             if available < truncation:
-                fpath[:, : (truncation - available)] = backcast
+                history[: (truncation - available)] = backcast
             for h in range(horizon):
                 # 1. Forecast transformed variance
-                lagged_forecasts = fpath[:, h : truncation + h]
-                temp = omega_tilde + lagged_forecasts.dot(lam_rev)
+                temp = omega_tilde + _lagged_path_sums(
+                    lam_rev, history, fpath, h, truncation
+                )
                 # 2. Transform variance
                 sigma2 = temp ** (2.0 / power)
                 # 3. Simulate new residual
@@ -3488,7 +3529,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 paths[path_loc, :, h] = sigma2
                 forecasts[path_loc, h] = sigma2.mean()
                 # 4. Transform new residual
-                fpath[:, truncation + h] = np.absolute(shocks[path_loc, :, h]) ** power
+                fpath[:, h] = np.absolute(shocks[path_loc, :, h]) ** power
 
         return VarianceForecast(forecasts, paths, shocks)
 
@@ -3949,28 +3990,30 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             abs_resids_full - gamma * resids, np.full(resids.shape[0], delta)
         )
 
-        fpath = np.empty((simulations, truncation + horizon))
+        # The transformed shocks before the origin are the same in all of the paths,
+        # so they are not repeated for each path
+        history = np.empty(truncation)
+        fpath = np.empty((simulations, horizon))
 
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             available = i + 1 - max(0, i - truncation + 1)
-            fpath[:, truncation - available : truncation] = fshocks_hist[
+            history[truncation - available : truncation] = fshocks_hist[
                 max(0, i + 1 - truncation) : i + 1
             ]
             if available < truncation:
-                fpath[:, : (truncation - available)] = backcast_delta
+                history[: (truncation - available)] = backcast_delta
             for h in range(horizon):
-                lagged_fshocks = fpath[:, h : truncation + h]
-                temp_sigma_delta = omega_tilde + lagged_fshocks.dot(lam_rev)
+                temp_sigma_delta = omega_tilde + _lagged_path_sums(
+                    lam_rev, history, fpath, h, truncation
+                )
                 sigma2_h = temp_sigma_delta ** (2.0 / delta)
                 path_loc = i - start
                 shocks[path_loc, :, h] = std_shocks[:, h] * np.sqrt(sigma2_h)
                 paths[path_loc, :, h] = sigma2_h
                 forecasts[path_loc, h] = sigma2_h.mean()
                 new_shocks = np.absolute(shocks[path_loc, :, h])
-                fpath[:, truncation + h] = (
-                    new_shocks - gamma * shocks[path_loc, :, h]
-                ) ** delta
+                fpath[:, h] = (new_shocks - gamma * shocks[path_loc, :, h]) ** delta
 
         return VarianceForecast(forecasts, paths, shocks)
 
