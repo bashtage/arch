@@ -1384,6 +1384,12 @@ def test_autoscale():
     assert_almost_equal(res_big.scale, 0.1)
 
 
+# The data are constant, so the optimizer can evaluate the likelihood where the
+# variance is 0. Whether it does depends on the platform (it does on Intel macOS),
+# and the 0 / 0 and log(0) warnings along the way are expected. The test only
+# checks that the fit reports the convergence problem.
+@pytest.mark.filterwarnings("ignore:invalid value encountered:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:divide by zero encountered:RuntimeWarning")
 def test_no_variance():
     mod = arch_model(np.ones(100))
     with pytest.warns(ConvergenceWarning, match=r"The optimizer returned"):
