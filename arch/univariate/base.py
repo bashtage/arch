@@ -1498,7 +1498,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Returns
         -------
-        summary : Summary
+        summary : statsmodels.iolib.summary.Summary
             Object that contains tables and facilitated export to text, html or
             latex.
         """
@@ -2249,7 +2249,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         Returns
         -------
-        summary : Summary
+        summary : statsmodels.iolib.summary.Summary
             Object that contains tables and facilitated export to text, html or
             latex.
         """
