@@ -432,7 +432,6 @@ omit = [
 directory = "coverage_html_report"
 
 [tool.mypy]
-plugins="numpy.typing.mypy_plugin"
 exclude = [
   "tests",
   "unitroot/critical_values/simulation",

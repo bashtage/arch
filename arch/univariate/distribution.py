@@ -254,7 +254,7 @@ class Distribution(metaclass=ABCMeta):
         self,
         resids: Sequence[float] | ArrayLike1D,
         parameters: Sequence[float] | ArrayLike1D | None = None,
-    ) -> Float64Array:
+    ) -> float | Float64Array:
         """
         Cumulative distribution function
 
