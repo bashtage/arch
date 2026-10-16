@@ -1179,6 +1179,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if rng is None:
             rng = self._distribution.simulate(dp)
         variance_start = max(0, start_index - earliest)
+        asym_weight = self._analytic_asym_weight(method, dp)
         vfcast = self._volatility.forecast(
             vp,
             full_resids,
@@ -1190,6 +1191,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulations=simulations,
             rng=rng,
             random_state=random_state,
+            asym_weight=asym_weight,
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
@@ -2624,6 +2626,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         if rng is None:
             rng = self._distribution.simulate(dp)
         variance_start = max(0, start_index - earliest)
+        asym_weight = self._analytic_asym_weight(method, dp)
         vfcast = self._volatility.forecast(
             vp,
             full_resids,
@@ -2635,6 +2638,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulations=simulations,
             rng=rng,
             random_state=random_state,
+            asym_weight=asym_weight,
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None

@@ -723,6 +723,26 @@ class ARCHModel(metaclass=ABCMeta):
             to_array_1d(_x[km + kv :]),
         )
 
+    def _analytic_asym_weight(
+        self, method: str, distribution_params: ArrayLike1D | Sequence[float]
+    ) -> float:
+        """
+        Weight on the variance in the asymmetric term of analytic forecasts
+
+        Returns E[z^2 1(z<0)] of the distribution when the volatility process is
+        asymmetric and the forecast is analytic, and 0.5 otherwise.
+        """
+        vol = self._volatility
+        asymmetric = bool(getattr(vol, "o", 0)) or bool(getattr(vol, "_asym", False))
+        # A method that is not a string is rejected by the volatility process
+        if (
+            not isinstance(method, str)
+            or method.lower() != "analytic"
+            or not asymmetric
+        ):
+            return 0.5
+        return float(self._distribution.partial_moment(2, 0.0, distribution_params))
+
     def fix(
         self,
         params: ArrayLike1D | Sequence[float],
