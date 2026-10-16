@@ -210,6 +210,17 @@ class CovarianceEstimator(ABC):
        %(formula)s
 
     where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
+
+    If the bandwidth is not provided, it is estimated using the constants of
+    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
+    details.
+
+    References
+    ----------
+    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+    .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.
     """
 
     _name = ""
@@ -391,6 +402,33 @@ class CovarianceEstimator(ABC):
 
         where :math:`c_k` is a kernel-dependent constant, T is the sample size,
         q determines the optimal bandwidth rate for the kernel.
+
+        The constants and the values of q are from [1]_. For example,
+        :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2
+        for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral
+        kernel. :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))
+        estimate that is suggested in [1]_. It is the nonparametric estimate
+        of [2]_,
+
+        .. math::
+
+           \hat{\alpha}\left(q\right) = \left(
+           \frac{\sum_{j=-n}^{n} \left|j\right|^q \hat{\sigma}_j}
+           {\sum_{j=-n}^{n} \hat{\sigma}_j} \right)^2
+
+        where :math:`\hat{\sigma}_j` is the lag-j autocovariance of the data
+        combined using ``weights``, and
+        :math:`n = \lceil 4 \left(T / 100\right)^{r} \rceil`. The rate r is
+        2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
+        the quadratic-spectral kernel, as in [2]_.
+
+        References
+        ----------
+        .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+           consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+        .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+           covariance matrix estimation. Review of Economic Studies, 61(4),
+           631-653.
         """
         c = self.kernel_const
         q = self.bandwidth_scale
