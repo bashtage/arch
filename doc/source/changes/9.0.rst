@@ -4,48 +4,597 @@ Version 9
 
 Release 9.0 (Unreleased)
 ========================
+
+Highlights
+~~~~~~~~~~
+- :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` now studentize the
+  loss differentials when ``studentize=True``, which is the default. The option had
+  no effect in previous versions, and so p-values, critical values and the superior
+  models obtained using the default arguments differ from previous versions. Use
+  ``studentize=False`` for the previous statistics.
+- Added :class:`~arch.univariate.FIAPARCH`, a fractionally integrated asymmetric
+  power ARCH volatility process (contributed by gjunjie).
+- Added :class:`~arch.univariate.MAMean`, a moving average mean model that can be
+  used with any volatility process and distribution (contributed by premdev1234).
+- Added :meth:`~arch.univariate.base.ARCHModel.append`, which adds observations to a
+  mean model in-place so that parameters estimated using earlier data can be used to
+  produce forecasts without re-estimating the model.
+- Added :class:`~arch.covariance.var.PreWhitenedRecolored`, which implements the
+  VAR-HAC and pre-whitened recolored long-run covariance estimators (contributed by
+  WatchTree-19).
+- Added Ng and Perron's modified AIC, ``method="maic"``, for selecting the number of
+  lags in the :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS` and
+  :class:`~arch.unitroot.ZivotAndrews` tests.
+- Wheels are available for Python 3.10 to 3.15. 9.0 is the last release that
+  supports Python 3.10 and NumPy 1.x.
+
+.. TODO(R2): Wheels. The last Highlights bullet and the first bullet in
+   "Compatibility" say that wheels are published for Python 3.10 to 3.15 (decision 2:
+   cp310 to cp315 on manylinux x86-64, manylinux aarch64, musllinux x86-64, Windows
+   AMD64, macOS arm64 and macOS x86-64, which is 36 wheels; no free-threaded wheels).
+   In RC1, confirm the count of wheels in the release, and edit both places if it
+   differs.
+
+New features
+~~~~~~~~~~~~
+- Added :class:`~arch.univariate.FIAPARCH`, a fractionally integrated asymmetric
+  power ARCH volatility process that extends :class:`~arch.univariate.FIGARCH` with
+  an asymmetry parameter and a power parameter, ``delta``, which is estimated
+  unless a value is provided. The orders ``p``, ``o`` and ``q`` can be 0 or 1. It
+  can be used in :func:`~arch.univariate.arch_model` with ``vol="FIAPARCH"``.
+  Analytic forecasts are only available for a horizon of 1, and longer horizons
+  require ``method="simulation"`` or ``method="bootstrap"``. Contributed by
+  gjunjie.
+
+.. TODO(R2): hold-a90-bug2a-fiaparch-backcast (decision 35). FIAPARCH is new in 9.0,
+   so the fix to the backcast used with an estimated ``delta`` needs no entry. Only
+   check that the FIAPARCH bullet above is still accurate once the fix has merged.
+
+- Added :class:`~arch.univariate.MAMean`, a moving average mean model of order q
+  with an optional constant that can be used with any volatility process and
+  distribution. Analytic, simulation and bootstrap forecasts include the moving
+  average terms for the first q steps. It is a class only: ``arch_model`` does not
+  support ``mean="MA"``. Contributed by premdev1234.
+- Added :meth:`~arch.univariate.base.ARCHModel.append` to the mean models, which
+  adds new observations to a model in-place. Parameters estimated using earlier
+  data can then be used to produce forecasts, or results using
+  :meth:`~arch.univariate.base.ARCHModel.fix`, without re-estimating the model. The
+  new data must have the same type as the data used to construct the model, and
+  models that include exogenous regressors require ``x`` for the new observations.
+- Added :class:`~arch.covariance.var.PreWhitenedRecolored`, which implements the
+  VAR-HAC (den Haan and Levin) and pre-whitened recolored (Andrews and Monahan)
+  long-run covariance estimators, and the :class:`~arch.covariance.kernel.ZeroLag`
+  kernel that it uses for VAR-HAC. The order, residuals and residual covariance of
+  the VAR are available as ``order``, ``resid`` and ``resid_cov``. Contributed by
+  WatchTree-19.
+- Added the residual diagnostics :func:`~arch.univariate.excess_kurtosis`,
+  :func:`~arch.univariate.hill_estimator` and :func:`~arch.univariate.var_ratio`,
+  which use standardized residuals. The results of a model also have
+  :attr:`~arch.univariate.base.ARCHModelResult.excess_kurtosis`,
+  :meth:`~arch.univariate.base.ARCHModelResult.hill_estimator` and
+  :meth:`~arch.univariate.base.ARCHModelResult.var_ratio`, which use the
+  standardized residuals and the estimated distribution of the model.
+- Added ``method="maic"`` to the automatic lag selection of
+  :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS` and
+  :class:`~arch.unitroot.ZivotAndrews`. It selects the lag that minimizes the
+  modified AIC of Ng and Perron (2001).
+- Added the keyword argument ``low_memory`` to
+  :func:`~arch.unitroot.cointegration.engle_granger`, which is passed to the
+  :class:`~arch.unitroot.ADF` test of the residuals. The default, ``None``, selects
+  the lag selection algorithm automatically.
+- Kernel names are now looked up in one place,
+  ``arch.covariance.kernel.get_kernel_estimator``, using the list
+  ``arch.covariance.kernel.KERNELS``. All estimators that take a ``kernel`` accept
+  the same names, in any case and with hyphens or underscores ignored, and raise
+  the same error, which lists the available kernels, for an unknown name. As a
+  result, the ``fit`` methods of
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` accept names such
+  as ``"quadratic-spectral"``, which raised ``KeyError`` in previous versions.
+- Automatic lag selection in :class:`~arch.unitroot.DFGLS` no longer estimates an
+  :class:`~arch.unitroot.ADF` test whose result was discarded, which makes it about
+  three times faster.
+- :class:`~arch.bootstrap.MCS` no longer copies the resampled losses in each
+  bootstrap replication.
+- The long-run variance of the loss differentials that :class:`~arch.bootstrap.SPA`
+  and :class:`~arch.bootstrap.StepM` use when ``nested=False`` is computed using an
+  FFT, which makes ``studentize=False`` about twice as fast as in previous versions.
+
+Changes that alter results
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+These changes fix bugs that returned incorrect results, or make an option that had
+no effect work as documented. Each entry says who is affected and, where there is
+one, how to restore the previous results.
+
 - Fixed :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` so that
   ``studentize=True`` (the default) studentizes the loss differentials. In
   previous versions the option had no effect on the results. The loss
   differentials are now studentized in the original data and inside each
   bootstrap replication, using the standard error from a kernel long-run
   variance estimator that matches the bootstrap, or from a nested bootstrap
-  if ``nested=True``. P-values, critical values and the superior models differ
-  from previous versions when using the default arguments.
+  if ``nested=True``. Everyone who uses the default arguments is affected:
+  p-values, critical values and the superior models differ from previous versions,
+  and the critical values apply to the studentized mean loss differentials, so
+  code that compares ``critical_values`` with mean loss differentials or that uses
+  fixed thresholds must change. For example, with 1000 observations, 12 models of
+  which 3 are better than the benchmark and ``reps=1000``, the lower, consistent and
+  upper p-values change from 0.102, 0.162 and 0.162 to 0 for all three, the 5%
+  consistent critical value changes from 0.173 to 2.52, ``better_models`` changes
+  from empty to the three better models, and the ``superior_models`` of
+  :class:`~arch.bootstrap.StepM` with ``size=0.10`` change from no models to four
+  models. When the evidence is weak the p-values can move in either direction. Use
+  ``studentize=False`` for the statistics that were always used in previous
+  versions. Studentizing in each replication makes the default about 2.2 times
+  slower (for 2000 observations, 100 models and 1000 replications, 1.35 seconds in
+  previous versions and 2.99 seconds now).
 - ``nested=True`` in :class:`~arch.bootstrap.SPA` and
   :class:`~arch.bootstrap.StepM` now computes the variances used to studentize
   in every bootstrap replication using a nested bootstrap, and not only in the
-  original data, and never uses the kernel estimator. ``nested=True`` requires
-  ``studentize=True`` and raises a ``ValueError`` otherwise.
+  original data, and never uses the kernel estimator. The run time grows with the
+  square of ``reps``: with 500 observations, 10 models and 200 replications it
+  increased from 0.04 seconds to 3.2 seconds. ``nested=True`` requires
+  ``studentize=True`` and raises a ``ValueError`` otherwise, so there is no way to
+  restore the previous statistics with ``nested=True``.
 - When ``nested=False``, the long-run variances in
   :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM`, which are
   used to select the models that are re-centered when computing the consistent
   p-value, now use the kernel that matches the bootstrap. Previously they
   always used the stationary bootstrap kernel, so the consistent p-value can
   also change with ``studentize=False`` when using the circular or moving
-  block bootstraps.
+  block bootstraps. Results of the stationary bootstrap do not change. In the
+  examples that were checked the effect on the critical values was small: the 5%
+  consistent critical value of the circular bootstrap changed from 0.1453 to
+  0.1391 (-4%), and the 10% value of the moving block bootstrap from 0.1235 to
+  0.1138 (-8%).
+- Fixed the simulation and bootstrap forecasts of
+  :class:`~arch.univariate.RiskMetrics2006`. The simulated paths started from the
+  variance at the forecast origin instead of the one-step-ahead variance, and so
+  the forecast of the first step differed from the analytic forecast and the
+  error carried into longer horizons. Analytic forecasts, estimation and ``fix``
+  are not changed. For example, for a zero mean model of daily S&P 500 returns,
+  the simulated variance of the first step at the last origin changes from 3.048
+  to 2.774 (-9%), which is the analytic forecast, and for a constant mean model of
+  NASDAQ returns with Student's t errors it changes from 3.383 to 5.462 (+61%) at
+  one origin when the volatility had just increased.
+
+.. TODO(R2): PR #885 (RiskMetrics2006 multi-step forecasts, raashish1601; decision
+   13). After it has merged, add a bullet here and drop "Analytic forecasts" from the
+   list of unchanged items in the bullet above. Before the PR, the analytic forecast
+   of :class:`~arch.univariate.RiskMetrics2006` for horizons above 1 was flat and
+   equal to the 1-step forecast. It is now the expected variance path,
+   w' A^(h-1) s(t+1) in the notation of the PR. This alters the results of every user
+   of analytic multi-step forecasts of this model. Magnitudes from AUD3: at the last
+   origin the old forecast at h=10 was 12.9% below the expected variance for the
+   default process and 24.5% below for ``tau0=500, tau1=2, kmax=8, rho=2``; the
+   forecast for h=1 does not change. There is no option to restore the old behavior.
+   The author is already in the Contributors list.
+
+.. TODO(R2): PR #870 and issue #867 (analytic GJR forecasts with skewed
+   distributions; decision 14). After the PR (with our fixes: case-insensitive
+   ``method``, ``MAMean``, MIDAS) has merged, add a bullet here and add its author,
+   shaneraphel, to the Contributors list. Before the PR the analytic variance forecast
+   of a GJR-type model assumed that the expectation of the squared standardized
+   shock when it is negative, E[z^2 1(z<0)], is 0.5, which is only correct for
+   symmetric distributions, so analytic multi-step forecasts of models with ``o > 0``
+   and :class:`~arch.univariate.SkewStudent` errors were wrong. Affected: analytic
+   forecasts of :class:`~arch.univariate.GARCH` with ``o > 0``,
+   :class:`~arch.univariate.MAMean` and :class:`~arch.univariate.MIDASHyperbolic`
+   with ``asym=True`` with skewed distributions. Magnitude from AUD3: up to 18% at
+   h=20 for a skew t with eta=7.6 and lambda=-0.16 (the value of the partial moment
+   is 0.5526). Simulation forecasts are not affected. The constraint and the initial
+   value used by ``simulate`` still use 0.5, so #867 stays open: write "xref #867"
+   in any PR text and do not say that it is fixed.
+
+- Fixed the acceleration constant of BCa confidence intervals computed by
+  :meth:`~arch.bootstrap.IIDBootstrap.conf_int` when the function returns more than
+  one statistic. The jackknife estimates of each statistic were centered at the
+  mean of the estimates of all of the statistics, and not at their own mean, which
+  changed the intervals when the statistics are at different levels. Intervals of a
+  function that returns one statistic are not changed. For example, for the column
+  means of data with columns at levels near 3 and 103, the intervals changed from
+  [2.4114, 2.9856] and [102.6764, 103.4099] to [2.4184, 2.9871] and
+  [102.6954, 103.4222], which now equal the intervals from bootstrapping each
+  column alone. Typical endpoint changes are 0.2% to 3%.
+- Fixed the residuals and conditional volatility of :class:`~arch.univariate.ARCHInMean`
+  results. In previous versions ``resid``, ``conditional_volatility``, ``std_resid``
+  and ``rsquared``, and the quantities derived from them such as the output of
+  ``summary`` and ``arch_lm_test``, were computed as if the in-mean parameter
+  ``kappa`` was 0, so they did not match the log-likelihood. They now use the
+  same recursion as the log-likelihood, for all values of ``form`` and for both
+  ``fit`` and ``fix``. The estimated parameters, log-likelihood and standard
+  errors are unchanged. The values change whenever ``kappa`` is not 0. For
+  example, for a GARCH(1,1) model with one AR lag fit to the daily S&P 500
+  returns in ``arch.data.sp500``, the conditional volatility changes by at most
+  3.7% (``form="log"``), 5.1% (``"vol"``) and 6.1% (``"var"``), the largest
+  change in a residual is 0.15, 0.53 and 1.1, and R-squared changes from
+  0.0021 to 0.0021, from 0.0039 to 0.0012 and from 0.0047 to -0.0006.
+  R-squared can now be negative for these models.
+
+.. TODO(R2): hold-a90-bug2a-archinmean-power (decision 34). If it merges, add a
+   bullet here: :class:`~arch.univariate.ARCHInMean` estimated with a volatility
+   process with ``power != 2`` (:class:`~arch.univariate.GARCH`,
+   :class:`~arch.univariate.FIGARCH`) used the wrong variance in the in-mean term, so
+   the log-likelihood and the estimates were wrong (example from BUG2A: -612.17
+   instead of -620.48). Affected: every ``ARCHInMean`` model with ``power != 2``;
+   no option restores the old values. If the alternative (raise ``ValueError`` for
+   ``power != 2``) is taken instead, move the bullet to "Backward-incompatible
+   changes".
+
+.. TODO(R2): branch a90-bug2a-aparch-sim-forecast (fragment bug2a-aparch.rst, folded
+   in below). Confirm it is merged and that the magnitudes in the bullet still hold.
+
+- Fixed simulation and bootstrap variance forecasts of :class:`~arch.univariate.APARCH`
+  models with ``p >= 2`` and ``o >= 1``. In previous versions the asymmetric term
+  ``|e| - gamma * e`` overwrote the stored absolute shock, so from the second forecast
+  horizon on the lagged shocks were wrong. Analytic, one-step and ``p = 1`` forecasts
+  are unchanged. For example, the simulated variance forecast of an APARCH(2,1,1) model
+  changes by between 7% and 34% depending on the parameters and the horizon (12% at
+  ``horizon=2`` in a typical case, from 0.271 to 0.239).
+
+.. TODO(R2): branch a90-bug2a-garch-power-sim-forecast (fragment bug2a-garchpow.rst,
+   folded in below). Confirm it is merged and that the magnitudes still hold.
+
+- Fixed simulation forecasts of :class:`~arch.univariate.GARCH` models with
+  ``power != 2`` (for example ``TARCH`` and ``AVGARCH`` models) that start in the first
+  ``max(p, o, q)`` observations. In previous versions the pre-sample values were
+  raised to the power ``power / 2`` a second time, so the forecast made at
+  ``start=0`` was wrong for any model with more than one lag. Forecasts that start
+  later in the sample, and the analytic and bootstrap forecasts, are unchanged. For
+  example, the one-step simulated variance of a GARCH(2,0,0) model with ``power=1``
+  at the first observation changes from 0.4184 to 0.4059 (3.1%), and that of a
+  GARCH(2,1,2) model with ``power=1`` changes by 3.6%.
+
+.. TODO(R2): branch a90-bug2b-semi-studentized (fragment bug2b-semi.rst, folded in
+   below and in "Backward-incompatible changes"). Confirm it is merged.
+
+- Fixed ``conf_int`` with ``sampling="semi-parametric"`` or ``sampling="parametric"``
+  in the bootstrap classes in :mod:`arch.bootstrap`. In previous versions the
+  ``params`` (and ``state``) keywords used to simulate the data were added to the
+  data of the bootstrap, so ``method="studentized"`` raised an error when the
+  studentization used a nested bootstrap. When ``extra_kwargs`` was also given, the
+  nested bootstrap silently used the non-parametric statistic. The nested bootstrap now
+  simulates the data in the same way as the outer bootstrap, so studentized intervals
+  from the nested bootstrap with these samplers change from previous versions.
+- Fixed :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` so that
+  ``df_adjust=True`` scales the entire estimate of the conditional long-run
+  variance, as :class:`~arch.unitroot.cointegration.FullyModifiedOLS` does.
+  Previously only the first term was scaled, which overstated the parameter
+  covariance and ``long_run_variance`` when the regressors are endogenous. Results
+  using the default, ``df_adjust=False``, are not changed. For example, in a
+  regression with 100 observations and a bandwidth of 4, the standard errors with
+  ``df_adjust=True`` were 9.5% larger than with ``df_adjust=False`` and are now
+  1.6% larger, and ``long_run_variance`` was 20% larger and is now 3.1% larger. In
+  regressions with about 400 observations the standard errors change by less than
+  0.1%.
+- Fixed :class:`~arch.unitroot.DFGLS` when the data are integers. The
+  quasi-differenced data were truncated to integers, which produced a statistic and
+  p-value that differ from those of the same data stored as floats. Results for data
+  that are floats are not changed. For example, the statistic of one integer series
+  changed from -0.3005 to -0.3378, and its p-value from 0.581 to 0.567. Convert the
+  data to floats to obtain the previous statistic.
 - Fixed :func:`~arch.unitroot.auto_bandwidth` so that the autocovariances are
   not truncated to integers. In previous versions any series with
   non-integer values could return an incorrect bandwidth or raise
-  ``ZeroDivisionError``.
-- Added :class:`~arch.covariance.var.PreWhitenedRecolored`, which
-  implements the VAR-HAC (den Haan and Levin) and pre-whitened recolored
-  (Andrews and Monahan) long-run covariance estimators, and the
-  :class:`~arch.covariance.kernel.ZeroLag` kernel that it uses for VAR-HAC.
-  The order, residuals and residual covariance of the VAR are available
-  as ``order``, ``resid`` and ``resid_cov``.
-- Kernel names are now looked up in one place,
-  :func:`arch.covariance.kernel.get_kernel_estimator`, using the canonical
-  list ``arch.covariance.kernel.KERNELS``. All estimators that take a
-  ``kernel`` accept the same names, in any case and with hyphens or
-  underscores ignored, and raise the same error, which lists the available
-  kernels, for an unknown name.
-- Fixed ``FIAPARCH`` so that models can be estimated when the Cython
-  extension is not available. In previous versions ``fit`` raised an
-  ``AttributeError`` in pure-Python builds, since copying the model
-  pickles the volatility updater using an attribute that was only set
-  once the recursion had been initialized.
-- Added :class:`~arch.univariate.MAMean`, a moving average mean model of
-  order q with an optional constant that can be used with any volatility
-  process and distribution. Analytic, simulation and bootstrap forecasts
-  include the moving average terms for the first q steps.
+  ``ZeroDivisionError``, which happened when all of the autocovariances were less
+  than 1 in absolute value. For example, the bandwidths for the Bartlett, Parzen and
+  quadratic spectral kernels of daily S&P 500 percent returns change by +1.7%, +1.5%
+  and +0.5%, and the quadratic spectral bandwidth of the first difference of a bond
+  yield series changes by +61%. Only :func:`~arch.unitroot.auto_bandwidth` is
+  affected: the kernel classes, :class:`~arch.unitroot.PhillipsPerron` and
+  :class:`~arch.unitroot.KPSS` do not use it.
+
+.. TODO(R2): hold-a90-bug2a-fit-arguments (decision 36). If it merges, add a bullet
+   here: invalid ``starting_values`` passed to ``fit`` are now ignored, as the
+   warning that was always issued says (before, they were used). Affected: calls that
+   pass starting values of the wrong shape or that fail the validity check; their
+   estimates can change because the optimizer starts from other values. Restore
+   the old behavior by passing valid starting values. The commit on the hold branch
+   at the time of drafting is 2faa3f5d00. If option (b) (raise ``ValueError``) is
+   taken instead, move the bullet to "Backward-incompatible changes".
+
+.. TODO(R2): hold-a90-bug2b-semantics, MCS boundary (decision 44). If it merges, add
+   a bullet here: a model whose :class:`~arch.bootstrap.MCS` p-value is exactly equal
+   to ``size`` stays in the model confidence set (``>=``, as in Hansen, Lunde and
+   Nason, 2011) and was removed before. Affected: ``MCS`` results with a p-value
+   that equals ``size``, which happens when the p-value is a multiple of 1/``reps``.
+   Commit 557e83130d at the time of drafting.
+
+Backward-incompatible changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- The ``bootstrap`` attribute of :class:`~arch.bootstrap.SPA`,
+  :class:`~arch.bootstrap.StepM` and :class:`~arch.bootstrap.MCS` is now a read-only
+  property. Assigning a bootstrap to an existing instance raises ``AttributeError``,
+  since quantities that depend on the bootstrap are computed when the instance is
+  created. Create a new instance to use a different bootstrap.
+- ``nested=True`` with ``studentize=False`` in :class:`~arch.bootstrap.SPA` and
+  :class:`~arch.bootstrap.StepM` raises a ``ValueError``. The combination was
+  accepted in previous versions.
+- The exceptions raised for invalid input are different in several places, and some
+  calls that were accepted now raise. See "Bug fixes" for details. The ones most
+  likely to affect code are: :func:`~arch.univariate.arch_model` raises
+  ``TypeError``, and not ``AssertionError``, for a ``p`` that is not an integer; the
+  ``method`` of the unit root tests raises ``ValueError`` or ``TypeError`` with a
+  different message;
+  :meth:`~arch.univariate.base.ARCHModelResult.arch_lm_test` raises ``ValueError``
+  when ``lags`` is less than 1, which was replaced by 1;
+  :class:`~arch.bootstrap.MCS`, :class:`~arch.bootstrap.SPA` and
+  :class:`~arch.bootstrap.StepM` raise ``ValueError`` when the losses contain ``NaN``
+  or infinite values; and the ``block_size`` of the circular, moving block and
+  stationary bootstraps and the ``method`` of :class:`~arch.bootstrap.MCS` are
+  validated.
+- ``std_err_func`` in ``conf_int`` no longer receives the ``params`` and ``state``
+  keywords that are used to simulate data when ``sampling`` is ``"semi-parametric"`` or
+  ``"parametric"``. It is called as ``std_err_func(params, *args, **kwargs)``, where
+  ``params`` is the estimate and ``kwargs`` contains only the data and ``extra_kwargs``.
+  Previously a ``std_err_func`` with a first argument named ``params`` raised a
+  ``TypeError`` for these samplers.
+- The ``type`` keyword argument of
+  :meth:`~arch.univariate.base.ARCHModelResult.hedgehog_plot` has been removed. See
+  "Deprecations and removals".
+
+.. TODO(R2): hold-a90-bug2b-semantics, ``block_size`` (decision 44). If it merges,
+   add a bullet here: ``block_size`` of the circular, moving block and stationary
+   bootstraps is a read-only property, as ``bootstrap`` is in ``SPA``, ``StepM`` and
+   ``MCS``, and assigning to it raises ``AttributeError``. Create a new bootstrap
+   to use a different block size. Commit dc5f390387 at the time of drafting.
+
+.. TODO(R2): hold-a90-bug2a-fit-arguments (decisions 37, 39) and the constructor
+   validation of decision 40 (BUG2A-22). If they merge, add bullets here (or in
+   "Bug fixes" if no existing code can reasonably break): the ``first_obs``,
+   ``last_obs`` and ``start`` arguments accept ``datetime.date`` and ``Period`` and
+   raise ``TypeError`` for any other unsupported type, including floats, where they
+   were silently ignored; ``fit`` no longer modifies the global warning filters; an
+   unknown ``cov_type`` raises ``ValueError`` instead of using ``"classic"``; and the
+   constructors raise ``TypeError`` for a non-integer ``p`` (``p=1.5``), ``m`` (the
+   MIDAS number of lags) or ``truncation`` (FIGARCH and FIAPARCH) where they truncated
+   the value or failed later.
+
+Bug fixes
+~~~~~~~~~
+- Fixed :class:`~arch.bootstrap.StepM`, which raised a ``ValueError`` when all of
+  the models were found to be superior after more than one round of the procedure
+  (:issue:`862`).
+- Fixed the check that ``p`` is a scalar ``int`` in
+  :func:`~arch.univariate.arch_model`, which only worked when ``vol`` was lower
+  case. In other cases, including the default ``vol="GARCH"``, an
+  ``AssertionError`` was raised for a ``p`` that is not an ``int``. A ``TypeError``
+  is now always raised. Contributed by gjunjie.
+- The ``method`` used to select the number of lags in :class:`~arch.unitroot.ADF`,
+  :class:`~arch.unitroot.DFGLS` and :class:`~arch.unitroot.ZivotAndrews` is not case
+  sensitive. In previous versions ``"AIC"`` and ``"BIC"``, which were the documented
+  values, raised a ``ValueError``. ``"t"`` and ``"tstat"`` are accepted as aliases
+  of ``"t-stat"``, a ``method`` that is not a string raises ``TypeError`` and an
+  unknown ``method`` raises a ``ValueError`` that lists the valid choices.
+- Fixed :class:`~arch.unitroot.ZivotAndrews`, which raised an exception when the
+  data are integers.
+- Fixed the ``trend`` property of the results of
+  :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``.
+- The summary of the results of
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` now has the title
+  "Canonical Cointegrating Regression" and not "Fully Modified OLS".
+- Fixed :class:`~arch.univariate.ARCHInMean` models that include a constant, lags and
+  exogenous regressors stored in a ``DataFrame``, which raised
+  ``ValueError: ndarray is not C-contiguous`` when estimated.
+- Fixed a ``TypeError`` when a timezone-naive ``Timestamp`` is used as ``first_obs``,
+  ``last_obs`` or ``start``, for example in
+  :meth:`~arch.univariate.base.ARCHModel.fit` and
+  :meth:`~arch.univariate.base.ARCHModel.forecast`, with data that have a timezone
+  aware index. The ``Timestamp`` is treated as the equivalent date string.
+- Fixed :class:`~arch.bootstrap.MCS` with ``method="max"``, which could fail to
+  terminate when the estimated standard deviation of a loss difference is 0, for
+  example when two of the losses are identical. A ``RuntimeWarning`` is issued.
+
+.. TODO(R2): branches a90-bug1-midas-asym-forecast, a90-bug1-arch-lm-test and
+   a90-bug1-archinmean-resid (fragments bug1-midas.rst, bug1-archlm.rst and
+   bug1-aim.rst; the ``ARCHInMean`` bullet is under "Changes that alter results").
+   Confirm they are merged and that the two bullets below and that one are still
+   accurate. Decision 22: ``arch_lm_test`` keeps the T R^2 statistic.
+
+- Fixed analytic forecasts of :class:`~arch.univariate.MIDASHyperbolic` with
+  ``asym=True``. In previous versions ``forecast`` raised a ``ValueError`` for
+  any ``start`` other than 0, including the default which forecasts only the
+  final observation. The asymmetry indicator was not restricted to the
+  observations starting at ``start``.
+- Fixed :meth:`~arch.univariate.base.ARCHModelResult.arch_lm_test` so that ``lags``
+  accepts any integer, including NumPy integers such as ``np.int64(5)``, which
+  previously raised an ``AssertionError``. Non-integer values now raise a
+  ``TypeError``, and values below 1, which were silently replaced by 1, now raise a
+  ``ValueError``. The documentation now gives the default number of lags,
+  :math:`\lceil 12 (T/100)^{1/4} \rceil`, and states that the statistic is :math:`T`
+  times the R-squared of the auxiliary regression. The statistic is unchanged.
+
+.. TODO(R2): branch a90-bug2a-simulation-method (fragment bug2a-simmethod.rst, folded
+   in below). Confirm it is merged.
+
+- Fixed the ``method`` argument of ``forecast`` so that it is case insensitive for all
+  three methods. In previous versions ``method="Simulation"`` (or any capitalization
+  other than ``"simulation"``) silently ran the bootstrap and ignored ``rng``, while
+  ``"Analytic"`` and ``"Bootstrap"`` worked. An unknown ``method`` now raises a
+  ``ValueError`` that lists the valid methods. Forecasts that use the lower case names
+  are unchanged.
+
+.. TODO(R2): branch a90-bug2a-hedgehog-plot (fragment bug2a-hh.rst, folded in below).
+   Confirm it is merged.
+
+- Fixed :meth:`~arch.univariate.base.ARCHModelFixedResult.hedgehog_plot` for models
+  without analytic multi-step variance forecasts (:class:`~arch.univariate.EGARCH`,
+  :class:`~arch.univariate.APARCH`, :class:`~arch.univariate.FIAPARCH` and
+  :class:`~arch.univariate.GARCH` with ``power != 2``). With the default arguments it
+  never returned. It now raises the ``ValueError`` from ``forecast``; use
+  ``method="simulation"`` or ``method="bootstrap"``, or ``horizon=1``.
+- Fixed :meth:`~arch.univariate.base.ARCHModelFixedResult.hedgehog_plot` so that the
+  spines start at the forecast origin. In previous versions, whenever the first
+  forecast origin was not the first observation (every model with lags, such as
+  :class:`~arch.univariate.ARX` or :class:`~arch.univariate.HARX`, and every call
+  with ``start``), the spines were drawn too early by the number of observations
+  before the first origin. The forecasts that are plotted were correct.
+- :meth:`~arch.univariate.base.ARCHModelFixedResult.plot` and
+  :meth:`~arch.univariate.base.ARCHModelFixedResult.hedgehog_plot` now work when the
+  data has a ``pandas.PeriodIndex``. Previously they raised a ``TypeError``.
+
+.. TODO(R2): branch a90-bug2a-small-fixes (fragment bug2a-small.rst, folded in
+   below). Confirm it is merged.
+
+- Fixed :meth:`~arch.univariate.MIDASHyperbolic.simulate`, which raised an
+  ``IndexError`` when ``burn`` was smaller than the number of lags, ``m``, also when
+  simulating through a mean model. The first ``m`` observations are always discarded.
+- :class:`~arch.univariate.HARCH` now accepts a NumPy array of lags, as documented,
+  including through ``arch_model(..., vol="HARCH", p=np.array([1, 5, 22]))``. Lags that
+  are not positive now raise a ``ValueError`` when the model is created. Previously
+  they failed later with a ``ZeroDivisionError``.
+- :meth:`~arch.univariate.ConstantMean.simulate` and
+  :meth:`~arch.univariate.ZeroMean.simulate` now raise a ``ValueError`` if ``params``
+  has the wrong number of elements. Previously extra values were silently ignored and
+  too few values raised an ``IndexError``.
+- :class:`~arch.univariate.ARX`, :class:`~arch.univariate.HARX`,
+  :class:`~arch.univariate.LS` and :class:`~arch.univariate.ConstantMean` models that
+  have not been fit can now be used with ``starting_values`` and
+  ``forecast(params)``, for example to forecast from new data using parameters
+  estimated elsewhere. Previously these raised an ``AttributeError``.
+- :func:`~arch.univariate.arch_model` now accepts NumPy integers for ``p``, such as the
+  elements of ``np.arange(1, 4)``, which were rejected. ``p``, ``o`` and ``q`` are
+  checked in the same way: a value that is not an integer, for example ``q=1.0``,
+  raises a ``TypeError``. Previously ``o`` and ``q`` were truncated with ``int``.
+- :meth:`~arch.univariate.base.ARCHModel.fit` no longer writes ``disp`` into the
+  dictionary passed as ``options``, which made a later call that reused the dictionary
+  ignore its ``disp`` argument.
+- Corrected the documentation of ``forecast`` for models with exogenous variables,
+  which stated that only 1-step forecasts are available, and of the ``simulate``
+  methods of the mean models, which stated that ``initial_value`` and ``x`` are not
+  used when they must be ``None``. The units of the initial value of the volatility
+  process in ``simulate`` are now documented.
+
+.. TODO(R2): branch a90-bug2b-mcs-spa-inputs (fragment bug2b-mcs.rst, folded in
+   below). Confirm it is merged.
+
+- Fixed :class:`~arch.bootstrap.MCS` with ``method="R"``, which raised a ``TypeError``
+  when the models with the worst losses had exactly equal test statistics, for example
+  two models with the same mean loss. The first of the tied models is eliminated.
+- :class:`~arch.bootstrap.MCS`, :class:`~arch.bootstrap.SPA` and
+  :class:`~arch.bootstrap.StepM` now raise a ``ValueError`` if the losses contain
+  ``NaN`` or infinite values. In previous versions ``MCS`` with ``method="max"`` never
+  returned, ``MCS`` with ``method="R"`` raised an ``IndexError``, ``SPA`` returned
+  p-values of 0 and ``StepM`` returned no superior models, even if only one loss was
+  missing.
+- Fixed :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` with unsigned
+  integer losses, where the loss differentials wrapped around, and with boolean losses,
+  which raised a ``TypeError``. The loss differentials are now computed in
+  floating point.
+
+.. TODO(R2): branch a90-bug2b-small-fixes (fragment bug2b-small.rst, folded in
+   below). Confirm it is merged and that the sentences on ``block_size`` and the
+   ``MCS`` ``method`` agree with the final code. Its documentation changes close the
+   issues #801 and #715 (decision 21); the last bullet of this section covers them.
+
+- ``conf_int(method="bca")`` in the bootstrap classes in :mod:`arch.bootstrap` now
+  raises the documented ``RuntimeError`` when all of the leave-one-out jackknife
+  estimates are equal (for example the maximum when the maximum is tied) or not finite.
+  In previous versions the acceleration was computed from rounding error, or was
+  ``NaN``, and an interval was returned without a warning.
+- The ``block_size`` of the circular, moving block and stationary bootstraps is now
+  validated. It must be an integer that is at least 1, except in the stationary
+  bootstrap where it is the mean block length and can be any number that is at least 1
+  (for example, the value estimated by :func:`~arch.bootstrap.optimal_block_length`).
+  Previously 0, negative and non-integer values raised unrelated errors or, for the
+  stationary bootstrap, were silently used. :class:`~arch.bootstrap.MCS` now raises a
+  ``ValueError`` if ``method`` is not ``"R"`` or ``"max"`` (in any case); previously
+  any other value was treated as ``"max"``. ``conf_int(method="studentized")`` raises a
+  ``ValueError`` if ``studentize_reps`` is less than 1 and ``std_err_func`` is not
+  provided, where it previously returned the degenerate interval ``[base, base]``.
+- ``conf_int``, ``cov`` and ``var`` in the bootstrap classes now accept a statistic that
+  returns a list, a tuple or a 0-dimensional array, as ``apply`` already did. ``apply``
+  now raises a ``ValueError`` if ``extra_kwargs`` contains the name of a bootstrapped
+  variable, as ``conf_int``, ``cov`` and ``var`` do, instead of silently replacing the
+  bootstrapped data.
+- Renamed ``_repr_html`` to ``_repr_html_`` in the bootstrap classes so that Jupyter
+  uses the HTML representation. Corrected a missing space in an error message of the BCa
+  bias correction.
+
+.. TODO(R2): hold-a90-bug2b-semantics, identical models in SPA (decision 44,
+   BUG2B-5). If it merges, add a bullet here saying what it does: a warning or a
+   ``ValueError``, as finally implemented, from :class:`~arch.bootstrap.SPA` (and
+   :class:`~arch.bootstrap.StepM` if it applies) when the loss differential of a model
+   has zero variance, for example because the model has the same losses as the
+   benchmark. See reports/BUG2B_REPORT.md for the behavior before. If a ``ValueError``
+   is raised, also list it under "Backward-incompatible changes".
+
+.. TODO(R2): branch a90-warn1-date-to-index (fragment warn1.rst, folded in below).
+   Confirm it is merged. The entry is a pandas 3.1 compatibility fix, and could also
+   go under "Compatibility".
+
+- Fixed a pandas 3.1 ``Pandas4Warning`` for time zone aware indices in date lookups.
+- Corrected the documented default of ``force_int`` in
+  :meth:`~arch.unitroot.cointegration.FullyModifiedOLS.fit`, which is ``True``, and
+  the documentation of ``reindex`` in :meth:`~arch.univariate.base.ARCHModel.forecast`.
+  The documentation of ``conf_int`` states that BCa uses the leave-one-out jackknife
+  and that studentized intervals use a nested bootstrap of the same type and block
+  size, and the kernel covariance estimators cite Andrews (1991) and Newey and West
+  (1994) for the automatic bandwidth.
+- Added :class:`~arch.univariate.FIAPARCH`, :class:`~arch.univariate.MAMean`,
+  :class:`~arch.covariance.var.PreWhitenedRecolored` and the residual diagnostics
+  to the API documentation, and a section on forecasting after new data arrive to
+  the forecasting guide.
+
+.. TODO(R2): branch a90-doc1-docs-build (DOC1). If it merges, add one bullet here:
+   the page with the common type definitions (``types.rst``, which pointed at the
+   renamed ``arch.typing``) is restored; the examples in the documentation and
+   docstrings use the datasets in ``arch.data`` and not downloads of Yahoo data;
+   examples that failed with current releases of pandas (``freq="M"``) and NumPy,
+   the failing docstring examples and the broken cross references are fixed. The
+   documentation build goes from 1444 to 83 warnings. It does not change any result,
+   so keep it to one bullet.
+
+.. TODO(R2): DOC2 (narrative documentation). When it has merged, extend the
+   documentation bullet above (or add one) with the new sections for ``MAMean``,
+   FIAPARCH, the residual diagnostics, ``append``, MAIC, the studentization of
+   SPA and StepM, and ``PreWhitenedRecolored``, and name the page that holds each.
+
+Deprecations and removals
+~~~~~~~~~~~~~~~~~~~~~~~~~
+.. TODO(R2): task DEP1 (branch a90-dep1-deprecations, not started when this was
+   drafted; decision 23). The three bullets below describe what DEP1 removes: confirm
+   that it has merged and that each statement is true of the final code (the KPSS
+   warning removed and ``lags=-1`` kept, the ``type`` keyword removed, and
+   ``arch/__future__`` deleted). Delete a bullet if DEP1 does not remove the item.
+
+- Removed the ``type`` keyword argument of
+  :meth:`~arch.univariate.base.ARCHModelResult.hedgehog_plot`, which has been
+  deprecated in favor of ``plot_type`` since 4.0.
+- :class:`~arch.unitroot.KPSS` no longer issues a ``DeprecationWarning`` when
+  ``lags`` is not provided. The data-dependent lag selection has been the default
+  since 4.8. Use ``lags=-1`` for the lag length that depends only on the sample
+  size.
+- Removed the empty module ``arch.__future__``. The import
+  ``from arch.__future__ import reindexing`` has been a no-op since 6.2.
+
+Compatibility
+~~~~~~~~~~~~~
+- Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux
+  on x86-64 and aarch64, and musllinux on x86-64), Windows (AMD64) and macOS (arm64
+  and x86-64) for each of them. 9.0 is the last release that supports Python 3.10
+  and NumPy 1.x. Later releases will raise the other minimum versions accordingly.
+- Building from source requires Cython 3.1.0 or later.
+- Running the test suite requires pytest 9 or later.
+- The continuous integration now builds and tests the wheel on macOS (arm64 and
+  Intel), and tests Python 3.10 to 3.15 with exact versions of the dependencies.
+
+.. TODO(R2): branches a90-pkg1-packaging and a90-ci1-release-ci (PKG1, CI1). The
+   Compatibility and "Minimum versions" sections describe what they set (statsmodels
+   0.13.1, Cython 3.1.0, pytest 9, the README text on the last release for Python
+   3.10 and NumPy 1.x, the Python 3.14 and 3.15 classifiers, macOS in CI). Confirm they
+   are merged and that each statement matches ``pyproject.toml`` and
+   ``cron-test.yml``.
+
+Minimum versions
+~~~~~~~~~~~~~~~~
+- The minimum version of statsmodels is now 0.13.1. Version 0.13.0 has no wheels for
+  Python 3.10.
+- The minimum versions of Python (3.10), NumPy (1.22.3), SciPy (1.8) and pandas
+  (1.4.0) have not changed. Building from source requires Cython 3.1.0, and running
+  the tests requires pytest 9.
+
+Contributors
+~~~~~~~~~~~~
+- Thanks to the contributors to this release: aeshef, albystack, gjunjie, heykav,
+  pedrosfaria2, premdev1234, raashish1601, VenishPaneliya, WatchTree-19 and
+  ZacKienzle2, and to lucaluo925 for reporting the BCa issue (:issue:`866`).
