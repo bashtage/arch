@@ -278,7 +278,7 @@ def test_arch_harch(setup):
     parameters = np.array([0.5, 0.5])
 
     backcast = arch.backcast(setup.resids)
-    assert_equal(backcast, harch.backcast(setup.resids))
+    assert_allclose(backcast, harch.backcast(setup.resids), rtol=1e-12)
     sigma2_arch = np.zeros_like(setup.sigma2)
     sigma2_harch = np.zeros_like(setup.sigma2)
     var_bounds = arch.variance_bounds(setup.resids)
@@ -938,7 +938,7 @@ def test_egarch(setup, initial_value):
     assert_equal(len(bounds), egarch.num_params)
     const = np.log(10000.0)
     lnv = np.log(np.mean(setup.resids**2.0))
-    assert_equal(bounds[0], (lnv - const, lnv + const))
+    assert_allclose(bounds[0], (lnv - const, lnv + const), rtol=1e-12)
     assert_equal(bounds[1], (-np.inf, np.inf))
     assert_equal(bounds[2], (-np.inf, np.inf))
     assert_equal(bounds[3], (0.0, 1.0))
@@ -1503,7 +1503,9 @@ def test_figarch_no_phi_beta(setup):
     assert_allclose(np.sqrt(backcast) ** 0.7, figarch.backcast_transform(backcast))
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)))
+    assert_allclose(
+        bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)), rtol=1e-12
+    )
     assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 

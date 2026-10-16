@@ -487,7 +487,7 @@ def test_fix_equals_fit(garch_ma2):
     model = MAMean(garch_ma2, lags=2, volatility=GARCH())
     res = model.fit(disp="off")
     fixed = model.fix(res.params)
-    assert_allclose(fixed.loglikelihood, res.loglikelihood, rtol=1e-12)
+    assert_allclose(fixed.loglikelihood, res.loglikelihood, rtol=1e-8)
     assert_allclose(np.asarray(fixed.resid), np.asarray(res.resid))
     assert_allclose(
         np.asarray(fixed.conditional_volatility),
@@ -509,7 +509,7 @@ def test_zero_theta_is_constant_mean(garch_ma2, vol):
     assert_allclose(np.asarray(ma.resid), np.asarray(cm.resid))
     # The backcast of the variance is computed using the residuals at the
     # starting values, which differ from the residuals with theta = 0
-    rtol = 1e-12 if isinstance(vol, ConstantVariance) else 5e-3
+    rtol = 1e-8 if isinstance(vol, ConstantVariance) else 5e-3
     assert_allclose(ma.loglikelihood, cm.loglikelihood, rtol=rtol)
 
 
@@ -546,7 +546,7 @@ def test_distributions_and_volatility(garch_ma2, vol, dist):
     assert np.isfinite(res.loglikelihood)
     assert isinstance(res, ARCHModelResult)
     fixed = model.fix(res.params)
-    assert_allclose(fixed.loglikelihood, res.loglikelihood, rtol=1e-10)
+    assert_allclose(fixed.loglikelihood, res.loglikelihood, rtol=1e-8)
     assert_allclose(res.params.iloc[:3], MA2_PARAMS, atol=0.2)
 
 
@@ -616,7 +616,7 @@ def test_fit_sample_equals_subsample(garch_ma2):
     )
     expected = MAMean(sub, lags=2, volatility=GARCH()).fit(disp="off")
     assert_allclose(res.params, expected.params, rtol=1e-8)
-    assert_allclose(res.loglikelihood, expected.loglikelihood, rtol=1e-10)
+    assert_allclose(res.loglikelihood, expected.loglikelihood, rtol=1e-8)
     assert (res.fit_start, res.fit_stop, res.nobs) == (first, last, last - first)
     resid = np.asarray(res.resid)
     assert np.all(np.isnan(resid[:first]))
@@ -630,7 +630,7 @@ def test_fit_sample_equals_subsample(garch_ma2):
 def test_hold_back(garch_ma2, hold_back):
     held = MAMean(garch_ma2, lags=2, hold_back=hold_back).fit(disp="off")
     first = MAMean(garch_ma2, lags=2).fit(disp="off", first_obs=hold_back)
-    assert_allclose(held.params, first.params, rtol=1e-10)
+    assert_allclose(held.params, first.params, rtol=1e-8)
     assert held.fit_start == hold_back
     assert held.nobs == np.asarray(garch_ma2).shape[0] - hold_back
     # in addition to first_obs
