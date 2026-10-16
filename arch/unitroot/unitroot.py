@@ -312,7 +312,7 @@ def _autolag_ols_low_memory(
                 singular_array_error.format(max_lags=maxlag, lag=m - i)
             ) from exc
         sigma2[i - m] = squeeze(ypy - b.T @ xpx_sub @ b) / nobs
-        if lower_method == "t-stat":
+        if lower_method == "t-stat" and i > m:
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
             tstat[i - m] = squeeze(b[-1]) / stderr
@@ -528,7 +528,22 @@ def _estimate_df_regression(
 
 
 class UnitRootTest(metaclass=ABCMeta):
-    """Base class to be used for inheritance in unit root bootstrap"""
+    """
+    Base class to be used for inheritance in unit root tests.
+
+    Parameters
+    ----------
+    y : array_like
+        The data to test.
+    lags : int or None
+        The number of lags used by the test. If None, the number of lags is
+        selected when the test statistic is computed.
+    trend : str
+        The deterministic trend used in the test. It must be one of
+        ``valid_trends``.
+    valid_trends : list of str or tuple of str
+        The trends that are supported by the test.
+    """
 
     def __init__(
         self,
@@ -598,18 +613,21 @@ class UnitRootTest(metaclass=ABCMeta):
 
     @property
     def null_hypothesis(self) -> str:
-        """The null hypothesis"""
+        """The null hypothesis."""
         return self._null_hypothesis
 
     @property
     def alternative_hypothesis(self) -> str:
-        """The alternative hypothesis"""
+        """The alternative hypothesis."""
         return self._alternative_hypothesis
 
     @property
     def nobs(self) -> int:
-        """The number of observations used when computing the test statistic.
-        Accounts for loss of data due to lags for regression-based bootstrap."""
+        """
+        The number of observations used when computing the test statistic.
+
+        Accounts for loss of data due to lags for regression-based tests.
+        """
         return self._nobs
 
     @property
@@ -619,28 +637,39 @@ class UnitRootTest(metaclass=ABCMeta):
 
     @property
     def pvalue(self) -> float:
-        """Returns the p-value for the test statistic"""
+        """The p-value for the test statistic."""
         self._compute_if_needed()
         assert self._pvalue is not None
         return self._pvalue
 
     @property
     def stat(self) -> float:
-        """The test statistic for a unit root"""
+        """The test statistic for a unit root."""
         self._compute_if_needed()
         assert self._stat is not None
         return self._stat
 
     @property
     def critical_values(self) -> dict[str, float]:
-        """Dictionary containing critical values specific to the test, number of
-        observations and included deterministic trend terms.
+        """
+        The critical values of the test.
+
+        The dictionary contains critical values specific to the test, the number
+        of observations and the included deterministic trend terms.
         """
         self._compute_if_needed()
         return self._critical_values
 
     def summary(self) -> Summary:
-        """Summary of test, containing statistic, p-value and critical values"""
+        """
+        Summary of test, containing statistic, p-value and critical values.
+
+        Returns
+        -------
+        statsmodels.iolib.summary.Summary
+            A summary instance with methods that support export to text, csv
+            or latex.
+        """
         table_data = [
             ("Test Statistic", f"{self.stat:0.3f}"),
             ("P-value", f"{self.pvalue:0.3f}"),
@@ -687,9 +716,11 @@ class UnitRootTest(metaclass=ABCMeta):
 
     @property
     def lags(self) -> int:
-        """Sets or gets the number of lags used in the model.
-        When bootstrap use DF-type regressions, lags is the number of lags in the
-        regression model.  When bootstrap use long-run variance estimators, lags
+        """
+        The number of lags used in the model.
+
+        When tests use DF-type regressions, lags is the number of lags in the
+        regression model.  When tests use long-run variance estimators, lags
         is the number of lags used in the long-run variance estimator.
         """
         self._compute_if_needed()
@@ -698,61 +729,67 @@ class UnitRootTest(metaclass=ABCMeta):
 
     @property
     def y(self) -> ArrayLike:
-        """Returns the data used in the test statistic"""
+        """The data used in the test statistic."""
         return self._y
 
     @property
     def trend(self) -> str:
-        """Sets or gets the deterministic trend term used in the test. See
-        valid_trends for a list of supported trends
+        """
+        The deterministic trend term used in the test.
+
+        See valid_trends for a list of supported trends.
         """
         return self._trend
 
 
 class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Augmented Dickey-Fuller unit root test
+    Augmented Dickey-Fuller unit root test.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        The data to test for a unit root
+    y : array_like
+        The data to test for a unit root.
     lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
-        than `max_lags` are included.
+        than `max_lags` lags included.
     trend : {"n", "c", "ct", "ctt"}, optional
         The trend component to include in the test
 
         - "n" - No trend components
-        - "c" - Include a constant (Default)
+        - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
         - "ctt" - Include a constant and linear and quadratic time trends
 
     max_lags : int, optional
-        The maximum number of lags to use when selecting lag length
+        The maximum number of lags to use when selecting lag length. If
+        omitted or None, the maximum number of lags is 12 * (nobs/100) ** (1/4),
+        rounded up, reduced when needed in short samples.
     method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
-        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the largest lag length for which the t-statistic
+          of the last lag is significant, using a cut-off of 1.645 for the
+          absolute value of the t-statistic
         - "maic" - Select the minimum of Ng and Perron's modified Akaike IC ([5]_)
 
-    low_memory : bool
+    low_memory : bool, optional
         Flag indicating whether to use a low memory implementation of the
         lag selection algorithm. The low memory algorithm is slower than
         the standard algorithm but will use 2-4% of the memory required for
         the standard algorithm. This options allows automatic lag selection
-        to be used in very long time series. If None, use automatic selection
-        of algorithm.
+        to be used in very long time series. If None, the low memory algorithm
+        is used when the series has more than 100,000 observations.
 
     Notes
     -----
     The null hypothesis of the Augmented Dickey-Fuller is that there is a unit
     root, with the alternative that there is no unit root. If the pvalue is
-    above a critical size, then the null cannot be rejected that there
-    and the series appears to be a unit root.
+    above a critical size, then the null cannot be rejected and the series
+    appears to be a unit root.
 
     The p-values are obtained through regression surface approximation from
     MacKinnon (1994) using the updated 2010 tables.
@@ -761,7 +798,26 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     The autolag option and maxlag for it are described in Greene [1]_.
     See Hamilton [2]_ for more on ADF tests. Critical value simulation based
-    on MacKinnon [3]_ abd [4]_.
+    on MacKinnon [3]_ and [4]_.
+
+    References
+    ----------
+    .. [1] Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper
+       Saddle River, New Jersey.
+
+    .. [2] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+       University Press.
+
+    .. [3] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
+       functions for unit-root and cointegration tests.  `Journal of
+       Business and Economic Statistics` 12, 167-76.
+
+    .. [4] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
+       Queen's University, Dept of Economics, Working Papers.  Available at
+       https://ideas.repec.org/p/qed/wpaper/1227.html
+    .. [5] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
+       Construction of Unit Root Tests with Good Size and Power."
+       Econometrica 69, 1519-1554.
 
     Examples
     --------
@@ -782,25 +838,6 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     -3.2111
     >>> print(f"{adf.pvalue:0.4f}")
     0.0822
-
-    References
-    ----------
-    .. [1] Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper
-       Saddle River, New Jersey.
-
-    .. [2] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
-       University Press.
-
-    .. [3] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
-       functions for unit-root and cointegration bootstrap.  `Journal of
-       Business and Economic Statistics` 12, 167-76.
-
-    .. [4] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
-       Queen's University, Dept of Economics, Working Papers.  Available at
-       https://ideas.repec.org/p/qed/wpaper/1227.html
-    .. [5] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
-       Construction of Unit Root Tests with Good Size and Power."
-       Econometrica 69, 1519-1554.
     """
 
     def __init__(
@@ -870,46 +907,57 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def regression(self) -> RegressionResults:
-        """Returns the OLS regression results from the ADF model estimated"""
+        """The OLS regression results from the ADF model estimated."""
         self._compute_if_needed()
         return self._regression
 
     @property
     def max_lags(self) -> int | None:
-        """Sets or gets the maximum lags used when automatically selecting lag
-        length"""
+        """The maximum lags used when automatically selecting lag length."""
         return self._max_lags
 
 
 class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Elliott, Rothenberg and Stock's ([ers]_) GLS detrended Dickey-Fuller
+    Elliott, Rothenberg and Stock's ([ers]_) GLS detrended Dickey-Fuller.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        The data to test for a unit root
+    y : array_like
+        The data to test for a unit root.
     lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
-        than `max_lags` are included.
+        than `max_lags` lags included.
     trend : {"c", "ct"}, optional
         The trend component to include in the test
 
-        - "c" - Include a constant (Default)
+        - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
 
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length. When using
         automatic lag length selection, the lag is selected using OLS
-        detrending rather than GLS detrending ([pq]_).
+        detrending rather than GLS detrending ([pq]_). If omitted or None,
+        the maximum number of lags is 12 * (nobs/100) ** (1/4), rounded up,
+        reduced when needed in short samples.
     method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
-        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the largest lag length for which the t-statistic
+          of the last lag is significant, using a cut-off of 1.645 for the
+          absolute value of the t-statistic
         - "maic" - Select the minimum of Ng and Perron's modified Akaike IC ([np]_)
+
+    low_memory : bool, optional
+        Flag indicating whether to use a low memory implementation of the
+        lag selection algorithm. The low memory algorithm is slower than
+        the standard algorithm but will use 2-4% of the memory required for
+        the standard algorithm. This options allows automatic lag selection
+        to be used in very long time series. If None, the low memory algorithm
+        is used when the series has at least 100,000 observations.
 
     Notes
     -----
@@ -923,6 +971,17 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     Critical values and p-values when trend is "c" are identical to
     the ADF.  When trend is set to "ct", they are from novel simulations.
+
+    References
+    ----------
+    .. [ers] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
+           tests for an autoregressive unit root. Econometrica 64: 813-836
+    .. [pq] Perron, P., & Qu, Z. (2007). A simple modification to improve the
+           finite sample properties of Ng and Perron's unit root tests.
+           Economics letters, 94(1), 12-19.
+    .. [np] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
+           Construction of Unit Root Tests with Good Size and Power."
+           Econometrica 69, 1519-1554.
 
     Examples
     --------
@@ -943,17 +1002,6 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     -2.9036
     >>> print(f"{dfgls.pvalue:0.4f}")
     0.0447
-
-    References
-    ----------
-    .. [ers] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
-           bootstrap for an autoregressive unit root. Econometrica 64: 813-836
-    .. [pq] Perron, P., & Qu, Z. (2007). A simple modification to improve the
-           finite sample properties of Ng and Perron's unit root tests.
-           Economics letters, 94(1), 12-19.
-    .. [np] Ng, S., and P. Perron. 2001. "Lag Length Selection and the
-           Construction of Unit Root Tests with Good Size and Power."
-           Econometrica 69, 1519-1554.
     """
 
     def __init__(
@@ -1045,61 +1093,80 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def regression(self) -> RegressionResults:
-        """Returns the OLS regression results from the ADF model estimated"""
+        """The OLS regression results from the ADF model estimated."""
         self._compute_if_needed()
         return self._regression
 
     @property
     def max_lags(self) -> int | None:
-        """Sets or gets the maximum lags used when automatically selecting lag
-        length"""
+        """The maximum lags used when automatically selecting lag length."""
         return self._max_lags
 
 
 class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Phillips-Perron unit root test
+    Phillips-Perron unit root test.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        The data to test for a unit root
+    y : array_like
+        The data to test for a unit root.
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the lag length is set automatically to
-        12 * (nobs/100) ** (1/4)
+        12 * (nobs/100) ** (1/4), rounded up.
     trend : {"n", "c", "ct"}, optional
         The trend component to include in the test
 
         - "n" - No trend components
-        - "c" - Include a constant (Default)
+        - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
 
-    test_type : {"tau", "rho"}
+    test_type : {"tau", "rho"}, optional
         The test to use when computing the test statistic. "tau" is based on
         the t-stat and "rho" uses a test based on nobs times the re-centered
-        regression coefficient
+        regression coefficient.
 
     Notes
     -----
     The null hypothesis of the Phillips-Perron (PP) test is that there is a
     unit root, with the alternative that there is no unit root. If the pvalue
-    is above a critical size, then the null cannot be rejected that there
-    and the series appears to be a unit root.
+    is above a critical size, then the null cannot be rejected and the series
+    appears to be a unit root.
 
     Unlike the ADF test, the regression estimated includes only one lag of
-    the dependant variable, in addition to trend terms. Any serial
+    the dependent variable, in addition to trend terms. Any serial
     correlation in the regression errors is accounted for using a long-run
     variance estimator (currently Newey-West).
 
     See Philips and Perron for details [3]_. See Hamilton [1]_ for more on
     PP tests. Newey and West contains information about long-run variance
     estimation [2]_. The p-values are obtained through regression surface
-    approximation using the mathodology of MacKinnon [4]_ and [5]_, only
+    approximation using the methodology of MacKinnon [4]_ and [5]_, only
     using many more simulations.
 
     If the p-value is close to significant, then the critical values should be
     used to judge whether to reject the null.
+
+    References
+    ----------
+    .. [1] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+           University Press.
+
+    .. [2] Newey, W. K., and K. D. West. 1987. "A simple, positive
+           semidefinite, heteroskedasticity and autocorrelation consistent covariance
+           matrix". Econometrica 55, 703-708.
+
+    .. [3] Phillips, P. C. B., and P. Perron. 1988. "Testing for a unit root in
+           time series regression". Biometrika 75, 335-346.
+
+    .. [4] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
+           functions for unit-root and cointegration tests".  Journal of
+           Business and  Economic Statistics. 12, 167-76.
+
+    .. [5] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
+           Queen's University, Dept of Economics, Working Papers.  Available at
+           https://ideas.repec.org/p/qed/wpaper/1227.html
 
     Examples
     --------
@@ -1125,26 +1192,6 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     -120.3271
     >>> print(f"{pp.pvalue:0.4f}")
     0.0000
-
-    References
-    ----------
-    .. [1] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
-           University Press.
-
-    .. [2] Newey, W. K., and K. D. West. 1987. "A simple, positive
-           semidefinite, heteroskedasticity and autocorrelation consistent covariance
-           matrix". Econometrica 55, 703-708.
-
-    .. [3] Phillips, P. C. B., and P. Perron. 1988. "Testing for a unit root in
-           time series regression". Biometrika 75, 335-346.
-
-    .. [4] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
-           functions for unit-root and cointegration bootstrap".  Journal of
-           Business and  Economic Statistics. 12, 167-76.
-
-    .. [5] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
-           Queen's University, Dept of Economics, Working Papers.  Available at
-           https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(
@@ -1242,15 +1289,16 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     @property
     def test_type(self) -> str:
         """
-        Gets or sets the test type returned by stat.
-        Valid values are "tau" or "rho"
+        The test type returned by stat.
+
+        Valid values are "tau" or "rho".
         """
         return self._test_type
 
     @property
     def regression(self) -> RegressionResults:
         """
-        Returns OLS regression results for the specification used in the test
+        The OLS regression results for the specification used in the test.
 
         The results returned use a Newey-West covariance matrix with the same
         number of lags as are used in the test statistic.
@@ -1261,12 +1309,12 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
 class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test
+    Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        The data to test for stationarity
+    y : array_like
+        The data to test for stationarity.
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the number of lags is calculated
@@ -1275,40 +1323,23 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         Set lags=-1 to use the old method that only depends on the sample
         size, 12 * (nobs/100) ** (1/4).
     trend : {"c", "ct"}, optional
-        The trend component to include in the ADF test
-            "c" - Include a constant (Default)
-            "ct" - Include a constant and linear time trend
+        The trend component to include in the test
+
+        - "c" - Include a constant
+        - "ct" - Include a constant and linear time trend
 
     Notes
     -----
     The null hypothesis of the KPSS test is that the series is weakly
     stationary and the alternative is that it is non-stationary.
     If the p-value is above a critical size, then the null cannot be
-    rejected that there and the series appears stationary.
+    rejected and the series appears stationary.
 
     The p-values and critical values were computed using an extensive
     simulation based on 100,000,000 replications using series with 2,000
     observations. See [3]_ for the initial description of the KPSS test.
     Further details are available in [2]_ and [5]_. Details about the long-run
     covariance estimation can be found in [1]_ and [4]_.
-
-    Examples
-    --------
-    >>> from arch.unitroot import KPSS
-    >>> import numpy as np
-    >>> import statsmodels.api as sm
-    >>> data = sm.datasets.macrodata.load().data
-    >>> inflation = np.diff(np.log(data["cpi"]))
-    >>> kpss = KPSS(inflation, lags=-1)
-    >>> print(f"{kpss.stat:0.4f}")
-    0.2870
-    >>> print(f"{kpss.pvalue:0.4f}")
-    0.1473
-    >>> kpss = KPSS(inflation, lags=-1, trend="ct")
-    >>> print(f"{kpss.stat:0.4f}")
-    0.2075
-    >>> print(f"{kpss.pvalue:0.4f}")
-    0.0128
 
     References
     ----------
@@ -1328,6 +1359,24 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     .. [5] Schwert, G. W. (1989). "Tests for unit roots: A Monte Carlo
            investigation". Journal of Business and Economic Statistics, 7 (2):
            147-159.
+
+    Examples
+    --------
+    >>> from arch.unitroot import KPSS
+    >>> import numpy as np
+    >>> import statsmodels.api as sm
+    >>> data = sm.datasets.macrodata.load().data
+    >>> inflation = np.diff(np.log(data["cpi"]))
+    >>> kpss = KPSS(inflation, lags=-1)
+    >>> print(f"{kpss.stat:0.4f}")
+    0.2870
+    >>> print(f"{kpss.pvalue:0.4f}")
+    0.1473
+    >>> kpss = KPSS(inflation, lags=-1, trend="ct")
+    >>> print(f"{kpss.stat:0.4f}")
+    0.2075
+    >>> print(f"{kpss.pvalue:0.4f}")
+    0.0128
     """
 
     def __init__(
@@ -1432,7 +1481,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
 class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Zivot-Andrews structural-break unit-root test
+    Zivot-Andrews structural-break unit-root test.
 
     The Zivot-Andrews test can be used to test for a unit root in a
     univariate process in the presence of serial correlation and a
@@ -1441,29 +1490,31 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     y : array_like
-        data series
+        The data series.
     lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
-        than `max_lags` are included.
+        than `max_lags` lags included.
     trend : {"c", "t", "ct"}, optional
         The trend component to include in the test
 
-        - "c" - Include a constant (Default)
+        - "c" - Include a constant
         - "t" - Include a linear time trend
         - "ct" - Include a constant and linear time trend
 
-    trim : float
-        percentage of series at begin/end to exclude from break-period
-        calculation in range [0, 0.333] (default=0.15)
+    trim : float, optional
+        Percentage of series at begin/end to exclude from break-period
+        calculation in range [0, 0.333].
     max_lags : int, optional
-        The maximum number of lags to use when selecting lag length
+        The maximum number of lags to use when selecting lag length.
     method : {"aic", "bic", "t-stat", "maic"}, optional
         The method to use when selecting the lag length
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
-        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the largest lag length for which the t-statistic
+          of the last lag is significant, using a cut-off of 1.645 for the
+          absolute value of the t-statistic
         - "maic" - Select the minimum of Ng and Perron's modified Akaike IC
 
     Notes
@@ -1477,7 +1528,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     with no dummies) to determine the best lag length. This lag length is
     then used for all subsequent break-period regressions. This results in
     significant run time reduction but also slightly more pessimistic test
-    statistics than the original Zivot-Andrews method,
+    statistics than the original Zivot-Andrews method.
 
     No attempt has been made to characterize the size/power trade-off.
 
@@ -1654,25 +1705,24 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        The data to test for a random walk
-    lags : int
-        The number of periods to used in the multi-period variance, which is
-        the numerator of the test statistic.  Must be at least 2
+    y : array_like
+        The data to test for a random walk.
+    lags : int, optional
+        The number of periods to use in the multi-period variance, which is
+        the numerator of the test statistic.  Must be at least 2.
     trend : {"n", "c"}, optional
         "c" allows for a non-zero drift in the random walk, while "n" requires
-        that the increments to y are mean 0
+        that the increments to y are mean 0.
+    debiased : bool, optional
+        Indicates whether to use a debiased version of the test. Only
+        applicable if overlap is True.
+    robust : bool, optional
+        Indicates whether to use heteroskedasticity robust inference.
     overlap : bool, optional
-        Indicates whether to use all overlapping blocks.  Default is True.  If
+        Indicates whether to use all overlapping blocks.  If
         False, the number of observations in y minus 1 must be an exact
         multiple of lags.  If this condition is not satisfied, some values at
         the end of y will be discarded.
-    robust : bool, optional
-        Indicates whether to use heteroskedasticity robust inference. Default
-        is True.
-    debiased : bool, optional
-        Indicates whether to use a debiased version of the test. Default is
-        True. Only applicable if overlap is True.
 
     Notes
     -----
@@ -1680,6 +1730,12 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     plus drift.  Rejection of the null with a positive test statistic
     indicates the presence of positive serial correlation in the time series.
     See [1]_ for details about variance ratio testing.
+
+    References
+    ----------
+    .. [1] Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The
+       Econometrics of Financial Markets. Princeton, NJ: Princeton University
+       Press.
 
     Examples
     --------
@@ -1691,12 +1747,6 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> vr = VarianceRatio(data, lags=12)
     >>> print(f"{vr.pvalue:0.4f}")
     0.1504
-
-    References
-    ----------
-    .. [1] Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The
-       Econometrics of Financial Markets. Princeton, NJ: Princeton University
-       Press.
     """
 
     def __init__(
@@ -1726,27 +1776,30 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def vr(self) -> float:
-        """The ratio of the long block lags-period variance
-        to the 1-period variance"""
+        """
+        The ratio of the long block lags-period variance to the 1-period variance.
+        """
         self._compute_if_needed()
         assert self._vr is not None
         return self._vr
 
     @property
     def overlap(self) -> bool:
-        """Sets of gets the indicator to use overlapping returns in the
-        long-period variance estimator"""
+        """
+        Indicator to use overlapping returns in the long-period variance estimator.
+        """
         return self._overlap
 
     @property
     def robust(self) -> bool:
-        """Sets of gets the indicator to use a heteroskedasticity robust
-        variance estimator"""
+        """
+        Indicator to use a heteroskedasticity robust variance estimator.
+        """
         return self._robust
 
     @property
     def debiased(self) -> bool:
-        """Sets of gets the indicator to use debiased variances in the ratio"""
+        """Indicator to use debiased variances in the ratio."""
         return self._debiased
 
     def _check_specification(self) -> None:
@@ -1830,41 +1883,42 @@ def mackinnonp(
     dist_type: Literal["adf-t", "adf-z", "dfgls"] = "adf-t",
 ) -> float:
     """
-    Returns MacKinnon's approximate p-value for test stat.
+    Return MacKinnon's approximate p-value for test stat.
 
     Parameters
     ----------
     stat : float
         "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
-    regression : {"c", "n", "ct", "ctt"}
+    regression : {"c", "n", "ct", "ctt"}, optional
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "n" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
-    num_unit_roots : int
+    num_unit_roots : int, optional
         The number of series believed to be I(1).  For (Augmented) Dickey-
         Fuller N = 1.
-    dist_type : {"adf-t", "adf-z", "dfgls"}
+    dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         The test type to use when computing p-values.  Options include
-        "ADF-t" - ADF t-stat based bootstrap
-        "ADF-z" - ADF z bootstrap
-        "DFGLS" - GLS detrended Dickey Fuller
+
+        - "adf-t" - ADF t-stat based test
+        - "adf-z" - ADF z test
+        - "dfgls" - GLS detrended Dickey Fuller
 
     Returns
     -------
     p-value : float
         The p-value for the ADF statistic estimated using MacKinnon 1994.
 
-    References
-    ----------
-    MacKinnon, J.G. 1994  "Approximate Asymptotic Distribution Functions for
-        Unit-Root and Cointegration Tests." Journal of Business & Economics
-        Statistics, 12.2, 167-76.
-
     Notes
     -----
     Most values are from MacKinnon (1994).  Values for DFGLS test statistics
     and the "n" version of the ADF z test statistic were computed following
     the methodology of MacKinnon (1994).
+
+    References
+    ----------
+    MacKinnon, J.G. 1994  "Approximate Asymptotic Distribution Functions for
+        Unit-Root and Cointegration Tests." Journal of Business & Economics
+        Statistics, 12.2, 167-76.
     """
     dist_type = cast("Literal['adf-t', 'adf-z', 'dfgls']", dist_type.lower())
     if num_unit_roots > 1 and dist_type.lower() != "adf-t":
@@ -1913,15 +1967,15 @@ def mackinnoncrit(
     dist_type: Literal["adf-t", "adf-z", "dfgls"] = "adf-t",
 ) -> Float64Array:
     """
-    Returns the critical values for cointegrating and the ADF test.
+    Return the critical values for cointegrating and the ADF test.
 
     In 2010 MacKinnon updated the values of his 1994 paper with critical values
-    for the augmented Dickey-Fuller bootstrap.  These new values are to be
+    for the augmented Dickey-Fuller tests.  These new values are to be
     preferred and are used here.
 
     Parameters
     ----------
-    num_unit_roots : int
+    num_unit_roots : int, optional
         The number of series of I(1) series for which the null of
         non-cointegration is being tested.  For N > 12, the critical values
         are linearly interpolated (not yet implemented).  For the ADF test,
@@ -1933,11 +1987,11 @@ def mackinnoncrit(
         no constant.  The values for the no constant case are taken from the
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
-    nobs : {int, np.inf}, optional
+    nobs : int or float, optional
         This is the sample size.  If the sample size is numpy.inf, then the
         asymptotic critical values are returned.
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
-        Type of test statistic
+        Type of test statistic.
 
     Returns
     -------
@@ -1947,7 +2001,7 @@ def mackinnoncrit(
     Notes
     -----
     Results for ADF t-stats from MacKinnon (1994,2010).  Results for DFGLS and
-    ADF z-bootstrap use the same methodology as MacKinnon.
+    ADF z-tests use the same methodology as MacKinnon.
 
     References
     ----------
@@ -1988,22 +2042,22 @@ def kpss_crit(
     stat: float, trend: Literal["c", "ct"] = "c"
 ) -> tuple[float, Float64Array]:
     """
-    Linear interpolation for KPSS p-values and critical values
+    Linear interpolation for KPSS p-values and critical values.
 
     Parameters
     ----------
     stat : float
         The KPSS test statistic.
-    trend : {"c","ct"}
-        The trend used when computing the KPSS statistic
+    trend : {"c", "ct"}, optional
+        The trend used when computing the KPSS statistic.
 
     Returns
     -------
     pvalue : float
-        The interpolated p-value
+        The interpolated p-value.
     crit_val : ndarray
-        Three element array containing the 10%, 5% and 1% critical values,
-        in order
+        Three element array containing the 1%, 5% and 10% critical values,
+        in order.
 
     Notes
     -----
@@ -2033,12 +2087,12 @@ def auto_bandwidth(
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        Data on which to apply the bandwidth selection
-    kernel : str
+    y : array_like
+        Data on which to apply the bandwidth selection.
+    kernel : {"ba", "pa", "qs"}, optional
         The kernel function to use for selecting the bandwidth
 
-        - "ba", "bartlett", "nw": Bartlett kernel (default)
+        - "ba", "bartlett", "nw": Bartlett kernel
         - "pa", "parzen", "gallant": Parzen kernel
         - "qs", "andrews":  Quadratic Spectral kernel
 

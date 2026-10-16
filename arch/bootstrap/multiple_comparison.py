@@ -168,7 +168,7 @@ class _KernelVariance:
 
 class MultipleComparison:
     """
-    Abstract class for inheritance
+    Abstract class for inheritance.
     """
 
     def __init__(self) -> None:
@@ -181,7 +181,7 @@ class MultipleComparison:
     @property
     def bootstrap(self) -> CircularBlockBootstrap:
         """
-        The bootstrap used in the comparison
+        The bootstrap used in the comparison.
 
         Returns
         -------
@@ -204,7 +204,7 @@ class MultipleComparison:
 
     def reset(self) -> None:
         """
-        Reset the bootstrap to it's initial state.
+        Reset the bootstrap to its initial state.
         """
         self.bootstrap.reset()
 
@@ -215,26 +215,26 @@ class MCS(MultipleComparison):
 
     Parameters
     ----------
-    losses : {ndarray, DataFrame}
-        T by k array containing losses from a set of models
+    losses : ndarray or DataFrame
+        T by k array containing losses from a set of models.
     size : float
         Value in (0,1) to use as the test size when implementing the
         MCS. There is no default value.
     reps : int, optional
-        Number of bootstrap replications to uses.  Default is 1000.
+        Number of bootstrap replications to use.
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
         appropriate for the data.
-    method : {'max', 'R'}, optional
-        MCS test and elimination implementation method, either 'max' or 'R'.
-        Default is 'R'.
-    bootstrap : str, optional
+    method : {"R", "max"}, optional
+        MCS test and elimination implementation method, either "max" or "R".
+    bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Options are
-        'stationary' or 'sb': Stationary bootstrap (Default)
-        'circular' or 'cbb': Circular block bootstrap
-        'moving block' or 'mbb': Moving block bootstrap
-    seed : {int, Generator, RandomState}, optional
+
+        * "stationary" or "sb": Stationary bootstrap
+        * "circular" or "cbb": Circular block bootstrap
+        * "moving block" or "mbb": Moving block bootstrap
+    seed : int, Generator or RandomState, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
@@ -482,12 +482,12 @@ class MCS(MultipleComparison):
     @property
     def included(self) -> list[Hashable]:
         """
-        List of model indices that are included in the MCS
+        List of model indices that are included in the MCS.
 
         Returns
         -------
         included : list
-            List of column indices or names of the included models
+            List of column indices or names of the included models.
         """
         self._has_been_computed()
         incl_loc = self._pvalues.Pvalue > self.size
@@ -498,12 +498,12 @@ class MCS(MultipleComparison):
     @property
     def excluded(self) -> list[Hashable]:
         """
-        List of model indices that are excluded from the MCS
+        List of model indices that are excluded from the MCS.
 
         Returns
         -------
         excluded : list
-            List of column indices or names of the excluded models
+            List of column indices or names of the excluded models.
         """
         self._has_been_computed()
         excl_loc = self._pvalues.Pvalue <= self.size
@@ -514,7 +514,7 @@ class MCS(MultipleComparison):
     @property
     def pvalues(self) -> pd.DataFrame:
         """
-        Model p-values for inclusion in the MCS
+        Model p-values for inclusion in the MCS.
 
         Returns
         -------
@@ -535,26 +535,27 @@ class StepM(MultipleComparison):
 
     Parameters
     ----------
-    benchmark : {ndarray, Series}
-        T element array of benchmark model *losses*
-    models : {ndarray, DataFrame}
-        T by k element array of alternative model *losses*
+    benchmark : ndarray or Series
+        T element array of benchmark model *losses*.
+    models : ndarray or DataFrame
+        T by k element array of alternative model *losses*.
     size : float, optional
         Value in (0,1) to use as the test size when implementing the
-        comparison. Default value is 0.05.
+        comparison.
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
         appropriate for the data.
     reps : int, optional
-        Number of bootstrap replications to uses.  Default is 1000.
-    bootstrap : str, optional
+        Number of bootstrap replications to use.
+    bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Options are
-        'stationary' or 'sb': Stationary bootstrap (Default)
-        'circular' or 'cbb': Circular block bootstrap
-        'moving block' or 'mbb': Moving block bootstrap
+
+        * "stationary" or "sb": Stationary bootstrap
+        * "circular" or "cbb": Circular block bootstrap
+        * "moving block" or "mbb": Moving block bootstrap
     studentize : bool, optional
-        Flag indicating to studentize loss differentials. Default is True.
+        Flag indicating to studentize loss differentials.
         Studentization is also applied inside each bootstrap replication,
         see :class:`~arch.bootstrap.SPA`. If False, the loss differentials
         are not studentized.
@@ -563,12 +564,17 @@ class StepM(MultipleComparison):
         used to studentize, instead of the kernel estimator of the long-run
         variance that matches the bootstrap. The variances are computed in
         the original data and in each bootstrap replication, so the
-        procedure uses reps squared resamples and can be very slow. Default
-        is False. Can only be True when studentize is True.
-    seed : {int, Generator, RandomState}, optional
+        procedure uses reps squared resamples and can be very slow. Can only
+        be True when studentize is True.
+    seed : int, Generator or RandomState, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
+
+    See Also
+    --------
+    arch.bootstrap.SPA
+        Test of Superior Predictive Ability of White and Hansen.
 
     Notes
     -----
@@ -580,10 +586,6 @@ class StepM(MultipleComparison):
     differentials are studentized.
 
     See [1]_ for detail.
-
-    See Also
-    --------
-    SPA
 
     References
     ----------
@@ -667,7 +669,7 @@ class StepM(MultipleComparison):
     @property
     def superior_models(self) -> list[int] | Sequence[Hashable]:
         """
-        List of the indices or column names of the superior models
+        List of the indices or column names of the superior models.
 
         Returns
         -------
@@ -691,37 +693,43 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
     Parameters
     ----------
-    benchmark : {ndarray, Series}
-        T element array of benchmark model *losses*
-    models : {ndarray, DataFrame}
-        T  by k element array of alternative model *losses*
+    benchmark : ndarray or Series
+        T element array of benchmark model *losses*.
+    models : ndarray or DataFrame
+        T by k element array of alternative model *losses*.
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
         appropriate for the data.
     reps : int, optional
-        Number of bootstrap replications to uses.  Default is 1000.
-    bootstrap : str, optional
+        Number of bootstrap replications to use.
+    bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Options are
-        'stationary' or 'sb': Stationary bootstrap (Default)
-        'circular' or 'cbb': Circular block bootstrap
-        'moving block' or 'mbb': Moving block bootstrap
-    studentize : bool
-        Flag indicating to studentize loss differentials. Default is True.
+
+        * "stationary" or "sb": Stationary bootstrap
+        * "circular" or "cbb": Circular block bootstrap
+        * "moving block" or "mbb": Moving block bootstrap
+    studentize : bool, optional
+        Flag indicating to studentize loss differentials.
         Studentization is also applied inside each bootstrap replication,
         see Notes. If False, the loss differentials are not studentized in
         the original data or in the bootstrap replications.
-    nested : bool
+    nested : bool, optional
         Flag indicating to use a nested bootstrap to compute the variances
         used to studentize, instead of the kernel estimator of the long-run
         variance that matches the bootstrap. The variances are computed in
         the original data and in each bootstrap replication, so the
-        procedure uses reps squared resamples and can be very slow. Default
-        is False. Can only be True when studentize is True.
-    seed : {int, Generator, RandomState}, optional
+        procedure uses reps squared resamples and can be very slow. Can only
+        be True when studentize is True.
+    seed : int, Generator or RandomState, optional
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
+
+    See Also
+    --------
+    arch.bootstrap.StepM
+        StepM multiple comparison procedure of Romano and Wolf.
 
     Notes
     -----
@@ -765,10 +773,6 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     No other studentization is done when ``studentize`` is False.
 
     See [1]_ and [2]_ for details.
-
-    See Also
-    --------
-    StepM
 
     References
     ----------
@@ -873,8 +877,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
     def subset(self, selector: BoolArray) -> None:
         """
-        Sets a list of active models to run the SPA on.  Primarily for
-        internal use.
+        Set the active models to run the SPA on.
+
+        This method is primarily for internal use.
 
         Parameters
         ----------
@@ -1030,8 +1035,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     @property
     def pvalues(self) -> pd.Series:
         """
-        P-values corresponding to the lower, consistent and
-        upper p-values.
+        The lower, consistent and upper p-values.
 
         Returns
         -------
@@ -1044,7 +1048,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
     def critical_values(self, pvalue: float = 0.05) -> pd.Series:
         """
-        Returns data-dependent critical values
+        Return data-dependent critical values.
 
         Parameters
         ----------
@@ -1074,16 +1078,14 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
     ) -> Int64Array1D:
         """
-        Returns set of models rejected as being equal-or-worse than the
-        benchmark
+        Return the set of models rejected as being equal-or-worse than the benchmark.
 
         Parameters
         ----------
         pvalue : float, optional
-            P-value in (0,1) to use when computing superior models
-        pvalue_type : str, optional
-            String in 'lower', 'consistent', or 'upper' indicating which
-            critical value to use.
+            P-value in (0,1) to use when computing superior models.
+        pvalue_type : {"lower", "consistent", "upper"}, optional
+            Indicates which critical value to use.
 
         Returns
         -------

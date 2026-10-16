@@ -77,9 +77,9 @@ class CointegrationTestResult:
     crit_vals : Series
         The critical values of the Engle-Granger specific to the sample size
         and model dimension.
-    null : str, default "No Cointegration"
+    null : str, optional
         The null hypothesis.
-    alternative : str, default "Cointegration"
+    alternative : str, optional
         The alternative hypothesis.
     """
 
@@ -101,7 +101,7 @@ class CointegrationTestResult:
 
     @property
     def name(self) -> str:
-        """Sets or gets the name of the cointegration test"""
+        """Set or get the name of the cointegration test."""
         return self._name
 
     @name.setter
@@ -121,7 +121,7 @@ class CointegrationTestResult:
     @property
     def critical_values(self) -> pd.Series:
         """
-        Critical Values
+        The critical values of the test.
 
         Returns
         -------
@@ -133,12 +133,12 @@ class CointegrationTestResult:
 
     @property
     def null_hypothesis(self) -> str:
-        """The null hypothesis"""
+        """The null hypothesis."""
         return self._null
 
     @property
     def alternative_hypothesis(self) -> str:
-        """The alternative hypothesis"""
+        """The alternative hypothesis."""
         return self._alternative
 
     def __str__(self) -> str:
@@ -177,7 +177,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
 
     @property
     def trend(self) -> str:
-        """The trend used in the cointegrating regression"""
+        """The trend used in the cointegrating regression."""
         return self._trend
 
     @property
@@ -209,9 +209,9 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
 
         Parameters
         ----------
-        axes : Axes, default None
-            matplotlib axes instance to hold the figure.
-        title : str, default None
+        axes : Axes, optional
+            Matplotlib axes instance to hold the figure.
+        title : str, optional
             Title for the figure.
 
         Returns
