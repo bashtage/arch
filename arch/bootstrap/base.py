@@ -1577,7 +1577,7 @@ class CircularBlockBootstrap(IIDBootstrap):
     @property
     def block_size(self) -> int:
         """
-        The block size of the bootstrap
+        The block size of the bootstrap.
 
         Returns
         -------
