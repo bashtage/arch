@@ -668,7 +668,7 @@ def test_dfgls_integer_data(trend):
 
 
 def test_zivot_andrews_reduced_rank():
-    y = np.random.standard_normal(1000)
+    y = np.random.default_rng(1234).standard_normal(1000)
     y[1:] = 3.0
     with pytest.raises(InfeasibleTestException, match=r"The regressor matrix is"):
         assert np.isfinite(ZivotAndrews(y, lags=1).stat)
@@ -710,7 +710,7 @@ def test_bw_selection_scale_invariant(kernel, expected):
 
 def test_invalid_trend():
     with pytest.raises(ValueError, match=r"trend not understood"):
-        ADF(np.random.standard_normal(100), trend="unknown")
+        ADF(np.random.default_rng(1234).standard_normal(100), trend="unknown")
 
 
 @pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
@@ -722,7 +722,7 @@ def test_wrong_exceptions(stat, nobs, trend):
     skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
-    y = np.random.standard_normal((nobs,))
+    y = np.random.default_rng(nobs).standard_normal((nobs,))
     try:
         assert np.isfinite(stat(y, trend=trend).stat)
     except InfeasibleTestException:
@@ -754,7 +754,7 @@ def test_phillips_perron_specifed_lag():
 
 
 def test_kpss_legacy():
-    y = np.random.standard_normal(4)
+    y = np.random.default_rng(1234).standard_normal(4)
     with pytest.raises(InfeasibleTestException, match=r"The number of observations 4"):
         assert np.isfinite(KPSS(y, lags=-1).stat)
 
@@ -784,7 +784,7 @@ def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
 @pytest.mark.parametrize("overlap", [True, False])
 @pytest.mark.parametrize("debiased", [True, False])
 def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
-    y = np.random.standard_normal((nobs,))
+    y = np.random.default_rng(nobs).standard_normal((nobs,))
     try:
         vr = VarianceRatio(y, trend=trend, lags=4, overlap=overlap, debiased=debiased)
         assert np.isfinite(vr.stat)
@@ -794,8 +794,9 @@ def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
 
 def test_low_memory_singular():
     x = np.zeros(1000)
-    x[:3] = np.random.standard_normal()
-    x[-3:] = np.random.standard_normal()
+    rng = np.random.default_rng(1234)
+    x[:3] = rng.standard_normal()
+    x[-3:] = rng.standard_normal()
     match = "The maximum lag you are"
     with pytest.raises(InfeasibleTestException, match=match):
         _ = ADF(x, max_lags=10, low_memory=True).stat
@@ -810,6 +811,6 @@ def test_autolag_ols_low_memory_smoke(trend, method):
 
 
 def test_autolag_warning():
-    y = np.random.standard_normal(1000000)
+    y = np.random.default_rng(1234).standard_normal(1000000)
     with pytest.warns(PerformanceWarning, match=r""):
         assert isinstance(ADF(y).stat, float)

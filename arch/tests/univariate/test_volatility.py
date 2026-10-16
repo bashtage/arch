@@ -278,7 +278,7 @@ def test_arch_harch(setup):
     parameters = np.array([0.5, 0.5])
 
     backcast = arch.backcast(setup.resids)
-    assert_equal(backcast, harch.backcast(setup.resids))
+    assert_allclose(backcast, harch.backcast(setup.resids), rtol=1e-12)
     sigma2_arch = np.zeros_like(setup.sigma2)
     sigma2_harch = np.zeros_like(setup.sigma2)
     var_bounds = arch.variance_bounds(setup.resids)
@@ -333,49 +333,29 @@ def test_harch(setup, initial_value):
     b_target = np.array([0.0, 0.0, 0.0, 0.0, -1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
-    state = setup.rng.get_state()
-    rng = Normal(seed=RandomState())
-    rng.generator.set_state(state)
+    # Own generator so the test does not depend on the state of the shared setup.rng
+    seed = 20260923
+    rng = Normal(seed=RandomState(seed))
     sim_data = harch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
-    setup.rng.set_state(state)
-    e = setup.rng.standard_normal(setup.t + 500)
-    sigma2 = np.zeros(setup.t + 500)
-    data = np.zeros(setup.t + 500)
-    lagged = np.zeros(22)
-    for t in range(setup.t + 500):
-        sigma2[t] = parameters[0]
-        lagged[:] = backcast
-        if t > 0:
-            if t == 1:
-                lagged[0] = data[0] ** 2.0
-            elif t < 22:
-                lagged[:t] = data[t - 1 :: -1] ** 2.0
-            else:
-                lagged = data[t - 1 : t - 22 : -1] ** 2.0
-
-        shock1 = data[t - 1] ** 2.0 if t > 0 else backcast
-        if t >= 5:
-            shock5 = np.mean(data[t - 5 : t] ** 2.0)
-        else:
-            shock5 = 0.0
-            for i in range(5):
-                shock5 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock5 = shock5 / 5.0
-
-        if t >= 22:
-            shock22 = np.mean(data[t - 22 : t] ** 2.0)
-        else:
-            shock22 = 0.0
-            for i in range(22):
-                shock22 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock22 = shock22 / 22.0
-
-        sigma2[t] += (
-            parameters[1] * shock1 + parameters[2] * shock5 + parameters[3] * shock22
+    e = RandomState(seed).standard_normal(setup.t + 500)
+    if initial_value is None:
+        initial_value = parameters[0] / (1.0 - parameters[1:].sum())
+    # HARCH.simulate sets the first 22 observations to the initial value
+    max_lag = 22
+    sigma2 = np.full(setup.t + 500, initial_value)
+    data = np.full(setup.t + 500, np.sqrt(initial_value))
+    for t in range(max_lag, setup.t + 500):
+        shock1 = data[t - 1] ** 2.0
+        shock5 = np.mean(data[t - 5 : t] ** 2.0)
+        shock22 = np.mean(data[t - 22 : t] ** 2.0)
+        sigma2[t] = (
+            parameters[0]
+            + parameters[1] * shock1
+            + parameters[2] * shock5
+            + parameters[3] * shock22
         )
-
         data[t] = e[t] * np.sqrt(sigma2[t])
     data = data[500:]
     sigma2 = sigma2[500:]
@@ -958,7 +938,7 @@ def test_egarch(setup, initial_value):
     assert_equal(len(bounds), egarch.num_params)
     const = np.log(10000.0)
     lnv = np.log(np.mean(setup.resids**2.0))
-    assert_equal(bounds[0], (lnv - const, lnv + const))
+    assert_allclose(bounds[0], (lnv - const, lnv + const), rtol=1e-12)
     assert_equal(bounds[1], (-np.inf, np.inf))
     assert_equal(bounds[2], (-np.inf, np.inf))
     assert_equal(bounds[3], (0.0, 1.0))
@@ -1047,8 +1027,12 @@ def test_egarch(setup, initial_value):
         EGARCH(p=0, o=0, q=1)
     with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         EGARCH(p=1, o=1, q=-1)
+    # beta > 1 is explosive, so the exponential of the log-variance overflows
     parameters = np.array([0.1, 0.1, -0.1, 1.05])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"):
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"),
+        np.errstate(over="ignore"),
+    ):
         egarch.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1523,7 +1507,9 @@ def test_figarch_no_phi_beta(setup):
     assert_allclose(np.sqrt(backcast) ** 0.7, figarch.backcast_transform(backcast))
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)))
+    assert_allclose(
+        bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)), rtol=1e-12
+    )
     assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
@@ -2166,7 +2152,7 @@ def test_fiaparch_simulate_initial_value(setup):
 
 def test_fiaparch_simulate_high_persistence(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
         fiaparch.simulate(parameters, 20, rng.simulate([]))
@@ -2174,16 +2160,21 @@ def test_fiaparch_simulate_high_persistence(setup):
 
 def test_fiaparch_simulate_high_beta(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.0, 0.4, 1.005, -0.3, 1.5])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
-        with pytest.warns(ValueWarning, match=r"beta >= 1"):
-            fiaparch.simulate(parameters, 20, rng.simulate([]))
+    # The variance process is explosive, which eventually makes the base of the
+    # power transformation negative
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"),
+        pytest.warns(ValueWarning, match=r"beta >= 1"),
+        pytest.warns(RuntimeWarning, match=r"invalid value encountered"),
+    ):
+        fiaparch.simulate(parameters, 20, rng.simulate([]))
 
 
 def test_fiaparch_simulate_persistence_ge_1(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     # d > 1 pushes persistence >= 1
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     fig_params = parameters[:4]

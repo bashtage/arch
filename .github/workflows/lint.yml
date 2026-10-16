@@ -1,0 +1,53 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    # The oldest and the newest supported Python. flake8 and black parse the code with
+    # the grammar of the Python that runs them.
+    name: Lint, Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.15"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the linters
+        id: install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install black flake8 isort ruff
+          python -m pip list
+
+      # Every check runs even when an earlier one fails, so that the log shows all of
+      # the problems
+      - name: flake8
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: flake8 arch
+
+      - name: ruff
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: ruff check arch
+
+      - name: black
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: black --check arch
+
+      - name: isort
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: isort --check arch

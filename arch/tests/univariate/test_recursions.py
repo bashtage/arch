@@ -106,7 +106,7 @@ import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
 
 nobs = 10000
-resids = np.random.standard_normal(nobs)
+resids = np.random.default_rng(1234).standard_normal(nobs)
 sigma2 = np.zeros_like(resids)
 var = resids.var()
 backcast = 1.0
@@ -651,7 +651,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         rec.harch_recursion(
             parameters, resids, sigma2, lags, nobs, backcast, self.var_bounds
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 
@@ -695,7 +695,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             backcast,
             self.var_bounds,
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 
@@ -736,7 +736,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         rec.arch_recursion(
             parameters, resids, sigma2, 3, nobs, backcast, self.var_bounds
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 

@@ -254,7 +254,7 @@ class Distribution(metaclass=ABCMeta):
         self,
         resids: Sequence[float] | ArrayLike1D,
         parameters: Sequence[float] | ArrayLike1D | None = None,
-    ) -> Float64Array:
+    ) -> float | Float64Array:
         """
         Cumulative distribution function
 
@@ -1074,7 +1074,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         is used with system-provided entropy.
     """
 
-    def __init__(
+    def __init__(  # noqa: B042
         self,
         *,
         seed: int | RandomState | Generator | None = None,
