@@ -387,7 +387,8 @@ class MCS(MultipleComparison):
             # Diffs are L(i) - L(j), so large value in [i,j] indicates
             # i is worse than j
             # Elimination is for
-            i = loc.squeeze()[0]
+            # The first is used if several models are tied
+            i = loc[0, 0]
             eliminated.append((int(indices.flat[i]), pval))
             included[indices.flat[i]] = False
         # Add pval of 1 for model remaining

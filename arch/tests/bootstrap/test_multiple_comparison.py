@@ -1002,3 +1002,65 @@ def test_bad_values():
     q = MCS(qlike, size=0.05, method="max")
     with pytest.warns(RuntimeWarning, match=r"During computation of a step"):
         q.compute()
+
+
+def reference_mcs_r(losses, block_size, reps, seed):
+    """
+    Hansen, Lunde and Nason (2011) T_R elimination with explicit resampling
+
+    Returns the models in the order of elimination and the (non-monotone)
+    p-values. A tie for the largest statistic eliminates the first model.
+    """
+    t, k = losses.shape
+    bs = StationaryBootstrap(block_size, np.arange(t), seed=seed)
+    indices = [bs.update_indices() for _ in range(reps)]
+    mean = losses.mean(0)
+    boot_mean = np.array([losses[idx].mean(0) for idx in indices])
+    dbar = mean[:, None] - mean[None, :]
+    dstar = boot_mean[:, :, None] - boot_mean[:, None, :]
+    var_ij = ((dstar - dbar) ** 2).mean(0) + np.eye(k)
+    alive = list(range(k))
+    order, pvals = [], []
+    while len(alive) > 1:
+        a = np.array(alive)
+        sd = np.sqrt(var_ij[np.ix_(a, a)])
+        t_ij = dbar[np.ix_(a, a)] / sd
+        t_star = ((dstar[:, a][:, :, a] - dbar[np.ix_(a, a)]) / sd).max(axis=(1, 2))
+        i, _ = np.unravel_index(np.argmax(t_ij), t_ij.shape)
+        order.append(alive[i])
+        pvals.append(float((t_star > t_ij.max()).mean()))
+        alive.pop(i)
+    order.append(alive[0])
+    pvals.append(1.0)
+    return order, np.maximum.accumulate(pvals)
+
+
+def tied_losses(design):
+    if design == "two-models":
+        # Equal mean losses, different patterns
+        a = np.zeros(32)
+        a[:8] = 1.0
+        b = np.zeros(32)
+        b[11:19] = 1.0
+        return np.column_stack([a, b])
+    # b = -a so both have a zero mean and the same variance, and c = -1:
+    # the statistics of a and b are exactly tied. The values are dyadic.
+    a = np.tile([-1.0, 0.5, 0.5, 1.0, -0.5, -0.5, 0.25, -0.25], 8)
+    c = -np.ones(a.shape[0])
+    return np.column_stack([a, -a, c])
+
+
+@pytest.mark.parametrize("design", ["two-models", "three-models"])
+def test_mcs_r_tied_worst_models(design):
+    # The worst models have exactly equal statistics
+    losses = tied_losses(design)
+    if design == "two-models":
+        assert losses[:, 0].mean() == losses[:, 1].mean()
+    reps, block_size, seed = 128, 4, 12345
+    mcs = MCS(losses, 0.1, reps=reps, block_size=block_size, method="R", seed=seed)
+    mcs.compute()
+    order, pvals = reference_mcs_r(losses, block_size, reps, seed)
+    pvalues = mcs.pvalues
+    assert list(pvalues.index) == order
+    assert np.all((pvalues["Pvalue"] >= 0) & (pvalues["Pvalue"] <= 1))
+    assert_allclose(pvalues["Pvalue"].to_numpy(), pvals, rtol=0, atol=1e-12)
