@@ -234,6 +234,8 @@ which produces
 The output will always have as many rows as the data input.  Values
 that are not forecast are ``nan`` filled.
 
+.. _forecasting-append:
+
 Forecasting After New Data Arrive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -256,7 +258,8 @@ model. If the model was constructed using a pandas ``Series``, the index of
 the new data must follow the index of the existing data. Individual
 observations can be appended to models that were constructed using an
 ``ndarray`` or a list. Models that include exogenous variables require the
-values of the exogenous variables for the new observations.
+values of the exogenous variables for the new observations, which are passed using
+the keyword argument ``x``, for example ``am.append(y_new, x=x_new)``.
 
 .. code-block:: python
 

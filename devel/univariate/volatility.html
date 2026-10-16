@@ -23,7 +23,7 @@
     
   
       
-        <title>Volatility Processes - arch v8.0.1 (+264)</title>
+        <title>Volatility Processes - arch v8.0.1 (+271)</title>
       
     
 
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#parameterless-variance-processes" class="md-skip">
+        <a href="#fractionally-integrated-asymmetric-power-arch" class="md-skip">
           Skip to content
         </a>
       
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+264)
+            arch v8.0.1 (+271)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+264)
+    arch v8.0.1 (+271)
   </label>
   
     <div class="md-nav__source">
@@ -1144,6 +1144,16 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fractionally-integrated-asymmetric-power-arch" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/volatility.rst#fractionally-integrated-asymmetric-power-arch (reference label)"><span>Fractionally Integrated Asymmetric Power ARCH</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#parameterless-variance-processes" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1524,6 +1534,52 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
@@ -1586,6 +1642,16 @@
       Contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fractionally-integrated-asymmetric-power-arch" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/volatility.rst#fractionally-integrated-asymmetric-power-arch (reference label)"><span>Fractionally Integrated Asymmetric Power ARCH</span></span>
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#parameterless-variance-processes" class="md-nav__link">
@@ -1667,6 +1733,78 @@ volatility.</p>
 </tr>
 </tbody>
 </table>
+<h2 id="fractionally-integrated-asymmetric-power-arch">Fractionally Integrated Asymmetric Power ARCH<a class="headerlink" href="#fractionally-integrated-asymmetric-power-arch" title="Link to this heading">¶</a></h2>
+<p><a class="reference internal" href="generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a> is a fractionally integrated asymmetric power
+ARCH process. It extends <a class="reference internal" href="generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a>, which has long memory in
+the volatility, with the asymmetry and the power of <a class="reference internal" href="generated/arch.univariate.APARCH.html#arch.univariate.APARCH" title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">APARCH</span></code></a>.
+The conditional volatility evolves according to</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t^{\delta} = \omega
++ \left[1-\beta L - (1-\phi L)(1-L)^d\right]
+(|\epsilon_t| - \gamma \epsilon_t)^{\delta}
++ \beta \sigma_{t-1}^{\delta}\]</div>
+<p>where <span class="math notranslate nohighlight">\(L\)</span> is the lag operator and <span class="math notranslate nohighlight">\(d\)</span> is the fractional differencing
+parameter. The shocks enter through <span class="math notranslate nohighlight">\(|\epsilon_t| - \gamma \epsilon_t\)</span>, so that
+<span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> produces a larger response to negative shocks than to positive
+shocks of the same size, and the power <span class="math notranslate nohighlight">\(\delta\)</span> determines the scale on
+which the volatility is modeled. As in the FIGARCH, the process is estimated using
+its ARCH(<span class="math notranslate nohighlight">\(\infty\)</span>) representation</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t^{\delta} = (1-\beta)^{-1}\omega + \sum_{i=1}^{\infty} \lambda_i
+(|\epsilon_{t-i}| - \gamma \epsilon_{t-i})^{\delta}\]</div>
+<p>with weights <span class="math notranslate nohighlight">\(\lambda_i\)</span> that are the same as in the FIGARCH, truncated after
+<code class="docutils literal notranslate"><span class="pre">truncation</span></code> terms (1000 by default).</p>
+<p>The orders <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">o</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> can be 0 or 1. They select, respectively, the
+parameters <span class="math notranslate nohighlight">\(\phi\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, and the parameters are
+ordered <code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code> and <code class="docutils literal notranslate"><span class="pre">delta</span></code>, omitting the
+ones that are not in the model. The power <span class="math notranslate nohighlight">\(\delta\)</span> is estimated, with values
+between 0.05 and 4, unless <code class="docutils literal notranslate"><span class="pre">delta</span></code> is provided, which fixes it to a value in the
+same range. Fixing <span class="math notranslate nohighlight">\(\delta\)</span> makes estimation considerably faster. The process
+is named <code class="docutils literal notranslate"><span class="pre">&quot;FI</span> <span class="pre">Power</span> <span class="pre">ARCH&quot;</span></code> when <code class="docutils literal notranslate"><span class="pre">o=0</span></code>, since it then has no asymmetry.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.nasdaq</span>
+
+<span class="gp">In [2]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">FIAPARCH</span>
+
+<span class="gp">In [3]: </span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="gp">In [4]: </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">nasdaq</span><span class="p">[</span><span class="s2">"Adj Close"</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="gp">In [5]: </span><span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">FIAPARCH</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="mi">250</span><span class="p">))</span>
+
+<span class="gp">In [6]: </span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
+
+<span class="gp">In [7]: </span><span class="n">res</span><span class="o">.</span><span class="n">params</span>
+<span class="gh">Out[7]: </span>
+<span class="go">mu       0.035150</span>
+<span class="go">omega    0.135799</span>
+<span class="go">phi      0.193406</span>
+<span class="go">d        0.489418</span>
+<span class="go">beta     0.607246</span>
+<span class="go">gamma    0.723740</span>
+<span class="go">Name: params, dtype: float64</span>
+</code></pre></div>
+</div>
+<p>The process can also be selected using <code class="docutils literal notranslate"><span class="pre">vol=&quot;FIAPARCH&quot;</span></code> in
+<a class="reference internal" href="introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>, which estimates <span class="math notranslate nohighlight">\(\delta\)</span> and uses the
+default truncation. Analytic forecasts are only available for a horizon of 1.
+Longer horizons require <code class="docutils literal notranslate"><span class="pre">method=&quot;simulation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">method=&quot;bootstrap&quot;</span></code>.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [8]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="gp">In [9]: </span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
+<span class="gp">   ...: </span>    <span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">method</span><span class="o">=</span><span class="s2">"simulation"</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">simulations</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">random_state</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">   ...: </span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [10]: </span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span>
+<span class="gh">Out[10]: </span>
+<span class="go">                h.1       h.2       h.3</span>
+<span class="go">Date                                   </span>
+<span class="go">2018-12-31  3.66342  3.328352  3.097639</span>
+</code></pre></div>
+</div>
 <h2 id="parameterless-variance-processes">Parameterless Variance Processes<a class="headerlink" href="#parameterless-variance-processes" title="Link to this heading">¶</a></h2>
 <p>Some volatility processes use fixed parameters and so have no parameters that
 are estimable.</p>
@@ -1806,6 +1944,8 @@ that can be used in <a class="reference internal" href="generated/arch.univariat
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

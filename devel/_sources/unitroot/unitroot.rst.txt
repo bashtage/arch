@@ -15,9 +15,9 @@ This module contains a number of routines:
 * Variance Ratio (:class:`~arch.unitroot.VarianceRatio`)
 * Automatic Bandwidth Selection (:func:`~arch.unitroot.auto_bandwidth`)
 
-The first four all start with the null of a unit root and have an alternative
-of a stationary process. The final test, KPSS, has a null of a stationary
-process with an alternative of a unit root.
+All of the tests except KPSS have a null of a unit root and an alternative of a
+stationary process. KPSS has a null of a stationary process with an alternative
+of a unit root.
 
 .. toctree::
     :maxdepth: 1

@@ -1,0 +1,6 @@
+﻿arch.data.frenchdata.load
+=========================
+
+.. currentmodule:: arch.data.frenchdata
+
+.. autofunction:: load

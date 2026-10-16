@@ -23,7 +23,7 @@
     
   
       
-        <title>Module Reference - arch v8.0.1 (+264)</title>
+        <title>Module Reference - arch v8.0.1 (+271)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+264)
+            arch v8.0.1 (+271)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+264)
+    arch v8.0.1 (+271)
   </label>
   
     <div class="md-nav__source">
@@ -688,6 +688,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#studentization" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/multiple-comparison/multiple-comparison-reference.rst#studentization (reference label)"><span>Studentization</span></span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -886,6 +896,52 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
@@ -957,6 +1013,22 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Test of Superior Predictive Ability (SPA), Reality Check">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#studentization" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/multiple-comparison/multiple-comparison-reference.rst#studentization (reference label)"><span>Studentization</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1018,6 +1090,117 @@ there are potentially alternative models being considered.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="studentization"><span id="spa-studentization"></span>Studentization<a class="headerlink" href="#studentization" title="Link to this heading">¶</a></h3>
+<p>The loss differentials, <span class="math notranslate nohighlight">\(d_{i,t} = L_{bm,t} - L_{i,t}\)</span>, are studentized by
+default (<code class="docutils literal notranslate"><span class="pre">studentize=True</span></code>). The statistic of model <em>i</em> is the average loss
+differential divided by an estimate of its standard error, so that the statistics
+of models with different amounts of variation in their losses are comparable. The
+standard error is estimated in the original data and again inside each bootstrap
+replication, where it is used to studentize the re-centered average of the bootstrap
+sample. As a result the bootstrap distribution reflects the sampling variation of
+the estimated standard errors that is present in the statistic from the data.</p>
+<div class="admonition versionchanged">
+<p class="admonition-title"><span class="versionmodified changed">Changed in version 9.0: </span>Previously <code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> had no effect, and the statistics were always the
+average loss differentials. Studentization is now applied, and so p-values,
+critical values and the superior models obtained using the default arguments
+differ from previous versions. The critical values apply to the studentized
+statistics. Use <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> to obtain the previous statistics.</p>
+</div>
+<p>The standard errors are the square root of a kernel estimator of the long-run
+variance of the loss differentials, divided by the number of observations. The
+kernel is chosen to match the bootstrap, so that the estimator is the variance of
+the sample mean that the bootstrap implies, with the average block size as the
+bandwidth. The weights on the autocovariances are those of the stationary bootstrap
+for the stationary bootstrap, and those of the Bartlett kernel for the circular and
+moving block bootstraps. Setting <code class="docutils literal notranslate"><span class="pre">nested=True</span></code> replaces the kernel estimator with a nested
+bootstrap, which estimates the variance of the average in the original data and in
+every bootstrap replication. This uses a number of resamples that is the square of
+<code class="docutils literal notranslate"><span class="pre">reps</span></code>, and so can be very slow. <code class="docutils literal notranslate"><span class="pre">nested=True</span></code> requires <code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> and
+raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> otherwise.</p>
+<p>The same variances are used by the consistent p-value to select the models that are
+re-centered, even when <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code>.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="gp">In [2]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="gp">In [3]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPA</span><span class="p">,</span> <span class="n">StepM</span>
+
+<span class="gp">In [4]: </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="gp">In [5]: </span><span class="n">t</span> <span class="o">=</span> <span class="mi">250</span>
+
+<span class="go"># The third and fourth models are more accurate than the benchmark</span>
+<span class="gp">In [6]: </span><span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">])</span>
+
+<span class="gp">In [7]: </span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"benchmark"</span><span class="p">)</span>
+
+<span class="gp">In [8]: </span><span class="n">models</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<span class="gp">   ...: </span>    <span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">"model_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)],</span>
+<span class="gp">   ...: </span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [9]: </span><span class="n">spa</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+<span class="gp">In [11]: </span><span class="n">spa</span><span class="o">.</span><span class="n">pvalues</span>
+<span class="gh">Out[11]: </span>
+<span class="go">lower         0.000</span>
+<span class="go">consistent    0.001</span>
+<span class="go">upper         0.001</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [12]: </span><span class="n">spa</span><span class="o">.</span><span class="n">critical_values</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gh">Out[12]: </span>
+<span class="go">lower         1.978230</span>
+<span class="go">consistent    2.451455</span>
+<span class="go">upper         2.451455</span>
+<span class="go">dtype: float64</span>
+</code></pre></div>
+</div>
+<p>The critical values are for the studentized statistics. Without studentization they
+are for the average loss differentials, and are much smaller.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [13]: </span><span class="n">spa_raw</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">studentize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [14]: </span><span class="n">spa_raw</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+<span class="gp">In [15]: </span><span class="n">spa_raw</span><span class="o">.</span><span class="n">pvalues</span>
+<span class="gh">Out[15]: </span>
+<span class="go">lower         0.002</span>
+<span class="go">consistent    0.004</span>
+<span class="go">upper         0.004</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [16]: </span><span class="n">spa_raw</span><span class="o">.</span><span class="n">critical_values</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gh">Out[16]: </span>
+<span class="go">lower         0.207127</span>
+<span class="go">consistent    0.256492</span>
+<span class="go">upper         0.256492</span>
+<span class="go">dtype: float64</span>
+</code></pre></div>
+</div>
+<p><a class="reference internal" href="generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> has the same options, and uses studentized loss
+differentials by default. Here, studentization identifies both models that are better
+than the benchmark, and not only the one with the largest improvement.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [17]: </span><span class="n">stepm</span> <span class="o">=</span> <span class="n">StepM</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [18]: </span><span class="n">stepm</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+<span class="gp">In [19]: </span><span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span>
+<span class="gh">Out[19]: </span><span class="go">['model_2', 'model_3']</span>
+
+<span class="gp">In [20]: </span><span class="n">stepm_raw</span> <span class="o">=</span> <span class="n">StepM</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">studentize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [21]: </span><span class="n">stepm_raw</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+<span class="gp">In [22]: </span><span class="n">stepm_raw</span><span class="o">.</span><span class="n">superior_models</span>
+<span class="gh">Out[22]: </span><span class="go">['model_3']</span>
+</code></pre></div>
+</div>
+<p>The bootstrap that is used is available from the read-only property <code class="docutils literal notranslate"><span class="pre">bootstrap</span></code> of
+<a class="reference internal" href="generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a>. A new instance must be
+created to use a different bootstrap.</p>
 <h2 id="stepwise-multiple-testing-stepm">Stepwise Multiple Testing (StepM)<a class="headerlink" href="#stepwise-multiple-testing-stepm" title="Link to this heading">¶</a></h2>
 <p>The Stepwise Multiple Testing procedure (Romano &amp; Wolf (2005)) is closely
 related to the SPA, except that it returns a set of models that are superior

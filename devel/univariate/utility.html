@@ -23,7 +23,7 @@
     
   
       
-        <title>Utilities - arch v8.0.1 (+264)</title>
+        <title>Utilities - arch v8.0.1 (+271)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+264)
+            arch v8.0.1 (+271)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+264)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+271)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+264)
+    arch v8.0.1 (+271)
   </label>
   
     <div class="md-nav__source">
@@ -1172,6 +1172,52 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
@@ -1469,6 +1515,73 @@
 </dd></dl>
 
 <h2 id="residual-diagnostics">Residual Diagnostics<a class="headerlink" href="#residual-diagnostics" title="Link to this heading">¶</a></h2>
+<p>If a model is correctly specified, the standardized residuals
+<span class="math notranslate nohighlight">\(\hat{e}_t = \hat{\epsilon}_t / \hat{\sigma}_t\)</span> behave like draws from the
+distribution of the model, and so the tails of the residuals can be compared to the
+tails of the distribution that was assumed. The functions below summarize the tails
+of standardized residuals, and are also available for the results of a model, which
+use the standardized residuals and the estimated distribution of the model.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/arch.univariate.excess_kurtosis.html#arch.univariate.excess_kurtosis" title="arch.univariate.excess_kurtosis (Python function) — Sample excess kurtosis of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">excess_kurtosis()</span></code></a> is the sample excess kurtosis, the fourth
+central moment divided by the squared variance, less 3. It is 0 for a Normal, and
+is positive when the residuals have heavier tails than a Normal. Observations
+that are not finite are ignored.</p></li>
+<li><p><a class="reference internal" href="generated/arch.univariate.hill_estimator.html#arch.univariate.hill_estimator" title="arch.univariate.hill_estimator (Python function) — Hill tail-index estimator of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> is the Hill estimator of the tail index,
+using the <code class="docutils literal notranslate"><span class="pre">k</span></code> largest absolute residuals, and <code class="docutils literal notranslate"><span class="pre">int(sqrt(n))</span></code> of them if <code class="docutils literal notranslate"><span class="pre">k</span></code>
+is not provided. The estimator is
+<span class="math notranslate nohighlight">\(\hat{\nu} = \left(k^{-1}\sum_{i=1}^{k} \ln X_{(n-i+1)} - \ln X_{(n-k)}\right)^{-1}\)</span>,
+where <span class="math notranslate nohighlight">\(X_{(j)}\)</span> is the <span class="math notranslate nohighlight">\(j\)</span>-th smallest absolute residual. Smaller values
+indicate heavier tails. The tail index of a Student’s t distribution is its degrees
+of freedom.</p></li>
+<li><p><a class="reference internal" href="generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">var_ratio()</span></code></a> is the ratio of the Value-at-Risk (VaR) of a
+Normal to the VaR of the distribution of the model, at a confidence level that is
+0.999 unless <code class="docutils literal notranslate"><span class="pre">level</span></code> is provided. A ratio below 1 means that the Normal
+understates the VaR of the model’s distribution. It depends on the distribution
+and its parameters only, and not on residuals.</p></li>
+</ul>
+<p>The results of a model have the same diagnostics. They use the standardized
+residuals, <code class="docutils literal notranslate"><span class="pre">std_resid</span></code>, and, for <code class="docutils literal notranslate"><span class="pre">var_ratio</span></code>, the estimated distribution and
+parameters.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
+
+<span class="gp">In [2]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">arch_model</span>
+
+<span class="gp">In [3]: </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="gp">In [4]: </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s2">"Adj Close"</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="gp">In [5]: </span><span class="n">res</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"t"</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
+
+<span class="gp">In [6]: </span><span class="n">res</span><span class="o">.</span><span class="n">excess_kurtosis</span>
+<span class="gh">Out[6]: </span><span class="go">2.0564921815243142</span>
+
+<span class="gp">In [7]: </span><span class="n">res</span><span class="o">.</span><span class="n">hill_estimator</span><span class="p">()</span>
+<span class="gh">Out[7]: </span><span class="go">5.044409345328121</span>
+
+<span class="gp">In [8]: </span><span class="n">res</span><span class="o">.</span><span class="n">var_ratio</span><span class="p">()</span>
+<span class="gh">Out[8]: </span><span class="go">0.7506387458290167</span>
+</code></pre></div>
+</div>
+<p>The functions can also be used with any standardized residuals, and with a
+distribution that is not estimated.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [9]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="gp">   ...: </span>    <span class="n">StudentsT</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">excess_kurtosis</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">hill_estimator</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">var_ratio</span><span class="p">,</span>
+<span class="gp">   ...: </span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [10]: </span><span class="n">excess_kurtosis</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">std_resid</span><span class="p">)</span>
+<span class="gh">Out[10]: </span><span class="go">2.0564921815243142</span>
+
+<span class="gp">In [11]: </span><span class="n">hill_estimator</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gh">Out[11]: </span><span class="go">4.637105026823519</span>
+
+<span class="gp">In [12]: </span><span class="n">var_ratio</span><span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">StudentsT</span><span class="p">(),</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">])</span>
+<span class="gh">Out[12]: </span><span class="go">0.9066125541022967</span>
+</code></pre></div>
+</div>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.excess_kurtosis.html#arch.univariate.excess_kurtosis" title="arch.univariate.excess_kurtosis (Python function) — Sample excess kurtosis of standardized residuals."><code class="xref py py-obj docutils literal notranslate"><span class="pre">excess_kurtosis</span></code></a>(std_resid)</p></td>
@@ -1482,6 +1595,10 @@
 </tr>
 </tbody>
 </table>
+<p>The corresponding members of the results classes are
+<a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelFixedResult.excess_kurtosis.html#arch.univariate.base.ARCHModelFixedResult.excess_kurtosis" title="arch.univariate.base.ARCHModelFixedResult.excess_kurtosis (Python property) — Sample excess kurtosis of standardized residuals"><code class="xref py py-attr docutils literal notranslate"><span class="pre">excess_kurtosis</span></code></a>,
+<a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelFixedResult.hill_estimator.html#arch.univariate.base.ARCHModelFixedResult.hill_estimator" title="arch.univariate.base.ARCHModelFixedResult.hill_estimator (Python method) — Hill tail-index estimator of standardized residuals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> and
+<a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelFixedResult.var_ratio.html#arch.univariate.base.ARCHModelFixedResult.var_ratio" title="arch.univariate.base.ARCHModelFixedResult.var_ratio (Python method) — Ratio of Gaussian VaR to model-distribution VaR"><code class="xref py py-meth docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>.</p>
 
 
 
@@ -1578,6 +1695,8 @@
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

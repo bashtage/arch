@@ -1,0 +1,6 @@
+﻿arch.data.default.load
+======================
+
+.. currentmodule:: arch.data.default
+
+.. autofunction:: load

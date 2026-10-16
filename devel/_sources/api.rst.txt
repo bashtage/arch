@@ -1,8 +1,10 @@
 API Reference
 =============
 
-This page lists contains a list of the essential end-user API functions
-and classes.
+This page contains a list of the essential end-user API functions
+and classes. The data sets that are included in the package are described in
+:doc:`data`, and the warnings and exceptions that the package raises are described
+in :doc:`warnings`.
 
 Volatility Modeling
 -------------------
@@ -24,6 +26,7 @@ Mean Specification
    ~arch.univariate.HARX
    ~arch.univariate.ARX
    ~arch.univariate.LS
+   ~arch.univariate.MAMean
 
 Volatility Process Specification
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,6 +36,7 @@ Volatility Process Specification
    ~arch.univariate.EGARCH
    ~arch.univariate.HARCH
    ~arch.univariate.FIGARCH
+   ~arch.univariate.FIAPARCH
    ~arch.univariate.MIDASHyperbolic
    ~arch.univariate.EWMAVariance
    ~arch.univariate.RiskMetrics2006
@@ -122,3 +126,5 @@ Long-run Covariance (HAC) Estimation
    ~arch.covariance.kernel.TukeyHamming
    ~arch.covariance.kernel.TukeyHanning
    ~arch.covariance.kernel.TukeyParzen
+   ~arch.covariance.kernel.ZeroLag
+   ~arch.covariance.var.PreWhitenedRecolored

@@ -15,7 +15,7 @@
         <link rel="prev" href="covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.rate.html">
       
       
-        <link rel="next" href="types.html">
+        <link rel="next" href="data.html">
       
       
       <link rel="icon" href="_static/favicon.ico">
@@ -23,7 +23,7 @@
     
   
       
-        <title>API Reference - arch v8.0.1 (+264)</title>
+        <title>API Reference - arch v8.0.1 (+271)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+264)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+271)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+264)
+            arch v8.0.1 (+271)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+264)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+264)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+271)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+271)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+264)
+    arch v8.0.1 (+271)
   </label>
   
     <div class="md-nav__source">
@@ -577,6 +577,52 @@
   
   
     <li class="md-nav__item">
+      <a href="data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="types.html" class="md-nav__link">
         
   
@@ -799,8 +845,10 @@
 
 
 <h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
-<p>This page lists contains a list of the essential end-user API functions
-and classes.</p>
+<p>This page contains a list of the essential end-user API functions
+and classes. The data sets that are included in the package are described in
+<a class="reference internal" href="data.html"><span class="doc">Data Sets</span></a>, and the warnings and exceptions that the package raises are described
+in <a class="reference internal" href="warnings.html"><span class="doc">Warnings and Exceptions</span></a>.</p>
 <h2 id="volatility-modeling">Volatility Modeling<a class="headerlink" href="#volatility-modeling" title="Link to this heading">¶</a></h2>
 <h3 id="high-level">High-level<a class="headerlink" href="#high-level" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
@@ -828,6 +876,9 @@ and classes.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.LS.html#arch.univariate.LS" title="arch.univariate.LS (Python class) — Least squares model estimation and simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LS</span></code></a>([y, x, constant, hold_back, volatility, ...])</p></td>
 <td><p>Least squares model estimation and simulation</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAMean</span></code></a>([y, lags, constant, hold_back, ...])</p></td>
+<td><p>Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting</p></td>
+</tr>
 </tbody>
 </table>
 <h3 id="volatility-process-specification">Volatility Process Specification<a class="headerlink" href="#volatility-process-specification" title="Link to this heading">¶</a></h3>
@@ -845,19 +896,22 @@ and classes.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FIGARCH</span></code></a>([p, q, power, truncation])</p></td>
 <td><p>FIGARCH model</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a>([m, asym])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a>([p, o, q, delta, truncation])</p></td>
+<td><p>Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a>([m, asym])</p></td>
 <td><p>MIDAS Hyperbolic ARCH process</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.EWMAVariance.html#arch.univariate.EWMAVariance" title="arch.univariate.EWMAVariance (Python class) — Exponentially Weighted Moving-Average (RiskMetrics) Variance process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EWMAVariance</span></code></a>([lam])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.EWMAVariance.html#arch.univariate.EWMAVariance" title="arch.univariate.EWMAVariance (Python class) — Exponentially Weighted Moving-Average (RiskMetrics) Variance process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EWMAVariance</span></code></a>([lam])</p></td>
 <td><p>Exponentially Weighted Moving-Average (RiskMetrics) Variance process</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a>([tau0, tau1, kmax, rho])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a>([tau0, tau1, kmax, rho])</p></td>
 <td><p>RiskMetrics 2006 Variance process</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.ConstantVariance.html#arch.univariate.ConstantVariance" title="arch.univariate.ConstantVariance (Python class) — Constant volatility process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantVariance</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.ConstantVariance.html#arch.univariate.ConstantVariance" title="arch.univariate.ConstantVariance (Python class) — Constant volatility process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantVariance</span></code></a>()</p></td>
 <td><p>Constant volatility process</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FixedVariance</span></code></a>(variance[, unit_scale])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FixedVariance</span></code></a>(variance[, unit_scale])</p></td>
 <td><p>Fixed volatility process</p></td>
 </tr>
 </tbody>
@@ -1012,6 +1066,12 @@ and classes.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="covariance/generated/arch.covariance.kernel.TukeyParzen.html#arch.covariance.kernel.TukeyParzen" title="arch.covariance.kernel.TukeyParzen (Python class) — Tukey-Parzen kernel covariance estimation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">TukeyParzen</span></code></a>(x[, bandwidth, df_adjust, ...])</p></td>
 <td><p>Tukey-Parzen kernel covariance estimation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="covariance/generated/arch.covariance.kernel.ZeroLag.html#arch.covariance.kernel.ZeroLag" title="arch.covariance.kernel.ZeroLag (Python class) — Zero-lag (No autocorrelation) kernel covariance estimation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZeroLag</span></code></a>(x[, bandwidth, df_adjust, center, ...])</p></td>
+<td><p>Zero-lag (No autocorrelation) kernel covariance estimation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>(x, *[, lags, method, ...])</p></td>
+<td><p>VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation.</p></td>
 </tr>
 </tbody>
 </table>

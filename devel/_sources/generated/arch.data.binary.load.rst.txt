@@ -1,0 +1,6 @@
+﻿arch.data.binary.load
+=====================
+
+.. currentmodule:: arch.data.binary
+
+.. autofunction:: load
