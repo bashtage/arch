@@ -42,6 +42,12 @@ def _info_to_str(
     return _str[:-2] + ")"
 
 
+_NON_FINITE_STATISTIC = (
+    "The MCS test statistic is not finite so no model can be eliminated. This "
+    "occurs when the losses are not finite."
+)
+
+
 class _KernelVariance:
     """
     Long-run variance of the mean using the kernel implied by a bootstrap
@@ -259,6 +265,10 @@ class MCS(MultipleComparison):
         super().__init__()
         self.losses = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses, dtype=float)
+        if not np.all(np.isfinite(self._losses_arr)):
+            raise ValueError(
+                "losses must be finite. The losses contain NaN or infinite values."
+            )
         if self._losses_arr.shape[1] < 2:
             raise ValueError("losses must have at least two columns")
         self.size: float = size
@@ -387,11 +397,15 @@ class MCS(MultipleComparison):
             simulated_test_stat = np.max(np.max(included_bs_losses, 2), 1)
             pval = float((test_stat < simulated_test_stat).mean())
             loc = np.argwhere(included_loss_diffs == test_stat)
+            if loc.shape[0] == 0:
+                # Only possible if the statistic is not finite
+                raise RuntimeError(_NON_FINITE_STATISTIC)
             # Loc has indices i,j, -- i  is the elimination
             # Diffs are L(i) - L(j), so large value in [i,j] indicates
             # i is worse than j
             # Elimination is for
-            i = loc.squeeze()[0]
+            # The first is used if several models are tied
+            i = loc[0, 0]
             eliminated.append((int(indices.flat[i]), pval))
             included[indices.flat[i]] = False
         # Add pval of 1 for model remaining
@@ -449,6 +463,10 @@ class MCS(MultipleComparison):
             test_stat = np.max(std_loss_diffs)
             pval = float((test_stat < simulated_test_stat).mean())
             locs = np.argwhere(std_loss_diffs == test_stat)
+            if locs.shape[0] == 0:
+                # Only possible if the statistic is not finite. Without a model
+                # to eliminate the loop would never end.
+                raise RuntimeError(_NON_FINITE_STATISTIC)
             eliminated.extend(
                 [
                     (int(idx_val), pval)
@@ -791,7 +809,20 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             self.block_size = block_size
         self.studentize: bool = studentize
         self.nested: bool = nested
-        self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
+        # Subtract in floating point. Unsigned integer losses would wrap around
+        # and boolean losses cannot be subtracted.
+        benchmark_arr = np.asarray(self.benchmark, dtype=float)
+        models_arr = np.asarray(self.models, dtype=float)
+        if not np.all(np.isfinite(benchmark_arr)):
+            raise ValueError(
+                "benchmark must be finite. The benchmark contains NaN or infinite "
+                "values."
+            )
+        if not np.all(np.isfinite(models_arr)):
+            raise ValueError(
+                "models must be finite. The models contain NaN or infinite values."
+            )
+        self._loss_diff = benchmark_arr - models_arr
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
