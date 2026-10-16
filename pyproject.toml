@@ -308,18 +308,16 @@ ignore = [
 "arch/unitroot/_engle_granger.py" = ["RUF001"]
 
 [tool.pytest]
-strict_parametrization_ids = true
 minversion = "9.0"
 testpaths = ["arch"]
-xfail_strict = true
-addopts = ["--strict"]
+# strict_config, strict_markers, strict_xfail and strict_parametrization_ids
+strict = true
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
   "ignore:`formatargspec`:DeprecationWarning:statsmodels",
   "ignore:Using or importing:DeprecationWarning",
   "ignore:Session._key_changed is deprecated:DeprecationWarning",
   "error:Support for multi-dimensional:DeprecationWarning",
-  "error:Mutating unit root tests is deprecated:FutureWarning",
   "error:invalid value encountered in cos:RuntimeWarning",
   "error:invalid value encountered in log:RuntimeWarning",
   "error:divide by zero encountered in double_scalars:RuntimeWarning",
@@ -330,13 +328,8 @@ filterwarnings = [
   "error:Parameters are not consistent with a::",
   "error:overflow encountered in double_scalars:RuntimeWarning:",
   "error:overflow encountered in multiply:RuntimeWarning:",
-  "error:The default for reindex:FutureWarning:",
   "error:overflow encountered in square:RuntimeWarning",
   "error:Values in x were outside bounds:RuntimeWarning:",
-  "error:The random_state property is deprecated:FutureWarning",
-  "error:random_state is deprecated:FutureWarning",
-  "error:seed is deprecated:FutureWarning",
-  "error:get_state is deprecated:FutureWarning",
   "error:Conversion of an array with ndim:DeprecationWarning:arch",
   "error:invalid value encountered in divide:RuntimeWarning",
   # "error:DatetimeIndex.values returning an ndarray::",
