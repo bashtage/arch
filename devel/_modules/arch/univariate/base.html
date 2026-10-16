@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+280)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+285)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+280)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+280)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+285)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+285)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+280)
+            arch v8.0.1 (+285)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+280)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+280)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+285)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+285)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+280)
+    arch v8.0.1 (+285)
   </label>
   
     <div class="md-nav__source">
@@ -1261,6 +1261,26 @@
             <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_x</span><span class="p">[</span><span class="n">km</span> <span class="p">:</span> <span class="n">km</span> <span class="o">+</span> <span class="n">kv</span><span class="p">]),</span>
             <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_x</span><span class="p">[</span><span class="n">km</span> <span class="o">+</span> <span class="n">kv</span> <span class="p">:]),</span>
         <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_analytic_asym_weight</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">distribution_params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Weight on the variance in the asymmetric term of analytic forecasts</span>
+
+<span class="sd">        Returns E[z^2 1(z&lt;0)] of the distribution when the volatility process is</span>
+<span class="sd">        asymmetric and the forecast is analytic, and 0.5 otherwise.</span>
+<span class="sd">        """</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span>
+        <span class="n">asymmetric</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span> <span class="s2">"o"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span> <span class="s2">"_asym"</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="c1"># A method that is not a string is rejected by the volatility process</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"analytic"</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">asymmetric</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">partial_moment</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">distribution_params</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ARCHModel.fix">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix">[docs]</a>
