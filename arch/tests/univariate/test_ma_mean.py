@@ -969,7 +969,8 @@ def test_forecast_paths_structure(garch_ma2, method, lags):
 def test_forecast_paths_moments():
     theta = np.array([0.6, 0.3])
     y = simulate_ma(theta, 300, mu=0.2, seed=61)
-    model = MAMean(y, lags=2)
+    # The simulation draws from the distribution, so seed it for a fixed outcome
+    model = MAMean(y, lags=2, distribution=Normal(seed=RandomState(5)))
     params = np.r_[0.2, theta, 2.0]
     horizon = 4
     fc = model.forecast(

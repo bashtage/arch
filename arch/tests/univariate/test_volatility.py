@@ -333,49 +333,29 @@ def test_harch(setup, initial_value):
     b_target = np.array([0.0, 0.0, 0.0, 0.0, -1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
-    state = setup.rng.get_state()
-    rng = Normal(seed=RandomState())
-    rng.generator.set_state(state)
+    # Own generator so the test does not depend on the state of the shared setup.rng
+    seed = 20260923
+    rng = Normal(seed=RandomState(seed))
     sim_data = harch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
-    setup.rng.set_state(state)
-    e = setup.rng.standard_normal(setup.t + 500)
-    sigma2 = np.zeros(setup.t + 500)
-    data = np.zeros(setup.t + 500)
-    lagged = np.zeros(22)
-    for t in range(setup.t + 500):
-        sigma2[t] = parameters[0]
-        lagged[:] = backcast
-        if t > 0:
-            if t == 1:
-                lagged[0] = data[0] ** 2.0
-            elif t < 22:
-                lagged[:t] = data[t - 1 :: -1] ** 2.0
-            else:
-                lagged = data[t - 1 : t - 22 : -1] ** 2.0
-
-        shock1 = data[t - 1] ** 2.0 if t > 0 else backcast
-        if t >= 5:
-            shock5 = np.mean(data[t - 5 : t] ** 2.0)
-        else:
-            shock5 = 0.0
-            for i in range(5):
-                shock5 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock5 = shock5 / 5.0
-
-        if t >= 22:
-            shock22 = np.mean(data[t - 22 : t] ** 2.0)
-        else:
-            shock22 = 0.0
-            for i in range(22):
-                shock22 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock22 = shock22 / 22.0
-
-        sigma2[t] += (
-            parameters[1] * shock1 + parameters[2] * shock5 + parameters[3] * shock22
+    e = RandomState(seed).standard_normal(setup.t + 500)
+    if initial_value is None:
+        initial_value = parameters[0] / (1.0 - parameters[1:].sum())
+    # HARCH.simulate sets the first 22 observations to the initial value
+    max_lag = 22
+    sigma2 = np.full(setup.t + 500, initial_value)
+    data = np.full(setup.t + 500, np.sqrt(initial_value))
+    for t in range(max_lag, setup.t + 500):
+        shock1 = data[t - 1] ** 2.0
+        shock5 = np.mean(data[t - 5 : t] ** 2.0)
+        shock22 = np.mean(data[t - 22 : t] ** 2.0)
+        sigma2[t] = (
+            parameters[0]
+            + parameters[1] * shock1
+            + parameters[2] * shock5
+            + parameters[3] * shock22
         )
-
         data[t] = e[t] * np.sqrt(sigma2[t])
     data = data[500:]
     sigma2 = sigma2[500:]
