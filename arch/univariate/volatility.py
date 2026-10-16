@@ -1610,13 +1610,22 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         max_lag = int(np.max(lags))
         sigma2[:max_lag] = initial_value
         data[:max_lag] = np.sqrt(initial_value)
+        # The squared data, to avoid squaring it once for each term of each sum
+        data2 = np.empty(nobs + burn)
+        data2[:max_lag] = data[0] ** 2.0
+        # The weight and the lag of each term that is added to omega, in order.
+        # The terms are added one at a time, in this order, using a cumulative sum
+        weights = np.concatenate(
+            [np.full(lag, parameters[1 + i] / lag) for i, lag in enumerate(lags)]
+        )
+        term_lags = np.concatenate([np.arange(1, lag + 1) for lag in lags])
+        terms = np.empty(weights.shape[0] + 1)
+        terms[0] = parameters[0]
         for t in range(max_lag, nobs + burn):
-            sigma2[t] = parameters[0]
-            for i in range(lags.shape[0]):
-                param = parameters[1 + i] / lags[i]
-                for j in range(lags[i]):
-                    sigma2[t] += param * data[t - 1 - j] ** 2.0
+            np.multiply(weights, data2[t - term_lags], out=terms[1:])
+            sigma2[t] = np.cumsum(terms)[-1]
             data[t] = errors[t] * np.sqrt(sigma2[t])
+            data2[t] = data[t] ** 2.0
 
         return data[burn:], sigma2[burn:]
 
@@ -1894,15 +1903,25 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         sigma2[:m] = initial_value
         data[:m] = np.sqrt(initial_value)
+        # The squared data, to avoid squaring it once for each term of each sum
+        data2 = np.empty(nobs + burn)
+        data2[:m] = data[0] ** 2.0
+        # Coefficient on the first m values, which are initial values
+        init_coef = aw + 0.5 * gw
+        # The m terms that are added to omega are added one at a time, in order of
+        # increasing lag, using a cumulative sum
+        terms = np.empty(m + 1)
+        terms[0] = omega
         for t in range(m, nobs + burn):
-            sigma2[t] = omega
-            for i in range(m):
-                if t - 1 - i < m:
-                    coef = aw[i] + 0.5 * gw[i]
-                else:
-                    coef = aw[i] + gw[i] * (data[t - 1 - i] < 0)
-                sigma2[t] += coef * data[t - 1 - i] ** 2.0
+            # The data and squared data at lags 1, 2, ..., m
+            lagged = data[t - m : t][::-1]
+            coef = aw + gw * (lagged < 0)
+            # Lags that are before the initial values use the initial coefficient
+            coef[t - m :] = init_coef[t - m :]
+            np.multiply(coef, data2[t - m : t][::-1], out=terms[1:])
+            sigma2[t] = np.cumsum(terms)[-1]
             data[t] = errors[t] * np.sqrt(sigma2[t])
+            data2[t] = data[t] ** 2.0
 
         return data[burn:], sigma2[burn:]
 
