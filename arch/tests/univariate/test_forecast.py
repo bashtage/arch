@@ -1033,7 +1033,7 @@ def test_x_exceptions():
     with pytest.raises(TypeError, match=r"x is not None but"):
         res.forecast(x=SP500)
     x = SP500.copy()
-    x[:] = np.random.standard_normal(SP500.shape)
+    x[:] = np.random.default_rng(1234).standard_normal(SP500.shape)
     x.name = "Exog"
     res = ARX(SP500, lags=1, x=x).fit(disp="off")
     with pytest.raises(TypeError, match=r"x is None but the model"):
@@ -1050,7 +1050,7 @@ def test_x_exceptions():
         res.forecast(x={"Exog": _x})
     x2 = pd.concat([x, x], axis=1)
     x2.columns = ["x0", "x1"]
-    x2.iloc[:, 1] = np.random.standard_normal(SP500.shape)
+    x2.iloc[:, 1] = np.random.default_rng(5678).standard_normal(SP500.shape)
     res = ARX(SP500, lags=1, x=x2).fit(disp="off")
     with pytest.raises(ValueError, match=r"The shapes of the arrays contained"):
         res.forecast(x={"x0": x2.iloc[:, 0], "x1": x2.iloc[10:, 1:]})

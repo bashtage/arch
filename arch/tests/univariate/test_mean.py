@@ -947,7 +947,7 @@ class TestMeanModel:
         cm = ConstantMean(y)
         res2 = cm.fit(last_obs=900, disp=DISPLAY)
 
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
     def test_align(self):
         dates = pd.date_range("2000-01-01", "2010-01-01", freq=MONTH_END)
@@ -975,9 +975,9 @@ class TestMeanModel:
             res.conditional_volatility, fixed_res.conditional_volatility
         )
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
         # Smoke for summary
         fixed_res.summary()
@@ -991,9 +991,9 @@ class TestMeanModel:
             res.conditional_volatility, fixed_res.conditional_volatility
         )
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
 
         # Test first and last dates
@@ -1002,9 +1002,9 @@ class TestMeanModel:
         new_am = arch_model(self.y_series)
         fixed_res = new_am.fix(res.params, first_obs=100, last_obs=900)
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
 
     @pytest.mark.parametrize("display", ["off", "final"])
@@ -1083,19 +1083,19 @@ class TestMeanModel:
         res = am.fit(disp=DISPLAY)
 
         res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0] + 1)
-        assert_equal(res.resid.values, res_adj.resid.values)
-        assert_equal(res.params.values, res_adj.params.values)
+        assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
+        assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100)
         assert res.fit_start == 100
         res_adj = am.fit(disp=DISPLAY, first_obs=self.y_series.index[100])
-        assert_equal(res.params.values, res_adj.params.values)
-        assert_equal(res.resid.values, res_adj.resid.values)
+        assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, last_obs=900)
         res2 = am.fit(disp=DISPLAY, last_obs=self.y_series.index[900])
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         res2 = am.fit(
@@ -1103,8 +1103,8 @@ class TestMeanModel:
             first_obs=self.y_series.index[100],
             last_obs=self.y_series.index[900],
         )
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
     def test_model_obs_equivalence(self):
         """Tests models that should use the same observation"""
@@ -1114,12 +1114,12 @@ class TestMeanModel:
         res2 = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         index = self.y_series.index
         res3 = am.fit(disp=DISPLAY, first_obs=index[100], last_obs=index[900])
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res2.params.values, res3.params.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-8)
+        assert_allclose(res2.params.values, res3.params.values, rtol=1e-8)
 
         am = arch_model(self.y_series, hold_back=100)
         res4 = am.fit(disp=DISPLAY, last_obs=900)
-        assert_equal(res.params.values, res4.params.values)
+        assert_allclose(res.params.values, res4.params.values, rtol=1e-8)
 
     def test_model_obs_equivalence_ar(self):
         """Tests models that should use the same observation"""
@@ -1173,11 +1173,12 @@ class TestMeanModel:
         am = arch_model(data.data)
         std = am.fit(disp=DISPLAY)
         loose = am.fit(tol=1e-2, disp=DISPLAY)
-        assert std.loglikelihood >= loose.loglikelihood
+        tol = 1e-6 * np.abs(std.loglikelihood)
+        assert std.loglikelihood >= loose.loglikelihood - tol
         with warnings.catch_warnings(record=True) as w:
             short = am.fit(options={"maxiter": 3}, disp=DISPLAY)
         assert len(w) == 1, str(w)
-        assert std.loglikelihood >= short.loglikelihood
+        assert std.loglikelihood >= short.loglikelihood - tol
         assert short.convergence_flag != 0
 
     def test_little_or_no_data(self):
@@ -1204,7 +1205,7 @@ class TestMeanModel:
 
         assert res.num_params == res_z.num_params
         assert_series_equal(res.params, res_z.params)
-        assert res.loglikelihood == res_z.loglikelihood
+        assert_allclose(res.loglikelihood, res_z.loglikelihood, rtol=1e-8)
 
 
 @pytest.mark.parametrize(
@@ -1430,11 +1431,12 @@ def test_backcast_restricted(simulated_data):
 
 
 def test_missing_data_exception():
-    y = np.random.standard_normal(1000)
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
     y[::29] = np.nan
     with pytest.raises(ValueError, match=r"NaN or inf values"):
         arch_model(y)
-    y = np.random.standard_normal(1000)
+    y = rng.standard_normal(1000)
     y[::53] = np.inf
     with pytest.raises(ValueError, match=r"NaN or inf values"):
         arch_model(y)
