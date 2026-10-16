@@ -18,7 +18,7 @@ from arch.bootstrap import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
-from arch.bootstrap.base import _loo_jackknife
+from arch.bootstrap.base import _get_acceleration, _loo_jackknife
 from arch.utility.exceptions import StudentizationError
 
 
@@ -1021,3 +1021,40 @@ def test_staionary_seed(bs_setup, seed):
     sb = StationaryBootstrap(10, bs_setup.y, seed=seed)
     for pos, _ in sb.bootstrap(10):
         assert pos[0].shape[0] == bs_setup.y.shape[0]
+
+
+@pytest.mark.parametrize("shift", [0.0, 0.1, 0.3])
+def test_bca_all_jackknife_estimates_equal(shift):
+    # With a tie for the maximum, the maximum is the same when any single
+    # observation is left out, so the acceleration is 0/0 or rounding error
+    x = np.random.default_rng(0).standard_normal(50) + shift
+    x[10] = x.max()
+
+    def func(y):
+        return np.atleast_1d(y.max())
+
+    jk = _loo_jackknife(func, x.shape[0], [x], {})
+    assert np.unique(jk).shape[0] == 1
+    bs = IIDBootstrap(x, seed=1)
+    with pytest.raises(RuntimeError, match="too small to use BCa"):
+        bs.conf_int(func, 200, method="bca")
+
+
+def test_bca_acceleration_unchanged():
+    # Acceleration of the mean from the definition
+    x = np.random.default_rng(1).standard_exponential(40)
+    jk = _loo_jackknife(lambda y: np.atleast_1d(y.mean()), x.shape[0], [x], {})
+    u = jk.mean(0) - jk
+    expected = (u**3).sum(0) / (6 * ((u**2).sum(0)) ** 1.5)
+    assert_allclose(_get_acceleration(jk).ravel(), expected, rtol=1e-12)
+    # The acceleration of the mean is the scaled skewness of the data
+    skew = stats.skew(x)
+    assert_allclose(_get_acceleration(jk).ravel(), skew / (6 * np.sqrt(40)), rtol=0.1)
+
+
+@pytest.mark.parametrize("bad", [np.nan, np.inf])
+def test_bca_acceleration_non_finite(bad):
+    jk = np.random.default_rng(1).standard_normal((20, 2))
+    jk[3, 1] = bad
+    with pytest.raises(RuntimeError, match="not finite"):
+        _get_acceleration(jk)

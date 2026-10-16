@@ -218,11 +218,22 @@ def _get_acceleration(jk_params: Float64Array) -> Float64Array2D:
     float
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
+    eps = np.finfo(np.float64).eps
+    if not np.all(np.isfinite(jk_params)):
+        raise RuntimeError(
+            "The jackknife estimates are not finite, so the acceleration used by "
+            "BCa cannot be computed."
+        )
     u = jk_params.mean(0) - jk_params
     numer = np.sum(u**3, 0)
     denom = 6 * (np.sum(u**2, 0) ** (3.0 / 2.0))
-    small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
-    if small.any():
+    # The jackknife estimates are all equal, up to rounding error, if the
+    # spread is tiny relative to their size. The rounding error would
+    # determine the acceleration (or 0/0 when they are exactly equal).
+    spread = np.ptp(jk_params, axis=0)
+    scale = np.abs(jk_params).max(axis=0)
+    small = (denom <= (np.abs(numer) * eps)) | (spread <= 8 * eps * scale)
+    if np.any(small):
         message = "Jackknife variance estimate {jk_var} is too small to use BCa"
         raise RuntimeError(message.format(jk_var=denom))
     a = numer / denom
