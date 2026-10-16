@@ -5,6 +5,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
+import operator
 from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
@@ -2676,6 +2677,14 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
 
 
+def _scalar_int(value: Any, name: str, suffix: str = "") -> int:
+    """Convert an integer or NumPy integer to int, otherwise raise a TypeError"""
+    try:
+        return operator.index(value)
+    except TypeError as exc:
+        raise TypeError(f"{name} must be a scalar int{suffix}.") from exc
+
+
 def arch_model(
     y: ArrayLike | None,
     x: ArrayLike | ArrayLike2D | None = None,
@@ -2831,40 +2840,29 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol_model in (
-        "arch",
-        "garch",
-        "figarch",
-        "fiaparch",
-        "egarch",
-        "aparch",
-    ) and not isinstance(p, int):
-        raise TypeError(
-            "p must be a scalar int for all volatility processes except HARCH."
-        )
-
     if vol_model == "constant":
         v: VolatilityProcess = ConstantVariance()
-    elif vol_model == "arch":
-        assert isinstance(p, int)
-        v = ARCH(p=p)
-    elif vol_model == "figarch":
-        assert isinstance(p, int)
-        v = FIGARCH(p=p, q=q, power=power)
-    elif vol_model == "garch":
-        assert isinstance(p, int)
-        v = GARCH(p=p, o=o, q=q, power=power)
-    elif vol_model == "egarch":
-        assert isinstance(p, int)
-        v = EGARCH(p=p, o=o, q=q)
-    elif vol_model == "fiaparch":
-        assert isinstance(p, int)
-        v = FIAPARCH(p=p, o=o, q=q)
-    elif vol_model == "aparch":
-        assert isinstance(p, int)
-        v = APARCH(p=p, o=o, q=q)
-    else:  # vol == 'harch'
+    elif vol_model == "harch":
         v = HARCH(lags=p)
+    else:
+        # p, o and q must be integers, which includes NumPy integers
+        p = _scalar_int(p, "p", " for all volatility processes except HARCH")
+        if vol_model in ("garch", "egarch", "aparch", "fiaparch"):
+            o = _scalar_int(o, "o")
+        if vol_model != "arch":
+            q = _scalar_int(q, "q")
+        if vol_model == "arch":
+            v = ARCH(p=p)
+        elif vol_model == "figarch":
+            v = FIGARCH(p=p, q=q, power=power)
+        elif vol_model == "garch":
+            v = GARCH(p=p, o=o, q=q, power=power)
+        elif vol_model == "egarch":
+            v = EGARCH(p=p, o=o, q=q)
+        elif vol_model == "fiaparch":
+            v = FIAPARCH(p=p, o=o, q=q)
+        else:  # vol == 'aparch'
+            v = APARCH(p=p, o=o, q=q)
 
     if dist_name in ("skewstudent", "skewt"):
         d: Distribution = SkewStudent()

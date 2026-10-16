@@ -243,3 +243,73 @@ def test_unfitted_resids_with_hold_back():
     assert_allclose(mod.resids(np.array([0.0, 1.0, 0.0])), expected, atol=1e-12)
     # No impact on the model used for estimation
     assert mod.fit(disp="off").nobs == 22
+
+
+VOLS = ["ARCH", "GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"]
+
+
+@pytest.mark.parametrize("vol", VOLS)
+@pytest.mark.parametrize("dtype", [np.int64, np.int32, np.uint8])
+def test_arch_model_numpy_integers(vol, dtype):
+    y = np.random.default_rng(10).standard_normal(100)
+    order = 1 if vol in ("FIGARCH", "FIAPARCH") else 2
+    np_kwargs = {"vol": vol, "p": dtype(order)}
+    if vol != "ARCH":
+        np_kwargs["q"] = dtype(1)
+    if vol in ("GARCH", "EGARCH", "APARCH", "FIAPARCH"):
+        np_kwargs["o"] = dtype(1)
+    mod = arch_model(y, **np_kwargs)
+    ref = arch_model(
+        y, **{k: v if k == "vol" else int(v) for k, v in np_kwargs.items()}
+    )
+    assert str(mod.volatility) == str(ref.volatility)
+    assert mod.volatility.num_params == ref.volatility.num_params
+    assert mod.volatility.p == order
+    assert type(mod.volatility.p) is int
+
+
+def test_arch_model_numpy_integers_fit_identical():
+    y = np.random.default_rng(11).standard_normal(400)
+    res = arch_model(y, p=np.int64(1), o=np.int64(1), q=np.int64(1)).fit(disp="off")
+    ref = arch_model(y, p=1, o=1, q=1).fit(disp="off")
+    assert_allclose(res.params, ref.params)
+    assert_allclose(res.loglikelihood, ref.loglikelihood)
+
+
+def test_arch_model_loop_over_numpy_ints():
+    y = np.random.default_rng(12).standard_normal(100)
+    for p in np.arange(1, 3):
+        assert arch_model(y, p=p).volatility.p == p
+
+
+@pytest.mark.parametrize("vol", VOLS)
+@pytest.mark.parametrize(
+    "p", [1.0, "1", [1, 5], None], ids=["float", "str", "list", "none"]
+)
+def test_arch_model_invalid_p(vol, p):
+    y = np.random.default_rng(10).standard_normal(100)
+    with pytest.raises(TypeError, match="p must be a scalar int"):
+        arch_model(y, vol=vol, p=p)
+
+
+@pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "APARCH", "FIAPARCH"])
+def test_arch_model_invalid_o(vol):
+    y = np.random.default_rng(10).standard_normal(100)
+    with pytest.raises(TypeError, match="o must be a scalar int"):
+        arch_model(y, vol=vol, o=1.0)
+
+
+@pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"])
+def test_arch_model_invalid_q(vol):
+    y = np.random.default_rng(10).standard_normal(100)
+    with pytest.raises(TypeError, match="q must be a scalar int"):
+        arch_model(y, vol=vol, q=1.5)
+
+
+def test_arch_model_unused_orders_not_validated():
+    y = np.random.default_rng(10).standard_normal(100)
+    # ARCH has no o or q, constant variance and HARCH ignore o and q
+    assert arch_model(y, vol="ARCH", o=0.5, q=0.5).volatility.p == 1
+    arch_model(y, vol="HARCH", p=[1, 5], o=0.5, q=0.5)
+    arch_model(y, vol="HARCH", p=np.array([1, 5]))
+    arch_model(y, vol="HARCH", p=np.int64(3))
