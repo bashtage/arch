@@ -36,6 +36,8 @@ routines relevant for the analysis of financial data.
     Unit Root Tests and Cointegration Analysis <unitroot/unitroot>
     Long-run Covariance Estimation <covariance/covariance>
     API Reference <api>
+    Data Sets <data>
+    Warnings and Exceptions <warnings>
     Common Type Definitions <types>
     Change Log <changes>
 
