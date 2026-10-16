@@ -1841,6 +1841,7 @@ class ARCHModelFixedResult(_SummaryRepr):
                     start,
                     method=method,
                     simulations=simulations,
+                    reindex=True,
                 )
                 break
             except ValueError:
