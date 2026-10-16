@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 requires = [
   'meson-python',
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy>=2.0.0,<3",
   "setuptools_scm>=9.2.0,<10",
 ]
@@ -14,7 +14,7 @@ dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
   "scipy>=1.8",
-  "statsmodels>=0.13.0",
+  "statsmodels>=0.13.1",
   "packaging",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
@@ -27,6 +27,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",
@@ -68,7 +70,7 @@ requires-python = ">=3.10"
 [project.optional-dependencies]
 test = [
   # test
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
@@ -81,7 +83,7 @@ doc = [
   "setuptools>=61",
   "wheel",
   "setuptools_scm[toml]>=9.2.0,<10",
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy >=2.3.4",
   "scipy >=1.16.0",
   "ipython >=8.0.1",
@@ -111,13 +113,13 @@ dev = [
   "setuptools_scm[toml]>=9.2.0,<10",
   "packaging",
   # Performance
-  "cython>=3.0.10",
+  "cython>=3.1.0",
   "numba>=0.55",
   # Graphics
   "matplotlib>=3",
   "seaborn",
   # Tests
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
@@ -307,7 +309,7 @@ ignore = [
 
 [tool.pytest]
 strict_parametrization_ids = true
-minversion = "8.4.1"
+minversion = "9.0"
 testpaths = ["arch"]
 xfail_strict = true
 addopts = ["--strict"]
@@ -328,7 +330,6 @@ filterwarnings = [
   "error:Parameters are not consistent with a::",
   "error:overflow encountered in double_scalars:RuntimeWarning:",
   "error:overflow encountered in multiply:RuntimeWarning:",
-  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
   "error:The default for reindex:FutureWarning:",
   "error:overflow encountered in square:RuntimeWarning",
   "error:Values in x were outside bounds:RuntimeWarning:",
