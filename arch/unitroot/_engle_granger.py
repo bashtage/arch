@@ -224,7 +224,7 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
 
         Returns
         -------
-        Summary
+        statsmodels.iolib.summary.Summary
             A summary instance with methods that support export to text, csv
             or latex.
         """
