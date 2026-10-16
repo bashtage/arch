@@ -753,9 +753,14 @@ class VolatilityProcess(metaclass=ABCMeta):
         to use this method when not available will raise a ValueError.
         """
         _parameters = to_array_1d(parameters)
-        method_name = method.lower()
-        if method_name not in ("analytic", "simulation", "bootstrap"):
-            raise ValueError(f"{method} is not a known forecasting method")
+        valid_methods = ("analytic", "simulation", "bootstrap")
+        method_name = method.lower() if isinstance(method, str) else method
+        if method_name not in valid_methods:
+            valid = ", ".join(f"'{m}'" for m in valid_methods)
+            raise ValueError(
+                f"{method} is not a known forecasting method. The method must be "
+                f"one of {valid} (in any case)."
+            )
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
         self._check_forecasting_method(cast("ForecastingMethod", method_name), horizon)
@@ -764,7 +769,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             return self._analytic_forecast(
                 _parameters, resids, backcast, var_bounds, start, horizon
             )
-        elif method == "simulation":
+        elif method_name == "simulation":
             # TODO: This looks like a design flaw.It is optional above but then must
             #  be present.  This happens because the caller of this function is
             #  expected to know when to provide the rng or not
@@ -806,7 +811,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        """
+        r"""
         Simulate data from the model
 
         Parameters
@@ -823,7 +828,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             the simulation
         initial_value : {float, ndarray}, optional
             Scalar or array of initial values to use when initializing the
-            simulation
+            simulation. The units depend on the process, see Notes.
 
         Returns
         -------
@@ -831,6 +836,22 @@ class VolatilityProcess(metaclass=ABCMeta):
             The simulated residuals
         variance : ndarray
             The simulated variance
+
+        Notes
+        -----
+        ``initial_value`` is the initial value of the quantity that the process
+        updates, which is not always the variance :math:`\sigma^2`:
+
+        * :math:`\sigma^2`: ARCH, GARCH with ``power=2``, HARCH,
+          MIDASHyperbolic, EWMAVariance and RiskMetrics2006.
+        * :math:`\sigma^{p}`: GARCH and FIGARCH with ``power=p``, which
+          includes the absolute value (``power=1``) models.
+        * :math:`\sigma^{\delta}`: APARCH and FIAPARCH, where :math:`\delta`
+          is the power parameter of the process.
+        * :math:`\ln \sigma^2`: EGARCH.
+
+        ``initial_value`` is ignored by ConstantVariance, and FixedVariance
+        does not support simulation.
         """
 
     def _gaussian_loglikelihood(
@@ -1488,10 +1509,15 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
         super().__init__()
-        if not isinstance(lags, Sequence):
-            lag_val = int(lags)
-            lags = list(range(1, lag_val + 1))
-        lags_arr = ensure1d(lags, "lags")
+        lags_arr = np.asarray(lags)
+        if lags_arr.ndim == 0:
+            lags_arr = np.arange(1, int(lags_arr) + 1)
+        if lags_arr.ndim != 1 or lags_arr.shape[0] == 0 or np.any(lags_arr < 1):
+            raise ValueError(
+                "lags must be a positive integer or a non-empty 1-d array-like of "
+                "positive integers."
+            )
+        lags_arr = ensure1d(lags_arr, "lags")
         self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
@@ -1743,7 +1769,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __str__(self) -> str:
         descr = self.name
-        descr += f"(lags: {self.m}, asym: {self._asym}"
+        descr += f"(lags: {self.m}, asym: {self._asym})"
 
         return descr
 
@@ -1831,6 +1857,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         aw = weights * alpha
         gw = weights * gamma
 
+        m = weights.shape[0]
+        # The first m values are initial values and are always discarded
+        burn = max(burn, m)
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -1840,8 +1869,6 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 warn(initial_value_warning, InitialValueWarning, stacklevel=2)
                 initial_value = _parameters[0]
 
-        m = weights.shape[0]
-        burn = max(burn, m)
         sigma2 = np.empty(nobs + burn)
         data = np.empty(nobs + burn)
 
@@ -1953,6 +1980,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         )
         m = self.m
         resids2 = resids2[start:].copy()
+        indicator = indicator[start:].copy()
         aw_rev = aw[::-1]
         gw_rev = gw[::-1]
 
@@ -4199,7 +4227,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             for j in range(p):
                 _shock = abs_shock[:, loc - j]
                 if self.o > j:
-                    _shock -= gamma[j] * shock[:, loc - j]
+                    # Not in-place: _shock is a view of abs_shock, which is used
+                    # again as a lagged value in later periods
+                    _shock = _shock - gamma[j] * shock[:, loc - j]
                 sigma_delta[:, h + m] += alpha[j] * (_shock**delta)
 
             for j in range(q):
