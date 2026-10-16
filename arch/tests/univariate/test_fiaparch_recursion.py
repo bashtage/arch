@@ -197,8 +197,8 @@ def test_fiaparch_recursion_bounds(func):
     assert_allclose(sigma2[lower], 1.5)
     assert_allclose(sigma2[upper], 2.0 + np.log(unbounded[upper] / 2.0))
     assert_allclose(sigma2[inside], unbounded[inside])
-    # sigma_delta holds the bounded value on the sigma ** delta scale
-    assert_allclose(sigma_delta, sigma2**0.75)
+    # sigma_delta holds sigma ** delta before the bounds are applied
+    assert_allclose(sigma_delta, unbounded**0.75)
 
 
 @pytest.mark.parametrize("module", [recpy, rec], ids=["python", "default"])
@@ -275,12 +275,14 @@ def test_fiaparch_simulate_matches_reference(truncation, est_delta):
     assert_allclose(sigma2, ref_sigma2, rtol=1e-12)
 
 
-@pytest.mark.parametrize("est_delta", [True, False], ids=["est_delta", "fixed_delta"])
-def test_fiaparch_simulation_forecast_first_step(est_delta):
+@pytest.mark.parametrize("delta", [None, 1.3, 2.0, 0.5], ids=lambda v: f"delta{v}")
+def test_fiaparch_simulation_forecast_first_step(delta):
     # The first step of a simulation forecast depends only on observed data, and so
-    # it must match the one-step analytic forecast, which uses the recursion
+    # it must match the one-step analytic forecast, which uses the recursion. The
+    # values 2 and 0.5 of delta are special cases of the power in numpy
+    est_delta = delta is None
     y = np.random.default_rng(3).standard_normal(300)
-    vol = FIAPARCH(1, 1, 1, delta=None if est_delta else 1.3, truncation=40)
+    vol = FIAPARCH(1, 1, 1, delta=delta, truncation=40)
     params = np.array([0.0, 0.1, 0.1, 0.3, 0.3, 0.4] + ([1.4] if est_delta else []))
     res = ConstantMean(y, volatility=vol).fix(params)
     analytic = res.forecast(horizon=1, start=250, reindex=False)

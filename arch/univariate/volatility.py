@@ -1336,42 +1336,49 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         beta = parameters[p + o + 1 :]
 
         m = np.max([p, o, q])
-        _resids = np.zeros(m + horizon)
-        _asym_resids = np.zeros(m + horizon)
-        _sigma2 = np.zeros(m + horizon)
+        n_origins = t - start
+        # The forecasts from every origin are computed together. Row k holds the
+        # last m residuals, asymmetric residuals and variances up to origin
+        # start + k, which are followed by the forecasts of each horizon
+        _resids = np.zeros((n_origins, m + horizon))
+        _asym_resids = np.zeros((n_origins, m + horizon))
+        _sigma2 = np.zeros((n_origins, m + horizon))
 
-        for i in range(start, t):
-            if i - m + 1 >= 0:
-                _resids[:m] = resids[i - m + 1 : i + 1]
-                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
-                _sigma2[:m] = sigma2[i - m + 1 : i + 1]
-            else:  # Back-casting needed
-                _resids[: m - i - 1] = np.sqrt(backcast)
-                _resids[m - i - 1 : m] = resids[0 : i + 1]
-                _asym_resids = cast("np.ndarray", _resids * (_resids < 0))
-                _asym_resids[: m - i - 1] = np.sqrt(asym_weight * backcast)
-                _sigma2[:m] = backcast
-                _sigma2[m - i - 1 : m] = sigma2[0 : i + 1]
+        _all_resids = np.asarray(resids)
+        origins = np.arange(start, t)
+        loc = origins[:, None] - m + 1 + np.arange(m)[None, :]
+        # Locations before the start of the sample use the backcast
+        available = loc >= 0
+        loc = np.where(available, loc, 0)
+        lagged_resids = _all_resids[loc]
+        _resids[:, :m] = np.where(available, lagged_resids, np.sqrt(backcast))
+        _asym_resids[:, :m] = np.where(
+            available,
+            lagged_resids * (lagged_resids < 0),
+            np.sqrt(asym_weight * backcast),
+        )
+        _sigma2[:, :m] = np.where(available, sigma2[loc], backcast)
 
-            for h in range(horizon):
-                fcast_loc = i - start
-                forecasts[fcast_loc, h] = omega
-                start_loc = h + m - 1
+        # np.power with an array of exponents is pow, which is the same as the
+        # scalar power used in a loop over origins. A scalar exponent of 2 uses
+        # a product, which is not identical in the last bit for some values
+        two = np.full(n_origins, 2.0)
+        for h in range(horizon):
+            start_loc = h + m - 1
+            forecast_h = np.full(n_origins, omega, dtype=float)
+            for j in range(p):
+                forecast_h += alpha[j] * np.power(_resids[:, start_loc - j], two)
 
-                for j in range(p):
-                    forecasts[fcast_loc, h] += alpha[j] * _resids[start_loc - j] ** 2
+            for j in range(o):
+                forecast_h += gamma[j] * np.power(_asym_resids[:, start_loc - j], two)
 
-                for j in range(o):
-                    forecasts[fcast_loc, h] += (
-                        gamma[j] * _asym_resids[start_loc - j] ** 2
-                    )
+            for j in range(q):
+                forecast_h += beta[j] * _sigma2[:, start_loc - j]
 
-                for j in range(q):
-                    forecasts[fcast_loc, h] += beta[j] * _sigma2[start_loc - j]
-
-                _resids[h + m] = np.sqrt(forecasts[fcast_loc, h])
-                _asym_resids[h + m] = np.sqrt(asym_weight * forecasts[fcast_loc, h])
-                _sigma2[h + m] = forecasts[fcast_loc, h]
+            forecasts[:, h] = forecast_h
+            _resids[:, h + m] = np.sqrt(forecast_h)
+            _asym_resids[:, h + m] = np.sqrt(asym_weight * forecast_h)
+            _sigma2[:, h + m] = forecast_h
 
         return VarianceForecast(forecasts)
 
@@ -1610,13 +1617,22 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         max_lag = int(np.max(lags))
         sigma2[:max_lag] = initial_value
         data[:max_lag] = np.sqrt(initial_value)
+        # The squared data, to avoid squaring it once for each term of each sum
+        data2 = np.empty(nobs + burn)
+        data2[:max_lag] = data[0] ** 2.0
+        # The weight and the lag of each term that is added to omega, in order.
+        # The terms are added one at a time, in this order, using a cumulative sum
+        weights = np.concatenate(
+            [np.full(lag, parameters[1 + i] / lag) for i, lag in enumerate(lags)]
+        )
+        term_lags = np.concatenate([np.arange(1, lag + 1) for lag in lags])
+        terms = np.empty(weights.shape[0] + 1)
+        terms[0] = parameters[0]
         for t in range(max_lag, nobs + burn):
-            sigma2[t] = parameters[0]
-            for i in range(lags.shape[0]):
-                param = parameters[1 + i] / lags[i]
-                for j in range(lags[i]):
-                    sigma2[t] += param * data[t - 1 - j] ** 2.0
+            np.multiply(weights, data2[t - term_lags], out=terms[1:])
+            sigma2[t] = np.cumsum(terms)[-1]
             data[t] = errors[t] * np.sqrt(sigma2[t])
+            data2[t] = data[t] ** 2.0
 
         return data[burn:], sigma2[burn:]
 
@@ -1894,15 +1910,25 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         sigma2[:m] = initial_value
         data[:m] = np.sqrt(initial_value)
+        # The squared data, to avoid squaring it once for each term of each sum
+        data2 = np.empty(nobs + burn)
+        data2[:m] = data[0] ** 2.0
+        # Coefficient on the first m values, which are initial values
+        init_coef = aw + 0.5 * gw
+        # The m terms that are added to omega are added one at a time, in order of
+        # increasing lag, using a cumulative sum
+        terms = np.empty(m + 1)
+        terms[0] = omega
         for t in range(m, nobs + burn):
-            sigma2[t] = omega
-            for i in range(m):
-                if t - 1 - i < m:
-                    coef = aw[i] + 0.5 * gw[i]
-                else:
-                    coef = aw[i] + gw[i] * (data[t - 1 - i] < 0)
-                sigma2[t] += coef * data[t - 1 - i] ** 2.0
+            # The data and squared data at lags 1, 2, ..., m
+            lagged = data[t - m : t][::-1]
+            coef = aw + gw * (lagged < 0)
+            # Lags that are before the initial values use the initial coefficient
+            coef[t - m :] = init_coef[t - m :]
+            np.multiply(coef, data2[t - m : t][::-1], out=terms[1:])
+            sigma2[t] = np.cumsum(terms)[-1]
             data[t] = errors[t] * np.sqrt(sigma2[t])
+            data2[t] = data[t] ** 2.0
 
         return data[burn:], sigma2[burn:]
 
@@ -3044,6 +3070,43 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
 
+def _lagged_path_sums(
+    lam_rev: Float64Array1D,
+    history: Float64Array1D,
+    simulated: Float64Array2D,
+    h: int,
+    truncation: int,
+) -> Float64Array1D:
+    """
+    Weighted sums of the last ``truncation`` values for each simulated path
+
+    Parameters
+    ----------
+    lam_rev : ndarray
+        Weights, ordered from the oldest to the newest lag
+    history : ndarray
+        The ``truncation`` values before the forecast origin, which are the same
+        in all of the paths
+    simulated : ndarray
+        The simulated values of the first ``h`` horizons for each path
+    h : int
+        The zero-based horizon
+    truncation : int
+        Number of lags
+
+    Returns
+    -------
+    ndarray
+        The sum for each path. The sum is the weighted sum of the history, which
+        is computed once, plus the weighted sum of the simulated values.
+    """
+    n_history = max(truncation - h, 0)
+    total = np.full(simulated.shape[0], lam_rev[:n_history].dot(history[h:]))
+    if h:
+        total += simulated[:, max(h - truncation, 0) : h].dot(lam_rev[n_history:])
+    return total
+
+
 class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     FIGARCH model
@@ -3439,21 +3502,25 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         omega = parameters[0]
         beta = parameters[-1] if q else 0.0
         omega_tilde = omega / (1 - beta)
-        fpath = np.empty((simulations, truncation + horizon))
+        # The transformed residuals before the origin are the same in all of the
+        # paths, so they are not repeated for each path
+        history = np.empty(truncation)
+        fpath = np.empty((simulations, horizon))
         fresids = np.absolute(resids) ** power
 
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             available = i + 1 - max(0, i - truncation + 1)
-            fpath[:, truncation - available : truncation] = fresids[
+            history[truncation - available : truncation] = fresids[
                 max(0, i + 1 - truncation) : i + 1
             ]
             if available < truncation:
-                fpath[:, : (truncation - available)] = backcast
+                history[: (truncation - available)] = backcast
             for h in range(horizon):
                 # 1. Forecast transformed variance
-                lagged_forecasts = fpath[:, h : truncation + h]
-                temp = omega_tilde + lagged_forecasts.dot(lam_rev)
+                temp = omega_tilde + _lagged_path_sums(
+                    lam_rev, history, fpath, h, truncation
+                )
                 # 2. Transform variance
                 sigma2 = temp ** (2.0 / power)
                 # 3. Simulate new residual
@@ -3462,7 +3529,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 paths[path_loc, :, h] = sigma2
                 forecasts[path_loc, h] = sigma2.mean()
                 # 4. Transform new residual
-                fpath[:, truncation + h] = np.absolute(shocks[path_loc, :, h]) ** power
+                fpath[:, h] = np.absolute(shocks[path_loc, :, h]) ** power
 
         return VarianceForecast(forecasts, paths, shocks)
 
@@ -3916,30 +3983,37 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast_delta = backcast ** (delta / 2.0)
 
         abs_resids_full = np.absolute(resids)
-        fshocks_hist = np.power(abs_resids_full - gamma * resids, delta)
+        # np.power with a scalar exponent uses square and sqrt for exponents of 2
+        # and 0.5, which differ from pow in the last bit for some values. An array
+        # of exponents always uses pow, as in a loop with scalars
+        fshocks_hist = np.power(
+            abs_resids_full - gamma * resids, np.full(resids.shape[0], delta)
+        )
 
-        fpath = np.empty((simulations, truncation + horizon))
+        # The transformed shocks before the origin are the same in all of the paths,
+        # so they are not repeated for each path
+        history = np.empty(truncation)
+        fpath = np.empty((simulations, horizon))
 
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             available = i + 1 - max(0, i - truncation + 1)
-            fpath[:, truncation - available : truncation] = fshocks_hist[
+            history[truncation - available : truncation] = fshocks_hist[
                 max(0, i + 1 - truncation) : i + 1
             ]
             if available < truncation:
-                fpath[:, : (truncation - available)] = backcast_delta
+                history[: (truncation - available)] = backcast_delta
             for h in range(horizon):
-                lagged_fshocks = fpath[:, h : truncation + h]
-                temp_sigma_delta = omega_tilde + lagged_fshocks.dot(lam_rev)
+                temp_sigma_delta = omega_tilde + _lagged_path_sums(
+                    lam_rev, history, fpath, h, truncation
+                )
                 sigma2_h = temp_sigma_delta ** (2.0 / delta)
                 path_loc = i - start
                 shocks[path_loc, :, h] = std_shocks[:, h] * np.sqrt(sigma2_h)
                 paths[path_loc, :, h] = sigma2_h
                 forecasts[path_loc, h] = sigma2_h.mean()
                 new_shocks = np.absolute(shocks[path_loc, :, h])
-                fpath[:, truncation + h] = (
-                    new_shocks - gamma * shocks[path_loc, :, h]
-                ) ** delta
+                fpath[:, h] = (new_shocks - gamma * shocks[path_loc, :, h]) ** delta
 
         return VarianceForecast(forecasts, paths, shocks)
 
