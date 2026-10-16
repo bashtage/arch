@@ -23,7 +23,7 @@
     
   
       
-        <title>Introduction to ARCH Models - arch v8.0.1 (+219)</title>
+        <title>Introduction to ARCH Models - arch v8.0.1 (+244)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -1325,22 +1325,19 @@ as</p>
 </ul>
 <p>In most applications, the simplest method to construct this model is to use the constructor
 function <a class="reference internal" href="#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-meth docutils literal notranslate"><span class="pre">arch_model()</span></code></a></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch</span><span class="w"> </span><span class="kn">import</span> <span class="n">arch_model</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'^GSPC'</span><span class="p">,</span> <span class="s1">'yahoo'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'2000-01-01'</span><span class="p">:</span><span class="s1">'2014-01-01'</span><span class="p">]</span>
 <span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>Alternatively, the same model can be manually assembled from the building
 blocks of an ARCH model</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
 
 <span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">am</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -1352,22 +1349,22 @@ blocks of an ARCH model</p>
 </code></pre></div>
 </div>
 <p>with the following output</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5159.58323938</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">16</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5156.09760149</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">24</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5152.29989336</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">4</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">31</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5146.47531817</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">38</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5143.86337547</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">45</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5143.02096168</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">7</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">52</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5142.24105141</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">8</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">60</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5142.07138907</span>
-<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">9</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">67</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.416653</span>
-<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">73</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39212288</span>
-<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">11</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">79</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39023885</span>
-<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">12</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">85</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39023359</span>
-<span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>    <span class="p">(</span><span class="n">Exit</span> <span class="n">mode</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">5141.39023359</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">68805886954919.59</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">15</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">1575359856.4496076</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">22</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5194.449409971215</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">4</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">28</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5190.7422748202325</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">34</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5191.570045895966</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">40</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5150.829260399659</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">7</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">46</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6474.487216207122</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">8</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">53</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5143.161859778254</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">9</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">59</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.392123039943</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">64</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.390238848524</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">11</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">69</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.390233587619</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">12</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">73</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.390233588856</span>
+<span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span>    <span class="p">(</span><span class="n">Exit</span> <span class="n">mode</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">5141.390233587619</span>
             <span class="n">Iterations</span><span class="p">:</span> <span class="mi">12</span>
-            <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">85</span>
+            <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">73</span>
             <span class="n">Gradient</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">12</span>
 </code></pre></div>
 </div>
@@ -1377,27 +1374,27 @@ blocks of an ARCH model</p>
 <p>yields</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>                     <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
-<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                      <span class="o">-</span><span class="mf">0.001</span>
-<span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>             <span class="n">Constant</span> <span class="n">Mean</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                 <span class="o">-</span><span class="mf">0.001</span>
+<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.000</span>
+<span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>             <span class="n">Constant</span> <span class="n">Mean</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                  <span class="mf">0.000</span>
 <span class="n">Vol</span> <span class="n">Model</span><span class="p">:</span>                      <span class="n">GARCH</span>   <span class="n">Log</span><span class="o">-</span><span class="n">Likelihood</span><span class="p">:</span>               <span class="o">-</span><span class="mf">5141.39</span>
 <span class="n">Distribution</span><span class="p">:</span>                  <span class="n">Normal</span>   <span class="n">AIC</span><span class="p">:</span>                           <span class="mf">10290.8</span>
 <span class="n">Method</span><span class="p">:</span>            <span class="n">Maximum</span> <span class="n">Likelihood</span>   <span class="n">BIC</span><span class="p">:</span>                           <span class="mf">10315.4</span>
                                         <span class="n">No</span><span class="o">.</span> <span class="n">Observations</span><span class="p">:</span>                 <span class="mi">3520</span>
-<span class="n">Date</span><span class="p">:</span>                <span class="n">Fri</span><span class="p">,</span> <span class="n">Dec</span> <span class="mi">02</span> <span class="mi">2016</span>   <span class="n">Df</span> <span class="n">Residuals</span><span class="p">:</span>                     <span class="mi">3516</span>
-<span class="n">Time</span><span class="p">:</span>                        <span class="mi">22</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">28</span>   <span class="n">Df</span> <span class="n">Model</span><span class="p">:</span>                            <span class="mi">4</span>
-                                  <span class="n">Mean</span> <span class="n">Model</span>
-<span class="o">==============================================================================</span>
-                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>        <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
-<span class="o">------------------------------------------------------------------------------</span>
-<span class="n">mu</span>             <span class="mf">0.0531</span>  <span class="mf">1.487e-02</span>      <span class="mf">3.569</span>  <span class="mf">3.581e-04</span>   <span class="p">[</span><span class="mf">2.392e-02</span><span class="p">,</span><span class="mf">8.220e-02</span><span class="p">]</span>
-                               <span class="n">Volatility</span> <span class="n">Model</span>
-<span class="o">==============================================================================</span>
-                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>        <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
-<span class="o">------------------------------------------------------------------------------</span>
-<span class="n">omega</span>          <span class="mf">0.0156</span>  <span class="mf">4.932e-03</span>      <span class="mf">3.155</span>  <span class="mf">1.606e-03</span>   <span class="p">[</span><span class="mf">5.892e-03</span><span class="p">,</span><span class="mf">2.523e-02</span><span class="p">]</span>
-<span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>       <span class="mf">0.0879</span>  <span class="mf">1.140e-02</span>      <span class="mf">7.710</span>  <span class="mf">1.260e-14</span>     <span class="p">[</span><span class="mf">6.554e-02</span><span class="p">,</span>  <span class="mf">0.110</span><span class="p">]</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>        <span class="mf">0.9014</span>  <span class="mf">1.183e-02</span>     <span class="mf">76.163</span>      <span class="mf">0.000</span>       <span class="p">[</span>  <span class="mf">0.878</span><span class="p">,</span>  <span class="mf">0.925</span><span class="p">]</span>
-<span class="o">==============================================================================</span>
+<span class="n">Date</span><span class="p">:</span>                <span class="n">Fri</span><span class="p">,</span> <span class="n">Oct</span> <span class="mi">16</span> <span class="mi">2026</span>   <span class="n">Df</span> <span class="n">Residuals</span><span class="p">:</span>                     <span class="mi">3519</span>
+<span class="n">Time</span><span class="p">:</span>                        <span class="mi">11</span><span class="p">:</span><span class="mi">57</span><span class="p">:</span><span class="mi">57</span>   <span class="n">Df</span> <span class="n">Model</span><span class="p">:</span>                            <span class="mi">1</span>
+                                 <span class="n">Mean</span> <span class="n">Model</span>
+<span class="o">============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>      <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
+<span class="o">----------------------------------------------------------------------------</span>
+<span class="n">mu</span>             <span class="mf">0.0531</span>  <span class="mf">1.487e-02</span>      <span class="mf">3.569</span>  <span class="mf">3.581e-04</span> <span class="p">[</span><span class="mf">2.392e-02</span><span class="p">,</span><span class="mf">8.220e-02</span><span class="p">]</span>
+                              <span class="n">Volatility</span> <span class="n">Model</span>
+<span class="o">============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>      <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
+<span class="o">----------------------------------------------------------------------------</span>
+<span class="n">omega</span>          <span class="mf">0.0156</span>  <span class="mf">4.932e-03</span>      <span class="mf">3.155</span>  <span class="mf">1.606e-03</span> <span class="p">[</span><span class="mf">5.892e-03</span><span class="p">,</span><span class="mf">2.523e-02</span><span class="p">]</span>
+<span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>       <span class="mf">0.0879</span>  <span class="mf">1.140e-02</span>      <span class="mf">7.710</span>  <span class="mf">1.260e-14</span>   <span class="p">[</span><span class="mf">6.554e-02</span><span class="p">,</span>  <span class="mf">0.110</span><span class="p">]</span>
+<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>        <span class="mf">0.9014</span>  <span class="mf">1.183e-02</span>     <span class="mf">76.163</span>      <span class="mf">0.000</span>     <span class="p">[</span>  <span class="mf">0.878</span><span class="p">,</span>  <span class="mf">0.925</span><span class="p">]</span>
+<span class="o">============================================================================</span>
 
 <span class="n">Covariance</span> <span class="n">estimator</span><span class="p">:</span> <span class="n">robust</span>
 </code></pre></div>
@@ -1466,10 +1463,9 @@ reported in the estimation results.</p>
 </dd>
 </dl>
 <p class="example rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">djia</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_fred</span><span class="p">(</span><span class="s1">'DJIA'</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">djia</span><span class="p">[</span><span class="s1">'DJIA'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.data.sp500</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">load</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <p>A basic GARCH(1,1) with a constant mean can be constructed using only
@@ -1583,7 +1579,7 @@ when <cite>mean=’zero’</cite>, are silently ignored.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

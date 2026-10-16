@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v8.0.1 (+219)</title>
+        <title>arch.unitroot.unitroot - arch v8.0.1 (+244)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -1238,7 +1238,7 @@
 <span class="sd">    0.0271</span>
 <span class="sd">    &gt;&gt;&gt; adf.lags</span>
 <span class="sd">    2</span>
-<span class="sd">    &gt;&gt;&gt; adf.trend="ct"</span>
+<span class="sd">    &gt;&gt;&gt; adf = ADF(inflation, trend="ct")</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.stat:0.4f}")</span>
 <span class="sd">    -3.2111</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.pvalue:0.4f}")</span>
@@ -1582,12 +1582,12 @@
 <span class="sd">    0.0000</span>
 <span class="sd">    &gt;&gt;&gt; pp.lags</span>
 <span class="sd">    15</span>
-<span class="sd">    &gt;&gt;&gt; pp.trend = "ct"</span>
+<span class="sd">    &gt;&gt;&gt; pp = PhillipsPerron(inflation, trend="ct")</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{pp.stat:0.4f}")</span>
 <span class="sd">    -8.2022</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{pp.pvalue:0.4f}")</span>
 <span class="sd">    0.0000</span>
-<span class="sd">    &gt;&gt;&gt; pp.test_type = "rho"</span>
+<span class="sd">    &gt;&gt;&gt; pp = PhillipsPerron(inflation, trend="ct", test_type="rho")</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{pp.stat:0.4f}")</span>
 <span class="sd">    -120.3271</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{pp.pvalue:0.4f}")</span>
@@ -1769,12 +1769,12 @@
 <span class="sd">    &gt;&gt;&gt; import statsmodels.api as sm</span>
 <span class="sd">    &gt;&gt;&gt; data = sm.datasets.macrodata.load().data</span>
 <span class="sd">    &gt;&gt;&gt; inflation = np.diff(np.log(data["cpi"]))</span>
-<span class="sd">    &gt;&gt;&gt; kpss = KPSS(inflation)</span>
+<span class="sd">    &gt;&gt;&gt; kpss = KPSS(inflation, lags=-1)</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{kpss.stat:0.4f}")</span>
 <span class="sd">    0.2870</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{kpss.pvalue:0.4f}")</span>
 <span class="sd">    0.1473</span>
-<span class="sd">    &gt;&gt;&gt; kpss.trend = "ct"</span>
+<span class="sd">    &gt;&gt;&gt; kpss = KPSS(inflation, lags=-1, trend="ct")</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{kpss.stat:0.4f}")</span>
 <span class="sd">    0.2075</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{kpss.pvalue:0.4f}")</span>
@@ -2159,13 +2159,14 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.data.sp500 import load</span>
 <span class="sd">    &gt;&gt;&gt; from arch.unitroot import VarianceRatio</span>
-<span class="sd">    &gt;&gt;&gt; import pandas_datareader as pdr</span>
-<span class="sd">    &gt;&gt;&gt; data = pdr.get_data_fred("DJIA", start="2010-1-1", end="2020-12-31")</span>
-<span class="sd">    &gt;&gt;&gt; data = np.log(data.resample("M").last())  # End of month</span>
+<span class="sd">    &gt;&gt;&gt; data = load()["Adj Close"].loc["2010-01-01":"2018-12-31"]</span>
+<span class="sd">    &gt;&gt;&gt; data = np.log(data.resample("ME").last())  # End of month</span>
 <span class="sd">    &gt;&gt;&gt; vr = VarianceRatio(data, lags=12)</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{vr.pvalue:0.4f}")</span>
-<span class="sd">    0.1370</span>
+<span class="sd">    0.1504</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -2664,7 +2665,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../../../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

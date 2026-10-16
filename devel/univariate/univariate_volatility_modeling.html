@@ -23,7 +23,7 @@
     
   
       
-        <title>ARCH Modeling - arch v8.0.1 (+219)</title>
+        <title>ARCH Modeling - arch v8.0.1 (+244)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -463,6 +463,26 @@
     
     <span class="md-ellipsis">
       <span title="/univariate/univariate_volatility_modeling.ipynb#distributions (reference label)"><span>Distributions</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Moving-Average-Mean-Models" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_volatility_modeling.ipynb#moving-average-mean-models (reference label)"><span>Moving Average Mean Models</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Fractionally-Integrated-Volatility" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_volatility_modeling.ipynb#fractionally-integrated-volatility (reference label)"><span>Fractionally Integrated Volatility</span></span>
     </span>
   </a>
   
@@ -1124,6 +1144,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#Moving-Average-Mean-Models" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_volatility_modeling.ipynb#moving-average-mean-models (reference label)"><span>Moving Average Mean Models</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Fractionally-Integrated-Volatility" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_volatility_modeling.ipynb#fractionally-integrated-volatility (reference label)"><span>Fractionally Integrated Volatility</span></span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1183,7 +1223,7 @@
 </div>
 </div>
 <h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
-<p>These examples will all make use of financial data from Yahoo! Finance. This data set can be loaded from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
+<p>These examples will all make use of daily S&amp;P 500 data that are distributed with the package and can be loaded from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
@@ -1253,7 +1293,7 @@ Distribution:                  Normal   AIC:                           13881.4
 Method:            Maximum Likelihood   BIC:                           13907.5
                                         No. Observations:                 5030
 Date:                Fri, Oct 16 2026   Df Residuals:                     5029
-Time:                        14:51:06   Df Model:                            1
+Time:                        14:57:16   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -1317,7 +1357,7 @@ Distribution:                  Normal   AIC:                           13655.8
 Method:            Maximum Likelihood   BIC:                           13688.4
                                         No. Observations:                 5030
 Date:                Fri, Oct 16 2026   Df Residuals:                     5029
-Time:                        14:51:07   Df Model:                            1
+Time:                        14:57:17   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1377,7 +1417,7 @@ Distribution:                  Normal   AIC:                           13608.4
 Method:            Maximum Likelihood   BIC:                           13641.0
                                         No. Observations:                 5030
 Date:                Fri, Oct 16 2026   Df Residuals:                     5029
-Time:                        14:51:07   Df Model:                            1
+Time:                        14:57:17   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1430,7 +1470,7 @@ Distribution:      Standardized Student&#39;s t   AIC:                          
 Method:                  Maximum Likelihood   BIC:                           13495.4
                                               No. Observations:                 5030
 Date:                      Fri, Oct 16 2026   Df Residuals:                     5029
-Time:                              14:51:07   Df Model:                            1
+Time:                              14:57:17   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -1480,7 +1520,7 @@ Distribution:       Standardized Student&#39;s t   AIC:                         
 Method:            User-specified Parameters   BIC:                           13869.0
                                                No. Observations:                 5030
 Date:                       Fri, Oct 16 2026
-Time:                               14:51:07
+Time:                               14:57:17
       Mean Model
 =====================
                  coef
@@ -1544,6 +1584,7 @@ Std. errors not available when the model is not estimated,
 <li><p>Autoregressive (<code class="docutils literal notranslate"><span class="pre">ARX</span></code>) with optional exogenous regressors</p></li>
 <li><p>Heterogeneous (<code class="docutils literal notranslate"><span class="pre">HARX</span></code>) autoregression with optional exogenous regressors</p></li>
 <li><p>Exogenous regressors only (<code class="docutils literal notranslate"><span class="pre">LS</span></code>)</p></li>
+<li><p>Moving average (<code class="docutils literal notranslate"><span class="pre">MAMean</span></code>)</p></li>
 </ul>
 </li>
 <li><p>A volatility process (<code class="docutils literal notranslate"><span class="pre">arch.volatility</span></code>)</p>
@@ -1555,6 +1596,7 @@ Std. errors not available when the model is not estimated,
 <li><p>Power GARCH and Asymmetric Power GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code>)</p></li>
 <li><p>Exponentially Weighted Moving Average Variance with estimated coefficient (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</p></li>
 <li><p>Heterogeneous ARCH (<code class="docutils literal notranslate"><span class="pre">HARCH</span></code>)</p></li>
+<li><p>Fractionally Integrated Asymmetric Power ARCH (<code class="docutils literal notranslate"><span class="pre">FIAPARCH</span></code>)</p></li>
 <li><p>Parameterless Models</p>
 <ul>
 <li><p>Exponentially Weighted Moving Average Variance, known as RiskMetrics (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</p></li>
@@ -1617,7 +1659,7 @@ Distribution:                  Normal   AIC:                           6609.68
 Method:            Maximum Likelihood   BIC:                           6632.57
                                         No. Observations:                  719
 Date:                Fri, Oct 16 2026   Df Residuals:                      715
-Time:                        14:51:07   Df Model:                            4
+Time:                        14:57:17   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1664,7 +1706,7 @@ Distribution:                  Normal   AIC:                           6369.19
 Method:            Maximum Likelihood   BIC:                           6414.97
                                         No. Observations:                  719
 Date:                Fri, Oct 16 2026   Df Residuals:                      715
-Time:                        14:51:07   Df Model:                            4
+Time:                        14:57:17   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1733,7 +1775,7 @@ Distribution:      Standardized Student&#39;s t   AIC:                          
 Method:                  Maximum Likelihood   BIC:                           6408.86
                                               No. Observations:                  719
 Date:                      Fri, Oct 16 2026   Df Residuals:                      715
-Time:                              14:51:08   Df Model:                            4
+Time:                              14:57:18   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1762,10 +1804,118 @@ nu             9.0456      3.367      2.687  7.217e-03 [  2.447, 15.645]
 Covariance estimator: robust
 </pre></div></div>
 </div>
+<h3 id="Moving-Average-Mean-Models">Moving Average Mean Models<a class="headerlink" href="#Moving-Average-Mean-Models" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">MAMean</span></code> models the conditional mean using a moving average of the past innovations, so that</p>
+<div class="math notranslate nohighlight">
+\[r_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \ldots + \theta_q \epsilon_{t-q}\]</div>
+<p>where the innovations <span class="math notranslate nohighlight">\(\epsilon_t=\sigma_t e_t\)</span> follow the chosen volatility process and distribution. The order <span class="math notranslate nohighlight">\(q\)</span> is set using <code class="docutils literal notranslate"><span class="pre">lags</span></code>, and <code class="docutils literal notranslate"><span class="pre">constant</span></code> controls whether <span class="math notranslate nohighlight">\(\mu\)</span> is included. The example below fits an MA(1) mean with GARCH(1,1) volatility to the S&amp;P 500 returns. The MA coefficient is small and negative, and is statistically significant.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">MAMean</span>
+
+<span class="n">ma_mod</span> <span class="o">=</span> <span class="n">MAMean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">ma_res</span> <span class="o">=</span> <span class="n">ma_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ma_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                           MA - GARCH Model Results
+==============================================================================
+Dep. Variable:              Adj Close   R-squared:                       0.004
+Mean Model:                        MA   Adj. R-squared:                  0.004
+Vol Model:                      GARCH   Log-Likelihood:               -6930.09
+Distribution:                  Normal   AIC:                           13870.2
+Method:            Maximum Likelihood   BIC:                           13902.8
+                                        No. Observations:                 5030
+Date:                Fri, Oct 16 2026   Df Residuals:                     5028
+Time:                        14:57:18   Df Model:                            2
+                                  Mean Model
+==============================================================================
+                 coef    std err          t      P&gt;|t|        95.0% Conf. Int.
+------------------------------------------------------------------------------
+mu             0.0562  1.092e-02      5.151  2.586e-07   [3.484e-02,7.764e-02]
+theta[1]      -0.0565  1.547e-02     -3.653  2.597e-04 [-8.680e-02,-2.618e-02]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+omega          0.0172  4.620e-03      3.731  1.909e-04 [8.182e-03,2.629e-02]
+alpha[1]       0.1016  1.306e-02      7.784  7.039e-15   [7.604e-02,  0.127]
+beta[1]        0.8860  1.383e-02     64.081      0.000     [  0.859,  0.913]
+============================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+<h3 id="Fractionally-Integrated-Volatility">Fractionally Integrated Volatility<a class="headerlink" href="#Fractionally-Integrated-Volatility" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">FIAPARCH</span></code> is the fractionally integrated asymmetric power ARCH model. The fractional differencing parameter <span class="math notranslate nohighlight">\(d\)</span> allows shocks to volatility to decay slowly (hyperbolically) rather than geometrically as in a GARCH model, <span class="math notranslate nohighlight">\(\gamma\)</span> captures asymmetry, and the power <span class="math notranslate nohighlight">\(\delta\)</span> is estimated unless it is fixed using the <code class="docutils literal notranslate"><span class="pre">delta</span></code> input. The weights in the infinite ARCH representation are truncated at <code class="docutils literal notranslate"><span class="pre">truncation</span></code> lags, which is set here to 250 rather than the default of 1000 to
+reduce the time needed to estimate the model.</p>
+<p>The estimate of <span class="math notranslate nohighlight">\(\gamma\)</span> is at its upper bound, which indicates that negative returns have a much larger effect on volatility than positive returns, so its reported standard error should not be relied on.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">FIAPARCH</span><span class="p">,</span> <span class="n">StudentsT</span>
+
+<span class="n">fia_mod</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span>
+    <span class="n">returns</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">FIAPARCH</span><span class="p">(</span><span class="n">truncation</span><span class="o">=</span><span class="mi">250</span><span class="p">),</span> <span class="n">distribution</span><span class="o">=</span><span class="n">StudentsT</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">fia_res</span> <span class="o">=</span> <span class="n">fia_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fia_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                       Constant Mean - FIAPARCH Model Results
+====================================================================================
+Dep. Variable:                    Adj Close   R-squared:                       0.000
+Mean Model:                   Constant Mean   Adj. R-squared:                  0.000
+Vol Model:                         FIAPARCH   Log-Likelihood:               -6705.94
+Distribution:      Standardized Student&#39;s t   AIC:                           13427.9
+Method:                  Maximum Likelihood   BIC:                           13480.1
+                                              No. Observations:                 5030
+Date:                      Fri, Oct 16 2026   Df Residuals:                     5029
+Time:                              14:57:26   Df Model:                            1
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0348  1.187e-02      2.929  3.401e-03 [1.150e-02,5.804e-02]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+omega          0.0712  1.465e-02      4.860  1.176e-06 [4.248e-02,9.990e-02]
+phi            0.1808  4.514e-02      4.006  6.174e-05   [9.237e-02,  0.269]
+d              0.3563  4.345e-02      8.199  2.415e-16     [  0.271,  0.441]
+beta           0.4700  7.316e-02      6.425  1.319e-10     [  0.327,  0.613]
+gamma          0.9997  2.119e-03    471.733      0.000     [  0.996,  1.004]
+delta          1.3230  6.507e-02     20.333  6.527e-92     [  1.195,  1.451]
+                              Distribution
+========================================================================
+                 coef    std err          t      P&gt;|t|  95.0% Conf. Int.
+------------------------------------------------------------------------
+nu             8.3415      0.988      8.442  3.121e-17 [  6.405, 10.278]
+========================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
 <h2 id="WTI-Crude">WTI Crude<a class="headerlink" href="#WTI-Crude" title="Link to this heading">¶</a></h2>
 <p>The next example uses West Texas Intermediate Crude data from FRED. Three models are fit using alternative distributional assumptions. The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student’s T or the Standardized Skew Student’s T – however, these two are fairly close. The closeness of the T and the Skew T indicate that returns are not heavily skewed.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
@@ -1812,7 +1962,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
 </code></pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1888,7 +2038,7 @@ dtype: float64
 </div>
 <p>The standardized residuals can be computed by dividing the residuals by the conditional volatility. These are plotted along with the (unstandardized, but scaled) residuals. The non-standardized residuals are more peaked in the center indicating that the distribution is somewhat more heavy tailed than that of the standardized residuals.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">conditional_volatility</span>
@@ -1903,7 +2053,7 @@ dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_modeling_44_0.png" src="../_images/univariate_univariate_volatility_modeling_44_0.png" />
+<img alt="../_images/univariate_univariate_volatility_modeling_48_0.png" src="../_images/univariate_univariate_volatility_modeling_48_0.png" />
 </div>
 </div>
 <h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Link to this heading">¶</a></h2>
@@ -1915,7 +2065,7 @@ dtype: float64
 <li><p><code class="docutils literal notranslate"><span class="pre">errors</span></code>: The simulated errors generated to produce the model. The errors are the difference between the data and its conditional mean, and can be transformed into the standardized errors by dividing by the volatility.</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"skewt"</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
@@ -1924,7 +2074,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
 </code></pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1983,7 +2133,7 @@ dtype: float64
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">sim_mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"skewt"</span><span class="p">)</span>
@@ -1994,7 +2144,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
 </code></pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2024,33 +2174,33 @@ dtype: float64
   <tbody>
     <tr>
       <th>0</th>
-      <td>-0.282689</td>
-      <td>1.852477</td>
-      <td>-0.312054</td>
+      <td>1.518856</td>
+      <td>2.455416</td>
+      <td>1.489491</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>-3.012250</td>
-      <td>1.802236</td>
-      <td>-3.041615</td>
+      <td>-1.183274</td>
+      <td>2.399480</td>
+      <td>-1.212639</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>-1.045784</td>
-      <td>1.952815</td>
-      <td>-1.075149</td>
+      <td>-0.003440</td>
+      <td>2.350429</td>
+      <td>-0.032805</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>1.077797</td>
-      <td>1.920622</td>
-      <td>1.048432</td>
+      <td>0.370165</td>
+      <td>2.278011</td>
+      <td>0.340800</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>-0.836202</td>
-      <td>1.878407</td>
-      <td>-0.865567</td>
+      <td>1.470798</td>
+      <td>2.209580</td>
+      <td>1.441433</td>
     </tr>
   </tbody>
 </table>
@@ -2059,7 +2209,7 @@ dtype: float64
 <p>Simulations can be reproduced using a NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>. This requires constructing a model from components where the <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> instance is passed into to the distribution when the model is created.</p>
 <p>The cell below contains code that builds a model with a constant mean, GJR-GARCH volatility and Skew <span class="math notranslate nohighlight">\(t\)</span> errors initialized with a user-provided <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>. Saving the initial state allows it to be restored later so that the simulation can be run with the same random values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[21]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -2078,7 +2228,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[21]:
 </code></pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2142,7 +2292,7 @@ dtype: float64
 </div>
 <p>Resetting the state using <code class="docutils literal notranslate"><span class="pre">set_state</span></code> shows that calling <code class="docutils literal notranslate"><span class="pre">simulate</span></code> using the same underlying state in the <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> produces the same objects.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[22]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Reset the state to the initial state</span>
@@ -2152,7 +2302,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[22]:
 </code></pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2305,7 +2455,7 @@ dtype: float64
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

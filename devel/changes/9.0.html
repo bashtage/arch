@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+219)</title>
+        <title>Version 9 - arch v8.0.1 (+244)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -458,6 +458,95 @@
 
 <h1 id="version-9">Version 9<a class="headerlink" href="#version-9" title="Link to this heading">¶</a></h1>
 <h2 id="release-9-0-unreleased">Release 9.0 (Unreleased)<a class="headerlink" href="#release-9-0-unreleased" title="Link to this heading">¶</a></h2>
+<h3 id="highlights">Highlights<a class="headerlink" href="#highlights" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> now studentize the
+loss differentials when <code class="docutils literal notranslate"><span class="pre">studentize=True</span></code>, which is the default. The option had
+no effect in previous versions, and so p-values, critical values and the superior
+models obtained using the default arguments differ from previous versions. Use
+<code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> for the previous statistics.</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a>, a fractionally integrated asymmetric
+power ARCH volatility process (contributed by gjunjie).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAMean</span></code></a>, a moving average mean model that can be
+used with any volatility process and distribution (contributed by premdev1234).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.append.html#arch.univariate.base.ARCHModel.append" title="arch.univariate.base.ARCHModel.append (Python method) — Append observations to the model in-place"><code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code></a>, which adds observations to a
+mean model in-place so that parameters estimated using earlier data can be used to
+produce forecasts without re-estimating the model.</p></li>
+<li><p>Added <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>, which implements the
+VAR-HAC and pre-whitened recolored long-run covariance estimators (contributed by
+WatchTree-19).</p></li>
+<li><p>Added Ng and Perron’s modified AIC, <code class="docutils literal notranslate"><span class="pre">method=&quot;maic&quot;</span></code>, for selecting the number of
+lags in the <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> tests.</p></li>
+<li><p>Wheels are available for Python 3.10 to 3.15. 9.0 is the last release that
+supports Python 3.10 and NumPy 1.x.</p></li>
+</ul>
+<h3 id="new-features">New features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a>, a fractionally integrated asymmetric
+power ARCH volatility process that extends <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> with
+an asymmetry parameter and a power parameter, <code class="docutils literal notranslate"><span class="pre">delta</span></code>, which is estimated
+unless a value is provided. The orders <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">o</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> can be 0 or 1. It
+can be used in <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">vol=&quot;FIAPARCH&quot;</span></code>.
+Analytic forecasts are only available for a horizon of 1, and longer horizons
+require <code class="docutils literal notranslate"><span class="pre">method=&quot;simulation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">method=&quot;bootstrap&quot;</span></code>. Contributed by
+gjunjie.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAMean</span></code></a>, a moving average mean model of order q
+with an optional constant that can be used with any volatility process and
+distribution. Analytic, simulation and bootstrap forecasts include the moving
+average terms for the first q steps. It is a class only: <code class="docutils literal notranslate"><span class="pre">arch_model</span></code> does not
+support <code class="docutils literal notranslate"><span class="pre">mean=&quot;MA&quot;</span></code>. Contributed by premdev1234.</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.append.html#arch.univariate.base.ARCHModel.append" title="arch.univariate.base.ARCHModel.append (Python method) — Append observations to the model in-place"><code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code></a> to the mean models, which
+adds new observations to a model in-place. Parameters estimated using earlier
+data can then be used to produce forecasts, or results using
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix" title="arch.univariate.base.ARCHModel.fix (Python method) — Allows an ARCHModelFixedResult to be constructed from fixed parameters."><code class="xref py py-meth docutils literal notranslate"><span class="pre">fix()</span></code></a>, without re-estimating the model. The
+new data must have the same type as the data used to construct the model, and
+models that include exogenous regressors require <code class="docutils literal notranslate"><span class="pre">x</span></code> for the new observations.</p></li>
+<li><p>Added <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>, which implements the
+VAR-HAC (den Haan and Levin) and pre-whitened recolored (Andrews and Monahan)
+long-run covariance estimators, and the <a class="reference internal" href="../covariance/generated/arch.covariance.kernel.ZeroLag.html#arch.covariance.kernel.ZeroLag" title="arch.covariance.kernel.ZeroLag (Python class) — Zero-lag (No autocorrelation) kernel covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZeroLag</span></code></a>
+kernel that it uses for VAR-HAC. The order, residuals and residual covariance of
+the VAR are available as <code class="docutils literal notranslate"><span class="pre">order</span></code>, <code class="docutils literal notranslate"><span class="pre">resid</span></code> and <code class="docutils literal notranslate"><span class="pre">resid_cov</span></code>. Contributed by
+WatchTree-19.</p></li>
+<li><p>Added the residual diagnostics <a class="reference internal" href="../univariate/generated/arch.univariate.excess_kurtosis.html#arch.univariate.excess_kurtosis" title="arch.univariate.excess_kurtosis (Python function) — Sample excess kurtosis of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">excess_kurtosis()</span></code></a>,
+<a class="reference internal" href="../univariate/generated/arch.univariate.hill_estimator.html#arch.univariate.hill_estimator" title="arch.univariate.hill_estimator (Python function) — Hill tail-index estimator of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> and <a class="reference internal" href="../univariate/generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>,
+which use standardized residuals. The results of a model also have
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.excess_kurtosis.html#arch.univariate.base.ARCHModelResult.excess_kurtosis" title="arch.univariate.base.ARCHModelResult.excess_kurtosis (Python property) — Sample excess kurtosis of standardized residuals"><code class="xref py py-attr docutils literal notranslate"><span class="pre">excess_kurtosis</span></code></a>,
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.hill_estimator.html#arch.univariate.base.ARCHModelResult.hill_estimator" title="arch.univariate.base.ARCHModelResult.hill_estimator (Python method) — Hill tail-index estimator of standardized residuals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.var_ratio.html#arch.univariate.base.ARCHModelResult.var_ratio" title="arch.univariate.base.ARCHModelResult.var_ratio (Python method) — Ratio of Gaussian VaR to model-distribution VaR"><code class="xref py py-meth docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>, which use the
+standardized residuals and the estimated distribution of the model.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">method=&quot;maic&quot;</span></code> to the automatic lag selection of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a>. It selects the lag that minimizes the
+modified AIC of Ng and Perron (2001).</p></li>
+<li><p>Added the keyword argument <code class="docutils literal notranslate"><span class="pre">low_memory</span></code> to
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>, which is passed to the
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> test of the residuals. The default, <code class="docutils literal notranslate"><span class="pre">None</span></code>, selects
+the lag selection algorithm automatically.</p></li>
+<li><p>Kernel names are now looked up in one place,
+<code class="docutils literal notranslate"><span class="pre">arch.covariance.kernel.get_kernel_estimator</span></code>, using the list
+<code class="docutils literal notranslate"><span class="pre">arch.covariance.kernel.KERNELS</span></code>. All estimators that take a <code class="docutils literal notranslate"><span class="pre">kernel</span></code> accept
+the same names, in any case and with hyphens or underscores ignored, and raise
+the same error, which lists the available kernels, for an unknown name. As a
+result, the <code class="docutils literal notranslate"><span class="pre">fit</span></code> methods of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> accept names such
+as <code class="docutils literal notranslate"><span class="pre">&quot;quadratic-spectral&quot;</span></code>, which raised <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> in previous versions.</p></li>
+<li><p>Automatic lag selection in <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> no longer estimates an
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> test whose result was discarded, which makes it about
+three times faster.</p></li>
+<li><p><a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> no longer copies the resampled losses in each
+bootstrap replication.</p></li>
+<li><p>The long-run variance of the loss differentials that <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a>
+and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> use when <code class="docutils literal notranslate"><span class="pre">nested=False</span></code> is computed using an
+FFT, which makes <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> about twice as fast as in previous versions.</p></li>
+</ul>
+<h3 id="changes-that-alter-results">Changes that alter results<a class="headerlink" href="#changes-that-alter-results" title="Link to this heading">¶</a></h3>
+<p>These changes fix bugs that returned incorrect results, or make an option that had
+no effect work as documented. Each entry says who is affected and, where there is
+one, how to restore the previous results.</p>
 <ul class="simple">
 <li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> so that
 <code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> (the default) studentizes the loss differentials. In
@@ -465,45 +554,396 @@ previous versions the option had no effect on the results. The loss
 differentials are now studentized in the original data and inside each
 bootstrap replication, using the standard error from a kernel long-run
 variance estimator that matches the bootstrap, or from a nested bootstrap
-if <code class="docutils literal notranslate"><span class="pre">nested=True</span></code>. P-values, critical values and the superior models differ
-from previous versions when using the default arguments.</p></li>
+if <code class="docutils literal notranslate"><span class="pre">nested=True</span></code>. Everyone who uses the default arguments is affected:
+p-values, critical values and the superior models differ from previous versions,
+and the critical values apply to the studentized mean loss differentials, so
+code that compares <code class="docutils literal notranslate"><span class="pre">critical_values</span></code> with mean loss differentials or that uses
+fixed thresholds must change. For example, with 1000 observations, 12 models of
+which 3 are better than the benchmark and <code class="docutils literal notranslate"><span class="pre">reps=1000</span></code>, the lower, consistent and
+upper p-values change from 0.102, 0.162 and 0.162 to 0 for all three, the 5%
+consistent critical value changes from 0.173 to 2.52, <code class="docutils literal notranslate"><span class="pre">better_models</span></code> changes
+from empty to the three better models, and the <code class="docutils literal notranslate"><span class="pre">superior_models</span></code> of
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> with <code class="docutils literal notranslate"><span class="pre">size=0.10</span></code> change from no models to four
+models. When the evidence is weak the p-values can move in either direction. Use
+<code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> for the statistics that were always used in previous
+versions. Studentizing in each replication makes the default about 2.2 times
+slower (for 2000 observations, 100 models and 1000 replications, 1.35 seconds in
+previous versions and 2.99 seconds now).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nested=True</span></code> in <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and
 <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> now computes the variances used to studentize
 in every bootstrap replication using a nested bootstrap, and not only in the
-original data, and never uses the kernel estimator. <code class="docutils literal notranslate"><span class="pre">nested=True</span></code> requires
-<code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> and raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> otherwise.</p></li>
+original data, and never uses the kernel estimator. The run time grows with the
+square of <code class="docutils literal notranslate"><span class="pre">reps</span></code>: with 500 observations, 10 models and 200 replications it
+increased from 0.04 seconds to 3.2 seconds. <code class="docutils literal notranslate"><span class="pre">nested=True</span></code> requires
+<code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> and raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> otherwise, so there is no way to
+restore the previous statistics with <code class="docutils literal notranslate"><span class="pre">nested=True</span></code>.</p></li>
 <li><p>When <code class="docutils literal notranslate"><span class="pre">nested=False</span></code>, the long-run variances in
 <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a>, which are
 used to select the models that are re-centered when computing the consistent
 p-value, now use the kernel that matches the bootstrap. Previously they
 always used the stationary bootstrap kernel, so the consistent p-value can
 also change with <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> when using the circular or moving
-block bootstraps.</p></li>
+block bootstraps. Results of the stationary bootstrap do not change. In the
+examples that were checked the effect on the critical values was small: the 5%
+consistent critical value of the circular bootstrap changed from 0.1453 to
+0.1391 (-4%), and the 10% value of the moving block bootstrap from 0.1235 to
+0.1138 (-8%).</p></li>
+<li><p>Fixed the simulation and bootstrap forecasts of
+<a class="reference internal" href="../univariate/generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process"><code class="xref py py-class docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a>. The simulated paths started from the
+variance at the forecast origin instead of the one-step-ahead variance, and so
+the forecast of the first step differed from the analytic forecast and the
+error carried into longer horizons. Analytic forecasts, estimation and <code class="docutils literal notranslate"><span class="pre">fix</span></code>
+are not changed. For example, for a zero mean model of daily S&amp;P 500 returns,
+the simulated variance of the first step at the last origin changes from 3.048
+to 2.774 (-9%), which is the analytic forecast, and for a constant mean model of
+NASDAQ returns with Student’s t errors it changes from 3.383 to 5.462 (+61%) at
+one origin when the volatility had just increased.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed the acceleration constant of BCa confidence intervals computed by
+<a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.conf_int.html#arch.bootstrap.IIDBootstrap.conf_int" title="arch.bootstrap.IIDBootstrap.conf_int (Python method) — Function the computes parameter values.  See Notes for requirements"><code class="xref py py-meth docutils literal notranslate"><span class="pre">conf_int()</span></code></a> when the function returns more than
+one statistic. The jackknife estimates of each statistic were centered at the
+mean of the estimates of all of the statistics, and not at their own mean, which
+changed the intervals when the statistics are at different levels. Intervals of a
+function that returns one statistic are not changed. For example, for the column
+means of data with columns at levels near 3 and 103, the intervals changed from
+[2.4114, 2.9856] and [102.6764, 103.4099] to [2.4184, 2.9871] and
+[102.6954, 103.4222], which now equal the intervals from bootstrapping each
+column alone. Typical endpoint changes are 0.2% to 3%.</p></li>
+<li><p>Fixed the residuals and conditional volatility of <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a>
+results. In previous versions <code class="docutils literal notranslate"><span class="pre">resid</span></code>, <code class="docutils literal notranslate"><span class="pre">conditional_volatility</span></code>, <code class="docutils literal notranslate"><span class="pre">std_resid</span></code>
+and <code class="docutils literal notranslate"><span class="pre">rsquared</span></code>, and the quantities derived from them such as the output of
+<code class="docutils literal notranslate"><span class="pre">summary</span></code> and <code class="docutils literal notranslate"><span class="pre">arch_lm_test</span></code>, were computed as if the in-mean parameter
+<code class="docutils literal notranslate"><span class="pre">kappa</span></code> was 0, so they did not match the log-likelihood. They now use the
+same recursion as the log-likelihood, for all values of <code class="docutils literal notranslate"><span class="pre">form</span></code> and for both
+<code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">fix</span></code>. The estimated parameters, log-likelihood and standard
+errors are unchanged. The values change whenever <code class="docutils literal notranslate"><span class="pre">kappa</span></code> is not 0. For
+example, for a GARCH(1,1) model with one AR lag fit to the daily S&amp;P 500
+returns in <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>, the conditional volatility changes by at most
+3.7% (<code class="docutils literal notranslate"><span class="pre">form=&quot;log&quot;</span></code>), 5.1% (<code class="docutils literal notranslate"><span class="pre">&quot;vol&quot;</span></code>) and 6.1% (<code class="docutils literal notranslate"><span class="pre">&quot;var&quot;</span></code>), the largest
+change in a residual is 0.15, 0.53 and 1.1, and R-squared changes from
+0.0021 to 0.0021, from 0.0039 to 0.0012 and from 0.0047 to -0.0006.
+R-squared can now be negative for these models.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> models that use a
+<a class="reference internal" href="../univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GARCH</span></code></a> or <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> volatility
+process with <code class="docutils literal notranslate"><span class="pre">power</span> <span class="pre">!=</span> <span class="pre">2</span></code> (for example <code class="docutils literal notranslate"><span class="pre">TARCH</span></code> and <code class="docutils literal notranslate"><span class="pre">AVGARCH</span></code>). The volatility
+updaters used in estimation returned the recursion value <span class="math notranslate nohighlight">\(\sigma^{power}\)</span>
+instead of the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>, so the in-mean term and the log-likelihood
+used the wrong conditional variance. The log-likelihood, estimates, standard errors
+and <code class="docutils literal notranslate"><span class="pre">summary</span></code> change for these models; models with <code class="docutils literal notranslate"><span class="pre">power=2</span></code> are unchanged. For
+example, for a GARCH(1,1,1) model with <code class="docutils literal notranslate"><span class="pre">power=1</span></code> and one AR lag fit to the second
+half of the daily S&amp;P 500 returns in <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>, the log-likelihood changes
+from -3154.8 to -3111.1 and the in-mean coefficient <code class="docutils literal notranslate"><span class="pre">kappa</span></code> from 0.217 to 0.060
+(<code class="docutils literal notranslate"><span class="pre">form=&quot;var&quot;</span></code>). For a GARCH(1,0,1) model with <code class="docutils literal notranslate"><span class="pre">power=1.5</span></code> the log-likelihood
+changes from -3206.3 to -3190.5, and for a FIGARCH(1,d,1) model with <code class="docutils literal notranslate"><span class="pre">power=1</span></code> from
+-3285.8 to -3193.0.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed simulation and bootstrap variance forecasts of <a class="reference internal" href="../univariate/generated/arch.univariate.APARCH.html#arch.univariate.APARCH" title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">APARCH</span></code></a>
+models with <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code> and <code class="docutils literal notranslate"><span class="pre">o</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>. In previous versions the asymmetric term
+<code class="docutils literal notranslate"><span class="pre">|e|</span> <span class="pre">-</span> <span class="pre">gamma</span> <span class="pre">*</span> <span class="pre">e</span></code> overwrote the stored absolute shock, so from the second forecast
+horizon on the lagged shocks were wrong. Analytic, one-step and <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">1</span></code> forecasts
+are unchanged. For example, the simulated variance forecast of an APARCH(2,1,1) model
+changes by between 7% and 34% depending on the parameters and the horizon (12% at
+<code class="docutils literal notranslate"><span class="pre">horizon=2</span></code> in a typical case, from 0.271 to 0.239).</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed simulation forecasts of <a class="reference internal" href="../univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GARCH</span></code></a> models with
+<code class="docutils literal notranslate"><span class="pre">power</span> <span class="pre">!=</span> <span class="pre">2</span></code> (for example <code class="docutils literal notranslate"><span class="pre">TARCH</span></code> and <code class="docutils literal notranslate"><span class="pre">AVGARCH</span></code> models) that start in the first
+<code class="docutils literal notranslate"><span class="pre">max(p,</span> <span class="pre">o,</span> <span class="pre">q)</span></code> observations. In previous versions the pre-sample values were
+raised to the power <code class="docutils literal notranslate"><span class="pre">power</span> <span class="pre">/</span> <span class="pre">2</span></code> a second time, so the forecast made at
+<code class="docutils literal notranslate"><span class="pre">start=0</span></code> was wrong for any model with more than one lag. Forecasts that start
+later in the sample, and the analytic and bootstrap forecasts, are unchanged. For
+example, the one-step simulated variance of a GARCH(2,0,0) model with <code class="docutils literal notranslate"><span class="pre">power=1</span></code>
+at the first observation changes from 0.4184 to 0.4059 (3.1%), and that of a
+GARCH(2,1,2) model with <code class="docutils literal notranslate"><span class="pre">power=1</span></code> changes by 3.6%.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> with <code class="docutils literal notranslate"><span class="pre">sampling=&quot;semi-parametric&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling=&quot;parametric&quot;</span></code>
+in the bootstrap classes in <a class="reference internal" href="../bootstrap/bootstrap.html#module-arch.bootstrap" title="arch.bootstrap: Bootstrap methods for simulation and parameter inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.bootstrap</span></code></a>. In previous versions the
+<code class="docutils literal notranslate"><span class="pre">params</span></code> (and <code class="docutils literal notranslate"><span class="pre">state</span></code>) keywords used to simulate the data were added to the
+data of the bootstrap, so <code class="docutils literal notranslate"><span class="pre">method=&quot;studentized&quot;</span></code> raised an error when the
+studentization used a nested bootstrap. When <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> was also given, the
+nested bootstrap silently used the non-parametric statistic. The nested bootstrap now
+simulates the data in the same way as the outer bootstrap, so studentized intervals
+from the nested bootstrap with these samplers change from previous versions.</p></li>
+<li><p>Fixed <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> so that
+<code class="docutils literal notranslate"><span class="pre">df_adjust=True</span></code> scales the entire estimate of the conditional long-run
+variance, as <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> does.
+Previously only the first term was scaled, which overstated the parameter
+covariance and <code class="docutils literal notranslate"><span class="pre">long_run_variance</span></code> when the regressors are endogenous. Results
+using the default, <code class="docutils literal notranslate"><span class="pre">df_adjust=False</span></code>, are not changed. For example, in a
+regression with 100 observations and a bandwidth of 4, the standard errors with
+<code class="docutils literal notranslate"><span class="pre">df_adjust=True</span></code> were 9.5% larger than with <code class="docutils literal notranslate"><span class="pre">df_adjust=False</span></code> and are now
+1.6% larger, and <code class="docutils literal notranslate"><span class="pre">long_run_variance</span></code> was 20% larger and is now 3.1% larger. In
+regressions with about 400 observations the standard errors change by less than
+0.1%.</p></li>
+<li><p>Fixed <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> when the data are integers. The
+quasi-differenced data were truncated to integers, which produced a statistic and
+p-value that differ from those of the same data stored as floats. Results for data
+that are floats are not changed. For example, the statistic of one integer series
+changed from -0.3005 to -0.3378, and its p-value from 0.581 to 0.567. Convert the
+data to floats to obtain the previous statistic.</p></li>
 <li><p>Fixed <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> so that the autocovariances are
 not truncated to integers. In previous versions any series with
 non-integer values could return an incorrect bandwidth or raise
-<code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code>.</p></li>
-<li><p>Added <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>, which
-implements the VAR-HAC (den Haan and Levin) and pre-whitened recolored
-(Andrews and Monahan) long-run covariance estimators, and the
-<a class="reference internal" href="../covariance/generated/arch.covariance.kernel.ZeroLag.html#arch.covariance.kernel.ZeroLag" title="arch.covariance.kernel.ZeroLag (Python class) — Zero-lag (No autocorrelation) kernel covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZeroLag</span></code></a> kernel that it uses for VAR-HAC.
-The order, residuals and residual covariance of the VAR are available
-as <code class="docutils literal notranslate"><span class="pre">order</span></code>, <code class="docutils literal notranslate"><span class="pre">resid</span></code> and <code class="docutils literal notranslate"><span class="pre">resid_cov</span></code>.</p></li>
-<li><p>Kernel names are now looked up in one place,
-<code class="xref py py-func docutils literal notranslate"><span class="pre">arch.covariance.kernel.get_kernel_estimator()</span></code>, using the canonical
-list <code class="docutils literal notranslate"><span class="pre">arch.covariance.kernel.KERNELS</span></code>. All estimators that take a
-<code class="docutils literal notranslate"><span class="pre">kernel</span></code> accept the same names, in any case and with hyphens or
-underscores ignored, and raise the same error, which lists the available
-kernels, for an unknown name.</p></li>
-<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">FIAPARCH</span></code> so that models can be estimated when the Cython
-extension is not available. In previous versions <code class="docutils literal notranslate"><span class="pre">fit</span></code> raised an
-<code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> in pure-Python builds, since copying the model
-pickles the volatility updater using an attribute that was only set
-once the recursion had been initialized.</p></li>
-<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAMean</span></code></a>, a moving average mean model of
-order q with an optional constant that can be used with any volatility
-process and distribution. Analytic, simulation and bootstrap forecasts
-include the moving average terms for the first q steps.</p></li>
+<code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code>, which happened when all of the autocovariances were less
+than 1 in absolute value. For example, the bandwidths for the Bartlett, Parzen and
+quadratic spectral kernels of daily S&amp;P 500 percent returns change by +1.7%, +1.5%
+and +0.5%, and the quadratic spectral bandwidth of the first difference of a bond
+yield series changes by +61%. Only <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> is
+affected: the kernel classes, <a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test"><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> do not use it.</p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> now includes a model in <code class="docutils literal notranslate"><span class="pre">included</span></code> if its p-value is
+greater than or equal to <code class="docutils literal notranslate"><span class="pre">size</span></code> (previously strictly greater), and lists it in
+<code class="docutils literal notranslate"><span class="pre">excluded</span></code> only if the p-value is less than <code class="docutils literal notranslate"><span class="pre">size</span></code> (previously less than or
+equal). A model is in the model confidence set of size alpha if its MCS p-value is at
+least alpha. Bootstrap p-values are multiples of <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">reps</span></code>, so a p-value equal to
+<code class="docutils literal notranslate"><span class="pre">size</span></code> occurs in practice and the model was previously excluded.</p></li>
+</ul>
+<h3 id="backward-incompatible-changes">Backward-incompatible changes<a class="headerlink" href="#backward-incompatible-changes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">bootstrap</span></code> attribute of <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a>,
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> is now a read-only
+property. Assigning a bootstrap to an existing instance raises <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>,
+since quantities that depend on the bootstrap are computed when the instance is
+created. Create a new instance to use a different bootstrap.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nested=True</span></code> with <code class="docutils literal notranslate"><span class="pre">studentize=False</span></code> in <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. The combination was
+accepted in previous versions.</p></li>
+<li><p>The exceptions raised for invalid input are different in several places, and some
+calls that were accepted now raise. See “Bug fixes” for details. The ones most
+likely to affect code are: <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> raises
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code>, and not <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code>, for a <code class="docutils literal notranslate"><span class="pre">p</span></code> that is not an integer; the
+<code class="docutils literal notranslate"><span class="pre">method</span></code> of the unit root tests raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> or <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> with a
+different message;
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.arch_lm_test.html#arch.univariate.base.ARCHModelResult.arch_lm_test" title="arch.univariate.base.ARCHModelResult.arch_lm_test (Python method) — ARCH LM test for conditional heteroskedasticity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">arch_lm_test()</span></code></a> raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>
+when <code class="docutils literal notranslate"><span class="pre">lags</span></code> is less than 1, which was replaced by 1;
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a>, <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when the losses contain <code class="docutils literal notranslate"><span class="pre">NaN</span></code>
+or infinite values; and the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the circular, moving block and
+stationary bootstraps and the <code class="docutils literal notranslate"><span class="pre">method</span></code> of <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> are
+validated.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> in <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> no longer receives the <code class="docutils literal notranslate"><span class="pre">params</span></code> and <code class="docutils literal notranslate"><span class="pre">state</span></code>
+keywords that are used to simulate data when <code class="docutils literal notranslate"><span class="pre">sampling</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;semi-parametric&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;parametric&quot;</span></code>. It is called as <code class="docutils literal notranslate"><span class="pre">std_err_func(params,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code>, where
+<code class="docutils literal notranslate"><span class="pre">params</span></code> is the estimate and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> contains only the data and <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code>.
+Previously a <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> with a first argument named <code class="docutils literal notranslate"><span class="pre">params</span></code> raised a
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for these samplers.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> keyword argument of
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.hedgehog_plot.html#arch.univariate.base.ARCHModelResult.hedgehog_plot" title="arch.univariate.base.ARCHModelResult.hedgehog_plot (Python method) — Plot forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hedgehog_plot()</span></code></a> has been removed. See
+“Deprecations and removals”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">block_size</span></code> of <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.CircularBlockBootstrap.html#arch.bootstrap.CircularBlockBootstrap" title="arch.bootstrap.CircularBlockBootstrap (Python class) — Bootstrap using blocks of the same length with end-to-start wrap around"><code class="xref py py-class docutils literal notranslate"><span class="pre">CircularBlockBootstrap</span></code></a>,
+<a class="reference internal" href="../bootstrap/generated/arch.bootstrap.MovingBlockBootstrap.html#arch.bootstrap.MovingBlockBootstrap" title="arch.bootstrap.MovingBlockBootstrap (Python class) — Bootstrap using blocks of the same length without wrap around"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovingBlockBootstrap</span></code></a> and
+<a class="reference internal" href="../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap" title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes"><code class="xref py py-class docutils literal notranslate"><span class="pre">StationaryBootstrap</span></code></a> is now a read-only property, and setting
+it raises an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>. In previous versions the attribute could be set, but
+the stationary bootstrap ignored the new value when sampling and <code class="docutils literal notranslate"><span class="pre">clone</span></code>, which is
+used for the nested bootstrap of studentized confidence intervals, used the value
+passed to the constructor. Create a new bootstrap to use a different block size.</p></li>
+</ul>
+<h3 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a>, which raised a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when all of
+the models were found to be superior after more than one round of the procedure
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/862">GH862</a>).</p></li>
+<li><p>Fixed the check that <code class="docutils literal notranslate"><span class="pre">p</span></code> is a scalar <code class="docutils literal notranslate"><span class="pre">int</span></code> in
+<a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>, which only worked when <code class="docutils literal notranslate"><span class="pre">vol</span></code> was lower
+case. In other cases, including the default <code class="docutils literal notranslate"><span class="pre">vol=&quot;GARCH&quot;</span></code>, an
+<code class="docutils literal notranslate"><span class="pre">AssertionError</span></code> was raised for a <code class="docutils literal notranslate"><span class="pre">p</span></code> that is not an <code class="docutils literal notranslate"><span class="pre">int</span></code>. A <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>
+is now always raised. Contributed by gjunjie.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> used to select the number of lags in <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> is not case
+sensitive. In previous versions <code class="docutils literal notranslate"><span class="pre">&quot;AIC&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;BIC&quot;</span></code>, which were the documented
+values, raised a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;t&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;tstat&quot;</span></code> are accepted as aliases
+of <code class="docutils literal notranslate"><span class="pre">&quot;t-stat&quot;</span></code>, a <code class="docutils literal notranslate"><span class="pre">method</span></code> that is not a string raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> and an
+unknown <code class="docutils literal notranslate"><span class="pre">method</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> that lists the valid choices.</p></li>
+<li><p>Fixed <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a>, which raised an exception when the
+data are integers.</p></li>
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">trend</span></code> property of the results of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>, which was always <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>.</p></li>
+<li><p>The summary of the results of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> now has the title
+“Canonical Cointegrating Regression” and not “Fully Modified OLS”.</p></li>
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> models that include a constant, lags and
+exogenous regressors stored in a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which raised
+<code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">ndarray</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">C-contiguous</span></code> when estimated.</p></li>
+<li><p>Fixed a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> when a timezone-naive <code class="docutils literal notranslate"><span class="pre">Timestamp</span></code> is used as <code class="docutils literal notranslate"><span class="pre">first_obs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">last_obs</span></code> or <code class="docutils literal notranslate"><span class="pre">start</span></code>, for example in
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.fit.html#arch.univariate.base.ARCHModel.fit" title="arch.univariate.base.ARCHModel.fit (Python method) — Estimate model parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.html#arch.univariate.base.ARCHModel.forecast" title="arch.univariate.base.ARCHModel.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>, with data that have a timezone
+aware index. The <code class="docutils literal notranslate"><span class="pre">Timestamp</span></code> is treated as the equivalent date string.</p></li>
+<li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> with <code class="docutils literal notranslate"><span class="pre">method=&quot;max&quot;</span></code>, which could fail to
+terminate when the estimated standard deviation of a loss difference is 0, for
+example when two of the losses are identical. A <code class="docutils literal notranslate"><span class="pre">RuntimeWarning</span></code> is issued.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed analytic forecasts of <a class="reference internal" href="../univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process"><code class="xref py py-class docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a> with
+<code class="docutils literal notranslate"><span class="pre">asym=True</span></code>. In previous versions <code class="docutils literal notranslate"><span class="pre">forecast</span></code> raised a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for
+any <code class="docutils literal notranslate"><span class="pre">start</span></code> other than 0, including the default which forecasts only the
+final observation. The asymmetry indicator was not restricted to the
+observations starting at <code class="docutils literal notranslate"><span class="pre">start</span></code>.</p></li>
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.arch_lm_test.html#arch.univariate.base.ARCHModelResult.arch_lm_test" title="arch.univariate.base.ARCHModelResult.arch_lm_test (Python method) — ARCH LM test for conditional heteroskedasticity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">arch_lm_test()</span></code></a> so that <code class="docutils literal notranslate"><span class="pre">lags</span></code>
+accepts any integer, including NumPy integers such as <code class="docutils literal notranslate"><span class="pre">np.int64(5)</span></code>, which
+previously raised an <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code>. Non-integer values now raise a
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code>, and values below 1, which were silently replaced by 1, now raise a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. The documentation now gives the default number of lags,
+<span class="math notranslate nohighlight">\(\lceil 12 (T/100)^{1/4} \rceil\)</span>, and states that the statistic is <span class="math notranslate nohighlight">\(T\)</span>
+times the R-squared of the auxiliary regression. The statistic is unchanged.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">method</span></code> argument of <code class="docutils literal notranslate"><span class="pre">forecast</span></code> so that it is case insensitive for all
+three methods. In previous versions <code class="docutils literal notranslate"><span class="pre">method=&quot;Simulation&quot;</span></code> (or any capitalization
+other than <code class="docutils literal notranslate"><span class="pre">&quot;simulation&quot;</span></code>) silently ran the bootstrap and ignored <code class="docutils literal notranslate"><span class="pre">rng</span></code>, while
+<code class="docutils literal notranslate"><span class="pre">&quot;Analytic&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;Bootstrap&quot;</span></code> worked. An unknown <code class="docutils literal notranslate"><span class="pre">method</span></code> now raises a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> that lists the valid methods. Forecasts that use the lower case names
+are unchanged.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.html#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="arch.univariate.base.ARCHModelFixedResult.hedgehog_plot (Python method) — Plot forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hedgehog_plot()</span></code></a> for models
+without analytic multi-step variance forecasts (<a class="reference internal" href="../univariate/generated/arch.univariate.EGARCH.html#arch.univariate.EGARCH" title="arch.univariate.EGARCH (Python class) — EGARCH model estimation"><code class="xref py py-class docutils literal notranslate"><span class="pre">EGARCH</span></code></a>,
+<a class="reference internal" href="../univariate/generated/arch.univariate.APARCH.html#arch.univariate.APARCH" title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">APARCH</span></code></a>, <a class="reference internal" href="../univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a> and
+<a class="reference internal" href="../univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GARCH</span></code></a> with <code class="docutils literal notranslate"><span class="pre">power</span> <span class="pre">!=</span> <span class="pre">2</span></code>). With the default arguments it
+never returned. It now raises the <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> from <code class="docutils literal notranslate"><span class="pre">forecast</span></code>; use
+<code class="docutils literal notranslate"><span class="pre">method=&quot;simulation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">method=&quot;bootstrap&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">horizon=1</span></code>.</p></li>
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.html#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="arch.univariate.base.ARCHModelFixedResult.hedgehog_plot (Python method) — Plot forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hedgehog_plot()</span></code></a> so that the
+spines start at the forecast origin. In previous versions, whenever the first
+forecast origin was not the first observation (every model with lags, such as
+<a class="reference internal" href="../univariate/generated/arch.univariate.ARX.html#arch.univariate.ARX" title="arch.univariate.ARX (Python class) — Autoregressive model with optional exogenous regressors estimation and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARX</span></code></a> or <a class="reference internal" href="../univariate/generated/arch.univariate.HARX.html#arch.univariate.HARX" title="arch.univariate.HARX (Python class) — Heterogeneous Autoregression (HAR), with optional exogenous regressors, model estimation and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HARX</span></code></a>, and every call
+with <code class="docutils literal notranslate"><span class="pre">start</span></code>), the spines were drawn too early by the number of observations
+before the first origin. The forecasts that are plotted were correct.</p></li>
+<li><p><a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.plot.html#arch.univariate.base.ARCHModelFixedResult.plot" title="arch.univariate.base.ARCHModelFixedResult.plot (Python method) — Plot standardized residuals and conditional volatility"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.html#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="arch.univariate.base.ARCHModelFixedResult.hedgehog_plot (Python method) — Plot forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hedgehog_plot()</span></code></a> now work when the
+data has a <code class="docutils literal notranslate"><span class="pre">pandas.PeriodIndex</span></code>. Previously they raised a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../univariate/generated/generated/arch.univariate.MIDASHyperbolic.simulate.html#arch.univariate.MIDASHyperbolic.simulate" title="arch.univariate.MIDASHyperbolic.simulate (Python method) — Simulate data from the model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simulate()</span></code></a>, which raised an
+<code class="docutils literal notranslate"><span class="pre">IndexError</span></code> when <code class="docutils literal notranslate"><span class="pre">burn</span></code> was smaller than the number of lags, <code class="docutils literal notranslate"><span class="pre">m</span></code>, also when
+simulating through a mean model. The first <code class="docutils literal notranslate"><span class="pre">m</span></code> observations are always discarded.</p></li>
+<li><p><a class="reference internal" href="../univariate/generated/arch.univariate.HARCH.html#arch.univariate.HARCH" title="arch.univariate.HARCH (Python class) — Heterogeneous ARCH process"><code class="xref py py-class docutils literal notranslate"><span class="pre">HARCH</span></code></a> now accepts a NumPy array of lags, as documented,
+including through <code class="docutils literal notranslate"><span class="pre">arch_model(...,</span> <span class="pre">vol=&quot;HARCH&quot;,</span> <span class="pre">p=np.array([1,</span> <span class="pre">5,</span> <span class="pre">22]))</span></code>. Lags that
+are not positive now raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when the model is created. Previously
+they failed later with a <code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code>.</p></li>
+<li><p><a class="reference internal" href="../univariate/generated/generated/arch.univariate.ConstantMean.simulate.html#arch.univariate.ConstantMean.simulate" title="arch.univariate.ConstantMean.simulate (Python method) — Simulated data from a constant mean model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simulate()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.ZeroMean.simulate.html#arch.univariate.ZeroMean.simulate" title="arch.univariate.ZeroMean.simulate (Python method) — Simulated data from a zero mean model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simulate()</span></code></a> now raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if <code class="docutils literal notranslate"><span class="pre">params</span></code>
+has the wrong number of elements. Previously extra values were silently ignored and
+too few values raised an <code class="docutils literal notranslate"><span class="pre">IndexError</span></code>.</p></li>
+<li><p><a class="reference internal" href="../univariate/generated/arch.univariate.ARX.html#arch.univariate.ARX" title="arch.univariate.ARX (Python class) — Autoregressive model with optional exogenous regressors estimation and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARX</span></code></a>, <a class="reference internal" href="../univariate/generated/arch.univariate.HARX.html#arch.univariate.HARX" title="arch.univariate.HARX (Python class) — Heterogeneous Autoregression (HAR), with optional exogenous regressors, model estimation and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HARX</span></code></a>,
+<a class="reference internal" href="../univariate/generated/arch.univariate.LS.html#arch.univariate.LS" title="arch.univariate.LS (Python class) — Least squares model estimation and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">LS</span></code></a> and <a class="reference internal" href="../univariate/generated/arch.univariate.ConstantMean.html#arch.univariate.ConstantMean" title="arch.univariate.ConstantMean (Python class) — Constant mean model estimation and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantMean</span></code></a> models that
+have not been fit can now be used with <code class="docutils literal notranslate"><span class="pre">starting_values</span></code> and
+<code class="docutils literal notranslate"><span class="pre">forecast(params)</span></code>, for example to forecast from new data using parameters
+estimated elsewhere. Previously these raised an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>.</p></li>
+<li><p><a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> now accepts NumPy integers for <code class="docutils literal notranslate"><span class="pre">p</span></code>, such as the
+elements of <code class="docutils literal notranslate"><span class="pre">np.arange(1,</span> <span class="pre">4)</span></code>, which were rejected. <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">o</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> are
+checked in the same way: a value that is not an integer, for example <code class="docutils literal notranslate"><span class="pre">q=1.0</span></code>,
+raises a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. Previously <code class="docutils literal notranslate"><span class="pre">o</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> were truncated with <code class="docutils literal notranslate"><span class="pre">int</span></code>.</p></li>
+<li><p><a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.fit.html#arch.univariate.base.ARCHModel.fit" title="arch.univariate.base.ARCHModel.fit (Python method) — Estimate model parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> no longer writes <code class="docutils literal notranslate"><span class="pre">disp</span></code> into the
+dictionary passed as <code class="docutils literal notranslate"><span class="pre">options</span></code>, which made a later call that reused the dictionary
+ignore its <code class="docutils literal notranslate"><span class="pre">disp</span></code> argument.</p></li>
+<li><p>Corrected the documentation of <code class="docutils literal notranslate"><span class="pre">forecast</span></code> for models with exogenous variables,
+which stated that only 1-step forecasts are available, and of the <code class="docutils literal notranslate"><span class="pre">simulate</span></code>
+methods of the mean models, which stated that <code class="docutils literal notranslate"><span class="pre">initial_value</span></code> and <code class="docutils literal notranslate"><span class="pre">x</span></code> are not
+used when they must be <code class="docutils literal notranslate"><span class="pre">None</span></code>. The units of the initial value of the volatility
+process in <code class="docutils literal notranslate"><span class="pre">simulate</span></code> are now documented.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> with <code class="docutils literal notranslate"><span class="pre">method=&quot;R&quot;</span></code>, which raised a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>
+when the models with the worst losses had exactly equal test statistics, for example
+two models with the same mean loss. The first of the tied models is eliminated.</p></li>
+<li><p><a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a>, <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and
+<a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> now raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the losses contain
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> or infinite values. In previous versions <code class="docutils literal notranslate"><span class="pre">MCS</span></code> with <code class="docutils literal notranslate"><span class="pre">method=&quot;max&quot;</span></code> never
+returned, <code class="docutils literal notranslate"><span class="pre">MCS</span></code> with <code class="docutils literal notranslate"><span class="pre">method=&quot;R&quot;</span></code> raised an <code class="docutils literal notranslate"><span class="pre">IndexError</span></code>, <code class="docutils literal notranslate"><span class="pre">SPA</span></code> returned
+p-values of 0 and <code class="docutils literal notranslate"><span class="pre">StepM</span></code> returned no superior models, even if only one loss was
+missing.</p></li>
+<li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> with unsigned
+integer losses, where the loss differentials wrapped around, and with boolean losses,
+which raised a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. The loss differentials are now computed in
+floating point.</p></li>
+</ul>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">conf_int(method=&quot;bca&quot;)</span></code> in the bootstrap classes in <a class="reference internal" href="../bootstrap/bootstrap.html#module-arch.bootstrap" title="arch.bootstrap: Bootstrap methods for simulation and parameter inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.bootstrap</span></code></a> now
+raises the documented <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> when all of the leave-one-out jackknife
+estimates are equal (for example the maximum when the maximum is tied) or not finite.
+In previous versions the acceleration was computed from rounding error, or was
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code>, and an interval was returned without a warning.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the circular, moving block and stationary bootstraps is now
+validated. It must be an integer that is at least 1, except in the stationary
+bootstrap where it is the mean block length and can be any number that is at least 1
+(for example, the value estimated by <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.optimal_block_length.html#arch.bootstrap.optimal_block_length" title="arch.bootstrap.optimal_block_length (Python function) — Estimate optimal window length for time-series bootstraps"><code class="xref py py-func docutils literal notranslate"><span class="pre">optimal_block_length()</span></code></a>).
+Previously 0, negative and non-integer values raised unrelated errors or, for the
+stationary bootstrap, were silently used. <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.MCS.html#arch.bootstrap.MCS" title="arch.bootstrap.MCS (Python class) — Model Confidence Set (MCS) of Hansen, Lunde and Nason."><code class="xref py py-class docutils literal notranslate"><span class="pre">MCS</span></code></a> now raises a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if <code class="docutils literal notranslate"><span class="pre">method</span></code> is not <code class="docutils literal notranslate"><span class="pre">&quot;R&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code> (in any case); previously
+any other value was treated as <code class="docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">conf_int(method=&quot;studentized&quot;)</span></code> raises a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if <code class="docutils literal notranslate"><span class="pre">studentize_reps</span></code> is less than 1 and <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> is not
+provided, where it previously returned the degenerate interval <code class="docutils literal notranslate"><span class="pre">[base,</span> <span class="pre">base]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">conf_int</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> in the bootstrap classes now accept a statistic that
+returns a list, a tuple or a 0-dimensional array, as <code class="docutils literal notranslate"><span class="pre">apply</span></code> already did. <code class="docutils literal notranslate"><span class="pre">apply</span></code>
+now raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> contains the name of a bootstrapped
+variable, as <code class="docutils literal notranslate"><span class="pre">conf_int</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> do, instead of silently replacing the
+bootstrapped data.</p></li>
+<li><p>Renamed <code class="docutils literal notranslate"><span class="pre">_repr_html</span></code> to <code class="docutils literal notranslate"><span class="pre">_repr_html_</span></code> in the bootstrap classes so that Jupyter
+uses the HTML representation. Corrected a missing space in an error message of the BCa
+bias correction.</p></li>
+<li><p><a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> issue a
+<code class="docutils literal notranslate"><span class="pre">RuntimeWarning</span></code> if the loss differential of a model is constant, for example
+because the model is identical to the benchmark. The test statistic of such a model is
+not meaningful, and <code class="docutils literal notranslate"><span class="pre">SPA</span></code> reported p-values of 0 in this case. The results are
+unchanged.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Fixed a pandas 3.1 <code class="docutils literal notranslate"><span class="pre">Pandas4Warning</span></code> for time zone aware indices in date lookups.</p></li>
+<li><p>Corrected the documented default of <code class="docutils literal notranslate"><span class="pre">force_int</span></code> in
+<a class="reference internal" href="../unitroot/generated/generated/arch.unitroot.cointegration.FullyModifiedOLS.fit.html#arch.unitroot.cointegration.FullyModifiedOLS.fit" title="arch.unitroot.cointegration.FullyModifiedOLS.fit (Python method) — Estimate the cointegrating vector."><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a>, which is <code class="docutils literal notranslate"><span class="pre">True</span></code>, and
+the documentation of <code class="docutils literal notranslate"><span class="pre">reindex</span></code> in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.html#arch.univariate.base.ARCHModel.forecast" title="arch.univariate.base.ARCHModel.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>.
+The documentation of <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> states that BCa uses the leave-one-out jackknife
+and that studentized intervals use a nested bootstrap of the same type and block
+size, and the kernel covariance estimators cite Andrews (1991) and Newey and West
+(1994) for the automatic bandwidth.</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a>, <a class="reference internal" href="../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant, model estimation, simulation and forecasting"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAMean</span></code></a>,
+<a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a> and the residual diagnostics
+to the API documentation, and a section on forecasting after new data arrive to
+the forecasting guide.</p></li>
+</ul>
+<h3 id="deprecations-and-removals">Deprecations and removals<a class="headerlink" href="#deprecations-and-removals" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Removed the <code class="docutils literal notranslate"><span class="pre">type</span></code> keyword argument of
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.hedgehog_plot.html#arch.univariate.base.ARCHModelResult.hedgehog_plot" title="arch.univariate.base.ARCHModelResult.hedgehog_plot (Python method) — Plot forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hedgehog_plot()</span></code></a>, which has been
+deprecated in favor of <code class="docutils literal notranslate"><span class="pre">plot_type</span></code> since 4.0.</p></li>
+<li><p><a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test"><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> no longer issues a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code> when
+<code class="docutils literal notranslate"><span class="pre">lags</span></code> is not provided. The data-dependent lag selection has been the default
+since 4.8. Use <code class="docutils literal notranslate"><span class="pre">lags=-1</span></code> for the lag length that depends only on the sample
+size.</p></li>
+<li><p>Removed the empty module <code class="docutils literal notranslate"><span class="pre">arch.__future__</span></code>. The import
+<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">arch.__future__</span> <span class="pre">import</span> <span class="pre">reindexing</span></code> has been a no-op since 6.2.</p></li>
+</ul>
+<h3 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux
+on x86-64 and aarch64, and musllinux on x86-64), Windows (AMD64) and macOS (arm64
+and x86-64) for each of them. 9.0 is the last release that supports Python 3.10
+and NumPy 1.x. Later releases will raise the other minimum versions accordingly.</p></li>
+<li><p>Building from source requires Cython 3.1.0 or later.</p></li>
+<li><p>Running the test suite requires pytest 9 or later.</p></li>
+<li><p>The continuous integration now builds and tests the wheel on macOS (arm64 and
+Intel), and tests Python 3.10 to 3.15 with exact versions of the dependencies.</p></li>
+</ul>
+<h3 id="minimum-versions">Minimum versions<a class="headerlink" href="#minimum-versions" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The minimum version of statsmodels is now 0.13.1. Version 0.13.0 has no wheels for
+Python 3.10.</p></li>
+<li><p>The minimum versions of Python (3.10), NumPy (1.22.3), SciPy (1.8) and pandas
+(1.4.0) have not changed. Building from source requires Cython 3.1.0, and running
+the tests requires pytest 9.</p></li>
+</ul>
+<h3 id="contributors">Contributors<a class="headerlink" href="#contributors" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Thanks to the contributors to this release: aeshef, albystack, gjunjie, heykav,
+pedrosfaria2, premdev1234, raashish1601, VenishPaneliya, WatchTree-19 and
+ZacKienzle2, and to lucaluo925 for reporting the BCa issue (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/866">GH866</a>).</p></li>
 </ul>
 
 
@@ -596,11 +1036,13 @@ include the moving average terms for the first q steps.</p></li>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

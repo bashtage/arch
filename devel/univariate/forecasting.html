@@ -23,7 +23,7 @@
     
   
       
-        <title>Forecasting - arch v8.0.1 (+219)</title>
+        <title>Forecasting - arch v8.0.1 (+244)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -1258,11 +1258,10 @@ the choices available for forecasting.  The model can be described as</p>
    e_t        &amp; \sim &amp; N(0,1)
 \end{eqnarray}</div><p>In code this model can be constructed using data from the S&amp;P 500 using</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch</span><span class="w"> </span><span class="kn">import</span> <span class="n">arch_model</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">'^GSPC'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'2000-01-01'</span><span class="p">:</span><span class="s1">'2014-01-01'</span><span class="p">]</span>
 <span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s1">'Garch'</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">)</span>
 </code></pre></div>
@@ -1370,11 +1369,11 @@ This will differ from <code class="docutils literal notranslate"><span class="pr
 <p>which returns</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>                 <span class="n">h</span><span class="mf">.1</span>       <span class="n">h</span><span class="mf">.2</span>       <span class="n">h</span><span class="mf">.3</span>       <span class="n">h</span><span class="mf">.4</span>       <span class="n">h</span><span class="mf">.5</span>
 <span class="n">Date</span>
-<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">24</span>  <span class="mf">0.489534</span>  <span class="mf">0.495875</span>  <span class="mf">0.501122</span>  <span class="mf">0.509194</span>  <span class="mf">0.518614</span>
-<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">26</span>  <span class="mf">0.474691</span>  <span class="mf">0.480416</span>  <span class="mf">0.483664</span>  <span class="mf">0.491932</span>  <span class="mf">0.502419</span>
-<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">27</span>  <span class="mf">0.447054</span>  <span class="mf">0.454875</span>  <span class="mf">0.462167</span>  <span class="mf">0.467515</span>  <span class="mf">0.475632</span>
-<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">30</span>  <span class="mf">0.421528</span>  <span class="mf">0.430024</span>  <span class="mf">0.439856</span>  <span class="mf">0.448282</span>  <span class="mf">0.457368</span>
-<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span>  <span class="mf">0.407544</span>  <span class="mf">0.415616</span>  <span class="mf">0.422848</span>  <span class="mf">0.430246</span>  <span class="mf">0.439451</span>
+<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">24</span>  <span class="mf">0.489534</span>  <span class="mf">0.496998</span>  <span class="mf">0.504412</span>  <span class="mf">0.511775</span>  <span class="mf">0.519089</span>
+<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">26</span>  <span class="mf">0.474691</span>  <span class="mf">0.482255</span>  <span class="mf">0.489768</span>  <span class="mf">0.497231</span>  <span class="mf">0.504643</span>
+<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">27</span>  <span class="mf">0.447054</span>  <span class="mf">0.454805</span>  <span class="mf">0.462503</span>  <span class="mf">0.470150</span>  <span class="mf">0.477744</span>
+<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">30</span>  <span class="mf">0.421528</span>  <span class="mf">0.429451</span>  <span class="mf">0.437320</span>  <span class="mf">0.445137</span>  <span class="mf">0.452900</span>
+<span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span>  <span class="mf">0.407544</span>  <span class="mf">0.415561</span>  <span class="mf">0.423525</span>  <span class="mf">0.431434</span>  <span class="mf">0.439290</span>
 </code></pre></div>
 </div>
 <p>The values in the columns <code class="docutils literal notranslate"><span class="pre">h.1</span></code> are one-step ahead forecast, while values in
@@ -1395,16 +1394,16 @@ observation used to estimate the model.</p>
 <span class="mi">2009</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">29</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>
 <span class="mi">2009</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">30</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>
 <span class="mi">2009</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>
-<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">04</span>  <span class="mf">0.739303</span>  <span class="mf">0.741100</span>  <span class="mf">0.744529</span>  <span class="mf">0.746940</span>  <span class="mf">0.752688</span>
-<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">05</span>  <span class="mf">0.695349</span>  <span class="mf">0.702488</span>  <span class="mf">0.706812</span>  <span class="mf">0.713342</span>  <span class="mf">0.721629</span>
-<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">06</span>  <span class="mf">0.649343</span>  <span class="mf">0.654048</span>  <span class="mf">0.664055</span>  <span class="mf">0.672742</span>  <span class="mf">0.681263</span>
+<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">04</span>  <span class="mf">0.739303</span>  <span class="mf">0.745081</span>  <span class="mf">0.750819</span>  <span class="mf">0.756519</span>  <span class="mf">0.762181</span>
+<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">05</span>  <span class="mf">0.695349</span>  <span class="mf">0.701424</span>  <span class="mf">0.707457</span>  <span class="mf">0.713450</span>  <span class="mf">0.719402</span>
+<span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">06</span>  <span class="mf">0.649343</span>  <span class="mf">0.655728</span>  <span class="mf">0.662070</span>  <span class="mf">0.668369</span>  <span class="mf">0.674625</span>
 </code></pre></div>
 </div>
 <p>The output will always have as many rows as the data input.  Values
 that are not forecast are <code class="docutils literal notranslate"><span class="pre">nan</span></code> filled.</p>
 <h2 id="forecasting-after-new-data-arrive">Forecasting After New Data Arrive<a class="headerlink" href="#forecasting-after-new-data-arrive" title="Link to this heading">¶</a></h2>
 <p>Models do not need to be re-estimated each time new data are available.
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code> adds observations to a model
+<a class="reference internal" href="generated/generated/arch.univariate.HARX.append.html#arch.univariate.HARX.append" title="arch.univariate.HARX.append (Python method) — Append observations to the model in-place"><code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code></a> adds observations to a model
 in-place without changing any parameters, so that forecasts can be produced
 from the latest observation using parameters estimated previously.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="n">split_date</span><span class="p">],</span> <span class="n">vol</span><span class="o">=</span><span class="s1">'Garch'</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">)</span>
@@ -1540,7 +1539,7 @@ previously. Results objects produced before calling <code class="docutils litera
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

@@ -23,7 +23,7 @@
     
   
       
-        <title>Multiple Comparisons - arch v8.0.1 (+219)</title>
+        <title>Multiple Comparisons - arch v8.0.1 (+244)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+219)
+            arch v8.0.1 (+244)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+219)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+219)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+219)
+    arch v8.0.1 (+244)
   </label>
   
     <div class="md-nav__source">
@@ -838,13 +838,13 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.186
-consistent    0.214
-upper         0.214
+lower         0.639
+consistent    0.727
+upper         0.729
 dtype: float64
 </pre></div></div>
 </div>
-<p>The same blocks can be repeated to perform a simulation study. Here I only use 100 replications since this should complete in a reasonable amount of time. Also I set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap replications in each application of the SPA (the default is a more reasonable 1000).</p>
+<p>The same blocks can be repeated to perform a simulation study. Here I only use 100 replications since this should complete in a reasonable amount of time. I also use 100 models in each replication rather than 500, and set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap replications in each application of the SPA (the default is a more reasonable 1000). The cost of each SPA grows with the number of models and with <code class="docutils literal notranslate"><span class="pre">reps</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
 </code></pre></div>
@@ -868,8 +868,8 @@ dtype: float64
     <span class="n">bm_beta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span> <span class="n">bm_factors</span><span class="p">[:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
     <span class="c1"># MSE loss</span>
     <span class="n">bm_losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bm_factors</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">bm_beta</span><span class="p">))</span> <span class="o">**</span> <span class="mf">2.0</span>
-    <span class="c1"># Number of models</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="c1"># Number of models, fewer than above to limit the run time</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="n">model_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="n">model_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
@@ -955,9 +955,9 @@ dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.027
-consistent    0.042
-upper         0.042
+lower         0.0
+consistent    0.0
+upper         0.0
 dtype: float64
 </pre></div></div>
 </div>
@@ -1002,7 +1002,7 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Model indices:
-[&#39;460&#39;]
+[&#39;27&#39;, &#39;240&#39;, &#39;360&#39;, &#39;405&#39;, &#39;410&#39;, &#39;415&#39;, &#39;423&#39;, &#39;425&#39;, &#39;430&#39;, &#39;431&#39;, &#39;435&#39;, &#39;437&#39;, &#39;444&#39;, &#39;459&#39;, &#39;465&#39;, &#39;468&#39;, &#39;469&#39;, &#39;471&#39;, &#39;472&#39;, &#39;475&#39;, &#39;480&#39;, &#39;488&#39;, &#39;492&#39;, &#39;494&#39;, &#39;496&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1059,35 +1059,35 @@ Model indices:
 MCS P-values
             Pvalue
 Model name
-model.180    0.000
 model.100    0.000
-model.20     0.000
-model.140    0.000
-model.220    0.000
-model.40     0.000
-model.120    0.000
-model.380    0.000
-model.160    0.000
-model.80     0.000
-model.0      0.003
-model.280    0.006
-model.260    0.006
-model.360    0.006
-model.60     0.006
-model.200    0.067
-model.240    0.067
-model.440    0.119
-model.320    0.177
-model.400    0.179
-model.340    0.179
-model.300    0.179
-model.420    0.519
-model.480    0.519
-model.460    1.000
+model.0      0.000
+model.40     0.003
+model.140    0.040
+model.200    0.076
+model.80     0.086
+model.20     0.086
+model.260    0.106
+model.60     0.124
+model.120    0.133
+model.380    0.334
+model.160    0.375
+model.300    0.375
+model.280    0.375
+model.340    0.541
+model.220    0.734
+model.460    0.734
+model.440    0.910
+model.180    0.910
+model.400    0.910
+model.360    0.910
+model.240    0.910
+model.320    0.910
+model.420    0.910
+model.480    1.000
 Included
-[&#39;300&#39;, &#39;320&#39;, &#39;340&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;]
+[&#39;120&#39;, &#39;160&#39;, &#39;180&#39;, &#39;220&#39;, &#39;240&#39;, &#39;260&#39;, &#39;280&#39;, &#39;300&#39;, &#39;320&#39;, &#39;340&#39;, &#39;360&#39;, &#39;380&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;, &#39;60&#39;]
 Excluded
-[&#39;0&#39;, &#39;100&#39;, &#39;120&#39;, &#39;140&#39;, &#39;160&#39;, &#39;180&#39;, &#39;20&#39;, &#39;200&#39;, &#39;220&#39;, &#39;240&#39;, &#39;260&#39;, &#39;280&#39;, &#39;360&#39;, &#39;380&#39;, &#39;40&#39;, &#39;60&#39;, &#39;80&#39;]
+[&#39;0&#39;, &#39;100&#39;, &#39;140&#39;, &#39;20&#39;, &#39;200&#39;, &#39;40&#39;, &#39;80&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1201,7 +1201,7 @@ Excluded
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
