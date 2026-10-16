@@ -5,8 +5,11 @@ import pytest
 from scipy.special import gammaln
 
 from arch.univariate import (
+    ARX,
     GARCH,
     HARCH,
+    HARX,
+    LS,
     ConstantMean,
     MIDASHyperbolic,
     Normal,
@@ -169,3 +172,74 @@ def test_simulate_params_shape(mean):
     assert mod.simulate(params[None, :], 10, burn=5).shape[0] == 10
     with pytest.raises(ValueError, match=r"1D|squeezable"):
         mod.simulate(np.tile(params, (2, 2)), 10)
+
+
+def lagged_regressors(y, lags):
+    """Regressors [1, mean of the last l observations for each l] and target"""
+    max_lag = max(lags)
+    nobs = y.shape[0]
+    cols = [np.ones(nobs - max_lag)]
+    cols.extend(
+        np.array([y[t - lag : t].mean() for t in range(max_lag, nobs)]) for lag in lags
+    )
+    return np.column_stack(cols), y[max_lag:]
+
+
+@pytest.fixture(scope="module")
+def ar_data():
+    rs = np.random.RandomState(8765)
+    e = rs.standard_normal(300)
+    y = np.empty(300)
+    y[0] = e[0]
+    for t in range(1, 300):
+        y[t] = 0.2 + 0.5 * y[t - 1] + e[t]
+    return y
+
+
+@pytest.mark.parametrize("lags", [[1], [1, 5]], ids=["ar1", "har-1-5"])
+def test_unfitted_starting_values_and_resids(ar_data, lags):
+    x, target = lagged_regressors(ar_data, lags)
+    ols = np.linalg.lstsq(x, target, rcond=None)[0]
+    cls = ARX if lags == [1] else HARX
+    mod = cls(ar_data, lags=lags[0] if lags == [1] else lags)
+    sv = mod.starting_values()
+    assert_allclose(sv[: ols.shape[0]], ols, rtol=1e-8)
+    params = np.r_[0.1, 0.4, np.zeros(len(lags) - 1)]
+    assert_allclose(mod.resids(params), target - x @ params, rtol=1e-10)
+
+
+def test_unfitted_ls_starting_values():
+    rs = np.random.RandomState(98)
+    x = rs.standard_normal((100, 2))
+    y = 1.0 + x @ np.array([0.5, -0.5]) + rs.standard_normal(100)
+    mod = LS(y, x=x)
+    design = np.column_stack([np.ones(100), x])
+    ols = np.linalg.lstsq(design, y, rcond=None)[0]
+    assert_allclose(mod.starting_values()[:3], ols, rtol=1e-8)
+
+
+def test_unfitted_arx_forecast(ar_data):
+    params = np.array([0.2, 0.5, 1.0])
+    mod = ARX(ar_data, lags=1)
+    fcast = mod.forecast(params, horizon=4)
+    # Recursion for the mean of an AR(1)
+    expected = []
+    last = ar_data[-1]
+    for _ in range(4):
+        last = 0.2 + 0.5 * last
+        expected.append(last)
+    assert_allclose(fcast.mean.to_numpy().ravel(), expected, rtol=1e-10)
+    assert_allclose(fcast.residual_variance.to_numpy().ravel()[0], 1.0)
+    # same as the forecast from a fixed model
+    fixed = ARX(ar_data, lags=1).fix(params)
+    assert_allclose(fcast.mean.to_numpy(), fixed.forecast(horizon=4).mean.to_numpy())
+
+
+def test_unfitted_resids_with_hold_back():
+    y = np.random.RandomState(7).standard_normal(30)
+    mod = HARX(y, lags=[1, 5], hold_back=8)
+    # The first 8 observations are held back, as when fitting
+    expected = y[8:] - (0.0 + 1.0 * y[7:-1])
+    assert_allclose(mod.resids(np.array([0.0, 1.0, 0.0])), expected, atol=1e-12)
+    # No impact on the model used for estimation
+    assert mod.fit(disp="off").nobs == 22

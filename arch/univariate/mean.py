@@ -341,6 +341,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             self._hold_back = max_lags
 
         self._init_model()
+        if self._y.shape[0] > self._hold_back:
+            # Use the complete sample, subject to hold_back, as fit does by
+            # default, so that the model can be used before it is fit
+            self._adjust_sample(None, None)
 
     def _prepare_append_x(
         self, x: ArrayLike | ArrayLike2D | None, nobs_new: int
