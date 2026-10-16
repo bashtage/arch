@@ -309,7 +309,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
         {"RT01"}
     ),
     "arch.unitroot.cointegration.CanonicalCointegratingReg.fit": frozenset({"PR03"}),
-    "arch.unitroot.cointegration.CointegrationAnalysisResults": frozenset({"GL08"}),
     "arch.unitroot.cointegration.DynamicOLSResults": frozenset({"PR01"}),
     "arch.unitroot.cointegration.FullyModifiedOLS.fit": frozenset({"PR03"}),
     "arch.unitroot.unitroot.ADF": frozenset({"GL07"}),
