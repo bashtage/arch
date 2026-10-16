@@ -906,7 +906,7 @@ class ARCHModel(metaclass=ABCMeta):
             the wrong number of elements or do not satisfy the constraints and
             bounds of the model are ignored, and a StartingValueWarning is
             issued.
-        cov_type : str, optional
+        cov_type : {"robust", "classic"}, optional
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
@@ -1328,7 +1328,7 @@ class ARCHModel(metaclass=ABCMeta):
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
             '1945-01-01'.
-        align : str, optional
+        align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
@@ -1829,7 +1829,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
             '1945-01-01'.
-        align : str, optional
+        align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
