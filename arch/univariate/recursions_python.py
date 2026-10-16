@@ -626,17 +626,85 @@ def fiaparch_recursion_python(
     omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
     backcast_delta = backcast ** (delta / 2.0)
-    for t in range(nobs):
-        bc_weight = 0.0
+    # The transformed shock depends only on the observation, not on the lag, so
+    # raise it to delta once (nobs powers) instead of once per (t, lag) pair
+    fshocks = np.empty(nobs)
+    for t in range(nobs - 1):
+        fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
+
+    # The sums below are independent across t. Four are accumulated at a time so
+    # that the floating point adds of different sums overlap, rather than each
+    # add waiting for the previous one. Every sum still adds its terms one at a
+    # time in the same order as a single loop would, so the results do not change.
+
+    # Weight on the backcast for t < trunc_lag, sum(lam[t:trunc_lag]), is 0 after
+    n_bc = min(nobs, trunc_lag)
+    bc_weights = np.zeros(nobs)
+    t = 0
+    while t + 3 < n_bc:
+        a0 = 0.0
+        a1 = 0.0
+        a2 = 0.0
+        a3 = 0.0
+        a0 += lam[t]
+        a0 += lam[t + 1]
+        a1 += lam[t + 1]
+        a0 += lam[t + 2]
+        a1 += lam[t + 2]
+        a2 += lam[t + 2]
+        for i in range(t + 3, trunc_lag):
+            w = lam[i]
+            a0 += w
+            a1 += w
+            a2 += w
+            a3 += w
+        bc_weights[t] = a0
+        bc_weights[t + 1] = a1
+        bc_weights[t + 2] = a2
+        bc_weights[t + 3] = a3
+        t += 4
+    while t < n_bc:
+        a0 = 0.0
         for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
+            a0 += lam[i]
+        bc_weights[t] = a0
+        t += 1
+
+    t = 0
+    while t + 3 < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
+        a1 = omega_tilde + bc_weights[t + 1] * backcast_delta
+        a2 = omega_tilde + bc_weights[t + 2] * backcast_delta
+        a3 = omega_tilde + bc_weights[t + 3] * backcast_delta
+        # Lags available to all four, t, t + 1, t + 2 and t + 3
+        m = min(t, trunc_lag)
+        for i in range(m):
+            w = lam[i]
+            a0 += w * fshocks[t - i - 1]
+            a1 += w * fshocks[t - i]
+            a2 += w * fshocks[t - i + 1]
+            a3 += w * fshocks[t - i + 2]
+        # Additional lags only available to the later observations
+        for i in range(m, min(t + 1, trunc_lag)):
+            a1 += lam[i] * fshocks[t - i]
+        for i in range(m, min(t + 2, trunc_lag)):
+            a2 += lam[i] * fshocks[t - i + 1]
+        for i in range(m, min(t + 3, trunc_lag)):
+            a3 += lam[i] * fshocks[t - i + 2]
+        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1 ** (2.0 / delta), var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2 ** (2.0 / delta), var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3 ** (2.0 / delta), var_bounds[t + 3])
+        for k in range(4):
+            sigma_delta[t + k] = sigma2[t + k] ** (delta / 2.0)
+        t += 4
+    while t < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
         for i in range(min(t, trunc_lag)):
-            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
-            sigma_delta[t] += lam[i] * (shock**delta)
-        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+            a0 += lam[i] * fshocks[t - i - 1]
+        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
         sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+        t += 1
 
     return sigma2
 
@@ -1094,9 +1162,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.delta = delta
         self.backcast: float | Float64Array1D = -1.0
         self.lam = np.empty(truncation)
-        self.resids = np.empty(0)
-        self.abs_resids = np.empty(0)
-        self.sigma_delta = np.empty(0)
+        self.fshocks = np.empty(0)
 
     def __setstate__(self, state: tuple) -> None:
         self.backcast = state[0]
@@ -1104,9 +1170,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         lam = np.asarray(state[2], dtype=np.float64)
         assert lam.shape[0] == self.truncation
         self.lam = lam.copy()
-        self.resids = np.asarray(state[3], dtype=np.float64).copy()
-        self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
-        self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
+        self.fshocks = np.asarray(state[3], dtype=np.float64).copy()
 
     def __reduce__(self) -> tuple:
         return (
@@ -1123,9 +1187,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
                 self.backcast,
                 self.delta,
                 np.asarray(self.lam),
-                np.asarray(self.resids),
-                np.asarray(self.abs_resids),
-                np.asarray(self.sigma_delta),
+                np.asarray(self.fshocks),
             ),
         )
 
@@ -1140,10 +1202,8 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         # stored on this scale
         delta = parameters[-1] if self.est_delta else self.delta
         self.backcast = cast("float", backcast) ** (delta / 2.0)
-        if self.resids.shape[0] < nobs:
-            self.resids = np.empty(nobs)
-            self.abs_resids = np.empty(nobs)
-            self.sigma_delta = np.empty(nobs)
+        if self.fshocks.shape[0] < nobs:
+            self.fshocks = np.empty(nobs)
 
     def update(
         self,
@@ -1164,20 +1224,21 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         beta = parameters[1 + p + q] if q else 0.0
         omega_tilde = omega / (1 - beta)
 
+        # The transformed shock depends only on the observation, so it is raised to
+        # delta once, when it becomes available, rather than once for each lag
         if t > 0:
-            self.resids[t - 1] = resids[t - 1]
-            self.abs_resids[t - 1] = np.abs(resids[t - 1])
+            self.fshocks[t - 1] = (
+                np.abs(resids[t - 1]) - gamma * resids[t - 1]
+            ) ** delta
 
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        self.sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        sigma_delta = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            shock = self.abs_resids[t - i - 1] - gamma * self.resids[t - i - 1]
-            self.sigma_delta[t] += self.lam[i] * (shock**delta)
-        sigma2[t] = self.sigma_delta[t] ** (2.0 / delta)
+            sigma_delta += self.lam[i] * self.fshocks[t - i - 1]
+        sigma2[t] = sigma_delta ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
-        self.sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):

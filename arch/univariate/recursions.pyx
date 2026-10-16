@@ -539,26 +539,99 @@ def fiaparch_recursion(const double[::1] parameters,
                        double[:, ::1] var_bounds,
                        double gamma,
                        double delta):
-    cdef Py_ssize_t t, i
-    cdef double bc_weight, omega, beta, omega_tilde, shock, backcast_delta
-    cdef double [::1] lam
+    cdef Py_ssize_t t, i, k, m, n_bc
+    cdef double omega, beta, omega_tilde, backcast_delta, w
+    cdef double a0, a1, a2, a3
+    cdef double acc[4]
+    cdef double [::1] lam, fshocks, bc_weights
 
     omega = parameters[0]
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
     backcast_delta = backcast ** (delta / 2.0)
-    for t in range(nobs):
-        bc_weight = 0.0
+    # The transformed shock depends only on the observation, not on the lag, so
+    # raise it to delta once (nobs powers) instead of once per (t, lag) pair
+    fshocks = np.empty(nobs)
+    for t in range(nobs - 1):
+        fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
+
+    # The sums below are independent across t. Four are accumulated at a time so
+    # that the floating point adds of different sums overlap, rather than each
+    # add waiting for the previous one. Every sum still adds its terms one at a
+    # time in the same order as a single loop would, so the results do not change.
+
+    # Weight on the backcast for t < trunc_lag, sum(lam[t:trunc_lag]), is 0 after
+    n_bc = min(nobs, trunc_lag)
+    bc_weights = np.zeros(nobs)
+    t = 0
+    while t + 3 < n_bc:
+        a0 = 0.0
+        a1 = 0.0
+        a2 = 0.0
+        a3 = 0.0
+        a0 += lam[t]
+        a0 += lam[t + 1]
+        a1 += lam[t + 1]
+        a0 += lam[t + 2]
+        a1 += lam[t + 2]
+        a2 += lam[t + 2]
+        for i in range(t + 3, trunc_lag):
+            w = lam[i]
+            a0 += w
+            a1 += w
+            a2 += w
+            a3 += w
+        bc_weights[t] = a0
+        bc_weights[t + 1] = a1
+        bc_weights[t + 2] = a2
+        bc_weights[t + 3] = a3
+        t += 4
+    while t < n_bc:
+        a0 = 0.0
         for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
+            a0 += lam[i]
+        bc_weights[t] = a0
+        t += 1
+
+    t = 0
+    while t + 3 < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
+        a1 = omega_tilde + bc_weights[t + 1] * backcast_delta
+        a2 = omega_tilde + bc_weights[t + 2] * backcast_delta
+        a3 = omega_tilde + bc_weights[t + 3] * backcast_delta
+        # Lags available to all four, t, t + 1, t + 2 and t + 3
+        m = min(t, trunc_lag)
+        for i in range(m):
+            w = lam[i]
+            a0 += w * fshocks[t - i - 1]
+            a1 += w * fshocks[t - i]
+            a2 += w * fshocks[t - i + 1]
+            a3 += w * fshocks[t - i + 2]
+        # Additional lags only available to the later observations
+        for i in range(m, min(t + 1, trunc_lag)):
+            a1 += lam[i] * fshocks[t - i]
+        for i in range(m, min(t + 2, trunc_lag)):
+            a2 += lam[i] * fshocks[t - i + 1]
+        for i in range(m, min(t + 3, trunc_lag)):
+            a3 += lam[i] * fshocks[t - i + 2]
+        acc[0] = a0
+        acc[1] = a1
+        acc[2] = a2
+        acc[3] = a3
+        for k in range(4):
+            sigma2[t + k] = acc[k] ** (2.0 / delta)
+            bounds_check(&sigma2[t + k], &var_bounds[t + k, 0])
+            sigma_delta[t + k] = sigma2[t + k] ** (delta / 2.0)
+        t += 4
+    while t < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
         for i in range(min(t, trunc_lag)):
-            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
-            sigma_delta[t] += lam[i] * (shock ** delta)
-        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+            a0 += lam[i] * fshocks[t - i - 1]
+        sigma2[t] = a0 ** (2.0 / delta)
         bounds_check(&sigma2[t], &var_bounds[t, 0])
         sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+        t += 1
 
     return np.asarray(sigma2)
 
@@ -1055,9 +1128,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         int p, q, o, truncation, est_delta
         double delta
         double[::1] lam
-        double[::1] _resids
-        double[::1] _abs_resids
-        double[::1] _sigma_delta
+        double[::1] _fshocks
         double backcast
 
     def __init__(
@@ -1076,9 +1147,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         self.est_delta = est_delta
         self.delta = delta
         self.lam = np.empty(truncation)
-        self._resids = np.empty(0)
-        self._abs_resids = np.empty(0)
-        self._sigma_delta = np.empty(0)
+        self._fshocks = np.empty(0)
 
     def __setstate__(self, state):
         cdef Py_ssize_t i
@@ -1090,17 +1159,9 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         for i in range(self.truncation):
             self.lam[i] = temp[i]
         temp = state[3]
-        self._resids = np.empty(temp.shape[0])
+        self._fshocks = np.empty(temp.shape[0])
         for i in range(temp.shape[0]):
-            self._resids[i] = temp[i]
-        temp = state[4]
-        self._abs_resids = np.empty(temp.shape[0])
-        for i in range(temp.shape[0]):
-            self._abs_resids[i] = temp[i]
-        temp = state[5]
-        self._sigma_delta = np.empty(temp.shape[0])
-        for i in range(temp.shape[0]):
-            self._sigma_delta[i] = temp[i]
+            self._fshocks[i] = temp[i]
 
     def __reduce__(self):
         return (
@@ -1117,9 +1178,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
                 self.backcast,
                 self.delta,
                 np.asarray(self.lam),
-                np.asarray(self._resids),
-                np.asarray(self._abs_resids),
-                np.asarray(self._sigma_delta),
+                np.asarray(self._fshocks),
             )
         )
 
@@ -1135,10 +1194,8 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         # stored on this scale
         delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
         self.backcast = backcast ** (delta / 2.0)
-        if self._resids.shape[0] < nobs:
-            self._resids = np.empty(nobs)
-            self._abs_resids = np.empty(nobs)
-            self._sigma_delta = np.empty(nobs)
+        if self._fshocks.shape[0] < nobs:
+            self._fshocks = np.empty(nobs)
 
     cdef void update(self,
                      Py_ssize_t t,
@@ -1148,7 +1205,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
                      const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t i
-        cdef double bc_weight, omega, beta, omega_tilde, shock, gamma, delta
+        cdef double bc_weight, omega, beta, omega_tilde, gamma, delta, sigma_delta
         cdef int p = self.p, q = self.q, o = self.o, trunc_lag = self.truncation
 
         omega = parameters[0]
@@ -1157,20 +1214,19 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         gamma = parameters[2 + p + q] if o else 0.0
         delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
 
+        # The transformed shock depends only on the observation, so it is raised to
+        # delta once, when it becomes available, rather than once for each lag
         if t > 0:
-            self._resids[t-1] = resids[t-1]
-            self._abs_resids[t-1] = fabs(resids[t-1])
+            self._fshocks[t-1] = (fabs(resids[t-1]) - gamma * resids[t-1]) ** delta
 
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        self._sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        sigma_delta = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            shock = self._abs_resids[t - i - 1] - gamma * self._resids[t - i - 1]
-            self._sigma_delta[t] += self.lam[i] * (shock ** delta)
-        sigma2[t] = self._sigma_delta[t] ** (2.0 / delta)
+            sigma_delta += self.lam[i] * self._fshocks[t - i - 1]
+        sigma2[t] = sigma_delta ** (2.0 / delta)
         bounds_check(&sigma2[t], &var_bounds[t, 0])
-        self._sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 cdef class RiskMetrics2006Updater(VolatilityUpdater):
