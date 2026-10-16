@@ -31,7 +31,7 @@ def cov_nw(
         The estimated covariance. A float if y is 1-d and a 2-d ndarray
         otherwise.
     """
-    z = y
+    z = asarray(y, dtype=float)
     is_1d = False
     if axis > z.ndim:
         raise ValueError("axis must be less than the dimension of y")
