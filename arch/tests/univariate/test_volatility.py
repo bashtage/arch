@@ -1027,8 +1027,12 @@ def test_egarch(setup, initial_value):
         EGARCH(p=0, o=0, q=1)
     with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
         EGARCH(p=1, o=1, q=-1)
+    # beta > 1 is explosive, so the exponential of the log-variance overflows
     parameters = np.array([0.1, 0.1, -0.1, 1.05])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"):
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"),
+        np.errstate(over="ignore"),
+    ):
         egarch.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -2148,7 +2152,7 @@ def test_fiaparch_simulate_initial_value(setup):
 
 def test_fiaparch_simulate_high_persistence(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
         fiaparch.simulate(parameters, 20, rng.simulate([]))
@@ -2156,16 +2160,21 @@ def test_fiaparch_simulate_high_persistence(setup):
 
 def test_fiaparch_simulate_high_beta(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.0, 0.4, 1.005, -0.3, 1.5])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
-        with pytest.warns(ValueWarning, match=r"beta >= 1"):
-            fiaparch.simulate(parameters, 20, rng.simulate([]))
+    # The variance process is explosive, which eventually makes the base of the
+    # power transformation negative
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"),
+        pytest.warns(ValueWarning, match=r"beta >= 1"),
+        pytest.warns(RuntimeWarning, match=r"invalid value encountered"),
+    ):
+        fiaparch.simulate(parameters, 20, rng.simulate([]))
 
 
 def test_fiaparch_simulate_persistence_ge_1(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     # d > 1 pushes persistence >= 1
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     fig_params = parameters[:4]
