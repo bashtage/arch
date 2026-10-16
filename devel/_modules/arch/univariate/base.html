@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+316)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+326)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+316)
+            arch v8.0.1 (+326)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+316)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+316)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+326)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+326)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+316)
+    arch v8.0.1 (+326)
   </label>
   
     <div class="md-nav__source">
@@ -1299,9 +1299,11 @@
 <span class="sd">            User specified parameters to use when generating the result. Must</span>
 <span class="sd">            have the correct number of parameters for a given choice of mean</span>
 <span class="sd">            model, volatility model and distribution.</span>
-<span class="sd">        first_obs : {int, str, datetime, Timestamp}</span>
-<span class="sd">            First observation to use when fixing model</span>
-<span class="sd">        last_obs : {int, str, datetime, Timestamp}</span>
+<span class="sd">        first_obs : {int, str, date, datetime, Timestamp, Period}</span>
+<span class="sd">            First observation to use when fixing model. Dates, strings and</span>
+<span class="sd">            periods can only be used with pandas inputs that have a</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">        last_obs : {int, str, date, datetime, Timestamp, Period}</span>
 <span class="sd">            Last observation to use when fixing model</span>
 
 <span class="sd">        Returns</span>
@@ -1400,17 +1402,23 @@
 <span class="sd">            nothing. If using a boolean, False is "off" and True is "final"</span>
 <span class="sd">        starting_values : ndarray, optional</span>
 <span class="sd">            Array of starting values to use.  If not provided, starting values</span>
-<span class="sd">            are constructed by the model components.</span>
+<span class="sd">            are constructed by the model components. Starting values that have</span>
+<span class="sd">            the wrong number of elements or do not satisfy the constraints and</span>
+<span class="sd">            bounds of the model are ignored, and a StartingValueWarning is</span>
+<span class="sd">            issued.</span>
 <span class="sd">        cov_type : str, optional</span>
 <span class="sd">            Estimation method of parameter covariance.  Supported options are</span>
 <span class="sd">            'robust', which does not assume the Information Matrix Equality</span>
 <span class="sd">            holds and 'classic' which does.  In the ARCH literature, 'robust'</span>
-<span class="sd">            corresponds to Bollerslev-Wooldridge covariance estimator.</span>
+<span class="sd">            corresponds to Bollerslev-Wooldridge covariance estimator. Any</span>
+<span class="sd">            other value raises a ValueError.</span>
 <span class="sd">        show_warning : bool, optional</span>
 <span class="sd">            Flag indicating whether convergence warnings should be shown.</span>
-<span class="sd">        first_obs : {int, str, datetime, Timestamp}</span>
-<span class="sd">            First observation to use when estimating model</span>
-<span class="sd">        last_obs : {int, str, datetime, Timestamp}</span>
+<span class="sd">        first_obs : {int, str, date, datetime, Timestamp, Period}</span>
+<span class="sd">            First observation to use when estimating model. Dates, strings and</span>
+<span class="sd">            periods can only be used with pandas inputs that have a</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">        last_obs : {int, str, date, datetime, Timestamp, Period}</span>
 <span class="sd">            Last observation to use when estimating model</span>
 <span class="sd">        tol : float, optional</span>
 <span class="sd">            Tolerance for termination.</span>
@@ -1436,6 +1444,11 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot estimate model without data."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cov_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"classic"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Unknown cov_type: </span><span class="si">{</span><span class="n">cov_type</span><span class="si">!r}</span><span class="s2">. The valid values are 'robust' "</span>
+                <span class="s2">"and 'classic'."</span>
+            <span class="p">)</span>
         <span class="c1"># 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,</span>
         <span class="c1"># use closed form</span>
         <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span>
@@ -1514,7 +1527,25 @@
         <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">std_resids</span><span class="p">))</span>
 
         <span class="c1"># 3. Construct starting values from all models</span>
-        <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sv</span><span class="p">:</span> <span class="n">Float64Array1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">user_sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">ensure1d</span><span class="p">(</span><span class="n">starting_values</span><span class="p">,</span> <span class="s2">"starting_values"</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
+            <span class="p">)</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="n">user_sv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_params</span>
+            <span class="k">if</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">satisfies_constraints</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">user_sv</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+                <span class="n">valid</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">satisfies_constraints</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bound</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bounds</span><span class="p">):</span>
+                    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">user_sv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+                <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">user_sv</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">starting_value_warning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">sv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
                     <span class="p">[</span>
@@ -1524,21 +1555,6 @@
                     <span class="p">]</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">starting_values</span><span class="p">,</span> <span class="s2">"starting_values"</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">))</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="n">sv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_params</span>
-            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">satisfies_constraints</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sv</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-                <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">satisfies_constraints</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bound</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bounds</span><span class="p">):</span>
-                <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">sv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="n">starting_value_warning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-                <span class="p">)</span>
-                <span class="n">starting_values</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># 4. Estimate models using constrained optimization</span>
         <span class="n">_callback_info</span><span class="p">[</span><span class="s2">"count"</span><span class="p">],</span> <span class="n">_callback_info</span><span class="p">[</span><span class="s2">"iter"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
@@ -1576,11 +1592,6 @@
                 <span class="n">callback</span><span class="o">=</span><span class="n">_callback</span><span class="p">,</span>
                 <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
             <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">show_warning</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"always"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">ConvergenceWarning</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">ConvergenceWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">show_warning</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -1792,11 +1803,12 @@
 <span class="sd">            shape to the parameters computed by fitting the model.</span>
 <span class="sd">        horizon : int, optional</span>
 <span class="sd">           Number of steps to forecast</span>
-<span class="sd">        start : {int, datetime, Timestamp, str}, optional</span>
-<span class="sd">            An integer, datetime or str indicating the first observation to</span>
-<span class="sd">            produce the forecast for.  Datetimes can only be used with pandas</span>
-<span class="sd">            inputs that have a datetime index. Strings must be convertible</span>
-<span class="sd">            to a date time, such as in '1945-01-01'.</span>
+<span class="sd">        start : {int, str, date, datetime, Timestamp, Period}, optional</span>
+<span class="sd">            An integer, date, datetime, Period or str indicating the first</span>
+<span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
+<span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">            Strings must be convertible to a date time, such as in</span>
+<span class="sd">            '1945-01-01'.</span>
 <span class="sd">        align : str, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
@@ -2341,11 +2353,12 @@
 <span class="sd">            shape to the parameters computed by fitting the model.</span>
 <span class="sd">        horizon : int, optional</span>
 <span class="sd">           Number of steps to forecast</span>
-<span class="sd">        start : {int, datetime, Timestamp, str}, optional</span>
-<span class="sd">            An integer, datetime or str indicating the first observation to</span>
-<span class="sd">            produce the forecast for.  Datetimes can only be used with pandas</span>
-<span class="sd">            inputs that have a datetime index. Strings must be convertible</span>
-<span class="sd">            to a date time, such as in '1945-01-01'.</span>
+<span class="sd">        start : {int, str, date, datetime, Timestamp, Period}, optional</span>
+<span class="sd">            An integer, date, datetime, Period or str indicating the first</span>
+<span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
+<span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">            Strings must be convertible to a date time, such as in</span>
+<span class="sd">            '1945-01-01'.</span>
 <span class="sd">        align : str, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
