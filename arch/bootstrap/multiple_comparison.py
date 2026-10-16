@@ -742,6 +742,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     when computing the consistent p-value, even if ``studentize`` is False.
     No other studentization is done when ``studentize`` is False.
 
+    If the loss differential of a model is constant in the original data, for
+    example because the model is identical to the benchmark, its variance is
+    0 and its test statistic is not meaningful. A ``RuntimeWarning`` is issued
+    when the test is created, and such models should be removed.
+
     See [1]_ and [2]_ for details.
 
     See Also
@@ -788,6 +793,24 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self.studentize: bool = studentize
         self.nested: bool = nested
         self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
+        # Constant, up to rounding error, so that the variance is 0
+        constant = np.ptp(self._loss_diff, axis=0) <= (
+            8 * np.finfo(float).eps * np.abs(self._loss_diff).max(axis=0)
+        )
+        if constant.any():
+            constant_models = np.flatnonzero(constant).tolist()
+            if isinstance(self.models, pd.DataFrame):
+                constant_models = list(self.models.columns[constant])
+            warnings.warn(
+                "The loss differential has a variance of 0 for the models "
+                f"{constant_models}, for example because a model is identical to "
+                "the benchmark. The studentized test statistic of these models "
+                "is not meaningful and the p-values of the SPA, and the superior "
+                "models of StepM, are not reliable if they are included. Remove "
+                "these models before testing.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
