@@ -324,6 +324,31 @@ def _check_block_size(block_size: Any, integer: bool = True) -> None:
         raise ValueError(f"block_size must be {kind} that is at least 1.")
 
 
+def _check_extra_kwargs(
+    kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
+) -> None:
+    """
+    Check that the extra keyword arguments do not replace bootstrapped data
+
+    Parameters
+    ----------
+    kwargs : dict
+        Keyword argument dictionary containing the bootstrapped data
+    extra_kwargs : dict, default None
+        Extra keyword arguments
+
+    Raises
+    ------
+    ValueError
+        If extra_kwargs contains a key used for the data in kwargs
+    """
+    if extra_kwargs is not None:
+        if any(k in kwargs for k in extra_kwargs):
+            raise ValueError(
+                "extra_kwargs contains keys used for variable names in the bootstrap"
+            )
+
+
 def _add_extra_kwargs(
     kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
 ) -> dict[str, Any]:
@@ -653,7 +678,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             results.  This allows alternative methods to be compared without
             rerunning the bootstrap simulation.  Reuse is ignored if reps is
             not the same across multiple runs, func changes across calls, or
-            method is 'studentized'.
+            method is 'studentized'.  Otherwise the previous results are
+            reused even if extra_kwargs or sampling have changed, so use a new
+            call without reuse (or ``reset``) after changing them.
         sampling : str, default "nonparametric"
             Type of sampling to use: 'nonparametric', 'semi-parametric' (or
             'semi') or 'parametric'.  The default is 'nonparametric'.  See
@@ -963,12 +990,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         ...     return y.mean(0)
         >>> results = bs.apply(func, 100)
         """
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        base = func(*self._args, **kwargs)
-        try:
-            num_params = base.shape[0]
-        except (IndexError, AttributeError):
-            num_params = 1
+        base = np.asarray(func(*self._args, **kwargs))
+        num_params = 1 if base.ndim == 0 else base.shape[0]
         results = np.zeros((reps, num_params))
         count = 0
         for pos_data, kw_data in self.bootstrap(reps):
@@ -997,16 +1022,12 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         elif sampling == "semiparametric":
             semi = True
 
-        if extra_kwargs is not None:
-            if any(k in self._kwargs for k in extra_kwargs):
-                raise ValueError(
-                    "extra_kwargs contains keys used for variable"
-                    " names in the bootstrap"
-                )
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        base = func(*self._args, **kwargs)
+        # Allows lists, tuples, scalars and 0-d arrays
+        base = np.asarray(func(*self._args, **kwargs))
 
-        num_params = 1 if np.isscalar(base) else base.shape[0]
+        num_params = 1 if base.ndim == 0 else base.shape[0]
         results = np.zeros((reps, num_params))
         studentized_results = np.zeros((reps, num_params))
 
@@ -1035,7 +1056,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 studentized_results[count] = err / std_err
             count += 1
 
-        self._base = np.asarray(base)
+        self._base = base
         self._results = np.asarray(results)
         self._studentized_results = np.asarray(studentized_results)
 

@@ -1148,3 +1148,84 @@ def test_studentize_reps_not_used():
     assert ci.shape == (2, 1)
     ci = bs.conf_int(np.mean, 20, method="percentile", studentize_reps=0)
     assert ci.shape == (2, 1)
+
+
+def _stat_array(y):
+    return np.array([y.mean(), y.std()])
+
+
+def _stat_list(y):
+    return [y.mean(), y.std()]
+
+
+def _stat_tuple(y):
+    return (y.mean(), y.std())
+
+
+def _stat_scalar_array(y):
+    return np.array(y.mean())
+
+
+def _stat_scalar_vector(y):
+    return np.array([y.mean()])
+
+
+def _stat_scalar_float(y):
+    return float(y.mean())
+
+
+@pytest.mark.parametrize(
+    ("func", "reference"),
+    [
+        (_stat_list, _stat_array),
+        (_stat_tuple, _stat_array),
+        (_stat_scalar_array, _stat_scalar_vector),
+        (_stat_scalar_float, _stat_scalar_vector),
+    ],
+    ids=["list", "tuple", "0-d-array", "float"],
+)
+@pytest.mark.parametrize(
+    "method", ["percentile", "basic", "norm", "bc", "bca", "studentized"]
+)
+def test_statistic_return_types(func, reference, method):
+    x = np.random.default_rng(0).standard_normal(50)
+    kwargs = {"studentize_reps": 10} if method == "studentized" else {}
+    ci = IIDBootstrap(x, seed=1).conf_int(func, 30, method=method, **kwargs)
+    expected = IIDBootstrap(x, seed=1).conf_int(reference, 30, method=method, **kwargs)
+    assert ci.shape == expected.shape
+    assert_allclose(ci, expected)
+
+
+@pytest.mark.parametrize(
+    ("func", "reference"),
+    [
+        (_stat_list, _stat_array),
+        (_stat_tuple, _stat_array),
+        (_stat_scalar_array, _stat_scalar_vector),
+        (_stat_scalar_float, _stat_scalar_vector),
+    ],
+    ids=["list", "tuple", "0-d-array", "float"],
+)
+def test_statistic_return_types_cov_var_apply(func, reference):
+    x = np.random.default_rng(0).standard_normal(50)
+    reps = 30
+    expected = IIDBootstrap(x, seed=1).apply(reference, reps)
+    assert_allclose(IIDBootstrap(x, seed=1).apply(func, reps), expected)
+    cov = IIDBootstrap(x, seed=1).cov(func, reps)
+    # Hand computation of the covariance using the recentered replications
+    centered = expected - expected.mean(0)
+    assert_allclose(cov, centered.T @ centered / reps)
+    var = IIDBootstrap(x, seed=1).var(func, reps)
+    assert_allclose(var, (centered**2).mean(0))
+
+
+@pytest.mark.parametrize("method", ["apply", "cov", "var", "conf_int"])
+def test_extra_kwargs_conflict(method):
+    x = np.random.default_rng(0).standard_normal(50)
+    bs = IIDBootstrap(x, y=x, seed=1)
+
+    def func(a, y):
+        return np.array([y.mean()])
+
+    with pytest.raises(ValueError, match="extra_kwargs contains keys used for"):
+        getattr(bs, method)(func, 3, extra_kwargs={"y": np.zeros(50)})
