@@ -98,6 +98,27 @@ def harch_core(
     return sigma2[t]
 
 
+cdef inline void _harch_step(Py_ssize_t t,
+                             const double[::1] parameters,
+                             const double[::1] resids,
+                             double[::1] sigma2,
+                             const np.int32_t[::1] lags,
+                             double backcast,
+                             const double[:, ::1] var_bounds):
+    cdef Py_ssize_t i, j
+    cdef double param
+
+    sigma2[t] = parameters[0]
+    for i in range(lags.shape[0]):
+        param = parameters[i + 1] / lags[i]
+        for j in range(lags[i]):
+            if (t - j - 1) >= 0:
+                sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
+            else:
+                sigma2[t] += param * backcast
+    bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+
 def harch_recursion(const double[::1] parameters,
                     const double[::1] resids,
                     double[::1] sigma2,
@@ -124,21 +145,48 @@ def harch_recursion(const double[::1] parameters,
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
     """
-    cdef Py_ssize_t t, i, num_lags
-    cdef int j
-    cdef double param
+    cdef Py_ssize_t t, i, j, num_lags, max_lag
+    cdef double param, a0, a1, a2, a3
     num_lags = lags.shape[0]
+    max_lag = 0
+    for i in range(num_lags):
+        if lags[i] > max_lag:
+            max_lag = lags[i]
 
-    for t in range(nobs):
-        sigma2[t] = parameters[0]
+    # The first max_lag observations use the backcast
+    t = 0
+    while t < min(max_lag, nobs):
+        _harch_step(t, parameters, resids, sigma2, lags, backcast, var_bounds)
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = parameters[0]
+        a1 = parameters[0]
+        a2 = parameters[0]
+        a3 = parameters[0]
         for i in range(num_lags):
             param = parameters[i + 1] / lags[i]
             for j in range(lags[i]):
-                if (t - j - 1) >= 0:
-                    sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
-                else:
-                    sigma2[t] += param * backcast
+                a0 += param * resids[t - j - 1] * resids[t - j - 1]
+                a1 += param * resids[t - j] * resids[t - j]
+                a2 += param * resids[t - j + 1] * resids[t - j + 1]
+                a3 += param * resids[t - j + 2] * resids[t - j + 2]
+        sigma2[t] = a0
+        sigma2[t + 1] = a1
+        sigma2[t + 2] = a2
+        sigma2[t + 3] = a3
         bounds_check(&sigma2[t], &var_bounds[t, 0])
+        bounds_check(&sigma2[t + 1], &var_bounds[t + 1, 0])
+        bounds_check(&sigma2[t + 2], &var_bounds[t + 2, 0])
+        bounds_check(&sigma2[t + 3], &var_bounds[t + 3, 0])
+        t += 4
+    while t < nobs:
+        _harch_step(t, parameters, resids, sigma2, lags, backcast, var_bounds)
+        t += 1
 
     return np.asarray(sigma2)
 

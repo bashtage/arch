@@ -79,6 +79,30 @@ def harch_core_python(
 harch_core = jit(harch_core_python, nopython=True, inline="always")
 
 
+def harch_step_python(
+    t: int,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    lags: Int32Array,
+    backcast: float,
+    var_bounds: Float64Array1D,
+) -> float:
+    """One observation of the HARCH recursion, which can use the backcast"""
+    sigma2 = parameters[0]
+    for i in range(lags.shape[0]):
+        param = parameters[i + 1] / lags[i]
+        for j in range(lags[i]):
+            if (t - j - 1) >= 0:
+                sigma2 += param * resids[t - j - 1] * resids[t - j - 1]
+            else:
+                sigma2 += param * backcast
+
+    return bounds_check(sigma2, var_bounds)
+
+
+harch_step = jit(harch_step_python, nopython=True)
+
+
 def harch_recursion_python(
     parameters: Float64Array1D,
     resids: Float64Array1D,
@@ -108,17 +132,41 @@ def harch_recursion_python(
         variances for each time period
     """
 
-    for t in range(nobs):
-        sigma2[t] = parameters[0]
-        for i in range(lags.shape[0]):
+    num_lags = lags.shape[0]
+    max_lag = 0
+    for i in range(num_lags):
+        max_lag = max(max_lag, lags[i])
+
+    # The first max_lag observations use the backcast
+    t = 0
+    while t < min(max_lag, nobs):
+        sigma2[t] = harch_step(t, parameters, resids, lags, backcast, var_bounds[t])
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = parameters[0]
+        a1 = parameters[0]
+        a2 = parameters[0]
+        a3 = parameters[0]
+        for i in range(num_lags):
             param = parameters[i + 1] / lags[i]
             for j in range(lags[i]):
-                if (t - j - 1) >= 0:
-                    sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
-                else:
-                    sigma2[t] += param * backcast
-
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+                a0 += param * resids[t - j - 1] * resids[t - j - 1]
+                a1 += param * resids[t - j] * resids[t - j]
+                a2 += param * resids[t - j + 1] * resids[t - j + 1]
+                a3 += param * resids[t - j + 2] * resids[t - j + 2]
+        sigma2[t] = bounds_check(a0, var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1, var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2, var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3, var_bounds[t + 3])
+        t += 4
+    while t < nobs:
+        sigma2[t] = harch_step(t, parameters, resids, lags, backcast, var_bounds[t])
+        t += 1
 
     return sigma2
 
