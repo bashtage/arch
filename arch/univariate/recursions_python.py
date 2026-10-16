@@ -447,6 +447,30 @@ def egarch_recursion_python(
 egarch_recursion = jit(egarch_recursion_python, nopython=True)
 
 
+def midas_step_python(
+    t: int,
+    omega: float,
+    aw: Float64Array1D,
+    gw: Float64Array1D,
+    resids: Float64Array1D,
+    resids2: Float64Array1D,
+    backcast: float,
+    var_bounds: Float64Array1D,
+) -> float:
+    """One observation of the MIDAS recursion, which can use the backcast"""
+    sigma2 = omega
+    for i in range(aw.shape[0]):
+        if (t - i - 1) >= 0:
+            sigma2 += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+        else:
+            sigma2 += (aw[i] + 0.5 * gw[i]) * backcast
+
+    return bounds_check(sigma2, var_bounds)
+
+
+midas_step = jit(midas_step_python, nopython=True)
+
+
 def midas_recursion_python(
     parameters: Float64Array1D,
     weights: Float64Array,
@@ -487,24 +511,41 @@ def midas_recursion_python(
         gw[i] = gamma * weights[i]
 
     resids2 = np.zeros(nobs)
-
     for t in range(nobs):
         resids2[t] = resids[t] * resids[t]
-        sigma2[t] = omega
+
+    # The first m observations use the backcast
+    t = 0
+    while t < min(m, nobs):
+        sigma2[t] = midas_step(
+            t, omega, aw, gw, resids, resids2, backcast, var_bounds[t]
+        )
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = omega
+        a1 = omega
+        a2 = omega
+        a3 = omega
         for i in range(m):
-            if (t - i - 1) >= 0:
-                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[
-                    t - i - 1
-                ]
-            else:
-                sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t] / var_bounds[t, 1])
+            a0 += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+            a1 += (aw[i] + gw[i] * (resids[t - i] < 0)) * resids2[t - i]
+            a2 += (aw[i] + gw[i] * (resids[t - i + 1] < 0)) * resids2[t - i + 1]
+            a3 += (aw[i] + gw[i] * (resids[t - i + 2] < 0)) * resids2[t - i + 2]
+        sigma2[t] = bounds_check(a0, var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1, var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2, var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3, var_bounds[t + 3])
+        t += 4
+    while t < nobs:
+        sigma2[t] = midas_step(
+            t, omega, aw, gw, resids, resids2, backcast, var_bounds[t]
+        )
+        t += 1
 
     return sigma2
 

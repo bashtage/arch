@@ -457,6 +457,28 @@ def egarch_recursion(const double[::1] parameters,
     return np.asarray(sigma2)
 
 
+cdef inline void _midas_step(Py_ssize_t t,
+                             double omega,
+                             const double[::1] aw,
+                             const double[::1] gw,
+                             const double[::1] resids,
+                             const double[::1] resids2,
+                             double[::1] sigma2,
+                             double backcast,
+                             const double[:, ::1] var_bounds):
+    cdef Py_ssize_t i
+
+    sigma2[t] = omega
+    for i in range(aw.shape[0]):
+        if (t - i - 1) >= 0:
+            sigma2[t] += (
+                    (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+            )
+        else:
+            sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
+    bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+
 def midas_recursion(const double[::1] parameters,
                     const double[::1] weights,
                     const double[::1] resids,
@@ -484,7 +506,7 @@ def midas_recursion(const double[::1] parameters,
         variances for each time period
     """
     cdef Py_ssize_t m, t, i
-    cdef double omega, alpha, gamma
+    cdef double omega, alpha, gamma, a0, a1, a2, a3
     cdef double [::1] aw, gw, resids2
 
     m = weights.shape[0]
@@ -499,19 +521,41 @@ def midas_recursion(const double[::1] parameters,
         gw[i] = gamma * weights[i]
 
     resids2 = np.zeros(nobs, dtype=np.double)
-
     for t in range(nobs):
         resids2[t] = resids[t] * resids[t]
-        sigma2[t] = omega
-        for i in range(m):
-            if (t - i - 1) >= 0:
-                sigma2[t] += (
-                        (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
-                )
-            else:
-                sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
 
+    # The first m observations use the backcast
+    t = 0
+    while t < min(m, nobs):
+        _midas_step(t, omega, aw, gw, resids, resids2, sigma2, backcast, var_bounds)
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = omega
+        a1 = omega
+        a2 = omega
+        a3 = omega
+        for i in range(m):
+            a0 += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+            a1 += (aw[i] + gw[i] * (resids[t - i] < 0)) * resids2[t - i]
+            a2 += (aw[i] + gw[i] * (resids[t - i + 1] < 0)) * resids2[t - i + 1]
+            a3 += (aw[i] + gw[i] * (resids[t - i + 2] < 0)) * resids2[t - i + 2]
+        sigma2[t] = a0
+        sigma2[t + 1] = a1
+        sigma2[t + 2] = a2
+        sigma2[t + 3] = a3
         bounds_check(&sigma2[t], &var_bounds[t, 0])
+        bounds_check(&sigma2[t + 1], &var_bounds[t + 1, 0])
+        bounds_check(&sigma2[t + 2], &var_bounds[t + 2, 0])
+        bounds_check(&sigma2[t + 3], &var_bounds[t + 3, 0])
+        t += 4
+    while t < nobs:
+        _midas_step(t, omega, aw, gw, resids, resids2, sigma2, backcast, var_bounds)
+        t += 1
 
     return np.asarray(sigma2)
 
