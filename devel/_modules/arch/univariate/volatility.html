@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v8.0.1 (+343)</title>
+        <title>arch.univariate.volatility - arch v8.0.1 (+355)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+343)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+343)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+343)
+            arch v8.0.1 (+355)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+343)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+343)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+343)
+    arch v8.0.1 (+355)
   </label>
   
     <div class="md-nav__source">
@@ -1959,42 +1959,49 @@
         <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="n">o</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
 
         <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span><span class="p">])</span>
-        <span class="n">_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">)</span>
-        <span class="n">_asym_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">)</span>
-        <span class="n">_sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">)</span>
+        <span class="n">n_origins</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="c1"># The forecasts from every origin are computed together. Row k holds the</span>
+        <span class="c1"># last m residuals, asymmetric residuals and variances up to origin</span>
+        <span class="c1"># start + k, which are followed by the forecasts of each horizon</span>
+        <span class="n">_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_origins</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="n">_asym_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_origins</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="n">_sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_origins</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">_resids</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="n">_asym_resids</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">_resids</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">_resids</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="n">_sigma2</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Back-casting needed</span>
-                <span class="n">_resids</span><span class="p">[:</span> <span class="n">m</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
-                <span class="n">_resids</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="n">_asym_resids</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"np.ndarray"</span><span class="p">,</span> <span class="n">_resids</span> <span class="o">*</span> <span class="p">(</span><span class="n">_resids</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span>
-                <span class="n">_asym_resids</span><span class="p">[:</span> <span class="n">m</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">asym_weight</span> <span class="o">*</span> <span class="n">backcast</span><span class="p">)</span>
-                <span class="n">_sigma2</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">backcast</span>
-                <span class="n">_sigma2</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">_all_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">origins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">origins</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="c1"># Locations before the start of the sample use the backcast</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">lagged_resids</span> <span class="o">=</span> <span class="n">_all_resids</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span>
+        <span class="n">_resids</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available</span><span class="p">,</span> <span class="n">lagged_resids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">))</span>
+        <span class="n">_asym_resids</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">available</span><span class="p">,</span>
+            <span class="n">lagged_resids</span> <span class="o">*</span> <span class="p">(</span><span class="n">lagged_resids</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">asym_weight</span> <span class="o">*</span> <span class="n">backcast</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">_sigma2</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">loc</span><span class="p">],</span> <span class="n">backcast</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
-                <span class="n">fcast_loc</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">start</span>
-                <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega</span>
-                <span class="n">start_loc</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="c1"># np.power with an array of exponents is pow, which is the same as the</span>
+        <span class="c1"># scalar power used in a loop over origins. A scalar exponent of 2 uses</span>
+        <span class="c1"># a product, which is not identical in the last bit for some values</span>
+        <span class="n">two</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_origins</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+            <span class="n">start_loc</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">forecast_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_origins</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="n">forecast_h</span> <span class="o">+=</span> <span class="n">alpha</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">_resids</span><span class="p">[:,</span> <span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">],</span> <span class="n">two</span><span class="p">)</span>
 
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">+=</span> <span class="n">alpha</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">_resids</span><span class="p">[</span><span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+                <span class="n">forecast_h</span> <span class="o">+=</span> <span class="n">gamma</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">_asym_resids</span><span class="p">[:,</span> <span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">],</span> <span class="n">two</span><span class="p">)</span>
 
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
-                        <span class="n">gamma</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">_asym_resids</span><span class="p">[</span><span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
-                    <span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+                <span class="n">forecast_h</span> <span class="o">+=</span> <span class="n">beta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">_sigma2</span><span class="p">[:,</span> <span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span>
 
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">+=</span> <span class="n">beta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">_sigma2</span><span class="p">[</span><span class="n">start_loc</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span>
-
-                <span class="n">_resids</span><span class="p">[</span><span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">])</span>
-                <span class="n">_asym_resids</span><span class="p">[</span><span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">asym_weight</span> <span class="o">*</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">])</span>
-                <span class="n">_sigma2</span><span class="p">[</span><span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span>
+            <span class="n">forecasts</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_h</span>
+            <span class="n">_resids</span><span class="p">[:,</span> <span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">forecast_h</span><span class="p">)</span>
+            <span class="n">_asym_resids</span><span class="p">[:,</span> <span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">asym_weight</span> <span class="o">*</span> <span class="n">forecast_h</span><span class="p">)</span>
+            <span class="n">_sigma2</span><span class="p">[:,</span> <span class="n">h</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_h</span>
 
         <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span>
 
@@ -2247,13 +2254,22 @@
         <span class="n">max_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lags</span><span class="p">))</span>
         <span class="n">sigma2</span><span class="p">[:</span><span class="n">max_lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span>
         <span class="n">data</span><span class="p">[:</span><span class="n">max_lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
+        <span class="c1"># The squared data, to avoid squaring it once for each term of each sum</span>
+        <span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">data2</span><span class="p">[:</span><span class="n">max_lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+        <span class="c1"># The weight and the lag of each term that is added to omega, in order.</span>
+        <span class="c1"># The terms are added one at a time, in this order, using a cumulative sum</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">lag</span><span class="p">,</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">lag</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lags</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">term_lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="n">lags</span><span class="p">])</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_lag</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">):</span>
-            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">lags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lags</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
-                    <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="n">param</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">data2</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">term_lags</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="n">terms</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">terms</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">data2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">burn</span><span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">burn</span><span class="p">:]</span></div>
 
@@ -2552,15 +2568,25 @@
 
         <span class="n">sigma2</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span>
         <span class="n">data</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
+        <span class="c1"># The squared data, to avoid squaring it once for each term of each sum</span>
+        <span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">data2</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+        <span class="c1"># Coefficient on the first m values, which are initial values</span>
+        <span class="n">init_coef</span> <span class="o">=</span> <span class="n">aw</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gw</span>
+        <span class="c1"># The m terms that are added to omega are added one at a time, in order of</span>
+        <span class="c1"># increasing lag, using a cumulative sum</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">):</span>
-            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">:</span>
-                    <span class="n">coef</span> <span class="o">=</span> <span class="n">aw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">coef</span> <span class="o">=</span> <span class="n">aw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">gw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+            <span class="c1"># The data and squared data at lags 1, 2, ..., m</span>
+            <span class="n">lagged</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">m</span> <span class="p">:</span> <span class="n">t</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">coef</span> <span class="o">=</span> <span class="n">aw</span> <span class="o">+</span> <span class="n">gw</span> <span class="o">*</span> <span class="p">(</span><span class="n">lagged</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Lags that are before the initial values use the initial coefficient</span>
+            <span class="n">coef</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">m</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">init_coef</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">m</span> <span class="p">:]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">coef</span><span class="p">,</span> <span class="n">data2</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">m</span> <span class="p">:</span> <span class="n">t</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="n">terms</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">terms</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">data2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">burn</span><span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">burn</span><span class="p">:]</span></div>
 
@@ -3821,6 +3847,43 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_lagged_path_sums</span><span class="p">(</span>
+    <span class="n">lam_rev</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+    <span class="n">history</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+    <span class="n">simulated</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Weighted sums of the last ``truncation`` values for each simulated path</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lam_rev : ndarray</span>
+<span class="sd">        Weights, ordered from the oldest to the newest lag</span>
+<span class="sd">    history : ndarray</span>
+<span class="sd">        The ``truncation`` values before the forecast origin, which are the same</span>
+<span class="sd">        in all of the paths</span>
+<span class="sd">    simulated : ndarray</span>
+<span class="sd">        The simulated values of the first ``h`` horizons for each path</span>
+<span class="sd">    h : int</span>
+<span class="sd">        The zero-based horizon</span>
+<span class="sd">    truncation : int</span>
+<span class="sd">        Number of lags</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The sum for each path. The sum is the weighted sum of the history, which</span>
+<span class="sd">        is computed once, plus the weighted sum of the simulated values.</span>
+<span class="sd">    """</span>
+    <span class="n">n_history</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">simulated</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lam_rev</span><span class="p">[:</span><span class="n">n_history</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="n">h</span><span class="p">:]))</span>
+    <span class="k">if</span> <span class="n">h</span><span class="p">:</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">simulated</span><span class="p">[:,</span> <span class="nb">max</span><span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="n">h</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam_rev</span><span class="p">[</span><span class="n">n_history</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+
 <div class="viewcode-block" id="FIGARCH">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FIGARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
@@ -4245,21 +4308,25 @@
         <span class="n">omega</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
         <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
-        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="c1"># The transformed residuals before the origin are the same in all of the</span>
+        <span class="c1"># paths, so they are not repeated for each path</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
         <span class="n">fresids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">power</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
             <span class="n">std_shocks</span> <span class="o">=</span> <span class="n">rng</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
             <span class="n">available</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span> <span class="p">:</span> <span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fresids</span><span class="p">[</span>
+            <span class="n">history</span><span class="p">[</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span> <span class="p">:</span> <span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fresids</span><span class="p">[</span>
                 <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">)</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">truncation</span><span class="p">:</span>
-                <span class="n">fpath</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast</span>
+                <span class="n">history</span><span class="p">[:</span> <span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast</span>
             <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
                 <span class="c1"># 1. Forecast transformed variance</span>
-                <span class="n">lagged_forecasts</span> <span class="o">=</span> <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span> <span class="p">:</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
-                <span class="n">temp</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lagged_forecasts</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam_rev</span><span class="p">)</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">_lagged_path_sums</span><span class="p">(</span>
+                    <span class="n">lam_rev</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">truncation</span>
+                <span class="p">)</span>
                 <span class="c1"># 2. Transform variance</span>
                 <span class="n">sigma2</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span><span class="p">)</span>
                 <span class="c1"># 3. Simulate new residual</span>
@@ -4268,7 +4335,7 @@
                 <span class="n">paths</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span>
                 <span class="n">forecasts</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
                 <span class="c1"># 4. Transform new residual</span>
-                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span>
 
         <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span></div>
 
@@ -4746,30 +4813,37 @@
         <span class="n">backcast_delta</span> <span class="o">=</span> <span class="n">backcast</span> <span class="o">**</span> <span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
 
         <span class="n">abs_resids_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
-        <span class="n">fshocks_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">abs_resids_full</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">resids</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
+        <span class="c1"># np.power with a scalar exponent uses square and sqrt for exponents of 2</span>
+        <span class="c1"># and 0.5, which differ from pow in the last bit for some values. An array</span>
+        <span class="c1"># of exponents always uses pow, as in a loop with scalars</span>
+        <span class="n">fshocks_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
+            <span class="n">abs_resids_full</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">resids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">delta</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="c1"># The transformed shocks before the origin are the same in all of the paths,</span>
+        <span class="c1"># so they are not repeated for each path</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
             <span class="n">std_shocks</span> <span class="o">=</span> <span class="n">rng</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
             <span class="n">available</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span> <span class="p">:</span> <span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fshocks_hist</span><span class="p">[</span>
+            <span class="n">history</span><span class="p">[</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span> <span class="p">:</span> <span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fshocks_hist</span><span class="p">[</span>
                 <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">)</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">truncation</span><span class="p">:</span>
-                <span class="n">fpath</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast_delta</span>
+                <span class="n">history</span><span class="p">[:</span> <span class="p">(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast_delta</span>
             <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
-                <span class="n">lagged_fshocks</span> <span class="o">=</span> <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span> <span class="p">:</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
-                <span class="n">temp_sigma_delta</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lagged_fshocks</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam_rev</span><span class="p">)</span>
+                <span class="n">temp_sigma_delta</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">_lagged_path_sums</span><span class="p">(</span>
+                    <span class="n">lam_rev</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">truncation</span>
+                <span class="p">)</span>
                 <span class="n">sigma2_h</span> <span class="o">=</span> <span class="n">temp_sigma_delta</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
                 <span class="n">path_loc</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">start</span>
                 <span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2_h</span><span class="p">)</span>
                 <span class="n">paths</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2_h</span>
                 <span class="n">forecasts</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2_h</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
                 <span class="n">new_shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span>
-                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">new_shocks</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span>
-                <span class="p">)</span> <span class="o">**</span> <span class="n">delta</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_shocks</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">shocks</span><span class="p">[</span><span class="n">path_loc</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span> <span class="o">**</span> <span class="n">delta</span>
 
         <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span></div>
 
