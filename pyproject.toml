@@ -158,10 +158,10 @@ exclude = '''
   | \.git
   | \.mypy_cache
   | \.oytest_cache
-  | _build
   | buck-out
-  | build
-  | dist
+  | ^/build/
+  | ^/dist/
+  | ^/arch/_version\.py$
 )
 '''
 
