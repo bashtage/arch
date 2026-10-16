@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.stop
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.stop

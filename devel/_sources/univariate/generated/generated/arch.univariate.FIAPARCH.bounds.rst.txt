@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIAPARCH.bounds
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIAPARCH.bounds

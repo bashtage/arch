@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.num\_params
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.num_params

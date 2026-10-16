@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIAPARCH.forecast
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIAPARCH.forecast

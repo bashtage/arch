@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIAPARCH.compute\_variance
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIAPARCH.compute_variance

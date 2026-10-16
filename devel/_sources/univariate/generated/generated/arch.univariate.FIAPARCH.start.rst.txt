@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.start
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.start

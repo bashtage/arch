@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.updateable
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.updateable

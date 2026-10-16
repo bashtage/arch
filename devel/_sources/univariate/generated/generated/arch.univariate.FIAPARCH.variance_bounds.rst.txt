@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIAPARCH.variance\_bounds
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIAPARCH.variance_bounds
