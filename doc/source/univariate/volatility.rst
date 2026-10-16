@@ -21,6 +21,7 @@ volatility.
    MIDASHyperbolic
    ARCH
    APARCH
+   FIAPARCH
 
 Parameterless Variance Processes
 --------------------------------
