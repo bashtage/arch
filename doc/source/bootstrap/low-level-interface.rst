@@ -34,7 +34,6 @@ The bootstrapped Sharpe ratios can be directly computed using `apply`.
 
 .. code-block:: python
 
-    import seaborn
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
     sharpe_ratios = bs.apply(sharpe_ratio, 1000)
