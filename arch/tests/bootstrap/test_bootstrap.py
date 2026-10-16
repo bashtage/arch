@@ -1066,7 +1066,7 @@ BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBoot
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
 @pytest.mark.parametrize("block_size", [0, -3, np.int64(0)], ids=["0", "-3", "np-0"])
 def test_block_size_too_small(cls, block_size):
-    with pytest.raises(ValueError, match="block_size must be .* at least 1"):
+    with pytest.raises(ValueError, match=r"block_size must be .* at least 1"):
         cls(block_size, np.arange(20.0))
 
 

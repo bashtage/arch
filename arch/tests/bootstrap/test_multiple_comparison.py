@@ -1046,13 +1046,9 @@ def test_mcs_method_changed_after_construction():
 @pytest.mark.parametrize("procedure", [MCS, SPA, StepM])
 def test_multiple_comparison_block_size(procedure, bootstrap, block_size, error):
     losses = np.random.default_rng(0).standard_normal((50, 3))
+    if procedure is MCS:
+        args = (losses, 0.1)
+    else:
+        args = (losses[:, 0], losses[:, 1:])
     with pytest.raises(error, match="block_size must be"):
-        if procedure is MCS:
-            MCS(losses, 0.1, block_size=block_size, bootstrap=bootstrap)
-        else:
-            procedure(
-                losses[:, 0],
-                losses[:, 1:],
-                block_size=block_size,
-                bootstrap=bootstrap,
-            )
+        procedure(*args, block_size=block_size, bootstrap=bootstrap)
