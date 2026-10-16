@@ -33,6 +33,7 @@ The setup makes use of return data downloaded from Yahoo!
 
     import datetime as dt
 
+    import numpy as np
     import pandas as pd
     import pandas_datareader.data as web
 
@@ -41,7 +42,7 @@ The setup makes use of return data downloaded from Yahoo!
     sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
     low = sp500.index.min()
     high = sp500.index.max()
-    monthly_dates = pd.date_range(low, high, freq='M')
+    monthly_dates = pd.date_range(low, high, freq='ME')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 

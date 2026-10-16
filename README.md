@@ -146,7 +146,7 @@ end = dt.datetime(2014,1,1)
 sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
 start = sp500.index.min()
 end = sp500.index.max()
-monthly_dates = pd.date_range(start, end, freq='M')
+monthly_dates = pd.date_range(start, end, freq='ME')
 monthly = sp500.reindex(monthly_dates, method='ffill')
 returns = 100 * monthly['Adj Close'].pct_change().dropna()
 

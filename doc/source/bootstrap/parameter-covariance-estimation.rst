@@ -10,6 +10,7 @@ Sharpe ratio of the S&P 500 using Yahoo! Finance data.
 .. code-block:: python
 
     import datetime as dt
+    import numpy as np
     import pandas as pd
     import pandas_datareader.data as web
 
@@ -18,7 +19,7 @@ Sharpe ratio of the S&P 500 using Yahoo! Finance data.
     sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
     low = sp500.index.min()
     high = sp500.index.max()
-    monthly_dates = pd.date_range(low, high, freq='M')
+    monthly_dates = pd.date_range(low, high, freq='ME')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -27,8 +28,8 @@ The function that returns the parameters.
 .. code-block:: python
 
     def sharpe_ratio(r):
-        mu = 12 * r.mean(0)
-        sigma = np.sqrt(12 * r.var(0))
+        mu = 12 * r.mean(axis=0)
+        sigma = np.sqrt(12 * r.var(axis=0))
         sr = mu / sigma
         return np.array([mu, sigma, sr])
 

@@ -41,7 +41,7 @@ blocks of an ARCH model
 
 .. code-block:: python
 
-    from arch import ConstantMean, GARCH, Normal
+    from arch.univariate import ConstantMean, GARCH, Normal
 
     am = ConstantMean(returns)
     am.volatility = GARCH(1, 0, 1)

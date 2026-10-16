@@ -40,8 +40,7 @@ uses a constant and time trend.
 
     df = web.DataReader(["AAA", "BAA"], "fred", start, end)
     df['diff'] = df['BAA'] - df['AAA']
-    adf = ADF(df['diff'])
-    adf.trend = 'ct'
+    adf = ADF(df['diff'], trend='ct')
 
     print(adf.summary())
 
