@@ -46,6 +46,77 @@ def _compare_truncated_forecasts(full, trunc, start):
         return
 
 
+def _aparch_hand_next(e, sigma_delta, params, p, o, q, delta, backcast):
+    """
+    One step of the APARCH recursion written out term by term.
+
+    ``e`` holds the shocks and ``sigma_delta`` the conditional variances to the
+    power ``delta / 2`` up to (and excluding) the period being computed.
+    """
+    t = len(e)
+    omega = params[0]
+    alpha = params[1 : p + 1]
+    gamma = params[p + 1 : p + o + 1]
+    beta = params[p + o + 1 : p + o + q + 1]
+    value = omega
+    for j in range(p):
+        if t - 1 - j < 0:
+            shock = backcast**0.5
+        else:
+            shock = abs(e[t - 1 - j])
+            if j < o:
+                shock = shock - gamma[j] * e[t - 1 - j]
+        value += alpha[j] * shock**delta
+    for j in range(q):
+        if t - 1 - j < 0:
+            value += beta[j] * backcast ** (delta / 2.0)
+        else:
+            value += beta[j] * sigma_delta[t - 1 - j]
+    return value
+
+
+def _aparch_hand_history(resids, params, p, o, q, delta, backcast):
+    sigma_delta: list[float] = []
+    for t in range(len(resids)):
+        value = _aparch_hand_next(
+            [float(r) for r in resids[:t]],
+            sigma_delta,
+            params,
+            p,
+            o,
+            q,
+            delta,
+            backcast,
+        )
+        sigma_delta.append(value)
+    return sigma_delta
+
+
+def _aparch_hand_simulation(
+    resids, history_sd, params, p, o, q, delta, backcast, origin, draws
+):
+    """
+    Simulated APARCH variance paths for one forecast origin.
+
+    ``draws`` has shape (simulations, horizon) and contains the standardized
+    shocks. Every path extends the history and applies ``_aparch_hand_next``.
+    """
+    history_e = [float(r) for r in resids[: origin + 1]]
+    sims, horizon = draws.shape
+    paths = np.empty((sims, horizon))
+    shocks = np.empty((sims, horizon))
+    for s in range(sims):
+        e = list(history_e)
+        sd = list(history_sd[: origin + 1])
+        for h in range(horizon):
+            value = _aparch_hand_next(e, sd, params, p, o, q, delta, backcast)
+            sd.append(value)
+            e.append(draws[s, h] * value ** (1.0 / delta))
+            paths[s, h] = value ** (2.0 / delta)
+            shocks[s, h] = e[-1]
+    return paths, shocks
+
+
 class PreservedState:
     """
     Context manager that will save NumPy's random generator's state when entering and
@@ -1921,6 +1992,82 @@ class TestVarianceForecasts:
         final += params[3] * (sigma2[-1] ** (delta / 2.0))
         final **= 2.0 / delta
         assert_allclose(final, forecast.forecasts[-1, 0])
+
+    @pytest.mark.parametrize(
+        ("p", "o", "q", "params", "delta"),
+        [
+            (2, 1, 1, [0.1, 0.1, 0.05, 0.3, 0.3, 1.5], None),
+            (2, 2, 1, [0.1, 0.1, 0.05, 0.3, -0.2, 0.3, 1.5], None),
+            (3, 1, 0, [0.1, 0.1, 0.08, 0.05, 0.3, 1.3], None),
+            (2, 1, 1, [0.1, 0.1, 0.05, 0.3, 0.3], 1.5),
+            (1, 1, 1, [0.1, 0.1, 0.3, 0.3, 1.5], None),
+        ],
+        ids=["211", "221", "310", "211-fixed-delta", "111"],
+    )
+    @pytest.mark.parametrize("method", ["simulation", "bootstrap"])
+    def test_aparch_simulation_matches_hand_recursion(
+        self, p, o, q, params, delta, method
+    ):
+        # Forecast paths must follow the APARCH recursion written out by hand
+        # when fed the same standardized shocks. In particular |e| - gamma * e
+        # may only be used in the period it is applied to
+        params = np.array(params)
+        delta_value = params[-1] if delta is None else delta
+        horizon = 4
+        sims = 12
+        n = 130
+        resids = np.random.default_rng(20240101).standard_t(8, n) * 1.2
+        vol = APARCH(p=p, o=o, q=q, delta=delta)
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        args = (params, p, o, q, delta_value, backcast)
+        history_sd = _aparch_hand_history(resids, *args)
+        starts = [0, 1, 110] if method == "simulation" else [110]
+        for start in starts:
+            if method == "simulation":
+                generator = np.random.default_rng(start + 1)
+                draws = [generator.standard_normal((sims, horizon)) for _ in range(n)]
+                calls = iter(draws[start:])
+
+                def rng(size, calls=calls):
+                    return next(calls)
+
+                kwargs = {"rng": rng}
+            else:
+                # Standardized residuals from the hand recursion, replayed
+                std_resid = resids / np.array(history_sd) ** (1.0 / delta_value)
+                replay = BootstrapRng(std_resid, start, RandomState(7)).rng()
+                draws = [None] * start
+                draws += [replay((sims, horizon)) for _ in range(n - start)]
+                kwargs = {"random_state": RandomState(7)}
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=horizon,
+                start=start,
+                method=method,
+                simulations=sims,
+                **kwargs,
+            )
+            for origin in range(start, n):
+                paths, shocks = _aparch_hand_simulation(
+                    resids, history_sd, *args, origin, draws[origin]
+                )
+                loc = origin - start
+                assert_allclose(forecast.forecast_paths[loc], paths, rtol=1e-10)
+                assert_allclose(forecast.shocks[loc], shocks, rtol=1e-10)
+                assert_allclose(forecast.forecasts[loc], paths.mean(0), rtol=1e-10)
+            # The one-step variance is known at the origin
+            analytic = vol.forecast(
+                params, resids, backcast, var_bounds, horizon=1, start=start
+            )
+            assert_allclose(
+                forecast.forecast_paths[:, :, 0],
+                np.tile(analytic.forecasts, (1, sims)),
+                rtol=1e-10,
+            )
 
     @pytest.mark.parametrize("o", [0, 1])
     @pytest.mark.parametrize("delta", [None, 1.5])
