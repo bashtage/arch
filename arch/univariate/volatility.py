@@ -1957,6 +1957,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         )
         m = self.m
         resids2 = resids2[start:].copy()
+        indicator = indicator[start:].copy()
         aw_rev = aw[::-1]
         gw_rev = gw[::-1]
 
