@@ -144,11 +144,6 @@ html_theme_options = {
             "title": "Development",
             "aliases": [],
         },
-        {
-            "title": "RTD (Release)",
-            "version": "https://arch.readthedocs.io/",
-            "aliases": [],
-        },
     ],
     "toc_title_is_page_title": True,
     "social": [
