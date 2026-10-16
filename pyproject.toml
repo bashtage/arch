@@ -177,6 +177,8 @@ target-version = "py310"
 
 [tool.ruff.lint]
 typing-modules = ["arch._typing"]
+# flake8-bugbear codes that are used in noqa comments
+external = ["B042"]
 
 select = [
   "ALL",
