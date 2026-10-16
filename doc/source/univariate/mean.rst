@@ -47,7 +47,7 @@ Writing New Mean Models
 -----------------------
 .. currentmodule:: arch.univariate.base
 
-All mean models must inherit from :class:ARCHModel and provide all public
+All mean models must inherit from :class:`~arch.univariate.base.ARCHModel` and provide all public
 methods. There are two optional private methods that should be provided if
 applicable.
 

@@ -74,7 +74,9 @@ class TestDistributions:
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         assert_array_equal(dist.starting_values(self.resids), np.array([sv]))
 
-        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 2"):
+        with pytest.raises(
+            ValueError, match=r"The shape parameter must be larger than 2"
+        ):
             dist.simulate(np.array([1.5]))
         sim = dist.simulate(8.0)
         assert isinstance(sim(100), np.ndarray)
@@ -125,11 +127,17 @@ class TestDistributions:
 
         with pytest.raises(ValueError, match=r"The shape parameter must be larger"):
             dist.simulate(np.array([1.5, 0.0]))
-        with pytest.raises(ValueError, match=r"The skew parameter must be smaller than 1"):
+        with pytest.raises(
+            ValueError, match=r"The skew parameter must be smaller than 1"
+        ):
             dist.simulate(np.array([4.0, 1.5]))
-        with pytest.raises(ValueError, match=r"The skew parameter must be smaller than 1"):
+        with pytest.raises(
+            ValueError, match=r"The skew parameter must be smaller than 1"
+        ):
             dist.simulate(np.array([4.0, -1.5]))
-        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 2"):
+        with pytest.raises(
+            ValueError, match=r"The shape parameter must be larger than 2"
+        ):
             dist.simulate(np.array([1.5, 1.5]))
 
         sim = dist.simulate([8.0, -0.2])
@@ -163,7 +171,9 @@ class TestDistributions:
 
         assert_array_equal(dist.starting_values(self.resids), np.array([1.5]))
 
-        with pytest.raises(ValueError, match=r"The shape parameter must be larger than 1"):
+        with pytest.raises(
+            ValueError, match=r"The shape parameter must be larger than 1"
+        ):
             dist.simulate(np.array([0.9]))
         simulator = dist.simulate(1.5)
         rvs = simulator(1000)
@@ -222,5 +232,7 @@ def test_no_parameters_error(distribution):
 
 
 def test_random_state_seed_transition():
-    with pytest.raises(TypeError, match=r"seed must by a NumPy Generator or RandomState"):
+    with pytest.raises(
+        TypeError, match=r"seed must by a NumPy Generator or RandomState"
+    ):
         Normal(seed="1234")

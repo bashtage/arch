@@ -1094,7 +1094,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
         self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         return (
             FIAPARCHUpdater,
             (

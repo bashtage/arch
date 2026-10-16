@@ -17,7 +17,6 @@ variables:
   test.install: false
   nightly: false
   experimental: false
-  style: false
 
 jobs:
 - template: ci/azure/azure_template_posix.yml
