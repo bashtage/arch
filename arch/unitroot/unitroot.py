@@ -312,7 +312,7 @@ def _autolag_ols_low_memory(
                 singular_array_error.format(max_lags=maxlag, lag=m - i)
             ) from exc
         sigma2[i - m] = squeeze(ypy - b.T @ xpx_sub @ b) / nobs
-        if lower_method == "t-stat":
+        if lower_method == "t-stat" and i > m:
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
             tstat[i - m] = squeeze(b[-1]) / stderr
