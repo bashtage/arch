@@ -614,21 +614,19 @@ def figarch_recursion(const double[::1] parameters,
                       int trunc_lag,
                       double backcast,
                       double[:, ::1] var_bounds):
-    cdef Py_ssize_t t, i
-    cdef double bc_weight, omega, beta, omega_tilde
-    cdef double [::1] lam
+    cdef Py_ssize_t t
+    cdef double omega, beta, omega_tilde
+    cdef double [::1] lam, bc_weights
 
     omega = parameters[0]
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
+    bc_weights = _backcast_weights(lam, nobs, trunc_lag)
+    _arch_inf_sums(
+        lam, fresids, bc_weights, omega_tilde, backcast, nobs, trunc_lag, sigma2
+    )
     for t in range(nobs):
-        bc_weight = 0.0
-        for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma2[t] = omega_tilde + bc_weight * backcast
-        for i in range(min(t, trunc_lag)):
-            sigma2[t] += lam[i] * fresids[t - i - 1]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
