@@ -36,7 +36,7 @@ The mean model determines :math:`\mu_t`, see :ref:`mean-models`.
 * :class:`~arch.univariate.MAMean`, a moving average,
   :math:`r_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \ldots + \theta_q \epsilon_{t-q}`.
 * :class:`~arch.univariate.ARCHInMean`, in which a function :math:`f` of the
-  conditional variance enters the mean,
+  conditional variance enters the mean [EngleLilienRobins1987]_,
   :math:`r_t = \mu + \kappa f(\sigma^2_t) + \sum_{i=1}^p \phi_{L_{i}} r_{t-L_{i}} + \gamma' x_t + \epsilon_t`.
 
 Volatility Processes
@@ -92,7 +92,7 @@ The GARCH(1,1) of the :doc:`introduction <introduction>` is the case :math:`p=q=
        that sum to 1 [Foroni2013]_ [Sheppard2018]_
    * - :class:`~arch.univariate.EWMAVariance`
      - :math:`\sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}`, with
-       :math:`\lambda=0.94` by default
+       :math:`\lambda=0.94` by default [RiskMetrics1996]_
    * - :class:`~arch.univariate.RiskMetrics2006`
      - A weighted average of ``kmax`` EWMA variance processes
    * - :class:`~arch.univariate.ConstantVariance`
@@ -113,7 +113,7 @@ have mean 0 and variance 1.
   :math:`\eta` and the skewness :math:`\lambda` [Hansen1994]_. When :math:`\lambda=0`
   it is the standardized Student's t.
 * :class:`~arch.univariate.GeneralizedError`, the generalized error distribution, with
-  one shape parameter :math:`\nu`.
+  one shape parameter :math:`\nu` [Nelson1991]_.
 
 References
 ~~~~~~~~~~
@@ -140,6 +140,10 @@ References
    estimates of the variance of United Kingdom inflation. *Econometrica*, 50(4),
    987-1007.
 
+.. [EngleLilienRobins1987] Engle, R. F., Lilien, D. M., & Robins, R. P. (1987).
+   Estimating time varying risk premia in the term structure: The ARCH-M model.
+   *Econometrica*, 55(2), 391-407.
+
 .. [Foroni2013] Foroni, Claudia, and Massimiliano Marcellino. "A survey of
    Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
 
@@ -152,6 +156,9 @@ References
 
 .. [Nelson1991] Nelson, D. B. (1991). Conditional heteroskedasticity in asset returns:
    a new approach. *Econometrica*, 59(2), 347-370.
+
+.. [RiskMetrics1996] J.P. Morgan/Reuters (1996). *RiskMetrics Technical Document*,
+   Fourth Edition. New York: J.P. Morgan/Reuters, December 17, 1996.
 
 .. [Sheppard2018] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
 
