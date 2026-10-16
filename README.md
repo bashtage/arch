@@ -14,7 +14,7 @@ to improve performance)
 | **Coverage**               | [![codecov](https://codecov.io/gh/bashtage/arch/branch/main/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)                                                                                                                       |
 | **Code Quality**           | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade) |
 | **Citation**               | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.593254.svg)](https://doi.org/10.5281/zenodo.593254)                                                                                                                                  |
-| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://arch.readthedocs.org/en/latest/)                                                                                                          |
+| **Documentation**          | [![Documentation](https://github.com/bashtage/arch/actions/workflows/generate-documentation.yml/badge.svg)](https://bashtage.github.io/arch/)                                                                                                          |
 
 ## Module Contents
 
@@ -31,11 +31,9 @@ to improve performance)
 
 ## Documentation
 
-Documentation from the main branch is hosted on
-[my github pages](https://bashtage.github.io/arch/).
-
-Released documentation is hosted on
-[read the docs](https://arch.readthedocs.org/en/latest/).
+Documentation for the latest release is hosted on
+[GitHub Pages](https://bashtage.github.io/arch/), and documentation from the
+main branch is at [bashtage.github.io/arch/devel](https://bashtage.github.io/arch/devel/).
 
 ## More about ARCH
 
@@ -205,7 +203,8 @@ that arch will work with older versions.
 - statsmodels (0.13.1+)
 - matplotlib (3+), optional
 
-arch 9.0 is the last release that supports Python 3.10.
+arch 9.0 is the last release that supports Python 3.10 and NumPy 1.x. Later
+releases will raise the other minimum versions accordingly.
 
 
 ### Optional Requirements
