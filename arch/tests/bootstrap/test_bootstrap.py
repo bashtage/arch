@@ -632,7 +632,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 0, "
         "<strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df, seed=seed)
     expected = (
@@ -660,7 +660,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = MovingBlockBootstrap(
         block_size=20, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
@@ -679,7 +679,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
 
 def test_uneven_sampling(bs_setup, seed):
@@ -1229,3 +1229,22 @@ def test_extra_kwargs_conflict(method):
 
     with pytest.raises(ValueError, match="extra_kwargs contains keys used for"):
         getattr(bs, method)(func, 3, extra_kwargs={"y": np.zeros(50)})
+
+
+@pytest.mark.parametrize("cls", [IIDBootstrap, IndependentSamplesBootstrap])
+def test_repr_html_is_jupyter_hook(cls):
+    # Jupyter uses _repr_html_, the name that was misspelled
+    bs = cls(np.arange(10.0))
+    assert callable(bs._repr_html_)
+    assert bs._repr_html_().startswith("<strong>")
+    assert not hasattr(bs, "_repr_html")
+    for block_cls in BLOCK_BOOTSTRAPS:
+        assert block_cls(3, np.arange(10.0))._repr_html_().startswith("<strong>")
+
+
+def test_bca_bias_message():
+    bs = IIDBootstrap(np.arange(10.0))
+    bs._base = np.array([1.0])
+    bs._results = np.zeros((5, 1))
+    with pytest.raises(RuntimeError, match=r"is 0 or 1, and so bias cannot be"):
+        bs._bca_bias()

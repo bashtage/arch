@@ -523,7 +523,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     def __repr__(self) -> str:
         return self.__str__()[:-1] + ", ID: " + hex(id(self)) + ")"
 
-    def _repr_html(self) -> str:
+    def _repr_html_(self) -> str:
         html = "<strong>" + self._name + "</strong>("
         html += "<strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
         html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
@@ -903,7 +903,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         p = (self._results < self._base).mean(axis=0)
         if p.min() <= 0.0 or p.max() >= 1.0:
             raise RuntimeError(
-                "Empirical probability used in bias correction is 0 or 1, and so"
+                "Empirical probability used in bias correction is 0 or 1, and so "
                 "bias cannot be corrected. This may occur in extremum statistics "
                 "that are not well approximated by a normal in a finite sample."
             )
@@ -1555,7 +1555,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
         return txt
 
-    def _repr_html(self) -> str:
+    def _repr_html_(self) -> str:
         html = "<strong>" + self._name + "</strong>("
         html += "<strong>block size</strong>: " + str(self.block_size)
         html += ", <strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
