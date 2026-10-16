@@ -736,6 +736,12 @@ class VolatilityProcess(metaclass=ABCMeta):
             samples numbers with that shape.
         random_state : RandomState, optional
             NumPy RandomState instance to use when method is 'bootstrap'
+        asym_weight : float, optional
+            Expected value of z**2 when z < 0, E[z**2 1(z < 0)], for the
+            standardized distribution, which weights the variance in the expected
+            value of the asymmetric terms of analytic forecasts. The default, 0.5,
+            is exact for symmetric distributions. Only used by processes with an
+            asymmetric term when method is 'analytic'.
 
         Returns
         -------
