@@ -626,14 +626,18 @@ def fiaparch_recursion_python(
     omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
     backcast_delta = backcast ** (delta / 2.0)
+    # The transformed shock depends only on the observation, not on the lag, so
+    # raise it to delta once (nobs powers) instead of once per (t, lag) pair
+    fshocks = np.empty(nobs)
+    for t in range(nobs - 1):
+        fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
     for t in range(nobs):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += lam[i]
         sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
         for i in range(min(t, trunc_lag)):
-            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
-            sigma_delta[t] += lam[i] * (shock**delta)
+            sigma_delta[t] += lam[i] * fshocks[t - i - 1]
         sigma2[t] = sigma_delta[t] ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
         sigma_delta[t] = sigma2[t] ** (delta / 2.0)
