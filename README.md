@@ -14,7 +14,7 @@ to improve performance)
 | **Coverage**               | [![codecov](https://codecov.io/gh/bashtage/arch/branch/main/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)                                                                                                                       |
 | **Code Quality**           | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade) |
 | **Citation**               | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.593254.svg)](https://doi.org/10.5281/zenodo.593254)                                                                                                                                  |
-| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://arch.readthedocs.org/en/latest/)                                                                                                          |
+| **Documentation**          | [![Documentation](https://github.com/bashtage/arch/actions/workflows/generate-documentation.yml/badge.svg)](https://bashtage.github.io/arch/)                                                                                                          |
 
 ## Module Contents
 
@@ -31,11 +31,9 @@ to improve performance)
 
 ## Documentation
 
-Documentation from the main branch is hosted on
-[my github pages](https://bashtage.github.io/arch/).
-
-Released documentation is hosted on
-[read the docs](https://arch.readthedocs.org/en/latest/).
+Documentation for the latest release is hosted on
+[GitHub Pages](https://bashtage.github.io/arch/), and documentation from the
+main branch is at [bashtage.github.io/arch/devel](https://bashtage.github.io/arch/devel/).
 
 ## More about ARCH
 
@@ -76,11 +74,8 @@ Contributions are welcome. There are opportunities at many levels to contribute:
 See the [univariate volatility example notebook](https://bashtage.github.io/arch/univariate/univariate_volatility_modeling.html) for a more complete overview.
 
 ```python
-import datetime as dt
-import pandas_datareader.data as web
-st = dt.datetime(1990,1,1)
-en = dt.datetime(2014,1,1)
-data = web.get_data_yahoo('^FTSE', start=st, end=en)
+import arch.data.sp500
+data = arch.data.sp500.load()
 returns = 100 * data['Adj Close'].pct_change().dropna()
 
 from arch import arch_model
@@ -137,16 +132,13 @@ for examples of bootstrapping the Sharpe ratio and a Probit model from statsmode
 
 ```python
 # Import data
-import datetime as dt
 import pandas as pd
 import numpy as np
-import pandas_datareader.data as web
-start = dt.datetime(1951,1,1)
-end = dt.datetime(2014,1,1)
-sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
+import arch.data.sp500
+sp500 = arch.data.sp500.load()
 start = sp500.index.min()
 end = sp500.index.max()
-monthly_dates = pd.date_range(start, end, freq='M')
+monthly_dates = pd.date_range(start, end, freq='ME')
 monthly = sp500.reindex(monthly_dates, method='ffill')
 returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -198,38 +190,33 @@ cov_est.cov.long_run
 These requirements reflect the testing environment. It is possible
 that arch will work with older versions.
 
-- Python (3.9+)
-- NumPy (1.19+)
-- SciPy (1.5+)
-- Pandas (1.1+)
-- statsmodels (0.12+)
+- Python (3.10-3.15)
+- NumPy (1.22.3+)
+- SciPy (1.8+)
+- pandas (1.4+)
+- statsmodels (0.13.1+)
 - matplotlib (3+), optional
+
+arch 9.0 is the last release that supports Python 3.10 and NumPy 1.x. Later
+releases will raise the other minimum versions accordingly.
 
 
 ### Optional Requirements
 
-- Numba (0.49+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable `ARCH_NO_BINARY=1` and install without the wheel.
+- Numba (0.55+) will be used if available **and** when arch is installed without building the binary modules. To make sure that they are not built, install from the source distribution with the `no-binary` build option:
 
 ```shell
-export ARCH_NO_BINARY=1
-python -m pip install arch
-```
-
-or if using Powershell on windows
-
-```powershell
-$env:ARCH_NO_BINARY=1
-python -m pip install arch
+python -m pip install arch --no-binary arch -Csetup-args="-Dno-binary=true"
 ```
 
 - jupyter and notebook are required to run the notebooks
 
 ## Installing
 
-Standard installation with a compiler requires Cython. If you do not
-have a compiler installed, the `arch` should still install. You will
-see a warning but this can be ignored. If you don't have a compiler,
-`numba` is strongly recommended.
+Wheels are available for Linux, macOS and Windows, so installing with
+`pip` does not need a compiler. Building from source needs a C compiler;
+`pip` installs the build requirements (Cython, meson-python and NumPy)
+automatically.
 
 ### pip
 
@@ -245,8 +232,8 @@ You can alternatively install the latest version from GitHub
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-Setting the environment variable `ARCH_NO_BINARY=1` can be used to
-disable compilation of the extensions.
+Adding `-Csetup-args="-Dno-binary=true"` to the `pip install` command
+disables compilation of the extensions.
 
 ### Anaconda
 
@@ -260,24 +247,23 @@ conda install arch-py -c conda-forge
 
 ### Windows
 
-Building extension using the community edition of Visual Studio is
-simple when using Python 3.8 or later. Building is not necessary when numba
-is installed since just-in-time compiled code (numba) runs as fast as
-ahead-of-time compiled extensions.
+Building the extensions from source needs the Visual Studio Build Tools
+(the free community edition is enough).
 
 ### Developing
 
 The development requirements are:
 
-- Cython (0.29+, if not using ARCH_NO_BINARY=1, supports 3.0.0b2+)
-- pytest (For tests)
+- Cython (3.1+), meson-python and ninja, unless building without the binary
+  modules
+- pytest (9+, for tests)
 - sphinx (to build docs)
 - sphinx-immaterial (to build docs)
 - jupyter, notebook and nbsphinx (to build docs)
 
 ### Installation Notes
 
-1. If Cython is not installed, the package will be installed
-    as-if `ARCH_NO_BINARY=1` was set.
-2. Setup does not verify these requirements. Please ensure these are
-    installed.
+1. Building without the binary modules (`-Csetup-args="-Dno-binary=true"`)
+   still needs a C compiler and Cython, since the build checks for them.
+   The recursions then run in numba if it is installed, and in pure
+   Python otherwise, which is much slower.

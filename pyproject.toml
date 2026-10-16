@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 requires = [
   'meson-python',
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy>=2.0.0,<3",
   "setuptools_scm>=9.2.0,<10",
 ]
@@ -14,7 +14,7 @@ dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
   "scipy>=1.8",
-  "statsmodels>=0.13.0",
+  "statsmodels>=0.13.1",
   "packaging",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
@@ -27,6 +27,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",
@@ -68,7 +70,7 @@ requires-python = ">=3.10"
 [project.optional-dependencies]
 test = [
   # test
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
@@ -81,7 +83,7 @@ doc = [
   "setuptools>=61",
   "wheel",
   "setuptools_scm[toml]>=9.2.0,<10",
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy >=2.3.4",
   "scipy >=1.16.0",
   "ipython >=8.0.1",
@@ -111,13 +113,13 @@ dev = [
   "setuptools_scm[toml]>=9.2.0,<10",
   "packaging",
   # Performance
-  "cython>=3.0.10",
+  "cython>=3.1.0",
   "numba>=0.55",
   # Graphics
   "matplotlib>=3",
   "seaborn",
   # Tests
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
@@ -158,10 +160,10 @@ exclude = '''
   | \.git
   | \.mypy_cache
   | \.oytest_cache
-  | _build
   | buck-out
-  | build
-  | dist
+  | ^/build/
+  | ^/dist/
+  | ^/arch/_version\.py$
 )
 '''
 
@@ -177,6 +179,8 @@ target-version = "py310"
 
 [tool.ruff.lint]
 typing-modules = ["arch._typing"]
+# flake8-bugbear codes that are used in noqa comments
+external = ["B042"]
 
 select = [
   "ALL",
@@ -306,18 +310,16 @@ ignore = [
 "arch/unitroot/_engle_granger.py" = ["RUF001"]
 
 [tool.pytest]
-strict_parametrization_ids = true
-minversion = "8.4.1"
+minversion = "9.0"
 testpaths = ["arch"]
-xfail_strict = true
-addopts = ["--strict"]
+# strict_config, strict_markers, strict_xfail and strict_parametrization_ids
+strict = true
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
   "ignore:`formatargspec`:DeprecationWarning:statsmodels",
   "ignore:Using or importing:DeprecationWarning",
   "ignore:Session._key_changed is deprecated:DeprecationWarning",
   "error:Support for multi-dimensional:DeprecationWarning",
-  "error:Mutating unit root tests is deprecated:FutureWarning",
   "error:invalid value encountered in cos:RuntimeWarning",
   "error:invalid value encountered in log:RuntimeWarning",
   "error:divide by zero encountered in double_scalars:RuntimeWarning",
@@ -328,14 +330,8 @@ filterwarnings = [
   "error:Parameters are not consistent with a::",
   "error:overflow encountered in double_scalars:RuntimeWarning:",
   "error:overflow encountered in multiply:RuntimeWarning:",
-  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
-  "error:The default for reindex:FutureWarning:",
   "error:overflow encountered in square:RuntimeWarning",
   "error:Values in x were outside bounds:RuntimeWarning:",
-  "error:The random_state property is deprecated:FutureWarning",
-  "error:random_state is deprecated:FutureWarning",
-  "error:seed is deprecated:FutureWarning",
-  "error:get_state is deprecated:FutureWarning",
   "error:Conversion of an array with ndim:DeprecationWarning:arch",
   "error:invalid value encountered in divide:RuntimeWarning",
   # "error:DatetimeIndex.values returning an ndarray::",
@@ -352,6 +348,21 @@ src_paths = ["arch"]
 sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 known_first_party = ["arch"]
 known_compat = ["arch.compat.*"]
+# The default skip list without _build, which holds arch/_build/git_version.py
+skip = [
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".nox",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0
@@ -421,7 +432,6 @@ omit = [
 directory = "coverage_html_report"
 
 [tool.mypy]
-plugins="numpy.typing.mypy_plugin"
 exclude = [
   "tests",
   "unitroot/critical_values/simulation",
