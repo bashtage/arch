@@ -238,7 +238,7 @@ Forecasting After New Data Arrive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Models do not need to be re-estimated each time new data are available.
-:meth:`~arch.univariate.mean.HARX.append` adds observations to a model
+:meth:`~arch.univariate.HARX.append` adds observations to a model
 in-place without changing any parameters, so that forecasts can be produced
 from the latest observation using parameters estimated previously.
 

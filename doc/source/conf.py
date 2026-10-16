@@ -53,9 +53,9 @@ else:
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
-    # One of the next two only
+    # NumPy-style docstrings are parsed by napoleon. The numpydoc extension
+    # cannot be used because sphinx-immaterial is incompatible with it.
     "sphinx.ext.napoleon",
-    # "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.extlinks",
@@ -282,6 +282,14 @@ intersphinx_mapping = {
 
 extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH%s")}
 
+# The numpy inventory lists numpy.float64 and numpy.int64 as attributes rather
+# than classes, so the py:class references generated from the NumPy array
+# annotations in signatures (e.g., Float64Array) cannot be resolved.
+nitpick_ignore = [
+    ("py:class", "numpy.float64"),
+    ("py:class", "numpy.int64"),
+]
+
 
 napoleon_google_docstring = False
 napoleon_use_admonition_for_examples = False
@@ -314,35 +322,6 @@ napoleon_type_aliases = {
     "ARCHModelResult": "arch.univariate.base.ARCHModelResult",
     "ARCHModelFixedResult": "arch.univariate.base.ARCHModelFixedResult",
 }
-
-numpydoc_use_autodoc_signature = True
-numpydoc_xref_param_type = True
-numpydoc_class_members_toctree = False
-numpydoc_xref_aliases = {
-    "array-like": ":term:`array-like <array_like>`",
-    "array_like": ":term:`array_like`",
-    "Figure": "matplotlib.figure.Figure",
-    "Axes": "matplotlib.axes.Axes",
-    "AxesSubplot": "matplotlib.axes.Axes",
-    "DataFrame": "pandas.DataFrame",
-    "Series": "pandas.Series",
-    "ndarray": "numpy.ndarray",
-    "np.ndarray": "numpy.array",
-    "pd.Series": "pandas.Series",
-    "RandomState": "numpy.random.RandomState",
-    "Generator": "numpy.random.Generator",
-    "float64": "numpy.double",
-    "numpy.float64": "numpy.double",
-    "OptimizeResult": "scipy.optimize.OptimizeResult",
-    "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
-    "CovarianceEstimator": "arch.covariance.kernel.CovarianceEstimator",
-    "CovarianceEstimate": "arch.covariance.kernel.CovarianceEstimate",
-    "VolatilityUpdater": "arch.univariate.recursions.VolatilityUpdater",
-    "ARCHModel": "arch.univariate.base.ARCHModel",
-    "ARCHModelResult": "arch.univariate.base.ARCHModelResult",
-    "ARCHModelFixedResult": "arch.univariate.base.ARCHModelFixedResult",
-}
-numpydoc_xref_ignore = {"type", "optional", "default"}
 
 autosummary_generate = True
 autoclass_content = "class"
