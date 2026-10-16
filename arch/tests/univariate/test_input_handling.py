@@ -1,9 +1,10 @@
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_equal
+import pandas as pd
 import pytest
 from scipy.special import gammaln
 
-from arch.univariate import ConstantMean, MIDASHyperbolic, Normal
+from arch.univariate import HARCH, ConstantMean, MIDASHyperbolic, Normal, arch_model
 
 
 def midas_weights(theta, m):
@@ -73,3 +74,54 @@ def test_midas_simulate_burn_zero_mean_model():
 def test_midas_str():
     assert str(MIDASHyperbolic(22)) == "MIDAS Hyperbolic(lags: 22, asym: False)"
     assert str(MIDASHyperbolic(5, asym=True)) == "MIDAS Hyperbolic(lags: 5, asym: True)"
+
+
+@pytest.mark.parametrize(
+    "lags",
+    [
+        np.array([1, 5, 22]),
+        np.array([1, 5, 22], dtype=np.int32),
+        pd.Series([1, 5, 22]),
+        (1, 5, 22),
+        [1, 5, 22],
+    ],
+    ids=["int64-array", "int32-array", "series", "tuple", "list"],
+)
+def test_harch_lags_formats(lags):
+    harch = HARCH(lags)
+    assert_array_equal(harch.lags, [1, 5, 22])
+    assert harch.num_params == 4
+    assert str(harch) == "HARCH(lags: 1, 5, 22)"
+
+
+@pytest.mark.parametrize(
+    "lags", [3, np.int64(3), np.array(3)], ids=["int", "numpy-int", "0d-array"]
+)
+def test_harch_scalar_lags(lags):
+    assert_array_equal(HARCH(lags).lags, [1, 2, 3])
+
+
+def test_harch_array_lags_arch_model():
+    y = np.random.default_rng(5).standard_normal(500)
+    res_array = arch_model(y, vol="harch", p=np.array([1, 5])).fit(disp="off")
+    res_list = arch_model(y, vol="harch", p=[1, 5]).fit(disp="off")
+    assert_allclose(res_array.params, res_list.params)
+    assert_allclose(res_array.loglikelihood, res_list.loglikelihood)
+
+
+@pytest.mark.parametrize(
+    "lags",
+    [0, -1, [0, 1], [1, -5], [], np.array([0, 1]), np.ones((2, 2), dtype=int)],
+    ids=[
+        "zero",
+        "negative",
+        "zero-in-list",
+        "negative-in-list",
+        "empty",
+        "array",
+        "2d",
+    ],
+)
+def test_harch_invalid_lags(lags):
+    with pytest.raises(ValueError, match="lags must be a positive integer"):
+        HARCH(lags)

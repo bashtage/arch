@@ -1487,10 +1487,15 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
         super().__init__()
-        if not isinstance(lags, Sequence):
-            lag_val = int(lags)
-            lags = list(range(1, lag_val + 1))
-        lags_arr = ensure1d(lags, "lags")
+        lags_arr = np.asarray(lags)
+        if lags_arr.ndim == 0:
+            lags_arr = np.arange(1, int(lags_arr) + 1)
+        if lags_arr.ndim != 1 or lags_arr.shape[0] == 0 or np.any(lags_arr < 1):
+            raise ValueError(
+                "lags must be a positive integer or a non-empty 1-d array-like of "
+                "positive integers."
+            )
+        lags_arr = ensure1d(lags_arr, "lags")
         self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
