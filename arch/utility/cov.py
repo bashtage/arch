@@ -7,7 +7,7 @@ def cov_nw(
     y: Float64Array, lags: int = 0, demean: bool = True, axis: int = 0, ddof: int = 0
 ) -> Float64Array | float:
     """
-    Computes Newey-West covariance for 1-d and 2-d arrays
+    Compute the Newey-West covariance for 1-d and 2-d arrays.
 
     Parameters
     ----------
@@ -15,20 +15,21 @@ def cov_nw(
         Values to use when computing the Newey-West covariance estimator, either
         1-d or 2-d. When y is 2d, default behavior is to treat columns as variables
         and rows as observations.
-    lags : int
-        Number of lags to include in the Newey-West covariance estimator
-    demean : bool
-        Indicates whether to subtract the mean.  Default is True
-    axis : int
-        The axis to use when y is 2d
-    ddof : int
+    lags : int, optional
+        Number of lags to include in the Newey-West covariance estimator.
+    demean : bool, optional
+        Indicates whether to subtract the mean.
+    axis : int, optional
+        The axis to use when y is 2d.
+    ddof : int, optional
         Degree of freedom correction for compatibility with simple covariance
-        estimators.  Default is 0.
+        estimators.
 
     Returns
     -------
-    ndarray
-        The estimated covariance
+    float or ndarray
+        The estimated covariance. A float if y is 1-d and a 2-d ndarray
+        otherwise.
     """
     z = y
     is_1d = False

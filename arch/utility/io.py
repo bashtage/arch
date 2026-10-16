@@ -4,7 +4,19 @@ __all__ = ["pval_format", "str_format"]
 
 
 def str_format(v: float) -> str:
-    """Preferred basic formatter"""
+    """
+    Format a number using the preferred basic formatter.
+
+    Parameters
+    ----------
+    v : float
+        The value to format.
+
+    Returns
+    -------
+    str
+        The formatted value, or 8 spaces if ``v`` is NaN.
+    """
     if np.isnan(v):
         return "        "
     av = abs(v)
@@ -24,7 +36,19 @@ def str_format(v: float) -> str:
 
 
 def pval_format(v: float) -> str:
-    """Preferred formatting for x in [0,1]"""
+    """
+    Format a number in [0, 1] using the preferred formatter.
+
+    Parameters
+    ----------
+    v : float
+        The value to format.
+
+    Returns
+    -------
+    str
+        The value formatted with 4 decimal places, or 8 spaces if ``v`` is NaN.
+    """
     if np.isnan(v):
         return "        "
     return f"{v:4.4f}"

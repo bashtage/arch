@@ -74,7 +74,7 @@ def normalize_kernel_name(kernel: str) -> str:
 
 class CovarianceEstimate:
     r"""
-    Covariance estimate using a long-run covariance estimator
+    Covariance estimate using a long-run covariance estimator.
 
     Parameters
     ----------
@@ -82,14 +82,14 @@ class CovarianceEstimate:
         The short-run covariance estimate.
     one_sided_strict : ndarray
         The one-sided strict covariance estimate.
-    columns : {None, list[str]}
+    columns : Index or list of str, optional
         Column labels to use if covariance estimates are returned as
         DataFrames.
-    long_run : ndarray, default None
+    long_run : ndarray, optional
         The long-run covariance estimate. If not provided, computed from
         short_run and one_sided_strict.
-    one_sided : ndarray, default None
-        The one-sided-strict covariance estimate. If not provided, computed
+    one_sided : ndarray, optional
+        The one-sided covariance estimate. If not provided, computed
         from short_run and one_sided_strict.
 
     Notes
@@ -189,21 +189,21 @@ def _kernel_covariance_template() -> None:
 
     Parameters
     ----------
-    x : array_like
+    x : ndarray, Series or DataFrame
         The data to use in covariance estimation.
-    bandwidth : float, default None
+    bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
-    df_adjust : int, default 0
+    df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
         inner-products.
-    center : bool, default True
+    center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
-    weights : array_like, default None
+    weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
         If not provided, a vector of 1s is used. Must have nvar elements.
-    force_int : bool, default False
+    force_int : bool, optional
         Force bandwidth to be an integer.
 
     Notes
@@ -252,21 +252,21 @@ class CovarianceEstimator(ABC):
 
     Parameters
     ----------
-    x : array_like
+    x : ndarray, Series or DataFrame
         The data to use in covariance estimation.
-    bandwidth : float, default None
+    bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
-    df_adjust : int, default 0
+    df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
         inner-products.
-    center : bool, default True
+    center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
-    weights : array_like, default None
+    weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
         If not provided, a vector of 1s is used. Must have nvar elements.
-    force_int : bool, default False
+    force_int : bool, optional
         Force bandwidth to be an integer.
 
     Notes
@@ -384,7 +384,6 @@ class CovarianceEstimator(ABC):
     def centered(self) -> bool:
         """
         Flag indicating whether the data are centered (demeaned).
-
 
         Returns
         -------
@@ -512,7 +511,7 @@ class CovarianceEstimator(ABC):
     @cached_property
     def kernel_weights(self) -> Float64Array:
         """
-        Weights used in covariance calculation.
+        The weights used in covariance calculation.
 
         Returns
         -------
@@ -538,7 +537,7 @@ class CovarianceEstimator(ABC):
 
         See Also
         --------
-        CovarianceEstimate
+        CovarianceEstimate : The container of the covariance estimates.
         """
         x = np.ascontiguousarray(self._x)
         k = x.shape[1]
@@ -824,33 +823,91 @@ class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInherito
         return w
 
 
-class Gallant(Parzen):
+class Gallant(Parzen):  # numpydoc ignore=PR02
     """
     Alternative name for Parzen covariance estimator.
 
+    Parameters
+    ----------
+    x : ndarray, Series or DataFrame
+        The data to use in covariance estimation.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
     See Also
     --------
-    Parzen
+    Parzen : Kernel covariance estimator using the Parzen kernel.
     """
 
 
-class Andrews(QuadraticSpectral):
+class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
     """
     Alternative name of the QuadraticSpectral covariance estimator.
 
+    Parameters
+    ----------
+    x : ndarray, Series or DataFrame
+        The data to use in covariance estimation.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
     See Also
     --------
-    QuadraticSpectral
+    QuadraticSpectral : Kernel covariance estimator using the quadratic spectral
+        kernel.
     """
 
 
-class NeweyWest(Bartlett):
+class NeweyWest(Bartlett):  # numpydoc ignore=PR02
     """
     Alternative name for Bartlett covariance estimator.
 
+    Parameters
+    ----------
+    x : ndarray, Series or DataFrame
+        The data to use in covariance estimation.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
     See Also
     --------
-    Bartlett
+    Bartlett : Kernel covariance estimator using the Bartlett kernel.
     """
 
 
@@ -913,8 +970,8 @@ def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
 
     Returns
     -------
-    type[CovarianceEstimator]
-        The kernel estimator class.
+    type
+        The kernel estimator class, a subclass of CovarianceEstimator.
 
     Raises
     ------

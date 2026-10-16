@@ -29,6 +29,26 @@ except ImportError:
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        """
+        Replace the numba ``jit`` decorator when numba is not available.
+
+        Parameters
+        ----------
+        function_or_signature : callable, optional
+            The function to wrap. Any other value, e.g., a signature, is ignored
+            and a decorator is returned.
+        *args : tuple, optional
+            Ignored.
+        **kwargs : dict, optional
+            Ignored.
+
+        Returns
+        -------
+        callable
+            The function, wrapped so that it issues a ``PerformanceWarning`` when it
+            is called, or a decorator that does this if ``function_or_signature`` is
+            not a function.
+        """
         if function_or_signature is not None and callable(function_or_signature):
             # Used directly, e.g., f_jit = jit(f)
             @functools.wraps(function_or_signature)
