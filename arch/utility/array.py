@@ -46,10 +46,6 @@ __all__ = [
     "to_array_1d",
 ]
 
-deprecation_doc: str = """
-{func} has been moved.  Please use {new_location}.{func}.
-"""
-
 
 def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     """
