@@ -684,9 +684,11 @@ class ARCHModel(metaclass=ABCMeta):
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when fixing model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when fixing model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when fixing model
 
         Returns
@@ -797,9 +799,11 @@ class ARCHModel(metaclass=ABCMeta):
             corresponds to Bollerslev-Wooldridge covariance estimator.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when estimating model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when estimating model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when estimating model
         tol : float, optional
             Tolerance for termination.
@@ -1164,11 +1168,12 @@ class ARCHModel(metaclass=ABCMeta):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1661,11 +1666,12 @@ class ARCHModelFixedResult(_SummaryRepr):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
