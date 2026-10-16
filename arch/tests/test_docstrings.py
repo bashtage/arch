@@ -286,7 +286,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.bootstrap.multiple_comparison.RealityCheck": frozenset({"GL07"}),
     "arch.bootstrap.multiple_comparison.SPA": frozenset({"GL07"}),
     "arch.bootstrap.multiple_comparison.StepM": frozenset({"GL07"}),
-    "arch.doc": frozenset({"GL08"}),
     "arch.unitroot._engle_granger.EngleGrangerTestResults.summary": frozenset({"RT01"}),
     "arch.unitroot._engle_granger.engle_granger": frozenset(
         {"PR01", "PR02", "PR04", "PR10"}
@@ -363,15 +362,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.univariate.volatility.RiskMetrics2006": frozenset({"GL07"}),
     "arch.univariate.volatility.RiskMetrics2006.compute_variance": frozenset({"RT01"}),
     "arch.univariate.volatility.VolatilityProcess.update": frozenset({"PR04"}),
-    "arch.utility.array.DocStringInheritor": frozenset({"PR01"}),
-    "arch.utility.array.ensure1d": frozenset({"GL08"}),
-    "arch.utility.array.ensure2d": frozenset({"GL08"}),
-    "arch.utility.array.parse_dataframe": frozenset({"GL08"}),
-    "arch.utility.io.pval_format": frozenset({"PR01", "RT01"}),
-    "arch.utility.io.str_format": frozenset({"PR01", "RT01"}),
-    "arch.utility.test": frozenset({"PR01", "RT01"}),
-    "arch.utility.testing.WaldTestStatistic.alternative": frozenset({"GL08"}),
-    "arch.utility.timeseries.add_trend": frozenset({"RT01"}),
 }
 # END KNOWN_FAILURES
 

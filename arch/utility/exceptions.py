@@ -1,5 +1,5 @@
 class InvalidLengthWarning(Warning):
-    pass
+    """Warning issued if observations are dropped to form complete blocks."""
 
 
 invalid_length_doc: str = """
@@ -13,7 +13,7 @@ deprecation_doc: str = """
 
 
 class ConvergenceWarning(Warning):
-    pass
+    """Warning issued if the optimizer does not report that it has converged."""
 
 
 convergence_warning: str = """\
@@ -24,7 +24,7 @@ See scipy.optimize.fmin_slsqp for code meaning.
 
 
 class StartingValueWarning(Warning):
-    pass
+    """Warning issued if the starting values are not valid for the model."""
 
 
 starting_value_warning: str = """\
@@ -34,7 +34,7 @@ provided starting values will be ignored.
 
 
 class InitialValueWarning(Warning):
-    pass
+    """Warning issued if the parameters are not consistent with stationarity."""
 
 
 initial_value_warning: str = """\
@@ -44,7 +44,7 @@ to initialize the model.
 
 
 class DataScaleWarning(Warning):
-    pass
+    """Warning issued if the data are poorly scaled."""
 
 
 data_scale_warning: str = """\
@@ -70,7 +70,7 @@ arguments. Input `{key}` has type {arg_type}.
 
 
 class StudentizationError(RuntimeError):
-    pass
+    """Error raised if the covariance used to studentize is numerically 0."""
 
 
 studentization_error: str = """
@@ -83,11 +83,11 @@ is:\n\n {cov}
 
 
 class InfeasibleTestException(RuntimeError):
-    pass
+    """Error raised if a test cannot be computed using the data provided."""
 
 
 class PerformanceWarning(UserWarning):
-    """Warning issued if recursions are run in CPython"""
+    """Warning issued if recursions are run in CPython."""
 
 
 class ValueWarning(UserWarning):
