@@ -317,13 +317,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.unitroot.unitroot.UnitRootTest.summary": frozenset({"RT01"}),
     "arch.unitroot.unitroot.VarianceRatio": frozenset({"GL07", "PR03"}),
     "arch.unitroot.unitroot.mackinnonp": frozenset({"GL07"}),
-    "arch.univariate.mean.ARCHInMean": frozenset({"GL07"}),
-    "arch.univariate.mean.ARX": frozenset({"GL07"}),
-    "arch.univariate.mean.ConstantMean": frozenset({"GL07"}),
-    "arch.univariate.mean.HARX": frozenset({"GL07"}),
-    "arch.univariate.mean.LS": frozenset({"GL07"}),
-    "arch.univariate.mean.ZeroMean": frozenset({"GL07"}),
-    "arch.univariate.mean.arch_model": frozenset({"GL07"}),
     "arch.univariate.recursions.VolatilityUpdater.initialize_update": frozenset(
         {"GL08"}
     ),
