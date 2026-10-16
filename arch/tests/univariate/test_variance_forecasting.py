@@ -684,6 +684,86 @@ class TestVarianceForecasts:
             assert_allclose(paths, forecast.forecast_paths[j])
             assert_allclose(shocks, forecast.shocks[j])
 
+    @pytest.mark.parametrize(
+        ("p", "o", "q", "power", "params"),
+        [
+            (2, 1, 2, 1.0, [0.2, 0.1, 0.1, 0.05, 0.1, 0.2, 0.2]),
+            (2, 0, 2, 1.5, [0.2, 0.1, 0.1, 0.2, 0.2]),
+            (3, 2, 1, 1.0, [0.2, 0.05, 0.05, 0.1, 0.05, 0.05, 0.3]),
+            (1, 1, 1, 0.5, [0.2, 0.1, 0.05, 0.4]),
+            (2, 1, 2, 2.0, [0.2, 0.1, 0.1, 0.05, 0.1, 0.2, 0.2]),
+        ],
+        ids=["212-p1", "202-p1.5", "321-p1", "111-p0.5", "212-p2"],
+    )
+    def test_garch_power_simulation_matches_hand_recursion(
+        self, p, o, q, power, params
+    ):
+        # The pre-sample values used by the simulation (backcast) are already on
+        # the scale of the recursion (sigma ** power) so must not be raised to
+        # power / 2 again. This only matters for max(p, o, q) > 1 and power != 2
+        params = np.array(params)
+        horizon = 4
+        sims = 10
+        n = 12
+        resids = np.random.default_rng(20240102).standard_t(8, n) * 1.2
+        vol = GARCH(p=p, o=o, q=q, power=power)
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids, power=power)
+        f_hist: list[float] = []
+        for t in range(n):
+            f_hist.append(
+                _garch_hand_next(
+                    [float(r) for r in resids[:t]],
+                    f_hist,
+                    params,
+                    p,
+                    o,
+                    q,
+                    power,
+                    backcast,
+                )
+            )
+        generator = np.random.default_rng(1)
+        draws = [generator.standard_normal((sims, horizon)) for _ in range(n)]
+        calls = iter(draws)
+
+        def rng(size):
+            return next(calls)
+
+        forecast = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=horizon,
+            start=0,
+            method="simulation",
+            simulations=sims,
+            rng=rng,
+        )
+        for origin in range(n):
+            for s in range(sims):
+                e = [float(r) for r in resids[: origin + 1]]
+                f = list(f_hist[: origin + 1])
+                for h in range(horizon):
+                    value = _garch_hand_next(e, f, params, p, o, q, power, backcast)
+                    f.append(value)
+                    e.append(draws[origin][s, h] * value ** (1.0 / power))
+                    expected = value ** (2.0 / power)
+                    actual = forecast.forecast_paths[origin, s, h]
+                    assert_allclose(actual, expected, rtol=1e-10)
+                    assert_allclose(forecast.shocks[origin, s, h], e[-1], rtol=1e-10)
+        # The one-step variance is known at the origin
+        analytic = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(
+            forecast.forecast_paths[:, :, 0],
+            np.tile(analytic.forecasts, (1, sims)),
+            rtol=1e-10,
+        )
+        assert_allclose(forecast.forecasts[:, 0], analytic.forecasts[:, 0], rtol=1e-10)
+
     def test_tarch_111_forecast_bootstrap(self):
         t = self.t
         vol = GARCH(p=1, o=1, q=1, power=1.0)
@@ -2503,6 +2583,38 @@ class TestVarianceForecasts:
         assert np.all(np.isnan(forecasts.forecasts))
         assert np.all(np.isnan(forecasts.forecast_paths))
         assert np.all(np.isnan(forecasts.shocks))
+
+
+def _garch_hand_next(e, f, params, p, o, q, power, backcast):
+    """
+    One step of the power GARCH recursion written out term by term.
+
+    ``e`` holds the shocks and ``f`` the conditional standard deviations to the
+    power ``power`` up to (and excluding) the period being computed.
+    ``backcast`` is on the same scale as ``f``.
+    """
+    t = len(e)
+    omega = params[0]
+    alpha = params[1 : p + 1]
+    gamma = params[p + 1 : p + o + 1]
+    beta = params[p + o + 1 :]
+    value = omega
+    for j in range(p):
+        if t - 1 - j < 0:
+            value += alpha[j] * backcast
+        else:
+            value += alpha[j] * abs(e[t - 1 - j]) ** power
+    for j in range(o):
+        if t - 1 - j < 0:
+            value += gamma[j] * 0.5 * backcast
+        elif e[t - 1 - j] < 0:
+            value += gamma[j] * abs(e[t - 1 - j]) ** power
+    for j in range(q):
+        if t - 1 - j < 0:
+            value += beta[j] * backcast
+        else:
+            value += beta[j] * f[t - 1 - j]
+    return value
 
 
 class TestBootstrapRng:
