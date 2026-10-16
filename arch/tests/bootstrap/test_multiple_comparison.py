@@ -1074,7 +1074,7 @@ def run_with_timeout(func, timeout=10.0):
     def target():
         try:
             outcome["value"] = func()
-        except BaseException as exc:  # noqa: BLE001
+        except Exception as exc:
             outcome["error"] = exc
 
     thread = threading.Thread(target=target, daemon=True)
