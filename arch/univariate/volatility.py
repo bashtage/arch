@@ -3935,7 +3935,12 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast_delta = backcast ** (delta / 2.0)
 
         abs_resids_full = np.absolute(resids)
-        fshocks_hist = np.power(abs_resids_full - gamma * resids, delta)
+        # np.power with a scalar exponent uses square and sqrt for exponents of 2
+        # and 0.5, which differ from pow in the last bit for some values. An array
+        # of exponents always uses pow, as in a loop with scalars
+        fshocks_hist = np.power(
+            abs_resids_full - gamma * resids, np.full(resids.shape[0], delta)
+        )
 
         fpath = np.empty((simulations, truncation + horizon))
 
