@@ -1406,9 +1406,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             if i - m < 0:
-                scaled_forecast_paths[:, :m] = backcast ** (power / 2.0)
-                scaled_shock[:, :m] = backcast ** (power / 2.0)
-                asym_scaled_shock[:, :m] = (0.5 * backcast) ** (power / 2.0)
+                # backcast is already on the scale of the recursion (sigma**power)
+                scaled_forecast_paths[:, :m] = backcast
+                scaled_shock[:, :m] = backcast
+                asym_scaled_shock[:, :m] = 0.5 * backcast
 
                 # Use actual values where available
                 count = i + 1
