@@ -3713,25 +3713,6 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return sigma2
 
-    def backcast_transform(
-        self, backcast: float | Float64Array1D
-    ) -> float | Float64Array1D:
-        backcast = super().backcast_transform(backcast)
-        delta = 2.0 if self._est_delta else self._delta
-        _backcast = np.sqrt(backcast) ** delta
-        if np.isscalar(_backcast):
-            return float(cast("np.float64", _backcast))
-        else:
-            return to_array_1d(_backcast)
-
-    def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
-        delta = 2.0 if self._est_delta else self._delta
-        tau = min(75, resids.shape[0])
-        w = 0.94 ** np.arange(tau)
-        w = w / sum(w)
-        backcast = float(np.sum((np.absolute(resids[:tau]) ** delta) * w))
-        return backcast
-
     def simulate(
         self,
         parameters: Sequence[int | float] | ArrayLike1D,
@@ -3920,6 +3901,8 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         omega = float(fig_params[0])
         beta = float(fig_params[-1]) if q else 0.0
         omega_tilde = omega / (1 - beta)
+        # The backcast is a variance, so convert it to sigma ** delta
+        backcast_delta = backcast ** (delta / 2.0)
 
         abs_resids_full = np.absolute(resids)
         fshocks_hist = np.empty(resids.shape[0])
@@ -3935,7 +3918,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 max(0, i + 1 - truncation) : i + 1
             ]
             if available < truncation:
-                fpath[:, : (truncation - available)] = backcast
+                fpath[:, : (truncation - available)] = backcast_delta
             for h in range(horizon):
                 lagged_fshocks = fpath[:, h : truncation + h]
                 temp_sigma_delta = omega_tilde + lagged_fshocks.dot(lam_rev)

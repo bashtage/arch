@@ -606,7 +606,8 @@ def fiaparch_recursion_python(
     trunc_lag : int
         Truncation lag for the ARCH approximations
     backcast : float
-        Value to use when initializing the recursion (in sigma^delta scale)
+        Value to use when initializing the recursion. This is a variance and is
+        converted to the sigma^delta scale using delta
     var_bounds : ndarray
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
@@ -624,11 +625,12 @@ def fiaparch_recursion_python(
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
+    backcast_delta = backcast ** (delta / 2.0)
     for t in range(nobs):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast
+        sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
         for i in range(min(t, trunc_lag)):
             shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
             sigma_delta[t] += lam[i] * (shock**delta)
@@ -1122,7 +1124,10 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         nobs: int,
     ) -> None:
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
-        self.backcast = backcast
+        # The backcast is a variance, so convert it to sigma ** delta. It is
+        # stored on this scale
+        delta = parameters[-1] if self.est_delta else self.delta
+        self.backcast = cast("float", backcast) ** (delta / 2.0)
         if self.resids.shape[0] < nobs:
             self.resids = np.empty(nobs)
             self.abs_resids = np.empty(nobs)
