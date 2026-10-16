@@ -540,18 +540,19 @@ def fiaparch_recursion(const double[::1] parameters,
                        double gamma,
                        double delta):
     cdef Py_ssize_t t, i
-    cdef double bc_weight, omega, beta, omega_tilde, shock
+    cdef double bc_weight, omega, beta, omega_tilde, shock, backcast_delta
     cdef double [::1] lam
 
     omega = parameters[0]
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
+    backcast_delta = backcast ** (delta / 2.0)
     for t in range(nobs):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast
+        sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
         for i in range(min(t, trunc_lag)):
             shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
             sigma_delta[t] += lam[i] * (shock ** delta)
@@ -1100,8 +1101,12 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
             object backcast,
             Py_ssize_t nobs
     ):
+        cdef double delta
         self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
-        self.backcast = backcast
+        # The backcast is a variance, so convert it to sigma ** delta. It is
+        # stored on this scale
+        delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
+        self.backcast = backcast ** (delta / 2.0)
         if self._resids.shape[0] < nobs:
             self._resids = np.empty(nobs)
             self._abs_resids = np.empty(nobs)
