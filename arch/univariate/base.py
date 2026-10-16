@@ -942,7 +942,8 @@ class ARCHModel(metaclass=ABCMeta):
         args = (sigma2, backcast, var_bounds)
         ineq_constraints = constraint(a, b)
 
-        options = {} if options is None else options
+        # Copy so that the caller's dict is not modified
+        options = {} if options is None else dict(options)
         options.setdefault("disp", disp_flag)
         with warnings.catch_warnings():
             warnings.filterwarnings(

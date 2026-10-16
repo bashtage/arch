@@ -313,3 +313,26 @@ def test_arch_model_unused_orders_not_validated():
     arch_model(y, vol="HARCH", p=[1, 5], o=0.5, q=0.5)
     arch_model(y, vol="HARCH", p=np.array([1, 5]))
     arch_model(y, vol="HARCH", p=np.int64(3))
+
+
+def test_fit_options_not_modified(capsys):
+    y = np.random.default_rng(13).standard_t(5, 500)
+    mod = arch_model(y)
+    options = {"maxiter": 100}
+    res = mod.fit(options=options, update_freq=0)
+    # disp="final" is the default and is not written to the caller's options
+    assert options == {"maxiter": 100}
+    capsys.readouterr()
+    # A new call with the same options and disp="off" does not print
+    res_off = mod.fit(disp="off", options=options)
+    assert capsys.readouterr().out == ""
+    assert options == {"maxiter": 100}
+    assert_allclose(res_off.params, res.params, rtol=1e-6)
+
+
+def test_fit_options_disp_in_options_respected(capsys):
+    y = np.random.default_rng(13).standard_t(5, 500)
+    options = {"maxiter": 100, "disp": False}
+    arch_model(y).fit(options=options, update_freq=0)
+    assert capsys.readouterr().out == ""
+    assert options == {"maxiter": 100, "disp": False}
