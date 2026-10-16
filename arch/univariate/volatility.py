@@ -806,7 +806,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        """
+        r"""
         Simulate data from the model
 
         Parameters
@@ -823,7 +823,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             the simulation
         initial_value : {float, ndarray}, optional
             Scalar or array of initial values to use when initializing the
-            simulation
+            simulation. The units depend on the process, see Notes.
 
         Returns
         -------
@@ -831,6 +831,22 @@ class VolatilityProcess(metaclass=ABCMeta):
             The simulated residuals
         variance : ndarray
             The simulated variance
+
+        Notes
+        -----
+        ``initial_value`` is the initial value of the quantity that the process
+        updates, which is not always the variance :math:`\sigma^2`:
+
+        * :math:`\sigma^2`: ARCH, GARCH with ``power=2``, HARCH,
+          MIDASHyperbolic, EWMAVariance and RiskMetrics2006.
+        * :math:`\sigma^{p}`: GARCH and FIGARCH with ``power=p``, which
+          includes the absolute value (``power=1``) models.
+        * :math:`\sigma^{\delta}`: APARCH and FIAPARCH, where :math:`\delta`
+          is the power parameter of the process.
+        * :math:`\ln \sigma^2`: EGARCH.
+
+        ``initial_value`` is ignored by ConstantVariance, and FixedVariance
+        does not support simulation.
         """
 
     def _gaussian_loglikelihood(

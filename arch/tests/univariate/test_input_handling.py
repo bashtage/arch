@@ -5,12 +5,16 @@ import pytest
 from scipy.special import gammaln
 
 from arch.univariate import (
+    APARCH,
+    ARCH,
     ARX,
+    EGARCH,
     GARCH,
     HARCH,
     HARX,
     LS,
     ConstantMean,
+    EWMAVariance,
     MIDASHyperbolic,
     Normal,
     StudentsT,
@@ -336,3 +340,46 @@ def test_fit_options_disp_in_options_respected(capsys):
     arch_model(y).fit(options=options, update_freq=0)
     assert capsys.readouterr().out == ""
     assert options == {"maxiter": 100, "disp": False}
+
+
+@pytest.mark.parametrize(
+    ("process", "params", "expected"),
+    [
+        pytest.param(GARCH(), [0.1, 0.1, 0.8], lambda v: v, id="garch"),
+        pytest.param(ARCH(2), [0.1, 0.1, 0.1], lambda v: v, id="arch"),
+        pytest.param(HARCH([1, 5]), [0.1, 0.1, 0.1], lambda v: v, id="harch"),
+        pytest.param(EWMAVariance(0.94), [], lambda v: v, id="ewma"),
+        pytest.param(
+            GARCH(power=1.0), [0.1, 0.1, 0.8], lambda v: v**2, id="garch-power-1"
+        ),
+        pytest.param(
+            GARCH(power=1.5), [0.1, 0.1, 0.8], lambda v: v ** (2 / 1.5), id="power-1.5"
+        ),
+        pytest.param(
+            APARCH(), [0.1, 0.1, 0.1, 0.8, 1.5], lambda v: v ** (2 / 1.5), id="aparch"
+        ),
+        pytest.param(EGARCH(), [0.1, 0.1, 0.1, 0.8], np.exp, id="egarch"),
+    ],
+)
+def test_simulate_initial_value_units(process, params, expected):
+    # The documented units of initial_value are those of the quantity the
+    # process updates: sigma^2, sigma^power, sigma^delta or ln(sigma^2).
+    initial_value = 1.7
+    rng = np.random.default_rng(0).standard_normal
+    _, sigma2 = process.simulate(params, 20, rng, burn=0, initial_value=initial_value)
+    assert_allclose(sigma2[0], expected(initial_value))
+
+
+@pytest.mark.parametrize(
+    ("mean", "message"),
+    [
+        (ConstantMean, "constant mean"),
+        (ZeroMean, "zero mean"),
+    ],
+)
+def test_simulate_initial_value_message(mean, message):
+    mod = mean(volatility=GARCH())
+    params = [0.0, 0.05, 0.1, 0.8][-mod.num_params - 3 :]
+    for kwargs in ({"initial_value": 1.0}, {"x": np.ones(10)}):
+        with pytest.raises(ValueError, match=f"simulating a {message} process"):
+            mod.simulate(params, 10, **kwargs)

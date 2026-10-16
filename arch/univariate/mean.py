@@ -637,6 +637,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulation.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1356,11 +1359,16 @@ class ConstantMean(HARX):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used.
+            Must be None, since there are no mean dynamics. A ValueError is
+            raised if it is not None.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1503,11 +1511,16 @@ class ZeroMean(HARX):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used.
+            Must be None, since there are no mean dynamics. A ValueError is
+            raised if it is not None.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
@@ -1536,7 +1549,7 @@ class ZeroMean(HARX):
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "
-                "simulating a constant mean process."
+                "simulating a zero mean process."
             )
 
         _, vp, dp = self._parse_parameters(_params)
@@ -2473,12 +2486,16 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
         initial_value : None
-            This value is not used. The innovations before the first
-            observation are 0.
+            Must be None. A ValueError is raised if it is not None. The
+            innovations before the first observation are 0.
         x : None
-            This value is not used.
+            Must be None, since there are no exogenous variables. A ValueError
+            is raised if it is not None.
         initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
 
         Returns
         -------
