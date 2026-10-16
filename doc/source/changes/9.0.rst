@@ -210,15 +210,26 @@ one, how to restore the previous results.
   0.0021 to 0.0021, from 0.0039 to 0.0012 and from 0.0047 to -0.0006.
   R-squared can now be negative for these models.
 
-.. TODO(R2): hold-a90-bug2a-archinmean-power (decision 34). If it merges, add a
-   bullet here: :class:`~arch.univariate.ARCHInMean` estimated with a volatility
-   process with ``power != 2`` (:class:`~arch.univariate.GARCH`,
-   :class:`~arch.univariate.FIGARCH`) used the wrong variance in the in-mean term, so
-   the log-likelihood and the estimates were wrong (example from BUG2A: -612.17
-   instead of -620.48). Affected: every ``ARCHInMean`` model with ``power != 2``;
-   no option restores the old values. If the alternative (raise ``ValueError`` for
-   ``power != 2``) is taken instead, move the bullet to "Backward-incompatible
+.. TODO(R2): branch hold-a90-bug2a-archinmean-power (decision 34, fragment
+   bug2a-aimpow.rst, folded in below). It is held under the name ``hold-`` and was
+   not pushed when this was drafted: confirm it is merged and that the magnitudes
+   still hold. If the alternative (raise ``ValueError`` for ``power != 2``) is
+   taken instead, replace the bullet and move it to "Backward-incompatible
    changes".
+
+- Fixed :class:`~arch.univariate.ARCHInMean` models that use a
+  :class:`~arch.univariate.GARCH` or :class:`~arch.univariate.FIGARCH` volatility
+  process with ``power != 2`` (for example ``TARCH`` and ``AVGARCH``). The volatility
+  updaters used in estimation returned the recursion value :math:`\sigma^{power}`
+  instead of the variance :math:`\sigma^2`, so the in-mean term and the log-likelihood
+  used the wrong conditional variance. The log-likelihood, estimates, standard errors
+  and ``summary`` change for these models; models with ``power=2`` are unchanged. For
+  example, for a GARCH(1,1,1) model with ``power=1`` and one AR lag fit to the second
+  half of the daily S&P 500 returns in ``arch.data.sp500``, the log-likelihood changes
+  from -3154.8 to -3111.1 and the in-mean coefficient ``kappa`` from 0.217 to 0.060
+  (``form="var"``). For a GARCH(1,0,1) model with ``power=1.5`` the log-likelihood
+  changes from -3206.3 to -3190.5, and for a FIGARCH(1,d,1) model with ``power=1`` from
+  -3285.8 to -3193.0.
 
 .. TODO(R2): branch a90-bug2a-aparch-sim-forecast (fragment bug2a-aparch.rst, folded
    in below). Confirm it is merged and that the magnitudes in the bullet still hold.
@@ -283,21 +294,27 @@ one, how to restore the previous results.
   affected: the kernel classes, :class:`~arch.unitroot.PhillipsPerron` and
   :class:`~arch.unitroot.KPSS` do not use it.
 
-.. TODO(R2): hold-a90-bug2a-fit-arguments (decision 36). If it merges, add a bullet
-   here: invalid ``starting_values`` passed to ``fit`` are now ignored, as the
+.. TODO(R2): branch hold-a90-bug2a-fit-arguments, starting values (decision 36;
+   commit 2faa3f5d00 at the time of drafting; no fragment yet). If it merges, add a
+   bullet here: invalid ``starting_values`` passed to ``fit`` are now ignored, as the
    warning that was always issued says (before, they were used). Affected: calls that
    pass starting values of the wrong shape or that fail the validity check; their
-   estimates can change because the optimizer starts from other values. Restore
-   the old behavior by passing valid starting values. The commit on the hold branch
-   at the time of drafting is 2faa3f5d00. If option (b) (raise ``ValueError``) is
-   taken instead, move the bullet to "Backward-incompatible changes".
+   estimates can change because the optimizer starts from the default values.
+   Restore the old behavior by passing valid starting values. If option (b) (raise
+   ``ValueError``) is taken instead, move the bullet to "Backward-incompatible
+   changes".
 
-.. TODO(R2): hold-a90-bug2b-semantics, MCS boundary (decision 44). If it merges, add
-   a bullet here: a model whose :class:`~arch.bootstrap.MCS` p-value is exactly equal
-   to ``size`` stays in the model confidence set (``>=``, as in Hansen, Lunde and
-   Nason, 2011) and was removed before. Affected: ``MCS`` results with a p-value
-   that equals ``size``, which happens when the p-value is a multiple of 1/``reps``.
-   Commit 557e83130d at the time of drafting.
+.. TODO(R2): branch hold-a90-bug2b-semantics (decision 44; fragment bug2b-sem.rst,
+   whose three bullets are folded in here, in "Backward-incompatible changes" and
+   in "Bug fixes"). It was not pushed when this was drafted: confirm it is merged
+   and that the bullets still describe it.
+
+- :class:`~arch.bootstrap.MCS` now includes a model in ``included`` if its p-value is
+  greater than or equal to ``size`` (previously strictly greater), and lists it in
+  ``excluded`` only if the p-value is less than ``size`` (previously less than or
+  equal). A model is in the model confidence set of size alpha if its MCS p-value is at
+  least alpha. Bootstrap p-values are multiples of ``1 / reps``, so a p-value equal to
+  ``size`` occurs in practice and the model was previously excluded.
 
 Backward-incompatible changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -332,22 +349,30 @@ Backward-incompatible changes
   :meth:`~arch.univariate.base.ARCHModelResult.hedgehog_plot` has been removed. See
   "Deprecations and removals".
 
-.. TODO(R2): hold-a90-bug2b-semantics, ``block_size`` (decision 44). If it merges,
-   add a bullet here: ``block_size`` of the circular, moving block and stationary
-   bootstraps is a read-only property, as ``bootstrap`` is in ``SPA``, ``StepM`` and
-   ``MCS``, and assigning to it raises ``AttributeError``. Create a new bootstrap
-   to use a different block size. Commit dc5f390387 at the time of drafting.
+- ``block_size`` of :class:`~arch.bootstrap.CircularBlockBootstrap`,
+  :class:`~arch.bootstrap.MovingBlockBootstrap` and
+  :class:`~arch.bootstrap.StationaryBootstrap` is now a read-only property, and setting
+  it raises an ``AttributeError``. In previous versions the attribute could be set, but
+  the stationary bootstrap ignored the new value when sampling and ``clone``, which is
+  used for the nested bootstrap of studentized confidence intervals, used the value
+  passed to the constructor. Create a new bootstrap to use a different block size.
 
-.. TODO(R2): hold-a90-bug2a-fit-arguments (decisions 37, 39) and the constructor
-   validation of decision 40 (BUG2A-22). If they merge, add bullets here (or in
-   "Bug fixes" if no existing code can reasonably break): the ``first_obs``,
-   ``last_obs`` and ``start`` arguments accept ``datetime.date`` and ``Period`` and
-   raise ``TypeError`` for any other unsupported type, including floats, where they
-   were silently ignored; ``fit`` no longer modifies the global warning filters; an
-   unknown ``cov_type`` raises ``ValueError`` instead of using ``"classic"``; and the
-   constructors raise ``TypeError`` for a non-integer ``p`` (``p=1.5``), ``m`` (the
-   MIDAS number of lags) or ``truncation`` (FIGARCH and FIAPARCH) where they truncated
-   the value or failed later.
+.. TODO(R2): branch hold-a90-bug2a-fit-arguments, cutoffs and warning filters
+   (decisions 37 and 39; commits ba212bb5ba and 16e5380b61 at the time of drafting; no
+   fragment yet). If it merges, add bullets here (or under "Bug fixes" if no code
+   can reasonably break): (1) ``first_obs``, ``last_obs`` (``fit``, ``fix``) and
+   ``start`` (``forecast``) accept ``datetime.date`` and ``pandas.Period``, a
+   ``PeriodIndex`` can be used with date-like cutoffs, and any other type, such as a
+   float, raises a ``TypeError`` that lists the supported types; before, such values
+   were silently replaced by the default, so ``fit(first_obs=10.0)`` used the whole
+   sample; (2) ``fit`` no longer inserts ``ConvergenceWarning`` filters in the
+   process-wide warnings filters, so a user's ``warnings.simplefilter("error")`` keeps
+   working after a ``fit``, ``show_warning=False`` no longer silences later
+   ``ConvergenceWarning`` from other code, and with the default filters the warning is
+   shown once per location instead of on every failed fit. The part of decision 39
+   about an unknown ``cov_type`` (``ValueError`` instead of using ``"classic"``) and
+   decision 40 (``TypeError`` for non-integer ``p``, ``m`` or ``truncation``, for
+   example ``p=1.5``) had no commit yet: add a bullet for each if it merges.
 
 Bug fixes
 ~~~~~~~~~
@@ -510,13 +535,11 @@ Bug fixes
   uses the HTML representation. Corrected a missing space in an error message of the BCa
   bias correction.
 
-.. TODO(R2): hold-a90-bug2b-semantics, identical models in SPA (decision 44,
-   BUG2B-5). If it merges, add a bullet here saying what it does: a warning or a
-   ``ValueError``, as finally implemented, from :class:`~arch.bootstrap.SPA` (and
-   :class:`~arch.bootstrap.StepM` if it applies) when the loss differential of a model
-   has zero variance, for example because the model has the same losses as the
-   benchmark. See reports/BUG2B_REPORT.md for the behavior before. If a ``ValueError``
-   is raised, also list it under "Backward-incompatible changes".
+- :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM` issue a
+  ``RuntimeWarning`` if the loss differential of a model is constant, for example
+  because the model is identical to the benchmark. The test statistic of such a model is
+  not meaningful, and ``SPA`` reported p-values of 0 in this case. The results are
+  unchanged.
 
 .. TODO(R2): branch a90-warn1-date-to-index (fragment warn1.rst, folded in below).
    Confirm it is merged. The entry is a pandas 3.1 compatibility fix, and could also
