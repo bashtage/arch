@@ -5,10 +5,17 @@ from numpy.random import RandomState
 from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
+from scipy import integrate, stats
+from scipy.special import gammaln
 
 from arch.univariate import arch_model
-from arch.univariate.distribution import Normal, StudentsT
-from arch.univariate.mean import ConstantMean
+from arch.univariate.distribution import (
+    GeneralizedError,
+    Normal,
+    SkewStudent,
+    StudentsT,
+)
+from arch.univariate.mean import ARX, ConstantMean, MAMean
 
 try:
     from arch.univariate.recursions import figarch_weights
@@ -2685,35 +2692,244 @@ def test_midas_asym_analytic_matches_simulation(midas_asym_fit):
     assert np.all(np.abs(mc_mean[1:] - analytic[1:]) < 5 * mc_se[1:])
 
 
-def test_gjr_analytic_forecast_uses_skew_partial_moment():
-    from arch.univariate.distribution import SkewStudent
+def _skew_t_constants(eta, lam):
+    c = np.exp(gammaln((eta + 1) / 2) - gammaln(eta / 2)) / np.sqrt(np.pi * (eta - 2))
+    a = 4 * lam * c * (eta - 2) / (eta - 1)
+    b = np.sqrt(1 + 3 * lam**2 - a**2)
+    return a, b, c
 
-    params = np.array([0.05, 0.02, 0.0, 0.20, 0.88, 7.6, -0.16])
-    data = ConstantMean(
-        None, volatility=GARCH(p=1, o=1, q=1), distribution=SkewStudent(seed=1)
-    ).simulate(params, 400, burn=100)["data"]
-    model = ConstantMean(
-        data, volatility=GARCH(p=1, o=1, q=1), distribution=SkewStudent(seed=2)
-    )
+
+def _skew_t_pdf(z, eta, lam):
+    """Hansen's (1994) skew-t density, written from the paper's definitions"""
+    a, b, c = _skew_t_constants(eta, lam)
+    scale = np.where(z < -a / b, 1 - lam, 1 + lam)
+    return b * c * (1 + ((b * z + a) / scale) ** 2 / (eta - 2)) ** (-(eta + 1) / 2)
+
+
+def _skew_t_kink(eta, lam):
+    a, b, _ = _skew_t_constants(eta, lam)
+    return -a / b
+
+
+def _integrate_pdf(pdf, power, upper, kink=0.0):
+    """Integrate z**power * pdf(z) over (-inf, upper], splitting at a kink"""
+
+    def integrand(z):
+        return z**power * pdf(z)
+
+    options = {"epsabs": 1e-13, "epsrel": 1e-13}
+    if kink < upper:
+        lower = integrate.quad(integrand, -np.inf, kink, **options)[0]
+        return lower + integrate.quad(integrand, kink, upper, **options)[0]
+    return integrate.quad(integrand, -np.inf, upper, **options)[0]
+
+
+def _students_t_pdf(z, nu):
+    scale = np.sqrt(nu / (nu - 2))
+    return stats.t.pdf(z * scale, nu) * scale
+
+
+def _ged_pdf(z, nu):
+    # gennorm with unit scale has variance gamma(3/nu) / gamma(1/nu)
+    scale = np.sqrt(np.exp(gammaln(1 / nu) - gammaln(3 / nu)))
+    return stats.gennorm.pdf(z, nu, scale=scale)
+
+
+# name: (distribution, distribution parameters)
+SKEW_CASES = {
+    "skew-t-7.6--0.16": (SkewStudent, [7.6, -0.16]),
+    "skew-t-5-0.35": (SkewStudent, [5.0, 0.35]),
+    "skew-t-12--0.6": (SkewStudent, [12.0, -0.6]),
+}
+SYMMETRIC_CASES = {
+    "normal": (Normal, []),
+    "students-t-6": (StudentsT, [6.0]),
+    "ged-1.5": (GeneralizedError, [1.5]),
+}
+DIST_CASES = {**SKEW_CASES, **SYMMETRIC_CASES}
+
+
+def _reference_negative_moment(name):
+    """E[z**2 1(z<0)] by numerical integration of the standardized density"""
+    dist, dp = DIST_CASES[name]
+    kink = 0.0
+    if dist is SkewStudent:
+        eta, lam = dp
+        kink = _skew_t_kink(eta, lam)
+
+        def pdf(z):
+            return _skew_t_pdf(z, eta, lam)
+
+    elif dist is Normal:
+        pdf = stats.norm.pdf
+    elif dist is StudentsT:
+
+        def pdf(z):
+            return _students_t_pdf(z, dp[0])
+
+    else:
+
+        def pdf(z):
+            return _ged_pdf(z, dp[0])
+
+    return _integrate_pdf(pdf, 2, 0.0, kink)
+
+
+@pytest.mark.parametrize("name", list(DIST_CASES))
+def test_negative_second_moment_reference(name):
+    # Checks the reference used in the GJR forecast tests below
+    dist, dp = DIST_CASES[name]
+    k = _reference_negative_moment(name)
+    assert_allclose(k, dist().partial_moment(2, 0.0, dp), rtol=1e-8)
+    if name in SKEW_CASES:
+        assert abs(k - 0.5) > 0.01
+    else:
+        assert_allclose(k, 0.5, rtol=1e-8)
+
+
+def test_skew_t_reference_density():
+    eta, lam = 7.6, -0.16
+    kink = _skew_t_kink(eta, lam)
+
+    def pdf(z):
+        return _skew_t_pdf(z, eta, lam)
+
+    assert_allclose(_integrate_pdf(pdf, 0, np.inf, kink), 1.0, rtol=1e-8)
+    assert_allclose(_integrate_pdf(pdf, 2, np.inf, kink), 1.0, rtol=1e-8)
+    # E[z^2 1(z<0)] for this (eta, lambda), from the integral above
+    assert_allclose(_reference_negative_moment("skew-t-7.6--0.16"), 0.5525668775)
+
+
+GJR_PARAMS = np.array([0.02, 0.0, 0.20, 0.88])  # omega, alpha, gamma, beta
+
+
+def _gjr_data(dist_name, nobs=400):
+    dist, dp = DIST_CASES[dist_name]
+    params = np.r_[0.05, GJR_PARAMS, dp]
+    sim = ConstantMean(None, volatility=GARCH(p=1, o=1, q=1), distribution=dist(seed=1))
+    return sim.simulate(params, nobs, burn=100)["data"].to_numpy()
+
+
+def _gjr_recursion(first, k, horizon):
+    omega, alpha, gamma, beta = GJR_PARAMS
+    ref = np.empty((first.shape[0], horizon))
+    ref[:, 0] = first
+    for h in range(1, horizon):
+        ref[:, h] = omega + (alpha + gamma * k + beta) * ref[:, h - 1]
+    return ref
+
+
+def _mean_model(kind, data, dist_name):
+    dist, dp = DIST_CASES[dist_name]
+    vol = GARCH(p=1, o=1, q=1)
+    if kind == "constant":
+        model = ConstantMean(data, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05]
+    elif kind == "arx":
+        model = ARX(data, lags=1, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05, 0.1]
+    else:
+        model = MAMean(data, lags=1, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05, 0.1]
+    return model, np.r_[mean_params, GJR_PARAMS, dp]
+
+
+@pytest.mark.parametrize("name", list(DIST_CASES))
+def test_gjr_analytic_forecast_recursion(name):
+    data = _gjr_data(name)
+    model, params = _mean_model("constant", data, name)
     res = model.fix(params)
-    k = model.distribution.partial_moment(2, 0.0, params[5:])
-    horizon = 12
-    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()[-1]
-    omega, alpha, gamma, beta = params[1:5]
-    exact = np.empty(horizon)
-    exact[0] = analytic[0]
-    for h in range(1, horizon):
-        exact[h] = omega + (alpha + gamma * k + beta) * exact[h - 1]
-    assert k != pytest.approx(0.5)
-    assert_allclose(analytic, exact)
+    k = _reference_negative_moment(name)
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, start=len(data) - 4, reindex=False)
+    analytic = fcast.residual_variance.to_numpy()
+    assert analytic.shape == (4, horizon)
+    ref = _gjr_recursion(analytic[:, 0], k, horizon)
+    assert_allclose(analytic, ref, rtol=1e-10)
 
-    normal = ConstantMean(
-        data, volatility=GARCH(p=1, o=1, q=1), distribution=Normal()
+
+@pytest.mark.parametrize("kind", ["constant", "arx", "ma"])
+@pytest.mark.parametrize("method", ["analytic", "Analytic", "ANALYTIC"])
+def test_gjr_analytic_forecast_models_and_method_case(kind, method):
+    name = "skew-t-7.6--0.16"
+    data = _gjr_data(name)
+    model, params = _mean_model(kind, data, name)
+    res = model.fix(params)
+    k = _reference_negative_moment(name)
+    horizon = 5
+    fcast = res.forecast(
+        horizon=horizon, start=len(data) - 3, method=method, reindex=False
     )
-    normal_forecast = normal.fix(params[:5]).forecast(horizon=horizon, reindex=False)
-    normal_path = normal_forecast.variance.to_numpy()[-1]
-    half = np.empty(horizon)
-    half[0] = normal_path[0]
-    for h in range(1, horizon):
-        half[h] = omega + (alpha + 0.5 * gamma + beta) * half[h - 1]
-    assert_allclose(normal_path, half)
+    analytic = fcast.residual_variance.to_numpy()
+    ref = _gjr_recursion(analytic[:, 0], k, horizon)
+    assert_allclose(analytic, ref, rtol=1e-10)
+    # The half-moment recursion (k = 0.5) is clearly different
+    half = _gjr_recursion(analytic[:, 0], 0.5, horizon)
+    assert np.all(np.abs(analytic[:, -1] / half[:, -1] - 1) > 0.003)
+
+
+def test_gjr_analytic_forecast_matches_simulation():
+    name = "skew-t-7.6--0.16"
+    data = _gjr_data(name, nobs=1000)
+    model, params = _mean_model("constant", data, name)
+    res = model.fix(params)
+    horizon = 20
+    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()
+    sim = res.forecast(
+        horizon=horizon, method="simulation", simulations=100_000, reindex=False
+    ).variance.to_numpy()
+    half = _gjr_recursion(analytic[:, 0], 0.5, horizon)
+    # The Monte Carlo error is below 1%; the half-moment recursion is 13% too low
+    # at h=20
+    assert_allclose(sim, analytic, rtol=0.02)
+    assert np.abs(half[:, -1] / sim[:, -1] - 1).max() > 0.1
+
+
+def _hyperbolic_weights(theta, m):
+    # w_j = theta (theta + 1) ... (theta + j - 1) / j!, normalized to sum to 1
+    w = np.empty(m)
+    w[0] = theta
+    for j in range(1, m):
+        w[j] = w[j - 1] * (theta + j) / (j + 1)
+    return w / w.sum()
+
+
+@pytest.mark.parametrize("method", ["analytic", "ANALYTIC"])
+@pytest.mark.parametrize("last", [1, 3])
+def test_midas_asym_analytic_forecast_skew_moment(method, last):
+    eta, lam = 7.6, -0.16
+    k = _reference_negative_moment("skew-t-7.6--0.16")
+    omega, alpha, gamma, theta = 0.02, 0.5, 0.6, 0.7
+    m = 22
+    params = np.array([0.05, omega, alpha, gamma, theta, eta, lam])
+    vol = MIDASHyperbolic(m=m, asym=True)
+    sim = ConstantMean(None, volatility=vol, distribution=SkewStudent(seed=1))
+    data = sim.simulate(params, 500, burn=100)["data"].to_numpy()
+    model = ConstantMean(data, volatility=vol, distribution=SkewStudent(seed=2))
+    res = model.fix(params)
+    nobs = data.shape[0]
+    horizon = 5
+    # start > 0 used to raise a ValueError for asymmetric MIDAS models
+    fcast = res.forecast(
+        horizon=horizon, start=nobs - last, method=method, reindex=False
+    )
+    analytic = fcast.variance.to_numpy()
+    assert analytic.shape == (last, horizon)
+
+    resid = data - params[0]
+    weights = _hyperbolic_weights(theta, m)
+    for row, origin in enumerate(range(nobs - last, nobs)):
+        # x: squared residuals, ind: squared negative residuals. Future values are
+        # replaced by their conditional expectations.
+        past = resid[origin - m + 1 : origin + 1]
+        x = list(past**2)
+        ind = list((past**2) * (past < 0))
+        expected = []
+        for _ in range(horizon):
+            lags_x = np.array(x[::-1][:m])
+            lags_i = np.array(ind[::-1][:m])
+            f = omega + alpha * weights @ lags_x + gamma * weights @ lags_i
+            expected.append(f)
+            x.append(f)
+            ind.append(k * f)
+        assert_allclose(analytic[row], expected, rtol=1e-10)
