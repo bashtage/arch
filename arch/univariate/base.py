@@ -51,7 +51,6 @@ from arch.utility.exceptions import (
     starting_value_warning,
 )
 from arch.utility.testing import WaldTestStatistic
-from arch.vendor._decorators import deprecate_kwarg
 
 MPL_LT_310 = False
 try:
@@ -1935,7 +1934,6 @@ class ARCHModelFixedResult(_SummaryRepr):
             x=x,
         )
 
-    @deprecate_kwarg("type", "plot_type")
     def hedgehog_plot(
         self,
         params: ArrayLike1D | None = None,
