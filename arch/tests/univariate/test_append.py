@@ -143,9 +143,11 @@ def fit(mod, **kwargs):
 
 def assert_results_equal(res, direct, **fix_kwargs):
     # res and direct come from two separate optimizations, which can stop at
-    # slightly different points depending on the platform's floating point
-    # (parameters differed by 8e-5 on Intel macOS), so they are compared loosely
-    assert_allclose(res.params, direct.params, rtol=1e-4, atol=5e-4)
+    # slightly different points depending on the platform's floating point. On
+    # Intel macOS the largest differences seen were 5.3e-4 relative, 3.4e-3 in
+    # a Student's t degree of freedom near 16.5, and 8e-5 in parameters close
+    # to 0, so they are compared loosely
+    assert_allclose(res.params, direct.params, rtol=2e-3, atol=5e-4)
     assert_allclose(res.loglikelihood, direct.loglikelihood, rtol=1e-6)
     # At the same parameters, the appended and the direct model must agree
     fixed = res.model.fix(direct.params, **fix_kwargs)
