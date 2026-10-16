@@ -678,6 +678,7 @@ cdef class GARCHUpdater(VolatilityUpdater):
     cdef:
         int p, o, q
         double power, backcast
+        double[::1] sigma_power
 
     def __init__(self, int p, int o, int q, double power):
         self.p = p
@@ -685,6 +686,23 @@ cdef class GARCHUpdater(VolatilityUpdater):
         self.q = q
         self.power = power
         self.backcast = -1.0
+        self.sigma_power = np.empty(0)
+
+    def __setstate__(self, state):
+        cdef Py_ssize_t i
+        cdef double[::1] temp
+        self.backcast = state[0]
+        temp = state[1]
+        self.sigma_power = np.empty(temp.shape[0])
+        for i in range(temp.shape[0]):
+            self.sigma_power[i] = temp[i]
+
+    def __reduce__(self):
+        return (
+            GARCHUpdater,
+            (self.p, self.o, self.q, self.power),
+            (self.backcast, np.asarray(self.sigma_power))
+        )
 
     def initialize_update(
             self,
@@ -693,6 +711,8 @@ cdef class GARCHUpdater(VolatilityUpdater):
             Py_ssize_t nobs
     ):
         self.backcast = backcast
+        if self.sigma_power.shape[0] < nobs:
+            self.sigma_power = np.empty(nobs)
 
     cdef void update(self,
                      Py_ssize_t t,
@@ -704,22 +724,25 @@ cdef class GARCHUpdater(VolatilityUpdater):
         cdef:
             int p = self.p, o = self.o, q = self.q
             double power = self.power, backcast = self.backcast
+            double sigma_power
             Py_ssize_t j, loc
 
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
         loc = 0
-        sigma2[t] = parameters[loc]
+        sigma_power = parameters[loc]
         loc += 1
         for j in range(p):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * backcast
+                sigma_power += parameters[loc] * backcast
             else:
-                sigma2[t] += parameters[loc] * (fabs(resids[t - 1 - j]) ** power)
+                sigma_power += parameters[loc] * (fabs(resids[t - 1 - j]) ** power)
             loc += 1
         for j in range(o):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * 0.5 * backcast
+                sigma_power += parameters[loc] * 0.5 * backcast
             else:
-                sigma2[t] += (
+                sigma_power += (
                         parameters[loc]
                         * (fabs(resids[t - 1 - j]) ** power)
                         * (resids[t - 1 - j] < 0)
@@ -727,11 +750,13 @@ cdef class GARCHUpdater(VolatilityUpdater):
             loc += 1
         for j in range(q):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * backcast
+                sigma_power += parameters[loc] * backcast
             else:
-                sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
+                sigma_power += parameters[loc] * self.sigma_power[t - 1 - j]
             loc += 1
-        bounds_check(&sigma2[t], &var_bounds[t, 0])
+        bounds_check(&sigma_power, &var_bounds[t, 0])
+        self.sigma_power[t] = sigma_power
+        sigma2[t] = sigma_power ** (2.0 / power)
 
 cdef class HARCHUpdater(VolatilityUpdater):
     cdef:
@@ -1003,7 +1028,7 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
                      const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t i
-        cdef double bc_weight, omega, beta, omega_tilde
+        cdef double bc_weight, omega, beta, omega_tilde, sigma_power
         cdef int p = self.p, q = self.q, trunc_lag = self.truncation
 
         omega = parameters[0]
@@ -1016,10 +1041,13 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        sigma2[t] = omega_tilde + bc_weight * self.backcast
+        sigma_power = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
-        bounds_check(&sigma2[t], &var_bounds[t, 0])
+            sigma_power += self.lam[i] * self.fresids[t - i - 1]
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
+        bounds_check(&sigma_power, &var_bounds[t, 0])
+        sigma2[t] = sigma_power ** (2.0 / self.power)
 
 
 cdef class FIAPARCHUpdater(VolatilityUpdater):

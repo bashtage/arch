@@ -828,6 +828,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.q = q
         self.power = power
         self.backcast = -1.0
+        self.sigma_power = np.empty(0)
 
     def initialize_update(
         self,
@@ -836,6 +837,8 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         nobs: int,
     ) -> None:
         self.backcast = cast("float", backcast)
+        if self.sigma_power.shape[0] < nobs:
+            self.sigma_power = np.empty(nobs)
 
     def update(
         self,
@@ -845,20 +848,24 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> None:
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
         loc = 0
-        sigma2[t] = parameters[loc]
+        sigma_power = parameters[loc]
         loc += 1
         for j in range(self.p):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * self.backcast
+                sigma_power += parameters[loc] * self.backcast
             else:
-                sigma2[t] += parameters[loc] * (np.abs(resids[t - 1 - j]) ** self.power)
+                sigma_power += parameters[loc] * (
+                    np.abs(resids[t - 1 - j]) ** self.power
+                )
             loc += 1
         for j in range(self.o):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * 0.5 * self.backcast
+                sigma_power += parameters[loc] * 0.5 * self.backcast
             else:
-                sigma2[t] += (
+                sigma_power += (
                     parameters[loc]
                     * (np.abs(resids[t - 1 - j]) ** self.power)
                     * (resids[t - 1 - j] < 0)
@@ -866,11 +873,13 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             loc += 1
         for j in range(self.q):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * self.backcast
+                sigma_power += parameters[loc] * self.backcast
             else:
-                sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
+                sigma_power += parameters[loc] * self.sigma_power[t - 1 - j]
             loc += 1
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+        sigma_power = bounds_check(sigma_power, var_bounds[t])
+        self.sigma_power[t] = sigma_power
+        sigma2[t] = sigma_power ** (2.0 / self.power)
 
 
 class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
@@ -1058,10 +1067,13 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        sigma2[t] = omega_tilde + bc_weight * self.backcast
+        sigma_power = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+            sigma_power += self.lam[i] * self.fresids[t - i - 1]
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
+        sigma_power = bounds_check(sigma_power, var_bounds[t])
+        sigma2[t] = sigma_power ** (2.0 / self.power)
 
 
 class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
