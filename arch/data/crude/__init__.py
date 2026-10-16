@@ -5,12 +5,12 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the Core CPI data used in the examples
+    Load the Brent and WTI crude oil price data used in the examples
 
     Returns
     -------
     data : DataFrame
-        Data set containing the CPI less Food and Energy
+        Data set containing the daily spot prices of Brent and WTI crude oil
 
     Notes
     -----
