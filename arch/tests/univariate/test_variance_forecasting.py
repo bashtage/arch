@@ -44,38 +44,6 @@ def _compare_truncated_forecasts(full, trunc, start):
         return
 
 
-def _garch_hand_next(e, f, params, p, o, q, power, backcast):
-    """
-    One step of the power GARCH recursion written out term by term.
-
-    ``e`` holds the shocks and ``f`` the conditional standard deviations to the
-    power ``power`` up to (and excluding) the period being computed.
-    ``backcast`` is on the same scale as ``f``.
-    """
-    t = len(e)
-    omega = params[0]
-    alpha = params[1 : p + 1]
-    gamma = params[p + 1 : p + o + 1]
-    beta = params[p + o + 1 :]
-    value = omega
-    for j in range(p):
-        if t - 1 - j < 0:
-            value += alpha[j] * backcast
-        else:
-            value += alpha[j] * abs(e[t - 1 - j]) ** power
-    for j in range(o):
-        if t - 1 - j < 0:
-            value += gamma[j] * 0.5 * backcast
-        elif e[t - 1 - j] < 0:
-            value += gamma[j] * abs(e[t - 1 - j]) ** power
-    for j in range(q):
-        if t - 1 - j < 0:
-            value += beta[j] * backcast
-        else:
-            value += beta[j] * f[t - 1 - j]
-    return value
-
-
 class PreservedState:
     """
     Context manager that will save NumPy's random generator's state when entering and
@@ -2533,3 +2501,36 @@ def test_external_rng():
         rng=rng,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)
+
+
+def _garch_hand_next(e, f, params, p, o, q, power, backcast):
+    """
+    One step of the power GARCH recursion written out term by term.
+
+    ``e`` holds the shocks and ``f`` the conditional standard deviations to the
+    power ``power`` up to (and excluding) the period being computed.
+    ``backcast`` is on the same scale as ``f``.
+    """
+    t = len(e)
+    omega = params[0]
+    alpha = params[1 : p + 1]
+    gamma = params[p + 1 : p + o + 1]
+    beta = params[p + o + 1 :]
+    value = omega
+    for j in range(p):
+        if t - 1 - j < 0:
+            value += alpha[j] * backcast
+        else:
+            value += alpha[j] * abs(e[t - 1 - j]) ** power
+    for j in range(o):
+        if t - 1 - j < 0:
+            value += gamma[j] * 0.5 * backcast
+        elif e[t - 1 - j] < 0:
+            value += gamma[j] * abs(e[t - 1 - j]) ** power
+    for j in range(q):
+        if t - 1 - j < 0:
+            value += beta[j] * backcast
+        else:
+            value += beta[j] * f[t - 1 - j]
+    return value
+
