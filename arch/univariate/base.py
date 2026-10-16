@@ -7,6 +7,7 @@ from collections.abc import Callable, Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
+import operator
 from typing import Any, cast, overload
 import warnings
 
@@ -1896,8 +1897,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         Parameters
         ----------
         lags : int, optional
-            Number of lags to include in the model.  If not specified,
-            uses $\lceil 1.2 T^{1/4} \rceil$.
+            Number of lags to include in the model. Must be a positive integer
+            (any integer-like value, including a NumPy integer, is accepted).
+            If not specified, uses $\lceil 12 (T/100)^{1/4} \rceil$, where T
+            is the number of non-missing residuals. In all cases the number of
+            lags is limited to $\lfloor T/2 \rfloor - 1$.
         standardized : bool, optional
             Flag indicating to test the model residuals divided by their
             conditional standard deviations.  If False, directly tests the
@@ -1907,7 +1911,35 @@ class ARCHModelFixedResult(_SummaryRepr):
         -------
         result : WaldTestStatistic
             Result of ARCH-LM test
+
+        Raises
+        ------
+        TypeError
+            If ``lags`` is not an integer.
+        ValueError
+            If ``lags`` is less than 1.
+
+        Notes
+        -----
+        The test statistic is :math:`T R^2`, where :math:`R^2` is the
+        coefficient of determination from the auxiliary regression of the
+        squared residuals on a constant and their own lags, and :math:`T` is
+        the total number of non-missing residuals. The regression uses the
+        :math:`T - \text{lags}` observations for which all lags are available,
+        so the statistic is :math:`T/(T-\text{lags})` times the statistic that
+        scales :math:`R^2` by the number of observations in the regression, as
+        in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an
+        asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.
         """
+        if lags is not None:
+            try:
+                lags = operator.index(lags)
+            except TypeError:
+                raise TypeError(
+                    f"lags must be an integer or None, got {type(lags).__name__}."
+                ) from None
+            if lags < 1:
+                raise ValueError(f"lags must be a positive integer, got {lags}.")
         resids = self.resid
         if standardized:
             resids = resids / np.asarray(self.conditional_volatility)
@@ -1930,7 +1962,6 @@ class ARCHModelFixedResult(_SummaryRepr):
         test_type = "R" if not standardized else "Standardized r"
         null = f"{test_type}esiduals are homoskedastic."
         alt = f"{test_type}esiduals are conditionally heteroskedastic."
-        assert isinstance(lags, int)
         return WaldTestStatistic(
             stat, df=lags, null=null, alternative=alt, name="ARCH-LM Test"
         )
