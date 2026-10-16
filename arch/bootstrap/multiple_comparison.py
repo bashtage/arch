@@ -465,10 +465,11 @@ class MCS(MultipleComparison):
         Returns
         -------
         included : list
-            List of column indices or names of the included models
+            List of column indices or names of the included models, which are
+            the models with a p-value that is at least size.
         """
         self._has_been_computed()
-        incl_loc = self._pvalues.Pvalue > self.size
+        incl_loc = self._pvalues.Pvalue >= self.size
         included = list(self._pvalues.index[incl_loc])
         included.sort()
         return included
@@ -481,10 +482,11 @@ class MCS(MultipleComparison):
         Returns
         -------
         excluded : list
-            List of column indices or names of the excluded models
+            List of column indices or names of the excluded models, which are
+            the models with a p-value that is less than size.
         """
         self._has_been_computed()
-        excl_loc = self._pvalues.Pvalue <= self.size
+        excl_loc = self._pvalues.Pvalue < self.size
         excluded = list(self._pvalues.index[excl_loc])
         excluded.sort()
         return excluded
@@ -498,7 +500,8 @@ class MCS(MultipleComparison):
         -------
         pvalues : DataFrame
             DataFrame where the index is the model index (column or name)
-            containing the smallest size where the model is in the MCS.
+            and the column Pvalue contains the MCS p-value of the model. The
+            model is in the MCS of size alpha if its p-value is at least alpha.
         """
         self._has_been_computed()
         return self._pvalues

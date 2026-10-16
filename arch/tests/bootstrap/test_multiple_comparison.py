@@ -1002,3 +1002,43 @@ def test_bad_values():
     q = MCS(qlike, size=0.05, method="max")
     with pytest.warns(RuntimeWarning, match=r"During computation of a step"):
         q.compute()
+
+
+@pytest.fixture(scope="module")
+def mcs_losses():
+    rng = np.random.default_rng(0)
+    return rng.standard_normal((120, 5)) + np.array([0.0, 0.05, 0.1, 0.2, 0.3])
+
+
+@pytest.mark.parametrize("method", ["R", "max"])
+def test_mcs_included_excluded_boundary(mcs_losses, method):
+    # A model is in the MCS of size alpha if its p-value is at least alpha
+    # (Hansen, Lunde and Nason, 2011), so a p-value equal to size is included
+    reps = 100
+    pvalues = MCS(mcs_losses, 0.1, reps=reps, seed=1, method=method)
+    pvalues.compute()
+    pvals = pvalues.pvalues["Pvalue"]
+    values = np.unique(pvals[(pvals > 0) & (pvals < 1)])
+    assert values.shape[0] >= 1
+    for size in values:
+        mcs = MCS(mcs_losses, float(size), reps=reps, seed=1, method=method)
+        mcs.compute()
+        expected_included = sorted(pvals.index[pvals >= size])
+        expected_excluded = sorted(pvals.index[pvals < size])
+        assert mcs.included == expected_included
+        assert mcs.excluded == expected_excluded
+        assert (pvals == size).any()
+        assert set(pvals.index[pvals == size]) <= set(mcs.included)
+        assert sorted(mcs.included + mcs.excluded) == list(range(5))
+
+
+def test_mcs_included_excluded_boundary_frame(mcs_losses):
+    losses = pd.DataFrame(mcs_losses, columns=list("abcde"))
+    mcs = MCS(losses, 0.1, reps=100, seed=1)
+    mcs.compute()
+    pvals = mcs.pvalues["Pvalue"]
+    size = float(np.unique(pvals[(pvals > 0) & (pvals < 1)])[0])
+    mcs = MCS(losses, size, reps=100, seed=1)
+    mcs.compute()
+    assert mcs.included == sorted(pvals.index[pvals >= size])
+    assert mcs.excluded == sorted(pvals.index[pvals < size])
