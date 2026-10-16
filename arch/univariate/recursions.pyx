@@ -1120,7 +1120,7 @@ cdef class MIDASUpdater(VolatilityUpdater):
             else:
                 sigma2[t] += (self.aw[i] + 0.5 * self.gw[i]) * self.backcast
 
-            bounds_check(&sigma2[t], &var_bounds[t, 0])
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
 cdef class FIGARCHUpdater(VolatilityUpdater):
     cdef:
