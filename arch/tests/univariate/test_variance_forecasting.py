@@ -1,3 +1,5 @@
+from math import exp, lgamma
+
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
@@ -2421,3 +2423,116 @@ def test_external_rng():
         rng=rng,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)
+
+
+def _midas_reference_forecast(resids, params, m, horizon, origin):
+    """
+    Direct implementation of the asymmetric MIDAS Hyperbolic variance
+
+    sigma2_t = omega + sum_i (alpha + gamma I[e_{t-i} < 0]) phi_i(theta) e_{t-i}^2
+
+    with phi_i(theta) proportional to Gamma(i + theta) / (Gamma(i + 1) Gamma(theta)),
+    normalized to sum to 1. Pre-sample squared residuals are set to the exponentially
+    weighted (0.94) backcast of the first 75 observations and pre-sample indicators to
+    1/2. For h > 1 the unknown squared shocks are replaced by their forecasts and
+    their indicators by 1/2.
+    """
+    omega, alpha, gamma, theta = params
+    lags = np.arange(1, m + 1)
+    phi = np.array(
+        [exp(lgamma(i + theta) - lgamma(i + 1) - lgamma(theta)) for i in lags]
+    )
+    phi = phi / phi.sum()
+
+    tau = min(75, resids.shape[0])
+    ew = 0.94 ** np.arange(tau)
+    ew = ew / ew.sum()
+    backcast = float(np.sum(resids[:tau] ** 2 * ew))
+
+    sq = [backcast] * m + list(resids[: origin + 1] ** 2)
+    ind = [0.5] * m + [float(r < 0) for r in resids[: origin + 1]]
+    out = []
+    for _ in range(horizon):
+        # most recent value first: lag 1 is the last element
+        past_sq = np.array(sq[-m:][::-1])
+        past_ind = np.array(ind[-m:][::-1])
+        sigma2 = omega + np.sum((alpha + gamma * past_ind) * phi * past_sq)
+        out.append(sigma2)
+        sq.append(sigma2)
+        ind.append(0.5)
+    return np.array(out)
+
+
+@pytest.fixture(scope="module")
+def midas_asym_fit():
+    m = 22
+    params = np.array([0.0, 0.05, 0.05, 0.25, 0.6])
+    sim_mod = ConstantMean(
+        None,
+        volatility=MIDASHyperbolic(m=m, asym=True),
+        distribution=Normal(seed=np.random.RandomState(2)),
+    )
+    y = sim_mod.simulate(params, 600, burn=300)["data"].to_numpy()
+    mod = ConstantMean(y, volatility=MIDASHyperbolic(m=m, asym=True))
+    res = mod.fix(params)
+    return mod, res, params, m
+
+
+@pytest.mark.parametrize("start", [0, 1, 300, 590, 599], ids=lambda s: f"start-{s}")
+def test_midas_asym_analytic_start(midas_asym_fit, start):
+    # Analytic forecasts of asymmetric MIDAS models used to raise for start > 0
+    _, res, params, m = midas_asym_fit
+    resids = np.asarray(res.resid)
+    nobs = resids.shape[0]
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, start=start, reindex=False)
+    expected = np.array(
+        [
+            _midas_reference_forecast(resids, params[1:], m, horizon, origin)
+            for origin in range(start, nobs)
+        ]
+    )
+    assert fcast.variance.shape == expected.shape
+    assert_allclose(fcast.variance.to_numpy(), expected, rtol=1e-10)
+
+
+def test_midas_asym_analytic_default_start(midas_asym_fit):
+    # The default forecasts only the final observation
+    _, res, params, m = midas_asym_fit
+    resids = np.asarray(res.resid)
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, reindex=False)
+    expected = _midas_reference_forecast(
+        resids, params[1:], m, horizon, resids.shape[0] - 1
+    )
+    assert fcast.variance.shape == (1, horizon)
+    assert_allclose(fcast.variance.to_numpy()[0], expected, rtol=1e-10)
+
+
+def test_midas_asym_analytic_rows_agree_across_start(midas_asym_fit):
+    _, res, _, _ = midas_asym_fit
+    full = res.forecast(horizon=4, start=0, reindex=False).variance.to_numpy()
+    part = res.forecast(horizon=4, start=500, reindex=False).variance.to_numpy()
+    assert_allclose(part, full[500:], rtol=1e-12)
+
+
+def test_midas_asym_analytic_matches_simulation(midas_asym_fit):
+    # Multi-step analytic forecasts replace the indicator by 1/2, which is exact in
+    # expectation for symmetric standardized shocks, so the simulation mean must
+    # agree up to Monte Carlo error
+    _, res, _, _ = midas_asym_fit
+    horizon = 5
+    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()[0]
+    sim = res.forecast(
+        horizon=horizon,
+        method="simulation",
+        simulations=20000,
+        rng=np.random.RandomState(12345).standard_normal,
+        reindex=False,
+    )
+    paths = sim.simulations.variances[0]
+    mc_mean = paths.mean(0)
+    mc_se = paths.std(0, ddof=1) / np.sqrt(paths.shape[0])
+    # one-step forecast is deterministic
+    assert_allclose(mc_mean[0], analytic[0], rtol=1e-10)
+    assert np.all(np.abs(mc_mean[1:] - analytic[1:]) < 5 * mc_se[1:])
