@@ -10,14 +10,15 @@ def load_file(file_base: str, filename: str) -> pd.DataFrame:
     Parameters
     ----------
     file_base : str
-        The director to use as the root.
+        The path of a file in the directory that contains the data, e.g.,
+        ``__file__``. The directory of this file is used as the root.
     filename : str
-        Name of csv.gz to load
+        Name of csv.gz to load.
 
     Returns
     -------
     DataFrame
-        Dataframe containing the loaded data.
+        DataFrame containing the loaded data.
     """
     curr_dir = os.path.split(os.path.abspath(file_base))[0]
     data = pd.read_csv(os.path.join(curr_dir, filename))

@@ -1,3 +1,5 @@
+"""S&P 500 data used in the examples."""
+
 from pandas import DataFrame
 
 from arch.data.utility import load_file
@@ -5,7 +7,7 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the S&P 500 data used in the examples
+    Load the S&P 500 data used in the examples.
 
     Returns
     -------
