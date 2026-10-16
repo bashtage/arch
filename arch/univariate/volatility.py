@@ -753,9 +753,14 @@ class VolatilityProcess(metaclass=ABCMeta):
         to use this method when not available will raise a ValueError.
         """
         _parameters = to_array_1d(parameters)
-        method_name = method.lower()
-        if method_name not in ("analytic", "simulation", "bootstrap"):
-            raise ValueError(f"{method} is not a known forecasting method")
+        valid_methods = ("analytic", "simulation", "bootstrap")
+        method_name = method.lower() if isinstance(method, str) else method
+        if method_name not in valid_methods:
+            valid = ", ".join(f"'{m}'" for m in valid_methods)
+            raise ValueError(
+                f"{method} is not a known forecasting method. The method must be "
+                f"one of {valid} (in any case)."
+            )
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
         self._check_forecasting_method(cast("ForecastingMethod", method_name), horizon)
@@ -764,7 +769,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             return self._analytic_forecast(
                 _parameters, resids, backcast, var_bounds, start, horizon
             )
-        elif method == "simulation":
+        elif method_name == "simulation":
             # TODO: This looks like a design flaw.It is optional above but then must
             #  be present.  This happens because the caller of this function is
             #  expected to know when to provide the rng or not
