@@ -208,3 +208,47 @@ def test_hedgehog_data_egarch_simulation(data, start, monkeypatch, agg_backend):
         assert_allclose(
             line[:, 0], mdates.date2num(index[origin : origin + horizon + 1])
         )
+
+
+@pytest.fixture(scope="module", params=["M", "D"], ids=["monthly", "daily"])
+def period_data(request):
+    rs = np.random.RandomState(4321)
+    index = pd.period_range("2000-01", periods=NOBS, freq=request.param)
+    return pd.Series(rs.standard_normal(NOBS), index=index)
+
+
+def test_plot_period_index(period_data, agg_backend):
+    res = arch_model(period_data).fit(disp="off", show_warning=False)
+    fig = res.plot()
+    expected_x = mdates.date2num(period_data.index.to_timestamp())
+    lines = [ax.get_lines()[0].get_xydata() for ax in fig.axes]
+    assert len(lines) == 2
+    for line in lines:
+        assert_allclose(line[:, 0], expected_x)
+    assert_allclose(lines[0][:, 1], res.resid / res.conditional_volatility)
+    assert_allclose(lines[1][:, 1], res.conditional_volatility)
+
+
+@pytest.mark.parametrize("plot_type", ["mean", "volatility"])
+def test_hedgehog_period_index(period_data, plot_type, agg_backend):
+    res = arch_model(period_data, mean="AR", lags=2).fit(disp="off", show_warning=False)
+    horizon, step = 3, 50
+    fig = res.hedgehog_plot(horizon=horizon, step=step, plot_type=plot_type)
+    lines = hedgehog_lines(fig)
+    timestamps = period_data.index.to_timestamp()
+    assert_allclose(lines[0][:, 0], mdates.date2num(timestamps))
+    # AR(2): the first origin is 1
+    origins = list(range(1, NOBS - horizon, step))
+    assert len(lines) == 1 + len(origins)
+    for line, origin in zip(lines[1:], origins, strict=True):
+        assert_allclose(
+            line[:, 0], mdates.date2num(timestamps[origin : origin + horizon + 1])
+        )
+        fcast = res.forecast(horizon=horizon, start=origin)
+        if plot_type == "mean":
+            values = fcast.mean.iloc[0].to_numpy()
+            first = period_data.iloc[origin]
+        else:
+            values = np.sqrt(fcast.variance.iloc[0].to_numpy())
+            first = res.conditional_volatility.iloc[origin]
+        assert_allclose(line[:, 1], np.hstack([first, values]), rtol=1e-10)
