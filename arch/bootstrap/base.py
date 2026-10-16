@@ -291,6 +291,39 @@ def _loo_jackknife(
     return np.array(results)
 
 
+def _check_block_size(block_size: Any, integer: bool = True) -> None:
+    """
+    Check that the block size of a block bootstrap is valid
+
+    Parameters
+    ----------
+    block_size : {int, float}
+        The block size
+    integer : bool, default True
+        Whether the block size must be an integer. The block size of the
+        stationary bootstrap is the mean block length, which can be any
+        number that is at least 1.
+
+    Raises
+    ------
+    TypeError
+        If the block size is not an integer (or a number if integer is False)
+    ValueError
+        If the block size is less than 1 or not finite
+    """
+    kind = "an integer" if integer else "a number"
+    valid_types = (
+        (int, np.integer) if integer else (int, float, np.integer, np.floating)
+    )
+    if not isinstance(block_size, valid_types):
+        raise TypeError(
+            f"block_size must be {kind}, but {block_size!r} has type "
+            f"{type(block_size).__name__}."
+        )
+    if not np.isfinite(block_size) or block_size < 1:
+        raise ValueError(f"block_size must be {kind} that is at least 1.")
+
+
 def _add_extra_kwargs(
     kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
 ) -> dict[str, Any]:
@@ -699,6 +732,11 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         tail_name = tail.lower()
         if tail_name not in ("two", "lower", "upper"):
             raise ValueError("tail must be one of two-sided, lower or upper")
+        if method == studentized and std_err_func is None and studentize_reps < 1:
+            raise ValueError(
+                "studentize_reps must be at least 1 when std_err_func is not "
+                "provided and method is 'studentized'."
+            )
         studentize_reps = studentize_reps if method == studentized else 0
         if sampling in ("semi", "semi-parametric", "semiparametric"):
             sampling = "semiparametric"
@@ -1449,6 +1487,7 @@ class CircularBlockBootstrap(IIDBootstrap):
     """
 
     _name = "Circular Block Bootstrap"
+    _integer_block_size = True
 
     def __init__(
         self,
@@ -1457,6 +1496,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
+        _check_block_size(block_size, self._integer_block_size)
         super().__init__(*args, seed=seed, **kwargs)
         self.block_size: int = block_size
         self._parameters = [block_size]
@@ -1593,6 +1633,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
     """
 
     _name = "Stationary Bootstrap"
+    # The block size is the mean of the geometric block length
+    _integer_block_size = False
 
     def __init__(
         self,

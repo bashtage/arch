@@ -270,6 +270,8 @@ class MCS(MultipleComparison):
 
         self.t: int = losses.shape[0]
         self.k: int = losses.shape[1]
+        if not isinstance(method, str) or method.lower() not in ("r", "max"):
+            raise ValueError(f"method must be 'R' or 'max' but is {method!r}.")
         self.method: Literal["R", "max"] = method
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
@@ -333,8 +335,10 @@ class MCS(MultipleComparison):
         """
         if self.method.lower() == "r":
             self._compute_r()
-        else:
+        elif self.method.lower() == "max":
             self._compute_max()
+        else:
+            raise ValueError(f"method must be 'R' or 'max' but is {self.method!r}.")
         self._results_computed = True
 
     def _compute_r(self) -> None:

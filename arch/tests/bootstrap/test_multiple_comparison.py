@@ -1002,3 +1002,57 @@ def test_bad_values():
     q = MCS(qlike, size=0.05, method="max")
     with pytest.warns(RuntimeWarning, match=r"During computation of a step"):
         q.compute()
+
+
+@pytest.mark.parametrize(
+    ("method", "canonical"),
+    [("r", "R"), ("max", "max"), ("MAX", "max"), ("Max", "max")],
+)
+def test_mcs_method_case_insensitive(method, canonical):
+    losses = np.random.default_rng(0).standard_normal((50, 3))
+    mcs = MCS(losses, 0.1, reps=10, method=method, seed=1)
+    mcs.compute()
+    reference = MCS(losses, 0.1, reps=10, method=canonical, seed=1)
+    reference.compute()
+    assert_allclose(mcs.pvalues["Pvalue"], reference.pvalues["Pvalue"])
+    assert list(mcs.pvalues.index) == list(reference.pvalues.index)
+
+
+@pytest.mark.parametrize("method", ["foo", "", "maximum", None, 1])
+def test_mcs_method_invalid(method):
+    losses = np.random.default_rng(0).standard_normal((50, 3))
+    with pytest.raises(ValueError, match="method must be 'R' or 'max'"):
+        MCS(losses, 0.1, reps=10, method=method)
+
+
+def test_mcs_method_changed_after_construction():
+    losses = np.random.default_rng(0).standard_normal((50, 3))
+    mcs = MCS(losses, 0.1, reps=10, seed=1)
+    mcs.method = "other"
+    with pytest.raises(ValueError, match="method must be 'R' or 'max'"):
+        mcs.compute()
+
+
+@pytest.mark.parametrize(
+    ("bootstrap", "block_size", "error"),
+    [
+        ("sb", 0, ValueError),
+        ("cbb", -1, ValueError),
+        ("mbb", 0, ValueError),
+        ("cbb", 2.5, TypeError),
+        ("mbb", 2.5, TypeError),
+    ],
+)
+@pytest.mark.parametrize("procedure", [MCS, SPA, StepM])
+def test_multiple_comparison_block_size(procedure, bootstrap, block_size, error):
+    losses = np.random.default_rng(0).standard_normal((50, 3))
+    with pytest.raises(error, match="block_size must be"):
+        if procedure is MCS:
+            MCS(losses, 0.1, block_size=block_size, bootstrap=bootstrap)
+        else:
+            procedure(
+                losses[:, 0],
+                losses[:, 1:],
+                block_size=block_size,
+                bootstrap=bootstrap,
+            )
