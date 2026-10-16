@@ -632,7 +632,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 0, "
         "<strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df, seed=seed)
     expected = (
@@ -660,7 +660,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = MovingBlockBootstrap(
         block_size=20, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
@@ -679,7 +679,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
 
 def test_uneven_sampling(bs_setup, seed):

@@ -136,9 +136,11 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     Returns
     -------
     DataFrame
-        A DataFrame with two columns `b_sb`, the estimated optimal block size
-        for the Stationary Bootstrap and `b_cb`, the estimated optimal block
-        size for the circular bootstrap.
+        A DataFrame with two columns `stationary`, the estimated optimal block
+        size for the Stationary Bootstrap, and `circular`, the estimated
+        optimal block size for the circular bootstrap. The index contains the
+        column names of x if it is a DataFrame, the name of x if it is a Series
+        and the column positions otherwise.
 
     See Also
     --------
@@ -218,11 +220,22 @@ def _get_acceleration(jk_params: Float64Array) -> Float64Array2D:
     float
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
+    eps = np.finfo(np.float64).eps
+    if not np.all(np.isfinite(jk_params)):
+        raise RuntimeError(
+            "The jackknife estimates are not finite, so the acceleration used by "
+            "BCa cannot be computed."
+        )
     u = jk_params.mean(0) - jk_params
     numer = np.sum(u**3, 0)
     denom = 6 * (np.sum(u**2, 0) ** (3.0 / 2.0))
-    small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
-    if small.any():
+    # The jackknife estimates are all equal, up to rounding error, if the
+    # spread is tiny relative to their size. The rounding error would
+    # determine the acceleration (or 0/0 when they are exactly equal).
+    spread = np.ptp(jk_params, axis=0)
+    scale = np.abs(jk_params).max(axis=0)
+    small = (denom <= (np.abs(numer) * eps)) | (spread <= 8 * eps * scale)
+    if np.any(small):
         message = "Jackknife variance estimate {jk_var} is too small to use BCa"
         raise RuntimeError(message.format(jk_var=denom))
     a = numer / denom
@@ -280,6 +293,64 @@ def _loo_jackknife(
     return np.array(results)
 
 
+def _check_block_size(block_size: Any, integer: bool = True) -> None:
+    """
+    Check that the block size of a block bootstrap is valid
+
+    Parameters
+    ----------
+    block_size : {int, float}
+        The block size
+    integer : bool, default True
+        Whether the block size must be an integer. The block size of the
+        stationary bootstrap is the mean block length, which can be any
+        number that is at least 1.
+
+    Raises
+    ------
+    TypeError
+        If the block size is not an integer (or a number if integer is False)
+    ValueError
+        If the block size is less than 1 or not finite
+    """
+    kind = "an integer" if integer else "a number"
+    valid_types = (
+        (int, np.integer) if integer else (int, float, np.integer, np.floating)
+    )
+    if not isinstance(block_size, valid_types):
+        raise TypeError(
+            f"block_size must be {kind}, but {block_size!r} has type "
+            f"{type(block_size).__name__}."
+        )
+    if not np.isfinite(block_size) or block_size < 1:
+        raise ValueError(f"block_size must be {kind} that is at least 1.")
+
+
+def _check_extra_kwargs(
+    kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
+) -> None:
+    """
+    Check that the extra keyword arguments do not replace bootstrapped data
+
+    Parameters
+    ----------
+    kwargs : dict
+        Keyword argument dictionary containing the bootstrapped data
+    extra_kwargs : dict, default None
+        Extra keyword arguments
+
+    Raises
+    ------
+    ValueError
+        If extra_kwargs contains a key used for the data in kwargs
+    """
+    if extra_kwargs is not None:
+        if any(k in kwargs for k in extra_kwargs):
+            raise ValueError(
+                "extra_kwargs contains keys used for variable names in the bootstrap"
+            )
+
+
 def _add_extra_kwargs(
     kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
 ) -> dict[str, Any]:
@@ -319,8 +390,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     args
         Positional arguments to bootstrap
     seed : {Generator, RandomState, int}, optional
-        Seed to use to ensure reproducable results. If an int, passes the
-        value to value to ``np.random.default_rng``. If None, a fresh
+        Seed to use to ensure reproducible results. If an int, passes the
+        value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
     kwargs
         Keyword arguments to bootstrap
@@ -343,8 +414,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``seed``
-    attribute after the bootstrap has been created. See the example below.
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
@@ -454,7 +525,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     def __repr__(self) -> str:
         return self.__str__()[:-1] + ", ID: " + hex(id(self)) + ")"
 
-    def _repr_html(self) -> str:
+    def _repr_html_(self) -> str:
         html = "<strong>" + self._name + "</strong>("
         html += "<strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
         html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
@@ -516,14 +587,17 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def reset(self, use_seed: bool = True) -> None:
         """
-        Resets the bootstrap to either its initial state or the last seed.
+        Resets the bootstrap to its initial state.
+
+        The generator is reset to the state it had when the bootstrap was
+        created, which is the state determined by the seed if one was provided,
+        and the data are restored to their original order.
 
         Parameters
         ----------
         use_seed : bool, default True
-            Flag indicating whether to use the last seed if provided.  If
-            False or if no seed has been set, the bootstrap will be reset
-            to the initial state.  Default is True
+            This argument is not used. The generator is always reset to the
+            state it had when the bootstrap was created.
         """
         self._index = np.arange(self._num_items, dtype=np.int64)
         self._resample()
@@ -609,11 +683,14 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             results.  This allows alternative methods to be compared without
             rerunning the bootstrap simulation.  Reuse is ignored if reps is
             not the same across multiple runs, func changes across calls, or
-            method is 'studentized'.
+            method is 'studentized'.  Otherwise the previous results are
+            reused even if extra_kwargs or sampling have changed, so use a new
+            call without reuse (or ``reset``) after changing them.
         sampling : str, default "nonparametric"
             Type of sampling to use: 'nonparametric', 'semi-parametric' (or
             'semi') or 'parametric'.  The default is 'nonparametric'.  See
-            notes about the changes to func required when using 'semi' or
+            :ref:`semiparametric-bootstraps` and :ref:`parametric-bootstraps`
+            for the changes to func required when using 'semi' or
             'parametric'.
         extra_kwargs : dict, default None
             Extra keyword arguments to use when calling func and std_err_func,
@@ -681,6 +758,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         * 'bca' - Bias corrected and accelerated, adding acceleration parameter
           to 'bc' method
 
+        The acceleration parameter used by 'bca' is estimated using a
+        leave-one-out jackknife of the observations in the original data. It is
+        the iid jackknife for all bootstraps, including the block bootstraps,
+        and so does not take account of serial dependence or the block size.
+
+        When ``std_err_func`` is not provided, the standard error used by
+        'studentized' is estimated in each bootstrap sample using a nested
+        bootstrap of the same type as this bootstrap, which applies the same
+        block size to the bootstrap sample. The block size of the nested
+        bootstrap is not selected separately from the block size of this
+        bootstrap. Provide ``std_err_func`` to use a different method, for
+        example, a nested block bootstrap with a different block size.
+
         """
         studentized = "studentized"
         if not 0.0 < size < 1.0:
@@ -688,6 +778,11 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         tail_name = tail.lower()
         if tail_name not in ("two", "lower", "upper"):
             raise ValueError("tail must be one of two-sided, lower or upper")
+        if method == studentized and std_err_func is None and studentize_reps < 1:
+            raise ValueError(
+                "studentize_reps must be at least 1 when std_err_func is not "
+                "provided and method is 'studentized'."
+            )
         studentize_reps = studentize_reps if method == studentized else 0
         if sampling in ("semi", "semi-parametric", "semiparametric"):
             sampling = "semiparametric"
@@ -827,7 +922,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         p = (self._results < self._base).mean(axis=0)
         if p.min() <= 0.0 or p.max() >= 1.0:
             raise RuntimeError(
-                "Empirical probability used in bias correction is 0 or 1, and so"
+                "Empirical probability used in bias correction is 0 or 1, and so "
                 "bias cannot be corrected. This may occur in extremum statistics "
                 "that are not well approximated by a normal in a finite sample."
             )
@@ -898,11 +993,12 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         .. code:: python
 
-            func(params, *args, **kwargs)
+            func(*args, **kwargs)
 
         where args and kwargs are the bootstrap version of the data provided
         when setting up the bootstrap.  When extra keyword arguments are used,
-        these are appended to kwargs before calling func
+        these are appended to kwargs before calling func.  The function can
+        return a scalar, a 0-dimensional array or a 1-dimensional array-like.
 
         Examples
         --------
@@ -914,12 +1010,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         ...     return y.mean(0)
         >>> results = bs.apply(func, 100)
         """
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        base = func(*self._args, **kwargs)
-        try:
-            num_params = base.shape[0]
-        except (IndexError, AttributeError):
-            num_params = 1
+        base = np.asarray(func(*self._args, **kwargs))
+        num_params = 1 if base.ndim == 0 else base.shape[0]
         results = np.zeros((reps, num_params))
         count = 0
         for pos_data, kw_data in self.bootstrap(reps):
@@ -948,16 +1042,12 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         elif sampling == "semiparametric":
             semi = True
 
-        if extra_kwargs is not None:
-            if any(k in self._kwargs for k in extra_kwargs):
-                raise ValueError(
-                    "extra_kwargs contains keys used for variable"
-                    " names in the bootstrap"
-                )
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        base = func(*self._args, **kwargs)
+        # Allows lists, tuples, scalars and 0-d arrays
+        base = np.asarray(func(*self._args, **kwargs))
 
-        num_params = 1 if np.isscalar(base) else base.shape[0]
+        num_params = 1 if base.ndim == 0 else base.shape[0]
         results = np.zeros((reps, num_params))
         studentized_results = np.zeros((reps, num_params))
 
@@ -986,7 +1076,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 studentized_results[count] = err / std_err
             count += 1
 
-        self._base = np.asarray(base)
+        self._base = base
         self._results = np.asarray(results)
         self._studentized_results = np.asarray(studentized_results)
 
@@ -1025,13 +1115,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         .. code:: python
 
-            func(params, *args, **kwargs)
+            func(*args, **kwargs)
 
-        where params are a 1-dimensional array, and `*args` and `**kwargs` are
-        data used in the the bootstrap.  The first argument, params, will be
-        none when called using the original data, and will contain the estimate
-        computed using the original data in bootstrap replications.  This
-        parameter is passed to allow parametric bootstrap simulation.
+        where `*args` and `**kwargs` are the bootstrap version of the data
+        used in the bootstrap, and any ``extra_kwargs`` are appended to
+        `**kwargs`. The function returns a scalar, a 0-dimensional array or a
+        1-dimensional array-like. A ``params`` argument is not passed, so only
+        the nonparametric bootstrap can be used.
 
         Examples
         --------
@@ -1106,13 +1196,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         .. code:: python
 
-            func(params, *args, **kwargs)
+            func(*args, **kwargs)
 
-        where params are a 1-dimensional array, and `*args` and `**kwargs` are
-        data used in the the bootstrap.  The first argument, params, will be
-        none when called using the original data, and will contain the estimate
-        computed using the original data in bootstrap replications.  This
-        parameter is passed to allow parametric bootstrap simulation.
+        where `*args` and `**kwargs` are the bootstrap version of the data
+        used in the bootstrap, and any ``extra_kwargs`` are appended to
+        `**kwargs`. The function returns a scalar, a 0-dimensional array or a
+        1-dimensional array-like. A ``params`` argument is not passed, so only
+        the nonparametric bootstrap can be used.
 
         Examples
         --------
@@ -1198,6 +1288,10 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     ----------
     args
         Positional arguments to bootstrap
+    seed : {Generator, RandomState, int}, optional
+        Seed to use to ensure reproducible results. If an int, passes the
+        value to ``np.random.default_rng``. If None, a fresh
+        Generator is constructed with system-provided entropy.
     kwargs
         Keyword arguments to bootstrap
 
@@ -1226,10 +1320,10 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``seed``
-    attribute after the bootstrap has been created. See the example below.
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
     Note that ``seed`` is a reserved keyword and any variable
-    passed using this keyword must be an instance of a NumPy ``Generator`` or
+    passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
 
     Examples
@@ -1313,14 +1407,17 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def reset(self, use_seed: bool = True) -> None:
         """
-        Resets the bootstrap to either its initial state or the last seed.
+        Resets the bootstrap to its initial state.
+
+        The generator is reset to the state it had when the bootstrap was
+        created, which is the state determined by the seed if one was provided,
+        and the data are restored to their original order.
 
         Parameters
         ----------
         use_seed : bool, default True
-            Flag indicating whether to use the last seed if provided.  If
-            False or if no seed has been set, the bootstrap will be reset
-            to the initial state.  Default is True
+            This argument is not used. The generator is always reset to the
+            state it had when the bootstrap was created.
         """
         pos_indices: list[Int64Array1D] = [
             np.arange(self._num_arg_items[i], dtype=np.int64)
@@ -1371,12 +1468,12 @@ class CircularBlockBootstrap(IIDBootstrap):
     Parameters
     ----------
     block_size : int
-        Size of block to use
+        Size of block to use. Must be an integer that is at least 1.
     args
         Positional arguments to bootstrap
     seed : {Generator, RandomState, int}, optional
-        Seed to use to ensure reproducable results. If an int, passes the
-        value to value to ``np.random.default_rng``. If None, a fresh
+        Seed to use to ensure reproducible results. If an int, passes the
+        value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
     kwargs
         Keyword arguments to bootstrap
@@ -1399,8 +1496,8 @@ class CircularBlockBootstrap(IIDBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``seed``
-    attribute after the bootstrap has been created. See the example below.
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
@@ -1438,6 +1535,7 @@ class CircularBlockBootstrap(IIDBootstrap):
     """
 
     _name = "Circular Block Bootstrap"
+    _integer_block_size = True
 
     def __init__(
         self,
@@ -1446,6 +1544,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
+        _check_block_size(block_size, self._integer_block_size)
         super().__init__(*args, seed=seed, **kwargs)
         self.block_size: int = block_size
         self._parameters = [block_size]
@@ -1483,7 +1582,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
         return txt
 
-    def _repr_html(self) -> str:
+    def _repr_html_(self) -> str:
         html = "<strong>" + self._name + "</strong>("
         html += "<strong>block size</strong>: " + str(self.block_size)
         html += ", <strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
@@ -1514,13 +1613,14 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     Parameters
     ----------
-    block_size : int
-        Average size of block to use
+    block_size : {int, float}
+        Average size of block to use. Can be any number that is at least 1,
+        for example, the value estimated by ``optimal_block_length``.
     args
         Positional arguments to bootstrap
     seed : {Generator, RandomState, int}, optional
-        Seed to use to ensure reproducable results. If an int, passes the
-        value to value to ``np.random.default_rng``. If None, a fresh
+        Seed to use to ensure reproducible results. If an int, passes the
+        value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
     kwargs
         Keyword arguments to bootstrap
@@ -1543,8 +1643,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``seed``
-    attribute after the bootstrap has been created. See the example below.
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
@@ -1582,6 +1682,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
     """
 
     _name = "Stationary Bootstrap"
+    # The block size is the mean of the geometric block length
+    _integer_block_size = False
 
     def __init__(
         self,
@@ -1613,12 +1715,12 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Parameters
     ----------
     block_size : int
-        Size of block to use
+        Size of block to use. Must be an integer that is at least 1.
     args
         Positional arguments to bootstrap
     seed : {Generator, RandomState, int}, optional
-        Seed to use to ensure reproducable results. If an int, passes the
-        value to value to ``np.random.default_rng``. If None, a fresh
+        Seed to use to ensure reproducible results. If an int, passes the
+        value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
     kwargs
         Keyword arguments to bootstrap
@@ -1641,8 +1743,8 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
-    To ensure a reproducible bootstrap, you must set the ``seed``
-    attribute after the bootstrap has been created. See the example below.
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
