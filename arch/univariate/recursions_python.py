@@ -1150,9 +1150,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.delta = delta
         self.backcast: float | Float64Array1D = -1.0
         self.lam = np.empty(truncation)
-        self.resids = np.empty(0)
-        self.abs_resids = np.empty(0)
-        self.sigma_delta = np.empty(0)
+        self.fshocks = np.empty(0)
 
     def __setstate__(self, state: tuple) -> None:
         self.backcast = state[0]
@@ -1160,9 +1158,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         lam = np.asarray(state[2], dtype=np.float64)
         assert lam.shape[0] == self.truncation
         self.lam = lam.copy()
-        self.resids = np.asarray(state[3], dtype=np.float64).copy()
-        self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
-        self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
+        self.fshocks = np.asarray(state[3], dtype=np.float64).copy()
 
     def __reduce__(self) -> tuple:
         return (
@@ -1179,9 +1175,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
                 self.backcast,
                 self.delta,
                 np.asarray(self.lam),
-                np.asarray(self.resids),
-                np.asarray(self.abs_resids),
-                np.asarray(self.sigma_delta),
+                np.asarray(self.fshocks),
             ),
         )
 
@@ -1196,10 +1190,8 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         # stored on this scale
         delta = parameters[-1] if self.est_delta else self.delta
         self.backcast = cast("float", backcast) ** (delta / 2.0)
-        if self.resids.shape[0] < nobs:
-            self.resids = np.empty(nobs)
-            self.abs_resids = np.empty(nobs)
-            self.sigma_delta = np.empty(nobs)
+        if self.fshocks.shape[0] < nobs:
+            self.fshocks = np.empty(nobs)
 
     def update(
         self,
@@ -1220,20 +1212,21 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         beta = parameters[1 + p + q] if q else 0.0
         omega_tilde = omega / (1 - beta)
 
+        # The transformed shock depends only on the observation, so it is raised to
+        # delta once, when it becomes available, rather than once for each lag
         if t > 0:
-            self.resids[t - 1] = resids[t - 1]
-            self.abs_resids[t - 1] = np.abs(resids[t - 1])
+            self.fshocks[t - 1] = (
+                np.abs(resids[t - 1]) - gamma * resids[t - 1]
+            ) ** delta
 
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        self.sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        sigma_delta = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            shock = self.abs_resids[t - i - 1] - gamma * self.resids[t - i - 1]
-            self.sigma_delta[t] += self.lam[i] * (shock**delta)
-        sigma2[t] = self.sigma_delta[t] ** (2.0 / delta)
+            sigma_delta += self.lam[i] * self.fshocks[t - i - 1]
+        sigma2[t] = sigma_delta ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
-        self.sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):

@@ -1100,9 +1100,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         int p, q, o, truncation, est_delta
         double delta
         double[::1] lam
-        double[::1] _resids
-        double[::1] _abs_resids
-        double[::1] _sigma_delta
+        double[::1] _fshocks
         double backcast
 
     def __init__(
@@ -1121,9 +1119,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         self.est_delta = est_delta
         self.delta = delta
         self.lam = np.empty(truncation)
-        self._resids = np.empty(0)
-        self._abs_resids = np.empty(0)
-        self._sigma_delta = np.empty(0)
+        self._fshocks = np.empty(0)
 
     def __setstate__(self, state):
         cdef Py_ssize_t i
@@ -1135,17 +1131,9 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         for i in range(self.truncation):
             self.lam[i] = temp[i]
         temp = state[3]
-        self._resids = np.empty(temp.shape[0])
+        self._fshocks = np.empty(temp.shape[0])
         for i in range(temp.shape[0]):
-            self._resids[i] = temp[i]
-        temp = state[4]
-        self._abs_resids = np.empty(temp.shape[0])
-        for i in range(temp.shape[0]):
-            self._abs_resids[i] = temp[i]
-        temp = state[5]
-        self._sigma_delta = np.empty(temp.shape[0])
-        for i in range(temp.shape[0]):
-            self._sigma_delta[i] = temp[i]
+            self._fshocks[i] = temp[i]
 
     def __reduce__(self):
         return (
@@ -1162,9 +1150,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
                 self.backcast,
                 self.delta,
                 np.asarray(self.lam),
-                np.asarray(self._resids),
-                np.asarray(self._abs_resids),
-                np.asarray(self._sigma_delta),
+                np.asarray(self._fshocks),
             )
         )
 
@@ -1180,10 +1166,8 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         # stored on this scale
         delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
         self.backcast = backcast ** (delta / 2.0)
-        if self._resids.shape[0] < nobs:
-            self._resids = np.empty(nobs)
-            self._abs_resids = np.empty(nobs)
-            self._sigma_delta = np.empty(nobs)
+        if self._fshocks.shape[0] < nobs:
+            self._fshocks = np.empty(nobs)
 
     cdef void update(self,
                      Py_ssize_t t,
@@ -1193,7 +1177,7 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
                      const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t i
-        cdef double bc_weight, omega, beta, omega_tilde, shock, gamma, delta
+        cdef double bc_weight, omega, beta, omega_tilde, gamma, delta, sigma_delta
         cdef int p = self.p, q = self.q, o = self.o, trunc_lag = self.truncation
 
         omega = parameters[0]
@@ -1202,20 +1186,19 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         gamma = parameters[2 + p + q] if o else 0.0
         delta = parameters[parameters.shape[0] - 1] if self.est_delta else self.delta
 
+        # The transformed shock depends only on the observation, so it is raised to
+        # delta once, when it becomes available, rather than once for each lag
         if t > 0:
-            self._resids[t-1] = resids[t-1]
-            self._abs_resids[t-1] = fabs(resids[t-1])
+            self._fshocks[t-1] = (fabs(resids[t-1]) - gamma * resids[t-1]) ** delta
 
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        self._sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        sigma_delta = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            shock = self._abs_resids[t - i - 1] - gamma * self._resids[t - i - 1]
-            self._sigma_delta[t] += self.lam[i] * (shock ** delta)
-        sigma2[t] = self._sigma_delta[t] ** (2.0 / delta)
+            sigma_delta += self.lam[i] * self._fshocks[t - i - 1]
+        sigma2[t] = sigma_delta ** (2.0 / delta)
         bounds_check(&sigma2[t], &var_bounds[t, 0])
-        self._sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 cdef class RiskMetrics2006Updater(VolatilityUpdater):
