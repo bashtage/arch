@@ -1299,16 +1299,16 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data["cpi"]))
-    >>> kpss = KPSS(inflation, lags=-1)
+    >>> kpss = KPSS(inflation)
     >>> print(f"{kpss.stat:0.4f}")
-    0.2870
+    0.3916
     >>> print(f"{kpss.pvalue:0.4f}")
-    0.1473
-    >>> kpss = KPSS(inflation, lags=-1, trend="ct")
+    0.0761
+    >>> kpss = KPSS(inflation, trend="ct")
     >>> print(f"{kpss.stat:0.4f}")
-    0.2075
+    0.2802
     >>> print(f"{kpss.pvalue:0.4f}")
-    0.0128
+    0.0026
 
     References
     ----------
@@ -1334,13 +1334,6 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self, y: ArrayLike, lags: int | None = None, trend: Literal["c", "ct"] = "c"
     ) -> None:
         valid_trends = ("c", "ct")
-        if lags is None:
-            warnings.warn(
-                "Lag selection has changed to use a data-dependent method. To use the "
-                "old method that only depends on time, set lags=-1",
-                DeprecationWarning,
-                stacklevel=2,
-            )
         self._legacy_lag_selection = False
         if lags == -1:
             self._legacy_lag_selection = True
