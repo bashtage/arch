@@ -39,6 +39,7 @@ routines relevant for the analysis of financial data.
     Data Sets <data>
     Warnings and Exceptions <warnings>
     Common Type Definitions <types>
+    Contributing <contributing>
     Change Log <changes>
 
 Citation
