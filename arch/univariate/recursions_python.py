@@ -79,6 +79,30 @@ def harch_core_python(
 harch_core = jit(harch_core_python, nopython=True, inline="always")
 
 
+def harch_step_python(
+    t: int,
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    lags: Int32Array,
+    backcast: float,
+    var_bounds: Float64Array1D,
+) -> float:
+    """One observation of the HARCH recursion, which can use the backcast"""
+    sigma2 = parameters[0]
+    for i in range(lags.shape[0]):
+        param = parameters[i + 1] / lags[i]
+        for j in range(lags[i]):
+            if (t - j - 1) >= 0:
+                sigma2 += param * resids[t - j - 1] * resids[t - j - 1]
+            else:
+                sigma2 += param * backcast
+
+    return bounds_check(sigma2, var_bounds)
+
+
+harch_step = jit(harch_step_python, nopython=True)
+
+
 def harch_recursion_python(
     parameters: Float64Array1D,
     resids: Float64Array1D,
@@ -108,17 +132,41 @@ def harch_recursion_python(
         variances for each time period
     """
 
-    for t in range(nobs):
-        sigma2[t] = parameters[0]
-        for i in range(lags.shape[0]):
+    num_lags = lags.shape[0]
+    max_lag = 0
+    for i in range(num_lags):
+        max_lag = max(max_lag, lags[i])
+
+    # The first max_lag observations use the backcast
+    t = 0
+    while t < min(max_lag, nobs):
+        sigma2[t] = harch_step(t, parameters, resids, lags, backcast, var_bounds[t])
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = parameters[0]
+        a1 = parameters[0]
+        a2 = parameters[0]
+        a3 = parameters[0]
+        for i in range(num_lags):
             param = parameters[i + 1] / lags[i]
             for j in range(lags[i]):
-                if (t - j - 1) >= 0:
-                    sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
-                else:
-                    sigma2[t] += param * backcast
-
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+                a0 += param * resids[t - j - 1] * resids[t - j - 1]
+                a1 += param * resids[t - j] * resids[t - j]
+                a2 += param * resids[t - j + 1] * resids[t - j + 1]
+                a3 += param * resids[t - j + 2] * resids[t - j + 2]
+        sigma2[t] = bounds_check(a0, var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1, var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2, var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3, var_bounds[t + 3])
+        t += 4
+    while t < nobs:
+        sigma2[t] = harch_step(t, parameters, resids, lags, backcast, var_bounds[t])
+        t += 1
 
     return sigma2
 
@@ -399,6 +447,30 @@ def egarch_recursion_python(
 egarch_recursion = jit(egarch_recursion_python, nopython=True)
 
 
+def midas_step_python(
+    t: int,
+    omega: float,
+    aw: Float64Array1D,
+    gw: Float64Array1D,
+    resids: Float64Array1D,
+    resids2: Float64Array1D,
+    backcast: float,
+    var_bounds: Float64Array1D,
+) -> float:
+    """One observation of the MIDAS recursion, which can use the backcast"""
+    sigma2 = omega
+    for i in range(aw.shape[0]):
+        if (t - i - 1) >= 0:
+            sigma2 += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+        else:
+            sigma2 += (aw[i] + 0.5 * gw[i]) * backcast
+
+    return bounds_check(sigma2, var_bounds)
+
+
+midas_step = jit(midas_step_python, nopython=True)
+
+
 def midas_recursion_python(
     parameters: Float64Array1D,
     weights: Float64Array,
@@ -439,24 +511,41 @@ def midas_recursion_python(
         gw[i] = gamma * weights[i]
 
     resids2 = np.zeros(nobs)
-
     for t in range(nobs):
         resids2[t] = resids[t] * resids[t]
-        sigma2[t] = omega
+
+    # The first m observations use the backcast
+    t = 0
+    while t < min(m, nobs):
+        sigma2[t] = midas_step(
+            t, omega, aw, gw, resids, resids2, backcast, var_bounds[t]
+        )
+        t += 1
+
+    # Later observations have a full history. The sums for different observations
+    # are independent, so four are accumulated at a time so that the floating point
+    # adds of different sums overlap, rather than each add waiting for the previous
+    # one. Every sum still adds its terms one at a time in the original order.
+    while t + 3 < nobs:
+        a0 = omega
+        a1 = omega
+        a2 = omega
+        a3 = omega
         for i in range(m):
-            if (t - i - 1) >= 0:
-                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[
-                    t - i - 1
-                ]
-            else:
-                sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t] / var_bounds[t, 1])
+            a0 += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+            a1 += (aw[i] + gw[i] * (resids[t - i] < 0)) * resids2[t - i]
+            a2 += (aw[i] + gw[i] * (resids[t - i + 1] < 0)) * resids2[t - i + 1]
+            a3 += (aw[i] + gw[i] * (resids[t - i + 2] < 0)) * resids2[t - i + 2]
+        sigma2[t] = bounds_check(a0, var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1, var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2, var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3, var_bounds[t + 3])
+        t += 4
+    while t < nobs:
+        sigma2[t] = midas_step(
+            t, omega, aw, gw, resids, resids2, backcast, var_bounds[t]
+        )
+        t += 1
 
     return sigma2
 
@@ -503,6 +592,115 @@ def figarch_weights_python(
 
 
 figarch_weights = jit(figarch_weights_python, nopython=True)
+
+
+def backcast_weights_python(
+    lam: Float64Array1D, nobs: int, trunc_lag: int
+) -> Float64Array1D:
+    """
+    Weights on the backcast in the ARCH(inf) representation
+
+    Element t is lam[t] + ... + lam[trunc_lag - 1], the weight on the lags that
+    are before the start of the sample, which is 0 for t >= trunc_lag. Each sum
+    adds the terms in increasing order of the lag.
+    """
+    # The sums for different t are independent. Four are accumulated at a time so
+    # that the floating point adds of different sums overlap, rather than each
+    # add waiting for the previous one. Every sum still adds its terms one at a
+    # time in the same order as a single loop would, so the results do not change.
+    n_bc = min(nobs, trunc_lag)
+    bc_weights = np.zeros(nobs)
+    t = 0
+    while t + 3 < n_bc:
+        a0 = 0.0
+        a1 = 0.0
+        a2 = 0.0
+        a3 = 0.0
+        a0 += lam[t]
+        a0 += lam[t + 1]
+        a1 += lam[t + 1]
+        a0 += lam[t + 2]
+        a1 += lam[t + 2]
+        a2 += lam[t + 2]
+        for i in range(t + 3, trunc_lag):
+            w = lam[i]
+            a0 += w
+            a1 += w
+            a2 += w
+            a3 += w
+        bc_weights[t] = a0
+        bc_weights[t + 1] = a1
+        bc_weights[t + 2] = a2
+        bc_weights[t + 3] = a3
+        t += 4
+    while t < n_bc:
+        a0 = 0.0
+        for i in range(t, trunc_lag):
+            a0 += lam[i]
+        bc_weights[t] = a0
+        t += 1
+    return bc_weights
+
+
+backcast_weights = jit(backcast_weights_python, nopython=True)
+
+
+def arch_inf_sums_python(
+    lam: Float64Array1D,
+    shocks: Float64Array1D,
+    bc_weights: Float64Array1D,
+    omega_tilde: float,
+    backcast: float,
+    nobs: int,
+    trunc_lag: int,
+    sums: Float64Array1D,
+) -> None:
+    """
+    Truncated ARCH(inf) sums of FIGARCH-type models
+
+    Sets sums[t] to
+
+        omega_tilde + bc_weights[t] * backcast + sum_i lam[i] * shocks[t - i - 1]
+
+    where the sum is over i < min(t, trunc_lag) and is accumulated in increasing
+    order of i, after the first two terms.
+    """
+    # As in backcast_weights, four sums are accumulated at a time
+    t = 0
+    while t + 3 < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast
+        a1 = omega_tilde + bc_weights[t + 1] * backcast
+        a2 = omega_tilde + bc_weights[t + 2] * backcast
+        a3 = omega_tilde + bc_weights[t + 3] * backcast
+        # Lags available to all four, t, t + 1, t + 2 and t + 3
+        m = min(t, trunc_lag)
+        for i in range(m):
+            w = lam[i]
+            a0 += w * shocks[t - i - 1]
+            a1 += w * shocks[t - i]
+            a2 += w * shocks[t - i + 1]
+            a3 += w * shocks[t - i + 2]
+        # Additional lags only available to the later observations
+        for i in range(m, min(t + 1, trunc_lag)):
+            a1 += lam[i] * shocks[t - i]
+        for i in range(m, min(t + 2, trunc_lag)):
+            a2 += lam[i] * shocks[t - i + 1]
+        for i in range(m, min(t + 3, trunc_lag)):
+            a3 += lam[i] * shocks[t - i + 2]
+        sums[t] = a0
+        sums[t + 1] = a1
+        sums[t + 2] = a2
+        sums[t + 3] = a3
+        t += 4
+    while t < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast
+        for i in range(min(t, trunc_lag)):
+            a0 += lam[i] * shocks[t - i - 1]
+        sums[t] = a0
+        t += 1
+
+
+arch_inf_sums = jit(arch_inf_sums_python, nopython=True)
 
 
 def figarch_recursion_python(
@@ -552,13 +750,11 @@ def figarch_recursion_python(
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
+    bc_weights = backcast_weights(lam, nobs, trunc_lag)
+    arch_inf_sums(
+        lam, fresids, bc_weights, omega_tilde, backcast, nobs, trunc_lag, sigma2
+    )
     for t in range(nobs):
-        bc_weight = 0.0
-        for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma2[t] = omega_tilde + bc_weight * backcast
-        for i in range(min(t, trunc_lag)):
-            sigma2[t] += lam[i] * fresids[t - i - 1]
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
     return sigma2
@@ -596,7 +792,9 @@ def fiaparch_recursion_python(
     sigma2 : ndarray
         Conditional variances with same shape as resids
     sigma_delta : ndarray
-        Conditional variance to the power delta with same shape as resids
+        Work array with same shape as resids. On return it contains the
+        conditional variance to the power delta before the variance bounds
+        are applied
     p : int
         0 or 1 to indicate whether the model contains phi
     q : int
@@ -606,7 +804,8 @@ def fiaparch_recursion_python(
     trunc_lag : int
         Truncation lag for the ARCH approximations
     backcast : float
-        Value to use when initializing the recursion (in sigma^delta scale)
+        Value to use when initializing the recursion. This is a variance and is
+        converted to the sigma^delta scale using delta
     var_bounds : ndarray
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
@@ -624,17 +823,29 @@ def fiaparch_recursion_python(
     beta = parameters[1 + p + q] if q else 0.0
     omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
+    backcast_delta = backcast ** (delta / 2.0)
+    # The transformed shock depends only on the observation, not on the lag, so
+    # raise it to delta once (nobs powers) instead of once per (t, lag) pair
+    fshocks = np.empty(nobs)
+    for t in range(nobs - 1):
+        fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
+    bc_weights = backcast_weights(lam, nobs, trunc_lag)
+    arch_inf_sums(
+        lam,
+        fshocks,
+        bc_weights,
+        omega_tilde,
+        backcast_delta,
+        nobs,
+        trunc_lag,
+        sigma_delta,
+    )
+    # sigma_delta is a work array that holds sigma ** delta before the variance
+    # bounds are applied. It is not read by any caller, so it is not recomputed from
+    # the bounded variance, which would cost a call to pow for each observation.
     for t in range(nobs):
-        bc_weight = 0.0
-        for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast
-        for i in range(min(t, trunc_lag)):
-            shock = abs_resids[t - i - 1] - gamma * resids[t - i - 1]
-            sigma_delta[t] += lam[i] * (shock**delta)
         sigma2[t] = sigma_delta[t] ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
-        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
     return sigma2
 
@@ -826,6 +1037,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.q = q
         self.power = power
         self.backcast = -1.0
+        self.sigma_power = np.empty(0)
 
     def initialize_update(
         self,
@@ -834,6 +1046,8 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         nobs: int,
     ) -> None:
         self.backcast = cast("float", backcast)
+        if self.sigma_power.shape[0] < nobs:
+            self.sigma_power = np.empty(nobs)
 
     def update(
         self,
@@ -843,20 +1057,24 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> None:
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
         loc = 0
-        sigma2[t] = parameters[loc]
+        sigma_power = parameters[loc]
         loc += 1
         for j in range(self.p):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * self.backcast
+                sigma_power += parameters[loc] * self.backcast
             else:
-                sigma2[t] += parameters[loc] * (np.abs(resids[t - 1 - j]) ** self.power)
+                sigma_power += parameters[loc] * (
+                    np.abs(resids[t - 1 - j]) ** self.power
+                )
             loc += 1
         for j in range(self.o):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * 0.5 * self.backcast
+                sigma_power += parameters[loc] * 0.5 * self.backcast
             else:
-                sigma2[t] += (
+                sigma_power += (
                     parameters[loc]
                     * (np.abs(resids[t - 1 - j]) ** self.power)
                     * (resids[t - 1 - j] < 0)
@@ -864,11 +1082,13 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
             loc += 1
         for j in range(self.q):
             if (t - 1 - j) < 0:
-                sigma2[t] += parameters[loc] * self.backcast
+                sigma_power += parameters[loc] * self.backcast
             else:
-                sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
+                sigma_power += parameters[loc] * self.sigma_power[t - 1 - j]
             loc += 1
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+        sigma_power = bounds_check(sigma_power, var_bounds[t])
+        self.sigma_power[t] = sigma_power
+        sigma2[t] = sigma_power ** (2.0 / self.power)
 
 
 class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
@@ -1056,10 +1276,13 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        sigma2[t] = omega_tilde + bc_weight * self.backcast
+        sigma_power = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+            sigma_power += self.lam[i] * self.fresids[t - i - 1]
+        # The recursion runs in sigma ** power, which is what the backcast and
+        # var_bounds use. sigma2 is the variance, sigma ** 2
+        sigma_power = bounds_check(sigma_power, var_bounds[t])
+        sigma2[t] = sigma_power ** (2.0 / self.power)
 
 
 class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
@@ -1080,9 +1303,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.delta = delta
         self.backcast: float | Float64Array1D = -1.0
         self.lam = np.empty(truncation)
-        self.resids = np.empty(0)
-        self.abs_resids = np.empty(0)
-        self.sigma_delta = np.empty(0)
+        self.fshocks = np.empty(0)
 
     def __setstate__(self, state: tuple) -> None:
         self.backcast = state[0]
@@ -1090,11 +1311,9 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         lam = np.asarray(state[2], dtype=np.float64)
         assert lam.shape[0] == self.truncation
         self.lam = lam.copy()
-        self.resids = np.asarray(state[3], dtype=np.float64).copy()
-        self.abs_resids = np.asarray(state[4], dtype=np.float64).copy()
-        self.sigma_delta = np.asarray(state[5], dtype=np.float64).copy()
+        self.fshocks = np.asarray(state[3], dtype=np.float64).copy()
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         return (
             FIAPARCHUpdater,
             (
@@ -1109,9 +1328,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
                 self.backcast,
                 self.delta,
                 np.asarray(self.lam),
-                np.asarray(self.resids),
-                np.asarray(self.abs_resids),
-                np.asarray(self.sigma_delta),
+                np.asarray(self.fshocks),
             ),
         )
 
@@ -1122,11 +1339,12 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         nobs: int,
     ) -> None:
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
-        self.backcast = backcast
-        if self.resids.shape[0] < nobs:
-            self.resids = np.empty(nobs)
-            self.abs_resids = np.empty(nobs)
-            self.sigma_delta = np.empty(nobs)
+        # The backcast is a variance, so convert it to sigma ** delta. It is
+        # stored on this scale
+        delta = parameters[-1] if self.est_delta else self.delta
+        self.backcast = cast("float", backcast) ** (delta / 2.0)
+        if self.fshocks.shape[0] < nobs:
+            self.fshocks = np.empty(nobs)
 
     def update(
         self,
@@ -1147,20 +1365,21 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         beta = parameters[1 + p + q] if q else 0.0
         omega_tilde = omega / (1 - beta)
 
+        # The transformed shock depends only on the observation, so it is raised to
+        # delta once, when it becomes available, rather than once for each lag
         if t > 0:
-            self.resids[t - 1] = resids[t - 1]
-            self.abs_resids[t - 1] = np.abs(resids[t - 1])
+            self.fshocks[t - 1] = (
+                np.abs(resids[t - 1]) - gamma * resids[t - 1]
+            ) ** delta
 
         bc_weight = 0.0
         for i in range(t, trunc_lag):
             bc_weight += self.lam[i]
-        self.sigma_delta[t] = omega_tilde + bc_weight * self.backcast
+        sigma_delta = omega_tilde + bc_weight * self.backcast
         for i in range(min(t, trunc_lag)):
-            shock = self.abs_resids[t - i - 1] - gamma * self.resids[t - i - 1]
-            self.sigma_delta[t] += self.lam[i] * (shock**delta)
-        sigma2[t] = self.sigma_delta[t] ** (2.0 / delta)
+            sigma_delta += self.lam[i] * self.fshocks[t - i - 1]
+        sigma2[t] = sigma_delta ** (2.0 / delta)
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
-        self.sigma_delta[t] = sigma2[t] ** (delta / 2.0)
 
 
 class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):

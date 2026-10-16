@@ -7,6 +7,7 @@ from collections.abc import Callable, Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
+import operator
 from typing import Any, cast, overload
 import warnings
 
@@ -177,6 +178,18 @@ def implicit_constant(x: Float64Array) -> bool:
     nobs = x.shape[0]
     rank = np.linalg.matrix_rank(np.hstack((np.ones((nobs, 1)), x)))
     return rank == x.shape[1]
+
+
+def _plot_index(index: pd.Index) -> pd.Index:
+    """
+    Convert an index to one that matplotlib can plot
+
+    Matplotlib cannot convert Period objects, so a PeriodIndex is replaced by
+    the timestamps at the start of each period.
+    """
+    if isinstance(index, pd.PeriodIndex):
+        return index.to_timestamp()
+    return index
 
 
 class ARCHModel(metaclass=ABCMeta):
@@ -477,12 +490,53 @@ class ARCHModel(metaclass=ABCMeta):
         e.g., any logged values.
         """
 
-    def _r2(self, params: ArrayLike1D) -> float | None:
+    def _r2(
+        self, params: ArrayLike1D, resids: Float64Array1D | None = None
+    ) -> float | None:
         """
         Computes the model r-square.  Optional to over-ride.  Must match
         signature.
+
+        If provided, resids are the residuals at params. Otherwise they are
+        computed from the mean model.
         """
         raise NotImplementedError("Subclasses optionally may provide.")
+
+    def _fitted_resids_variance(
+        self,
+        params: Float64Array1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> tuple[Float64Array1D, Float64Array1D]:
+        """
+        Residuals and conditional variance at params
+
+        Parameters
+        ----------
+        params
+            All model parameters
+        backcast
+            Value to use for pre-sample observations
+        var_bounds
+            Bounds on the conditional variance
+
+        Returns
+        -------
+        resids
+            Residuals
+        variance
+            Conditional variance
+
+        Notes
+        -----
+        Models where the residuals depend on the conditional variance must
+        override this method so that both are computed jointly.
+        """
+        mp, vp, _ = self._parse_parameters(params)
+        resids = to_array_1d(self.resids(mp))
+        variance = np.zeros(resids.shape[0], dtype=float)
+        self.volatility.compute_variance(vp, resids, variance, backcast, var_bounds)
+        return resids, variance
 
     @abstractmethod
     def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
@@ -669,6 +723,26 @@ class ARCHModel(metaclass=ABCMeta):
             to_array_1d(_x[km + kv :]),
         )
 
+    def _analytic_asym_weight(
+        self, method: str, distribution_params: ArrayLike1D | Sequence[float]
+    ) -> float:
+        """
+        Weight on the variance in the asymmetric term of analytic forecasts
+
+        Returns E[z^2 1(z<0)] of the distribution when the volatility process is
+        asymmetric and the forecast is analytic, and 0.5 otherwise.
+        """
+        vol = self._volatility
+        asymmetric = bool(getattr(vol, "o", 0)) or bool(getattr(vol, "_asym", False))
+        # A method that is not a string is rejected by the volatility process
+        if (
+            not isinstance(method, str)
+            or method.lower() != "analytic"
+            or not asymmetric
+        ):
+            return 0.5
+        return float(self._distribution.partial_moment(2, 0.0, distribution_params))
+
     def fix(
         self,
         params: ArrayLike1D | Sequence[float],
@@ -684,9 +758,11 @@ class ARCHModel(metaclass=ABCMeta):
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when fixing model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when fixing model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when fixing model
 
         Returns
@@ -712,11 +788,7 @@ class ARCHModel(metaclass=ABCMeta):
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
         assert isinstance(loglikelihood, float)
 
-        mp, vp, _ = self._parse_parameters(params)
-
-        resids = to_array_1d(self.resids(mp))
-        vol = np.zeros(resids.shape[0], dtype=float)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
         vol = to_array_1d(np.sqrt(vol))
 
         names = self._all_parameter_names()
@@ -786,17 +858,23 @@ class ARCHModel(metaclass=ABCMeta):
             nothing. If using a boolean, False is "off" and True is "final"
         starting_values : ndarray, optional
             Array of starting values to use.  If not provided, starting values
-            are constructed by the model components.
+            are constructed by the model components. Starting values that have
+            the wrong number of elements or do not satisfy the constraints and
+            bounds of the model are ignored, and a StartingValueWarning is
+            issued.
         cov_type : str, optional
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimator.
+            corresponds to Bollerslev-Wooldridge covariance estimator. Any
+            other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when estimating model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when estimating model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when estimating model
         tol : float, optional
             Tolerance for termination.
@@ -822,6 +900,11 @@ class ARCHModel(metaclass=ABCMeta):
         """
         if self._y_original is None:
             raise RuntimeError("Cannot estimate model without data.")
+        if cov_type not in ("robust", "classic"):
+            raise ValueError(
+                f"Unknown cov_type: {cov_type!r}. The valid values are 'robust' "
+                "and 'classic'."
+            )
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
@@ -900,7 +983,25 @@ class ARCHModel(metaclass=ABCMeta):
         bounds.extend(d.bounds(std_resids))
 
         # 3. Construct starting values from all models
-        if starting_values is None:
+        sv: Float64Array1D | None = None
+        if starting_values is not None:
+            user_sv = np.asarray(
+                ensure1d(starting_values, "starting_values"), dtype=float
+            )
+            valid = user_sv.shape[0] == num_params
+            if valid and a.shape[0] > 0:
+                satisfies_constraints = a.dot(user_sv) - b >= 0
+                valid = bool(satisfies_constraints.all())
+            if valid:
+                for i, bound in enumerate(bounds):
+                    valid = valid and bound[0] <= user_sv[i] <= bound[1]
+            if valid:
+                sv = to_array_1d(user_sv)
+            else:
+                warnings.warn(
+                    starting_value_warning, StartingValueWarning, stacklevel=2
+                )
+        if sv is None:
             sv = to_array_1d(
                 np.hstack(
                     [
@@ -910,21 +1011,6 @@ class ARCHModel(metaclass=ABCMeta):
                     ]
                 )
             )
-        else:
-            assert starting_values is not None
-            sv = np.asarray(ensure1d(starting_values, "starting_values"), dtype=float)
-            assert isinstance(sv, (np.ndarray, pd.Series))
-            valid = sv.shape[0] == num_params
-            if a.shape[0] > 0:
-                satisfies_constraints = a.dot(sv) - b >= 0
-                valid = valid and satisfies_constraints.all()
-            for i, bound in enumerate(bounds):
-                valid = valid and bound[0] <= sv[i] <= bound[1]
-            if not valid:
-                warnings.warn(
-                    starting_value_warning, StartingValueWarning, stacklevel=2
-                )
-                starting_values = None
 
         # 4. Estimate models using constrained optimization
         _callback_info["count"], _callback_info["iter"] = 0, 0
@@ -942,7 +1028,8 @@ class ARCHModel(metaclass=ABCMeta):
         args = (sigma2, backcast, var_bounds)
         ineq_constraints = constraint(a, b)
 
-        options = {} if options is None else options
+        # Copy so that the caller's dict is not modified
+        options = {} if options is None else dict(options)
         options.setdefault("disp", disp_flag)
         with warnings.catch_warnings():
             warnings.filterwarnings(
@@ -962,11 +1049,6 @@ class ARCHModel(metaclass=ABCMeta):
                 options=options,
             )
 
-        if show_warning:
-            warnings.filterwarnings("always", "", ConvergenceWarning)
-        else:
-            warnings.filterwarnings("ignore", "", ConvergenceWarning)
-
         if opt.status != 0 and show_warning:
             warnings.warn(
                 convergence_warning.format(code=opt.status, string_message=opt.message),
@@ -978,15 +1060,13 @@ class ARCHModel(metaclass=ABCMeta):
         params = opt.x
         loglikelihood = -1.0 * opt.fun
 
-        mp, vp, _ = self._parse_parameters(params)
+        mp, _, _ = self._parse_parameters(params)
 
-        resids = self.resids(mp)
-        vol = np.zeros(resids.shape[0], dtype=float)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
         vol = cast("Float64Array1D", np.sqrt(vol))
 
         try:
-            r2 = self._r2(mp)
+            r2 = self._r2(mp, resids)
         except NotImplementedError:
             r2 = np.nan
 
@@ -1158,11 +1238,12 @@ class ARCHModel(metaclass=ABCMeta):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1247,10 +1328,10 @@ class ARCHModel(metaclass=ABCMeta):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (model.x is not None), then
-        only 1-step ahead forecasts are available.  Using horizon > 1 will
-        produce a warning and all columns, except the first, will be
-        nan-filled.
+        If the model contains exogenous variables (``model.x is not None``),
+        then `x` must be provided with the expected values of the exogenous
+        variables for each step of the forecast horizon. Forecasts for any
+        horizon are available.
 
         If `align` is 'origin', forecast[t,h] contains the forecast made using
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
@@ -1603,12 +1684,13 @@ class ARCHModelFixedResult(_SummaryRepr):
                 pass
 
         fig = figure()
+        index = _plot_index(self._index)
 
         ax = fig.add_subplot(2, 1, 1)
-        ax.plot(self._index.values, self.resid / self.conditional_volatility)
+        ax.plot(index.values, self.resid / self.conditional_volatility)
         ax.set_title("Standardized Residuals")
         ax.set_xticklabels([])
-        _set_tight_x(ax, self._index)
+        _set_tight_x(ax, index)
 
         ax = fig.add_subplot(2, 1, 2)
         vol = self.conditional_volatility
@@ -1624,8 +1706,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         else:
             title = "Conditional Volatility"
 
-        ax.plot(self._index.values, vol)
-        _set_tight_x(ax, self._index)
+        ax.plot(index.values, vol)
+        _set_tight_x(ax, index)
         ax.set_title(title)
 
         return fig
@@ -1655,11 +1737,12 @@ class ARCHModelFixedResult(_SummaryRepr):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1731,10 +1814,10 @@ class ARCHModelFixedResult(_SummaryRepr):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (`model.x is not None`), then
-        only 1-step ahead forecasts are available.  Using horizon > 1 will
-        produce a warning and all columns, except the first, will be
-        nan-filled.
+        If the model contains exogenous variables (``model.x is not None``),
+        then `x` must be provided with the expected values of the exogenous
+        variables for each step of the forecast horizon. Forecasts for any
+        horizon are available.
 
         If `align` is 'origin', forecast[t,h] contains the forecast made using
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
@@ -1803,7 +1886,9 @@ class ARCHModelFixedResult(_SummaryRepr):
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. For these models,
+            hedgehog_plot raises a ValueError unless horizon is 1 or method is
+            'simulation' or 'bootstrap'.
         simulations : int
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
@@ -1827,36 +1912,40 @@ class ARCHModelFixedResult(_SummaryRepr):
         import matplotlib.pyplot as plt  # noqa: PLC0415
 
         plot_mean = plot_type.lower() == "mean"
+        search_start = start is None
         if start is None:
-            invalid_start = True
-            start = 0
-            while invalid_start:
-                try:
-                    forecasts = self.forecast(
-                        params,
-                        horizon,
-                        start,
-                        method=method,
-                        simulations=simulations,
-                    )
-                    invalid_start = False
-                except ValueError:  # noqa: PERF203
-                    start += 1
-        else:
-            forecasts = self.forecast(
-                params,
-                horizon,
-                start,
-                method=method,
-                simulations=simulations,
-            )
+            # The earliest origin for which the model can produce a forecast
+            start = max(0, self.model._fit_indices[0] - 1)
+        while True:
+            try:
+                forecasts = self.forecast(
+                    params,
+                    horizon,
+                    start,
+                    method=method,
+                    simulations=simulations,
+                    reindex=True,
+                )
+                break
+            except ValueError:
+                # Only bootstrap forecasts depend on the origin: they need a
+                # minimum number of initial observations. Any other error does
+                # not depend on start and is raised.
+                if not (
+                    search_start
+                    and method.lower() == "bootstrap"
+                    and start < self.model._y.shape[0] - 1
+                ):
+                    raise
+                start += 1
 
         fig, ax = plt.subplots(1, 1)
-        use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
+        plot_index = _plot_index(self._dep_var.index)
+        use_date = isinstance(plot_index, pd.DatetimeIndex)
         plot_fn = ax.plot
         if MPL_LT_310 and hasattr(ax, "plot_date") and use_date:
             plot_fn = ax.plot_date
-        x_values = np.array(self._dep_var.index)
+        x_values = np.array(plot_index)
         if plot_mean:
             y_values = np.asarray(self._dep_var)
         else:
@@ -1896,8 +1985,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         Parameters
         ----------
         lags : int, optional
-            Number of lags to include in the model.  If not specified,
-            uses $\lceil 1.2 T^{1/4} \rceil$.
+            Number of lags to include in the model. Must be a positive integer
+            (any integer-like value, including a NumPy integer, is accepted).
+            If not specified, uses $\lceil 12 (T/100)^{1/4} \rceil$, where T
+            is the number of non-missing residuals. In all cases the number of
+            lags is limited to $\lfloor T/2 \rfloor - 1$.
         standardized : bool, optional
             Flag indicating to test the model residuals divided by their
             conditional standard deviations.  If False, directly tests the
@@ -1907,7 +1999,35 @@ class ARCHModelFixedResult(_SummaryRepr):
         -------
         result : WaldTestStatistic
             Result of ARCH-LM test
+
+        Raises
+        ------
+        TypeError
+            If ``lags`` is not an integer.
+        ValueError
+            If ``lags`` is less than 1.
+
+        Notes
+        -----
+        The test statistic is :math:`T R^2`, where :math:`R^2` is the
+        coefficient of determination from the auxiliary regression of the
+        squared residuals on a constant and their own lags, and :math:`T` is
+        the total number of non-missing residuals. The regression uses the
+        :math:`T - \text{lags}` observations for which all lags are available,
+        so the statistic is :math:`T/(T-\text{lags})` times the statistic that
+        scales :math:`R^2` by the number of observations in the regression, as
+        in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an
+        asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.
         """
+        if lags is not None:
+            try:
+                lags = operator.index(lags)
+            except TypeError:
+                raise TypeError(
+                    f"lags must be an integer or None, got {type(lags).__name__}."
+                ) from None
+            if lags < 1:
+                raise ValueError(f"lags must be a positive integer, got {lags}.")
         resids = self.resid
         if standardized:
             resids = resids / np.asarray(self.conditional_volatility)
@@ -1930,7 +2050,6 @@ class ARCHModelFixedResult(_SummaryRepr):
         test_type = "R" if not standardized else "Standardized r"
         null = f"{test_type}esiduals are homoskedastic."
         alt = f"{test_type}esiduals are conditionally heteroskedastic."
-        assert isinstance(lags, int)
         return WaldTestStatistic(
             stat, df=lags, null=null, alternative=alt, name="ARCH-LM Test"
         )

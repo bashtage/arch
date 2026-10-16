@@ -16,6 +16,8 @@ from pandas import (
     DatetimeIndex,
     Index,
     NaT,
+    Period,
+    PeriodIndex,
     Series,
     Timestamp,
     concat,
@@ -253,11 +255,14 @@ def date_to_index(
     """
     if not is_datetime64_any_dtype(date_index):
         raise ValueError("date_index must be a datetime64 array")
-    values = (
-        date_index.values
-        if isinstance(date_index, DatetimeIndex)
-        else np.asarray(date_index)
-    )
+    if isinstance(date_index, DatetimeIndex):
+        if date_index.tzinfo is not None:
+            # The same UTC values without a time zone that .values returned. Using
+            # .values is deprecated for time zone aware indices.
+            date_index = date_index.tz_convert("GMT").tz_localize(None)
+        values = date_index.to_numpy()
+    else:
+        values = np.asarray(date_index)
     if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
         raise ValueError("date_index is not monotonic and unique")
     if not isinstance(date, (dt.datetime, np.datetime64, str, Timestamp)):
@@ -280,19 +285,12 @@ def date_to_index(
         assert isinstance(date, np.datetime64)
         date_64 = date
 
-    if isinstance(date_index, DatetimeIndex):
-        if date_index.tzinfo is not None:
-            date_index = date_index.tz_convert("GMT").tz_localize(None)
-        date_index = date_index.to_numpy()
-
-    date_index = np.asarray(date_index)
-
-    locs = np.nonzero(date_index <= date_64)[0]
+    locs = np.nonzero(values <= date_64)[0]
     if locs.shape[0] == 0:
         return 0
 
     loc = locs.max()
-    in_array = np.any(date_index == date_64)
+    in_array = np.any(values == date_64)
     if not in_array:
         loc += 1
 
@@ -305,9 +303,12 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
 
     Parameters
     ----------
-    cutoff : {None, str, datetime, datetime64, Timestamp)
-        The cutoff point to use
-    index : DatetimeIndex
+    cutoff : {None, int, str, date, datetime, datetime64, Timestamp, Period}
+        The cutoff point to use. An int is the location of the observation.
+        Dates, strings and periods can only be used when index is a
+        DatetimeIndex or a PeriodIndex. A Period is converted to the first
+        instant in the period.
+    index : {DatetimeIndex, PeriodIndex}
         Pandas index
     default : int
         The value to return if cutoff is None
@@ -316,16 +317,36 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
     -------
     int
         Integer value where
-    """
-    int_index = default
-    if isinstance(cutoff, (str, dt.datetime, np.datetime64, Timestamp)):
-        assert isinstance(index, DatetimeIndex)
-        int_index = date_to_index(cutoff, index)
-    elif isinstance(cutoff, int) or issubclass(cutoff.__class__, np.integer):
-        assert cutoff is not None
-        int_index = int(cutoff)
 
-    return int_index
+    Raises
+    ------
+    TypeError
+        If cutoff is not None, an integer or a date-like value
+    ValueError
+        If cutoff is a date-like value and the index is not a DatetimeIndex or
+        a PeriodIndex
+    """
+    if cutoff is None:
+        return default
+    if isinstance(cutoff, (int, np.integer)):
+        return int(cutoff)
+    if isinstance(cutoff, Period):
+        cutoff = cutoff.start_time
+    elif isinstance(cutoff, dt.date) and not isinstance(cutoff, dt.datetime):
+        cutoff = Timestamp(cutoff)
+    if isinstance(cutoff, (str, dt.datetime, np.datetime64)):  # includes Timestamp
+        if isinstance(index, PeriodIndex):
+            index = index.to_timestamp()
+        if not isinstance(index, DatetimeIndex):
+            raise ValueError(
+                "A cutoff that is a date, a datetime or a string can only be used "
+                "when the data has a DatetimeIndex or a PeriodIndex."
+            )
+        return date_to_index(cutoff, index)
+    raise TypeError(
+        "cutoffs must be None, an integer, a string, a date, a datetime, a datetime64, "
+        f"a Timestamp or a Period. Got {type(cutoff).__name__}."
+    )
 
 
 def find_index(s: AnyPandas, index: int | DateLike) -> int:

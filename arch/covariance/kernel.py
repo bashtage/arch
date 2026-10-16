@@ -1,8 +1,9 @@
 from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from functools import cached_property
-from typing import SupportsInt, cast
+from typing import SupportsInt, TypeVar, cast
 
 import numpy as np
 from pandas import DataFrame, Index
@@ -178,7 +179,11 @@ else:
     _cov_jit = _cov_kernel
 
 
-class CovarianceEstimator(ABC):
+def _kernel_covariance_template() -> None:
+    # The docstring is the template of the docstrings of the kernel estimators, which
+    # is filled using the name of the kernel and the formula of its weights. It is
+    # written as a docstring so that it is processed in the same way as the
+    # docstring of a class.
     r"""
     %(kernel_name)s kernel covariance estimation.
 
@@ -210,6 +215,76 @@ class CovarianceEstimator(ABC):
        %(formula)s
 
     where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
+
+    If the bandwidth is not provided, it is estimated using the constants of
+    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
+    details.
+
+    References
+    ----------
+    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+    .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.
+    """
+
+
+_KERNEL_COVARIANCE_DOC = _kernel_covariance_template.__doc__
+_KernelT = TypeVar("_KernelT", bound=type)
+
+
+def _kernel_substitution(
+    kernel_name: str, formula: str
+) -> Callable[[_KernelT], _KernelT]:
+    """Set the docstring of a kernel estimator using its name and weight formula"""
+    substitution = Substitution(kernel_name=kernel_name, formula=formula)
+
+    def decorator(cls: _KernelT) -> _KernelT:
+        cls.__doc__ = _KERNEL_COVARIANCE_DOC
+        return substitution(cls)
+
+    return decorator
+
+
+class CovarianceEstimator(ABC):
+    r"""
+    Base class of the kernel-based long-run covariance estimators.
+
+    Parameters
+    ----------
+    x : array_like
+        The data to use in covariance estimation.
+    bandwidth : float, default None
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+    df_adjust : int, default 0
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products.
+    center : bool, default True
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, default None
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements.
+    force_int : bool, default False
+        Force bandwidth to be an integer.
+
+    Notes
+    -----
+    The kernel weights are defined by the concrete estimators that inherit from
+    this class. They are computed using :math:`z=\frac{h}{H}, h=0, 1, \ldots, H`
+    where H is the bandwidth.
+
+    If the bandwidth is not provided, it is estimated using the constants of
+    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
+    details.
+
+    References
+    ----------
+    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+    .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.
     """
 
     _name = ""
@@ -391,6 +466,33 @@ class CovarianceEstimator(ABC):
 
         where :math:`c_k` is a kernel-dependent constant, T is the sample size,
         q determines the optimal bandwidth rate for the kernel.
+
+        The constants and the values of q are from [1]_. For example,
+        :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2
+        for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral
+        kernel. :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))
+        estimate that is suggested in [1]_. It is the nonparametric estimate
+        of [2]_,
+
+        .. math::
+
+           \hat{\alpha}\left(q\right) = \left(
+           \frac{\sum_{j=-n}^{n} \left|j\right|^q \hat{\sigma}_j}
+           {\sum_{j=-n}^{n} \hat{\sigma}_j} \right)^2
+
+        where :math:`\hat{\sigma}_j` is the lag-j autocovariance of the data
+        combined using ``weights``, and
+        :math:`n = \lceil 4 \left(T / 100\right)^{r} \rceil`. The rate r is
+        2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
+        the quadratic-spectral kernel, as in [2]_.
+
+        References
+        ----------
+        .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+           consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+        .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+           covariance matrix estimation. Review of Economic Studies, 61(4),
+           631-653.
         """
         c = self.kernel_const
         q = self.bandwidth_scale
@@ -463,7 +565,7 @@ w=\\begin{cases} 1-\\left|z\\right| & z\\leq1 \\\\ 0 & z>1 \\end{cases}
 """
 
 
-@Substitution(kernel_name="Bartlett's (Newey-West)", formula=_bartlett_formula)
+@_kernel_substitution(kernel_name="Bartlett's (Newey-West)", formula=_bartlett_formula)
 class Bartlett(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -493,7 +595,7 @@ w=\\begin{cases}\
 """
 
 
-@Substitution(kernel_name="Parzen's", formula=_parzen_formula)
+@_kernel_substitution(kernel_name="Parzen's", formula=_parzen_formula)
 class Parzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -525,7 +627,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen-Reisz", formula=_parzen_reisz_formula)
+@_kernel_substitution(kernel_name="Parzen-Reisz", formula=_parzen_reisz_formula)
 class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -553,7 +655,9 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen's Geometric", formula=_parzen_geometric_formula)
+@_kernel_substitution(
+    kernel_name="Parzen's Geometric", formula=_parzen_geometric_formula
+)
 class ParzenGeometric(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -581,7 +685,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen's Cauchy", formula=_parzen_cauchy_formula)
+@_kernel_substitution(kernel_name="Parzen's Cauchy", formula=_parzen_cauchy_formula)
 class ParzenCauchy(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -609,7 +713,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Hamming", formula=_tukey_hamming_formula)
+@_kernel_substitution(kernel_name="Tukey-Hamming", formula=_tukey_hamming_formula)
 class TukeyHamming(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -637,7 +741,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Hanning", formula=_tukey_hanning_formula)
+@_kernel_substitution(kernel_name="Tukey-Hanning", formula=_tukey_hanning_formula)
 class TukeyHanning(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -665,7 +769,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Parzen", formula=_tukey_parzen_formula)
+@_kernel_substitution(kernel_name="Tukey-Parzen", formula=_tukey_parzen_formula)
 class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -694,7 +798,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name=_qs_name, formula=_qs_formula)
+@_kernel_substitution(kernel_name=_qs_name, formula=_qs_formula)
 class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -759,7 +863,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name=_zero_lag_name, formula=_zero_lag_formula)
+@_kernel_substitution(kernel_name=_zero_lag_name, formula=_zero_lag_formula)
 class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:

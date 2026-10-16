@@ -54,7 +54,13 @@ nbs = sorted(glob.glob(os.path.join(NOTEBOOK_DIR, "*.ipynb")))
 ids = [os.path.split(nb)[-1].split(".")[0] for nb in nbs]
 if nbs:  # pragma: no cover
 
+    # asyncio on Windows uses the Proactor loop from Python 3.14 on. Setting the
+    # selector policy is deprecated in 3.14 (removed in 3.16) and there is no
+    # replacement that nbclient honors, so only ignore the resulting zmq warning.
     @pytest.mark.slow
+    @pytest.mark.filterwarnings(
+        "ignore:Proactor event loop does not implement add_reader:RuntimeWarning"
+    )
     @pytest.mark.parametrize("notebook", nbs, ids=ids)
     @pytest.mark.skipif(SKIP, reason=REASON)
     def test_notebook(notebook):

@@ -42,6 +42,12 @@ def _info_to_str(
     return _str[:-2] + ")"
 
 
+_NON_FINITE_STATISTIC = (
+    "The MCS test statistic is not finite so no model can be eliminated. This "
+    "occurs when the losses are not finite."
+)
+
+
 class _KernelVariance:
     """
     Long-run variance of the mean using the kernel implied by a bootstrap
@@ -211,9 +217,11 @@ class MCS(MultipleComparison):
     ----------
     losses : {ndarray, DataFrame}
         T by k array containing losses from a set of models
-    size : float, optional
+    size : float
         Value in (0,1) to use as the test size when implementing the
-        mcs. Default value is 0.05.
+        MCS. There is no default value.
+    reps : int, optional
+        Number of bootstrap replications to uses.  Default is 1000.
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
@@ -221,8 +229,6 @@ class MCS(MultipleComparison):
     method : {'max', 'R'}, optional
         MCS test and elimination implementation method, either 'max' or 'R'.
         Default is 'R'.
-    reps : int, optional
-        Number of bootstrap replications to uses.  Default is 1000.
     bootstrap : str, optional
         Bootstrap to use.  Options are
         'stationary' or 'sb': Stationary bootstrap (Default)
@@ -259,6 +265,10 @@ class MCS(MultipleComparison):
         super().__init__()
         self.losses = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses, dtype=float)
+        if not np.all(np.isfinite(self._losses_arr)):
+            raise ValueError(
+                "losses must be finite. The losses contain NaN or infinite values."
+            )
         if self._losses_arr.shape[1] < 2:
             raise ValueError("losses must have at least two columns")
         self.size: float = size
@@ -270,6 +280,8 @@ class MCS(MultipleComparison):
 
         self.t: int = losses.shape[0]
         self.k: int = losses.shape[1]
+        if not isinstance(method, str) or method.lower() not in ("r", "max"):
+            raise ValueError(f"method must be 'R' or 'max' but is {method!r}.")
         self.method: Literal["R", "max"] = method
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
@@ -333,8 +345,10 @@ class MCS(MultipleComparison):
         """
         if self.method.lower() == "r":
             self._compute_r()
-        else:
+        elif self.method.lower() == "max":
             self._compute_max()
+        else:
+            raise ValueError(f"method must be 'R' or 'max' but is {self.method!r}.")
         self._results_computed = True
 
     def _compute_r(self) -> None:
@@ -383,11 +397,15 @@ class MCS(MultipleComparison):
             simulated_test_stat = np.max(np.max(included_bs_losses, 2), 1)
             pval = float((test_stat < simulated_test_stat).mean())
             loc = np.argwhere(included_loss_diffs == test_stat)
+            if loc.shape[0] == 0:
+                # Only possible if the statistic is not finite
+                raise RuntimeError(_NON_FINITE_STATISTIC)
             # Loc has indices i,j, -- i  is the elimination
             # Diffs are L(i) - L(j), so large value in [i,j] indicates
             # i is worse than j
             # Elimination is for
-            i = loc.squeeze()[0]
+            # The first is used if several models are tied
+            i = loc[0, 0]
             eliminated.append((int(indices.flat[i]), pval))
             included[indices.flat[i]] = False
         # Add pval of 1 for model remaining
@@ -445,6 +463,10 @@ class MCS(MultipleComparison):
             test_stat = np.max(std_loss_diffs)
             pval = float((test_stat < simulated_test_stat).mean())
             locs = np.argwhere(std_loss_diffs == test_stat)
+            if locs.shape[0] == 0:
+                # Only possible if the statistic is not finite. Without a model
+                # to eliminate the loop would never end.
+                raise RuntimeError(_NON_FINITE_STATISTIC)
             eliminated.extend(
                 [
                     (int(idx_val), pval)
@@ -501,7 +523,9 @@ class MCS(MultipleComparison):
         pvalues : DataFrame
             DataFrame where the index is the model index (column or name)
             and the column Pvalue contains the MCS p-value of the model. The
-            model is in the MCS of size alpha if its p-value is at least alpha.
+            model is in the MCS of size alpha, and so in ``included``, if its
+            p-value is at least alpha. The models are in the order that
+            they were eliminated and the p-value of the remaining model is 1.
         """
         self._has_been_computed()
         return self._pvalues
@@ -792,7 +816,20 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             self.block_size = block_size
         self.studentize: bool = studentize
         self.nested: bool = nested
-        self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
+        # Subtract in floating point. Unsigned integer losses would wrap around
+        # and boolean losses cannot be subtracted.
+        benchmark_arr = np.asarray(self.benchmark, dtype=float)
+        models_arr = np.asarray(self.models, dtype=float)
+        if not np.all(np.isfinite(benchmark_arr)):
+            raise ValueError(
+                "benchmark must be finite. The benchmark contains NaN or infinite "
+                "values."
+            )
+        if not np.all(np.isfinite(models_arr)):
+            raise ValueError(
+                "models must be finite. The models contain NaN or infinite values."
+            )
+        self._loss_diff = benchmark_arr - models_arr
         # Constant, up to rounding error, so that the variance is 0
         constant = np.ptp(self._loss_diff, axis=0) <= (
             8 * np.finfo(float).eps * np.abs(self._loss_diff).max(axis=0)
@@ -1075,9 +1112,10 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
         Returns
         -------
-        indices : list
-            List of column names or indices of the superior models.  Column
-            names are returned if models is a DataFrame.
+        indices : ndarray
+            Array containing the integer positions of the columns of the
+            superior models. Positions are returned, and not column names, even
+            if models is a DataFrame.
 
         Notes
         -----

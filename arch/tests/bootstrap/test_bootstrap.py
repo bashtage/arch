@@ -632,7 +632,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 0, "
         "<strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df, seed=seed)
     expected = (
@@ -660,7 +660,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
     bs = MovingBlockBootstrap(
         block_size=20, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
@@ -679,7 +679,7 @@ def test_str(bs_setup, seed):
         "<strong>no. keyword inputs</strong>: 2,"
         " <strong>ID</strong>: " + hex(id(bs)) + ")"
     )
-    assert_equal(bs._repr_html(), expected)
+    assert_equal(bs._repr_html_(), expected)
 
 
 def test_uneven_sampling(bs_setup, seed):
@@ -883,7 +883,7 @@ def test_studentization_error():
     def f(x):
         return np.array([x.mean(), 3])
 
-    x = np.random.standard_normal(100)
+    x = RandomState(1234).standard_normal(100)
     bs = IIDBootstrap(x)
     with pytest.raises(StudentizationError):
         bs.conf_int(f, 100, method="studentized")
@@ -891,10 +891,11 @@ def test_studentization_error():
 
 def test_list_input():
     # GH 315
-    vals = np.random.standard_normal(25).tolist()
+    rs = RandomState(1234)
+    vals = rs.standard_normal(25).tolist()
     with pytest.raises(TypeError, match=r"Positional input 0 "):
         IIDBootstrap(vals)
-    vals = np.random.standard_normal(25).tolist()
+    vals = rs.standard_normal(25).tolist()
     with pytest.raises(TypeError, match=r"Input `data` "):
         IIDBootstrap(data=vals)
 
@@ -904,7 +905,7 @@ def test_bca_extra_kwarg():
     def f(a, b):
         return a.mean(0)
 
-    x = np.random.standard_normal(1000)
+    x = RandomState(1234).standard_normal(1000)
     bs = IIDBootstrap(x)
     ci = bs.conf_int(f, extra_kwargs={"b": "anything"}, reps=100, method="bca")
     assert isinstance(ci, np.ndarray)

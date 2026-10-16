@@ -345,3 +345,31 @@ def test_get_kernel_estimator_errors(name):
     for known in KERNELS:
         assert known in str(e.value)
     assert "ZeroLag" not in str(e.value)
+
+
+@pytest.mark.parametrize(
+    ("estimator", "const", "q", "rate"),
+    [
+        (Bartlett, 1.1447, 1, 2 / 9),
+        (Parzen, 2.6614, 2, 4 / 25),
+        (QuadraticSpectral, 1.3221, 2, 2 / 25),
+    ],
+    ids=["Bartlett", "Parzen", "QuadraticSpectral"],
+)
+def test_opt_bandwidth_documented_formula(estimator, const, q, rate):
+    # The constants of Andrews (1991) and the nonparametric estimate of the
+    # scale from Newey and West (1994), as in the docstring of opt_bandwidth
+    rng = np.random.default_rng(0)
+    nobs = 500
+    shocks = rng.standard_normal(nobs)
+    x = np.zeros(nobs)
+    for i in range(1, nobs):
+        x[i] = 0.5 * x[i - 1] + shocks[i]
+    z = x - x.mean()
+    n = int(np.ceil(4 * (nobs / 100) ** rate))
+    sigma = np.array([z[j:] @ z[: nobs - j] / nobs for j in range(n + 1)])
+    lags = np.arange(n + 1)
+    s_0 = sigma[0] + 2 * sigma[1:].sum()
+    s_q = 2 * (lags[1:] ** q * sigma[1:]).sum()
+    expected = const * ((s_q / s_0) ** 2 * nobs) ** (1 / (2 * q + 1))
+    assert_allclose(estimator(x).opt_bandwidth, expected, rtol=1e-10)

@@ -1,12 +1,21 @@
+from math import exp, lgamma
+
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
+from scipy import integrate, stats
+from scipy.special import gammaln
 
 from arch.univariate import arch_model
-from arch.univariate.distribution import Normal, StudentsT
-from arch.univariate.mean import ConstantMean
+from arch.univariate.distribution import (
+    GeneralizedError,
+    Normal,
+    SkewStudent,
+    StudentsT,
+)
+from arch.univariate.mean import ARX, ConstantMean, MAMean
 
 try:
     from arch.univariate.recursions import figarch_weights
@@ -42,6 +51,77 @@ def _compare_truncated_forecasts(full, trunc, start):
         assert trunc.forecast_paths is None
         assert trunc.shocks is None
         return
+
+
+def _aparch_hand_next(e, sigma_delta, params, p, o, q, delta, backcast):
+    """
+    One step of the APARCH recursion written out term by term.
+
+    ``e`` holds the shocks and ``sigma_delta`` the conditional variances to the
+    power ``delta / 2`` up to (and excluding) the period being computed.
+    """
+    t = len(e)
+    omega = params[0]
+    alpha = params[1 : p + 1]
+    gamma = params[p + 1 : p + o + 1]
+    beta = params[p + o + 1 : p + o + q + 1]
+    value = omega
+    for j in range(p):
+        if t - 1 - j < 0:
+            shock = backcast**0.5
+        else:
+            shock = abs(e[t - 1 - j])
+            if j < o:
+                shock = shock - gamma[j] * e[t - 1 - j]
+        value += alpha[j] * shock**delta
+    for j in range(q):
+        if t - 1 - j < 0:
+            value += beta[j] * backcast ** (delta / 2.0)
+        else:
+            value += beta[j] * sigma_delta[t - 1 - j]
+    return value
+
+
+def _aparch_hand_history(resids, params, p, o, q, delta, backcast):
+    sigma_delta: list[float] = []
+    for t in range(len(resids)):
+        value = _aparch_hand_next(
+            [float(r) for r in resids[:t]],
+            sigma_delta,
+            params,
+            p,
+            o,
+            q,
+            delta,
+            backcast,
+        )
+        sigma_delta.append(value)
+    return sigma_delta
+
+
+def _aparch_hand_simulation(
+    resids, history_sd, params, p, o, q, delta, backcast, origin, draws
+):
+    """
+    Simulated APARCH variance paths for one forecast origin.
+
+    ``draws`` has shape (simulations, horizon) and contains the standardized
+    shocks. Every path extends the history and applies ``_aparch_hand_next``.
+    """
+    history_e = [float(r) for r in resids[: origin + 1]]
+    sims, horizon = draws.shape
+    paths = np.empty((sims, horizon))
+    shocks = np.empty((sims, horizon))
+    for s in range(sims):
+        e = list(history_e)
+        sd = list(history_sd[: origin + 1])
+        for h in range(horizon):
+            value = _aparch_hand_next(e, sd, params, p, o, q, delta, backcast)
+            sd.append(value)
+            e.append(draws[s, h] * value ** (1.0 / delta))
+            paths[s, h] = value ** (2.0 / delta)
+            shocks[s, h] = e[-1]
+    return paths, shocks
 
 
 class PreservedState:
@@ -603,6 +683,86 @@ class TestVarianceForecasts:
             assert_allclose(paths.mean(0), forecast.forecasts[j])
             assert_allclose(paths, forecast.forecast_paths[j])
             assert_allclose(shocks, forecast.shocks[j])
+
+    @pytest.mark.parametrize(
+        ("p", "o", "q", "power", "params"),
+        [
+            (2, 1, 2, 1.0, [0.2, 0.1, 0.1, 0.05, 0.1, 0.2, 0.2]),
+            (2, 0, 2, 1.5, [0.2, 0.1, 0.1, 0.2, 0.2]),
+            (3, 2, 1, 1.0, [0.2, 0.05, 0.05, 0.1, 0.05, 0.05, 0.3]),
+            (1, 1, 1, 0.5, [0.2, 0.1, 0.05, 0.4]),
+            (2, 1, 2, 2.0, [0.2, 0.1, 0.1, 0.05, 0.1, 0.2, 0.2]),
+        ],
+        ids=["212-p1", "202-p1.5", "321-p1", "111-p0.5", "212-p2"],
+    )
+    def test_garch_power_simulation_matches_hand_recursion(
+        self, p, o, q, power, params
+    ):
+        # The pre-sample values used by the simulation (backcast) are already on
+        # the scale of the recursion (sigma ** power) so must not be raised to
+        # power / 2 again. This only matters for max(p, o, q) > 1 and power != 2
+        params = np.array(params)
+        horizon = 4
+        sims = 10
+        n = 12
+        resids = np.random.default_rng(20240102).standard_t(8, n) * 1.2
+        vol = GARCH(p=p, o=o, q=q, power=power)
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids, power=power)
+        f_hist: list[float] = []
+        for t in range(n):
+            f_hist.append(
+                _garch_hand_next(
+                    [float(r) for r in resids[:t]],
+                    f_hist,
+                    params,
+                    p,
+                    o,
+                    q,
+                    power,
+                    backcast,
+                )
+            )
+        generator = np.random.default_rng(1)
+        draws = [generator.standard_normal((sims, horizon)) for _ in range(n)]
+        calls = iter(draws)
+
+        def rng(size):
+            return next(calls)
+
+        forecast = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=horizon,
+            start=0,
+            method="simulation",
+            simulations=sims,
+            rng=rng,
+        )
+        for origin in range(n):
+            for s in range(sims):
+                e = [float(r) for r in resids[: origin + 1]]
+                f = list(f_hist[: origin + 1])
+                for h in range(horizon):
+                    value = _garch_hand_next(e, f, params, p, o, q, power, backcast)
+                    f.append(value)
+                    e.append(draws[origin][s, h] * value ** (1.0 / power))
+                    expected = value ** (2.0 / power)
+                    actual = forecast.forecast_paths[origin, s, h]
+                    assert_allclose(actual, expected, rtol=1e-10)
+                    assert_allclose(forecast.shocks[origin, s, h], e[-1], rtol=1e-10)
+        # The one-step variance is known at the origin
+        analytic = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(
+            forecast.forecast_paths[:, :, 0],
+            np.tile(analytic.forecasts, (1, sims)),
+            rtol=1e-10,
+        )
+        assert_allclose(forecast.forecasts[:, 0], analytic.forecasts[:, 0], rtol=1e-10)
 
     def test_tarch_111_forecast_bootstrap(self):
         t = self.t
@@ -1808,8 +1968,20 @@ class TestVarianceForecasts:
         assert forecasts.forecast_paths is None
         assert forecasts.shocks is None
         one_step = _sigma2[1:]
+        assert_allclose(forecasts.forecasts[:, 0], one_step, rtol=1e-4)
+        # The components are EWMAs of squared residuals, and the expected
+        # squared residual is the combined variance
+        w = vol._ewma_combination_weights()
+        mus = vol._ewma_smoothing_parameters()
+        resids2 = np.asarray(resids) ** 2
+        components = np.empty((resids2.shape[0] + 1, mus.shape[0]))
+        components[0] = backcast
+        for t in range(resids2.shape[0]):
+            components[t + 1] = mus * components[t] + (1 - mus) * resids2[t]
+        expected = components[1:]
         for i in range(10):
-            assert_allclose(forecasts.forecasts[:, i], one_step, rtol=1e-4)
+            assert_allclose(forecasts.forecasts[:, i], expected @ w, rtol=1e-4)
+            expected = mus * expected + (1 - mus) * (expected @ w)[:, None]
 
         alt_forecasts = vol.forecast(
             params, resids, backcast, var_bounds, horizon=10, start=500
@@ -1919,6 +2091,82 @@ class TestVarianceForecasts:
         final += params[3] * (sigma2[-1] ** (delta / 2.0))
         final **= 2.0 / delta
         assert_allclose(final, forecast.forecasts[-1, 0])
+
+    @pytest.mark.parametrize(
+        ("p", "o", "q", "params", "delta"),
+        [
+            (2, 1, 1, [0.1, 0.1, 0.05, 0.3, 0.3, 1.5], None),
+            (2, 2, 1, [0.1, 0.1, 0.05, 0.3, -0.2, 0.3, 1.5], None),
+            (3, 1, 0, [0.1, 0.1, 0.08, 0.05, 0.3, 1.3], None),
+            (2, 1, 1, [0.1, 0.1, 0.05, 0.3, 0.3], 1.5),
+            (1, 1, 1, [0.1, 0.1, 0.3, 0.3, 1.5], None),
+        ],
+        ids=["211", "221", "310", "211-fixed-delta", "111"],
+    )
+    @pytest.mark.parametrize("method", ["simulation", "bootstrap"])
+    def test_aparch_simulation_matches_hand_recursion(
+        self, p, o, q, params, delta, method
+    ):
+        # Forecast paths must follow the APARCH recursion written out by hand
+        # when fed the same standardized shocks. In particular |e| - gamma * e
+        # may only be used in the period it is applied to
+        params = np.array(params)
+        delta_value = params[-1] if delta is None else delta
+        horizon = 4
+        sims = 12
+        n = 130
+        resids = np.random.default_rng(20240101).standard_t(8, n) * 1.2
+        vol = APARCH(p=p, o=o, q=q, delta=delta)
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        args = (params, p, o, q, delta_value, backcast)
+        history_sd = _aparch_hand_history(resids, *args)
+        starts = [0, 1, 110] if method == "simulation" else [110]
+        for start in starts:
+            if method == "simulation":
+                generator = np.random.default_rng(start + 1)
+                draws = [generator.standard_normal((sims, horizon)) for _ in range(n)]
+                calls = iter(draws[start:])
+
+                def rng(size, calls=calls):
+                    return next(calls)
+
+                kwargs = {"rng": rng}
+            else:
+                # Standardized residuals from the hand recursion, replayed
+                std_resid = resids / np.array(history_sd) ** (1.0 / delta_value)
+                replay = BootstrapRng(std_resid, start, RandomState(7)).rng()
+                draws = [None] * start
+                draws += [replay((sims, horizon)) for _ in range(n - start)]
+                kwargs = {"random_state": RandomState(7)}
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=horizon,
+                start=start,
+                method=method,
+                simulations=sims,
+                **kwargs,
+            )
+            for origin in range(start, n):
+                paths, shocks = _aparch_hand_simulation(
+                    resids, history_sd, *args, origin, draws[origin]
+                )
+                loc = origin - start
+                assert_allclose(forecast.forecast_paths[loc], paths, rtol=1e-10)
+                assert_allclose(forecast.shocks[loc], shocks, rtol=1e-10)
+                assert_allclose(forecast.forecasts[loc], paths.mean(0), rtol=1e-10)
+            # The one-step variance is known at the origin
+            analytic = vol.forecast(
+                params, resids, backcast, var_bounds, horizon=1, start=start
+            )
+            assert_allclose(
+                forecast.forecast_paths[:, :, 0],
+                np.tile(analytic.forecasts, (1, sims)),
+                rtol=1e-10,
+            )
 
     @pytest.mark.parametrize("o", [0, 1])
     @pytest.mark.parametrize("delta", [None, 1.5])
@@ -2337,6 +2585,38 @@ class TestVarianceForecasts:
         assert np.all(np.isnan(forecasts.shocks))
 
 
+def _garch_hand_next(e, f, params, p, o, q, power, backcast):
+    """
+    One step of the power GARCH recursion written out term by term.
+
+    ``e`` holds the shocks and ``f`` the conditional standard deviations to the
+    power ``power`` up to (and excluding) the period being computed.
+    ``backcast`` is on the same scale as ``f``.
+    """
+    t = len(e)
+    omega = params[0]
+    alpha = params[1 : p + 1]
+    gamma = params[p + 1 : p + o + 1]
+    beta = params[p + o + 1 :]
+    value = omega
+    for j in range(p):
+        if t - 1 - j < 0:
+            value += alpha[j] * backcast
+        else:
+            value += alpha[j] * abs(e[t - 1 - j]) ** power
+    for j in range(o):
+        if t - 1 - j < 0:
+            value += gamma[j] * 0.5 * backcast
+        elif e[t - 1 - j] < 0:
+            value += gamma[j] * abs(e[t - 1 - j]) ** power
+    for j in range(q):
+        if t - 1 - j < 0:
+            value += beta[j] * backcast
+        else:
+            value += beta[j] * f[t - 1 - j]
+    return value
+
+
 class TestBootstrapRng:
     @classmethod
     def setup_class(cls):
@@ -2421,3 +2701,359 @@ def test_external_rng():
         rng=rng,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)
+
+
+def _midas_reference_forecast(resids, params, m, horizon, origin):
+    """
+    Direct implementation of the asymmetric MIDAS Hyperbolic variance
+
+    sigma2_t = omega + sum_i (alpha + gamma I[e_{t-i} < 0]) phi_i(theta) e_{t-i}^2
+
+    with phi_i(theta) proportional to Gamma(i + theta) / (Gamma(i + 1) Gamma(theta)),
+    normalized to sum to 1. Pre-sample squared residuals are set to the exponentially
+    weighted (0.94) backcast of the first 75 observations and pre-sample indicators to
+    1/2. For h > 1 the unknown squared shocks are replaced by their forecasts and
+    their indicators by 1/2.
+    """
+    omega, alpha, gamma, theta = params
+    lags = np.arange(1, m + 1)
+    phi = np.array(
+        [exp(lgamma(i + theta) - lgamma(i + 1) - lgamma(theta)) for i in lags]
+    )
+    phi = phi / phi.sum()
+
+    tau = min(75, resids.shape[0])
+    ew = 0.94 ** np.arange(tau)
+    ew = ew / ew.sum()
+    backcast = float(np.sum(resids[:tau] ** 2 * ew))
+
+    sq = [backcast] * m + list(resids[: origin + 1] ** 2)
+    ind = [0.5] * m + [float(r < 0) for r in resids[: origin + 1]]
+    out = []
+    for _ in range(horizon):
+        # most recent value first: lag 1 is the last element
+        past_sq = np.array(sq[-m:][::-1])
+        past_ind = np.array(ind[-m:][::-1])
+        sigma2 = omega + np.sum((alpha + gamma * past_ind) * phi * past_sq)
+        out.append(sigma2)
+        sq.append(sigma2)
+        ind.append(0.5)
+    return np.array(out)
+
+
+@pytest.fixture(scope="module")
+def midas_asym_fit():
+    m = 22
+    params = np.array([0.0, 0.05, 0.05, 0.25, 0.6])
+    sim_mod = ConstantMean(
+        None,
+        volatility=MIDASHyperbolic(m=m, asym=True),
+        distribution=Normal(seed=np.random.RandomState(2)),
+    )
+    y = sim_mod.simulate(params, 600, burn=300)["data"].to_numpy()
+    mod = ConstantMean(y, volatility=MIDASHyperbolic(m=m, asym=True))
+    res = mod.fix(params)
+    return mod, res, params, m
+
+
+@pytest.mark.parametrize("start", [0, 1, 300, 590, 599], ids=lambda s: f"start-{s}")
+def test_midas_asym_analytic_start(midas_asym_fit, start):
+    # Analytic forecasts of asymmetric MIDAS models used to raise for start > 0
+    _, res, params, m = midas_asym_fit
+    resids = np.asarray(res.resid)
+    nobs = resids.shape[0]
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, start=start, reindex=False)
+    expected = np.array(
+        [
+            _midas_reference_forecast(resids, params[1:], m, horizon, origin)
+            for origin in range(start, nobs)
+        ]
+    )
+    assert fcast.variance.shape == expected.shape
+    assert_allclose(fcast.variance.to_numpy(), expected, rtol=1e-10)
+
+
+def test_midas_asym_analytic_default_start(midas_asym_fit):
+    # The default forecasts only the final observation
+    _, res, params, m = midas_asym_fit
+    resids = np.asarray(res.resid)
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, reindex=False)
+    expected = _midas_reference_forecast(
+        resids, params[1:], m, horizon, resids.shape[0] - 1
+    )
+    assert fcast.variance.shape == (1, horizon)
+    assert_allclose(fcast.variance.to_numpy()[0], expected, rtol=1e-10)
+
+
+def test_midas_asym_analytic_rows_agree_across_start(midas_asym_fit):
+    _, res, _, _ = midas_asym_fit
+    full = res.forecast(horizon=4, start=0, reindex=False).variance.to_numpy()
+    part = res.forecast(horizon=4, start=500, reindex=False).variance.to_numpy()
+    assert_allclose(part, full[500:], rtol=1e-12)
+
+
+def test_midas_asym_analytic_matches_simulation(midas_asym_fit):
+    # Multi-step analytic forecasts replace the indicator by 1/2, which is exact in
+    # expectation for symmetric standardized shocks, so the simulation mean must
+    # agree up to Monte Carlo error
+    _, res, _, _ = midas_asym_fit
+    horizon = 5
+    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()[0]
+    sim = res.forecast(
+        horizon=horizon,
+        method="simulation",
+        simulations=20000,
+        rng=np.random.RandomState(12345).standard_normal,
+        reindex=False,
+    )
+    paths = sim.simulations.variances[0]
+    mc_mean = paths.mean(0)
+    mc_se = paths.std(0, ddof=1) / np.sqrt(paths.shape[0])
+    # one-step forecast is deterministic
+    assert_allclose(mc_mean[0], analytic[0], rtol=1e-10)
+    assert np.all(np.abs(mc_mean[1:] - analytic[1:]) < 5 * mc_se[1:])
+
+
+def _skew_t_constants(eta, lam):
+    c = np.exp(gammaln((eta + 1) / 2) - gammaln(eta / 2)) / np.sqrt(np.pi * (eta - 2))
+    a = 4 * lam * c * (eta - 2) / (eta - 1)
+    b = np.sqrt(1 + 3 * lam**2 - a**2)
+    return a, b, c
+
+
+def _skew_t_pdf(z, eta, lam):
+    """Hansen's (1994) skew-t density, written from the paper's definitions"""
+    a, b, c = _skew_t_constants(eta, lam)
+    scale = np.where(z < -a / b, 1 - lam, 1 + lam)
+    return b * c * (1 + ((b * z + a) / scale) ** 2 / (eta - 2)) ** (-(eta + 1) / 2)
+
+
+def _skew_t_kink(eta, lam):
+    a, b, _ = _skew_t_constants(eta, lam)
+    return -a / b
+
+
+def _integrate_pdf(pdf, power, upper, kink=0.0):
+    """Integrate z**power * pdf(z) over (-inf, upper], splitting at a kink"""
+
+    def integrand(z):
+        return z**power * pdf(z)
+
+    options = {"epsabs": 1e-13, "epsrel": 1e-13}
+    if kink < upper:
+        lower = integrate.quad(integrand, -np.inf, kink, **options)[0]
+        return lower + integrate.quad(integrand, kink, upper, **options)[0]
+    return integrate.quad(integrand, -np.inf, upper, **options)[0]
+
+
+def _students_t_pdf(z, nu):
+    scale = np.sqrt(nu / (nu - 2))
+    return stats.t.pdf(z * scale, nu) * scale
+
+
+def _ged_pdf(z, nu):
+    # gennorm with unit scale has variance gamma(3/nu) / gamma(1/nu)
+    scale = np.sqrt(np.exp(gammaln(1 / nu) - gammaln(3 / nu)))
+    return stats.gennorm.pdf(z, nu, scale=scale)
+
+
+# name: (distribution, distribution parameters)
+SKEW_CASES = {
+    "skew-t-7.6--0.16": (SkewStudent, [7.6, -0.16]),
+    "skew-t-5-0.35": (SkewStudent, [5.0, 0.35]),
+    "skew-t-12--0.6": (SkewStudent, [12.0, -0.6]),
+}
+SYMMETRIC_CASES = {
+    "normal": (Normal, []),
+    "students-t-6": (StudentsT, [6.0]),
+    "ged-1.5": (GeneralizedError, [1.5]),
+}
+DIST_CASES = {**SKEW_CASES, **SYMMETRIC_CASES}
+
+
+def _reference_negative_moment(name):
+    """E[z**2 1(z<0)] by numerical integration of the standardized density"""
+    dist, dp = DIST_CASES[name]
+    kink = 0.0
+    if dist is SkewStudent:
+        eta, lam = dp
+        kink = _skew_t_kink(eta, lam)
+
+        def pdf(z):
+            return _skew_t_pdf(z, eta, lam)
+
+    elif dist is Normal:
+        pdf = stats.norm.pdf
+    elif dist is StudentsT:
+
+        def pdf(z):
+            return _students_t_pdf(z, dp[0])
+
+    else:
+
+        def pdf(z):
+            return _ged_pdf(z, dp[0])
+
+    return _integrate_pdf(pdf, 2, 0.0, kink)
+
+
+@pytest.mark.parametrize("name", list(DIST_CASES))
+def test_negative_second_moment_reference(name):
+    # Checks the reference used in the GJR forecast tests below
+    dist, dp = DIST_CASES[name]
+    k = _reference_negative_moment(name)
+    assert_allclose(k, dist().partial_moment(2, 0.0, dp), rtol=1e-8)
+    if name in SKEW_CASES:
+        assert abs(k - 0.5) > 0.01
+    else:
+        assert_allclose(k, 0.5, rtol=1e-8)
+
+
+def test_skew_t_reference_density():
+    eta, lam = 7.6, -0.16
+    kink = _skew_t_kink(eta, lam)
+
+    def pdf(z):
+        return _skew_t_pdf(z, eta, lam)
+
+    assert_allclose(_integrate_pdf(pdf, 0, np.inf, kink), 1.0, rtol=1e-8)
+    assert_allclose(_integrate_pdf(pdf, 2, np.inf, kink), 1.0, rtol=1e-8)
+    # E[z^2 1(z<0)] for this (eta, lambda), from the integral above
+    assert_allclose(_reference_negative_moment("skew-t-7.6--0.16"), 0.5525668775)
+
+
+GJR_PARAMS = np.array([0.02, 0.0, 0.20, 0.88])  # omega, alpha, gamma, beta
+
+
+def _gjr_data(dist_name, nobs=400):
+    dist, dp = DIST_CASES[dist_name]
+    params = np.r_[0.05, GJR_PARAMS, dp]
+    sim = ConstantMean(None, volatility=GARCH(p=1, o=1, q=1), distribution=dist(seed=1))
+    return sim.simulate(params, nobs, burn=100)["data"].to_numpy()
+
+
+def _gjr_recursion(first, k, horizon):
+    omega, alpha, gamma, beta = GJR_PARAMS
+    ref = np.empty((first.shape[0], horizon))
+    ref[:, 0] = first
+    for h in range(1, horizon):
+        ref[:, h] = omega + (alpha + gamma * k + beta) * ref[:, h - 1]
+    return ref
+
+
+def _mean_model(kind, data, dist_name):
+    dist, dp = DIST_CASES[dist_name]
+    vol = GARCH(p=1, o=1, q=1)
+    if kind == "constant":
+        model = ConstantMean(data, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05]
+    elif kind == "arx":
+        model = ARX(data, lags=1, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05, 0.1]
+    else:
+        model = MAMean(data, lags=1, volatility=vol, distribution=dist(seed=2))
+        mean_params = [0.05, 0.1]
+    return model, np.r_[mean_params, GJR_PARAMS, dp]
+
+
+@pytest.mark.parametrize("name", list(DIST_CASES))
+def test_gjr_analytic_forecast_recursion(name):
+    data = _gjr_data(name)
+    model, params = _mean_model("constant", data, name)
+    res = model.fix(params)
+    k = _reference_negative_moment(name)
+    horizon = 5
+    fcast = res.forecast(horizon=horizon, start=len(data) - 4, reindex=False)
+    analytic = fcast.residual_variance.to_numpy()
+    assert analytic.shape == (4, horizon)
+    ref = _gjr_recursion(analytic[:, 0], k, horizon)
+    assert_allclose(analytic, ref, rtol=1e-10)
+
+
+@pytest.mark.parametrize("kind", ["constant", "arx", "ma"])
+@pytest.mark.parametrize("method", ["analytic", "Analytic", "ANALYTIC"])
+def test_gjr_analytic_forecast_models_and_method_case(kind, method):
+    name = "skew-t-7.6--0.16"
+    data = _gjr_data(name)
+    model, params = _mean_model(kind, data, name)
+    res = model.fix(params)
+    k = _reference_negative_moment(name)
+    horizon = 5
+    fcast = res.forecast(
+        horizon=horizon, start=len(data) - 3, method=method, reindex=False
+    )
+    analytic = fcast.residual_variance.to_numpy()
+    ref = _gjr_recursion(analytic[:, 0], k, horizon)
+    assert_allclose(analytic, ref, rtol=1e-10)
+    # The half-moment recursion (k = 0.5) is clearly different
+    half = _gjr_recursion(analytic[:, 0], 0.5, horizon)
+    assert np.all(np.abs(analytic[:, -1] / half[:, -1] - 1) > 0.003)
+
+
+def test_gjr_analytic_forecast_matches_simulation():
+    name = "skew-t-7.6--0.16"
+    data = _gjr_data(name, nobs=1000)
+    model, params = _mean_model("constant", data, name)
+    res = model.fix(params)
+    horizon = 20
+    analytic = res.forecast(horizon=horizon, reindex=False).variance.to_numpy()
+    sim = res.forecast(
+        horizon=horizon, method="simulation", simulations=100_000, reindex=False
+    ).variance.to_numpy()
+    half = _gjr_recursion(analytic[:, 0], 0.5, horizon)
+    # The Monte Carlo error is below 1%; the half-moment recursion is 13% too low
+    # at h=20
+    assert_allclose(sim, analytic, rtol=0.02)
+    assert np.abs(half[:, -1] / sim[:, -1] - 1).max() > 0.1
+
+
+def _hyperbolic_weights(theta, m):
+    # w_j = theta (theta + 1) ... (theta + j - 1) / j!, normalized to sum to 1
+    w = np.empty(m)
+    w[0] = theta
+    for j in range(1, m):
+        w[j] = w[j - 1] * (theta + j) / (j + 1)
+    return w / w.sum()
+
+
+@pytest.mark.parametrize("method", ["analytic", "ANALYTIC"])
+@pytest.mark.parametrize("last", [1, 3])
+def test_midas_asym_analytic_forecast_skew_moment(method, last):
+    eta, lam = 7.6, -0.16
+    k = _reference_negative_moment("skew-t-7.6--0.16")
+    omega, alpha, gamma, theta = 0.02, 0.5, 0.6, 0.7
+    m = 22
+    params = np.array([0.05, omega, alpha, gamma, theta, eta, lam])
+    vol = MIDASHyperbolic(m=m, asym=True)
+    sim = ConstantMean(None, volatility=vol, distribution=SkewStudent(seed=1))
+    data = sim.simulate(params, 500, burn=100)["data"].to_numpy()
+    model = ConstantMean(data, volatility=vol, distribution=SkewStudent(seed=2))
+    res = model.fix(params)
+    nobs = data.shape[0]
+    horizon = 5
+    # start > 0 used to raise a ValueError for asymmetric MIDAS models
+    fcast = res.forecast(
+        horizon=horizon, start=nobs - last, method=method, reindex=False
+    )
+    analytic = fcast.variance.to_numpy()
+    assert analytic.shape == (last, horizon)
+
+    resid = data - params[0]
+    weights = _hyperbolic_weights(theta, m)
+    for row, origin in enumerate(range(nobs - last, nobs)):
+        # x: squared residuals, ind: squared negative residuals. Future values are
+        # replaced by their conditional expectations.
+        past = resid[origin - m + 1 : origin + 1]
+        x = list(past**2)
+        ind = list((past**2) * (past < 0))
+        expected = []
+        for _ in range(horizon):
+            lags_x = np.array(x[::-1][:m])
+            lags_i = np.array(ind[::-1][:m])
+            f = omega + alpha * weights @ lags_x + gamma * weights @ lags_i
+            expected.append(f)
+            x.append(f)
+            ind.append(k * f)
+        assert_allclose(analytic[row], expected, rtol=1e-10)
