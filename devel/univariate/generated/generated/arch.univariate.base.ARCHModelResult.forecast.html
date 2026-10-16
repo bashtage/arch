@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.base.ARCHModelResult.forecast - arch v8.0.1 (+248)</title>
+        <title>arch.univariate.base.ARCHModelResult.forecast - arch v8.0.1 (+262)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+262)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+262)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+248)
+            arch v8.0.1 (+262)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+262)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+262)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+248)
+    arch v8.0.1 (+262)
   </label>
   
     <div class="md-nav__source">
@@ -2204,10 +2204,10 @@ length as the original data, where the t-th value will be the time-t
 forecast for time t + 1.  When the horizon is &gt; 1, and when using the
 default value for <cite>align</cite>, the forecast value in position [t, h] is the
 time-t, h+1 step ahead forecast.</p>
-<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
-only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
-produce a warning and all columns, except the first, will be
-nan-filled.</p>
+<p>If the model contains exogenous variables (<code class="docutils literal notranslate"><span class="pre">model.x</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span></code>),
+then <cite>x</cite> must be provided with the expected values of the exogenous
+variables for each step of the forecast horizon. Forecasts for any
+horizon are available.</p>
 <p>If <cite>align</cite> is ‘origin’, forecast[t,h] contains the forecast made using
 y[:t] (that is, up to but not including t) for horizon h + 1.  For
 example, y[100,2] contains the 3-step ahead forecast using the first
