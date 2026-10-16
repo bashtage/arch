@@ -352,6 +352,21 @@ src_paths = ["arch"]
 sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 known_first_party = ["arch"]
 known_compat = ["arch.compat.*"]
+# The default skip list without _build, which holds arch/_build/git_version.py
+skip = [
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".nox",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0

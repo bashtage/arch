@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import os
-import setuptools_scm
-from packaging.version import Version
 from pathlib import Path
+
+from packaging.version import Version
+import setuptools_scm
 
 ROOT = Path(__file__).parent.parent.parent.absolute()
 
