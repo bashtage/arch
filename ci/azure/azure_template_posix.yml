@@ -25,8 +25,7 @@ jobs:
     # wheel are built with the newest numpy and tested with an older one.
     #
     # Variables of an entry
-    #   python.version   Version of Python. 3.15-dev is the newest 3.15, including
-    #                    release candidates.
+    #   python.version   Version of Python.
     #   NUMPY, SCIPY, PANDAS, STATSMODELS, MATPLOTLIB, NUMBA
     #                    Exact versions. Everything is installed in one command so
     #                    that the installer also picks versions of seaborn, ... that
@@ -113,8 +112,7 @@ jobs:
         nightly: true
         experimental: true
       python_315:
-        python.version: '3.15-dev'
-        experimental: true
+        python.version: '3.15'
 
     maxParallel: 10
 
@@ -149,10 +147,13 @@ jobs:
 
   - script: |
      source ci/azure/update_path.sh
-     flake8 arch
-     ruff check arch
-     black --check arch
-     isort --check arch
+     # Run every check, and fail if any of them fails
+     status=0
+     flake8 arch || status=1
+     ruff check arch || status=1
+     black --check arch || status=1
+     isort --check arch || status=1
+     exit ${status}
     displayName: 'Check style and formatting'
     condition: eq(variables['style'], 'true')
 

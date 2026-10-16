@@ -16,7 +16,7 @@ else
 fi
 
 python -m pip install --upgrade pip "setuptools>=61" wheel
-python -m pip install cython "pytest>=8.4.1,<9" pytest-xdist "coverage[toml]" pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 nbconvert setuptools_scm colorama "meson-python>=0.18.0" meson ninja
+python -m pip install cython "pytest>=9,<10" pytest-xdist "coverage[toml]" pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 ruff nbconvert setuptools_scm colorama "meson-python>=0.18.0" meson ninja
 
 
 # Versions are exact so that the job tests what its matrix entry says, and all of
