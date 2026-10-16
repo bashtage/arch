@@ -758,9 +758,11 @@ class ARCHModel(metaclass=ABCMeta):
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when fixing model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when fixing model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when fixing model
 
         Returns
@@ -856,17 +858,23 @@ class ARCHModel(metaclass=ABCMeta):
             nothing. If using a boolean, False is "off" and True is "final"
         starting_values : ndarray, optional
             Array of starting values to use.  If not provided, starting values
-            are constructed by the model components.
+            are constructed by the model components. Starting values that have
+            the wrong number of elements or do not satisfy the constraints and
+            bounds of the model are ignored, and a StartingValueWarning is
+            issued.
         cov_type : str, optional
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimator.
+            corresponds to Bollerslev-Wooldridge covariance estimator. Any
+            other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
-        first_obs : {int, str, datetime, Timestamp}
-            First observation to use when estimating model
-        last_obs : {int, str, datetime, Timestamp}
+        first_obs : {int, str, date, datetime, Timestamp, Period}
+            First observation to use when estimating model. Dates, strings and
+            periods can only be used with pandas inputs that have a
+            DatetimeIndex or a PeriodIndex.
+        last_obs : {int, str, date, datetime, Timestamp, Period}
             Last observation to use when estimating model
         tol : float, optional
             Tolerance for termination.
@@ -892,6 +900,11 @@ class ARCHModel(metaclass=ABCMeta):
         """
         if self._y_original is None:
             raise RuntimeError("Cannot estimate model without data.")
+        if cov_type not in ("robust", "classic"):
+            raise ValueError(
+                f"Unknown cov_type: {cov_type!r}. The valid values are 'robust' "
+                "and 'classic'."
+            )
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
@@ -970,7 +983,25 @@ class ARCHModel(metaclass=ABCMeta):
         bounds.extend(d.bounds(std_resids))
 
         # 3. Construct starting values from all models
-        if starting_values is None:
+        sv: Float64Array1D | None = None
+        if starting_values is not None:
+            user_sv = np.asarray(
+                ensure1d(starting_values, "starting_values"), dtype=float
+            )
+            valid = user_sv.shape[0] == num_params
+            if valid and a.shape[0] > 0:
+                satisfies_constraints = a.dot(user_sv) - b >= 0
+                valid = bool(satisfies_constraints.all())
+            if valid:
+                for i, bound in enumerate(bounds):
+                    valid = valid and bound[0] <= user_sv[i] <= bound[1]
+            if valid:
+                sv = to_array_1d(user_sv)
+            else:
+                warnings.warn(
+                    starting_value_warning, StartingValueWarning, stacklevel=2
+                )
+        if sv is None:
             sv = to_array_1d(
                 np.hstack(
                     [
@@ -980,21 +1011,6 @@ class ARCHModel(metaclass=ABCMeta):
                     ]
                 )
             )
-        else:
-            assert starting_values is not None
-            sv = np.asarray(ensure1d(starting_values, "starting_values"), dtype=float)
-            assert isinstance(sv, (np.ndarray, pd.Series))
-            valid = sv.shape[0] == num_params
-            if a.shape[0] > 0:
-                satisfies_constraints = a.dot(sv) - b >= 0
-                valid = valid and satisfies_constraints.all()
-            for i, bound in enumerate(bounds):
-                valid = valid and bound[0] <= sv[i] <= bound[1]
-            if not valid:
-                warnings.warn(
-                    starting_value_warning, StartingValueWarning, stacklevel=2
-                )
-                starting_values = None
 
         # 4. Estimate models using constrained optimization
         _callback_info["count"], _callback_info["iter"] = 0, 0
@@ -1032,11 +1048,6 @@ class ARCHModel(metaclass=ABCMeta):
                 callback=_callback,
                 options=options,
             )
-
-        if show_warning:
-            warnings.filterwarnings("always", "", ConvergenceWarning)
-        else:
-            warnings.filterwarnings("ignore", "", ConvergenceWarning)
 
         if opt.status != 0 and show_warning:
             warnings.warn(
@@ -1227,11 +1238,12 @@ class ARCHModel(metaclass=ABCMeta):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1725,11 +1737,12 @@ class ARCHModelFixedResult(_SummaryRepr):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : {int, datetime, Timestamp, str}, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index. Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+        start : {int, str, date, datetime, Timestamp, Period}, optional
+            An integer, date, datetime, Period or str indicating the first
+            observation to produce the forecast for.  Dates can only be used
+            with pandas inputs that have a DatetimeIndex or a PeriodIndex.
+            Strings must be convertible to a date time, such as in
+            '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
