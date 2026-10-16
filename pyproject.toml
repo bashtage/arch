@@ -476,3 +476,44 @@ module = [
 check_untyped_defs=false
 disallow_untyped_defs=false
 disallow_incomplete_defs=false
+
+[tool.numpydoc_validation]
+# Run with ``python -m numpydoc lint $(git ls-files "arch/*.py")``.  "all" with other
+# codes listed is "everything except those codes".
+checks = [
+  "all",
+  # Not required: extended summary, See Also section, Examples section
+  "ES01",
+  "SA01",
+  "EX01",
+  # Not required: a Returns entry may be named (``names : list of str``)
+  "RT02",
+  # The linter reads the source, so it cannot see the docstrings that DocStringInheritor
+  # copies from the base class when a class is created, and it reports every one of
+  # those methods.  arch/tests/test_docstrings.py checks it on the live objects.
+  "GL08",
+  # The linter treats a property like a method and wants a Returns section for it.
+  # arch/tests/test_docstrings.py checks it on the live objects, which can tell them
+  # apart.
+  "RT01",
+]
+# Matched against the dotted name ``module.Class.method`` (``module`` is the file stem):
+# private objects and special methods, which the documentation does not show.
+exclude = [
+  '\._',
+  '\.__\w+__$',
+]
+# Matched against the start of the file path, which uses forward slashes.
+exclude_files = [
+  # Tests and test configuration
+  '(.*/)?tests/',
+  '(.*/)?conftest\.py',
+  # Generated critical value tables and the scripts that produce them
+  '(.*/)?critical_values/',
+  # Implementations that are only used through documented objects
+  '(.*/)?_samplers_python\.py',
+  '(.*/)?recursions_python\.py',
+  # Build helpers and vendored code
+  '(.*/)?_build/',
+  '(.*/)?_decorators\.py',
+]
