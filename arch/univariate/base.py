@@ -734,7 +734,12 @@ class ARCHModel(metaclass=ABCMeta):
         """
         vol = self._volatility
         asymmetric = bool(getattr(vol, "o", 0)) or bool(getattr(vol, "_asym", False))
-        if method.lower() != "analytic" or not asymmetric:
+        # A method that is not a string is rejected by the volatility process
+        if (
+            not isinstance(method, str)
+            or method.lower() != "analytic"
+            or not asymmetric
+        ):
             return 0.5
         return float(self._distribution.partial_moment(2, 0.0, distribution_params))
 
