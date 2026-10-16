@@ -1,4 +1,5 @@
 import itertools
+import threading
 from typing import NamedTuple
 
 import numpy as np
@@ -1064,3 +1065,75 @@ def test_mcs_r_tied_worst_models(design):
     assert list(pvalues.index) == order
     assert np.all((pvalues["Pvalue"] >= 0) & (pvalues["Pvalue"] <= 1))
     assert_allclose(pvalues["Pvalue"].to_numpy(), pvals, rtol=0, atol=1e-12)
+
+
+def run_with_timeout(func, timeout=10.0):
+    """Run func in a thread so that a hang fails the test rather than blocking"""
+    outcome = {}
+
+    def target():
+        try:
+            outcome["value"] = func()
+        except BaseException as exc:  # noqa: BLE001
+            outcome["error"] = exc
+
+    thread = threading.Thread(target=target, daemon=True)
+    thread.start()
+    thread.join(timeout)
+    if thread.is_alive():
+        pytest.fail("The computation did not finish. It would loop forever.")
+    if "error" in outcome:
+        raise outcome["error"]
+    return outcome["value"]
+
+
+@pytest.fixture(scope="module")
+def finite_losses():
+    rng = np.random.default_rng(0)
+    benchmark = rng.standard_normal(60) ** 2
+    models = benchmark[:, None] + rng.standard_normal((60, 3))
+    return benchmark, models
+
+
+@pytest.mark.parametrize(
+    "bad_value", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "-inf"]
+)
+@pytest.mark.parametrize("method", ["R", "max"])
+@pytest.mark.parametrize("frame", [False, True], ids=["array", "frame"])
+def test_mcs_non_finite_losses(finite_losses, bad_value, method, frame):
+    losses = np.column_stack(finite_losses)
+    losses[3, 2] = bad_value
+    if frame:
+        losses = pd.DataFrame(losses, columns=list("abcd"))
+    with pytest.raises(ValueError, match="losses must be finite"):
+        run_with_timeout(lambda: MCS(losses, 0.1, reps=5, method=method, seed=1))
+
+
+@pytest.mark.parametrize("method", ["R", "max"])
+def test_mcs_non_finite_statistic_does_not_hang(finite_losses, method):
+    # If non-finite losses get past the constructor, the elimination loop must
+    # stop rather than run forever
+    losses = np.column_stack(finite_losses)
+    mcs = MCS(losses, 0.1, reps=5, method=method, seed=1)
+    mcs._losses_arr[3, 2] = np.nan
+    with pytest.raises(RuntimeError, match="statistic is not finite"):
+        run_with_timeout(mcs.compute)
+
+
+@pytest.mark.parametrize(
+    "bad_value", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "-inf"]
+)
+@pytest.mark.parametrize("procedure", [SPA, StepM])
+@pytest.mark.parametrize("where", ["benchmark", "models"])
+@pytest.mark.parametrize("frame", [False, True], ids=["array", "frame"])
+def test_spa_stepm_non_finite_losses(finite_losses, bad_value, procedure, where, frame):
+    benchmark, models = (np.array(v, copy=True) for v in finite_losses)
+    if where == "benchmark":
+        benchmark[4] = bad_value
+    else:
+        models[4, 1] = bad_value
+    if frame:
+        benchmark = pd.Series(benchmark, name="bench")
+        models = pd.DataFrame(models, columns=list("abc"))
+    with pytest.raises(ValueError, match=f"{where} must be finite"):
+        run_with_timeout(lambda: procedure(benchmark, models, reps=5, seed=1))
