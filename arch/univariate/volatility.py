@@ -4198,7 +4198,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             for j in range(p):
                 _shock = abs_shock[:, loc - j]
                 if self.o > j:
-                    _shock -= gamma[j] * shock[:, loc - j]
+                    # Not in-place: _shock is a view of abs_shock, which is used
+                    # again as a lagged value in later periods
+                    _shock = _shock - gamma[j] * shock[:, loc - j]
                 sigma_delta[:, h + m] += alpha[j] * (_shock**delta)
 
             for j in range(q):
