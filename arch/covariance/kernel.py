@@ -540,7 +540,7 @@ class CovarianceEstimator(ABC):
         --------
         CovarianceEstimate
         """
-        x = np.ascontiguousarray(self._x)
+        x = np.ascontiguousarray(self._x, dtype=float)
         k = x.shape[1]
         df = self._df
         sr = x.T @ x / df
