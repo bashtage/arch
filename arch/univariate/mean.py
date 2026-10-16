@@ -217,7 +217,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     A standard HAR with average lags 1 and 6 but holding back 10 observations
 
     >>> from pandas import Series, date_range
-    >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
+    >>> index = date_range('2000-01-01', freq='ME', periods=y.shape[0])
     >>> y = Series(y, name='y', index=index)
     >>> har = HARX(y, lags=[1, 6], hold_back=10)
 
@@ -241,8 +241,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     It is simple to verify that these are the equivalent by inspecting the R2.
 
     >>> models = [harx_1, harx_2, harx_3, harx_4]
-    >>> print([mod.fit().rsquared for mod in models])
-    0.085, 0.085, 0.085, 0.085
+    >>> print([round(mod.fit().rsquared, 3) for mod in models])
+    [0.085, 0.085, 0.085, 0.085]
 
     Notes
     -----
@@ -1787,7 +1787,7 @@ class ARCHInMean(ARX):
     >>> sp500 = load()
     >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
     >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
-    >>> res = gim.fit()
+    >>> res = gim.fit(disp="off")
 
     Notes
     -----
@@ -2758,10 +2758,9 @@ def arch_model(
 
     Examples
     --------
-    >>> import datetime as dt
-    >>> import pandas_datareader.data as web
-    >>> djia = web.get_data_fred('DJIA')
-    >>> returns = 100 * djia['DJIA'].pct_change().dropna()
+    >>> from arch.data.sp500 import load
+    >>> sp500 = load()
+    >>> returns = 100 * sp500['Adj Close'].pct_change().dropna()
 
     A basic GARCH(1,1) with a constant mean can be constructed using only
     the return data

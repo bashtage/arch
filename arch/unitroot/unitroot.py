@@ -777,7 +777,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     0.0271
     >>> adf.lags
     2
-    >>> adf.trend="ct"
+    >>> adf = ADF(inflation, trend="ct")
     >>> print(f"{adf.stat:0.4f}")
     -3.2111
     >>> print(f"{adf.pvalue:0.4f}")
@@ -1115,12 +1115,12 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     0.0000
     >>> pp.lags
     15
-    >>> pp.trend = "ct"
+    >>> pp = PhillipsPerron(inflation, trend="ct")
     >>> print(f"{pp.stat:0.4f}")
     -8.2022
     >>> print(f"{pp.pvalue:0.4f}")
     0.0000
-    >>> pp.test_type = "rho"
+    >>> pp = PhillipsPerron(inflation, trend="ct", test_type="rho")
     >>> print(f"{pp.stat:0.4f}")
     -120.3271
     >>> print(f"{pp.pvalue:0.4f}")
@@ -1299,12 +1299,12 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data["cpi"]))
-    >>> kpss = KPSS(inflation)
+    >>> kpss = KPSS(inflation, lags=-1)
     >>> print(f"{kpss.stat:0.4f}")
     0.2870
     >>> print(f"{kpss.pvalue:0.4f}")
     0.1473
-    >>> kpss.trend = "ct"
+    >>> kpss = KPSS(inflation, lags=-1, trend="ct")
     >>> print(f"{kpss.stat:0.4f}")
     0.2075
     >>> print(f"{kpss.pvalue:0.4f}")
@@ -1683,13 +1683,14 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     Examples
     --------
+    >>> import numpy as np
+    >>> from arch.data.sp500 import load
     >>> from arch.unitroot import VarianceRatio
-    >>> import pandas_datareader as pdr
-    >>> data = pdr.get_data_fred("DJIA", start="2010-1-1", end="2020-12-31")
-    >>> data = np.log(data.resample("M").last())  # End of month
+    >>> data = load()["Adj Close"].loc["2010-01-01":"2018-12-31"]
+    >>> data = np.log(data.resample("ME").last())  # End of month
     >>> vr = VarianceRatio(data, lags=12)
     >>> print(f"{vr.pvalue:0.4f}")
-    0.1370
+    0.1504
 
     References
     ----------

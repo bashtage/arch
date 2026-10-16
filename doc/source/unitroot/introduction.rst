@@ -30,18 +30,13 @@ uses a constant and time trend.
 
 .. code-block:: python
 
-    import datetime as dt
-
-    import pandas_datareader.data as web
+    import arch.data.default
     from arch.unitroot import ADF
 
-    start = dt.datetime(1919, 1, 1)
-    end = dt.datetime(2014, 1, 1)
-
-    df = web.DataReader(["AAA", "BAA"], "fred", start, end)
-    df['diff'] = df['BAA'] - df['AAA']
-    adf = ADF(df['diff'])
-    adf.trend = 'ct'
+    default_data = arch.data.default.load()
+    default = default_data['BAA'] - default_data['AAA']
+    default = default.loc['1919-01-01':'2014-01-01']
+    adf = ADF(default, trend='ct')
 
     print(adf.summary())
 

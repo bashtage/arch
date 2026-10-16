@@ -74,11 +74,8 @@ Contributions are welcome. There are opportunities at many levels to contribute:
 See the [univariate volatility example notebook](https://bashtage.github.io/arch/univariate/univariate_volatility_modeling.html) for a more complete overview.
 
 ```python
-import datetime as dt
-import pandas_datareader.data as web
-st = dt.datetime(1990,1,1)
-en = dt.datetime(2014,1,1)
-data = web.get_data_yahoo('^FTSE', start=st, end=en)
+import arch.data.sp500
+data = arch.data.sp500.load()
 returns = 100 * data['Adj Close'].pct_change().dropna()
 
 from arch import arch_model
@@ -135,16 +132,13 @@ for examples of bootstrapping the Sharpe ratio and a Probit model from statsmode
 
 ```python
 # Import data
-import datetime as dt
 import pandas as pd
 import numpy as np
-import pandas_datareader.data as web
-start = dt.datetime(1951,1,1)
-end = dt.datetime(2014,1,1)
-sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
+import arch.data.sp500
+sp500 = arch.data.sp500.load()
 start = sp500.index.min()
 end = sp500.index.max()
-monthly_dates = pd.date_range(start, end, freq='M')
+monthly_dates = pd.date_range(start, end, freq='ME')
 monthly = sp500.reindex(monthly_dates, method='ffill')
 returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
