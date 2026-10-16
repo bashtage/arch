@@ -317,9 +317,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.unitroot.unitroot.UnitRootTest.summary": frozenset({"RT01"}),
     "arch.unitroot.unitroot.VarianceRatio": frozenset({"GL07", "PR03"}),
     "arch.unitroot.unitroot.mackinnonp": frozenset({"GL07"}),
-    "arch.univariate.recursions.VolatilityUpdater.initialize_update": frozenset(
-        {"GL08"}
-    ),
     "arch.utility.array.DocStringInheritor": frozenset({"PR01"}),
     "arch.utility.array.ensure1d": frozenset({"GL08"}),
     "arch.utility.array.ensure2d": frozenset({"GL08"}),
