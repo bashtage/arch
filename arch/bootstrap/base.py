@@ -752,6 +752,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         * 'bca' - Bias corrected and accelerated, adding acceleration parameter
           to 'bc' method
 
+        The acceleration parameter used by 'bca' is estimated using a
+        leave-one-out jackknife of the observations in the original data. It is
+        the iid jackknife for all bootstraps, including the block bootstraps,
+        and so does not take account of serial dependence or the block size.
+
+        When ``std_err_func`` is not provided, the standard error used by
+        'studentized' is estimated in each bootstrap sample using a nested
+        bootstrap of the same type as this bootstrap, which applies the same
+        block size to the bootstrap sample. The block size of the nested
+        bootstrap is not selected separately from the block size of this
+        bootstrap. Provide ``std_err_func`` to use a different method, for
+        example, a nested block bootstrap with a different block size.
+
         """
         studentized = "studentized"
         if not 0.0 < size < 1.0:
