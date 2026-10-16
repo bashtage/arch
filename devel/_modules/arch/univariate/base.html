@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+244)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+248)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+244)
+            arch v8.0.1 (+248)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+244)
+    arch v8.0.1 (+248)
   </label>
   
     <div class="md-nav__source">
@@ -637,6 +637,18 @@
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">x</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">rank</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_index</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert an index to one that matplotlib can plot</span>
+
+<span class="sd">    Matplotlib cannot convert Period objects, so a PeriodIndex is replaced by</span>
+<span class="sd">    the timestamps at the start of each period.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">PeriodIndex</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">index</span>
 
 
 <div class="viewcode-block" id="ARCHModel">
@@ -2183,12 +2195,13 @@
                 <span class="k">pass</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">_plot_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
 
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Standardized Residuals"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
-        <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
+        <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span>
@@ -2204,8 +2217,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s2">"Conditional Volatility"</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
-        <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
+        <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
@@ -2389,7 +2402,9 @@
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
 <span class="sd">            volatility models support all methods. In particular, volatility</span>
 <span class="sd">            models that do not evolve in squares such as EGARCH or TARCH do not</span>
-<span class="sd">            support the 'analytic' method for horizons &gt; 1.</span>
+<span class="sd">            support the 'analytic' method for horizons &gt; 1. For these models,</span>
+<span class="sd">            hedgehog_plot raises a ValueError unless horizon is 1 or method is</span>
+<span class="sd">            'simulation' or 'bootstrap'.</span>
 <span class="sd">        simulations : int</span>
 <span class="sd">            Number of simulations to run when computing the forecast using</span>
 <span class="sd">            either simulation or bootstrap.</span>
@@ -2413,36 +2428,40 @@
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: PLC0415</span>
 
         <span class="n">plot_mean</span> <span class="o">=</span> <span class="n">plot_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"mean"</span>
+        <span class="n">search_start</span> <span class="o">=</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">invalid_start</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">invalid_start</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
-                        <span class="n">params</span><span class="p">,</span>
-                        <span class="n">horizon</span><span class="p">,</span>
-                        <span class="n">start</span><span class="p">,</span>
-                        <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-                        <span class="n">simulations</span><span class="o">=</span><span class="n">simulations</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">invalid_start</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># noqa: PERF203</span>
-                    <span class="n">start</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
-                <span class="n">params</span><span class="p">,</span>
-                <span class="n">horizon</span><span class="p">,</span>
-                <span class="n">start</span><span class="p">,</span>
-                <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-                <span class="n">simulations</span><span class="o">=</span><span class="n">simulations</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="c1"># The earliest origin for which the model can produce a forecast</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
+                    <span class="n">params</span><span class="p">,</span>
+                    <span class="n">horizon</span><span class="p">,</span>
+                    <span class="n">start</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                    <span class="n">simulations</span><span class="o">=</span><span class="n">simulations</span><span class="p">,</span>
+                    <span class="n">reindex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># Only bootstrap forecasts depend on the origin: they need a</span>
+                <span class="c1"># minimum number of initial observations. Any other error does</span>
+                <span class="c1"># not depend on start and is raised.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                    <span class="n">search_start</span>
+                    <span class="ow">and</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"bootstrap"</span>
+                    <span class="ow">and</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span>
+                <span class="n">start</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">use_date</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span>
+        <span class="n">plot_index</span> <span class="o">=</span> <span class="n">_plot_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">use_date</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span>
         <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span>
         <span class="k">if</span> <span class="n">MPL_LT_310</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">"plot_date"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_date</span><span class="p">:</span>
             <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span>
-        <span class="n">x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">plot_index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_mean</span><span class="p">:</span>
             <span class="n">y_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

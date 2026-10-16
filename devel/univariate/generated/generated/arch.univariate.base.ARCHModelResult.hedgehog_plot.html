@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.base.ARCHModelResult.hedgehog_plot - arch v8.0.1 (+244)</title>
+        <title>arch.univariate.base.ARCHModelResult.hedgehog_plot - arch v8.0.1 (+248)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+244)
+            arch v8.0.1 (+248)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+244)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+244)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+248)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+248)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+244)
+    arch v8.0.1 (+248)
   </label>
   
     <div class="md-nav__source">
@@ -2068,7 +2068,9 @@ is set to the earliest forecastable date.</p>
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
-support the ‘analytic’ method for horizons &gt; 1.</p>
+support the ‘analytic’ method for horizons &gt; 1. For these models,
+hedgehog_plot raises a ValueError unless horizon is 1 or method is
+‘simulation’ or ‘bootstrap’.</p>
 </dd>
 <dt id="arch.univariate.base.ARCHModelResult.hedgehog_plot.simulations"><span class="n sig-name">simulations</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.hedgehog_plot.simulations" title="Permalink to this definition">¶</a></dt><dd><p>Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</p>
