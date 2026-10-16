@@ -2533,4 +2533,3 @@ def _garch_hand_next(e, f, params, p, o, q, power, backcast):
         else:
             value += beta[j] * f[t - 1 - j]
     return value
-
