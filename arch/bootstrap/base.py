@@ -125,13 +125,13 @@ def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
 
 def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     r"""
-    Estimate optimal window length for time-series bootstraps
+    Estimate optimal window length for time-series bootstraps.
 
     Parameters
     ----------
     x : array_like
-        A one-dimensional or two-dimensional array-like.  Operates columns by
-        column if 2-dimensional.
+        The data, which can be one-dimensional or two-dimensional.  Operates
+        column by column if 2-dimensional.
 
     Returns
     -------
@@ -145,9 +145,9 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     See Also
     --------
     arch.bootstrap.StationaryBootstrap
-       Politis and Romano's bootstrap with exp. distributed block lengths
+        Politis and Romano's bootstrap with exp. distributed block lengths.
     arch.bootstrap.CircularBlockBootstrap
-       Circular (wrap-around) bootstrap
+        Circular (wrap-around) bootstrap.
 
     Notes
     -----
@@ -383,35 +383,40 @@ def _add_extra_kwargs(
 
 class IIDBootstrap(metaclass=DocStringInheritor):
     """
-    Bootstrap using uniform resampling
+    Bootstrap using uniform resampling.
 
     Parameters
     ----------
-    args
-        Positional arguments to bootstrap
-    seed : {Generator, RandomState, int}, optional
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap.
+    seed : int, Generator or RandomState, optional
         Seed to use to ensure reproducible results. If an int, passes the
         value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    kwargs
-        Keyword arguments to bootstrap
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap.
 
     Attributes
     ----------
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
-        in the second (pos_data, kw_data)
+        in the second (pos_data, kw_data).
     pos_data : tuple
-        Tuple containing the positional arguments (in the order entered)
+        Tuple containing the positional arguments (in the order entered).
     kw_data : dict
-        Dictionary containing the keyword arguments
+        Dictionary containing the keyword arguments.
+
+    See Also
+    --------
+    arch.bootstrap.IndependentSamplesBootstrap
+        Bootstrap where each input is independently resampled.
 
     Notes
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
-    the same type as the input date.
+    the same type as the input data.
 
-    Data entered using keyword arguments is directly accessibly as an
+    Data entered using keyword arguments is directly accessible as an
     attribute.
 
     To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
@@ -447,10 +452,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     This is equivalent to
 
     >>> bs = IIDBootstrap(x, y=y, z=z, seed=1234)
-
-    See also
-    --------
-    arch.bootstrap.IndependentSamplesBootstrap
     """
 
     _name = "IID Bootstrap"
@@ -535,13 +536,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     @property
     def generator(self) -> Generator | RandomState:
         """
-        Set or get the instance PRNG
+        Set or get the instance PRNG.
 
         Returns
         -------
-        {Generator, RandomState}
+        Generator or RandomState
             The instance of the Generator or RandomState instance used
-            by bootstrap
+            by bootstrap.
         """
         return self._generator
 
@@ -554,18 +555,18 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     @property
     def index(self) -> BootstrapIndexT:
         """
-        The current index of the bootstrap
+        The current index of the bootstrap.
         """
         return self._index
 
     @property
     def state(self) -> RandomStateState | Mapping[str, Any]:
         """
-        Set or get the generator's state
+        Set or get the generator's state.
 
         Returns
         -------
-        {tuple, dict}
+        tuple or dict
             A tuple or dictionary containing the generator's state.
             If using a ``RandomState``, the value returned is a tuple.
             Otherwise it is a dictionary.
@@ -587,7 +588,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def reset(self, use_seed: bool = True) -> None:
         """
-        Resets the bootstrap to its initial state.
+        Reset the bootstrap to its initial state.
 
         The generator is reset to the state it had when the bootstrap was
         created, which is the state determined by the seed if one was provided,
@@ -595,7 +596,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         Parameters
         ----------
-        use_seed : bool, default True
+        use_seed : bool, optional
             This argument is not used. The generator is always reset to the
             state it had when the bootstrap was created.
         """
@@ -607,17 +608,25 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self, reps: int
     ) -> PyGenerator[tuple[tuple[ArrayLike, ...], dict[str, ArrayLike]], None, None]:
         """
-        Iterator for use when bootstrapping
+        Iterate over the bootstrap replications.
 
         Parameters
         ----------
         reps : int
-            Number of bootstrap replications
+            Number of bootstrap replications.
 
-        Returns
-        -------
-        generator
-            Generator to iterate over in bootstrap calculations
+        Yields
+        ------
+        tuple
+            The data of one bootstrap replication. The first element is a tuple
+            containing the data entered in positional arguments and the second
+            element is a dict containing the data entered using keywords.
+
+        Notes
+        -----
+        The iterator returns a tuple containing the data entered in positional
+        arguments as a tuple and the data entered using keywords as a
+        dictionary.
 
         Examples
         --------
@@ -634,13 +643,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         .. note::
 
             Note this is a generic example and so the class used should be the
-            name of the required bootstrap
-
-        Notes
-        -----
-        The iterator returns a tuple containing the data entered in positional
-        arguments as a tuple and the data entered using keywords as a
-        dictionary
+            name of the required bootstrap.
         """
         for _ in range(reps):
             self._index = self.update_indices()
@@ -664,44 +667,48 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         studentize_reps: int = 1000,
     ) -> Float64Array:
         """
+        Compute confidence intervals using the bootstrap.
+
         Parameters
         ----------
         func : callable
-            Function the computes parameter values.  See Notes for requirements
-        reps : int, default 1000
-            Number of bootstrap replications
-        method : str, default "basic"
-            One of 'basic', 'percentile', 'studentized', 'norm' (identical to
-            'var', 'cov'), 'bc' (identical to 'debiased', 'bias-corrected'), or
-            'bca'
-        size : float, default 0.95
-            Coverage of confidence interval
-        tail : str, default "two"
-            One of 'two', 'upper' or 'lower'.
-        reuse : bool, default False
+            Function that computes parameter values.  See Notes for
+            requirements.
+        reps : int, optional
+            Number of bootstrap replications.
+        method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional
+            The method used to construct the interval.  "norm" is identical to
+            "var" and "cov", and "bc" is identical to "debiased" and
+            "bias-corrected".  See Notes for a description of each method.
+        size : float, optional
+            Coverage of confidence interval.
+        tail : {"two", "upper", "lower"}, optional
+            The tail of the interval.  When tail is "lower", all upper bounds
+            are inf.  Similarly, "upper" sets all lower bounds to -inf.
+        extra_kwargs : dict, optional
+            Extra keyword arguments to use when calling func and std_err_func,
+            when appropriate.
+        reuse : bool, optional
             Flag indicating whether to reuse previously computed bootstrap
             results.  This allows alternative methods to be compared without
             rerunning the bootstrap simulation.  Reuse is ignored if reps is
             not the same across multiple runs, func changes across calls, or
-            method is 'studentized'.  Otherwise the previous results are
+            method is "studentized".  Otherwise the previous results are
             reused even if extra_kwargs or sampling have changed, so use a new
             call without reuse (or ``reset``) after changing them.
-        sampling : str, default "nonparametric"
-            Type of sampling to use: 'nonparametric', 'semi-parametric' (or
-            'semi') or 'parametric'.  The default is 'nonparametric'.  See
+        sampling : {"nonparametric", "semi-parametric", "parametric"}, optional
+            Type of sampling to use.  "semi" and "semiparametric" are
+            identical to "semi-parametric".  See
             :ref:`semiparametric-bootstraps` and :ref:`parametric-bootstraps`
-            for the changes to func required when using 'semi' or
-            'parametric'.
-        extra_kwargs : dict, default None
-            Extra keyword arguments to use when calling func and std_err_func,
-            when appropriate
-        std_err_func : callable, default None
+            for the changes to func required when using "semi-parametric" or
+            "parametric".
+        std_err_func : callable, optional
             Function to use when standardizing estimated parameters when using
             the studentized bootstrap.  Providing an analytical function
-            eliminates the need for a nested bootstrap
-        studentize_reps : int, default 1000
+            eliminates the need for a nested bootstrap.
+        studentize_reps : int, optional
             Number of bootstraps to use in the inner bootstrap when using the
-            studentized bootstrap.  Ignored when ``std_err_func`` is provided
+            studentized bootstrap.  Ignored when ``std_err_func`` is provided.
 
         Returns
         -------
@@ -710,16 +717,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             row 1 contains the upper bounds.  Each column corresponds to a
             parameter. When tail is 'lower', all upper bounds are inf.
             Similarly, 'upper' sets all lower bounds to -inf.
-
-        Examples
-        --------
-        >>> import numpy as np
-        >>> def func(x):
-        ...     return x.mean(0)
-        >>> y = np.random.randn(1000, 2)
-        >>> from arch.bootstrap import IIDBootstrap
-        >>> bs = IIDBootstrap(y)
-        >>> ci = bs.conf_int(func, 1000)
 
         Notes
         -----
@@ -777,6 +774,15 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         bootstrap. Provide ``std_err_func`` to use a different method, for
         example, a nested block bootstrap with a different block size.
 
+        Examples
+        --------
+        >>> import numpy as np
+        >>> def func(x):
+        ...     return x.mean(0)
+        >>> y = np.random.randn(1000, 2)
+        >>> from arch.bootstrap import IIDBootstrap
+        >>> bs = IIDBootstrap(y)
+        >>> ci = bs.conf_int(func, 1000)
         """
         studentized = "studentized"
         if not 0.0 < size < 1.0:
@@ -949,21 +955,21 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         **kwargs: ArrayLike,
     ) -> "IIDBootstrap":
         """
-        Clones the bootstrap using different data with a fresh prng.
+        Clone the bootstrap using different data with a fresh prng.
 
         Parameters
         ----------
-        args
-            Positional arguments to bootstrap
-        seed
-            The seed value to pass to the closed generator
-        kwargs
-            Keyword arguments to bootstrap
+        *args : ndarray, Series or DataFrame
+            Positional arguments to bootstrap.
+        seed : int, Generator or RandomState, optional
+            The seed value to pass to the cloned generator.
+        **kwargs : ndarray, Series or DataFrame
+            Keyword arguments to bootstrap.
 
         Returns
         -------
-        type[self]
-            Bootstrap instance
+        IIDBootstrap
+            A new bootstrap instance of the same type as this instance.
         """
         bs = self.__class__(*args, seed=seed, **kwargs)
         return bs
@@ -975,23 +981,24 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         extra_kwargs: dict[str, Any] | None = None,
     ) -> Float64Array:
         """
-        Applies a function to bootstrap replicated data
+        Apply a function to bootstrap replicated data.
 
         Parameters
         ----------
         func : callable
-            Function the computes parameter values.  See Notes for requirements
-        reps : int, default 1000
-            Number of bootstrap replications
-        extra_kwargs : dict, default None
+            Function that computes parameter values.  See Notes for
+            requirements.
+        reps : int, optional
+            Number of bootstrap replications.
+        extra_kwargs : dict, optional
             Extra keyword arguments to use when calling func.  Must not
-            conflict with keyword arguments used to initialize bootstrap
+            conflict with keyword arguments used to initialize bootstrap.
 
         Returns
         -------
         ndarray
-            reps by nparam array of computed function values where each row
-            corresponds to a bootstrap iteration
+            The reps by nparam array of computed function values where each row
+            corresponds to a bootstrap iteration.
 
         Notes
         -----
@@ -1101,26 +1108,26 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         extra_kwargs: dict[str, Any] | None = None,
     ) -> float | Float64Array:
         """
-        Compute parameter covariance using bootstrap
+        Compute parameter covariance using bootstrap.
 
         Parameters
         ----------
         func : callable
             Callable function that returns the statistic of interest as a
-            1-d array
-        reps : int, default 1000
-            Number of bootstrap replications
-        recenter : bool, default True
+            1-d array.
+        reps : int, optional
+            Number of bootstrap replications.
+        recenter : bool, optional
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
-            estimate (False).  Default is True.
-        extra_kwargs : dict, default None
-            Dictionary of extra keyword arguments to pass to func
+            estimate (False).
+        extra_kwargs : dict, optional
+            Dictionary of extra keyword arguments to pass to func.
 
         Returns
         -------
         ndarray
-            Bootstrap covariance estimator
+            Bootstrap covariance estimator.
 
         Notes
         -----
@@ -1160,8 +1167,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         .. note::
 
             Note this is a generic example and so the class used should be the
-            name of the required bootstrap
-
+            name of the required bootstrap.
         """
         return self._bootstrap_cov(func, reps, recenter, extra_kwargs)
 
@@ -1194,26 +1200,26 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         extra_kwargs: dict[str, Any] | None = None,
     ) -> float | Float64Array:
         """
-        Compute parameter variance using bootstrap
+        Compute parameter variance using bootstrap.
 
         Parameters
         ----------
         func : callable
             Callable function that returns the statistic of interest as a
-            1-d array
-        reps : int, default 1000
-            Number of bootstrap replications
-        recenter : bool, default True
+            1-d array.
+        reps : int, optional
+            Number of bootstrap replications.
+        recenter : bool, optional
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
-            estimate (False).  Default is True.
-        extra_kwargs: dict, default None
-            Dictionary of extra keyword arguments to pass to func
+            estimate (False).
+        extra_kwargs : dict, optional
+            Dictionary of extra keyword arguments to pass to func.
 
         Returns
         -------
         ndarray
-            Bootstrap variance estimator
+            Bootstrap variance estimator.
 
         Notes
         -----
@@ -1253,8 +1259,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         .. note::
 
             Note this is a generic example and so the class used should be the
-            name of the required bootstrap
-
+            name of the required bootstrap.
         """
         self._construct_bootstrap_estimates(func, reps, extra_kwargs)
         base, results = self._base, self._results
@@ -1269,8 +1274,14 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def update_indices(self) -> BootstrapIndexT:
         """
-        Update indices for the next iteration of the bootstrap.  This must
-        be overridden when creating new bootstraps.
+        Update indices for the next iteration of the bootstrap.
+
+        This must be overridden when creating new bootstraps.
+
+        Returns
+        -------
+        ndarray
+            The indices of the observations in the next bootstrap sample.
         """
         return _get_random_integers(
             self._generator, self._num_items, size=self._num_items
@@ -1307,28 +1318,33 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
 class IndependentSamplesBootstrap(IIDBootstrap):
     """
-    Bootstrap where each input is independently resampled
+    Bootstrap where each input is independently resampled.
 
     Parameters
     ----------
-    args
-        Positional arguments to bootstrap
-    seed : {Generator, RandomState, int}, optional
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap.
+    seed : int, Generator or RandomState, optional
         Seed to use to ensure reproducible results. If an int, passes the
         value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    kwargs
-        Keyword arguments to bootstrap
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap.
 
     Attributes
     ----------
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
-        in the second (pos_data, kw_data)
+        in the second (pos_data, kw_data).
     pos_data : tuple
-        Tuple containing the positional arguments (in the order entered)
+        Tuple containing the positional arguments (in the order entered).
     kw_data : dict
-        Dictionary containing the keyword arguments
+        Dictionary containing the keyword arguments.
+
+    See Also
+    --------
+    arch.bootstrap.IIDBootstrap
+        Bootstrap using uniform resampling.
 
     Notes
     -----
@@ -1340,9 +1356,9 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     inappropriate.
 
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
-    the same type as the input date.
+    the same type as the input data.
 
-    Data entered using keyword arguments is directly accessibly as an
+    Data entered using keyword arguments is directly accessible as an
     attribute.
 
     To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
@@ -1374,10 +1390,6 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     >>> from numpy.random import default_rng
     >>> gen = default_rng(1234)
     >>> bs = IndependentSamplesBootstrap(x, y=y, z=z, seed=gen)
-
-    See also
-    --------
-    arch.bootstrap.IIDBootstrap
     """
 
     _common_size_required = False
@@ -1399,8 +1411,16 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         self,
     ) -> tuple[list[Int64Array1D], dict[str, Int64Array1D]]:
         """
-        Update indices for the next iteration of the bootstrap.  This must
-        be overridden when creating new bootstraps.
+        Update indices for the next iteration of the bootstrap.
+
+        This must be overridden when creating new bootstraps.
+
+        Returns
+        -------
+        tuple
+            A two-element tuple. The first element is a list that contains the
+            indices for each of the positional arguments. The second element
+            is a dict that contains the indices of the keyword arguments.
         """
         pos_indices = [
             _get_random_integers(
@@ -1419,12 +1439,12 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     @property
     def index(self) -> BootstrapIndexT:
         """
-        Returns the current index of the bootstrap
+        The current index of the bootstrap.
 
         Returns
         -------
-        tuple[list[ndarray], dict[str, ndarray]]
-            2-element tuple containing a list and a dictionary. The list
+        tuple
+            A two-element tuple containing a list and a dictionary. The list
             contains indices for each of the positional arguments.  The
             dictionary contains the indices of keyword arguments.
         """
@@ -1432,7 +1452,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def reset(self, use_seed: bool = True) -> None:
         """
-        Resets the bootstrap to its initial state.
+        Reset the bootstrap to its initial state.
 
         The generator is reset to the state it had when the bootstrap was
         created, which is the state determined by the seed if one was provided,
@@ -1440,7 +1460,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
         Parameters
         ----------
-        use_seed : bool, default True
+        use_seed : bool, optional
             This argument is not used. The generator is always reset to the
             state it had when the bootstrap was created.
         """
@@ -1488,37 +1508,44 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
 class CircularBlockBootstrap(IIDBootstrap):
     """
-    Bootstrap using blocks of the same length with end-to-start wrap around
+    Bootstrap using blocks of the same length with end-to-start wrap around.
 
     Parameters
     ----------
     block_size : int
         Size of block to use. Must be an integer that is at least 1.
-    args
-        Positional arguments to bootstrap
-    seed : {Generator, RandomState, int}, optional
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap.
+    seed : int, Generator or RandomState, optional
         Seed to use to ensure reproducible results. If an int, passes the
         value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    kwargs
-        Keyword arguments to bootstrap
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap.
 
     Attributes
     ----------
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
-        in the second (pos_data, kw_data)
+        in the second (pos_data, kw_data).
     pos_data : tuple
-        Tuple containing the positional arguments (in the order entered)
+        Tuple containing the positional arguments (in the order entered).
     kw_data : dict
-        Dictionary containing the keyword arguments
+        Dictionary containing the keyword arguments.
+
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+        Optimal block length estimation.
+    arch.bootstrap.StationaryBootstrap
+        Politis and Romano's bootstrap with exp. distributed block lengths.
 
     Notes
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
-    the same type as the input date.
+    the same type as the input data.
 
-    Data entered using keyword arguments is directly accessibly as an
+    Data entered using keyword arguments is directly accessible as an
     attribute.
 
     To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
@@ -1526,13 +1553,6 @@ class CircularBlockBootstrap(IIDBootstrap):
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
-
-    See Also
-    --------
-    arch.bootstrap.optimal_block_length
-       Optimal block length estimation
-    arch.bootstrap.StationaryBootstrap
-       Politis and Romano's bootstrap with exp. distributed block lengths
 
     Examples
     --------
@@ -1581,21 +1601,23 @@ class CircularBlockBootstrap(IIDBootstrap):
         **kwargs: ArrayLike,
     ) -> "CircularBlockBootstrap":
         """
-        Clones the bootstrap using different data with a fresh prng.
+        Clone the bootstrap using different data with a fresh prng.
+
+        The block size is the block size of this bootstrap.
 
         Parameters
         ----------
-        args
-            Positional arguments to bootstrap
-        seed
-            The seed value to pass to the closed generator
-        kwargs
-            Keyword arguments to bootstrap
+        *args : ndarray, Series or DataFrame
+            Positional arguments to bootstrap.
+        seed : int, Generator or RandomState, optional
+            The seed value to pass to the cloned generator.
+        **kwargs : ndarray, Series or DataFrame
+            Keyword arguments to bootstrap.
 
         Returns
         -------
-        bs
-            Bootstrap instance
+        CircularBlockBootstrap
+            A new bootstrap instance of the same type as this instance.
         """
         block_size = self._parameters[0]
         return self.__class__(block_size, *args, seed=seed, **kwargs)
@@ -1634,38 +1656,45 @@ class CircularBlockBootstrap(IIDBootstrap):
 
 class StationaryBootstrap(CircularBlockBootstrap):
     """
-    Politis and Romano (1994) bootstrap with expon distributed block sizes
+    Politis and Romano (1994) bootstrap with expon distributed block sizes.
 
     Parameters
     ----------
-    block_size : {int, float}
+    block_size : int or float
         Average size of block to use. Can be any number that is at least 1,
         for example, the value estimated by ``optimal_block_length``.
-    args
-        Positional arguments to bootstrap
-    seed : {Generator, RandomState, int}, optional
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap.
+    seed : int, Generator or RandomState, optional
         Seed to use to ensure reproducible results. If an int, passes the
         value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    kwargs
-        Keyword arguments to bootstrap
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap.
 
     Attributes
     ----------
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
-        in the second (pos_data, kw_data)
+        in the second (pos_data, kw_data).
     pos_data : tuple
-        Tuple containing the positional arguments (in the order entered)
+        Tuple containing the positional arguments (in the order entered).
     kw_data : dict
-        Dictionary containing the keyword arguments
+        Dictionary containing the keyword arguments.
+
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+        Optimal block length estimation.
+    arch.bootstrap.CircularBlockBootstrap
+        Circular (wrap-around) bootstrap.
 
     Notes
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
-    the same type as the input date.
+    the same type as the input data.
 
-    Data entered using keyword arguments is directly accessibly as an
+    Data entered using keyword arguments is directly accessible as an
     attribute.
 
     To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
@@ -1673,13 +1702,6 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
-
-    See Also
-    --------
-    arch.bootstrap.optimal_block_length
-       Optimal block length estimation
-    arch.bootstrap.CircularBlockBootstrap
-       Circular (wrap-around) bootstrap
 
     Examples
     --------
@@ -1735,37 +1757,46 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
 class MovingBlockBootstrap(CircularBlockBootstrap):
     """
-    Bootstrap using blocks of the same length without wrap around
+    Bootstrap using blocks of the same length without wrap around.
 
     Parameters
     ----------
     block_size : int
         Size of block to use. Must be an integer that is at least 1.
-    args
-        Positional arguments to bootstrap
-    seed : {Generator, RandomState, int}, optional
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap.
+    seed : int, Generator or RandomState, optional
         Seed to use to ensure reproducible results. If an int, passes the
         value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
-    kwargs
-        Keyword arguments to bootstrap
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap.
 
     Attributes
     ----------
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
-        in the second (pos_data, kw_data)
+        in the second (pos_data, kw_data).
     pos_data : tuple
-        Tuple containing the positional arguments (in the order entered)
+        Tuple containing the positional arguments (in the order entered).
     kw_data : dict
-        Dictionary containing the keyword arguments
+        Dictionary containing the keyword arguments.
+
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+        Optimal block length estimation.
+    arch.bootstrap.StationaryBootstrap
+        Politis and Romano's bootstrap with exp. distributed block lengths.
+    arch.bootstrap.CircularBlockBootstrap
+        Circular (wrap-around) bootstrap.
 
     Notes
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
-    the same type as the input date.
+    the same type as the input data.
 
-    Data entered using keyword arguments is directly accessibly as an
+    Data entered using keyword arguments is directly accessible as an
     attribute.
 
     To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
@@ -1773,15 +1804,6 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Note that ``seed`` is a reserved keyword and any variable
     passed using this keyword must be an integer, a ``Generator`` or a
     ``RandomState``.
-
-    See Also
-    --------
-    arch.bootstrap.optimal_block_length
-       Optimal block length estimation
-    arch.bootstrap.StationaryBootstrap
-       Politis and Romano's bootstrap with exp. distributed block lengths
-    arch.bootstrap.CircularBlockBootstrap
-       Circular (wrap-around) bootstrap
 
     Examples
     --------
