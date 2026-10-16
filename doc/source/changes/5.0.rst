@@ -62,9 +62,9 @@ Bootstrap
   instances and integers.  If an integer is passed, the random number generator is constructed by
   calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
   ``random_state`` keyword argument.
-- The :func:`~arch.bootstrap.IIDBootstrap.random_state` property has also been deprecated in favor
+- The ``IIDBootstrap.random_state`` property has also been deprecated in favor
   of :func:`~arch.bootstrap.IIDBootstrap.generator`.
-- The :func:`~arch.bootstrap.IIDBootstrap.get_state` and :func:`~arch.bootstrap.IIDBootstrap.set_state`
+- The ``IIDBootstrap.get_state`` and ``IIDBootstrap.set_state``
   methods have been replaced by the :func:`~arch.bootstrap.IIDBootstrap.state` property.
 
 Volatility Modeling
