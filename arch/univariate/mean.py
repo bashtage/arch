@@ -830,21 +830,21 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             np.ascontiguousarray(np.hstack((reg_constant, reg_lags, reg_x))),
         )
 
-    def _r2(self, params: ArrayLike1D) -> float:
+    def _r2(self, params: ArrayLike1D, resids: Float64Array1D | None = None) -> float:
         y = self._fit_y
         constant = False
         x = self._fit_regressors
         if x is not None and x.shape[1] > 0:
             constant = self.constant or implicit_constant(x)
         if constant:
-            if x.shape[1] == 1:
-                # Shortcut for constant only
+            if x.shape[1] == 1 and len(params) == 1:
+                # Shortcut for constant only, which is the only mean parameter
                 return 0.0
             y = y - np.mean(y)
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = to_array_1d(self.resids(to_array_1d(params)))
+        e = to_array_1d(self.resids(to_array_1d(params)) if resids is None else resids)
 
         return 1.0 - float(e.T.dot(e)) / tss
 
@@ -1907,6 +1907,29 @@ class ARCHInMean(ARX):
             cast("Float64Array1D", params[:-1]), y=y, regressors=regressors
         )
 
+    def _fitted_resids_variance(
+        self,
+        params: Float64Array1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> tuple[Float64Array1D, Float64Array1D]:
+        # The residuals depend on the conditional variance, so both come from
+        # the recursion that is used to compute the log-likelihood
+        mp, vp, _ = self._parse_parameters(params)
+        nobs = self._fit_y.shape[0]
+        variance = np.zeros(nobs, dtype=float)
+        self._volatility_updater.initialize_update(vp, backcast, nobs)
+        resids = self._recursion.recursion(
+            self._fit_y,
+            self._fit_regressors,
+            mp,
+            vp,
+            variance,
+            var_bounds,
+            self._form_power / 2.0,
+        )
+        return to_array_1d(resids), variance
+
     def starting_values(self) -> Float64Array1D:
         return np.r_[super().starting_values(), 0.0]
 
@@ -2352,14 +2375,14 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             resids = np.clip(resids, -_MAX_MA_RESID, _MAX_MA_RESID)
         return to_array_1d(resids)
 
-    def _r2(self, params: ArrayLike1D) -> float:
+    def _r2(self, params: ArrayLike1D, resids: Float64Array1D | None = None) -> float:
         y = self._fit_y
         if self.constant:
             y = y - np.mean(y)
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = to_array_1d(self.resids(to_array_1d(params)))
+        e = to_array_1d(self.resids(to_array_1d(params)) if resids is None else resids)
 
         return 1.0 - float(e.T.dot(e)) / tss
 
