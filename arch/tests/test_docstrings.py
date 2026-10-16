@@ -317,20 +317,6 @@ KNOWN_FAILURES: dict[str, frozenset[str]] = {
     "arch.unitroot.unitroot.UnitRootTest.summary": frozenset({"RT01"}),
     "arch.unitroot.unitroot.VarianceRatio": frozenset({"GL07", "PR03"}),
     "arch.unitroot.unitroot.mackinnonp": frozenset({"GL07"}),
-    "arch.univariate.distribution.Distribution": frozenset({"PR01"}),
-    "arch.univariate.distribution.Distribution.partial_moment": frozenset({"GL07"}),
-    "arch.univariate.distribution.GeneralizedError.loglikelihood": frozenset(
-        {"PR01", "PR02"}
-    ),
-    "arch.univariate.distribution.GeneralizedError.partial_moment": frozenset({"GL07"}),
-    "arch.univariate.distribution.Normal.loglikelihood": frozenset({"PR01", "PR02"}),
-    "arch.univariate.distribution.Normal.partial_moment": frozenset({"GL07"}),
-    "arch.univariate.distribution.SkewStudent.loglikelihood": frozenset(
-        {"PR01", "PR02"}
-    ),
-    "arch.univariate.distribution.SkewStudent.partial_moment": frozenset({"GL07"}),
-    "arch.univariate.distribution.StudentsT.loglikelihood": frozenset({"PR01", "PR02"}),
-    "arch.univariate.distribution.StudentsT.partial_moment": frozenset({"GL07"}),
     "arch.univariate.mean.ARCHInMean": frozenset({"GL07"}),
     "arch.univariate.mean.ARX": frozenset({"GL07"}),
     "arch.univariate.mean.ConstantMean": frozenset({"GL07"}),
