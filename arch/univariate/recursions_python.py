@@ -631,16 +631,80 @@ def fiaparch_recursion_python(
     fshocks = np.empty(nobs)
     for t in range(nobs - 1):
         fshocks[t] = (abs_resids[t] - gamma * resids[t]) ** delta
-    for t in range(nobs):
-        bc_weight = 0.0
+
+    # The sums below are independent across t. Four are accumulated at a time so
+    # that the floating point adds of different sums overlap, rather than each
+    # add waiting for the previous one. Every sum still adds its terms one at a
+    # time in the same order as a single loop would, so the results do not change.
+
+    # Weight on the backcast for t < trunc_lag, sum(lam[t:trunc_lag]), is 0 after
+    n_bc = min(nobs, trunc_lag)
+    bc_weights = np.zeros(nobs)
+    t = 0
+    while t + 3 < n_bc:
+        a0 = 0.0
+        a1 = 0.0
+        a2 = 0.0
+        a3 = 0.0
+        a0 += lam[t]
+        a0 += lam[t + 1]
+        a1 += lam[t + 1]
+        a0 += lam[t + 2]
+        a1 += lam[t + 2]
+        a2 += lam[t + 2]
+        for i in range(t + 3, trunc_lag):
+            w = lam[i]
+            a0 += w
+            a1 += w
+            a2 += w
+            a3 += w
+        bc_weights[t] = a0
+        bc_weights[t + 1] = a1
+        bc_weights[t + 2] = a2
+        bc_weights[t + 3] = a3
+        t += 4
+    while t < n_bc:
+        a0 = 0.0
         for i in range(t, trunc_lag):
-            bc_weight += lam[i]
-        sigma_delta[t] = omega_tilde + bc_weight * backcast_delta
+            a0 += lam[i]
+        bc_weights[t] = a0
+        t += 1
+
+    t = 0
+    while t + 3 < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
+        a1 = omega_tilde + bc_weights[t + 1] * backcast_delta
+        a2 = omega_tilde + bc_weights[t + 2] * backcast_delta
+        a3 = omega_tilde + bc_weights[t + 3] * backcast_delta
+        # Lags available to all four, t, t + 1, t + 2 and t + 3
+        m = min(t, trunc_lag)
+        for i in range(m):
+            w = lam[i]
+            a0 += w * fshocks[t - i - 1]
+            a1 += w * fshocks[t - i]
+            a2 += w * fshocks[t - i + 1]
+            a3 += w * fshocks[t - i + 2]
+        # Additional lags only available to the later observations
+        for i in range(m, min(t + 1, trunc_lag)):
+            a1 += lam[i] * fshocks[t - i]
+        for i in range(m, min(t + 2, trunc_lag)):
+            a2 += lam[i] * fshocks[t - i + 1]
+        for i in range(m, min(t + 3, trunc_lag)):
+            a3 += lam[i] * fshocks[t - i + 2]
+        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
+        sigma2[t + 1] = bounds_check(a1 ** (2.0 / delta), var_bounds[t + 1])
+        sigma2[t + 2] = bounds_check(a2 ** (2.0 / delta), var_bounds[t + 2])
+        sigma2[t + 3] = bounds_check(a3 ** (2.0 / delta), var_bounds[t + 3])
+        for k in range(4):
+            sigma_delta[t + k] = sigma2[t + k] ** (delta / 2.0)
+        t += 4
+    while t < nobs:
+        a0 = omega_tilde + bc_weights[t] * backcast_delta
         for i in range(min(t, trunc_lag)):
-            sigma_delta[t] += lam[i] * fshocks[t - i - 1]
-        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
-        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+            a0 += lam[i] * fshocks[t - i - 1]
+        sigma2[t] = bounds_check(a0 ** (2.0 / delta), var_bounds[t])
         sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+        t += 1
 
     return sigma2
 
