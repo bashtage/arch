@@ -180,6 +180,18 @@ def implicit_constant(x: Float64Array) -> bool:
     return rank == x.shape[1]
 
 
+def _plot_index(index: pd.Index) -> pd.Index:
+    """
+    Convert an index to one that matplotlib can plot
+
+    Matplotlib cannot convert Period objects, so a PeriodIndex is replaced by
+    the timestamps at the start of each period.
+    """
+    if isinstance(index, pd.PeriodIndex):
+        return index.to_timestamp()
+    return index
+
+
 class ARCHModel(metaclass=ABCMeta):
     """
     Abstract base class for mean models in ARCH processes.  Specifies the
@@ -1639,12 +1651,13 @@ class ARCHModelFixedResult(_SummaryRepr):
                 pass
 
         fig = figure()
+        index = _plot_index(self._index)
 
         ax = fig.add_subplot(2, 1, 1)
-        ax.plot(self._index.values, self.resid / self.conditional_volatility)
+        ax.plot(index.values, self.resid / self.conditional_volatility)
         ax.set_title("Standardized Residuals")
         ax.set_xticklabels([])
-        _set_tight_x(ax, self._index)
+        _set_tight_x(ax, index)
 
         ax = fig.add_subplot(2, 1, 2)
         vol = self.conditional_volatility
@@ -1660,8 +1673,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         else:
             title = "Conditional Volatility"
 
-        ax.plot(self._index.values, vol)
-        _set_tight_x(ax, self._index)
+        ax.plot(index.values, vol)
+        _set_tight_x(ax, index)
         ax.set_title(title)
 
         return fig
@@ -1839,7 +1852,9 @@ class ARCHModelFixedResult(_SummaryRepr):
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. For these models,
+            hedgehog_plot raises a ValueError unless horizon is 1 or method is
+            'simulation' or 'bootstrap'.
         simulations : int
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
@@ -1863,36 +1878,40 @@ class ARCHModelFixedResult(_SummaryRepr):
         import matplotlib.pyplot as plt  # noqa: PLC0415
 
         plot_mean = plot_type.lower() == "mean"
+        search_start = start is None
         if start is None:
-            invalid_start = True
-            start = 0
-            while invalid_start:
-                try:
-                    forecasts = self.forecast(
-                        params,
-                        horizon,
-                        start,
-                        method=method,
-                        simulations=simulations,
-                    )
-                    invalid_start = False
-                except ValueError:  # noqa: PERF203
-                    start += 1
-        else:
-            forecasts = self.forecast(
-                params,
-                horizon,
-                start,
-                method=method,
-                simulations=simulations,
-            )
+            # The earliest origin for which the model can produce a forecast
+            start = max(0, self.model._fit_indices[0] - 1)
+        while True:
+            try:
+                forecasts = self.forecast(
+                    params,
+                    horizon,
+                    start,
+                    method=method,
+                    simulations=simulations,
+                    reindex=True,
+                )
+                break
+            except ValueError:
+                # Only bootstrap forecasts depend on the origin: they need a
+                # minimum number of initial observations. Any other error does
+                # not depend on start and is raised.
+                if not (
+                    search_start
+                    and method.lower() == "bootstrap"
+                    and start < self.model._y.shape[0] - 1
+                ):
+                    raise
+                start += 1
 
         fig, ax = plt.subplots(1, 1)
-        use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
+        plot_index = _plot_index(self._dep_var.index)
+        use_date = isinstance(plot_index, pd.DatetimeIndex)
         plot_fn = ax.plot
         if MPL_LT_310 and hasattr(ax, "plot_date") and use_date:
             plot_fn = ax.plot_date
-        x_values = np.array(self._dep_var.index)
+        x_values = np.array(plot_index)
         if plot_mean:
             y_values = np.asarray(self._dep_var)
         else:
