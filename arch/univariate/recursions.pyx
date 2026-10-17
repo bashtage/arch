@@ -6,6 +6,8 @@ cimport numpy as np
 from libc.float cimport DBL_MAX
 from libc.math cimport exp, fabs, lgamma, log, sqrt
 
+from arch.utility._validation import _describe
+
 cdef:
     double SQRT2_OV_PI = 0.79788456080286535587989211
 
@@ -34,6 +36,53 @@ __all__ = [
 cdef double LNSIGMA_MAX = log(DBL_MAX)
 
 np.import_array()
+
+cdef int _bad_array(str name, object value, str rule, bint wrong_type) except -1:
+    """Raise TypeError (wrong_type) or ValueError: <name> must be <rule>; got <value>"""
+    exc = TypeError if wrong_type else ValueError
+    raise exc(f"{name} must be {rule}; got {_describe(value)}")
+
+
+cdef str _vector_rule(Py_ssize_t min_length):
+    """The rule in the message, which is only built when a check fails."""
+    rule = "a 1-d C contiguous float64 ndarray"
+    if min_length > 0:
+        rule += f" with at least {min_length} element{'' if min_length == 1 else 's'}"
+    return rule
+
+
+cdef int _check_vector(
+    str name, const double[::1] arr, Py_ssize_t min_length
+) except -1:
+    """
+    Check that an argument is not None and has at least min_length elements.
+
+    The checks are O(1) and are made once per likelihood evaluation, never in the
+    per-observation update. A memoryview argument accepts None unless it is
+    declared "not None", and the recursions read and write memoryviews without
+    bounds checks.
+    """
+    if arr is None:
+        _bad_array(name, None, _vector_rule(min_length), True)
+    if arr.shape[0] < min_length:
+        _bad_array(name, np.asarray(arr), _vector_rule(min_length), False)
+    return 0
+
+
+cdef int _check_matrix(
+    str name, const double[:, ::1] arr, Py_ssize_t min_rows, Py_ssize_t min_cols
+) except -1:
+    """Check that an argument is not None and has at least min_rows by min_cols."""
+    cdef str rule
+    if arr is None or arr.shape[0] < min_rows or arr.shape[1] < min_cols:
+        rule = (
+            "a 2-d C contiguous float64 ndarray with at least "
+            f"{min_rows} row{'' if min_rows == 1 else 's'} and "
+            f"{min_cols} column{'' if min_cols == 1 else 's'}"
+        )
+        _bad_array(name, None if arr is None else np.asarray(arr), rule, arr is None)
+    return 0
+
 
 cdef inline void bounds_check(double* sigma2, const double* var_bounds):
     if sigma2[0] < var_bounds[0]:
@@ -1056,6 +1105,7 @@ cdef class EWMAUpdater(VolatilityUpdater):
             Py_ssize_t nobs
     ):
         if self.estimate_lam:
+            _check_vector("parameters", parameters, 1)
             self.params[1] = 1.0 - parameters[0]
             self.params[2] = parameters[0]
         self.backcast = backcast
@@ -1236,6 +1286,8 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
             object backcast,
             Py_ssize_t nobs
     ):
+        # omega, phi (if p), d and beta (if q), which the weights and update read
+        _check_vector("parameters", parameters, 2 + self.p + self.q)
         self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         self.backcast = backcast
         if self.fresids.shape[0] < nobs:
@@ -1558,7 +1610,11 @@ cdef class ARCHInMeanRecursion:
     cdef:
         VolatilityUpdater volatility_updater
 
-    def __init__(self, VolatilityUpdater updater):
+    def __init__(self, object updater):
+        if not isinstance(updater, VolatilityUpdater):
+            raise TypeError(
+                f"updater must be a VolatilityUpdater; got {_describe(updater)}"
+            )
         self.volatility_updater = updater
 
     def recursion(self,
@@ -1570,9 +1626,23 @@ cdef class ARCHInMeanRecursion:
                   const double[:, ::1] var_bounds,
                   double power):
         cdef:
-            Py_ssize_t t, i, nobs = y.shape[0], k = x.shape[1]
-            double[::1] resids = np.empty(nobs)
-            double gamma = mean_parameters[k]
+            Py_ssize_t t, i, nobs, k
+            double[::1] resids
+            double gamma
+
+        # Checked once per call. The loop below reads and writes these arrays
+        # without bounds checks, and None would be dereferenced.
+        _check_vector("y", y, 0)
+        nobs = y.shape[0]
+        _check_matrix("x", x, nobs, 0)
+        k = x.shape[1]
+        _check_vector("mean_parameters", mean_parameters, k + 1)
+        # The length that variance_params needs depends on the updater
+        _check_vector("variance_params", variance_params, 0)
+        _check_vector("sigma2", sigma2, nobs)
+        _check_matrix("var_bounds", var_bounds, nobs, 2)
+        resids = np.empty(nobs)
+        gamma = mean_parameters[k]
 
         for t in range(nobs):
             self.volatility_updater.update(
