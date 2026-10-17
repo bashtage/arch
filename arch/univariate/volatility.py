@@ -3556,6 +3556,11 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, variance: Float64Array, unit_scale: bool = False) -> None:
         super().__init__()
+        unit_scale = check_bool("unit_scale", unit_scale)
+        values = check_array("variance", variance, ndim=1)
+        if values.size and values.min() <= 0.0:
+            rule = "a 1-d array of finite numbers > 0"
+            _fail(ValueError, "variance", rule, _describe(variance))
         self._num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
         self._name = "Fixed Variance"
