@@ -1025,7 +1025,7 @@ def test_message_shows_the_value():
     assert str(info.value) == "lags must be an integer >= 0; got 2.5 (float)"
     with pytest.raises(TypeError) as info:
         HARX(Y, constant="no")
-    assert str(info.value) == "constant must be True or False; got 'no' (str)"
+    assert str(info.value) == "constant must be True, False, 0 or 1; got 'no' (str)"
     with pytest.raises(ValueError, match=r"^p must be") as info:
         arch_model(Y, p=-1)
     assert str(info.value) == "p must be an integer >= 0; got -1 (int)"

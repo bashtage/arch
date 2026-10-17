@@ -267,12 +267,16 @@ def test_flag_zero_and_one(value, expected):
 
 
 def test_flags_integers_other_than_zero_and_one():
-    with pytest.raises(ValueError, match=r"^rescale must be True or False or None"):
+    with pytest.raises(ValueError, match=r"^rescale must be True, False, 0, 1 or None"):
         arch_model(Y, rescale=2)
-    with pytest.raises(ValueError, match=r"^constant must be True or False; got -1"):
+    with pytest.raises(
+        ValueError, match=r"^constant must be True, False, 0 or 1; got -1"
+    ):
         ARX(Y, constant=-1)
     for bad in (1.0, 0.0, "1", np.array([1])):
-        with pytest.raises(TypeError, match=r"^rescale must be True or False or None"):
+        with pytest.raises(
+            TypeError, match=r"^rescale must be True, False, 0, 1 or None"
+        ):
             arch_model(Y, rescale=bad)
 
 
@@ -280,9 +284,9 @@ def test_fit_disp_integers(model):
     zero = model.fit(disp=0, show_warning=False, **OPTIONS)
     off = model.fit(disp="off", show_warning=False, **OPTIONS)
     assert_allclose(zero.params, off.params)
-    with pytest.raises(ValueError, match=r"^disp must be True or False; got 2"):
+    with pytest.raises(ValueError, match=r"^disp must be True, False, 0 or 1; got 2"):
         model.fit(disp=2)
-    with pytest.raises(TypeError, match=r"^disp must be True or False; got 1.0"):
+    with pytest.raises(TypeError, match=r"^disp must be True, False, 0 or 1; got 1.0"):
         model.fit(disp=1.0)
     for text in ("off", "final", "OFF"):
         model.fit(disp=text, show_warning=False, **OPTIONS)
@@ -296,11 +300,13 @@ def test_fit_disp_one_prints(model, capsys):
 
 
 def test_arch_test_flags():
-    with pytest.raises(ValueError, match=r"^exit must be True or False; got 2"):
+    with pytest.raises(ValueError, match=r"^exit must be True, False, 0 or 1; got 2"):
         arch.test(exit=2)
-    with pytest.raises(TypeError, match=r"^append must be True or False; got 'no'"):
+    with pytest.raises(
+        TypeError, match=r"^append must be True, False, 0 or 1; got 'no'"
+    ):
         arch.test(append="no")
-    with pytest.raises(TypeError, match=r"^exit must be True or False; got None"):
+    with pytest.raises(TypeError, match=r"^exit must be True, False, 0 or 1; got None"):
         arch.test(exit=None)
 
 

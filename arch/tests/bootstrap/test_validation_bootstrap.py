@@ -376,7 +376,7 @@ for _name in ("cov", "var"):
         BASE,
         "recenter",
         BOOL_BAD,
-        rule=r"True or False",
+        rule=r"True, False, 0 or 1",
     )
     ROWS += good_value_rows(
         f"{_name}-recenter", METHODS[_name], BASE, "recenter", BOOL_GOOD
@@ -412,7 +412,7 @@ ROWS += good_value_rows(
     "conf_int-size", CI, CI_BASE, "size", [*FLOAT_GOOD, 0.001, 0.999]
 )
 ROWS += bad_value_rows(
-    "conf_int-reuse", CI, CI_BASE, "reuse", BOOL_BAD, rule=r"True or False"
+    "conf_int-reuse", CI, CI_BASE, "reuse", BOOL_BAD, rule=r"True, False, 0 or 1"
 )
 ROWS += good_value_rows("conf_int-reuse", CI, CI_BASE, "reuse", BOOL_GOOD)
 ROWS += bad_value_rows(
@@ -501,7 +501,7 @@ for _name, _cls in {
         {},
         "use_seed",
         BOOL_BAD,
-        rule=r"True or False",
+        rule=r"True, False, 0 or 1",
     )
     ROWS += good_value_rows(
         f"{_name}-reset",

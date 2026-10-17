@@ -145,7 +145,7 @@ STAT_GOOD = [-3.5, 0, 2, np.float32(-1.5), np.int64(-4), np.inf, -np.inf, 1.0e6]
 
 RULE_INT = r"an integer .*"
 RULE_FLOAT = r"a .*float.*"
-RULE_BOOL = r"True or False.*"
+RULE_BOOL = r"True, False, 0(, 1 or None| or 1)"
 
 
 def table_rows():
@@ -576,7 +576,9 @@ def test_default_lags_against_nobs():
 def test_checks_run_at_creation_and_statistic_is_lazy():
     test = ADF(Y)
     assert test._stat is None
-    with pytest.raises(TypeError, match=r"^low_memory must be True or False or None"):
+    with pytest.raises(
+        TypeError, match=r"^low_memory must be True, False, 0, 1 or None"
+    ):
         ADF(Y, low_memory="yes")
     assert np.isfinite(test.stat)
 

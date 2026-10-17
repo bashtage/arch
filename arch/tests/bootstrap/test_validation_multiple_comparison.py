@@ -175,7 +175,7 @@ for _name, _func, _base in SPA_PROCEDURES:
             _func,
             {**_base, "studentize": "no", "nested": True},
             TypeError,
-            r"^studentize must be True or False; got 'no' \(str\)$",
+            r"^studentize must be True, False, 0 or 1; got 'no' \(str\)$",
             id=f"{_name}-studentize-checked-first",
             name="studentize",
         )

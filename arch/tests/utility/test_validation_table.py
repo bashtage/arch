@@ -32,7 +32,7 @@ def make_func(*, lags, flag=True):
         raise ValueError(f"lags must be an integer >= 0; got {lags!r} (int)")
     if not isinstance(flag, bool):
         raise TypeError(
-            f"flag must be True or False; got {flag!r} ({type(flag).__name__})"
+            f"flag must be True, False, 0 or 1; got {flag!r} ({type(flag).__name__})"
         )
 
 

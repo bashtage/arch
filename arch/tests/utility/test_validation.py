@@ -130,7 +130,7 @@ def test_bool_accepts(value):
     ("value", "exc"), BOOL_BAD_VALUES, ids=ids_for(BOOL_BAD_VALUES)
 )
 def test_bool_rejects(value, exc):
-    with pytest.raises(exc, match=r"^flag must be True or False; got ") as e:
+    with pytest.raises(exc, match=r"^flag must be True, False, 0 or 1; got ") as e:
         check_bool("flag", value)
     assert_form(e, "flag")
 
@@ -149,26 +149,28 @@ def test_bool_accepts_zero_and_one(value):
 
 @pytest.mark.parametrize("value", NOT_ZERO_ONE, ids=ids_for(NOT_ZERO_ONE))
 def test_bool_integer_not_zero_or_one_is_a_value_error(value):
-    with pytest.raises(ValueError, match=r"^flag must be True or False; got "):
+    with pytest.raises(ValueError, match=r"^flag must be True, False, 0 or 1; got "):
         check_bool("flag", value)
-    with pytest.raises(ValueError, match=r"^flag must be True or False or None; got "):
+    with pytest.raises(
+        ValueError, match=r"^flag must be True, False, 0, 1 or None; got "
+    ):
         check_bool("flag", value, allow_none=True)
 
 
 @pytest.mark.parametrize("value", NOT_INTEGER, ids=ids_for(NOT_INTEGER))
 def test_bool_float_string_and_sequence_are_type_errors(value):
-    with pytest.raises(TypeError, match=r"^flag must be True or False; got "):
+    with pytest.raises(TypeError, match=r"^flag must be True, False, 0 or 1; got "):
         check_bool("flag", value)
 
 
 def test_bool_none():
     assert check_bool("flag", None, allow_none=True) is None
     with pytest.raises(
-        TypeError, match=r"flag must be True or False; got None \(NoneType\)"
+        TypeError, match=r"flag must be True, False, 0 or 1; got None \(NoneType\)"
     ):
         check_bool("flag", None)
     with pytest.raises(
-        TypeError, match=r"flag must be True or False or None; got 'no'"
+        TypeError, match=r"flag must be True, False, 0, 1 or None; got 'no'"
     ):
         check_bool("flag", "no", allow_none=True)
 

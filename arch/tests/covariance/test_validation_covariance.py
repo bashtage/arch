@@ -344,7 +344,7 @@ PW_ROWS: list[Row] = [
         {"x": X_LONG, "lags": 1, "center": np.bool_},
         TypeError,
         # numpy.bool_ is numpy.bool in NumPy 2
-        rf"^center must be True or False; got {re.escape(str(np.bool_))} \(type\)$",
+        rf"^center must be True, False, 0 or 1; got {re.escape(str(np.bool_))} \(type\)$",
         id="PWRC-center-bool-class",
         name="center",
     ),

@@ -189,7 +189,8 @@ def check_bool(name: str, value: Any, *, allow_none: bool = False) -> bool | Non
         exc = ValueError
     elif allow_none and value is None:
         return None
-    _fail(exc, name, _with_none("True or False", allow_none), _describe(value))
+    rule = "True, False, 0, 1 or None" if allow_none else "True, False, 0 or 1"
+    _fail(exc, name, rule, _describe(value))
 
 
 def _int_rule(lower: int | None, upper: int | None, allow_none: bool) -> str:
