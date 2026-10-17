@@ -24,7 +24,7 @@ def test_normalize_is_applied_after_lower():
 
 
 def test_value_error_message():
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError, match=r"^method must") as exc:
         check_option("method", "xyz", ("aic", "bic", "t-stat", "maic"))
     assert str(exc.value) == (
         "method must be one of 'aic', 'bic', 't-stat' or 'maic'; got 'xyz'"
@@ -50,7 +50,7 @@ def test_non_string_is_type_error(value):
 
 
 def test_long_value_is_shortened():
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError, match=r"^method must") as exc:
         check_option("method", "x" * 200, ("aic", "bic"))
     message = str(exc.value)
     assert message.endswith("...")

@@ -22,9 +22,35 @@ from arch.bootstrap.base import (
     StationaryBootstrap,
     _get_random_integers,
 )
+from arch.utility._validation import check_option
 from arch.utility.array import DocStringInheritor, ensure2d
 
 __all__ = ["MCS", "SPA", "RealityCheck", "StepM"]
+
+# Lower case names of the MCS methods, which map to the canonical names
+_MCS_METHODS = {"r": "R", "max": "max"}
+
+# Lower case names of the bootstraps, using underscores instead of spaces
+_BOOTSTRAPS: dict[str, type[CircularBlockBootstrap]] = {
+    "circular": CircularBlockBootstrap,
+    "cbb": CircularBlockBootstrap,
+    "stationary": StationaryBootstrap,
+    "sb": StationaryBootstrap,
+    "moving_block": MovingBlockBootstrap,
+    "mbb": MovingBlockBootstrap,
+}
+
+
+def _bootstrap_class(bootstrap: str) -> type[CircularBlockBootstrap]:
+    """Find the bootstrap class from its name, ignoring case and spaces"""
+    name = check_option(
+        "bootstrap",
+        bootstrap,
+        tuple(_BOOTSTRAPS),
+        display=("stationary", "sb", "circular", "cbb", "moving block", "mbb"),
+        normalize=lambda value: value.replace(" ", "_"),
+    )
+    return _BOOTSTRAPS[name]
 
 
 def _info_to_str(
@@ -280,21 +306,15 @@ class MCS(MultipleComparison):
 
         self.t: int = losses.shape[0]
         self.k: int = losses.shape[1]
-        if not isinstance(method, str) or method.lower() not in ("r", "max"):
-            raise ValueError(f"method must be 'R' or 'max' but is {method!r}.")
-        self.method: Literal["R", "max"] = method
+        self.method: Literal["R", "max"] = cast(
+            "Literal['R', 'max']",
+            check_option("method", method, _MCS_METHODS, display=("R", "max")),
+        )
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
         indices = np.arange(self.t)
-        bootstrap_meth = bootstrap.lower().replace(" ", "_")
-        if bootstrap_meth in ("circular", "cbb"):
-            bootstrap_inst = CircularBlockBootstrap(self.block_size, indices, seed=seed)
-        elif bootstrap_meth in ("stationary", "sb"):
-            bootstrap_inst = StationaryBootstrap(self.block_size, indices, seed=seed)
-        elif bootstrap_meth in ("moving_block", "mbb"):
-            bootstrap_inst = MovingBlockBootstrap(self.block_size, indices, seed=seed)
-        else:
-            raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
+        bootstrap_cls = _bootstrap_class(bootstrap)
+        bootstrap_inst = bootstrap_cls(self.block_size, indices, seed=seed)
         self._seed = seed
         self._bootstrap = bootstrap_inst
         # Optional index retention, for testing
@@ -343,12 +363,12 @@ class MCS(MultipleComparison):
         """
         Compute the set of models in the confidence set.
         """
-        if self.method.lower() == "r":
+        # The method is a public attribute that can be set after construction
+        method = check_option("method", self.method, _MCS_METHODS, display=("R", "max"))
+        if method == "R":
             self._compute_r()
-        elif self.method.lower() == "max":
-            self._compute_max()
         else:
-            raise ValueError(f"method must be 'R' or 'max' but is {self.method!r}.")
+            self._compute_max()
         self._results_computed = True
 
     def _compute_r(self) -> None:
@@ -826,21 +846,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
-        bootstrap_name = bootstrap.lower().replace(" ", "_")
-        if bootstrap_name in ("circular", "cbb"):
-            bootstrap_inst = CircularBlockBootstrap(
-                self.block_size, self._loss_diff, seed=seed
-            )
-        elif bootstrap_name in ("stationary", "sb"):
-            bootstrap_inst = StationaryBootstrap(
-                self.block_size, self._loss_diff, seed=seed
-            )
-        elif bootstrap_name in ("moving_block", "mbb"):
-            bootstrap_inst = MovingBlockBootstrap(
-                self.block_size, self._loss_diff, seed=seed
-            )
-        else:
-            raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
+        bootstrap_cls = _bootstrap_class(bootstrap)
+        bootstrap_inst = bootstrap_cls(self.block_size, self._loss_diff, seed=seed)
         self._seed = seed
         self._bootstrap = bootstrap_inst
         # Instantiate the kernel long-run variance estimator, which is used to
@@ -1098,8 +1105,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         set of models, even when using subset().
         """
         self._check_compute()
-        if pvalue_type not in self._pvalues:
-            raise ValueError("Unknown pvalue type")
+        pvalue_type = check_option("pvalue_type", pvalue_type, tuple(self._pvalues))
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
         better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)

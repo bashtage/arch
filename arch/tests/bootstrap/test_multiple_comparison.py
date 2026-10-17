@@ -590,10 +590,10 @@ def test_errors(spa_data):
     ):
         _ = spa.better_models()
 
-    with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
+    with pytest.raises(ValueError, match=r"bootstrap must be one of 'stationary'"):
         _ = SPA(spa_data.benchmark, spa_data.models, bootstrap="unknown")
     spa.compute()
-    with pytest.raises(ValueError, match=r"Unknown pvalue type"):
+    with pytest.raises(ValueError, match=r"pvalue_type must be one of 'lower'"):
         _ = spa.better_models(pvalue_type="unknown")
     with pytest.raises(ValueError, match=r"pvalue must be in \(0,1\)"):
         _ = spa.critical_values(pvalue=1.0)
@@ -951,7 +951,7 @@ class TestMCS:
             bootstrap="moving block",
         )
         mcs.compute()
-        with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
+        with pytest.raises(ValueError, match=r"bootstrap must be one of 'stationary'"):
             MCS(self.losses, 0.05, bootstrap="unknown")
 
     def test_str_repr(self):

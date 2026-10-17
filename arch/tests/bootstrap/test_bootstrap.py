@@ -164,9 +164,11 @@ def test_errors(bs_setup):
         IIDBootstrap(index=x)
     bs = IIDBootstrap(y)
 
-    with pytest.raises(ValueError, match=r"Unknown method"):
+    with pytest.raises(ValueError, match=r"method must be one of 'basic'"):
         bs.conf_int(bs_setup.func, method="unknown")
-    with pytest.raises(ValueError, match=r"tail must be one of two-sided"):
+    with pytest.raises(
+        ValueError, match=r"tail must be one of 'two', 'lower' or 'upper'"
+    ):
         bs.conf_int(bs_setup.func, tail="dragon")
     with pytest.raises(ValueError, match=r"size must be strictly between 0 and 1"):
         bs.conf_int(bs_setup.func, size=95)
@@ -491,7 +493,7 @@ def test_conf_int_parametric(bs_setup):
         count += 1
     assert_allclose(bs._results, results)
 
-    with pytest.raises(ValueError, match=r"sampling must be one"):
+    with pytest.raises(ValueError, match=r"sampling must be one of 'nonparametric'"):
         bs.conf_int(func=semi_func, reps=100, sampling="other")
 
 

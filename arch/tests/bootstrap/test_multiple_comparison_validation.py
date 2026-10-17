@@ -19,10 +19,14 @@ def test_mcs_method_case_insensitive(method, canonical):
     assert list(mcs.pvalues.index) == list(reference.pvalues.index)
 
 
-@pytest.mark.parametrize("method", ["foo", "", "maximum", None, 1])
-def test_mcs_method_invalid(method):
+@pytest.mark.parametrize(
+    ("method", "error"),
+    [("foo", ValueError), ("", ValueError), ("maximum", ValueError)]
+    + [(None, TypeError), (1, TypeError)],
+)
+def test_mcs_method_invalid(method, error):
     losses = np.random.default_rng(0).standard_normal((50, 3))
-    with pytest.raises(ValueError, match="method must be 'R' or 'max'"):
+    with pytest.raises(error, match="method must be one of 'R' or 'max'"):
         MCS(losses, 0.1, reps=10, method=method)
 
 
@@ -30,7 +34,7 @@ def test_mcs_method_changed_after_construction():
     losses = np.random.default_rng(0).standard_normal((50, 3))
     mcs = MCS(losses, 0.1, reps=10, seed=1)
     mcs.method = "other"
-    with pytest.raises(ValueError, match="method must be 'R' or 'max'"):
+    with pytest.raises(ValueError, match="method must be one of 'R' or 'max'"):
         mcs.compute()
 
 
