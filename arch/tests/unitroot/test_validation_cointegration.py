@@ -5,6 +5,7 @@ The table-driven rows are built on arch.tests.validation_table.
 """
 
 from arch.compat.matplotlib import HAS_MATPLOTLIB
+from arch.compat.pandas import MONTH_END
 
 import numpy as np
 import pandas as pd
@@ -164,7 +165,7 @@ INDEX_ROWS = [
         func,
         {
             "y": pd.Series(
-                Y, index=pd.date_range("2000-01-31", periods=NOBS, freq="ME")
+                Y, index=pd.date_range("2000-01-31", periods=NOBS, freq=MONTH_END)
             ),
             "x": pd.DataFrame(X),
         },
@@ -207,7 +208,7 @@ def test_minimum_observations(trend, num_x, min_rows):
     CanonicalCointegratingReg(y, x, trend)
 
 
-DATES = pd.date_range("2000-01-31", periods=NOBS, freq="ME")
+DATES = pd.date_range("2000-01-31", periods=NOBS, freq=MONTH_END)
 Y_GOOD = [
     pd.Series(Y, index=DATES, name="target"),
     Y.tolist(),
