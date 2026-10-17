@@ -358,7 +358,7 @@ def test_fit_options_disp_in_options_respected(capsys):
         pytest.param(
             APARCH(), [0.1, 0.1, 0.1, 0.8, 1.5], lambda v: v ** (2 / 1.5), id="aparch"
         ),
-        pytest.param(EGARCH(), [0.1, 0.1, 0.1, 0.8], np.exp, id="egarch"),
+        pytest.param(EGARCH(), [0.1, 0.1, 0.8], np.exp, id="egarch"),
     ],
 )
 def test_simulate_initial_value_units(process, params, expected):

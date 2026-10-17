@@ -682,7 +682,7 @@ def test_errors(setup):
 
 def test_warnings_nonstationary(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0])
+    parameters = np.array([0.1, 0.2, 0.8])
     studt = StudentsT()
     warnings.simplefilter("always", UserWarning)
     with pytest.warns(
@@ -694,7 +694,7 @@ def test_warnings_nonstationary(setup):
 
 def test_warnings_nonstationary_garch(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
+    parameters = np.array([0.1, 0.2, 0.8])
     skewstud = SkewStudent()
     with pytest.warns(
         InitialValueWarning,
@@ -778,7 +778,7 @@ def test_ewma(setup):
     state = setup.rng.get_state()
     rng = Normal(seed=RandomState())
     rng.generator.set_state(state)
-    sim_data = ewma.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = ewma.simulate(np.array([]), setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
