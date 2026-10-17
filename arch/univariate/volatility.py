@@ -74,6 +74,43 @@ __all__ = [
 ]
 
 
+# The compiled updaters take the orders, lags and truncation as a C int
+_INT_MAX = int(np.iinfo(np.int32).max)
+
+
+def _check_count(name: str, value: Any, lower: int) -> int:
+    """
+    Check an order, a lag or a length that is passed to the compiled updaters.
+
+    Parameters
+    ----------
+    name : str
+        The name of the argument.
+    value : int
+        The value.
+    lower : int
+        The smallest accepted value.
+
+    Returns
+    -------
+    int
+        The value as a Python int.
+
+    Raises
+    ------
+    TypeError
+        If the value is not an integer.
+    ValueError
+        If the value is smaller than ``lower`` or larger than the largest int32.
+    """
+    result = check_int(name, value, lower=lower)
+    if result > _INT_MAX:
+        _fail(
+            ValueError, name, f"an integer in [{lower}, {_INT_MAX}]", _describe(value)
+        )
+    return result
+
+
 def _common_names(p: int, o: int, q: int) -> list[str]:
     names = ["omega"]
     names.extend(["alpha[" + str(i + 1) + "]" for i in range(p)])
@@ -1460,19 +1497,13 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self.power: float = power
-        self._num_params = 1 + p + o + q
-        if p < 0 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative")
-        if p == 0 and o == 0:
-            raise ValueError("One of p or o must be strictly positive")
-        if power <= 0.0:
-            raise ValueError(
-                "power must be strictly positive, usually larger than 0.25"
-            )
+        self.p: int = _check_count("p", p, 0)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        self.power: float = check_float("power", power, lower=0.0, inclusive="neither")
+        self._num_params = 1 + self.p + self.o + self.q
+        if self.p == 0 and self.o == 0:
+            _fail(ValueError, "p", "an integer >= 1 when o is 0", _describe(p))
         self._name = self._generate_name()
         self._volatility_updater = rec.GARCHUpdater(self.p, self.o, self.q, self.power)
 
