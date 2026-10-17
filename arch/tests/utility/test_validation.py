@@ -499,12 +499,11 @@ def test_array_wrong_ndim():
         ["a", "b"],
         [1, "b"],
         ["2020-01-01"],
-        np.array([1 + 1j]),
         None,
         [None, 1.0],
         pd.Series(["a"]),
     ],
-    ids=["str", "mixed", "date-str", "complex", "none", "none-in-list", "series-str"],
+    ids=["str", "mixed", "date-str", "none", "none-in-list", "series-str"],
 )
 def test_array_rejects_unconvertible(value):
     with pytest.raises(
@@ -512,6 +511,51 @@ def test_array_rejects_unconvertible(value):
     ) as e:
         check_array("y", value, ndim=1)
     assert_form(e, "y")
+
+
+@pytest.mark.parametrize(
+    ("value", "text"),
+    [
+        (np.array([1 + 1j]), "complex128"),
+        (np.array([1 + 1j], dtype=np.complex64), "complex64"),
+        (np.ones(3, dtype=np.float16), "float16"),
+        (pd.Series(np.ones(3, dtype=np.float16)), "float16"),
+        (
+            pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": np.ones(3, dtype=np.float16)}),
+            "float16",
+        ),
+    ],
+    ids=["complex128", "complex64", "float16", "series-float16", "frame-float16"],
+)
+def test_array_rejects_float16_and_complex(value, text):
+    # The message gives the data type that was received and the data types accepted
+    with pytest.raises(
+        TypeError,
+        match=r"^y must be an array of finite real numbers \(integer, Boolean, "
+        rf"float32 or float64 data\); got {text} data with shape \(\d+(, \d+)?,?\) "
+        r"\(\w+\)$",
+    ) as e:
+        check_array("y", value)
+    assert_form(e, "y")
+
+
+def test_array_complex_is_allowed_by_the_flag():
+    value = np.array([1 + 1j, 2.0, np.nan])
+    with pytest.raises(
+        ValueError, match=r"^y must be a 1-d array of finite numbers; got 1 NaN"
+    ):
+        check_array("y", value, ndim=1, allow_complex=True)
+    out = check_array("y", value, ndim=1, allow_complex=True, allow_nan=True)
+    assert out.dtype == np.complex128
+    with pytest.raises(
+        TypeError, match=r"^y must be a 1-d array of finite real or complex"
+    ):
+        check_array("y", np.ones(3, dtype=np.float16), ndim=1, allow_complex=True)
+    # NaN or inf in the imaginary part are found
+    with pytest.raises(ValueError, match=r"got 1 inf \(ndarray\)"):
+        check_array(
+            "y", np.array([1 + 1j, complex(2, np.inf)]), ndim=1, allow_complex=True
+        )
 
 
 def test_array_rejects_dates():

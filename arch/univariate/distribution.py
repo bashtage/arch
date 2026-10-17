@@ -398,7 +398,7 @@ class Distribution(metaclass=ABCMeta):
         TypeError
             If std_resid cannot be converted to float64.
         ValueError
-            If std_resid is not 1-d, is empty, or contains NaN or inf.
+            If std_resid is not 1-d or is empty.
 
         Notes
         -----
@@ -665,7 +665,9 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             return sum(lls)
 
     def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
-        check_array("std_resid", std_resid, ndim=1, min_length=1)
+        check_array(
+            "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
+        )
         return empty(0)
 
     def _simulator(self, size: int | tuple[int, ...]) -> Float64Array:
@@ -879,15 +881,19 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         TypeError
             If std_resid cannot be converted to float64.
         ValueError
-            If std_resid is not 1-d, is empty, or contains NaN or inf.
+            If std_resid is not 1-d or is empty.
 
         Notes
         -----
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
-        std_resid = check_array("std_resid", std_resid, ndim=1, min_length=1)
-        k = cast("float", stats.kurtosis(std_resid, fisher=False))
+        std_resid = check_array(
+            "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
+        )
+        with np.errstate(invalid="ignore"):
+            # Non-finite residuals give NaN and the default starting value
+            k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
@@ -1177,7 +1183,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         TypeError
             If std_resid cannot be converted to float64.
         ValueError
-            If std_resid is not 1-d, is empty, or contains NaN or inf.
+            If std_resid is not 1-d or is empty.
 
         Notes
         -----
@@ -1185,8 +1191,12 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         produce a moment-based estimator for the starting value of the shape
         parameter.  The starting value of the skewness parameter is 0.
         """
-        std_resid = check_array("std_resid", std_resid, ndim=1, min_length=1)
-        k = cast("float", stats.kurtosis(std_resid, fisher=False))
+        std_resid = check_array(
+            "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
+        )
+        with np.errstate(invalid="ignore"):
+            # Non-finite residuals give NaN and the default starting value
+            k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
@@ -1561,7 +1571,9 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         -----
         Defaults to 1.5 which implies heavier tails than a normal.
         """
-        check_array("std_resid", std_resid, ndim=1, min_length=1)
+        check_array(
+            "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
+        )
         return to_array_1d(array([1.5]))
 
     def _simulator(self, size: int | tuple[int, ...]) -> Float64Array:

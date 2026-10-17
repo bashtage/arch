@@ -158,11 +158,13 @@ The rules
    rejected. NaN and inf are rejected unless the argument is documented to accept them.
 4. **NumPy scalars** are accepted wherever the Python type of the same kind is accepted.
 5. **Data** is ``array_like`` and is converted to ``float64`` (``as_float64`` in
-   ``arch/utility/array.py``). Strings, dates, complex numbers, ``None`` and objects that
-   are not numbers cannot be converted. NaN and inf in the data of the tests, the
-   estimators and the covariance estimators raise a ``ValueError`` that names the
-   argument, except where NaN is handled by design (the data of the bootstraps, the
-   diagnostics that drop NaN, outputs padded with NaN), which the docstring says.
+   ``arch/utility/array.py``), following the rules in "Data types" below. Strings,
+   dates, ``None`` and objects that are not numbers cannot be converted, and neither
+   can float16 data or, where complex data are not accepted, complex data. NaN and inf
+   in the data of the tests, the estimators and the covariance estimators raise a
+   ``ValueError`` that names the argument, except where NaN is handled by design (the
+   data of the bootstraps, the diagnostics that drop NaN, outputs padded with NaN),
+   which the docstring says.
 6. **String options** are not case sensitive (``check_option``).
 7. **Positions and dates** (``first_obs``, ``last_obs``, ``start``) must be in
    ``[0, nobs]`` or, for a data set with a date index, a date within the index.
@@ -243,8 +245,10 @@ returns the value in its canonical type: a Python ``int``, ``float`` or ``bool``
    * - ``check_instance(name, value, types, *, allow_none=False)``
      - objects of a class, such as a distribution
    * - ``check_array(name, value, *, ndim=None, shape=None, min_length=None,
-       squeeze=True, allow_nan=False, allow_inf=False, allow_none=False)``
-     - ``array_like`` data, converted to ``float64``, with its dimensions, length and
+       squeeze=True, allow_nan=False, allow_inf=False, allow_none=False,
+       allow_complex=False)``
+     - ``array_like`` data, converted to ``float64`` (``complex128`` if
+       ``allow_complex`` and the data are complex), with its dimensions, length and
        finiteness
    * - ``check_ndarray(name, value, *, ndim, shape=None, writeable=False,
        allow_none=False)``
@@ -267,6 +271,77 @@ returns the value in its canonical type: a Python ``int``, ``float`` or ``bool``
 Call the helpers at the top of the function or in ``__init__``, and use the value that
 they return. The helpers are private (``arch.utility._validation`` is not part of the
 API), so a library that wants the same checks copies them.
+
+Data types
+~~~~~~~~~~
+
+One rule decides which data types the public API accepts. It is in ``as_float64`` and
+``_rejected_dtype`` in ``arch/utility/array.py``, and ``ensure1d``, ``ensure2d``,
+``to_array_1d`` and ``check_array`` use it, so a function never tests a data type
+itself.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Data type
+     - Real data (the default)
+     - Complex allowed (``allow_complex=True``)
+   * - bool, integer, unsigned integer
+     - converted to ``float64``
+     - converted to ``float64``
+   * - float32, float64, longdouble
+     - converted to ``float64``
+     - converted to ``float64``
+   * - complex64, complex128
+     - ``TypeError``
+     - converted to ``complex128``
+   * - float16
+     - ``TypeError``
+     - ``TypeError``
+   * - strings, dates, ``None``, other objects
+     - ``TypeError``
+     - ``TypeError``
+
+* **Everything is computed in float64.** float32 is accepted and promoted on entry, as
+  NumPy does for ``numpy.cov``, so that the result for float32 data is the result for
+  the same values stored as float64. A calculation in float32 is not accurate enough
+  for these estimators. In an emulation with every array in float32, the kernel
+  covariance estimators are accurate to about 1e-6 for well scaled data and to 1e-2 for
+  data whose mean is large relative to the standard deviation, the unit root statistics
+  differ from float64 by 1e-7 to 1e-6 for well scaled series and by up to 4e-2
+  (Phillips-Perron) for a series with a large level, the ADF lag search fails with a
+  singular matrix for such series and for a series with a trend and thousands of
+  observations, and the parameters of the cointegrating regressions differ by up to
+  1e-4.
+* **float16 is rejected** wherever data are accepted. Its 11 bits are about 3 decimal
+  digits, which is not enough for any of the estimators, and a float16 array is almost
+  always a mistake (an array that was cast to save memory). The message names the
+  accepted types, so that the fix, ``astype(np.float32)`` or ``astype(np.float64)``, is
+  clear.
+* **Complex data are accepted only where the function is Hermitian** and the result is
+  correct: the kernel covariance estimators in ``arch.covariance.kernel``, ``cov_nw``,
+  and ``add_trend``, whose real trend columns are added to the data. The bootstraps do
+  not convert their data, so they resample complex data, and ``apply``, ``cov`` and
+  ``var`` accept a statistic that returns complex values (``cov`` is then Hermitian and
+  ``var`` is real). All other estimators raise a ``TypeError``: the unit root and
+  cointegration tests, the ARCH models, volatility processes and distributions, the
+  multiple comparison procedures, ``optimal_block_length`` and the VAR prewhitening of
+  ``PreWhitenedRecolored``, for which there is no single model of complex data (see its
+  Notes).
+
+To accept complex data in a new function, pass ``allow_complex=True`` and make every
+product Hermitian: use the conjugate transpose (``x.conj().T``), take the real part of a
+quantity that is real by construction, such as the autocovariance used in a bandwidth
+that is summed over positive and negative lags, and return the same data type for a
+real input as before. Test it against the real data of the real and imaginary parts
+(see ``arch/tests/covariance/test_covariance_dtypes.py``): for :math:`z=a+ib` the
+Hermitian covariance is :math:`\Omega_{aa}+\Omega_{bb}+i(\Omega_{ba}-\Omega_{ab})`
+where :math:`\Omega_{uv}` is the covariance of the real data :math:`u` and :math:`v`
+computed with the same kernel and bandwidth. The tables in
+``arch/tests/test_validation_dtypes.py`` and ``arch/tests/utility/test_dtype_policy.py``
+list every data type for every entry point and for each helper; add a row for a new
+entry point.
 
 Testing validation
 ~~~~~~~~~~~~~~~~~~

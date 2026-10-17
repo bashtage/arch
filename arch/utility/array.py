@@ -8,7 +8,7 @@ from abc import ABCMeta
 from collections.abc import Hashable, Sequence
 import datetime as dt
 from functools import cached_property
-from typing import Any, Literal, Union, cast, overload
+from typing import Any, Literal, NoReturn, Union, cast, overload
 
 import numpy as np
 from pandas import (
@@ -23,7 +23,12 @@ from pandas import (
     concat,
     to_datetime,
 )
-from pandas.api.types import is_bool_dtype, is_float_dtype, is_integer_dtype
+from pandas.api.types import (
+    is_bool_dtype,
+    is_complex_dtype,
+    is_float_dtype,
+    is_integer_dtype,
+)
 
 from arch._typing import (
     AnyArray,
@@ -55,7 +60,8 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     Parameters
     ----------
     x : ndarray or Series
-        Array to convert.
+        Array to convert. Integer, Boolean and float32 data are converted to
+        float64.
 
     Returns
     -------
@@ -67,54 +73,111 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     ValueError
         If x is an ndarray that cannot be converted to 1D.
     TypeError
-        If x is not a Series or an ndarray.
+        If x is not a Series or an ndarray, or its data are float16, complex or
+        cannot be converted to float64.
     """
     if isinstance(x, np.ndarray):
-        if x.ndim == 1 and x.dtype.type is np.float64:
+        if x.ndim == 1 and x.dtype == np.float64 and x.dtype.char == "d":
             return cast("Float64Array1D", x)
         _x = x.squeeze()
         if _x.ndim == 1:
-            return cast("Float64Array1D", _x.astype(float))
+            return cast("Float64Array1D", as_float64(_x, "x"))
         elif _x.ndim == 0:
-            return cast("Float64Array1D", np.atleast_1d(_x).astype(float))
+            return cast("Float64Array1D", np.atleast_1d(as_float64(_x, "x")))
         else:
             # Imported here because the validation module imports this module
             from arch.utility._validation import _describe, _fail  # noqa: PLC0415
 
             _fail(ValueError, "x", "1D or 1D convertible", _describe(x))
     elif isinstance(x, Series):
-        return np.asarray(x.to_numpy(), dtype=float)
+        return as_float64(x.to_numpy(), "x")
     else:
         from arch.utility._validation import _describe, _fail  # noqa: PLC0415
 
         _fail(TypeError, "x", "a Series or ndarray", _describe(x))
 
 
-def as_float64(x: Any, name: str) -> Any:
+_REAL_NUMBERS = "real numbers (integer, Boolean, float32 or float64 data)"
+_INEXACT_NUMBERS = (
+    "real or complex numbers (integer, Boolean, float32, float64, complex64 or "
+    "complex128 data)"
+)
+
+
+def _numbers_rule(allow_complex: bool) -> str:
+    """The rule for the data in a message: the numbers and the data types accepted."""
+    return _INEXACT_NUMBERS if allow_complex else _REAL_NUMBERS
+
+
+def _rejected_dtype(dtype: Any, allow_complex: bool) -> bool:
+    """
+    Whether the data type of numeric data is not accepted.
+
+    This is the only definition of which numeric data types are rejected: float16,
+    which has 11 bits of precision and is never accepted, and complex types, which
+    are accepted only if ``allow_complex``. Every other numeric type is converted:
+    integer, unsigned integer, Boolean and real floating point types to float64
+    (float32 is promoted, since a calculation in float32 loses accuracy that the
+    estimators need), and complex types to complex128.
+    """
+    dtype = getattr(dtype, "numpy_dtype", dtype)  # pandas extension types
+    kind = getattr(dtype, "kind", "")
+    if kind == "f":
+        return bool(dtype.itemsize < 4)
+    return kind == "c" and not allow_complex
+
+
+def _dtype_error(
+    name: str, dtype: Any, shape: tuple[int, ...], x: Any, allow_complex: bool
+) -> NoReturn:
+    """Raise the TypeError of data that have a data type that is not accepted."""
+    dtype = getattr(dtype, "numpy_dtype", dtype)
+    raise TypeError(
+        f"{name} must be array_like of {_numbers_rule(allow_complex)}; got "
+        f"{dtype} data with shape {shape} ({type(x).__name__})"
+    )
+
+
+def _check_pandas_dtypes(
+    x: Series | DataFrame, dtypes: Sequence[Any], name: str, allow_complex: bool
+) -> None:
+    """Reject a Series, or a DataFrame with a column, of a data type not accepted."""
+    for dtype in dtypes:
+        if _rejected_dtype(dtype, allow_complex):
+            _dtype_error(name, dtype, x.shape, x, allow_complex)
+
+
+def as_float64(x: Any, name: str, *, allow_complex: bool = False) -> Any:
     """
     Convert array_like data to a float64 ndarray.
 
     Parameters
     ----------
     x : array_like
-        The data. Integer, unsigned integer, Boolean and other real floating
-        point data are converted. Object data are converted if every element is
-        a real number.
+        The data. Integer, unsigned integer, Boolean, float32 and other real
+        floating point data are converted to float64. Object data are converted
+        if every element is a real number. float16 data are not accepted.
     name : str
         The name of the variable. Used in error messages.
+    allow_complex : bool, optional
+        If True, complex data (complex64, complex128 or object data with a
+        complex element) are converted to complex128. Real data are still
+        converted to float64. If False, complex data are not accepted.
 
     Returns
     -------
     ndarray
-        The data as float64, with the shape of x. This is x if x is an ndarray with
-        dtype float64.
+        The data as float64, or as complex128 if allow_complex and the data
+        are complex, with the shape of x. This is x if x is an ndarray with
+        dtype float64 or, if allow_complex, complex128.
 
     Raises
     ------
     TypeError
-        If the data cannot be converted to real float64 values, e.g., if the
-        data are None or contain None, strings, dates, complex values or objects
-        that are not numbers.
+        If the data cannot be converted to float64 (or complex128 if
+        allow_complex), e.g., if the data are None or contain None, strings,
+        dates or objects that are not numbers, or if they are float16, or
+        complex unless allow_complex.
 
     Notes
     -----
@@ -122,33 +185,38 @@ def as_float64(x: Any, name: str) -> Any:
     ``np.asarray(None).astype(float)`` is NaN. None is rejected here, as a value
     and as an element of an object array, so that a missing argument or value
     is not turned into a NaN.
+
+    float32 data are converted to float64 and the calculations of the
+    estimators are done in float64, so that their results do not depend on
+    whether the data were stored in 32 or 64 bits. float16 data are rejected,
+    since its 11 bits of precision (about 3 decimal digits) are not enough for
+    any estimator; convert it with ``astype(np.float32)`` or
+    ``astype(np.float64)`` if that is intended.
     """
     if x is None:
         raise TypeError(
             f"{name} must be array_like data that can be converted to float64; "
             "got None (NoneType)"
         )
+    if isinstance(x, DataFrame):
+        # The columns can have different data types, which np.asarray merges
+        _check_pandas_dtypes(x, list(x.dtypes), name, allow_complex)
     arr = np.asarray(x)
-    # An 8-byte long double compares equal to float64, but it is a different type
-    if arr.dtype.type is np.float64:
+    # The character is "d" for float64 only. np.longdouble is equal to np.float64 where
+    # it has 64 bits (Windows) but it is a different type that LAPACK does not accept.
+    if arr.dtype == np.float64 and arr.dtype.char == "d":
         return arr
-    if arr.dtype.kind in "biuf":
+    kind = arr.dtype.kind
+    if kind in "fc":
+        if _rejected_dtype(arr.dtype, allow_complex):
+            _dtype_error(name, arr.dtype, arr.shape, x, allow_complex)
+        if _is_exactly(arr.dtype, np.complex128):
+            return arr
+        return arr.astype(np.complex128 if kind == "c" else np.float64)
+    if kind in "biu":
         return arr.astype(np.float64)
-    if arr.dtype.kind == "O":
-        if any(item is None for item in arr.flat):
-            raise TypeError(
-                f"{name} must contain real numbers that can be converted to "
-                f"float64; got None in an object array with shape {arr.shape} "
-                f"({type(x).__name__})"
-            )
-        try:
-            return arr.astype(np.float64)
-        except (TypeError, ValueError) as exc:
-            raise TypeError(
-                f"{name} must contain real numbers that can be converted to "
-                f"float64. Received an object array with shape {arr.shape} that "
-                f"contains elements that cannot be converted ({exc})."
-            ) from exc
+    if kind == "O":
+        return _object_as_float64(arr, x, name, allow_complex)
     raise TypeError(
         f"{name} must be array_like with integer, Boolean or floating point "
         f"values that can be converted to float64. Received an array with shape "
@@ -156,7 +224,73 @@ def as_float64(x: Any, name: str) -> Any:
     )
 
 
-def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
+def _object_as_float64(arr: np.ndarray, x: Any, name: str, allow_complex: bool) -> Any:
+    """Convert an object array to float64, or to complex128 if allowed and needed."""
+    if any(item is None for item in arr.flat):
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to "
+            f"float64; got None in an object array with shape {arr.shape} "
+            f"({type(x).__name__})"
+        )
+    try:
+        return arr.astype(np.float64)
+    except (TypeError, ValueError) as exc:
+        if allow_complex:
+            try:
+                return arr.astype(np.complex128)
+            except (TypeError, ValueError):
+                pass
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to "
+            f"float64. Received an object array with shape {arr.shape} that "
+            f"contains elements that cannot be converted ({exc})."
+        ) from exc
+
+
+def _is_exactly(dtype: Any, target: type) -> bool:
+    """
+    Whether a data type is float64 (or complex128), and not just equal to it.
+
+    ``np.longdouble`` is equal to ``np.float64`` where long double has 64 bits
+    (Windows), but it is a different type that pandas does not convert, and LAPACK
+    only accepts float64. The type character is "d" for float64 and "D" for
+    complex128.
+    """
+    return bool(
+        isinstance(dtype, np.dtype)
+        and dtype == target
+        and dtype.char == np.dtype(target).char
+    )
+
+
+def _astype_pandas(
+    x: Series | DataFrame, target: type, allow_complex: bool, name: str
+) -> tuple[Any, type]:
+    """
+    Convert a Series or DataFrame using astype.
+
+    If float64 is the target and the data are objects with complex elements, complex128
+    is used when complex data are allowed. Returns the converted object and the data
+    type that it was converted to.
+    """
+    try:
+        return x.astype(target), target
+    except (TypeError, ValueError) as exc:
+        if allow_complex and target is np.float64:
+            try:
+                return x.astype(np.complex128), np.complex128
+            except (TypeError, ValueError):
+                pass
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to float64. "
+            f"Received a {type(x).__name__} with shape {x.shape} that contains "
+            f"elements that cannot be converted ({exc})."
+        ) from exc
+
+
+def _float64_pandas(
+    x: Series | DataFrame, name: str, allow_complex: bool = False
+) -> Any:
     """
     Convert a Series or DataFrame to float64, keeping the index and labels.
 
@@ -166,27 +300,40 @@ def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
         The data.
     name : str
         The name of the variable. Used in error messages.
+    allow_complex : bool, optional
+        If True, complex data are converted to complex128, and all the columns of
+        a DataFrame with a complex column are converted to complex128.
 
     Returns
     -------
     Series or DataFrame
-        x if every column is a float64 NumPy dtype. Otherwise a new object,
-        so that the input is never modified.
+        x if every column is a float64 NumPy dtype (complex128 if allow_complex and
+        a column is complex). Otherwise a new object, so that the input is never
+        modified.
 
     Raises
     ------
     TypeError
-        If the data cannot be converted to real float64 values.
+        If the data cannot be converted to real float64 values (or complex128 if
+        allow_complex), or they are float16.
     """
-    dtypes = x.dtypes if isinstance(x, DataFrame) else [x.dtype]
-    if all(
-        isinstance(dtype, np.dtype) and dtype.type is np.float64 for dtype in dtypes
-    ):
+    dtypes: list[Any] = list(x.dtypes) if isinstance(x, DataFrame) else [x.dtype]
+    if all(_is_exactly(dtype, np.float64) for dtype in dtypes):
+        return x
+    _check_pandas_dtypes(x, dtypes, name, allow_complex)
+    target: type = (
+        np.complex128
+        if allow_complex
+        and any(isinstance(dtype, np.dtype) and dtype.kind == "c" for dtype in dtypes)
+        else np.float64
+    )
+    if all(_is_exactly(dtype, target) for dtype in dtypes):
         return x
     if not all(
         is_float_dtype(dtype)
         or is_integer_dtype(dtype)
         or is_bool_dtype(dtype)
+        or (allow_complex and is_complex_dtype(dtype))
         or (isinstance(dtype, np.dtype) and dtype.kind == "O")
         for dtype in dtypes
     ):
@@ -195,24 +342,17 @@ def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
             f"can be converted to float64. Received a {type(x).__name__} with "
             f"shape {x.shape} and data type(s) {', '.join(map(str, set(dtypes)))}."
         )
-    try:
-        if any(
-            isinstance(dtype, np.dtype) and dtype.type is np.longdouble
-            for dtype in dtypes
-        ):
-            # pandas does not convert an 8-byte long double, which it treats as
-            # float64
-            values = np.asarray(x.to_numpy(), dtype=np.float64)
-            if isinstance(x, Series):
-                return Series(values, index=x.index, name=x.name)
-            return DataFrame(values, index=x.index, columns=x.columns)
-        return x.astype(np.float64)
-    except (TypeError, ValueError) as exc:
-        raise TypeError(
-            f"{name} must contain real numbers that can be converted to float64. "
-            f"Received a {type(x).__name__} with shape {x.shape} that contains "
-            f"elements that cannot be converted ({exc})."
-        ) from exc
+    converted, target = _astype_pandas(x, target, allow_complex, name)
+    new_dtypes = (
+        list(converted.dtypes) if isinstance(x, DataFrame) else [converted.dtype]
+    )
+    if not all(_is_exactly(dtype, target) for dtype in new_dtypes):
+        # pandas does not convert longdouble to float64 when they are equal
+        values = converted.to_numpy().astype(target)
+        if isinstance(converted, DataFrame):
+            return DataFrame(values, index=converted.index, columns=converted.columns)
+        return Series(values, index=converted.index, name=converted.name)
+    return converted
 
 
 @overload
@@ -220,6 +360,8 @@ def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[False] = ...,
+    *,
+    allow_complex: bool = ...,
 ) -> AnyArray1D:  # pragma: no cover
     ...  # pragma: no cover
 
@@ -229,6 +371,8 @@ def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[True],
+    *,
+    allow_complex: bool = ...,
 ) -> Series:  # pragma: no cover
     ...  # pragma: no cover
 
@@ -237,6 +381,8 @@ def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: bool = False,
+    *,
+    allow_complex: bool = False,
 ) -> AnyArray1D | Series:
     """
     Convert data to a 1-d float64 ndarray or Series.
@@ -246,20 +392,25 @@ def ensure1d(
     x : array_like, Series or DataFrame
         The data to convert. A DataFrame must have a single column, and any
         other input must have at most one dimension with more than one element.
-        Integer, unsigned integer and Boolean data are converted to float64.
+        Integer, unsigned integer, Boolean and float32 data are converted to
+        float64. float16 data are not accepted.
     name : Hashable or None
         The name of the variable. Used in error messages and as the name of
         the Series if x is not a Series or a DataFrame and series is True.
     series : bool, optional
         If True, return a Series. If False, return an ndarray.
+    allow_complex : bool, optional
+        If True, complex data are converted to complex128 and real data to
+        float64. If False, complex data are not accepted.
 
     Returns
     -------
     ndarray or Series
         The 1-d data. A Series if series is True and an ndarray otherwise. The
-        dtype is float64. The index of a Series is kept. x is returned, or is
-        a view of x, if x is float64 data. The name of a Series that is not a
-        str is converted to a str.
+        dtype is float64, or complex128 if allow_complex and x is complex. The
+        index of a Series is kept. x is returned, or is a view of x, if x is
+        float64 data (or complex128 data if allow_complex). The name of a Series
+        that is not a str is converted to a str.
 
     Raises
     ------
@@ -267,7 +418,9 @@ def ensure1d(
         If x cannot be squeezed to 1 dimension.
     TypeError
         If x cannot be converted to real float64 values (None cannot be
-        converted), name is not hashable or series is not a bool.
+        converted), or to complex128 values if allow_complex, if x is float16 or
+        complex data that are not allowed, name is not hashable or series is not
+        a bool.
 
     Notes
     -----
@@ -286,7 +439,7 @@ def ensure1d(
 
         check_instance("name", name, Hashable)
     if isinstance(x, Series):
-        x_ser = _float64_pandas(x, str(name))
+        x_ser = _float64_pandas(x, str(name), allow_complex)
         if not isinstance(x_ser.name, str):
             # Rename a new Series so that the Series of the caller is unchanged
             x_ser = x_ser.rename(str(x_ser.name))
@@ -301,7 +454,7 @@ def ensure1d(
                 f"{name} must be squeezable to 1 dimension. Received a DataFrame "
                 f"with shape {x.shape}, and a DataFrame must have a single column."
             )
-        x_frame = _float64_pandas(x, str(name))
+        x_frame = _float64_pandas(x, str(name), allow_complex)
         if not series:
             return x_frame.iloc[:, 0].to_numpy()
         x_series = Series(x_frame.iloc[:, 0], x_frame.index)
@@ -309,7 +462,7 @@ def ensure1d(
             x_series.name = str(x_series.name)
         return x_series
 
-    x_arr = as_float64(x, str(name))
+    x_arr = as_float64(x, str(name), allow_complex=allow_complex)
     if sum([s > 1 for s in x_arr.shape]) > 1:
         raise ValueError(
             f"{name} must be squeezable to 1 dimension. Received an array with "
@@ -326,6 +479,8 @@ def ensure1d(
 def ensure2d(
     x: Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike,
     name: str,
+    *,
+    allow_complex: bool = False,
 ) -> DataFrame | NDArray:
     """
     Convert data to a 2-d float64 DataFrame or ndarray.
@@ -336,17 +491,22 @@ def ensure2d(
         The data to convert. A Series is converted to a DataFrame with a
         single column. A scalar is converted to an array with a single row and
         column, and a 1-d array_like to an array with a single column.
-        Integer, unsigned integer and Boolean data are converted to float64.
+        Integer, unsigned integer, Boolean and float32 data are converted to
+        float64. float16 data are not accepted.
     name : str
         The name of the variable. Used in error messages.
+    allow_complex : bool, optional
+        If True, complex data are converted to complex128 and real data to
+        float64. If False, complex data are not accepted.
 
     Returns
     -------
     DataFrame or ndarray
-        The 2-d data with dtype float64. A DataFrame if x is a Series or a
-        DataFrame and an ndarray otherwise. The index and the column labels
-        are kept. x is returned if it is a DataFrame or an ndarray with float64
-        data.
+        The 2-d data with dtype float64, or complex128 if allow_complex and x is
+        complex. A DataFrame if x is a Series or a DataFrame and an ndarray
+        otherwise. The index and the column labels are kept. x is returned if it
+        is a DataFrame or an ndarray with float64 data (or complex128 data if
+        allow_complex).
 
     Raises
     ------
@@ -354,7 +514,8 @@ def ensure2d(
         If x has more than 2 dimensions.
     TypeError
         If x cannot be converted to real float64 values (None cannot be
-        converted) or name is not a str.
+        converted), or to complex128 values if allow_complex, if x is float16 or
+        complex data that are not allowed, or name is not a str.
 
     Notes
     -----
@@ -367,10 +528,10 @@ def ensure2d(
 
         check_str("name", name)
     if isinstance(x, Series):
-        return DataFrame(_float64_pandas(x, name))
+        return DataFrame(_float64_pandas(x, name, allow_complex))
     elif isinstance(x, DataFrame):
-        return _float64_pandas(x, name)
-    arr = as_float64(x, name)
+        return _float64_pandas(x, name, allow_complex)
+    arr = as_float64(x, name, allow_complex=allow_complex)
     if arr.ndim == 0:
         return np.asarray([[arr]])
     elif arr.ndim == 1:
