@@ -157,8 +157,9 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     ----------
     x : array_like
         The data, which can be one-dimensional or two-dimensional.  Operates
-        column by column if 2-dimensional. The data are converted to float64
-        and must be finite and have at least 11 observations.
+        column by column if 2-dimensional. Integer, Boolean and float32 data are
+        converted to float64. float16 and complex data are not accepted. The data
+        must be finite and have at least 11 observations.
 
     Returns
     -------
@@ -172,8 +173,8 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     Raises
     ------
     TypeError
-        If ``x`` cannot be converted to float64 (strings, dates, complex
-        numbers or None).
+        If ``x`` cannot be converted to float64 (strings, dates, float16 or
+        complex data, or None).
     ValueError
         If ``x`` has more than 2 dimensions, no columns or fewer than 11
         observations, or contains NaN or inf.
@@ -365,6 +366,26 @@ def _check_block_size(block_size: Any, integer: bool = True) -> int | float:
     if isinstance(block_size, (int, np.integer)):
         return int(block_size)
     return checked
+
+
+def _replication_dtype(base: np.ndarray) -> type:
+    """
+    The data type of the replications of a statistic.
+
+    The imaginary part of a complex statistic must not be discarded when the
+    replications are stored.
+    """
+    return np.complex128 if base.dtype.kind == "c" else np.float64
+
+
+def _check_real_statistic(base: np.ndarray) -> None:
+    """Raise a TypeError if the statistic is complex, which has no interval."""
+    if base.dtype.kind == "c":
+        raise TypeError(
+            "the value returned by func must be real numbers, since a confidence "
+            f"interval is not defined for complex values; got {base.dtype} values "
+            "(ndarray)"
+        )
 
 
 def _check_extra_kwargs(
@@ -817,7 +838,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             If ``func`` or ``std_err_func`` is not callable, ``reps`` or
             ``studentize_reps`` is not an int, ``size`` is not a number,
             ``reuse`` is not a bool, ``method``, ``tail`` or ``sampling`` is not
-            a str, or ``extra_kwargs`` is not a dict.
+            a str, ``extra_kwargs`` is not a dict, or ``func`` returns complex
+            values, which have no confidence interval.
         ValueError
             If ``reps`` is less than 1, ``size`` is not in (0, 1),
             ``studentize_reps`` is less than 1 when it is used, ``method``,
@@ -940,11 +962,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 std_err_func=std_err_func,
                 studentize_reps=studentize_reps,
                 sampling=sampling,
+                real_only=True,
             )
 
         base, results = self._base, self._results
         assert results is not None
         assert base is not None
+        _check_real_statistic(base)
         studentized_results = self._studentized_results
 
         std_err = np.empty((0,))
@@ -1124,7 +1148,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         -------
         ndarray
             The reps by nparam array of computed function values where each row
-            corresponds to a bootstrap iteration.
+            corresponds to a bootstrap iteration. The array is complex128 if
+            func returns complex values and float64 otherwise.
 
         Raises
         ------
@@ -1164,7 +1189,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         base = np.asarray(func(*self._args, **kwargs))
         num_params = 1 if base.ndim == 0 else base.shape[0]
-        results = np.zeros((reps, num_params))
+        results = np.zeros((reps, num_params), dtype=_replication_dtype(base))
         count = 0
         for pos_data, kw_data in self.bootstrap(reps):
             kwargs = _add_extra_kwargs(kw_data, extra_kwargs)
@@ -1182,6 +1207,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         sampling: Literal[
             "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
         ] = "nonparametric",
+        real_only: bool = False,
     ) -> None:
         eps = np.finfo(np.double).eps
         # Private, more complicated version of apply
@@ -1195,9 +1221,11 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         # Allows lists, tuples, scalars and 0-d arrays
         base = np.asarray(func(*self._args, **kwargs))
+        if real_only:
+            _check_real_statistic(base)
 
         num_params = 1 if base.ndim == 0 else base.shape[0]
-        results = np.zeros((reps, num_params))
+        results = np.zeros((reps, num_params), dtype=_replication_dtype(base))
         studentized_results = np.zeros((reps, num_params))
 
         count = 0
@@ -1263,7 +1291,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Returns
         -------
         ndarray
-            Bootstrap covariance estimator.
+            Bootstrap covariance estimator. If func returns complex values, this
+            is the complex Hermitian covariance, which uses the conjugate
+            transpose, and a complex128 array.
 
         Raises
         ------
@@ -1339,6 +1369,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         else:
             errors = results - base
 
+        if np.iscomplexobj(errors):
+            # Hermitian covariance of a complex statistic
+            return errors.T.dot(errors.conj()) / reps
         return errors.T.dot(errors) / reps
 
     def var(
@@ -1368,7 +1401,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Returns
         -------
         ndarray
-            Bootstrap variance estimator.
+            Bootstrap variance estimator. If func returns complex values, this
+            is the real variance, the average of the squared absolute values of
+            the errors.
 
         Raises
         ------
@@ -1432,6 +1467,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         else:
             errors = results - base
 
+        if np.iscomplexobj(errors):
+            # The variance of a complex statistic is real
+            return (errors.real**2 + errors.imag**2).sum(0) / reps
         return (errors**2).sum(0) / reps
 
     def update_indices(self) -> BootstrapIndexT:
