@@ -2904,21 +2904,22 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rho: float = 1.4142135623730951,
     ) -> None:
         super().__init__()
-        self.tau0: float = tau0
-        self.tau1: float = tau1
-        self.kmax: int = kmax
-        self._backcast_size = kmax
-        self.rho: float = rho
+        self.tau0: float = check_float("tau0", tau0, lower=0.0, inclusive="neither")
+        self.tau1: float = check_float("tau1", tau1, lower=0.0, inclusive="neither")
+        self.kmax: int = _check_count("kmax", kmax, 1)
+        self._backcast_size = self.kmax
+        self.rho: float = check_float("rho", rho, lower=1.0, inclusive="neither")
         self._num_params = 0
 
-        if tau0 <= tau1 or tau1 <= 0:
-            raise ValueError("tau0 must be greater than tau1 and tau1 > 0")
-        if tau1 * rho ** (kmax - 1) > tau0:
-            raise ValueError("tau1 * rho ** (kmax-1) smaller than tau0")
-        if not kmax >= 1:
-            raise ValueError("kmax must be a positive integer")
-        if not rho > 1:
-            raise ValueError("rho must be a positive number larger than 1")
+        if self.tau0 <= self.tau1:
+            rule = f"a finite float greater than tau1 ({self.tau1:g})"
+            _fail(ValueError, "tau0", rule, _describe(tau0))
+        with np.errstate(over="ignore"):
+            # The power overflows to inf for a large kmax, which is then too large
+            longest = np.float64(self.tau1) * np.float64(self.rho) ** (self.kmax - 1)
+        if longest > self.tau0:
+            rule = f"such that tau1 * rho ** (kmax - 1) <= tau0 ({self.tau0:g})"
+            _fail(ValueError, "kmax", rule, _describe(kmax))
         self._name = "RiskMetrics2006"
         self._volatility_updater = rec.RiskMetrics2006Updater(
             self.kmax,
