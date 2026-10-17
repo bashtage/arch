@@ -187,11 +187,21 @@ class Row:
 
 
 def _label(value: Any) -> str:
-    text = repr(value)
+    """A label that is the same in every process, so no memory addresses (xdist)."""
     if isinstance(value, np.generic):
         text = f"np.{type(value).__name__}({value})"
     elif isinstance(value, np.ndarray):
         text = f"array{value.shape}"
+    elif value is None or isinstance(value, (bool, int, float, complex, str, bytes)):
+        text = repr(value)
+    elif (
+        isinstance(value, (list, tuple))
+        and len(value) <= 3
+        and all(v is None or isinstance(v, (bool, int, float, str)) for v in value)
+    ):
+        text = repr(value)
+    else:
+        text = type(value).__name__
     text = text.replace(" ", "")
     return text if len(text) <= 24 else text[:21] + "..."
 
