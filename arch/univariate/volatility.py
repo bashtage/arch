@@ -3732,7 +3732,16 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         these should be strictly positive, and usually larger than 0.25.
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
-        Default is 1000.
+        Default is 1000. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``q`` or ``truncation`` is not an integer, or ``power`` is not a
+        real number.
+    ValueError
+        If ``p`` or ``q`` is not 0 or 1, ``truncation`` is smaller than 1, or
+        ``power`` is not finite and strictly positive.
 
     Notes
     -----
