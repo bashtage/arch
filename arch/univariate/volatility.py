@@ -4224,31 +4224,25 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         truncation: int = 1000,
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self._truncation = int(truncation)
+        self.p: int = check_int("p", p, lower=0, upper=1)
+        self.o: int = check_int("o", o, lower=0, upper=1)
+        self.q: int = check_int("q", q, lower=0, upper=1)
+        self._truncation = _check_count("truncation", truncation, 1)
         self._est_delta = delta is None
-        self._delta = float(np.nan)
-        if not self._est_delta:
-            try:
-                assert delta is not None
-                self._delta = float(delta)
-            except (ValueError, TypeError) as exc:
-                raise TypeError("delta must be convertible to a float.") from exc
-            if not 0.05 < self._delta < 4:
-                raise ValueError("delta must be between 0.05 and 4")
-        if p < 0 or q < 0 or p > 1 or q > 1:
-            raise ValueError("p and q must be either 0 or 1.")
-        if o < 0 or o > 1:
-            raise ValueError("o must be either 0 or 1.")
-        if self._truncation <= 0:
-            raise ValueError("truncation must be a positive integer")
-        self._num_params = 2 + p + q + o + int(self._est_delta)
+        fixed_delta = check_float(
+            "delta",
+            delta,
+            lower=0.05,
+            upper=4.0,
+            inclusive="neither",
+            allow_none=True,
+        )
+        self._delta = float(np.nan) if fixed_delta is None else fixed_delta
+        self._num_params = 2 + self.p + self.q + self.o + int(self._est_delta)
         self._name = self._generate_name()
         delta_init = 2.0 if self._est_delta else self._delta
         self._volatility_updater = rec.FIAPARCHUpdater(
-            p, q, o, self._truncation, self._est_delta, delta_init
+            self.p, self.q, self.o, self._truncation, self._est_delta, delta_init
         )
         self._sigma_delta = np.empty(0)
 
