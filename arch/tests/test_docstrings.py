@@ -79,6 +79,9 @@ STRUCTURAL_CODES = frozenset(
     }
 )
 
+# The codes that compare the parameters with the signature
+SIGNATURE_CODES = frozenset({"PR01", "PR02", "PR03"})
+
 ALL_MODULES = (
     "arch",
     "arch.univariate",
@@ -247,6 +250,14 @@ def structural_codes(name: str) -> frozenset[str]:
             obj = numpydoc_validate.Validator._load_obj(name)
             if inspect.getdoc(obj):
                 codes.discard("GL08")
+        if codes & SIGNATURE_CODES:
+            # The signature of a metaclass that does not define __new__ or __init__
+            # depends on the version of Python: (name, bases, namespace, **kwargs)
+            # up to Python 3.10 and (*args, **kwargs) after it. The parameters cannot
+            # match both.
+            obj = numpydoc_validate.Validator._load_obj(name)
+            if inspect.isclass(obj) and issubclass(obj, type):
+                codes -= SIGNATURE_CODES
     return frozenset(codes)
 
 
