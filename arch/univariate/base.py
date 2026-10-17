@@ -41,6 +41,7 @@ from arch.univariate.diagnostics import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
+from arch.utility._options import check_option
 from arch.utility.array import append_same_type, ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
@@ -900,10 +901,14 @@ class ARCHModel(metaclass=ABCMeta):
         """
         if self._y_original is None:
             raise RuntimeError("Cannot estimate model without data.")
-        if cov_type not in ("robust", "classic"):
-            raise ValueError(
-                f"Unknown cov_type: {cov_type!r}. The valid values are 'robust' "
-                "and 'classic'."
+        cov_type = cast(
+            "Literal['robust', 'classic']",
+            check_option(cov_type, "cov_type", ("robust", "classic")),
+        )
+        if isinstance(disp, str):
+            disp = cast(
+                "Literal['off', 'final']",
+                check_option(disp, "disp", ("off", "final")),
             )
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
@@ -1698,11 +1703,9 @@ class ARCHModelFixedResult(_SummaryRepr):
         if scale is not None:
             vol = vol * np.sqrt(scale)
         elif annualize is not None:
-            scales = {"D": 252, "W": 52, "M": 12}
-            if annualize in scales:
-                vol = vol * np.sqrt(scales[annualize])
-            else:
-                raise ValueError("annualize not recognized")
+            scales = {"d": 252, "w": 52, "m": 12}
+            check_option(annualize, "annualize", scales, display=("D", "W", "M"))
+            vol = vol * np.sqrt(scales[annualize.lower()])
         else:
             title = "Conditional Volatility"
 
@@ -1911,7 +1914,13 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         import matplotlib.pyplot as plt  # noqa: PLC0415
 
-        plot_mean = plot_type.lower() == "mean"
+        plot_mean = (
+            check_option(plot_type, "plot_type", ("volatility", "mean")) == "mean"
+        )
+        method = cast(
+            "ForecastingMethod",
+            check_option(method, "method", ("analytic", "simulation", "bootstrap")),
+        )
         search_start = start is None
         if start is None:
             # The earliest origin for which the model can produce a forecast
@@ -1933,7 +1942,7 @@ class ARCHModelFixedResult(_SummaryRepr):
                 # not depend on start and is raised.
                 if not (
                     search_start
-                    and method.lower() == "bootstrap"
+                    and method == "bootstrap"
                     and start < self.model._y.shape[0] - 1
                 ):
                     raise
@@ -2375,14 +2384,17 @@ class ARCHModelResult(ARCHModelFixedResult):
 def _align_forecast(
     f: pd.DataFrame, align: Literal["origin", "target"]
 ) -> pd.DataFrame:
+    align = check_option(
+        align,
+        "align",
+        {"origin": "origin", "target": "target", "horizon": "target"},
+        display=("origin", "target"),
+    )
     if align == "origin":
         return f
-    elif align in ("target", "horizon"):
-        for i, col in enumerate(f):
-            f[col] = f[col].shift(i + 1)
-        return f
-    else:
-        raise ValueError("Unknown alignment")
+    for i, col in enumerate(f):
+        f[col] = f[col].shift(i + 1)
+    return f
 
 
 def _format_forecasts(

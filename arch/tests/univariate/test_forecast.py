@@ -1565,7 +1565,7 @@ def test_volatility_forecast_method_case(method):
 def test_forecast_unknown_method(model_name, method, use_result):
     model = _forecast_method_models()[model_name]
     res = model.fit(disp="off")
-    match = r"not a known forecasting method.*'analytic', 'simulation', 'bootstrap'"
+    match = r"method must be one of 'analytic', 'simulation' or 'bootstrap'"
     forecast = res.forecast if use_result else partial(model.forecast, res.params)
     with pytest.raises(ValueError, match=match):
         forecast(method=method)
