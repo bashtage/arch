@@ -43,7 +43,9 @@ from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility._validation import (
     check_array,
+    check_bool,
     check_float,
+    check_instance,
     check_int,
     check_option,
 )
@@ -273,37 +275,33 @@ class ARCHModel(metaclass=ABCMeta):
         self._y = to_array_1d(
             np.ascontiguousarray(self._y_series.to_numpy()).astype(float)
         )
-        if not np.all(np.isfinite(self._y)):
-            raise ValueError(
-                "NaN or inf values found in y. y must contains only finite values."
-            )
+        check_array("y", self._y, ndim=1)
         self._y_original = y
 
         self._fit_indices: list[int] = [0, int(self._y.shape[0])]
         self._fit_y = self._y
 
+        # There is no upper bound: data can be appended to a model whose hold_back
+        # is larger than the sample, and fit checks the sample that remains.
+        hold_back = check_int("hold_back", hold_back, lower=0, allow_none=True)
         self.hold_back: int | None = hold_back
         self._hold_back = 0 if hold_back is None else hold_back
 
-        self.rescale: bool | None = rescale
+        self.rescale: bool | None = check_bool("rescale", rescale, allow_none=True)
         self.scale: float = 1.0
 
         self._backcast: float | Float64Array1D | None = None
         self._var_bounds: Float64Array | None = None
 
-        if isinstance(volatility, VolatilityProcess):
-            self._volatility = volatility
-        elif volatility is None:
-            self._volatility = ConstantVariance()
-        else:
-            raise TypeError("volatility must inherit from VolatilityProcess")
+        volatility = check_instance(
+            "volatility", volatility, VolatilityProcess, allow_none=True
+        )
+        self._volatility = ConstantVariance() if volatility is None else volatility
 
-        if isinstance(distribution, Distribution):
-            self._distribution = distribution
-        elif distribution is None:
-            self._distribution = Normal()
-        else:
-            raise TypeError("distribution must inherit from Distribution")
+        distribution = check_instance(
+            "distribution", distribution, Distribution, allow_none=True
+        )
+        self._distribution = Normal() if distribution is None else distribution
 
     @property
     def name(self) -> str:
@@ -342,10 +340,7 @@ class ARCHModel(metaclass=ABCMeta):
         y_series = cast("pd.Series", ensure1d(y_original, "y", series=True))
         y_values = to_array_1d(np.ascontiguousarray(y_series.to_numpy()).astype(float))
         y_new = to_array_1d(y_values[nobs:])
-        if not np.all(np.isfinite(y_new)):
-            raise ValueError(
-                "NaN or inf values found in y. y must contains only finite values."
-            )
+        check_array("y", y_new, ndim=1)
         if self._is_pandas:
             index = y_series.index
             old_index, new_index = index[:nobs], index[nobs:]
@@ -495,9 +490,7 @@ class ARCHModel(metaclass=ABCMeta):
 
     @volatility.setter
     def volatility(self, value: VolatilityProcess) -> None:
-        if not isinstance(value, VolatilityProcess):
-            raise ValueError("Must subclass VolatilityProcess")
-        self._volatility = value
+        self._volatility = check_instance("volatility", value, VolatilityProcess)
 
     @property
     def distribution(self) -> Distribution:
@@ -510,9 +503,7 @@ class ARCHModel(metaclass=ABCMeta):
 
     @distribution.setter
     def distribution(self, value: Distribution) -> None:
-        if not isinstance(value, Distribution):
-            raise ValueError("Must subclass Distribution")
-        self._distribution = value
+        self._distribution = check_instance("distribution", value, Distribution)
 
     def _check_scale(self, resids: ArrayLike1D) -> None:
         check = self.rescale in (None, True)

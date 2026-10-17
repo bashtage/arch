@@ -778,11 +778,11 @@ class TestMeanModel:
 
         ar = ARX(self.y, lags=1)
         d = Normal()
-        with pytest.raises(ValueError, match=r"Must subclass VolatilityProcess"):
+        with pytest.raises(TypeError, match=r"volatility must be an instance of"):
             ar.volatility = d
 
         v = GARCH()
-        with pytest.raises(ValueError, match=r"Must subclass Distribution"):
+        with pytest.raises(TypeError, match=r"distribution must be an instance of"):
             ar.distribution = v
         x = self.rng.randn(1000, 1)
         with pytest.raises(ValueError, match=r"x must have nobs \+ burn rows"):
@@ -1442,15 +1442,15 @@ def test_missing_data_exception():
     rng = np.random.default_rng(1234)
     y = rng.standard_normal(1000)
     y[::29] = np.nan
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
     y = rng.standard_normal(1000)
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
     y[::29] = np.nan
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
 
 
@@ -1466,9 +1466,9 @@ def test_parameterless_fit(first_obs, last_obs, vol):
 
 
 def test_invalid_vol_dist():
-    with pytest.raises(TypeError, match=r"volatility must inherit"):
+    with pytest.raises(TypeError, match=r"volatility must be an instance of"):
         ConstantMean(SP500, volatility="GARCH")
-    with pytest.raises(TypeError, match=r"distribution must inherit"):
+    with pytest.raises(TypeError, match=r"distribution must be an instance of"):
         ConstantMean(SP500, distribution="Skew-t")
 
 

@@ -673,7 +673,7 @@ def test_input_types():
     for data in (list(y), pd.Series(y), pd.DataFrame(y), y.astype(np.float32)):
         res = MAMean(data, lags=1).fit(disp="off")
         assert_allclose(res.params, expected.params, rtol=1e-4)
-    with pytest.raises(ValueError, match="NaN or inf values found in y"):
+    with pytest.raises(ValueError, match="y must be a 1-d array of finite numbers"):
         MAMean(np.r_[y, np.nan], lags=1)
 
 
