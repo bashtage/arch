@@ -167,7 +167,7 @@ def test_multiple_comparison_bootstrap_invalid(losses, procedure, bad, exc):
 
 @pytest.mark.parametrize(
     ("method", "canonical"),
-    [("R", "R"), ("r", "R"), ("max", "max"), ("MAX", "max"), ("Max", "max")],
+    [("R", "r"), ("r", "r"), ("max", "max"), ("MAX", "max"), ("Max", "max")],
 )
 def test_mcs_method_canonical_value(losses, method, canonical):
     mcs = MCS(losses, 0.1, reps=20, block_size=5, method=method, seed=0)
@@ -181,7 +181,7 @@ def test_mcs_method_canonical_value(losses, method, canonical):
 def test_mcs_method_set_after_construction(losses):
     reference = MCS(losses, 0.1, reps=20, block_size=5, method="max", seed=0)
     reference.compute()
-    mcs = MCS(losses, 0.1, reps=20, block_size=5, method="R", seed=0)
+    mcs = MCS(losses, 0.1, reps=20, block_size=5, method="r", seed=0)
     mcs.method = "MAX"
     mcs.compute()
     assert_allclose(mcs.pvalues, reference.pvalues)

@@ -241,12 +241,12 @@ def test_forecast_method_invalid(returns, result, bad, exc, use_result):
         forecast(method=bad)
 
 
-@pytest.mark.parametrize("annualize", ["D", "W", "M"])
+@pytest.mark.parametrize("annualize", ["d", "w", "m"])
 def test_plot_annualize_case(result, annualize):
-    scale = {"D": 252, "W": 52, "M": 12}[annualize]
+    scale = {"d": 252, "w": 52, "m": 12}[annualize]
     expected = result.conditional_volatility * np.sqrt(scale)
     try:
-        for spelling in (annualize, annualize.lower()):
+        for spelling in (annualize, annualize.upper()):
             fig = result.plot(annualize=spelling)
             vol_line = fig.axes[1].lines[0]
             assert_allclose(vol_line.get_ydata(), expected)
@@ -259,7 +259,7 @@ def test_plot_annualize_case(result, annualize):
     ("bad", "exc"), [("bogus", ValueError), ("Q", ValueError), (1, TypeError)]
 )
 def test_plot_annualize_invalid(result, bad, exc):
-    with pytest.raises(exc, match=r"annualize must be one of 'D', 'W' or 'M'; got "):
+    with pytest.raises(exc, match=r"annualize must be one of 'd', 'w' or 'm'; got "):
         result.plot(annualize=bad)
     plt.close("all")
 

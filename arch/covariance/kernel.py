@@ -3,6 +3,7 @@ from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from functools import cached_property
+import re
 from typing import TypeVar, cast
 
 import numpy as np
@@ -75,10 +76,15 @@ def normalize_kernel_name(kernel: str) -> str:
     -------
     str
         The name in lower case without hyphens or underscores, so that
-        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are
-        all the same.
+        "quadratic-spectral" and "quadratic_spectral" are both
+        "quadraticspectral".
     """
     return kernel.replace("-", "").replace("_", "").lower()
+
+
+def _kernel_display_name(name: str) -> str:
+    """The lower case name of a kernel with hyphens between the words"""
+    return re.sub(r"(?<!^)(?=[A-Z])", "-", name).lower()
 
 
 class CovarianceEstimate:
@@ -1074,10 +1080,12 @@ def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
     Parameters
     ----------
     kernel : str
-        The name of a kernel estimator. The name is not case sensitive and
-        hyphens and underscores are ignored, so that "QuadraticSpectral",
-        "quadratic-spectral" and "quadratic_spectral" are all the same. The
-        available kernels are those in ``KERNELS``.
+        The name of a kernel estimator, such as "bartlett" or
+        "quadratic-spectral". The names are those of the classes in ``KERNELS``
+        in lower case with hyphens between the words. The name is not case
+        sensitive and hyphens and underscores are ignored, so that
+        "quadratic-spectral", "quadratic_spectral" and "quadraticspectral" are
+        all the same.
 
     Returns
     -------
@@ -1093,7 +1101,7 @@ def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
         "kernel",
         kernel,
         tuple(KERNEL_ESTIMATORS),
-        display=sorted(KERNELS),
+        display=sorted(_kernel_display_name(name) for name in KERNELS),
         normalize=normalize_kernel_name,
     )
     return KERNEL_ESTIMATORS[key]

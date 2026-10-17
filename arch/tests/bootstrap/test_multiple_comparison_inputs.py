@@ -62,7 +62,7 @@ def test_mcs_r_tied_worst_models(design):
     if design == "two-models":
         assert losses[:, 0].mean() == losses[:, 1].mean()
     reps, block_size, seed = 128, 4, 12345
-    mcs = MCS(losses, 0.1, reps=reps, block_size=block_size, method="R", seed=seed)
+    mcs = MCS(losses, 0.1, reps=reps, block_size=block_size, method="r", seed=seed)
     mcs.compute()
     order, pvals = reference_mcs_r(losses, block_size, reps, seed)
     pvalues = mcs.pvalues
@@ -102,7 +102,7 @@ def finite_losses():
 @pytest.mark.parametrize(
     "bad_value", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "-inf"]
 )
-@pytest.mark.parametrize("method", ["R", "max"])
+@pytest.mark.parametrize("method", ["r", "max"])
 @pytest.mark.parametrize("frame", [False, True], ids=["array", "frame"])
 def test_mcs_non_finite_losses(finite_losses, bad_value, method, frame):
     losses = np.column_stack(finite_losses)
@@ -113,7 +113,7 @@ def test_mcs_non_finite_losses(finite_losses, bad_value, method, frame):
         run_with_timeout(lambda: MCS(losses, 0.1, reps=5, method=method, seed=1))
 
 
-@pytest.mark.parametrize("method", ["R", "max"])
+@pytest.mark.parametrize("method", ["r", "max"])
 def test_mcs_non_finite_statistic_does_not_hang(finite_losses, method):
     # If non-finite losses get past the constructor, the elimination loop must
     # stop rather than run forever

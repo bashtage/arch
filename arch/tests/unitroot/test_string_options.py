@@ -263,7 +263,7 @@ def test_engle_granger_invalid(cointegrated, bad, exc):
         engle_granger(y, x, method=bad)
 
 
-@pytest.mark.parametrize("test_type", ["Za", "Zt", "Pu", "Pz"])
+@pytest.mark.parametrize("test_type", ["za", "zt", "pu", "pz"])
 def test_phillips_ouliaris_case(cointegrated, test_type):
     y, x = cointegrated
     expected = phillips_ouliaris(y, x, test_type=test_type)
@@ -271,9 +271,9 @@ def test_phillips_ouliaris_case(cointegrated, test_type):
         test = phillips_ouliaris(y, x, test_type=spelling)
         assert_allclose(test.stat, expected.stat)
         assert_allclose(test.pvalue, expected.pvalue)
-        # The canonical spelling is kept in the name
+        # The name of the test is the same for every spelling
         assert test.name == expected.name
-        assert test_type in test.name
+        assert test_type.capitalize() in test.name
 
 
 @pytest.mark.parametrize("trend", TRENDS4)
@@ -285,10 +285,10 @@ def test_phillips_ouliaris_trend_case(cointegrated, trend):
     assert_allclose(test.pvalue, expected.pvalue)
 
 
-@pytest.mark.parametrize("test_type", ["Za", "Zt", "Pu", "Pz"])
+@pytest.mark.parametrize("test_type", ["za", "zt", "pu", "pz"])
 def test_phillips_ouliaris_cv_pval_case(test_type):
     assert_allclose(
-        phillips_ouliaris_cv(test_type.lower(), "C", 3, 200),
+        phillips_ouliaris_cv(test_type.capitalize(), "C", 3, 200),
         phillips_ouliaris_cv(test_type, "c", 3, 200),
     )
     assert_allclose(
@@ -300,7 +300,7 @@ def test_phillips_ouliaris_cv_pval_case(test_type):
 @pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
 def test_phillips_ouliaris_invalid(cointegrated, bad, exc):
     y, x = cointegrated
-    tt = r"test_type must be one of 'Za', 'Zt', 'Pu' or 'Pz'; got "
+    tt = r"test_type must be one of 'za', 'zt', 'pu' or 'pz'; got "
     tr = r"trend must be one of 'n', 'c', 'ct' or 'ctt'; got "
     with pytest.raises(exc, match=tt):
         phillips_ouliaris(y, x, test_type=bad)
@@ -309,11 +309,11 @@ def test_phillips_ouliaris_invalid(cointegrated, bad, exc):
     with pytest.raises(exc, match=tt):
         phillips_ouliaris_cv(bad, "c", 3, 200)
     with pytest.raises(exc, match=tr):
-        phillips_ouliaris_cv("Za", bad, 3, 200)
+        phillips_ouliaris_cv("za", bad, 3, 200)
     with pytest.raises(exc, match=tt):
         phillips_ouliaris_pval(-3.0, bad, "c", 3)
     with pytest.raises(exc, match=tr):
-        phillips_ouliaris_pval(-3.0, "Za", bad, 3)
+        phillips_ouliaris_pval(-3.0, "za", bad, 3)
 
 
 @pytest.mark.parametrize("method", ["aic", "bic", "hqic"])

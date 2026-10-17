@@ -651,7 +651,7 @@ RESULT_ROWS = [
         "annualize",
         [("zzz", ValueError), ("", ValueError), (1, TypeError), (252, TypeError)],
     ),
-    *good_value_rows("plot", plot, {}, "annualize", [None, "D", "w", "M"]),
+    *good_value_rows("plot", plot, {}, "annualize", [None, "d", "W", "m"]),
     *bad_value_rows(
         "plot",
         plot,
@@ -674,7 +674,7 @@ RESULT_ROWS = [
         plot,
         {"annualize": "zzz", "scale": 252.0},
         ValueError,
-        r"^annualize must be one of 'D', 'W' or 'M'; got 'zzz' \(str\)",
+        r"^annualize must be one of 'd', 'w' or 'm'; got 'zzz' \(str\)",
         id="plot-annualize-with-scale",
         name="annualize",
     ),

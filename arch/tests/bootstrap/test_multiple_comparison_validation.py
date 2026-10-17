@@ -7,7 +7,7 @@ from arch.bootstrap.multiple_comparison import MCS, SPA, StepM
 
 @pytest.mark.parametrize(
     ("method", "canonical"),
-    [("r", "R"), ("max", "max"), ("MAX", "max"), ("Max", "max")],
+    [("r", "r"), ("R", "r"), ("max", "max"), ("MAX", "max"), ("Max", "max")],
 )
 def test_mcs_method_case_insensitive(method, canonical):
     losses = np.random.default_rng(0).standard_normal((50, 3))
@@ -26,7 +26,7 @@ def test_mcs_method_case_insensitive(method, canonical):
 )
 def test_mcs_method_invalid(method, error):
     losses = np.random.default_rng(0).standard_normal((50, 3))
-    with pytest.raises(error, match="method must be one of 'R' or 'max'"):
+    with pytest.raises(error, match="method must be one of 'r' or 'max'"):
         MCS(losses, 0.1, reps=10, method=method)
 
 
@@ -34,7 +34,7 @@ def test_mcs_method_changed_after_construction():
     losses = np.random.default_rng(0).standard_normal((50, 3))
     mcs = MCS(losses, 0.1, reps=10, seed=1)
     mcs.method = "other"
-    with pytest.raises(ValueError, match="method must be one of 'R' or 'max'"):
+    with pytest.raises(ValueError, match="method must be one of 'r' or 'max'"):
         mcs.compute()
 
 

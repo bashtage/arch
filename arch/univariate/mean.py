@@ -3200,13 +3200,11 @@ def _check_order(name: str, value: Any) -> int:
 def arch_model(
     y: ArrayLike | None,
     x: ArrayLike | ArrayLike2D | None = None,
-    mean: Literal[
-        "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
-    ] = "Constant",
+    mean: Literal["constant", "zero", "ls", "ar", "arx", "har", "harx"] = "constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
     vol: Literal[
-        "GARCH", "ARCH", "EGARCH", "FIGARCH", "FIAPARCH", "APARCH", "HARCH"
-    ] = "GARCH",
+        "garch", "arch", "egarch", "figarch", "fiaparch", "aparch", "harch"
+    ] = "garch",
     p: int | list[int] = 1,
     o: int = 0,
     q: int = 1,
@@ -3235,18 +3233,19 @@ def arch_model(
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
-        Name of the mean model.  Currently supported options are: 'Constant',
-        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.  Not case sensitive.
+        Name of the mean model.  Currently supported options are: 'constant'
+        (default), 'zero', 'ls', 'ar', 'arx', 'har' and 'harx'.  Not case
+        sensitive.
     lags : int or list of int, optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
-        and 'HARCH'.  Not case sensitive.
+        'garch' (default), 'arch', 'egarch', 'figarch', 'fiaparch', 'aparch'
+        and 'harch'.  Not case sensitive.
     p : int or list of int, optional
         Lag order of the symmetric innovation.  A list of lags can only be used
-        with the 'HARCH' volatility model.  Must be at least 0, and integers
+        with the 'harch' volatility model.  Must be at least 0, and integers
         only (2.0 and True are not accepted).
     o : int, optional
         Lag order of the asymmetric innovation.  Must be at least 0.
@@ -3311,13 +3310,13 @@ def arch_model(
 
     Alternative mean and volatility processes can be directly specified
 
-    >>> am = arch_model(returns, mean='AR', lags=2, vol='harch', p=[1, 5, 22])
+    >>> am = arch_model(returns, mean='ar', lags=2, vol='harch', p=[1, 5, 22])
 
     This example demonstrates the construction of a zero mean process
     with a TARCH volatility process and Student t error distribution
 
     >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1,
-    ...                 power=1.0, dist='StudentsT')
+    ...                 power=1.0, dist='studentst')
     """
     am: ARCHModel
 

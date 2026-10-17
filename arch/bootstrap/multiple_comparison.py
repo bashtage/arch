@@ -36,8 +36,8 @@ __all__ = ["MCS", "SPA", "RealityCheck", "StepM"]
 
 _PVALUE_TYPES = ("lower", "consistent", "upper")
 
-# Lower case names of the MCS methods, which map to the canonical names
-_MCS_METHODS = {"r": "R", "max": "max"}
+# The MCS methods
+_MCS_METHODS = ("r", "max")
 
 # Lower case names of the bootstraps, using underscores instead of spaces
 _BOOTSTRAPS: dict[str, type[CircularBlockBootstrap]] = {
@@ -301,8 +301,8 @@ class MCS(MultipleComparison):
         Length of window to use in the bootstrap, between 1 and T.  If not
         provided, sqrt(T) is used.  In general, this should be provided and
         chosen to be appropriate for the data.
-    method : {"R", "max"}, optional
-        MCS test and elimination implementation method, either "max" or "R".
+    method : {"r", "max"}, optional
+        MCS test and elimination implementation method, either "max" or "r".
         Not case sensitive.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Not case sensitive.  Options are
@@ -343,7 +343,7 @@ class MCS(MultipleComparison):
         size: float,
         reps: int = 1000,
         block_size: int | None = None,
-        method: Literal["R", "max"] = "R",
+        method: Literal["r", "max"] = "r",
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
         ] = "stationary",
@@ -374,9 +374,8 @@ class MCS(MultipleComparison):
 
         self.t: int = self.losses.shape[0]
         self.k: int = self.losses.shape[1]
-        self.method: Literal["R", "max"] = cast(
-            "Literal['R', 'max']",
-            check_option("method", method, _MCS_METHODS, display=("R", "max")),
+        self.method: Literal["r", "max"] = cast(
+            "Literal['r', 'max']", check_option("method", method, _MCS_METHODS)
         )
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
@@ -432,8 +431,8 @@ class MCS(MultipleComparison):
         Compute the set of models in the confidence set.
         """
         # The method is a public attribute that can be set after construction
-        method = check_option("method", self.method, _MCS_METHODS, display=("R", "max"))
-        if method == "R":
+        method = check_option("method", self.method, _MCS_METHODS)
+        if method == "r":
             self._compute_r()
         else:
             self._compute_max()

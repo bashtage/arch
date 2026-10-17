@@ -1607,10 +1607,10 @@ class ARCHModel(metaclass=ABCMeta):
         --------
         >>> import pandas as pd
         >>> from arch import arch_model
-        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> am = arch_model(None,mean='har',lags=[1,5,22],vol='constant')
         >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
+        >>> am = arch_model(sim_data['data'],mean='har',lags=[1,5,22],  vol='constant')
         >>> res = am.fit()
         >>> fig = res.hedgehog_plot()
         """
@@ -1938,10 +1938,10 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        annualize : {"D", "W", "M"}, optional
+        annualize : {"d", "w", "m"}, optional
             String containing frequency of data that indicates plot should
-            contain annualized volatility.  Supported values are 'D' (daily),
-            'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,
+            contain annualized volatility.  Supported values are 'd' (daily),
+            'w' (weekly) and 'm' (monthly), which scale variance by 252, 52,
             and 12, respectively. Not case sensitive.
         scale : float, optional
             Value to use when scaling returns to annualize.  If scale is
@@ -1972,7 +1972,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Produce a plot with annualized volatility
 
-        >>> fig = res.plot(annualize='D')
+        >>> fig = res.plot(annualize='d')
 
         Override the usual scale of 252 to use 360 for an asset that trades
         most days of the year
@@ -1984,9 +1984,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         scales = {"d": 252, "w": 52, "m": 12}
         if annualize is not None:
-            annualize = check_option(
-                "annualize", annualize, tuple(scales), display=("D", "W", "M")
-            )
+            annualize = check_option("annualize", annualize, tuple(scales))
         scale = check_float(
             "scale", scale, lower=0, inclusive="neither", allow_none=True
         )
@@ -2256,10 +2254,10 @@ class ARCHModelFixedResult(_SummaryRepr):
         --------
         >>> import pandas as pd
         >>> from arch import arch_model
-        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> am = arch_model(None,mean='har',lags=[1,5,22],vol='constant')
         >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
+        >>> am = arch_model(sim_data['data'],mean='har',lags=[1,5,22],  vol='constant')
         >>> res = am.fit()
         >>> fig = res.hedgehog_plot(plot_type='mean')
         """
