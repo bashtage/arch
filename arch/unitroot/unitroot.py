@@ -2117,7 +2117,7 @@ def kpss_crit(
     Parameters
     ----------
     stat : float
-        The KPSS test statistic.
+        The KPSS test statistic, which is not negative. It can be inf.
     trend : {"c", "ct"}, optional
         The trend used when computing the KPSS statistic.
 
@@ -2129,13 +2129,31 @@ def kpss_crit(
         Three element array containing the 1%, 5% and 10% critical values,
         in order.
 
+    Raises
+    ------
+    TypeError
+        If `stat` is not a real number or `trend` is not a str.
+    ValueError
+        If `stat` is negative or NaN, or `trend` is not one of the options.
+
     Notes
     -----
     The p-values are linear interpolated from the quantiles of the simulated
     KPSS test statistic distribution using 100,000,000 replications and 2000
     data points.
     """
+    stat = cast("float", check_float("stat", stat, lower=0, allow_inf=True))
     trend = cast("Literal['c', 'ct']", check_option("trend", trend, ("c", "ct")))
+    return _kpss_crit(stat, trend)
+
+
+def _kpss_crit(stat: float, trend: Literal["c", "ct"]) -> tuple[float, Float64Array]:
+    """
+    The p-value and critical values of kpss_crit for arguments that have been checked.
+
+    A NaN statistic gives a NaN p-value here, which is how the test reports a
+    statistic that could not be computed.
+    """
     table = kpss_critical_values[trend]
     y = table[:, 0]
     x = table[:, 1]
