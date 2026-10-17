@@ -2,6 +2,8 @@ from functools import cached_property
 
 from scipy.stats import chi2
 
+from arch.utility._validation import check_float, check_int, check_str
+
 __all__ = ["WaldTestStatistic"]
 
 
@@ -12,15 +14,24 @@ class WaldTestStatistic:
     Parameters
     ----------
     stat : float
-        The test statistic.
+        The test statistic. Must not be negative. NaN is accepted and gives a
+        NaN p-value, for a statistic that cannot be computed.
     df : int
-        Degree of freedom.
+        Degree of freedom. Must be positive.
     null : str
         A statement of the test's null hypothesis.
     alternative : str
         A statement of the test's alternative hypothesis.
     name : str, optional
         Name of test.
+
+    Raises
+    ------
+    TypeError
+        If stat is not a real number, df is not an integer, or null, alternative
+        or name is not a str.
+    ValueError
+        If stat is negative or df is not positive.
     """
 
     def __init__(
@@ -31,11 +42,13 @@ class WaldTestStatistic:
         alternative: str,
         name: str = "",
     ) -> None:
+        stat = check_float("stat", stat, lower=0.0, allow_nan=True, allow_inf=True)
+        df = check_int("df", df, lower=1)
         self._stat = stat
-        self._null = null
-        self._alternative = alternative
+        self._null = check_str("null", null)
+        self._alternative = check_str("alternative", alternative)
         self.df: int = df
-        self._name = name
+        self._name = check_str("name", name)
         self.dist = chi2(df)
         self.dist_name: str = f"chi2({df})"
 
