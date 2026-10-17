@@ -595,11 +595,11 @@ class TestMeanModel:
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="classic")
         res.plot()
-        res.plot(annualize="D")
-        res.plot(annualize="W")
-        res.plot(annualize="M")
+        res.plot(annualize="d")
+        res.plot(annualize="w")
+        res.plot(annualize="m")
         with pytest.raises(
-            ValueError, match=r"annualize must be one of 'D', 'W' or 'M'"
+            ValueError, match=r"annualize must be one of 'd', 'w' or 'm'"
         ):
             res.plot(annualize="unknown")
 

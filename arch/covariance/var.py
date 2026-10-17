@@ -89,11 +89,12 @@ class PreWhitenedRecolored(CovarianceEstimator):
         implied by the estimated VAR when computing the short-run and
         one-sided covariances. Does not affect the long-run covariance.
     kernel : str or None, optional
-        The name of the kernel to use, which can be the name of any of the
-        kernels in ``arch.covariance.kernel.KERNELS``. The name is not case
-        sensitive and any underscores or hyphens are ignored, so that
-        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are
-        all the same. Use None to compute the VAR-HAC estimator, which
+        The name of the kernel to use, such as "bartlett" or
+        "quadratic-spectral". It can be the name of any of the kernels in
+        ``arch.covariance.kernel.KERNELS``, in lower case with hyphens between
+        the words. The name is not case sensitive and any underscores or
+        hyphens are ignored, so that "quadratic-spectral", "quadratic_spectral"
+        and "quadraticspectral" are all the same. Use None to compute the VAR-HAC estimator, which
         recolors the residual covariance without applying a kernel to the
         residuals.
     bandwidth : float, optional

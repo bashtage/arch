@@ -1014,7 +1014,7 @@ def mcs_losses():
     return rng.standard_normal((120, 5)) + np.array([0.0, 0.05, 0.1, 0.2, 0.3])
 
 
-@pytest.mark.parametrize("method", ["R", "max"])
+@pytest.mark.parametrize("method", ["r", "max"])
 def test_mcs_included_excluded_boundary(mcs_losses, method):
     # A model is in the MCS of size alpha if its p-value is at least alpha
     # (Hansen, Lunde and Nason, 2011), so a p-value equal to size is included

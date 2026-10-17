@@ -58,9 +58,9 @@ def test_lower_case_value_is_returned():
 
 
 def test_mapping_returns_canonical_value():
-    allowed = {"r": "R", "max": "max", "maximum": "max"}
-    assert check_option("method", "r", allowed) == "R"
-    assert check_option("method", "R", allowed) == "R"
+    allowed = {"mean": "mean", "avg": "mean", "max": "max", "maximum": "max"}
+    assert check_option("method", "avg", allowed) == "mean"
+    assert check_option("method", "AVG", allowed) == "mean"
     assert check_option("method", "MAXIMUM", allowed) == "max"
 
 
@@ -90,8 +90,8 @@ def test_two_and_one_choices():
 
 
 def test_display_overrides_allowed():
-    with pytest.raises(ValueError, match=r"x must be one of 'R' or 'max'; got 'c'"):
-        check_option("x", "c", {"r": "R", "max": "max"}, display=("R", "max"))
+    with pytest.raises(ValueError, match=r"x must be one of 'r' or 'max'; got 'c'"):
+        check_option("x", "c", {"r": "r", "maximum": "max"}, display=("r", "max"))
 
 
 @pytest.mark.parametrize(

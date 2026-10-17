@@ -345,11 +345,13 @@ def test_get_kernel_estimator(name):
 def test_get_kernel_estimator_errors(name, error):
     with pytest.raises(error, match="kernel must be one of") as e:
         get_kernel_estimator(name)
-    # The message lists every available kernel
+    # The message lists every available kernel using lower case names
+    listed = str(e.value).split("; got")[0]
     for known in KERNELS:
-        assert known in str(e.value)
+        assert repr(re.sub(r"(?<!^)(?=[A-Z])", "-", known).lower()) in listed
+    assert listed == listed.lower()
     # Excluding the value that was received
-    assert "ZeroLag" not in str(e.value).split("; got")[0]
+    assert "zero" not in listed
 
 
 @pytest.mark.parametrize(

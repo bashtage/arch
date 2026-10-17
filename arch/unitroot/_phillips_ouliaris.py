@@ -34,8 +34,11 @@ class CriticalValueWarning(RuntimeWarning):
     pass
 
 
-# Lower case names of the tests, which map to the canonical names
-_TEST_TYPES = {"za": "Za", "zt": "Zt", "pu": "Pu", "pz": "Pz"}
+# The tests
+_TEST_TYPES = ("za", "zt", "pu", "pz")
+# The names of the tests in the results, which are also the keys of the tables of
+# critical values and p-value parameters
+_TEST_NAMES = {"za": "Za", "zt": "Zt", "pu": "Pu", "pz": "Pz"}
 
 
 def _check_num_trends(num: int) -> None:
@@ -48,7 +51,7 @@ def _check_num_trends(num: int) -> None:
 def _po_ptests(
     z: pd.DataFrame,
     xsection: RegressionResults,
-    test_type: Literal["Pu", "Pz"],
+    test_type: Literal["pu", "pz"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
     bandwidth: float | None,
@@ -66,7 +69,7 @@ def _po_ptests(
     omega = (nobs - 1) / nobs * np.asarray(cov.long_run)
 
     u = np.asarray(xsection.resid)
-    if test_type.lower() == "pu":
+    if test_type == "pu":
         denom = u.T @ u / nobs
         omega21 = omega[0, 1:]
         omega22 = omega[1:, 1:]
@@ -100,7 +103,7 @@ def _po_ptests(
 def _po_ztests(
     yx: pd.DataFrame,
     xsection: RegressionResults,
-    test_type: Literal["Za", "Zt"],
+    test_type: Literal["za", "zt"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
     bandwidth: float | None,
@@ -119,7 +122,7 @@ def _po_ztests(
     one_sided_strict = k_scale * cov.one_sided_strict
 
     z = float(np.squeeze((alpha - 1) - nobs * one_sided_strict / u2))
-    if test_type.lower() == "za":
+    if test_type == "za":
         test_stat = nobs * z
     else:
         long_run = k_scale * np.squeeze(cov.long_run)
@@ -146,7 +149,7 @@ def phillips_ouliaris(
     x: ArrayLike2D,
     trend: UnitRootTrend = "c",
     *,
-    test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
+    test_type: Literal["za", "zt", "pu", "pz"] = "zt",
     kernel: str = "bartlett",
     bandwidth: float | None = None,
     force_int: bool = False,
@@ -175,13 +178,13 @@ def phillips_ouliaris(
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
 
-    test_type : {"Za", "Zt", "Pu", "Pz"}, optional
+    test_type : {"za", "zt", "pu", "pz"}, optional
         The test statistic to compute. Not case sensitive. Supported options are:
 
-        * "Za": The Zα test based on the debiased AR(1) coefficient.
-        * "Zt": The Zt test based on the t-statistic from an AR(1).
-        * "Pu": The Pᵤ variance-ratio test.
-        * "Pz": The Pz test of the trace of the product of an estimate of the
+        * "za": The Zα test based on the debiased AR(1) coefficient.
+        * "zt": The Zt test based on the t-statistic from an AR(1).
+        * "pu": The Pᵤ variance-ratio test.
+        * "pz": The Pz test of the trace of the product of an estimate of the
           long-run residual variance and the inner-product of the data.
 
         See the notes for details on the test.
@@ -307,8 +310,8 @@ def phillips_ouliaris(
        Econometric Society, 165-193.
     """
     test_type = cast(
-        "Literal['Za', 'Zt', 'Pu', 'Pz']",
-        check_option("test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()),
+        "Literal['za', 'zt', 'pu', 'pz']",
+        check_option("test_type", test_type, _TEST_TYPES),
     )
     kernel_est = get_kernel_estimator(kernel)
     bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
@@ -320,11 +323,11 @@ def phillips_ouliaris(
     data = xsection.model.data
     x_df = data.orig_exog.iloc[:, : setup.x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)
-    if test_type in ("Pu", "Pz"):
+    if test_type in ("pu", "pz"):
         return _po_ptests(
             z,
             xsection,
-            cast("Literal['Pu', 'Pz']", test_type),
+            cast("Literal['pu', 'pz']", test_type),
             trend,
             kernel_est,
             bandwidth,
@@ -333,7 +336,7 @@ def phillips_ouliaris(
     return _po_ztests(
         z,
         xsection,
-        cast("Literal['Za', 'Zt']", test_type),
+        cast("Literal['za', 'zt']", test_type),
         trend,
         kernel_est,
         bandwidth,
@@ -366,7 +369,7 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         The OLS results used in the cross-sectional regression. They must be
         provided.
     test_type : str, optional
-        The type of the test, one of "Za", "Zt", "Pu" and "Pz".
+        The type of the test, one of "za", "zt", "pu" and "pz". Not case sensitive.
     kernel_est : CovarianceEstimator, optional
         The long-run covariance estimator used to compute the test statistic.
         It must be provided.
@@ -384,14 +387,15 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         trend: str = "c",
         order: int = 2,
         xsection: RegressionResults | None = None,
-        test_type: str = "Za",
+        test_type: str = "za",
         kernel_est: CovarianceEstimator | None = None,
         rho: float = 0.0,
     ) -> None:
         super().__init__(
             stat, pvalue, crit_vals, null, alternative, trend, order, xsection=xsection
         )
-        self.name = f"Phillips-Ouliaris {test_type} Cointegration Test"
+        name = _TEST_NAMES.get(test_type.lower(), test_type)
+        self.name = f"Phillips-Ouliaris {name} Cointegration Test"
         self._test_type = test_type
         assert kernel_est is not None
         self._kernel_est = kernel_est
@@ -471,7 +475,7 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
 
 
 def phillips_ouliaris_cv(
-    test_type: Literal["Za", "Zt", "Pu", "Pz"],
+    test_type: Literal["za", "zt", "pu", "pz"],
     trend: UnitRootTrend,
     num: int,
     nobs: int,
@@ -481,7 +485,7 @@ def phillips_ouliaris_cv(
 
     Parameters
     ----------
-    test_type : {"Za", "Zt", "Pu", "Pz"}
+    test_type : {"za", "zt", "pu", "pz"}
         The test type. Not case sensitive.
     trend : {"n", "c", "ct", "ctt"}
         The trend included in the model. Not case sensitive.
@@ -496,12 +500,10 @@ def phillips_ouliaris_cv(
     Series
         The critical values for 1, 5 and 10%.
     """
-    test_type_key = check_option(
-        "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
-    )
+    test_type_key = check_option("test_type", test_type, _TEST_TYPES)
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     _check_num_trends(num)
-    key = (test_type_key, trend, num)
+    key = (_TEST_NAMES[test_type_key], trend, num)
     tbl = CV_PARAMETERS[key]
     min_size = CV_TAU_MIN[key]
     if nobs < min_size:
@@ -524,7 +526,7 @@ def phillips_ouliaris_cv(
 
 def phillips_ouliaris_pval(
     stat: float,
-    test_type: Literal["Za", "Zt", "Pu", "Pz"],
+    test_type: Literal["za", "zt", "pu", "pz"],
     trend: UnitRootTrend,
     num: int,
 ) -> float:
@@ -535,7 +537,7 @@ def phillips_ouliaris_pval(
     ----------
     stat : float
         The test statistic.
-    test_type : {"Za", "Zt", "Pu", "Pz"}
+    test_type : {"za", "zt", "pu", "pz"}
         The test type. Not case sensitive.
     trend : {"n", "c", "ct", "ctt"}
         The trend included in the model. Not case sensitive.
@@ -548,13 +550,11 @@ def phillips_ouliaris_pval(
     float
         The asymptotic p-value.
     """
-    test_type_key = check_option(
-        "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
-    )
+    test_type_key = check_option("test_type", test_type, _TEST_TYPES)
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     _check_num_trends(num)
-    key = (test_type_key, trend, num)
-    if test_type_key in ("Pu", "Pz"):
+    key = (_TEST_NAMES[test_type_key], trend, num)
+    if test_type_key in ("pu", "pz"):
         # These are upper tail, so we multiply by -1 to make lower tail
         stat = -1 * stat
     tau_max = PVAL_TAU_MAX[key]

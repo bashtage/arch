@@ -1009,11 +1009,12 @@ def check_option(
         The value passed by the user. It must be a string.
     allowed : iterable of str or mapping of str to str
         The lower case allowed values. A mapping maps each lower case spelling,
-        including any alias, to the canonical value that is returned. The
-        canonical value may use any case, for example "R" or "Za".
+        including any alias, to the canonical value that is returned, for example
+        to map an alias to the option it names. The canonical values are lower
+        case, since the lower case spelling is the only one that arch shows.
     display : sequence[str], optional
-        The values listed in the error message. The default is the lower case
-        spellings in ``allowed``.
+        The values listed in the error message, which must be lower case. The
+        default is the lower case spellings in ``allowed``.
     normalize : callable, optional
         A function applied to the lower case value before it is looked up, for
         example to ignore spaces and hyphens in the names of kernels.
@@ -1021,8 +1022,8 @@ def check_option(
     Returns
     -------
     str
-        The canonical value. This is the lower case value when ``allowed`` is
-        not a mapping.
+        The canonical value, which is lower case. It is the lower case value
+        when ``allowed`` is not a mapping.
 
     Raises
     ------

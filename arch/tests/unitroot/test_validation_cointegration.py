@@ -325,7 +325,7 @@ def _po_rows(func, base, prefix):
 
 
 PO_ROWS = [
-    *_po_rows(_po, {**BASE, "test_type": "Zt"}, "po"),
+    *_po_rows(_po, {**BASE, "test_type": "zt"}, "po"),
     Row(
         "po",
         _po,

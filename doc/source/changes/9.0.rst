@@ -97,16 +97,16 @@ New features
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` accept names such as
   ``"quadratic-spectral"``, which raised ``KeyError`` in previous versions. Contributed
   by WatchTree-19 (:issue:`873`).
-- The string options of the public API are not case sensitive, and the canonical
+- The string options of the public API are not case sensitive, and the lower case
   spelling is stored. For example ``forecast(method="Analytic", align="Target")``,
   ``plot(annualize="d")``, ``ADF(y, trend="C", method="AIC")``,
   ``engle_granger(y, x, trend="CT")``, ``add_trend(x, trend="CT")`` and
   ``IIDBootstrap.conf_int(func, method="BCa", tail="Upper")`` now work, where they
-  raised an error in previous versions. The ``method`` of :class:`~arch.bootstrap.MCS`
-  is stored as ``"R"`` or ``"max"``, and the ``cov_type`` of ``fit`` and the ``form`` of
-  ``ARCHInMean`` in lower case. An option that is not accepted raises a ``ValueError``
-  that lists the accepted values (a ``TypeError`` for a value that is not a string). See
-  "Bug fixes" for the options that were silently accepted (:issue:`947`).
+  raised an error in previous versions. The ``method`` of :class:`~arch.bootstrap.MCS`,
+  the ``cov_type`` of ``fit`` and the ``form`` of ``ARCHInMean`` are stored in lower
+  case. An option that is not accepted raises a ``ValueError`` that lists the accepted
+  values (a ``TypeError`` for a value that is not a string). See "Bug fixes" for the
+  options that were silently accepted (:issue:`947`).
 
 - Lists and other ``array_like`` objects are accepted as the data of the covariance
   estimators, :class:`~arch.covariance.var.PreWhitenedRecolored`, ``cov_nw``,
@@ -581,7 +581,7 @@ Backward-incompatible changes
   callable, a ``random_state`` that is not a ``RandomState`` and a ``reindex`` that is
   not ``bool`` raise errors that name the argument. ``plot`` raises a ``ValueError`` for
   a ``scale`` that is not positive and finite and for an ``annualize`` that is not
-  ``"D"``, ``"W"`` or ``"M"``, and ``arch_lm_test`` requires ``standardized`` to be a
+  ``"d"``, ``"w"`` or ``"m"``, and ``arch_lm_test`` requires ``standardized`` to be a
   ``bool``. ``var_ratio`` raises for a ``level`` that is not a number and for
   ``parameters`` that do not have one finite element for each parameter of the
   distribution, and ``hill_estimator`` for a ``k`` that is not an integer or is outside
@@ -658,7 +658,20 @@ Backward-incompatible changes
   :class:`~arch.unitroot.PhillipsPerron` (any value other than ``"rho"`` was ``"tau"``),
   the ``has_constant`` of ``add_trend`` (any value other than ``"raise"`` and ``"skip"``
   was ``"add"``) and the ``method`` of :class:`~arch.bootstrap.MCS` (any value other
-  than ``"R"`` was ``"max"``) (:issue:`947`).
+  than ``"r"`` was ``"max"``) (:issue:`947`).
+
+- The documented spelling of every string option is now lower case, even though the
+  options are not case sensitive, and so is every option value that arch shows or that
+  an object exposes. The ``method`` of :class:`~arch.bootstrap.MCS` is ``"r"`` or
+  ``"max"`` (it was ``"R"``). The docstrings, annotations, defaults, error messages,
+  documentation and examples use ``"garch"`` and ``"constant"`` for ``arch_model``
+  (they were ``"GARCH"`` and ``"Constant"``), ``"d"``, ``"w"`` and ``"m"`` for the
+  ``annualize`` of ``plot``, ``"za"``, ``"zt"``, ``"pu"`` and ``"pz"`` for the
+  ``test_type`` of the Phillips-Ouliaris tests, and names such as
+  ``"quadratic-spectral"`` for kernels. All of the previous spellings, such as
+  ``vol="GARCH"``, ``method="R"`` and ``annualize="D"``, are still accepted and give the
+  same results. Code that compares ``MCS.method`` with ``"R"``, or matches the text of
+  an error message, needs to be updated (:issue:`955`).
 
 - ``arch.utility.array.ensure1d`` and ``ensure2d`` convert every input to ``float64``,
   including integer, Boolean, ``float32`` and object data, and raise a ``TypeError``
@@ -825,7 +838,7 @@ Bug fixes
   (for example, the value estimated by :func:`~arch.bootstrap.optimal_block_length`).
   Previously 0, negative and non-integer values raised unrelated errors or, for the
   stationary bootstrap, were silently used. :class:`~arch.bootstrap.MCS` raises a
-  ``ValueError`` if ``method`` is not ``"R"`` or ``"max"`` (in any case); previously any
+  ``ValueError`` if ``method`` is not ``"r"`` or ``"max"`` (in any case); previously any
   other value was treated as ``"max"`` (:issue:`917`).
 - ``conf_int``, ``cov`` and ``var`` in the bootstrap classes now accept a statistic that
   returns a list, a tuple or a 0-dimensional array, as ``apply`` already did. ``apply``

@@ -13,10 +13,11 @@ Kernel-based Estimators
 .. currentmodule:: arch.covariance.kernel
 
 Estimators that accept a ``kernel`` select it by name. The names are the names
-of the classes below in ``arch.covariance.kernel.KERNELS``, for example
-``"Bartlett"`` or ``"QuadraticSpectral"``, and they are not case sensitive and
-ignore hyphens and underscores, so that ``"quadratic-spectral"`` is the same as
-``"QuadraticSpectral"``. ``ZeroLag`` is only used by
+of the classes below in ``arch.covariance.kernel.KERNELS``, in lower case with
+hyphens between the words, for example ``"bartlett"`` or ``"quadratic-spectral"``.
+They are not case sensitive and ignore hyphens and underscores, so that
+``"quadratic_spectral"`` is the same as ``"quadratic-spectral"``. ``ZeroLag`` is
+only used by
 :class:`~arch.covariance.var.PreWhitenedRecolored` when ``kernel`` is None.
 
 .. autosummary::

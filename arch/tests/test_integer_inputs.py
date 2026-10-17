@@ -655,7 +655,7 @@ def engle_granger_test(d: dict[str, Any]) -> dict[str, Any]:
 @case(_cointegrated)
 def phillips_ouliaris_test(d: dict[str, Any]) -> dict[str, Any]:
     out = {}
-    for test_type in ("Za", "Zt", "Pu", "Pz"):
+    for test_type in ("za", "zt", "pu", "pz"):
         res = phillips_ouliaris(d["y"], d["x"], test_type=test_type, bandwidth=4)
         out[test_type] = {
             "stat": res.stat,
