@@ -1346,6 +1346,24 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     Further details are available in [2]_ and [5]_. Details about the long-run
     covariance estimation can be found in [1]_ and [4]_.
 
+    Examples
+    --------
+    >>> from arch.unitroot import KPSS
+    >>> import numpy as np
+    >>> import statsmodels.api as sm
+    >>> data = sm.datasets.macrodata.load().data
+    >>> inflation = np.diff(np.log(data["cpi"]))
+    >>> kpss = KPSS(inflation)
+    >>> print(f"{kpss.stat:0.4f}")
+    0.3916
+    >>> print(f"{kpss.pvalue:0.4f}")
+    0.0761
+    >>> kpss = KPSS(inflation, trend="ct")
+    >>> print(f"{kpss.stat:0.4f}")
+    0.2802
+    >>> print(f"{kpss.pvalue:0.4f}")
+    0.0026
+
     References
     ----------
     .. [1] Andrews, D.W.K. (1991). "Heteroskedasticity and autocorrelation
