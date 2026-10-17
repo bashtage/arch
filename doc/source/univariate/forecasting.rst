@@ -49,7 +49,7 @@ In code this model can be constructed using data from the S&P 500 using
     sp500 = arch.data.sp500.load()
     sp500 = sp500.loc['2000-01-01':'2014-01-01']
     returns = 100 * sp500['Adj Close'].pct_change().dropna()
-    am = arch_model(returns, vol='Garch', p=1, o=0, q=1, dist='Normal')
+    am = arch_model(returns, vol='garch', p=1, o=0, q=1, dist='normal')
 
 The model will be estimated using the first 10 years to estimate parameters
 and then forecasts will be produced for the final 5.
@@ -246,7 +246,7 @@ from the latest observation using parameters estimated previously.
 
 .. code-block:: python
 
-   am = arch_model(returns[:split_date], vol='Garch', p=1, o=0, q=1, dist='Normal')
+   am = arch_model(returns[:split_date], vol='garch', p=1, o=0, q=1, dist='normal')
    res = am.fit(disp='off')
    # Observations arrive, and are added to the model
    am.append(returns[split_date + dt.timedelta(1):])

@@ -72,7 +72,7 @@ is named ``"FI Power ARCH"`` when ``o=0``, since it then has no asymmetry.
     res = am.fit(disp="off")
     res.params
 
-The process can also be selected using ``vol="FIAPARCH"`` in
+The process can also be selected using ``vol="fiaparch"`` in
 :func:`~arch.univariate.arch_model`, which estimates :math:`\delta` and uses the
 default truncation. Analytic forecasts are only available for a horizon of 1.
 Longer horizons require ``method="simulation"`` or ``method="bootstrap"``.
