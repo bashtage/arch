@@ -1129,6 +1129,10 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lags: Int32Array) -> None:
+        if lags is None:
+            raise TypeError(
+                f"lags must be a 1-d C contiguous int32 ndarray; got {_describe(lags)}"
+            )
         self.lags = lags
         self.backcast = -1.0
 

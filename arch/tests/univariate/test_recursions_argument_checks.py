@@ -325,3 +325,10 @@ def test_truncation_one(rec):
     updater = rec.FIGARCHUpdater(0, 0, 2.0, 1)
     params = np.array([0.1, 0.4])
     assert_allclose(_t0(updater, params, 0.5), 0.1 + 0.4 * 0.5, rtol=1e-12)
+
+
+def test_harch_lags_none(rec):
+    # The compiled updater used to accept None and treat it as no lags
+    message = _message("lags", "a 1-d C contiguous int32 ndarray", "None (NoneType)")
+    with pytest.raises(TypeError, match=message):
+        rec.HARCHUpdater(None)

@@ -1035,6 +1035,10 @@ cdef class HARCHUpdater(VolatilityUpdater):
         double backcast
 
     def __init__(self, const np.int32_t[::1] lags):
+        if lags is None:
+            raise TypeError(
+                f"lags must be a 1-d C contiguous int32 ndarray; got {_describe(lags)}"
+            )
         self.lags = lags
         self.backcast = -1.0
 
