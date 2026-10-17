@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility.timeseries - arch v8.0.1 (+398)</title>
+        <title>arch.utility.timeseries - arch v8.0.1 (+413)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+398)
+            arch v8.0.1 (+413)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+398)
+    arch v8.0.1 (+413)
   </label>
   
     <div class="md-nav__source">
@@ -534,6 +534,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NDArrayOrFrame</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
 
 
 <div class="viewcode-block" id="ColumnNameConflict">
@@ -616,8 +617,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray or DataFrame, optional</span>
+<span class="sd">    x : array_like or DataFrame, optional</span>
 <span class="sd">        Original array of data. If None, then nobs must be a positive integer.</span>
+<span class="sd">        Integer, unsigned integer and Boolean data are converted to float64.</span>
 <span class="sd">    trend : {"n", "c", "t", "ct", "ctt"}, optional</span>
 <span class="sd">        The trend(s) to add. Supported options are:</span>
 
@@ -641,8 +643,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    ndarray or DataFrame</span>
 <span class="sd">        The trend if x is None, an ndarray with nobs rows. Otherwise x with the</span>
-<span class="sd">        trend columns added, which has the same type as x. The trend columns</span>
-<span class="sd">        of a DataFrame are named "const", "trend" and "quadratic_trend".</span>
+<span class="sd">        trend columns added, which is a DataFrame if x is a DataFrame and an</span>
+<span class="sd">        ndarray otherwise. The trend columns of a DataFrame are named "const",</span>
+<span class="sd">        "trend" and "quadratic_trend".</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -664,6 +667,12 @@
     <span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"One and only one of x or nobs must be provided."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># A Series is stacked into an ndarray, as before</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"NDArrayOrFrame"</span><span class="p">,</span>
+            <span class="n">ensure1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="k">else</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="n">trend_name</span> <span class="o">==</span> <span class="s2">"n"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">x</span>

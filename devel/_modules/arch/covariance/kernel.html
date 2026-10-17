@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+398)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+413)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+398)
+            arch v8.0.1 (+413)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+398)
+    arch v8.0.1 (+413)
   </label>
   
     <div class="md-nav__source">
@@ -733,8 +733,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, optional</span>
@@ -798,8 +799,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, optional</span>
@@ -1093,7 +1095,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        CovarianceEstimate : The container of the covariance estimates.</span>
 <span class="sd">        """</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
         <span class="n">sr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span> <span class="o">/</span> <span class="n">df</span>
@@ -1414,8 +1416,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, optional</span>
@@ -1446,8 +1449,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, optional</span>
@@ -1479,8 +1483,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
 <span class="sd">    df_adjust : int, optional</span>

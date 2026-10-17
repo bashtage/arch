@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch v8.0.1 (+398)</title>
+        <title>arch.univariate.distribution - arch v8.0.1 (+413)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+398)
+            arch v8.0.1 (+413)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+398)
+    arch v8.0.1 (+413)
   </label>
   
     <div class="md-nav__source">
@@ -562,7 +562,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gammainc</span><span class="p">,</span> <span class="n">gammaincc</span><span class="p">,</span> <span class="n">gammaln</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbstractDocStringInheritor</span><span class="p">,</span>
+    <span class="n">as_float64</span><span class="p">,</span>
+    <span class="n">ensure1d</span><span class="p">,</span>
+    <span class="n">to_array_1d</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Distribution"</span><span class="p">,</span> <span class="s2">"GeneralizedError"</span><span class="p">,</span> <span class="s2">"Normal"</span><span class="p">,</span> <span class="s2">"SkewStudent"</span><span class="p">,</span> <span class="s2">"StudentsT"</span><span class="p">]</span>
 
@@ -996,6 +1001,8 @@
 <span class="sd">            \ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}</span>
 <span class="sd">            +\frac{x^{2}}{\sigma^{2}}\right)</span>
 <span class="sd">        """</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">"resids"</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="s2">"sigma2"</span><span class="p">)</span>
         <span class="n">lls</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">+</span> <span class="n">resids</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">sigma2</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">individual</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">lls</span>
@@ -1047,7 +1054,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
             <span class="n">_pits</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">pits</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -1173,6 +1179,9 @@
 
 <span class="sd">        where :math:`\Gamma` is the gamma function.</span>
 <span class="sd">        """</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">"parameters"</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">"resids"</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="s2">"sigma2"</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">lls</span> <span class="o">=</span> <span class="n">gammaln</span><span class="p">((</span><span class="n">nu</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">nu</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">lls</span> <span class="o">-=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">))</span>
@@ -1206,6 +1215,7 @@
 <span class="sd">        Uses relationship between kurtosis and degree of freedom parameter to</span>
 <span class="sd">        produce a moment-based estimator for the starting values.</span>
 <span class="sd">        """</span>
+        <span class="n">std_resid</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="s2">"std_resid"</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">fisher</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="n">sv</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mf">3.75</span> <span class="k">else</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">])</span></div>
@@ -1451,6 +1461,9 @@
 
 <span class="sd">        and :math:`\Gamma` is the gamma function.</span>
 <span class="sd">        """</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">"parameters"</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">"resids"</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="s2">"sigma2"</span><span class="p">)</span>
         <span class="n">parameters_arr</span><span class="p">:</span> <span class="n">Float64Array1D</span>
         <span class="n">parameters_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters_arr</span>
@@ -1498,6 +1511,7 @@
 <span class="sd">        produce a moment-based estimator for the starting value of the shape</span>
 <span class="sd">        parameter.  The starting value of the skewness parameter is 0.</span>
 <span class="sd">        """</span>
+        <span class="n">std_resid</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="s2">"std_resid"</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">fisher</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="n">sv</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mf">3.75</span> <span class="k">else</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span></div>
@@ -1832,6 +1846,9 @@
 <span class="sd">            \ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})</span>
 <span class="sd">            -\ln\Gamma(\frac{3}{\nu})\right).</span>
 <span class="sd">        """</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">"parameters"</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">"resids"</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">as_float64</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="s2">"sigma2"</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">log_c</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">gammaln</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">nu</span><span class="p">)</span> <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="n">nu</span><span class="p">))</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">log_c</span><span class="p">)</span>
