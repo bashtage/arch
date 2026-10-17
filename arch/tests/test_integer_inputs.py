@@ -773,7 +773,10 @@ def large_values_unit_root(d: dict[str, Any]) -> dict[str, Any]:
 def _losses() -> dict[str, np.ndarray]:
     rng = np.random.default_rng(40)
     losses = rng.integers(0, 40, size=(120, 4)) + np.array([5, 0, 2, 4])
-    return {"losses": losses.astype(float), "benchmark": losses[:, :1].astype(float)}
+    # A separate benchmark, since a model identical to the benchmark has a constant
+    # loss differential, which SPA and StepM warn about
+    benchmark = rng.integers(0, 40, size=(120, 1)) + 3
+    return {"losses": losses.astype(float), "benchmark": benchmark.astype(float)}
 
 
 @case(_losses)
