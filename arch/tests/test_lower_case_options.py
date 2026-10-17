@@ -106,14 +106,17 @@ def test_literal_annotations_and_defaults_are_lower_case(name, obj):
         signature = inspect.signature(target)
     except (NameError, TypeError, ValueError):  # pragma: no cover
         pytest.skip("The annotations cannot be resolved")
-    for param, hint in hints.items():
-        values = literal_values(hint)
-        assert values == [value.lower() for value in values], (name, param, values)
-        default = (
-            signature.parameters[param].default if param in signature.parameters else 0
-        )
-        if values and isinstance(default, str):
-            assert default == default.lower(), (name, param, default)
+    else:
+        for param, hint in hints.items():
+            values = literal_values(hint)
+            assert values == [value.lower() for value in values], (name, param, values)
+            default = (
+                signature.parameters[param].default
+                if param in signature.parameters
+                else 0
+            )
+            if values and isinstance(default, str):
+                assert default == default.lower(), (name, param, default)
 
 
 @pytest.mark.parametrize(("name", "obj"), OBJECTS, ids=IDS)
