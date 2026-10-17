@@ -123,15 +123,24 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
 
     Parameters
     ----------
-    a : ndarray
-        Parameter loadings.
-    b : ndarray
-        Constraint bounds.
+    a : array_like
+        Parameter loadings. A 2-d array of finite numbers.
+    b : array_like
+        Constraint bounds. A 1-d array of finite numbers with one element for each
+        row of ``a``.
 
     Returns
     -------
     constraints : list of dict
         Dictionaries of inequality constraints, one for each row of a.
+
+    Raises
+    ------
+    TypeError
+        If ``a`` or ``b`` cannot be converted to numbers.
+    ValueError
+        If ``a`` is not 2-d, ``b`` is not 1-d with one element for each row of
+        ``a``, or either contains NaN or inf.
 
     Notes
     -----
@@ -165,16 +174,25 @@ def format_float_fixed(x: float, max_digits: int = 10, decimal: int = 4) -> str:
     Parameters
     ----------
     x : float
-        The number to format.
+        The number to format. NaN and inf are formatted, as in a table of results
+        where a value is not available.
     max_digits : int, optional
-        The width of the formatted string, in characters.
+        The width of the formatted string, in characters. Must be at least 1.
     decimal : int, optional
-        The number of digits after the decimal point.
+        The number of digits after the decimal point. Must be at least 0.
 
     Returns
     -------
     str
         The formatted number.
+
+    Raises
+    ------
+    TypeError
+        If ``x`` is not a real number or ``max_digits`` or ``decimal`` is not an
+        integer.
+    ValueError
+        If ``max_digits`` is less than 1 or ``decimal`` is less than 0.
     """
     x = check_float("x", x, allow_nan=True, allow_inf=True)
     max_digits = check_int("max_digits", max_digits, lower=1)
@@ -197,14 +215,21 @@ def implicit_constant(x: Float64Array) -> bool:
 
     Parameters
     ----------
-    x : ndarray
-        Array to be tested.
+    x : array_like
+        Array to be tested. A 2-d array of finite numbers.
 
     Returns
     -------
     constant : bool
         Flag indicating whether the array has an implicit constant - whether
         the array has a set of columns that adds to a constant value.
+
+    Raises
+    ------
+    TypeError
+        If ``x`` cannot be converted to numbers.
+    ValueError
+        If ``x`` is not 2-d or contains NaN or inf.
     """
     x = check_array("x", x, ndim=2)
     nobs = x.shape[0]
@@ -261,7 +286,7 @@ class ARCHModel(metaclass=ABCMeta):
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must not be negative.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
@@ -269,6 +294,14 @@ class ARCHModel(metaclass=ABCMeta):
         then y is rescaled and the new scale is reported in the estimation results.
         If None, the data is not rescaled and a warning is issued when its scale is
         likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``volatility`` is not a VolatilityProcess, ``distribution`` is not a
+        Distribution, ``hold_back`` is not an integer or ``rescale`` is not a bool.
+    ValueError
+        If ``hold_back`` is negative or ``y`` contains NaN or inf.
     """
 
     def __init__(
@@ -499,7 +532,8 @@ class ARCHModel(metaclass=ABCMeta):
         """
         Get or set the volatility process.
 
-        Volatility processes must be a subclass of VolatilityProcess.
+        Volatility processes must be a subclass of VolatilityProcess. Setting a
+        value of another type raises a TypeError.
         """
         return self._volatility
 
@@ -512,7 +546,8 @@ class ARCHModel(metaclass=ABCMeta):
         """
         Get or set the error distribution.
 
-        Distributions must be a subclass of Distribution.
+        Distributions must be a subclass of Distribution. Setting a value of
+        another type raises a TypeError.
         """
         return self._distribution
 
@@ -850,18 +885,30 @@ class ARCHModel(metaclass=ABCMeta):
         params : array_like
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
-            model, volatility model and distribution.
+            model, volatility model and distribution, and be finite.
         first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when fixing model. Dates, strings and
             periods can only be used with pandas inputs that have a
-            DatetimeIndex or a PeriodIndex.
+            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
+            a date must be in the index.
         last_obs : int, str, date, datetime, Timestamp or Period, optional
-            Last observation to use when fixing model.
+            Last observation to use when fixing model. An integer must be in
+            [0, nobs], and a date must be in the index.
 
         Returns
         -------
         results : ARCHModelFixedResult
             Object containing model results.
+
+        Raises
+        ------
+        TypeError
+            If ``params`` cannot be converted to numbers, or ``first_obs`` or
+            ``last_obs`` is not an integer or a date.
+        ValueError
+            If ``params`` does not have one element for each parameter of the
+            model or contains NaN or inf, or ``first_obs`` or ``last_obs`` is
+            outside the sample.
 
         Notes
         -----
@@ -949,15 +996,16 @@ class ARCHModel(metaclass=ABCMeta):
         update_freq : int, optional
             Frequency of iteration updates.  Output is generated every
             `update_freq` iterations. Set to 0 to disable iterative output.
+            Must not be negative.
         disp : bool or {"off", "final"}, optional
             Either 'final' to print optimization result or 'off' to display
             nothing. If using a boolean, False is "off" and True is "final".
         starting_values : array_like, optional
             Array of starting values to use.  If not provided, starting values
-            are constructed by the model components. Starting values that have
-            the wrong number of elements or do not satisfy the constraints and
-            bounds of the model are ignored, and a StartingValueWarning is
-            issued.
+            are constructed by the model components. Must have one finite element
+            for each parameter of the model. Starting values that do not
+            satisfy the constraints and bounds of the model are ignored, and a
+            StartingValueWarning is issued.
         cov_type : {"robust", "classic"}, optional
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
@@ -969,23 +1017,41 @@ class ARCHModel(metaclass=ABCMeta):
         first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when estimating model. Dates, strings and
             periods can only be used with pandas inputs that have a
-            DatetimeIndex or a PeriodIndex.
+            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
+            a date must be in the index.
         last_obs : int, str, date, datetime, Timestamp or Period, optional
-            Last observation to use when estimating model.
+            Last observation to use when estimating model. An integer must be in
+            [0, nobs], and a date must be in the index.
         tol : float, optional
-            Tolerance for termination.
+            Tolerance for termination. Must not be negative.
         options : dict, optional
             Options to pass to `scipy.optimize.minimize`.  Valid entries
             include 'ftol', 'eps', 'disp', and 'maxiter'.
         backcast : float or ndarray, optional
             Value to use as backcast. Should be measure :math:`\sigma^2_0`
             since model-specific non-linear transformations are applied to
-            value before computing the variance recursions.
+            value before computing the variance recursions. A float must be
+            positive, and an array must contain finite values.
 
         Returns
         -------
         results : ARCHModelResult
             Object containing model results.
+
+        Raises
+        ------
+        RuntimeError
+            If the model was created without data.
+        TypeError
+            If an argument is not of the documented type, for example a float for
+            ``update_freq`` or an integer (0 or 1) for ``disp``.
+        ValueError
+            If ``update_freq`` is negative, ``tol`` is negative or not finite,
+            ``backcast`` is not positive and finite, ``starting_values`` does not
+            have one finite element for each parameter, ``first_obs`` or
+            ``last_obs`` is outside the sample, ``cov_type`` or ``disp`` is not one
+            of the options, or the model has more parameters than the number of
+            observations used to estimate it.
 
         Notes
         -----
@@ -1263,12 +1329,13 @@ class ARCHModel(metaclass=ABCMeta):
         ----------
         params : array_like
             Parameters to use when simulating the model.  Parameter order is
-            [mean volatility distribution].
+            [mean volatility distribution]. Must have one finite element for
+            each parameter of the model.
         nobs : int
-            Length of series to simulate.
+            Length of series to simulate. Must be positive.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
-            dependence on initial values.
+            dependence on initial values. Must not be negative.
         initial_value : float or ndarray, optional
             Initial values to use when initializing the mean model.  The valid
             values depend on the mean model.
@@ -1288,6 +1355,15 @@ class ARCHModel(metaclass=ABCMeta):
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
             containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or ``params`` cannot be
+            converted to numbers.
+        ValueError
+            If ``nobs`` is not positive, ``burn`` is negative, or ``params`` does
+            not have one finite element for each parameter of the model.
         """
 
     @abstractmethod
@@ -1303,7 +1379,8 @@ class ARCHModel(metaclass=ABCMeta):
         Parameters
         ----------
         params : ndarray
-            Model parameters.
+            Model parameters. Must have one finite element for each parameter of
+            the mean model.
         y : ndarray, optional
             Alternative values to use when computing model residuals.
         regressors : ndarray, optional
@@ -1313,6 +1390,14 @@ class ARCHModel(metaclass=ABCMeta):
         -------
         resids : ndarray
             Model residuals.
+
+        Raises
+        ------
+        TypeError
+            If ``params``, ``y`` or ``regressors`` cannot be converted to numbers.
+        ValueError
+            If ``params`` does not have one finite element for each parameter of
+            the mean model.
         """
 
     def compute_param_cov(
@@ -1326,12 +1411,14 @@ class ARCHModel(metaclass=ABCMeta):
 
         Parameters
         ----------
-        params : ndarray
-            Model parameters.
+        params : array_like
+            Model parameters. Must have one finite element for each parameter of
+            the model.
         backcast : float or ndarray, optional
             Value to use for pre-sample observations.  If not provided, the
             backcast stored in the model is used and, if the model has none, it
-            is computed from the residuals.
+            is computed from the residuals. A float must be positive, and an
+            array must contain finite values.
         robust : bool, optional
             Flag indicating whether to use robust standard errors (True) or
             classic MLE (False).
@@ -1340,6 +1427,15 @@ class ARCHModel(metaclass=ABCMeta):
         -------
         ndarray
             The covariance matrix of the parameters.
+
+        Raises
+        ------
+        TypeError
+            If ``params`` or ``backcast`` cannot be converted to numbers, or
+            ``robust`` is not a bool.
+        ValueError
+            If ``params`` does not have one finite element for each parameter of
+            the model, or ``backcast`` is not positive and finite.
         """
         num_params = int(
             self.num_params + self.volatility.num_params + self.distribution.num_params
@@ -1400,13 +1496,14 @@ class ARCHModel(metaclass=ABCMeta):
             Parameters required to forecast. Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
-            Number of steps to forecast.
+            Number of steps to forecast. Must be positive.
         start : int, str, date, datetime, Timestamp or Period, optional
             An integer, date, datetime, Period or str indicating the first
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
-            '1945-01-01'.
+            '1945-01-01'. An integer must be in [0, nobs], and a date must be in
+            the index.
         align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1422,7 +1519,7 @@ class ARCHModel(metaclass=ABCMeta):
             support the 'analytic' method for horizons > 1.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
-            either simulation or bootstrap.
+            either simulation or bootstrap. Must be positive.
         rng : callable, optional
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
@@ -1471,6 +1568,18 @@ class ARCHModel(metaclass=ABCMeta):
         arch.univariate.base.ARCHModelForecast
             Container for forecasts. Key properties are ``mean``,
             ``variance`` and ``residual_variance``.
+
+        Raises
+        ------
+        TypeError
+            If ``horizon`` or ``simulations`` is not an integer, ``reindex`` is not
+            a bool, ``rng`` is not callable, ``random_state`` is not a RandomState,
+            or ``start`` is not an integer or a date.
+        ValueError
+            If ``horizon`` or ``simulations`` is less than 1, ``params`` does not
+            have one finite element for each parameter of the model, ``start`` is
+            outside the sample, or ``align`` or ``method`` is not one of the
+            options.
 
         Notes
         -----
@@ -1545,6 +1654,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         Whether the original input was pandas.
     model : ARCHModel
         The model object used to estimate the parameters.
+
+    Notes
+    -----
+    The results are created by ``ARCHModel.fix``. The arguments of the constructor
+    are not validated.
     """
 
     def __init__(
@@ -1772,12 +1886,20 @@ class ARCHModelFixedResult(_SummaryRepr):
         k : int, optional
             Number of upper order statistics to use. If not provided, uses
             ``int(sqrt(n))`` where ``n`` is the number of finite standardized
-            residuals.
+            residuals. Must be at least 1 and less than the number of non-zero
+            finite standardized residuals.
 
         Returns
         -------
         float
             Inverse Hill estimate of the tail index.
+
+        Raises
+        ------
+        TypeError
+            If ``k`` is not an integer.
+        ValueError
+            If ``k`` is outside the allowed range.
         """
         return _hill_estimator(self.std_resid, k)
 
@@ -1788,13 +1910,21 @@ class ARCHModelFixedResult(_SummaryRepr):
         Parameters
         ----------
         level : float, optional
-            VaR confidence level. Must be between 0.5 and 1.0.
+            VaR confidence level. Must be finite and between 0.5 and 1.0,
+            exclusive.
 
         Returns
         -------
         float
             Ratio of the Gaussian left-tail VaR to the VaR implied by the
             fitted model distribution.
+
+        Raises
+        ------
+        TypeError
+            If ``level`` is not a real number.
+        ValueError
+            If ``level`` is not in (0.5, 1.0).
         """
         _, _, dp = self.model._parse_parameters(self._params)
         return _var_ratio(level, distribution=self.model.distribution, parameters=dp)
@@ -1807,19 +1937,28 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        annualize : str, optional
+        annualize : {"D", "W", "M"}, optional
             String containing frequency of data that indicates plot should
             contain annualized volatility.  Supported values are 'D' (daily),
             'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,
-            and 12, respectively.
+            and 12, respectively. Not case sensitive.
         scale : float, optional
             Value to use when scaling returns to annualize.  If scale is
-            provided, annualize is ignored and the value in scale is used.
+            provided, annualize is not used, and the value in scale is used.
+            Must be finite and positive.
 
         Returns
         -------
         fig : Figure
             Handle to the figure.
+
+        Raises
+        ------
+        TypeError
+            If ``annualize`` is not a string or ``scale`` is not a real number.
+        ValueError
+            If ``annualize`` is not one of the options, even if ``scale`` is
+            provided, or ``scale`` is not finite and positive.
 
         Examples
         --------
@@ -1906,13 +2045,14 @@ class ARCHModelFixedResult(_SummaryRepr):
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
-            Number of steps to forecast.
+            Number of steps to forecast. Must be positive.
         start : int, str, date, datetime, Timestamp or Period, optional
             An integer, date, datetime, Period or str indicating the first
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
-            '1945-01-01'.
+            '1945-01-01'. An integer must be in [0, nobs], and a date must be in
+            the index.
         align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
@@ -1928,7 +2068,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             support the 'analytic' method for horizons > 1.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
-            either simulation or bootstrap.
+            either simulation or bootstrap. Must be positive.
         rng : callable, optional
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
@@ -1975,6 +2115,18 @@ class ARCHModelFixedResult(_SummaryRepr):
         arch.univariate.base.ARCHModelForecast
             Container for forecasts. Key properties are ``mean``,
             ``variance`` and ``residual_variance``.
+
+        Raises
+        ------
+        TypeError
+            If ``horizon`` or ``simulations`` is not an integer, ``reindex`` is not
+            a bool, ``rng`` is not callable, ``random_state`` is not a RandomState,
+            or ``start`` is not an integer or a date.
+        ValueError
+            If ``horizon`` or ``simulations`` is less than 1, ``params`` does not
+            have one finite element for each parameter of the model, ``start`` is
+            outside the sample, or ``align`` or ``method`` is not one of the
+            options.
 
         Notes
         -----
@@ -2058,15 +2210,16 @@ class ARCHModelFixedResult(_SummaryRepr):
             computed by fitting the model are used.  Must be 1-d and identical
             in shape to the parameters computed by fitting the model.
         horizon : int, optional
-            Number of steps to forecast.
+            Number of steps to forecast. Must be positive.
         step : int, optional
-            Non-negative number of forecasts to skip between spines.
+            Number of forecasts to skip between spines. Must be positive.
         start : int, datetime or str, optional
             An integer, datetime or str indicating the first observation to
             produce the forecast for.  Datetimes can only be used with pandas
             inputs that have a datetime index.  Strings must be convertible
             to a date time, such as in '1945-01-01'.  If not provided, the start
-            is set to the earliest forecastable date.
+            is set to the earliest forecastable date. An integer must be in
+            [0, nobs], and a date must be in the index.
         plot_type : {"volatility", "mean"}, optional
             Quantity to plot, the forecast volatility or the forecast mean.
         method : {"analytic", "simulation", "bootstrap"}, optional
@@ -2079,12 +2232,23 @@ class ARCHModelFixedResult(_SummaryRepr):
             'simulation' or 'bootstrap'.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
-            either simulation or bootstrap.
+            either simulation or bootstrap. Must be positive.
 
         Returns
         -------
         fig : Figure
             Handle to the figure.
+
+        Raises
+        ------
+        TypeError
+            If ``horizon``, ``step`` or ``simulations`` is not an integer, or
+            ``start`` is not an integer or a date.
+        ValueError
+            If ``horizon``, ``step`` or ``simulations`` is less than 1, ``params``
+            does not have one finite element for each parameter of the model,
+            ``start`` is outside the sample, or ``plot_type`` or ``method`` is not
+            one of the options.
 
         Examples
         --------
@@ -2190,7 +2354,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         ----------
         lags : int, optional
             Number of lags to include in the model. Must be a positive integer
-            (any integer-like value, including a NumPy integer, is accepted).
+            (a Python or NumPy integer; floats and Booleans are rejected).
             If not specified, uses $\lceil 12 (T/100)^{1/4} \rceil$, where T
             is the number of non-missing residuals. In all cases the number of
             lags is limited to $\lfloor T/2 \rfloor - 1$.
@@ -2207,9 +2371,10 @@ class ARCHModelFixedResult(_SummaryRepr):
         Raises
         ------
         TypeError
-            If ``lags`` is not an integer.
+            If ``lags`` is not an integer or ``standardized`` is not a bool.
         ValueError
-            If ``lags`` is less than 1.
+            If ``lags`` is less than 1 or there are fewer than 3 non-missing
+            residuals.
 
         Notes
         -----
@@ -2290,6 +2455,11 @@ class ARCHModelResult(ARCHModelFixedResult):
         slice notation `fit_start:fit_stop`.
     model : ARCHModel
         The model object used to estimate the parameters.
+
+    Notes
+    -----
+    The results are created by ``ARCHModel.fit``. The arguments of the constructor
+    are not validated.
     """
 
     def __init__(
@@ -2336,13 +2506,21 @@ class ARCHModelResult(ARCHModelFixedResult):
         Parameters
         ----------
         alpha : float, optional
-            Size (prob.) to use when constructing the confidence interval.
+            Size (prob.) to use when constructing the confidence interval. Must be
+            finite and in (0, 1).
 
         Returns
         -------
         ci : DataFrame
             Array where the ith row contains the confidence interval  for the
             ith parameter.
+
+        Raises
+        ------
+        TypeError
+            If ``alpha`` is not a real number.
+        ValueError
+            If ``alpha`` is not in (0, 1).
         """
         alpha = check_float("alpha", alpha, lower=0, upper=1, inclusive="neither")
         cv = stats.norm.ppf(1.0 - alpha / 2.0)
@@ -2618,6 +2796,11 @@ class ARCHModelForecastSimulation:
     residual_variances : ndarray or None
         Simulated variances of the residuals.  A 3-d array with the same
         dimensions as ``values``.
+
+    Notes
+    -----
+    The container is created by the forecasting methods. The arguments of the
+    constructor are not validated.
     """
 
     def __init__(
@@ -2710,6 +2893,11 @@ class ARCHModelForecast:
     reindex : bool, optional
         Whether to reindex the forecasts to have the same dimension as the series
         being forecast.
+
+    Notes
+    -----
+    The container is created by the forecasting methods. The arguments of the
+    constructor are not validated.
     """
 
     def __init__(
