@@ -64,11 +64,13 @@ class PreWhitenedRecolored(CovarianceEstimator):
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
-        Must not contain NaN or infinite values.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     lags : int, optional
         The number of lags to include in the VAR. If None, a specification
-        search is used to select the order. Must be small enough that each
-        equation of the VAR has more observations than parameters, see Notes.
+        search is used to select the order. Must be non-negative and small
+        enough that each equation of the VAR has more observations than
+        parameters, see Notes.
     method : {"aic", "hqc", "bic"}, optional
         The information criteria to use in the model specification search.
         Input is not case sensitive.
@@ -80,7 +82,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         than one column.
     max_lag : int, optional
         The maximum lag to use in the model specification search. If None,
-        then int(nobs**(1/3)) is used. The value used is limited, see Notes.
+        then int(nobs**(1/3)) is used. Must be non-negative. The value used is
+        limited, see Notes.
     sample_autocov : bool, optional
         Whether to use the sample autocovariance of x or the autocovariance
         implied by the estimated VAR when computing the short-run and
@@ -95,19 +98,39 @@ class PreWhitenedRecolored(CovarianceEstimator):
         residuals.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated
-        from the VAR residuals. Must be None or 0 when kernel is None.
+        from the VAR residuals. Must be finite and non-negative, and None or 0
+        when kernel is None.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products, see Notes.
+        inner-products, see Notes. Must be at least 0 and smaller than the
+        number of observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if lags, max_lag or
+        df_adjust is not an integer (a float, including 5.0, or a Boolean is
+        not accepted), if bandwidth is not a real number, if diagonal,
+        sample_autocov, center or force_int is not a bool, or if method or
+        kernel is not a str.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if lags or max_lag is negative or lags is larger than
+        the largest order that can be estimated; if bandwidth is negative, not
+        finite or not None or 0 when kernel is None; if df_adjust is negative
+        or not smaller than the number of observations; if weights does not
+        have nvar finite non-negative elements, or has only zeros; or if
+        method or kernel is not one of the available names.
 
     See Also
     --------

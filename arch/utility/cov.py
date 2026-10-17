@@ -22,21 +22,33 @@ def cov_nw(
         Values to use when computing the Newey-West covariance estimator, either
         1-d or 2-d. When y is 2d, default behavior is to treat columns as variables
         and rows as observations. Integer and Boolean data are converted to float64.
+        Must not contain NaN or infinite values.
     lags : int, optional
-        Number of lags to include in the Newey-West covariance estimator.
+        Number of lags to include in the Newey-West covariance estimator. Must be
+        non-negative and at most the number of observations.
     demean : bool, optional
         Indicates whether to subtract the mean.
     axis : int, optional
         The axis to use when y is 2d.
     ddof : int, optional
         Degree of freedom correction for compatibility with simple covariance
-        estimators.
+        estimators. Must be non-negative and smaller than the number of
+        observations.
 
     Returns
     -------
     float or ndarray
         The estimated covariance. A float if y is 1-d and a 2-d ndarray
         otherwise.
+
+    Raises
+    ------
+    TypeError
+        If y cannot be converted to float64 or if lags, demean, axis or ddof have
+        the wrong type. Booleans and floats are not accepted for the integers.
+    ValueError
+        If y is not 1-d or 2-d, is empty or contains NaN or infinite values, or if
+        lags, axis or ddof are outside their range.
     """
     z = check_array("y", y)
     if z.ndim not in (1, 2) or z.size == 0:

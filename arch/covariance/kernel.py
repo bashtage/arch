@@ -201,20 +201,38 @@ def _kernel_covariance_template() -> None:
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     bandwidth : float, optional
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if bandwidth is not a
+        real number, if df_adjust is not an integer (a float, including 5.0, or
+        a Boolean is not accepted), or if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     Notes
     -----
@@ -265,20 +283,38 @@ class CovarianceEstimator(ABC):
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     bandwidth : float, optional
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if bandwidth is not a
+        real number, if df_adjust is not an integer (a float, including 5.0, or
+        a Boolean is not accepted), or if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     Notes
     -----
@@ -849,20 +885,38 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     bandwidth : float, optional
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if bandwidth is not a
+        real number, if df_adjust is not an integer (a float, including 5.0, or
+        a Boolean is not accepted), or if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     See Also
     --------
@@ -879,20 +933,38 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     bandwidth : float, optional
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if bandwidth is not a
+        real number, if df_adjust is not an integer (a float, including 5.0, or
+        a Boolean is not accepted), or if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     See Also
     --------
@@ -910,20 +982,38 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
         variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
     bandwidth : float, optional
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
     df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
     center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
     weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if bandwidth is not a
+        real number, if df_adjust is not an integer (a float, including 5.0, or
+        a Boolean is not accepted), or if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     See Also
     --------
