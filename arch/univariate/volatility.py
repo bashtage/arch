@@ -2582,6 +2582,7 @@ class ARCH(GARCH):
     """
 
     def __init__(self, p: int = 1) -> None:
+        p = _check_count("p", p, 1)
         super().__init__(p, 0, 0, 2.0)
         self._num_params = p + 1
 
