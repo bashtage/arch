@@ -242,6 +242,12 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         -------
         Figure
             The matplotlib Figure instance.
+
+        Raises
+        ------
+        TypeError
+            If axes is not a matplotlib Axes or None, or title is not a string or
+            None.
         """
         from matplotlib.axes import Axes  # noqa: PLC0415
 
