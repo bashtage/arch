@@ -144,7 +144,7 @@ same way everywhere.
    helpers (the private functions ``_is_bool``, ``_is_flag_integer``, ``_is_integer``,
    ``_is_real`` and
    ``_float_in_range`` in ``arch/utility/_validation.py``) and in the lists of values in
-   ``arch/tests/validation_table.py``, so that a different answer changes those places
+   ``arch/tests/validation_table.py``, so that a change of policy changes those places
    and not the code that calls them.
 
 The rules
