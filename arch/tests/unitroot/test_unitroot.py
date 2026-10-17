@@ -235,7 +235,9 @@ class TestUnitRoot:
         assert dfgls._low_memory
 
     def test_negative_lag(self):
-        with pytest.raises(ValueError, match=r"lags must be non-negative"):
+        with pytest.raises(
+            ValueError, match=r"lags must be an integer >= 0 or None; got -1 \(int\)"
+        ):
             ADF(self.inflation, lags=-1)
 
     def test_invalid_determinstic(self):

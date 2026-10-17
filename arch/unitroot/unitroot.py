@@ -84,12 +84,7 @@ from arch.utility._validation import (
     check_int,
     check_option,
 )
-from arch.utility.array import (
-    AbstractDocStringInheritor,
-    ensure1d,
-    ensure2d,
-    to_array_1d,
-)
+from arch.utility.array import AbstractDocStringInheritor, ensure2d, to_array_1d
 from arch.utility.cov import cov_nw
 from arch.utility.exceptions import (
     InfeasibleTestException,
@@ -534,6 +529,42 @@ def _estimate_df_regression(
     return OLS(lhs, rhs).fit()
 
 
+def _newey_west_lags(nobs: int) -> int:
+    """The rule of thumb for the number of lags of a Newey-West estimator"""
+    return int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+
+
+def _y_too_short(
+    test: str, required: int, nobs: int, trend: str, lags_text: str = ""
+) -> NoReturn:
+    """Raise the error for a series that is too short to run a test"""
+    raise InfeasibleTestException(
+        f"y must be at least {required} observations long to run the {test} test with "
+        f"trend {trend!r}{lags_text}; got {nobs} observations (ndarray)"
+    )
+
+
+def _lags_too_large(name: str, value: int, limit: int, nobs: int) -> NoReturn:
+    """Raise the error for lags that the observations in y cannot support"""
+    raise InfeasibleTestException(
+        f"{name} must be at most {limit} for the {nobs} observations in y; "
+        f"got {value} (int)"
+    )
+
+
+def _check_max_lags(
+    max_lags: int | None, lags: int | None, nobs: int, limit: int
+) -> None:
+    """
+    Check the maximum lag of the lag selection against the observations
+
+    max_lags is not used if lags is given, so it is only checked against nobs if
+    lags is None.
+    """
+    if max_lags is not None and lags is None and max_lags > limit:
+        _lags_too_large("max_lags", max_lags, limit, nobs)
+
+
 class UnitRootTest(metaclass=ABCMeta):
     """
     Base class to be used for inheritance in unit root tests.
@@ -550,7 +581,22 @@ class UnitRootTest(metaclass=ABCMeta):
         ``valid_trends``.
     valid_trends : list of str or tuple of str
         The trends that are supported by the test.
+
+    Raises
+    ------
+    TypeError
+        If y cannot be converted to numbers, lags is not an integer or trend is not
+        a str.
+    ValueError
+        If y is not 1-d, contains NaN or inf, lags is negative or trend is not one
+        of valid_trends.
+    InfeasibleTestException
+        If y has too few observations for the test and lags. This is also a
+        ``ValueError``.
     """
+
+    # The smallest number of lags that the test accepts
+    _min_lags = 0
 
     def __init__(
         self,
@@ -559,12 +605,10 @@ class UnitRootTest(metaclass=ABCMeta):
         trend: UnitRootTrend | Literal["t"],
         valid_trends: list[str] | tuple[str, ...],
     ) -> None:
-        self._y = ensure1d(y, "y", series=False)
+        self._y = check_array("y", y, ndim=1)
         self._delta_y = diff(self._y)
         self._nobs = self._y.shape[0]
-        self._lags = int(lags) if lags is not None else lags
-        if self._lags is not None and self._lags < 0:
-            raise ValueError("lags must be non-negative.")
+        self._lags = check_int("lags", lags, lower=self._min_lags, allow_none=True)
         self._valid_trends = list(valid_trends)
         self._trend = check_option("trend", trend, self._valid_trends)
         self._stat: float | None = None
@@ -590,7 +634,47 @@ class UnitRootTest(metaclass=ABCMeta):
     def _check_specification(self) -> None:
         """
         Check that the data are compatible with running a test.
+
+        This is called when the test is created.
         """
+
+    def _check_nobs(
+        self,
+        test: str,
+        limit: Callable[[int], int],
+        default: Callable[[int], int] | None = None,
+    ) -> None:
+        """
+        Check the number of observations in y against the lags.
+
+        Parameters
+        ----------
+        test : str
+            The name of the test, used in the message.
+        limit : callable
+            The largest number of lags that nobs observations can support, which is
+            below the smallest number of lags if nobs is too small to run the test.
+        default : callable, optional
+            The number of lags that the test uses if lags is None, if that is
+            known from nobs.
+        """
+        nobs, lags = self._nobs, self._lags
+        max_lags = limit(nobs)
+        if max_lags < self._min_lags:
+            required = nobs + 1
+            while limit(required) < self._min_lags:
+                required += 1
+            _y_too_short(test, required, nobs, self._trend)
+        if lags is not None:
+            if lags > max_lags:
+                _lags_too_large("lags", lags, max_lags, nobs)
+        elif default is not None and default(nobs) > max_lags:
+            required = nobs + 1
+            while default(required) > limit(required):
+                required += 1
+            _y_too_short(
+                test, required, nobs, self._trend, " and the default number of lags"
+            )
 
     @abstractmethod
     def _compute_statistic(self) -> None:
