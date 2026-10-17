@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.base.ARCHModelFixedResult.arch_lm_test - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.base.ARCHModelFixedResult.arch_lm_test - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -1730,7 +1730,7 @@
 <dt class="field-odd" id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test.lags"><span class="n sig-name">lags</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test.lags" title="Permalink to this definition">¶</a></dt><dd><p>Number of lags to include in the model. Must be a positive integer
-(any integer-like value, including a NumPy integer, is accepted).
+(a Python or NumPy integer; floats and Booleans are rejected).
 If not specified, uses $lceil 12 (T/100)^{1/4} rceil$, where T
 is the number of non-missing residuals. In all cases the number of
 lags is limited to $lfloor T/2 rfloor - 1$.</p>
@@ -1745,12 +1745,13 @@ estimated residuals.</p>
 <dd class="field-even"><p><strong>result</strong> – Result of ARCH-LM test.</p>
 </dd>
 <dt class="field-odd" id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test-return-type" title="Permalink to this headline">¶</a></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">WaldTestStatistic</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../../utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic (Python class) — Test statistic holder for Wald-type tests."><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.utility.testing.WaldTestStatistic</span></code></a></p>
 </dd>
 <dt class="field-even" id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test-raises" title="Permalink to this headline">¶</a></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is not an integer.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is less than 1.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is not an integer or <code class="docutils literal notranslate"><span class="pre">standardized</span></code> is not a bool.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is less than 1 or there are fewer than 3 non-missing
+    residuals.</p></li>
 </ul>
 </dd>
 </dl>

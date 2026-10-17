@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+566)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -531,11 +531,10 @@
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
@@ -569,7 +568,16 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_array</span><span class="p">,</span>
+    <span class="n">check_bool</span><span class="p">,</span>
+    <span class="n">check_callable</span><span class="p">,</span>
+    <span class="n">check_float</span><span class="p">,</span>
+    <span class="n">check_index</span><span class="p">,</span>
+    <span class="n">check_instance</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+    <span class="n">check_option</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">append_same_type</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ConvergenceWarning</span><span class="p">,</span>
@@ -643,20 +651,31 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    a : ndarray</span>
-<span class="sd">        Parameter loadings.</span>
-<span class="sd">    b : ndarray</span>
-<span class="sd">        Constraint bounds.</span>
+<span class="sd">    a : array_like</span>
+<span class="sd">        Parameter loadings. A 2-d array of finite numbers.</span>
+<span class="sd">    b : array_like</span>
+<span class="sd">        Constraint bounds. A 1-d array of finite numbers with one element for each</span>
+<span class="sd">        row of ``a``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    constraints : list of dict</span>
 <span class="sd">        Dictionaries of inequality constraints, one for each row of a.</span>
 
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``a`` or ``b`` cannot be converted to numbers.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``a`` is not 2-d, ``b`` is not 1-d with one element for each row of</span>
+<span class="sd">        ``a``, or either contains NaN or inf.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Parameter constraints satisfy a.dot(parameters) - b &gt;= 0</span>
 <span class="sd">    """</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"b"</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">coeff</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -683,17 +702,29 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    x : float</span>
-<span class="sd">        The number to format.</span>
+<span class="sd">        The number to format. NaN and inf are formatted, as in a table of results</span>
+<span class="sd">        where a value is not available.</span>
 <span class="sd">    max_digits : int, optional</span>
-<span class="sd">        The width of the formatted string, in characters.</span>
+<span class="sd">        The width of the formatted string, in characters. Must be at least 1.</span>
 <span class="sd">    decimal : int, optional</span>
-<span class="sd">        The number of digits after the decimal point.</span>
+<span class="sd">        The number of digits after the decimal point. Must be at least 0.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The formatted number.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``x`` is not a real number or ``max_digits`` or ``decimal`` is not an</span>
+<span class="sd">        integer.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``max_digits`` is less than 1 or ``decimal`` is less than 0.</span>
 <span class="sd">    """</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">allow_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">max_digits</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"max_digits"</span><span class="p">,</span> <span class="n">max_digits</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">decimal</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"decimal"</span><span class="p">,</span> <span class="n">decimal</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="c1"># basic_format = '{:0.' + str(digits) + 'g}'</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">"{:0."</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimal</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"f}"</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
@@ -712,15 +743,23 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : ndarray</span>
-<span class="sd">        Array to be tested.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        Array to be tested. A 2-d array of finite numbers.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    constant : bool</span>
 <span class="sd">        Flag indicating whether the array has an implicit constant - whether</span>
 <span class="sd">        the array has a set of columns that adds to a constant value.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``x`` cannot be converted to numbers.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``x`` is not 2-d or contains NaN or inf.</span>
 <span class="sd">    """</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">x</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">rank</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -738,6 +777,20 @@
     <span class="k">return</span> <span class="n">index</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_backcast</span><span class="p">(</span><span class="n">backcast</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Check a backcast that is None, a positive scalar or a 1-d array of finite values.</span>
+
+<span class="sd">    The volatility process decides whether the length of an array is correct and</span>
+<span class="sd">    transforms the value to its own scale.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">backcast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"backcast"</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"backcast"</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="ARCHModel">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.base.ARCHModel.html#arch.univariate.base.ARCHModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ARCHModel</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -752,7 +805,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">    y : array_like or Series, optional</span>
 <span class="sd">        The dependent variable.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
 <span class="sd">        Volatility process to use in the model.  If not specified, a constant</span>
@@ -763,7 +816,7 @@
 <span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
-<span class="sd">        lag lengths to estimate on the common sample.</span>
+<span class="sd">        lag lengths to estimate on the common sample.  Must not be negative.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
@@ -771,6 +824,14 @@
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
 <span class="sd">        If None, the data is not rescaled and a warning is issued when its scale is</span>
 <span class="sd">        likely to produce convergence issues.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``volatility`` is not a VolatilityProcess, ``distribution`` is not a</span>
+<span class="sd">        Distribution, ``hold_back`` is not an integer or ``rescale`` is not a bool.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``hold_back`` is negative or ``y`` contains NaN or inf.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -792,37 +853,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"NaN or inf values found in y. y must contains only finite values."</span>
-            <span class="p">)</span>
+        <span class="n">check_array</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="o">=</span> <span class="n">y</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
 
+        <span class="c1"># There is no upper bound: data can be appended to a model whose hold_back</span>
+        <span class="c1"># is larger than the sample, and fit checks the sample that remains.</span>
+        <span class="n">hold_back</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"hold_back"</span><span class="p">,</span> <span class="n">hold_back</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hold_back</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">hold_back</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">hold_back</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hold_back</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">rescale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"rescale"</span><span class="p">,</span> <span class="n">rescale</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volatility</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">volatility</span>
-        <span class="k">elif</span> <span class="n">volatility</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">ConstantVariance</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"volatility must inherit from VolatilityProcess"</span><span class="p">)</span>
+        <span class="n">volatility</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span>
+            <span class="s2">"volatility"</span><span class="p">,</span> <span class="n">volatility</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">ConstantVariance</span><span class="p">()</span> <span class="k">if</span> <span class="n">volatility</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">volatility</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">distribution</span>
-        <span class="k">elif</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"distribution must inherit from Distribution"</span><span class="p">)</span>
+        <span class="n">distribution</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span>
+            <span class="s2">"distribution"</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">()</span> <span class="k">if</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">distribution</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -861,10 +918,7 @@
         <span class="n">y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"pd.Series"</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y_original</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="n">y_values</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">y_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
         <span class="n">y_new</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">y_values</span><span class="p">[</span><span class="n">nobs</span><span class="p">:])</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_new</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"NaN or inf values found in y. y must contains only finite values."</span>
-            <span class="p">)</span>
+        <span class="n">check_array</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">y_series</span><span class="o">.</span><span class="n">index</span>
             <span class="n">old_index</span><span class="p">,</span> <span class="n">new_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[:</span><span class="n">nobs</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="n">nobs</span><span class="p">:]</span>
@@ -1017,30 +1071,28 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get or set the volatility process.</span>
 
-<span class="sd">        Volatility processes must be a subclass of VolatilityProcess.</span>
+<span class="sd">        Volatility processes must be a subclass of VolatilityProcess. Setting a</span>
+<span class="sd">        value of another type raises a TypeError.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span>
 
     <span class="nd">@volatility</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">VolatilityProcess</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Must subclass VolatilityProcess"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span><span class="s2">"volatility"</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get or set the error distribution.</span>
 
-<span class="sd">        Distributions must be a subclass of Distribution.</span>
+<span class="sd">        Distributions must be a subclass of Distribution. Setting a value of</span>
+<span class="sd">        another type raises a TypeError.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span>
 
     <span class="nd">@distribution</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Must subclass Distribution"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span><span class="s2">"distribution"</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
@@ -1326,6 +1378,38 @@
             <span class="k">return</span> <span class="mf">0.5</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">partial_moment</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">distribution_params</span><span class="p">))</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_sample</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">first_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check the first and last observations and convert them to positions</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        first_obs : {int, str, datetime, datetime64, Timestamp, Period}, optional</span>
+<span class="sd">            First observation to use.</span>
+<span class="sd">        last_obs : {int, str, datetime, datetime64, Timestamp, Period}, optional</span>
+<span class="sd">            Last observation to use.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        first_obs : int or None</span>
+<span class="sd">            The position of the first observation, or None if not given.</span>
+<span class="sd">        last_obs : int or None</span>
+<span class="sd">            The position of the last observation, or None if not given.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Positions are in [0, nobs] and dates must be in the index. Whether the</span>
+<span class="sd">        positions leave any observation after hold_back is checked when the sample</span>
+<span class="sd">        is set.</span>
+<span class="sd">        """</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">check_index</span><span class="p">(</span><span class="s2">"first_obs"</span><span class="p">,</span> <span class="n">first_obs</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">check_index</span><span class="p">(</span><span class="s2">"last_obs"</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span>
+
 <div class="viewcode-block" id="ARCHModel.fix">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fix</span><span class="p">(</span>
@@ -1342,24 +1426,40 @@
 <span class="sd">        params : array_like</span>
 <span class="sd">            User specified parameters to use when generating the result. Must</span>
 <span class="sd">            have the correct number of parameters for a given choice of mean</span>
-<span class="sd">            model, volatility model and distribution.</span>
+<span class="sd">            model, volatility model and distribution, and be finite.</span>
 <span class="sd">        first_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            First observation to use when fixing model. Dates, strings and</span>
 <span class="sd">            periods can only be used with pandas inputs that have a</span>
-<span class="sd">            DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and</span>
+<span class="sd">            a date must be in the index.</span>
 <span class="sd">        last_obs : int, str, date, datetime, Timestamp or Period, optional</span>
-<span class="sd">            Last observation to use when fixing model.</span>
+<span class="sd">            Last observation to use when fixing model. An integer must be in</span>
+<span class="sd">            [0, nobs], and a date must be in the index.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        results : ARCHModelFixedResult</span>
 <span class="sd">            Object containing model results.</span>
 
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``params`` cannot be converted to numbers, or ``first_obs`` or</span>
+<span class="sd">            ``last_obs`` is not an integer or a date.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``params`` does not have one element for each parameter of the</span>
+<span class="sd">            model or contains NaN or inf, or ``first_obs`` or ``last_obs`` is</span>
+<span class="sd">            outside the sample.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        Parameters are not checked against model-specific constraints.</span>
 <span class="sd">        """</span>
         <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span>
+
+        <span class="n">num_params</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_params</span><span class="p">,))</span>
+        <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
@@ -1369,11 +1469,10 @@
 
         <span class="n">var_bounds</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
 
-        <span class="n">params</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loglikelihood</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 
-        <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitted_resids_variance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitted_resids_variance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
         <span class="n">vol</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
@@ -1386,7 +1485,7 @@
 
         <span class="n">model_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ARCHModelFixedResult</span><span class="p">(</span>
-            <span class="n">params</span><span class="p">,</span>
+            <span class="n">values</span><span class="p">,</span>
             <span class="n">resids_final</span><span class="p">,</span>
             <span class="n">vol_final</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span>
@@ -1441,43 +1540,63 @@
 <span class="sd">        update_freq : int, optional</span>
 <span class="sd">            Frequency of iteration updates.  Output is generated every</span>
 <span class="sd">            `update_freq` iterations. Set to 0 to disable iterative output.</span>
+<span class="sd">            Must not be negative.</span>
 <span class="sd">        disp : bool or {"off", "final"}, optional</span>
 <span class="sd">            Either 'final' to print optimization result or 'off' to display</span>
-<span class="sd">            nothing. If using a boolean, False is "off" and True is "final".</span>
+<span class="sd">            nothing. Not case sensitive. If using a boolean, False is "off" and</span>
+<span class="sd">            True is "final".</span>
 <span class="sd">        starting_values : array_like, optional</span>
 <span class="sd">            Array of starting values to use.  If not provided, starting values</span>
-<span class="sd">            are constructed by the model components. Starting values that have</span>
-<span class="sd">            the wrong number of elements or do not satisfy the constraints and</span>
-<span class="sd">            bounds of the model are ignored, and a StartingValueWarning is</span>
-<span class="sd">            issued.</span>
+<span class="sd">            are constructed by the model components. Must have one finite element</span>
+<span class="sd">            for each parameter of the model. Starting values that do not</span>
+<span class="sd">            satisfy the constraints and bounds of the model are ignored, and a</span>
+<span class="sd">            StartingValueWarning is issued.</span>
 <span class="sd">        cov_type : {"robust", "classic"}, optional</span>
 <span class="sd">            Estimation method of parameter covariance.  Supported options are</span>
 <span class="sd">            'robust', which does not assume the Information Matrix Equality</span>
 <span class="sd">            holds and 'classic' which does.  In the ARCH literature, 'robust'</span>
-<span class="sd">            corresponds to Bollerslev-Wooldridge covariance estimator. Any</span>
-<span class="sd">            other value raises a ValueError.</span>
+<span class="sd">            corresponds to Bollerslev-Wooldridge covariance estimator. Not case</span>
+<span class="sd">            sensitive. Any other value raises a ValueError.</span>
 <span class="sd">        show_warning : bool, optional</span>
 <span class="sd">            Flag indicating whether convergence warnings should be shown.</span>
 <span class="sd">        first_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            First observation to use when estimating model. Dates, strings and</span>
 <span class="sd">            periods can only be used with pandas inputs that have a</span>
-<span class="sd">            DatetimeIndex or a PeriodIndex.</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and</span>
+<span class="sd">            a date must be in the index.</span>
 <span class="sd">        last_obs : int, str, date, datetime, Timestamp or Period, optional</span>
-<span class="sd">            Last observation to use when estimating model.</span>
+<span class="sd">            Last observation to use when estimating model. An integer must be in</span>
+<span class="sd">            [0, nobs], and a date must be in the index.</span>
 <span class="sd">        tol : float, optional</span>
-<span class="sd">            Tolerance for termination.</span>
+<span class="sd">            Tolerance for termination. Must not be negative.</span>
 <span class="sd">        options : dict, optional</span>
 <span class="sd">            Options to pass to `scipy.optimize.minimize`.  Valid entries</span>
 <span class="sd">            include 'ftol', 'eps', 'disp', and 'maxiter'.</span>
-<span class="sd">        backcast : float or ndarray, optional</span>
+<span class="sd">        backcast : float or array_like, optional</span>
 <span class="sd">            Value to use as backcast. Should be measure :math:`\sigma^2_0`</span>
 <span class="sd">            since model-specific non-linear transformations are applied to</span>
-<span class="sd">            value before computing the variance recursions.</span>
+<span class="sd">            value before computing the variance recursions. A float must be</span>
+<span class="sd">            positive, and an array must contain finite values.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        results : ARCHModelResult</span>
 <span class="sd">            Object containing model results.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the model was created without data.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If an argument is not of the documented type, for example a float for</span>
+<span class="sd">            ``update_freq`` or an integer (0 or 1) for ``disp``.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``update_freq`` is negative, ``tol`` is negative or not finite,</span>
+<span class="sd">            ``backcast`` is not positive and finite, ``starting_values`` does not</span>
+<span class="sd">            have one finite element for each parameter, ``first_obs`` or</span>
+<span class="sd">            ``last_obs`` is outside the sample, ``cov_type`` or ``disp`` is not one</span>
+<span class="sd">            of the options, or the model has more parameters than the number of</span>
+<span class="sd">            observations used to estimate it.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1488,20 +1607,36 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot estimate model without data."</span><span class="p">)</span>
-        <span class="n">cov_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-            <span class="s2">"Literal['robust', 'classic']"</span><span class="p">,</span>
-            <span class="n">check_option</span><span class="p">(</span><span class="s2">"cov_type"</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">,</span> <span class="p">(</span><span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"classic"</span><span class="p">)),</span>
-        <span class="p">)</span>
+        <span class="n">update_freq</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"update_freq"</span><span class="p">,</span> <span class="n">update_freq</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># A bool is "off" or "final". A string is not case sensitive.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">disp</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
                 <span class="s2">"Literal['off', 'final']"</span><span class="p">,</span>
                 <span class="n">check_option</span><span class="p">(</span><span class="s2">"disp"</span><span class="p">,</span> <span class="n">disp</span><span class="p">,</span> <span class="p">(</span><span class="s2">"off"</span><span class="p">,</span> <span class="s2">"final"</span><span class="p">)),</span>
             <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">disp</span> <span class="o">=</span> <span class="s2">"final"</span> <span class="k">if</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"disp"</span><span class="p">,</span> <span class="n">disp</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"off"</span>
+        <span class="n">cov_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"Literal['robust', 'classic']"</span><span class="p">,</span>
+            <span class="n">check_option</span><span class="p">(</span><span class="s2">"cov_type"</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">,</span> <span class="p">(</span><span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"classic"</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">show_warning</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"show_warning"</span><span class="p">,</span> <span class="n">show_warning</span><span class="p">)</span>
+        <span class="n">tol</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"tol"</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span><span class="s2">"options"</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="n">_check_backcast</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
         <span class="c1"># 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,</span>
         <span class="c1"># use closed form</span>
         <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span>
         <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">total_params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
+        <span class="n">total_params</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">offsets</span><span class="p">))</span>
+        <span class="n">starting_values</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+            <span class="s2">"starting_values"</span><span class="p">,</span>
+            <span class="n">starting_values</span><span class="p">,</span>
+            <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">total_params</span><span class="p">,),</span>
+            <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
 
         <span class="c1"># Closed form is applicable when model has no parameters</span>
         <span class="c1"># Or when distribution is normal and constant variance</span>
@@ -1512,6 +1647,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
 
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
+        <span class="n">nobs_fit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">total_params</span> <span class="o">&gt;</span> <span class="n">nobs_fit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"the number of parameters must be at most the number of observations "</span>
+                <span class="sa">f</span><span class="s2">"used to estimate the model (</span><span class="si">{</span><span class="n">nobs_fit</span><span class="si">}</span><span class="s2">); got </span><span class="si">{</span><span class="n">total_params</span><span class="si">}</span><span class="s2"> (int)"</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_scale</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="c1"># Scale changed, rescale data and reset model</span>
@@ -1577,16 +1718,14 @@
         <span class="c1"># 3. Construct starting values from all models</span>
         <span class="n">sv</span><span class="p">:</span> <span class="n">Float64Array1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">user_sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-                <span class="n">ensure1d</span><span class="p">(</span><span class="n">starting_values</span><span class="p">,</span> <span class="s2">"starting_values"</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
-            <span class="p">)</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="n">user_sv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_params</span>
-            <span class="k">if</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">user_sv</span> <span class="o">=</span> <span class="n">starting_values</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">satisfies_constraints</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">user_sv</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span>
                 <span class="n">valid</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">satisfies_constraints</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
             <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bound</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bounds</span><span class="p">):</span>
-                    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="ow">and</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">user_sv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">user_sv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
                 <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">user_sv</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1606,9 +1745,6 @@
 
         <span class="c1"># 4. Estimate models using constrained optimization</span>
         <span class="n">_callback_info</span><span class="p">[</span><span class="s2">"count"</span><span class="p">],</span> <span class="n">_callback_info</span><span class="p">[</span><span class="s2">"iter"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">disp</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">disp</span><span class="p">)</span>
-            <span class="n">disp</span> <span class="o">=</span> <span class="s2">"off"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">disp</span> <span class="k">else</span> <span class="s2">"final"</span>
         <span class="k">if</span> <span class="n">update_freq</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">disp</span> <span class="o">==</span> <span class="s2">"off"</span><span class="p">:</span>
             <span class="n">_callback_info</span><span class="p">[</span><span class="s2">"display"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span>
 
@@ -1750,20 +1886,21 @@
 <span class="sd">        ----------</span>
 <span class="sd">        params : array_like</span>
 <span class="sd">            Parameters to use when simulating the model.  Parameter order is</span>
-<span class="sd">            [mean volatility distribution].</span>
+<span class="sd">            [mean volatility distribution]. Must have one finite element for</span>
+<span class="sd">            each parameter of the model.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Length of series to simulate.</span>
+<span class="sd">            Length of series to simulate. Must be positive.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of values to simulate to initialize the model and remove</span>
-<span class="sd">            dependence on initial values.</span>
-<span class="sd">        initial_value : float or ndarray, optional</span>
+<span class="sd">            dependence on initial values. Must not be negative.</span>
+<span class="sd">        initial_value : float or array_like, optional</span>
 <span class="sd">            Initial values to use when initializing the mean model.  The valid</span>
 <span class="sd">            values depend on the mean model.</span>
-<span class="sd">        x : ndarray or DataFrame, optional</span>
+<span class="sd">        x : array_like or DataFrame, optional</span>
 <span class="sd">            Exogenous variables to include in the simulation, if the mean model</span>
 <span class="sd">            includes exogenous variables.  The valid values depend on the mean</span>
 <span class="sd">            model.</span>
-<span class="sd">        initial_value_vol : float or ndarray, optional</span>
+<span class="sd">        initial_value_vol : float or array_like, optional</span>
 <span class="sd">            An array or scalar to use when initializing the volatility process.</span>
 <span class="sd">            It is not always a variance. The units depend on the volatility</span>
 <span class="sd">            process, see</span>
@@ -1775,6 +1912,15 @@
 <span class="sd">            DataFrame with columns data containing the simulated values,</span>
 <span class="sd">            volatility, containing the conditional volatility and errors</span>
 <span class="sd">            containing the errors used in the simulation.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``nobs`` or ``burn`` is not an integer, or ``params`` cannot be</span>
+<span class="sd">            converted to numbers.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``nobs`` is not positive, ``burn`` is negative, or ``params`` does</span>
+<span class="sd">            not have one finite element for each parameter of the model.</span>
 <span class="sd">        """</span></div>
 
 
@@ -1792,17 +1938,26 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : ndarray</span>
-<span class="sd">            Model parameters.</span>
-<span class="sd">        y : ndarray, optional</span>
+<span class="sd">        params : array_like</span>
+<span class="sd">            Model parameters. Must have one finite element for each parameter of</span>
+<span class="sd">            the mean model.</span>
+<span class="sd">        y : array_like, optional</span>
 <span class="sd">            Alternative values to use when computing model residuals.</span>
-<span class="sd">        regressors : ndarray, optional</span>
+<span class="sd">        regressors : array_like, optional</span>
 <span class="sd">            Alternative regressor values to use when computing model residuals.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        resids : ndarray</span>
 <span class="sd">            Model residuals.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``params``, ``y`` or ``regressors`` cannot be converted to numbers.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``params`` does not have one finite element for each parameter of</span>
+<span class="sd">            the mean model.</span>
 <span class="sd">        """</span></div>
 
 
@@ -1819,12 +1974,14 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : ndarray</span>
-<span class="sd">            Model parameters.</span>
-<span class="sd">        backcast : float or ndarray, optional</span>
+<span class="sd">        params : array_like</span>
+<span class="sd">            Model parameters. Must have one finite element for each parameter of</span>
+<span class="sd">            the model.</span>
+<span class="sd">        backcast : float or array_like, optional</span>
 <span class="sd">            Value to use for pre-sample observations.  If not provided, the</span>
 <span class="sd">            backcast stored in the model is used and, if the model has none, it</span>
-<span class="sd">            is computed from the residuals.</span>
+<span class="sd">            is computed from the residuals. A float must be positive, and an</span>
+<span class="sd">            array must contain finite values.</span>
 <span class="sd">        robust : bool, optional</span>
 <span class="sd">            Flag indicating whether to use robust standard errors (True) or</span>
 <span class="sd">            classic MLE (False).</span>
@@ -1833,7 +1990,22 @@
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
 <span class="sd">            The covariance matrix of the parameters.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``params`` or ``backcast`` cannot be converted to numbers, or</span>
+<span class="sd">            ``robust`` is not a bool.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``params`` does not have one finite element for each parameter of</span>
+<span class="sd">            the model, or ``backcast`` is not positive and finite.</span>
 <span class="sd">        """</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">num_params</span>
+        <span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_params</span><span class="p">,))</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="n">_check_backcast</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="n">robust</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"robust"</span><span class="p">,</span> <span class="n">robust</span><span class="p">)</span>
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
         <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1886,33 +2058,34 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : ndarray or Series</span>
+<span class="sd">        params : array_like</span>
 <span class="sd">            Parameters required to forecast. Must be identical in</span>
 <span class="sd">            shape to the parameters computed by fitting the model.</span>
 <span class="sd">        horizon : int, optional</span>
-<span class="sd">            Number of steps to forecast.</span>
+<span class="sd">            Number of steps to forecast. Must be positive.</span>
 <span class="sd">        start : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            An integer, date, datetime, Period or str indicating the first</span>
 <span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
 <span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
 <span class="sd">            Strings must be convertible to a date time, such as in</span>
-<span class="sd">            '1945-01-01'.</span>
+<span class="sd">            '1945-01-01'. An integer must be in [0, nobs], and a date must be in</span>
+<span class="sd">            the index.</span>
 <span class="sd">        align : {"origin", "target"}, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
 <span class="sd">            set to 'target', the t-th row contains the 1-step ahead forecast</span>
 <span class="sd">            from time t-1, the 2 step from time t-2, ..., and the h-step from</span>
 <span class="sd">            time t-h.  'target' simplified computing forecast errors since the</span>
-<span class="sd">            realization and h-step forecast are aligned.</span>
+<span class="sd">            realization and h-step forecast are aligned. Not case sensitive.</span>
 <span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
 <span class="sd">            volatility models support all methods. In particular, volatility</span>
 <span class="sd">            models that do not evolve in squares such as EGARCH or TARCH do not</span>
-<span class="sd">            support the 'analytic' method for horizons &gt; 1.</span>
+<span class="sd">            support the 'analytic' method for horizons &gt; 1. Not case sensitive.</span>
 <span class="sd">        simulations : int, optional</span>
 <span class="sd">            Number of simulations to run when computing the forecast using</span>
-<span class="sd">            either simulation or bootstrap.</span>
+<span class="sd">            either simulation or bootstrap. Must be positive.</span>
 <span class="sd">        rng : callable, optional</span>
 <span class="sd">            Custom random number generator to use in simulation-based forecasts.</span>
 <span class="sd">            Must produce random samples using the syntax `rng(size)` where size</span>
@@ -1961,6 +2134,18 @@
 <span class="sd">        arch.univariate.base.ARCHModelForecast</span>
 <span class="sd">            Container for forecasts. Key properties are ``mean``,</span>
 <span class="sd">            ``variance`` and ``residual_variance``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``horizon`` or ``simulations`` is not an integer, ``reindex`` is not</span>
+<span class="sd">            a bool, ``rng`` is not callable, ``random_state`` is not a RandomState,</span>
+<span class="sd">            or ``start`` is not an integer or a date.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``horizon`` or ``simulations`` is less than 1, ``params`` does not</span>
+<span class="sd">            have one finite element for each parameter of the model, ``start`` is</span>
+<span class="sd">            outside the sample, or ``align`` or ``method`` is not one of the</span>
+<span class="sd">            options.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -2039,6 +2224,11 @@
 <span class="sd">        Whether the original input was pandas.</span>
 <span class="sd">    model : ARCHModel</span>
 <span class="sd">        The model object used to estimate the parameters.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The results are created by ``ARCHModel.fix``. The arguments of the constructor</span>
+<span class="sd">    are not validated.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2304,12 +2494,20 @@
 <span class="sd">        k : int, optional</span>
 <span class="sd">            Number of upper order statistics to use. If not provided, uses</span>
 <span class="sd">            ``int(sqrt(n))`` where ``n`` is the number of finite standardized</span>
-<span class="sd">            residuals.</span>
+<span class="sd">            residuals. Must be at least 1 and less than the number of non-zero</span>
+<span class="sd">            finite standardized residuals.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            Inverse Hill estimate of the tail index.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``k`` is not an integer.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``k`` is outside the allowed range.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">_hill_estimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
 
@@ -2323,13 +2521,21 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        level : float, optional</span>
-<span class="sd">            VaR confidence level. Must be between 0.5 and 1.0.</span>
+<span class="sd">            VaR confidence level. Must be finite and between 0.5 and 1.0,</span>
+<span class="sd">            exclusive.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            Ratio of the Gaussian left-tail VaR to the VaR implied by the</span>
 <span class="sd">            fitted model distribution.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``level`` is not a real number.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``level`` is not in (0.5, 1.0).</span>
 <span class="sd">        """</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_var_ratio</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">dp</span><span class="p">)</span></div>
@@ -2345,19 +2551,28 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        annualize : str, optional</span>
+<span class="sd">        annualize : {"D", "W", "M"}, optional</span>
 <span class="sd">            String containing frequency of data that indicates plot should</span>
 <span class="sd">            contain annualized volatility.  Supported values are 'D' (daily),</span>
 <span class="sd">            'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,</span>
-<span class="sd">            and 12, respectively.</span>
+<span class="sd">            and 12, respectively. Not case sensitive.</span>
 <span class="sd">        scale : float, optional</span>
 <span class="sd">            Value to use when scaling returns to annualize.  If scale is</span>
-<span class="sd">            provided, annualize is ignored and the value in scale is used.</span>
+<span class="sd">            provided, annualize is not used, and the value in scale is used.</span>
+<span class="sd">            Must be finite and positive.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fig : Figure</span>
 <span class="sd">            Handle to the figure.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``annualize`` is not a string or ``scale`` is not a real number.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``annualize`` is not one of the options, even if ``scale`` is</span>
+<span class="sd">            provided, or ``scale`` is not finite and positive.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2380,6 +2595,15 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>  <span class="c1"># noqa: PLC0415</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">figure</span>  <span class="c1"># noqa: PLC0415</span>
 
+        <span class="n">scales</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"d"</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">annualize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">annualize</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+                <span class="s2">"annualize"</span><span class="p">,</span> <span class="n">annualize</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">scales</span><span class="p">),</span> <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"D"</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span>
+            <span class="s2">"scale"</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">_set_tight_x</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">axis</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -2401,9 +2625,7 @@
         <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">vol</span> <span class="o">=</span> <span class="n">vol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">annualize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">scales</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"d"</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
-            <span class="n">check_option</span><span class="p">(</span><span class="s2">"annualize"</span><span class="p">,</span> <span class="n">annualize</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">scales</span><span class="p">),</span> <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"D"</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">))</span>
-            <span class="n">vol</span> <span class="o">=</span> <span class="n">vol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">scales</span><span class="p">[</span><span class="n">annualize</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+            <span class="n">vol</span> <span class="o">=</span> <span class="n">vol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">scales</span><span class="p">[</span><span class="n">annualize</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s2">"Conditional Volatility"</span>
 
@@ -2435,34 +2657,35 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : ndarray or Series, optional</span>
+<span class="sd">        params : array_like, optional</span>
 <span class="sd">            Alternative parameters to use.  If not provided, the parameters</span>
 <span class="sd">            estimated when fitting the model are used.  Must be identical in</span>
 <span class="sd">            shape to the parameters computed by fitting the model.</span>
 <span class="sd">        horizon : int, optional</span>
-<span class="sd">            Number of steps to forecast.</span>
+<span class="sd">            Number of steps to forecast. Must be positive.</span>
 <span class="sd">        start : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            An integer, date, datetime, Period or str indicating the first</span>
 <span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
 <span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
 <span class="sd">            Strings must be convertible to a date time, such as in</span>
-<span class="sd">            '1945-01-01'.</span>
+<span class="sd">            '1945-01-01'. An integer must be in [0, nobs], and a date must be in</span>
+<span class="sd">            the index.</span>
 <span class="sd">        align : {"origin", "target"}, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
 <span class="sd">            set to 'target', the t-th row contains the 1-step ahead forecast</span>
 <span class="sd">            from time t-1, the 2 step from time t-2, ..., and the h-step from</span>
 <span class="sd">            time t-h.  'target' simplified computing forecast errors since the</span>
-<span class="sd">            realization and h-step forecast are aligned.</span>
+<span class="sd">            realization and h-step forecast are aligned. Not case sensitive.</span>
 <span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
 <span class="sd">            volatility models support all methods. In particular, volatility</span>
 <span class="sd">            models that do not evolve in squares such as EGARCH or TARCH do not</span>
-<span class="sd">            support the 'analytic' method for horizons &gt; 1.</span>
+<span class="sd">            support the 'analytic' method for horizons &gt; 1. Not case sensitive.</span>
 <span class="sd">        simulations : int, optional</span>
 <span class="sd">            Number of simulations to run when computing the forecast using</span>
-<span class="sd">            either simulation or bootstrap.</span>
+<span class="sd">            either simulation or bootstrap. Must be positive.</span>
 <span class="sd">        rng : callable, optional</span>
 <span class="sd">            Custom random number generator to use in simulation-based forecasts.</span>
 <span class="sd">            Must produce random samples using the syntax `rng(size)` where size</span>
@@ -2510,6 +2733,18 @@
 <span class="sd">            Container for forecasts. Key properties are ``mean``,</span>
 <span class="sd">            ``variance`` and ``residual_variance``.</span>
 
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``horizon`` or ``simulations`` is not an integer, ``reindex`` is not</span>
+<span class="sd">            a bool, ``rng`` is not callable, ``random_state`` is not a RandomState,</span>
+<span class="sd">            or ``start`` is not an integer or a date.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``horizon`` or ``simulations`` is less than 1, ``params`` does not</span>
+<span class="sd">            have one finite element for each parameter of the model, ``start`` is</span>
+<span class="sd">            outside the sample, or ``align`` or ``method`` is not one of the</span>
+<span class="sd">            options.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        The most basic 1-step ahead forecast will return a vector with the same</span>
@@ -2531,15 +2766,34 @@
 <span class="sd">        [102, 2], so that it is aligned with the observation to use when</span>
 <span class="sd">        evaluating, but still in the same column.</span>
 <span class="sd">        """</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
-            <span class="ow">or</span> <span class="n">params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">ndim</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"params have incorrect dimensions"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">horizon</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="n">horizon</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"horizon must be an integer &gt;= 1."</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+                <span class="s2">"params"</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">,)</span>
+            <span class="p">)</span>
+        <span class="n">horizon</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"horizon"</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">check_index</span><span class="p">(</span><span class="s2">"start"</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
+        <span class="n">align</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"Literal['origin', 'target']"</span><span class="p">,</span>
+            <span class="n">check_option</span><span class="p">(</span>
+                <span class="s2">"align"</span><span class="p">,</span>
+                <span class="n">align</span><span class="p">,</span>
+                <span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"horizon"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">},</span>
+                <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"ForecastingMethod"</span><span class="p">,</span>
+            <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"analytic"</span><span class="p">,</span> <span class="s2">"simulation"</span><span class="p">,</span> <span class="s2">"bootstrap"</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">simulations</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"simulations"</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">check_callable</span><span class="p">(</span><span class="s2">"rng"</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span>
+            <span class="s2">"random_state"</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">reindex</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"reindex"</span><span class="p">,</span> <span class="n">reindex</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
             <span class="n">params</span><span class="p">,</span>
             <span class="n">horizon</span><span class="p">,</span>
@@ -2571,22 +2825,24 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : ndarray or Series, optional</span>
+<span class="sd">        params : array_like, optional</span>
 <span class="sd">            Alternative parameters to use.  If not provided, the parameters</span>
 <span class="sd">            computed by fitting the model are used.  Must be 1-d and identical</span>
 <span class="sd">            in shape to the parameters computed by fitting the model.</span>
 <span class="sd">        horizon : int, optional</span>
-<span class="sd">            Number of steps to forecast.</span>
+<span class="sd">            Number of steps to forecast. Must be positive.</span>
 <span class="sd">        step : int, optional</span>
-<span class="sd">            Non-negative number of forecasts to skip between spines.</span>
+<span class="sd">            Number of forecasts to skip between spines. Must be positive.</span>
 <span class="sd">        start : int, datetime or str, optional</span>
 <span class="sd">            An integer, datetime or str indicating the first observation to</span>
 <span class="sd">            produce the forecast for.  Datetimes can only be used with pandas</span>
 <span class="sd">            inputs that have a datetime index.  Strings must be convertible</span>
 <span class="sd">            to a date time, such as in '1945-01-01'.  If not provided, the start</span>
-<span class="sd">            is set to the earliest forecastable date.</span>
+<span class="sd">            is set to the earliest forecastable date. An integer must be in</span>
+<span class="sd">            [0, nobs], and a date must be in the index.</span>
 <span class="sd">        plot_type : {"volatility", "mean"}, optional</span>
-<span class="sd">            Quantity to plot, the forecast volatility or the forecast mean.</span>
+<span class="sd">            Quantity to plot, the forecast volatility or the forecast mean. Not case</span>
+<span class="sd">            sensitive.</span>
 <span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
@@ -2594,15 +2850,26 @@
 <span class="sd">            models that do not evolve in squares such as EGARCH or TARCH do not</span>
 <span class="sd">            support the 'analytic' method for horizons &gt; 1. For these models,</span>
 <span class="sd">            hedgehog_plot raises a ValueError unless horizon is 1 or method is</span>
-<span class="sd">            'simulation' or 'bootstrap'.</span>
+<span class="sd">            'simulation' or 'bootstrap'. Not case sensitive.</span>
 <span class="sd">        simulations : int, optional</span>
 <span class="sd">            Number of simulations to run when computing the forecast using</span>
-<span class="sd">            either simulation or bootstrap.</span>
+<span class="sd">            either simulation or bootstrap. Must be positive.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fig : Figure</span>
 <span class="sd">            Handle to the figure.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``horizon``, ``step`` or ``simulations`` is not an integer, or</span>
+<span class="sd">            ``start`` is not an integer or a date.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``horizon``, ``step`` or ``simulations`` is less than 1, ``params``</span>
+<span class="sd">            does not have one finite element for each parameter of the model,</span>
+<span class="sd">            ``start`` is outside the sample, or ``plot_type`` or ``method`` is not</span>
+<span class="sd">            one of the options.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2624,6 +2891,16 @@
             <span class="s2">"ForecastingMethod"</span><span class="p">,</span>
             <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"analytic"</span><span class="p">,</span> <span class="s2">"simulation"</span><span class="p">,</span> <span class="s2">"bootstrap"</span><span class="p">)),</span>
         <span class="p">)</span>
+        <span class="n">horizon</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"horizon"</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"step"</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">simulations</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"simulations"</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">check_index</span><span class="p">(</span>
+            <span class="s2">"start"</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+                <span class="s2">"params"</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">,)</span>
+            <span class="p">)</span>
         <span class="n">search_start</span> <span class="o">=</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># The earliest origin for which the model can produce a forecast</span>
@@ -2654,9 +2931,17 @@
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">plot_index</span> <span class="o">=</span> <span class="n">_plot_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">use_date</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span>
-        <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span>
+        <span class="n">plot_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span>
         <span class="k">if</span> <span class="n">MPL_LT_310</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">"plot_date"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_date</span><span class="p">:</span>
-            <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">_plot_date</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">linestyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"-"</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+                <span class="c1"># The default fmt of plot_date, "o", conflicts with the linestyle and</span>
+                <span class="c1"># marker keywords, so the style is passed as fmt</span>
+                <span class="k">return</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">linestyle</span> <span class="o">+</span> <span class="n">marker</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">_plot_date</span>
         <span class="n">x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">plot_index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_mean</span><span class="p">:</span>
             <span class="n">y_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="p">)</span>
@@ -2701,7 +2986,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        lags : int, optional</span>
 <span class="sd">            Number of lags to include in the model. Must be a positive integer</span>
-<span class="sd">            (any integer-like value, including a NumPy integer, is accepted).</span>
+<span class="sd">            (a Python or NumPy integer; floats and Booleans are rejected).</span>
 <span class="sd">            If not specified, uses $\lceil 12 (T/100)^{1/4} \rceil$, where T</span>
 <span class="sd">            is the number of non-missing residuals. In all cases the number of</span>
 <span class="sd">            lags is limited to $\lfloor T/2 \rfloor - 1$.</span>
@@ -2712,15 +2997,16 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result : WaldTestStatistic</span>
+<span class="sd">        result : arch.utility.testing.WaldTestStatistic</span>
 <span class="sd">            Result of ARCH-LM test.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        TypeError</span>
-<span class="sd">            If ``lags`` is not an integer.</span>
+<span class="sd">            If ``lags`` is not an integer or ``standardized`` is not a bool.</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``lags`` is less than 1.</span>
+<span class="sd">            If ``lags`` is less than 1 or there are fewer than 3 non-missing</span>
+<span class="sd">            residuals.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -2734,15 +3020,8 @@
 <span class="sd">        in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an</span>
 <span class="sd">        asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">lags</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"lags must be an integer or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">."</span>
-                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
-            <span class="k">if</span> <span class="n">lags</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"lags must be a positive integer, got </span><span class="si">{</span><span class="n">lags</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">lags</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"lags"</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">standardized</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"standardized"</span><span class="p">,</span> <span class="n">standardized</span><span class="p">)</span>
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span>
         <span class="k">if</span> <span class="n">standardized</span><span class="p">:</span>
             <span class="n">resids</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">)</span>
@@ -2812,6 +3091,11 @@
 <span class="sd">        slice notation `fit_start:fit_stop`.</span>
 <span class="sd">    model : ARCHModel</span>
 <span class="sd">        The model object used to estimate the parameters.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The results are created by ``ARCHModel.fit``. The arguments of the constructor</span>
+<span class="sd">    are not validated.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2863,14 +3147,23 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        alpha : float, optional</span>
-<span class="sd">            Size (prob.) to use when constructing the confidence interval.</span>
+<span class="sd">            Size (prob.) to use when constructing the confidence interval. Must be</span>
+<span class="sd">            finite and in (0, 1).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ci : DataFrame</span>
 <span class="sd">            Array where the ith row contains the confidence interval  for the</span>
 <span class="sd">            ith parameter.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``alpha`` is not a real number.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``alpha`` is not in (0, 1).</span>
 <span class="sd">        """</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
         <span class="n">cv</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="n">se</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_err</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
@@ -2968,7 +3261,7 @@
             <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std_err</span><span class="p">),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">),</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">conf_int_str</span><span class="p">),</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">conf_int_str</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="c1"># (0,0) is a dummy format</span>
         <span class="n">formats</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
@@ -3178,6 +3471,11 @@
 <span class="sd">    residual_variances : ndarray or None</span>
 <span class="sd">        Simulated variances of the residuals.  A 3-d array with the same</span>
 <span class="sd">        dimensions as ``values``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The container is created by the forecasting methods. The arguments of the</span>
+<span class="sd">    constructor are not validated.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -3273,6 +3571,11 @@
 <span class="sd">    reindex : bool, optional</span>
 <span class="sd">        Whether to reindex the forecasts to have the same dimension as the series</span>
 <span class="sd">        being forecast.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The container is created by the forecasting methods. The arguments of the</span>
+<span class="sd">    constructor are not validated.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>

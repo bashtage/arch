@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.bootstrap.CircularBlockBootstrap.conf_int - arch v8.0.1 (+413)</title>
+        <title>arch.bootstrap.CircularBlockBootstrap.conf_int - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -938,6 +938,16 @@
     
     <span class="md-ellipsis">
       <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.CircularBlockBootstrap.conf_int-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
     </span>
   </a>
   
@@ -1680,6 +1690,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.CircularBlockBootstrap.conf_int-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1712,16 +1732,18 @@
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.func"><span class="n sig-name">func</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)">Callable</a><span class="p">[</span><span class="p">[</span><span class="p">...</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.func" title="Permalink to this definition">¶</a></dt><dd><p>Function that computes parameter values.  See Notes for
 requirements.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.reps"><span class="n sig-name">reps</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.reps" title="Permalink to this definition">¶</a></dt><dd><p>Number of bootstrap replications.</p>
+<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.reps"><span class="n sig-name">reps</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.reps" title="Permalink to this definition">¶</a></dt><dd><p>Number of bootstrap replications. Must be at least 1.</p>
 </dd>
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.method"><span class="n sig-name">method</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'basic'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'percentile'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'studentized'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'norm'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'bc'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'bca'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'basic'</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.method" title="Permalink to this definition">¶</a></dt><dd><p>The method used to construct the interval.  “norm” is identical to
 “var” and “cov”, and “bc” is identical to “debiased” and
-“bias-corrected”.  See Notes for a description of each method.</p>
+“bias-corrected”.  See Notes for a description of each method. Not case
+sensitive.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.size"><span class="n sig-name">size</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.95</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.size" title="Permalink to this definition">¶</a></dt><dd><p>Coverage of confidence interval.</p>
+<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.size"><span class="n sig-name">size</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.95</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.size" title="Permalink to this definition">¶</a></dt><dd><p>Coverage of confidence interval. Must be strictly between 0 and 1.</p>
 </dd>
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.tail"><span class="n sig-name">tail</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'two'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'upper'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'lower'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'two'</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.tail" title="Permalink to this definition">¶</a></dt><dd><p>The tail of the interval.  When tail is “lower”, all upper bounds
-are inf.  Similarly, “upper” sets all lower bounds to -inf.</p>
+are inf.  Similarly, “upper” sets all lower bounds to -inf. Not case
+sensitive.</p>
 </dd>
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.extra_kwargs"><span class="n sig-name">extra_kwargs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)">Any</a><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.extra_kwargs" title="Permalink to this definition">¶</a></dt><dd><p>Extra keyword arguments to use when calling func and std_err_func,
 when appropriate.</p>
@@ -1734,8 +1756,8 @@ method is “studentized”.  Otherwise the previous results are
 reused even if extra_kwargs or sampling have changed, so use a new
 call without reuse (or <code class="docutils literal notranslate"><span class="pre">reset</span></code>) after changing them.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.sampling"><span class="n sig-name">sampling</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'nonparametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semi-parametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semi'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'parametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semiparametric'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'nonparametric'</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.sampling" title="Permalink to this definition">¶</a></dt><dd><p>Type of sampling to use.  “semi” and “semiparametric” are
-identical to “semi-parametric”.  See
+<dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.sampling"><span class="n sig-name">sampling</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'nonparametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semi-parametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semi'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'parametric'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'semiparametric'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'nonparametric'</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.sampling" title="Permalink to this definition">¶</a></dt><dd><p>Type of sampling to use.  Not case sensitive.  “semi” and
+“semiparametric” are identical to “semi-parametric”.  See
 <a class="reference internal" href="../../semiparametric-parametric-bootstrap.html#semiparametric-bootstraps"><span class="std std-ref">Semiparametric Bootstraps</span></a> and <a class="reference internal" href="../../semiparametric-parametric-bootstrap.html#parametric-bootstraps"><span class="std std-ref">Parametric Bootstraps</span></a>
 for the changes to func required when using “semi-parametric” or
 “parametric”.</p>
@@ -1745,7 +1767,9 @@ the studentized bootstrap.  Providing an analytical function
 eliminates the need for a nested bootstrap.</p>
 </dd>
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int.studentize_reps"><span class="n sig-name">studentize_reps</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1000</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int.studentize_reps" title="Permalink to this definition">¶</a></dt><dd><p>Number of bootstraps to use in the inner bootstrap when using the
-studentized bootstrap.  Ignored when <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> is provided.</p>
+studentized bootstrap.  Its value is ignored, but it must be an int,
+when <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> is provided or <code class="docutils literal notranslate"><span class="pre">method</span></code> is not
+“studentized”. Otherwise it must be at least 1.</p>
 </dd>
 </dl>
 </dd>
@@ -1757,6 +1781,18 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </dd>
 <dt class="field-odd" id="arch.bootstrap.CircularBlockBootstrap.conf_int-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int-return-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-even" id="arch.bootstrap.CircularBlockBootstrap.conf_int-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">func</span></code> or <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> is not callable, <code class="docutils literal notranslate"><span class="pre">reps</span></code> or
+    <code class="docutils literal notranslate"><span class="pre">studentize_reps</span></code> is not an int, <code class="docutils literal notranslate"><span class="pre">size</span></code> is not a number,
+    <code class="docutils literal notranslate"><span class="pre">reuse</span></code> is not a bool, <code class="docutils literal notranslate"><span class="pre">method</span></code>, <code class="docutils literal notranslate"><span class="pre">tail</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling</span></code> is not
+    a str, or <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> is not a dict.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reps</span></code> is less than 1, <code class="docutils literal notranslate"><span class="pre">size</span></code> is not in (0, 1),
+    <code class="docutils literal notranslate"><span class="pre">studentize_reps</span></code> is less than 1 when it is used, <code class="docutils literal notranslate"><span class="pre">method</span></code>,
+    <code class="docutils literal notranslate"><span class="pre">tail</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling</span></code> is not one of the options, or
+    <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> has a key that is the name of bootstrapped data.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

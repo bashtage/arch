@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.bootstrap.CircularBlockBootstrap - arch v8.0.1 (+413)</title>
+        <title>arch.bootstrap.CircularBlockBootstrap - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -1157,6 +1157,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arch.bootstrap.CircularBlockBootstrap-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="generated/arch.bootstrap.CircularBlockBootstrap.apply.html" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1795,6 +1805,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.CircularBlockBootstrap-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1826,13 +1846,13 @@
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.bootstrap.CircularBlockBootstrap.__init__.block_size"><span class="n sig-name">block_size</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.block_size" title="Permalink to this definition">¶</a></dt><dd><p>Size of block to use. Must be an integer that is at least 1.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.args"><span class="o">*</span><span class="n sig-name">args</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.args" title="Permalink to this definition">¶</a></dt><dd><p>Positional arguments to bootstrap.</p>
+<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.args"><span class="o">*</span><span class="n sig-name">args</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.args" title="Permalink to this definition">¶</a></dt><dd><p>Positional arguments to bootstrap. Each must have at least one row.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.seed"><span class="n sig-name">seed</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)">Generator</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)">RandomState</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.seed" title="Permalink to this definition">¶</a></dt><dd><p>Seed to use to ensure reproducible results. If an int, passes the
-value to <code class="docutils literal notranslate"><span class="pre">np.random.default_rng</span></code>. If None, a fresh
-Generator is constructed with system-provided entropy.</p>
+<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.seed"><span class="n sig-name">seed</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)">Generator</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)">RandomState</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.seed" title="Permalink to this definition">¶</a></dt><dd><p>Seed to use to ensure reproducible results. If an int, it must be
+non-negative and is passed to <code class="docutils literal notranslate"><span class="pre">np.random.default_rng</span></code>. If None, a
+fresh Generator is constructed with system-provided entropy.</p>
 </dd>
-<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.kwargs"><span class="o">**</span><span class="n sig-name">kwargs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.kwargs" title="Permalink to this definition">¶</a></dt><dd><p>Keyword arguments to bootstrap.</p>
+<dt id="arch.bootstrap.CircularBlockBootstrap.__init__.kwargs"><span class="o">**</span><span class="n sig-name">kwargs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.__init__.kwargs" title="Permalink to this definition">¶</a></dt><dd><p>Keyword arguments to bootstrap. Each must have at least one row.</p>
 </dd>
 </dl>
 </dd>
@@ -1871,6 +1891,19 @@ in the second (pos_data, kw_data).</p>
 </dl>
 </dd></dl>
 
+<dl class="field-list simple">
+<dt class="field-odd" id="arch.bootstrap.CircularBlockBootstrap-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If an input is not an ndarray, Series or DataFrame, <code class="docutils literal notranslate"><span class="pre">block_size</span></code> is
+    not an int, or <code class="docutils literal notranslate"><span class="pre">seed</span></code> is not None, a non-negative int, a Generator or a
+    RandomState.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If there are no inputs, an input has no rows, the inputs do not have
+    the same number of rows, <code class="docutils literal notranslate"><span class="pre">block_size</span></code> is less than 1, <code class="docutils literal notranslate"><span class="pre">seed</span></code> is a
+    negative int, or a keyword argument has the name of an attribute or
+    method of the bootstrap.</p></li>
+</ul>
+</dd>
+</dl>
 <div class="seealso admonition">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -1883,6 +1916,9 @@ in the second (pos_data, kw_data).</p>
 <p class="rubric">Notes</p>
 <p>Supports numpy arrays and pandas Series and DataFrames.  Data returned has
 the same type as the input data.</p>
+<p>The data are used as given. They are not converted to float64 and are not
+checked for NaN or inf, since the function that is bootstrapped decides how
+to treat them (for example, using <code class="docutils literal notranslate"><span class="pre">np.nanmean</span></code>).</p>
 <p>Data entered using keyword arguments is directly accessible as an
 attribute.</p>
 <p>To ensure a reproducible bootstrap, you must pass the <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword

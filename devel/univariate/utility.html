@@ -23,7 +23,7 @@
     
   
       
-        <title>Utilities - arch v8.0.1 (+413)</title>
+        <title>Utilities - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -882,6 +882,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arch.utility.testing.WaldTestStatistic-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#arch.utility.testing.WaldTestStatistic.alternative" class="md-nav__link">
     
       <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span>
@@ -1417,6 +1427,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arch.utility.testing.WaldTestStatistic-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#arch.utility.testing.WaldTestStatistic.alternative" class="md-nav__link">
     
       <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span>
@@ -1522,9 +1542,10 @@
 <dl class="field-list simple">
 <dt class="field-odd" id="arch.utility.testing.WaldTestStatistic-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
-<dt id="arch.utility.testing.WaldTestStatistic.__init__.stat"><span class="n sig-name">stat</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.stat" title="Permalink to this definition">¶</a></dt><dd><p>The test statistic.</p>
+<dt id="arch.utility.testing.WaldTestStatistic.__init__.stat"><span class="n sig-name">stat</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.stat" title="Permalink to this definition">¶</a></dt><dd><p>The test statistic. Must not be negative. NaN is accepted and gives a
+NaN p-value, for a statistic that cannot be computed.</p>
 </dd>
-<dt id="arch.utility.testing.WaldTestStatistic.__init__.df"><span class="n sig-name">df</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.df" title="Permalink to this definition">¶</a></dt><dd><p>Degree of freedom.</p>
+<dt id="arch.utility.testing.WaldTestStatistic.__init__.df"><span class="n sig-name">df</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.df" title="Permalink to this definition">¶</a></dt><dd><p>Degree of freedom. Must be positive.</p>
 </dd>
 <dt id="arch.utility.testing.WaldTestStatistic.__init__.null"><span class="n sig-name">null</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></span></span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.null" title="Permalink to this definition">¶</a></dt><dd><p>A statement of the test’s null hypothesis.</p>
 </dd>
@@ -1533,6 +1554,13 @@
 <dt id="arch.utility.testing.WaldTestStatistic.__init__.name"><span class="n sig-name">name</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">''</span></code><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.__init__.name" title="Permalink to this definition">¶</a></dt><dd><p>Name of test.</p>
 </dd>
 </dl>
+</dd>
+<dt class="field-even" id="arch.utility.testing.WaldTestStatistic-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If stat is not a real number, df is not an integer, or null, alternative
+    or name is not a str.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If stat is negative or df is not positive.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py property objdesc">

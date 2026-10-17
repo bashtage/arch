@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.HARCH - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.HARCH - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -1206,6 +1206,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arch.univariate.HARCH-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="generated/arch.univariate.HARCH.backcast.html" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -2013,6 +2023,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.univariate.HARCH-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2043,9 +2063,16 @@
 <dt class="field-odd" id="arch.univariate.HARCH-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.univariate.HARCH-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.univariate.HARCH.__init__.lags"><span class="n sig-name">lags</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.15)">Sequence</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.HARCH.__init__.lags" title="Permalink to this definition">¶</a></dt><dd><p>List of lags to include in the model, or if scalar, includes all lags up to
-the value.</p>
+the value. The lags must be positive integers, and the list cannot be empty.</p>
 </dd>
 </dl>
+</dd>
+<dt class="field-even" id="arch.univariate.HARCH-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.HARCH-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is not an integer or an array of integers.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">lags</span></code> is smaller than 1, is empty, is not 1-d, or contains a lag
+    smaller than 1.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

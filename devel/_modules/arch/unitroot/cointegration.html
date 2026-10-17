@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+413)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+566)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -550,9 +550,18 @@
     <span class="n">PhillipsOuliarisTestResults</span><span class="p">,</span>
     <span class="n">phillips_ouliaris</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot._shared</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_cointegrating_regression</span><span class="p">,</span> <span class="n">_cross_section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot._shared</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_TREND_TERMS</span><span class="p">,</span>
+    <span class="n">_check_cointegrating_regression</span><span class="p">,</span>
+    <span class="n">_cross_section</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">SHORT_TREND_DESCRIPTION</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_bool</span><span class="p">,</span>
+    <span class="n">check_float</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+    <span class="n">check_option</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">pval_format</span><span class="p">,</span> <span class="n">str_format</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_trend</span>
@@ -941,7 +950,13 @@
 <span class="sd">        statsmodels.iolib.summary.Summary</span>
 <span class="sd">            A summary instance with methods that support export to text, csv</span>
 <span class="sd">            or latex.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If full is not a bool.</span>
 <span class="sd">        """</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"full"</span><span class="p">,</span> <span class="n">full</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">):</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">str_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -996,11 +1011,18 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    y : array_like</span>
-<span class="sd">        The left-hand-side variable in the cointegrating regression.</span>
-<span class="sd">    x : ndarray, Series or DataFrame</span>
-<span class="sd">        The right-hand-side variables in the cointegrating regression.</span>
+<span class="sd">        The left-hand-side variable in the cointegrating regression. It must be</span>
+<span class="sd">        1-d and contain only finite values.</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The right-hand-side variables in the cointegrating regression. It must</span>
+<span class="sd">        be 1-d or 2-d with the same number of rows as y, at least 1 column,</span>
+<span class="sd">        the same index as y if both are pandas objects, and contain only finite</span>
+<span class="sd">        values. The number of rows must be at least two more than the number of</span>
+<span class="sd">        parameters in the cointegrating regression (the number of columns of x</span>
+<span class="sd">        and the number of terms in trend).</span>
 <span class="sd">    trend : {"n", "c", "ct", "ctt"}, optional</span>
-<span class="sd">        Trend to include in the cointegrating regression. Trends are:</span>
+<span class="sd">        Trend to include in the cointegrating regression. Not case sensitive.</span>
+<span class="sd">        Trends are:</span>
 
 <span class="sd">        * "n": No deterministic terms</span>
 <span class="sd">        * "c": Constant</span>
@@ -1009,24 +1031,44 @@
 
 <span class="sd">    lags : int, optional</span>
 <span class="sd">        The number of lags to include in the model.  If None, the optimal</span>
-<span class="sd">        number of lags is chosen using method.</span>
+<span class="sd">        number of lags is chosen using method. It must be an integer between 0</span>
+<span class="sd">        and nobs - 2.</span>
 <span class="sd">    leads : int, optional</span>
 <span class="sd">        The number of leads to include in the model.  If None, the optimal</span>
-<span class="sd">        number of leads is chosen using method.</span>
+<span class="sd">        number of leads is chosen using method. It must be an integer between 0</span>
+<span class="sd">        and nobs - 2.</span>
 <span class="sd">    common : bool, optional</span>
 <span class="sd">        Flag indicating that lags and leads should be restricted to the same</span>
 <span class="sd">        value. When common is True, lags must equal leads and max_lag must</span>
 <span class="sd">        equal max_lead.</span>
 <span class="sd">    max_lag : int, optional</span>
-<span class="sd">        The maximum lag to consider. See Notes for value used when None.</span>
+<span class="sd">        The maximum lag to consider. See Notes for value used when None. It</span>
+<span class="sd">        must be an integer between 0 and nobs - 2.</span>
 <span class="sd">    max_lead : int, optional</span>
-<span class="sd">        The maximum lead to consider. See Notes for value used when None.</span>
+<span class="sd">        The maximum lead to consider. See Notes for value used when None. It</span>
+<span class="sd">        must be an integer between 0 and nobs - 2.</span>
 <span class="sd">    method : {"aic", "bic", "hqic"}, optional</span>
-<span class="sd">        The method used to select lag length when lags or leads is None.</span>
+<span class="sd">        The method used to select lag length when lags or leads is None. Not</span>
+<span class="sd">        case sensitive.</span>
 
 <span class="sd">        * "aic" - Akaike Information Criterion</span>
 <span class="sd">        * "hqic" - Hannan-Quinn Information Criterion</span>
 <span class="sd">        * "bic" - Schwartz/Bayesian Information Criterion</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If y or x cannot be converted to float64, lags, leads, max_lag or</span>
+<span class="sd">        max_lead is not an integer or None, common is not a bool, or trend or</span>
+<span class="sd">        method is not a string.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If y or x contains NaN or inf, does not have the required dimensions, the</span>
+<span class="sd">        same number of rows or the same index, or has too few rows. Also if lags,</span>
+<span class="sd">        leads, max_lag or max_lead is not between 0 and nobs - 2, if common is</span>
+<span class="sd">        True and lags and leads (or max_lag and max_lead) differ, if the sample</span>
+<span class="sd">        that remains after the differences, lags and leads is not larger than</span>
+<span class="sd">        the number of parameters of the smallest model that is estimated, or if</span>
+<span class="sd">        trend or method is not one of the options.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1080,24 +1122,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">trend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">=</span> <span class="n">leads</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="n">max_lag</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span> <span class="o">=</span> <span class="n">max_lead</span>
+        <span class="c1"># At least one observation must remain after the first difference</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"lags"</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"leads"</span><span class="p">,</span> <span class="n">leads</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span>
+            <span class="s2">"max_lag"</span><span class="p">,</span> <span class="n">max_lag</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span>
+            <span class="s2">"max_lead"</span><span class="p">,</span> <span class="n">max_lead</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"hqic"</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">common</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"common"</span><span class="p">,</span> <span class="n">common</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate the inputs"""</span>
-        <span class="n">max_lag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lag</span>
-        <span class="n">max_lead</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_lead</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lead</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lead</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_leads</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
-
+        <span class="n">max_lag</span><span class="p">,</span> <span class="n">max_lead</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">"common is specified but leads and lags have different values"</span>
@@ -1108,7 +1150,8 @@
             <span class="p">)</span>
         <span class="n">max_ll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead_lag</span><span class="p">()</span>
 
-        <span class="n">obs_remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">obs_remaining</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">obs_remaining</span> <span class="o">-=</span> <span class="n">max_ll</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lag</span>
         <span class="n">obs_remaining</span> <span class="o">-=</span> <span class="n">max_ll</span> <span class="k">if</span> <span class="n">max_lead</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lead</span>
         <span class="k">if</span> <span class="n">obs_remaining</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1116,6 +1159,25 @@
                 <span class="s2">"max_lag and max_lead are too large for the amount of "</span>
                 <span class="s2">"data. The largest model specification in the search "</span>
                 <span class="s2">"cannot be estimated."</span>
+            <span class="p">)</span>
+        <span class="c1"># The regressions use the sample of the largest model. The smallest model</span>
+        <span class="c1"># that is estimated must have fewer parameters than the sample has rows.</span>
+        <span class="n">most_lags</span><span class="p">,</span> <span class="n">most_leads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span>
+        <span class="k">if</span> <span class="n">most_lags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">most_lags</span> <span class="o">=</span> <span class="n">max_ll</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lag</span>
+        <span class="k">if</span> <span class="n">most_leads</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">most_leads</span> <span class="o">=</span> <span class="n">max_ll</span> <span class="k">if</span> <span class="n">max_lead</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lead</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">most_lags</span> <span class="o">-</span> <span class="n">most_leads</span>
+        <span class="n">fewest</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">num_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># x, the trend, and the difference of x with its lags and leads</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="n">num_x</span> <span class="o">*</span> <span class="p">(</span><span class="n">fewest</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">_TREND_TERMS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="n">num_params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"lags, leads, max_lag and max_lead are too large for the amount of "</span>
+                <span class="sa">f</span><span class="s2">"data. </span><span class="si">{</span><span class="n">rows</span><span class="si">}</span><span class="s2"> observations remain after the differences, lags and "</span>
+                <span class="sa">f</span><span class="s2">"leads, which is not more than the </span><span class="si">{</span><span class="n">num_params</span><span class="si">}</span><span class="s2"> parameters of the "</span>
+                <span class="s2">"smallest model that is estimated."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_variables</span><span class="p">(</span>
@@ -1220,7 +1282,7 @@
             <span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">"unadjusted"</span><span class="p">,</span>
         <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"bartlett"</span><span class="p">,</span>
-        <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicOLSResults</span><span class="p">:</span>
@@ -1231,18 +1293,19 @@
 <span class="sd">        ----------</span>
 <span class="sd">        cov_type : {"unadjusted", "homoskedastic", "robust", "kernel"}, optional</span>
 <span class="sd">            Either "unadjusted" (or its equivalent "homoskedastic") or "robust"</span>
-<span class="sd">            (or its equivalent "kernel").</span>
+<span class="sd">            (or its equivalent "kernel"). Not case sensitive.</span>
 <span class="sd">        kernel : str, optional</span>
 <span class="sd">            The string name of any known kernel-based long-run</span>
 <span class="sd">            covariance estimator. Common choices are "bartlett" for the</span>
 <span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
-<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
-<span class="sd">        bandwidth : int, optional</span>
-<span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
-<span class="sd">            estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">            "unadjusted" produces the classic OLS covariance estimator.</span>
-<span class="sd">            Setting the bandwidth to 0 and using "robust" produces White's</span>
-<span class="sd">            covariance estimator.</span>
+<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel. Not case</span>
+<span class="sd">            sensitive.</span>
+<span class="sd">        bandwidth : float, optional</span>
+<span class="sd">            The bandwidth to use. It must be a finite non-negative number. If</span>
+<span class="sd">            not provided, the optimal bandwidth is estimated from the data.</span>
+<span class="sd">            Setting the bandwidth to 0 and using "unadjusted" produces the</span>
+<span class="sd">            classic OLS covariance estimator. Setting the bandwidth to 0 and</span>
+<span class="sd">            using "robust" produces White's covariance estimator.</span>
 <span class="sd">        force_int : bool, optional</span>
 <span class="sd">            Whether to force the estimated optimal bandwidth to be an integer.</span>
 <span class="sd">        df_adjust : bool, optional</span>
@@ -1255,6 +1318,15 @@
 <span class="sd">        -------</span>
 <span class="sd">        DynamicOLSResults</span>
 <span class="sd">            The estimation results.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If bandwidth is not a real number or None, force_int or df_adjust is</span>
+<span class="sd">            not a bool, or cov_type or kernel is not a string.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If bandwidth is negative, NaN or inf, or cov_type or kernel is not one</span>
+<span class="sd">            of the options.</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -1295,6 +1367,10 @@
                 <span class="p">(</span><span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span><span class="p">),</span>
             <span class="p">),</span>
         <span class="p">)</span>
+        <span class="n">get_kernel_estimator</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"bandwidth"</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">force_int</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"force_int"</span><span class="p">,</span> <span class="n">force_int</span><span class="p">)</span>
+        <span class="n">df_adjust</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"df_adjust"</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">)</span>
         <span class="n">leads</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads_and_lags</span><span class="p">()</span>
         <span class="c1"># TODO: Rank check and drop??</span>
         <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_variables</span><span class="p">(</span><span class="n">leads</span><span class="p">,</span> <span class="n">lags</span><span class="p">)</span>
@@ -1328,7 +1404,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_cov</span><span class="p">(</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span><span class="p">],</span>
         <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">rhs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
@@ -1436,11 +1512,18 @@
 <span class="s2">    Parameters</span>
 <span class="s2">    ----------</span>
 <span class="s2">    y : array_like</span>
-<span class="s2">        The left-hand-side variable in the cointegrating regression.</span>
-<span class="s2">    x : ndarray, Series or DataFrame</span>
-<span class="s2">        The right-hand-side variables in the cointegrating regression.</span>
+<span class="s2">        The left-hand-side variable in the cointegrating regression. It must be</span>
+<span class="s2">        1-d and contain only finite values.</span>
+<span class="s2">    x : array_like</span>
+<span class="s2">        The right-hand-side variables in the cointegrating regression. It must</span>
+<span class="s2">        be 1-d or 2-d with the same number of rows as y, at least 1 column,</span>
+<span class="s2">        the same index as y if both are pandas objects, and contain only finite</span>
+<span class="s2">        values. The number of rows must be at least two more than the number of</span>
+<span class="s2">        parameters in the cointegrating regression (the number of columns of x</span>
+<span class="s2">        and the number of terms in trend).</span>
 <span class="s2">    trend : {"n", "c", "ct", "ctt"}, optional</span>
-<span class="s2">        Trend to include in the cointegrating regression. Trends are:</span>
+<span class="s2">        Trend to include in the cointegrating regression. Not case sensitive.</span>
+<span class="s2">        Trends are:</span>
 
 <span class="s2">        * "n": No deterministic terms</span>
 <span class="s2">        * "c": Constant</span>
@@ -1451,7 +1534,17 @@
 <span class="s2">        Trends that affect the x-data but do not appear in the</span>
 <span class="s2">        cointegrating regression. x_trend must be at least as large as</span>
 <span class="s2">        trend, so that if trend is "ct", x_trend must be either "ct" or</span>
-<span class="s2">        "ctt". If None, x_trend is the same as trend.</span>
+<span class="s2">        "ctt". If None, x_trend is the same as trend. Not case sensitive.</span>
+
+<span class="s2">    Raises</span>
+<span class="s2">    ------</span>
+<span class="s2">    TypeError</span>
+<span class="s2">        If y or x cannot be converted to float64, or trend or x_trend is not a</span>
+<span class="s2">        string.</span>
+<span class="s2">    ValueError</span>
+<span class="s2">        If y or x contains NaN or inf, does not have the required dimensions, the</span>
+<span class="s2">        same number of rows or the same index, or has too few rows. Also if trend</span>
+<span class="s2">        or x_trend is not one of the options.</span>
 
 <span class="s2">    Notes</span>
 <span class="s2">    -----</span>
@@ -1555,6 +1648,18 @@
 <span class="s2">"""</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_fit_arguments</span><span class="p">(</span>
+    <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Check the arguments of the fit method of FMOLS and CCR"""</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">check_float</span><span class="p">(</span><span class="s2">"bandwidth"</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">cast</span><span class="p">(</span><span class="s2">"bool"</span><span class="p">,</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"force_int"</span><span class="p">,</span> <span class="n">force_int</span><span class="p">)),</span>
+        <span class="n">cast</span><span class="p">(</span><span class="s2">"bool"</span><span class="p">,</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"diff"</span><span class="p">,</span> <span class="n">diff</span><span class="p">)),</span>
+        <span class="n">cast</span><span class="p">(</span><span class="s2">"bool"</span><span class="p">,</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"df_adjust"</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="FullyModifiedOLS">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS">[docs]</a>
 <span class="nd">@Substitution</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">FMOLS_METHOD</span><span class="p">,</span> <span class="n">estimator</span><span class="o">=</span><span class="n">FMOLS_ESTIMATOR</span><span class="p">)</span>
@@ -1571,7 +1676,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="n">trend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_x_trend</span> <span class="o">=</span> <span class="n">x_trend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">x_trend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># The documented options are "c", "ct" and "ctt", "n" and "t" also work</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x_trend</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="s2">"UnitRootTrend"</span><span class="p">,</span>
+                <span class="n">check_option</span><span class="p">(</span>
+                    <span class="s2">"x_trend"</span><span class="p">,</span>
+                    <span class="n">x_trend</span><span class="p">,</span>
+                    <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">),</span>
+                    <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_common_fit</span><span class="p">(</span>
@@ -1639,10 +1755,11 @@
 <span class="sd">            The string name of any known kernel-based long-run</span>
 <span class="sd">            covariance estimator. Common choices are "bartlett" for the</span>
 <span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
-<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
+<span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel. Not case</span>
+<span class="sd">            sensitive.</span>
 <span class="sd">        bandwidth : float, optional</span>
-<span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
-<span class="sd">            estimated from the data.</span>
+<span class="sd">            The bandwidth to use. It must be a finite non-negative number. If</span>
+<span class="sd">            not provided, the optimal bandwidth is estimated from the data.</span>
 <span class="sd">        force_int : bool, optional</span>
 <span class="sd">            Whether to force the estimated optimal bandwidth to be an integer.</span>
 <span class="sd">        diff : bool, optional</span>
@@ -1657,7 +1774,19 @@
 <span class="sd">        -------</span>
 <span class="sd">        CointegrationAnalysisResults</span>
 <span class="sd">            The estimation results instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If bandwidth is not a real number or None, force_int, diff or</span>
+<span class="sd">            df_adjust is not a bool, or kernel is not a string.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If bandwidth is negative, NaN or inf, or kernel is not one of the</span>
+<span class="sd">            options.</span>
 <span class="sd">        """</span>
+        <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">df_adjust</span> <span class="o">=</span> <span class="n">_check_fit_arguments</span><span class="p">(</span>
+            <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">df_adjust</span>
+        <span class="p">)</span>
         <span class="n">cov_est</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_fit</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
         <span class="n">lmbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">one_sided</span><span class="p">)</span>
@@ -1739,6 +1868,9 @@
         <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CointegrationAnalysisResults</span><span class="p">:</span>
+        <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">df_adjust</span> <span class="o">=</span> <span class="n">_check_fit_arguments</span><span class="p">(</span>
+            <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">df_adjust</span>
+        <span class="p">)</span>
         <span class="n">cov_est</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_fit</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">force_int</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span><span class="p">)</span>
         <span class="n">lmbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov_est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">one_sided</span><span class="p">)</span>

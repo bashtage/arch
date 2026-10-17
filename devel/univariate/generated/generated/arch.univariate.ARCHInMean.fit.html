@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.ARCHInMean.fit - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.ARCHInMean.fit - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -1080,6 +1080,16 @@
     
     <span class="md-ellipsis">
       <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.univariate.ARCHInMean.fit-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
     </span>
   </a>
   
@@ -2070,6 +2080,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.univariate.ARCHInMean.fit-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2100,39 +2120,44 @@
 <dt class="field-odd" id="arch.univariate.ARCHInMean.fit-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.univariate.ARCHInMean.fit-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.univariate.ARCHInMean.fit.update_freq"><span class="n sig-name">update_freq</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.update_freq" title="Permalink to this definition">¶</a></dt><dd><p>Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p>
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.
+Must not be negative.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.disp"><span class="n sig-name">disp</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'off'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'final'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'final'</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.disp" title="Permalink to this definition">¶</a></dt><dd><p>Either ‘final’ to print optimization result or ‘off’ to display
-nothing. If using a boolean, False is “off” and True is “final”.</p>
+nothing. Not case sensitive. If using a boolean, False is “off” and
+True is “final”.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.starting_values"><span class="n sig-name">starting_values</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.starting_values" title="Permalink to this definition">¶</a></dt><dd><p>Array of starting values to use.  If not provided, starting values
-are constructed by the model components. Starting values that have
-the wrong number of elements or do not satisfy the constraints and
-bounds of the model are ignored, and a StartingValueWarning is
-issued.</p>
+are constructed by the model components. Must have one finite element
+for each parameter of the model. Starting values that do not
+satisfy the constraints and bounds of the model are ignored, and a
+StartingValueWarning is issued.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.cov_type"><span class="n sig-name">cov_type</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'robust'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'classic'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'robust'</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.cov_type" title="Permalink to this definition">¶</a></dt><dd><p>Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator. Any
-other value raises a ValueError.</p>
+corresponds to Bollerslev-Wooldridge covariance estimator. Not case
+sensitive. Any other value raises a ValueError.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.show_warning"><span class="n sig-name">show_warning</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.show_warning" title="Permalink to this definition">¶</a></dt><dd><p>Flag indicating whether convergence warnings should be shown.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.first_obs"><span class="n sig-name">first_obs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)">datetime</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.datetime64" title="(in NumPy v2.5)">datetime64</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v3.0.6)">Timestamp</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.first_obs" title="Permalink to this definition">¶</a></dt><dd><p>First observation to use when estimating model. Dates, strings and
 periods can only be used with pandas inputs that have a
-DatetimeIndex or a PeriodIndex.</p>
+DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
+a date must be in the index.</p>
 </dd>
-<dt id="arch.univariate.ARCHInMean.fit.last_obs"><span class="n sig-name">last_obs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)">datetime</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.datetime64" title="(in NumPy v2.5)">datetime64</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v3.0.6)">Timestamp</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.last_obs" title="Permalink to this definition">¶</a></dt><dd><p>Last observation to use when estimating model.</p>
+<dt id="arch.univariate.ARCHInMean.fit.last_obs"><span class="n sig-name">last_obs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)">datetime</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.datetime64" title="(in NumPy v2.5)">datetime64</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v3.0.6)">Timestamp</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.last_obs" title="Permalink to this definition">¶</a></dt><dd><p>Last observation to use when estimating model. An integer must be in
+[0, nobs], and a date must be in the index.</p>
 </dd>
-<dt id="arch.univariate.ARCHInMean.fit.tol"><span class="n sig-name">tol</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.tol" title="Permalink to this definition">¶</a></dt><dd><p>Tolerance for termination.</p>
+<dt id="arch.univariate.ARCHInMean.fit.tol"><span class="n sig-name">tol</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.tol" title="Permalink to this definition">¶</a></dt><dd><p>Tolerance for termination. Must not be negative.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.options"><span class="n sig-name">options</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)">Any</a><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.options" title="Permalink to this definition">¶</a></dt><dd><p>Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p>
 </dd>
 <dt id="arch.univariate.ARCHInMean.fit.backcast"><span class="n sig-name">backcast</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.ARCHInMean.fit.backcast" title="Permalink to this definition">¶</a></dt><dd><p>Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recursions.</p>
+value before computing the variance recursions. A float must be
+positive, and an array must contain finite values.</p>
 </dd>
 </dl>
 </dd>
@@ -2141,6 +2166,19 @@ value before computing the variance recursions.</p>
 </dd>
 <dt class="field-odd" id="arch.univariate.ARCHInMean.fit-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.univariate.ARCHInMean.fit-return-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../arch.univariate.base.ARCHModelResult.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult (Python class) — Results from estimation of an ARCHModel model."><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.base.ARCHModelResult</span></code></a></p>
+</dd>
+<dt class="field-even" id="arch.univariate.ARCHInMean.fit-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.ARCHInMean.fit-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the model was created without data.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If an argument is not of the documented type, for example a float for
+    <code class="docutils literal notranslate"><span class="pre">update_freq</span></code> or an integer (0 or 1) for <code class="docutils literal notranslate"><span class="pre">disp</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">update_freq</span></code> is negative, <code class="docutils literal notranslate"><span class="pre">tol</span></code> is negative or not finite,
+    <code class="docutils literal notranslate"><span class="pre">backcast</span></code> is not positive and finite, <code class="docutils literal notranslate"><span class="pre">starting_values</span></code> does not
+    have one finite element for each parameter, <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> or
+    <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is outside the sample, <code class="docutils literal notranslate"><span class="pre">cov_type</span></code> or <code class="docutils literal notranslate"><span class="pre">disp</span></code> is not one
+    of the options, or the model has more parameters than the number of
+    observations used to estimate it.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

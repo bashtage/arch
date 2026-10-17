@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.var - arch v8.0.1 (+413)</title>
+        <title>arch.covariance.var - arch v8.0.1 (+566)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -527,8 +527,7 @@
 
 <h1>Source code for arch.covariance.var</h1><div class="highlight"><pre>
 <span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -545,21 +544,16 @@
     <span class="n">ZeroLag</span><span class="p">,</span>
     <span class="n">get_kernel_estimator</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_describe</span><span class="p">,</span>
+    <span class="n">_fail</span><span class="p">,</span>
+    <span class="n">check_bool</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+    <span class="n">check_option</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Appender</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"PreWhitenedRecolored"</span><span class="p">]</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_is_non_negative_integer</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Test for a real, finite, non-negative value that is a whole number"""</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Real</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Integral</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"int"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-    <span class="n">number</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">number</span><span class="p">))</span> <span class="ow">and</span> <span class="n">number</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">==</span> <span class="n">number</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">VARModel</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
@@ -600,14 +594,16 @@
 <span class="sd">    x : array_like</span>
 <span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
 <span class="sd">        variables in columns. Integer and Boolean data are converted to float64.</span>
-<span class="sd">        Must not contain NaN or infinite values.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
 <span class="sd">    lags : int, optional</span>
 <span class="sd">        The number of lags to include in the VAR. If None, a specification</span>
-<span class="sd">        search is used to select the order. Must be small enough that each</span>
-<span class="sd">        equation of the VAR has more observations than parameters, see Notes.</span>
+<span class="sd">        search is used to select the order. Must be non-negative and small</span>
+<span class="sd">        enough that each equation of the VAR has more observations than</span>
+<span class="sd">        parameters, see Notes.</span>
 <span class="sd">    method : {"aic", "hqc", "bic"}, optional</span>
 <span class="sd">        The information criteria to use in the model specification search.</span>
-<span class="sd">        Input is not case sensitive.</span>
+<span class="sd">        Not case sensitive.</span>
 <span class="sd">    diagonal : bool, optional</span>
 <span class="sd">        Flag indicating whether the specification search also considers</span>
 <span class="sd">        models where the coefficient matrices on the final lags are</span>
@@ -616,7 +612,8 @@
 <span class="sd">        than one column.</span>
 <span class="sd">    max_lag : int, optional</span>
 <span class="sd">        The maximum lag to use in the model specification search. If None,</span>
-<span class="sd">        then int(nobs**(1/3)) is used. The value used is limited, see Notes.</span>
+<span class="sd">        then int(nobs**(1/3)) is used. Must be non-negative. The value used is</span>
+<span class="sd">        limited, see Notes.</span>
 <span class="sd">    sample_autocov : bool, optional</span>
 <span class="sd">        Whether to use the sample autocovariance of x or the autocovariance</span>
 <span class="sd">        implied by the estimated VAR when computing the short-run and</span>
@@ -631,19 +628,39 @@
 <span class="sd">        residuals.</span>
 <span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated</span>
-<span class="sd">        from the VAR residuals. Must be None or 0 when kernel is None.</span>
+<span class="sd">        from the VAR residuals. Must be finite and non-negative, and None or 0</span>
+<span class="sd">        when kernel is None.</span>
 <span class="sd">    df_adjust : int, optional</span>
 <span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
 <span class="sd">        number of observations in x minus df_adjust when dividing</span>
-<span class="sd">        inner-products, see Notes.</span>
+<span class="sd">        inner-products, see Notes. Must be at least 0 and smaller than the</span>
+<span class="sd">        number of observations in x.</span>
 <span class="sd">    center : bool, optional</span>
 <span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
 <span class="sd">        covariance.</span>
 <span class="sd">    weights : array_like, optional</span>
 <span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
-<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x or weights cannot be converted to float64, if lags, max_lag or</span>
+<span class="sd">        df_adjust is not an integer (a float, including 5.0, or a Boolean is</span>
+<span class="sd">        not accepted), if bandwidth is not a real number, if diagonal,</span>
+<span class="sd">        sample_autocov, center or force_int is not a bool, or if method or</span>
+<span class="sd">        kernel is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if lags or max_lag is negative or lags is larger than</span>
+<span class="sd">        the largest order that can be estimated; if bandwidth is negative, not</span>
+<span class="sd">        finite or not None or 0 when kernel is None; if df_adjust is negative</span>
+<span class="sd">        or not smaller than the number of observations; if weights does not</span>
+<span class="sd">        have nvar finite non-negative elements, or has only zeros; or if</span>
+<span class="sd">        method or kernel is not one of the available names.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -799,9 +816,6 @@
         <span class="n">weights</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"x must not contain NaN or infinite values."</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">x</span><span class="p">,</span>
             <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth</span><span class="p">,</span>
@@ -813,16 +827,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal_lags</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"hqc"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal</span> <span class="o">=</span> <span class="n">diagonal</span>
-        <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_non_negative_integer</span><span class="p">(</span><span class="n">max_lag</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_lag must be a non-negative integer."</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"diagonal"</span><span class="p">,</span> <span class="n">diagonal</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"max_lag"</span><span class="p">,</span> <span class="n">max_lag</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_lag_selection</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_format_lags</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_autocov</span> <span class="o">=</span> <span class="n">sample_autocov</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_autocov</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"sample_autocov"</span><span class="p">,</span> <span class="n">sample_autocov</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"bandwidth must be None or 0 when kernel is None"</span><span class="p">)</span>
+                <span class="n">_fail</span><span class="p">(</span>
+                    <span class="ne">ValueError</span><span class="p">,</span>
+                    <span class="s2">"bandwidth"</span><span class="p">,</span>
+                    <span class="s2">"None or 0 when kernel is None"</span><span class="p">,</span>
+                    <span class="n">_describe</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">),</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]</span> <span class="o">=</span> <span class="n">ZeroLag</span>
@@ -839,23 +856,24 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check lag inputs and standard values for lags and diagonal lags</span>
 <span class="sd">        """</span>
+        <span class="n">largest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_largest_lag</span><span class="p">()</span>
+        <span class="n">nobs</span><span class="p">,</span> <span class="n">nvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">lags</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"lags"</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_lag_selection</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_non_negative_integer</span><span class="p">(</span><span class="n">lags</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"lags must be a non-negative integer."</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"float"</span><span class="p">,</span> <span class="n">lags</span><span class="p">))</span>
-        <span class="n">largest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_largest_lag</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">&gt;</span> <span class="n">largest</span><span class="p">:</span>
-            <span class="n">nobs</span><span class="p">,</span> <span class="n">nvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"lags must be at most </span><span class="si">{</span><span class="n">largest</span><span class="si">}</span><span class="s2"> when x has </span><span class="si">{</span><span class="n">nobs</span><span class="si">}</span><span class="s2"> observations "</span>
-                <span class="sa">f</span><span class="s2">"and </span><span class="si">{</span><span class="n">nvar</span><span class="si">}</span><span class="s2"> series so that each equation of the VAR has more "</span>
-                <span class="s2">"observations than parameters."</span>
+        <span class="k">if</span> <span class="n">lags</span> <span class="o">&gt;</span> <span class="n">largest</span><span class="p">:</span>
+            <span class="n">_fail</span><span class="p">(</span>
+                <span class="ne">ValueError</span><span class="p">,</span>
+                <span class="s2">"lags"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"at most </span><span class="si">{</span><span class="n">largest</span><span class="si">}</span><span class="s2"> when x has </span><span class="si">{</span><span class="n">nobs</span><span class="si">}</span><span class="s2"> observations and </span><span class="si">{</span><span class="n">nvar</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="s2">"series so that each equation of the VAR has more observations "</span>
+                <span class="s2">"than parameters"</span><span class="p">,</span>
+                <span class="n">_describe</span><span class="p">(</span><span class="n">lags</span><span class="p">),</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal_lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
-        <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal_lags</span> <span class="o">=</span> <span class="n">lags</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_largest_lag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>

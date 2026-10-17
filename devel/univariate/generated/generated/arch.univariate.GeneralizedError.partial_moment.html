@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.GeneralizedError.partial_moment - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.GeneralizedError.partial_moment - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -1004,6 +1004,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.univariate.GeneralizedError.partial_moment-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1632,6 +1642,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.univariate.GeneralizedError.partial_moment-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1661,9 +1681,9 @@
 <dl class="field-list simple">
 <dt class="field-odd" id="arch.univariate.GeneralizedError.partial_moment-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
-<dt id="arch.univariate.GeneralizedError.partial_moment.n"><span class="n sig-name">n</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment.n" title="Permalink to this definition">¶</a></dt><dd><p>Order of partial moment.</p>
+<dt id="arch.univariate.GeneralizedError.partial_moment.n"><span class="n sig-name">n</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment.n" title="Permalink to this definition">¶</a></dt><dd><p>Order of partial moment. NaN is returned if n is negative.</p>
 </dd>
-<dt id="arch.univariate.GeneralizedError.partial_moment.z"><span class="n sig-name">z</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.0</span></code><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment.z" title="Permalink to this definition">¶</a></dt><dd><p>Upper bound for partial moment integral.</p>
+<dt id="arch.univariate.GeneralizedError.partial_moment.z"><span class="n sig-name">z</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.0</span></code><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment.z" title="Permalink to this definition">¶</a></dt><dd><p>Upper bound for partial moment integral. inf is allowed.</p>
 </dd>
 <dt id="arch.univariate.GeneralizedError.partial_moment.parameters"><span class="n sig-name">parameters</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.15)">Sequence</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment.parameters" title="Permalink to this definition">¶</a></dt><dd><p>Distribution parameters.  Use None for parameterless distributions.</p>
 </dd>
@@ -1674,6 +1694,15 @@
 </dd>
 <dt class="field-odd" id="arch.univariate.GeneralizedError.partial_moment-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment-return-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-even" id="arch.univariate.GeneralizedError.partial_moment-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.GeneralizedError.partial_moment-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If n is not an integer, z is not a real number, or parameters cannot
+    be converted to float64.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If z is NaN, or parameters does not have one element for each shape
+    parameter, contains NaN or inf, or is outside the bounds of the
+    distribution.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

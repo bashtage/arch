@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility.timeseries - arch v8.0.1 (+413)</title>
+        <title>arch.utility.timeseries - arch v8.0.1 (+566)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -533,7 +533,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NDArrayOrFrame</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_bool</span><span class="p">,</span> <span class="n">check_int</span><span class="p">,</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
 
 
@@ -620,8 +620,9 @@
 <span class="sd">    x : array_like or DataFrame, optional</span>
 <span class="sd">        Original array of data. If None, then nobs must be a positive integer.</span>
 <span class="sd">        Integer, unsigned integer and Boolean data are converted to float64.</span>
+<span class="sd">        NaN and inf in x are not checked and are returned unchanged.</span>
 <span class="sd">    trend : {"n", "c", "t", "ct", "ctt"}, optional</span>
-<span class="sd">        The trend(s) to add. Supported options are:</span>
+<span class="sd">        The trend(s) to add. Not case sensitive. Supported options are:</span>
 
 <span class="sd">        * "n" no trend (no-op)</span>
 <span class="sd">        * "c" add constant only</span>
@@ -631,13 +632,13 @@
 <span class="sd">    prepend : bool, optional</span>
 <span class="sd">        If True, prepends the new data to the columns of x.</span>
 <span class="sd">    nobs : int, optional</span>
-<span class="sd">        Positive integer containing the length of the trend series.  Only used</span>
-<span class="sd">        if x is None.</span>
+<span class="sd">        Positive integer containing the length of the trend series. Must be</span>
+<span class="sd">        None if x is provided.</span>
 <span class="sd">    has_constant : {"raise", "add", "skip"}, optional</span>
 <span class="sd">        Controls what happens when trend is "c", "ct" or "ctt" and a constant</span>
 <span class="sd">        already exists in x. "raise" will raise an error. "add" will duplicate a</span>
 <span class="sd">        constant. "skip" will return the data without change. "skip" is the</span>
-<span class="sd">        default.</span>
+<span class="sd">        default. Not case sensitive.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -649,10 +650,13 @@
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If trend or has_constant is not a str, prepend is not a bool, nobs is</span>
+<span class="sd">        not an integer, or x cannot be converted to float64 data.</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If trend is not one of the supported options, if both or neither of x</span>
-<span class="sd">        and nobs are provided, if nobs is not positive, or if has_constant is</span>
-<span class="sd">        "raise" and x already contains a constant.</span>
+<span class="sd">        If trend or has_constant is not one of the supported options, if both</span>
+<span class="sd">        or neither of x and nobs are provided, if nobs is not positive, or if</span>
+<span class="sd">        has_constant is "raise" and x already contains a constant.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -665,6 +669,8 @@
         <span class="s2">"Literal['raise', 'add', 'skip']"</span><span class="p">,</span>
         <span class="n">check_option</span><span class="p">(</span><span class="s2">"has_constant"</span><span class="p">,</span> <span class="n">has_constant</span><span class="p">,</span> <span class="p">(</span><span class="s2">"raise"</span><span class="p">,</span> <span class="s2">"add"</span><span class="p">,</span> <span class="s2">"skip"</span><span class="p">)),</span>
     <span class="p">)</span>
+    <span class="n">prepend</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"prepend"</span><span class="p">,</span> <span class="n">prepend</span><span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"nobs"</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"One and only one of x or nobs must be provided."</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -687,8 +693,7 @@
 
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nobs</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"nobs must be a positive integer if x is None"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">nobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">trend_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vander</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">),</span> <span class="n">trend_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="c1"># put in order ctt</span>
     <span class="n">trend_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">trend_array</span><span class="p">)</span>
@@ -698,6 +703,7 @@
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trend_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">x_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">skipped_constant</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="s2">"c"</span> <span class="ow">in</span> <span class="n">trend_name</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x_array</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
     <span class="p">):</span>
@@ -707,12 +713,15 @@
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="n">has_constant</span> <span class="o">==</span> <span class="s2">"skip"</span> <span class="ow">and</span> <span class="n">trend_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">):</span>
             <span class="n">trend_array</span> <span class="o">=</span> <span class="n">trend_array</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">skipped_constant</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"const"</span><span class="p">,</span> <span class="s2">"trend"</span><span class="p">,</span> <span class="s2">"quadratic_trend"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">trend_name</span> <span class="o">==</span> <span class="s2">"t"</span><span class="p">:</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">trend_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">skipped_constant</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="n">_enforce_unique_col_name</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">columns</span><span class="p">)</span>
         <span class="n">trend_array_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">trend_array</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">prepend</span><span class="p">:</span>

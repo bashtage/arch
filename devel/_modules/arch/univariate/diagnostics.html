@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.diagnostics - arch v8.0.1 (+413)</title>
+        <title>arch.univariate.diagnostics - arch v8.0.1 (+566)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -537,13 +537,19 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike1D</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_array</span><span class="p">,</span>
+    <span class="n">check_float</span><span class="p">,</span>
+    <span class="n">check_instance</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"excess_kurtosis"</span><span class="p">,</span> <span class="s2">"hill_estimator"</span><span class="p">,</span> <span class="s2">"var_ratio"</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_clean_std_resid</span><span class="p">(</span><span class="n">std_resid</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="s2">"std_resid"</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># NaN and inf are removed by design, and so they are accepted</span>
+    <span class="n">resids</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"std_resid"</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">resids</span> <span class="o">=</span> <span class="n">resids</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">resids</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"std_resid must contain at least one finite observation"</span><span class="p">)</span>
@@ -560,12 +566,20 @@
 <span class="sd">    ----------</span>
 <span class="sd">    std_resid : array_like</span>
 <span class="sd">        Standardized residuals. Non-finite observations are removed before</span>
-<span class="sd">        computing the statistic.</span>
+<span class="sd">        computing the statistic, since the residuals of a fitted model are NaN</span>
+<span class="sd">        outside the estimation sample.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Sample excess kurtosis computed using sample central moments.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``std_resid`` cannot be converted to numbers.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``std_resid`` is not 1-d or has no finite observation.</span>
 <span class="sd">    """</span>
     <span class="n">resids</span> <span class="o">=</span> <span class="n">_clean_std_resid</span><span class="p">(</span><span class="n">std_resid</span><span class="p">)</span>
     <span class="n">demeaned</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">-</span> <span class="n">resids</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -588,15 +602,27 @@
 <span class="sd">    ----------</span>
 <span class="sd">    std_resid : array_like</span>
 <span class="sd">        Standardized residuals. The estimator is computed from the largest</span>
-<span class="sd">        absolute standardized residuals after removing non-finite observations.</span>
+<span class="sd">        absolute standardized residuals after removing non-finite observations,</span>
+<span class="sd">        since the residuals of a fitted model are NaN outside the estimation</span>
+<span class="sd">        sample.</span>
 <span class="sd">    k : int, optional</span>
 <span class="sd">        Number of upper order statistics to use. If not provided, uses</span>
-<span class="sd">        ``int(sqrt(n))`` where ``n`` is the number of finite residuals.</span>
+<span class="sd">        ``int(sqrt(n))`` where ``n`` is the number of finite residuals. Must be at</span>
+<span class="sd">        least 1 and less than the number of non-zero finite residuals.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Inverse Hill estimate of the tail index.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``std_resid`` cannot be converted to numbers or ``k`` is not an</span>
+<span class="sd">        integer.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``std_resid`` is not 1-d, has fewer than two non-zero finite</span>
+<span class="sd">        observations, or ``k`` is outside the allowed range.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -609,6 +635,7 @@
 
 <span class="sd">    where ``X`` contains the positive absolute standardized residuals.</span>
 <span class="sd">    """</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">abs_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_clean_std_resid</span><span class="p">(</span><span class="n">std_resid</span><span class="p">))</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">abs_resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">abs_resids</span><span class="p">[</span><span class="n">abs_resids</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">])</span>
@@ -620,14 +647,8 @@
 
     <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"k must be an integer"</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">positive</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">"k must satisfy 1 &lt;= k &lt; the number of non-zero finite observations"</span>
-        <span class="p">)</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="c1"># k is at most the number of non-zero finite observations less one</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">positive</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="n">threshold</span> <span class="o">=</span> <span class="n">resids</span><span class="p">[</span><span class="o">-</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">hill</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">resids</span><span class="p">[</span><span class="o">-</span><span class="n">k</span><span class="p">:])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">threshold</span><span class="p">))</span>
@@ -650,27 +671,44 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    level : float, optional</span>
-<span class="sd">        VaR confidence level. Must be between 0.5 and 1.0.</span>
+<span class="sd">        VaR confidence level. Must be finite and between 0.5 and 1.0, exclusive.</span>
 <span class="sd">    distribution : Distribution, optional</span>
 <span class="sd">        Standardized distribution used to compute the model VaR. If not</span>
 <span class="sd">        provided, uses the standard normal distribution.</span>
 <span class="sd">    parameters : array_like, optional</span>
-<span class="sd">        Distribution parameters. Use ``None`` for parameterless distributions.</span>
+<span class="sd">        Distribution parameters. Must have one finite element for each parameter</span>
+<span class="sd">        of ``distribution``. Use ``None`` for parameterless distributions.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Ratio of the Gaussian left-tail VaR to the VaR implied by the supplied</span>
 <span class="sd">        model distribution.</span>
-<span class="sd">    """</span>
-    <span class="n">level</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.5</span> <span class="o">&lt;</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"level must be larger than 0.5 and smaller than 1.0"</span><span class="p">)</span>
 
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``level`` is not a real number, ``distribution`` is not a Distribution</span>
+<span class="sd">        or ``parameters`` cannot be converted to numbers.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``level`` is not in (0.5, 1.0), ``parameters`` does not have one finite</span>
+<span class="sd">        element for each parameter of the distribution, or the model distribution</span>
+<span class="sd">        does not produce a positive finite VaR.</span>
+<span class="sd">    """</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"level"</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span>
+        <span class="s2">"distribution"</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">distribution</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"distribution must inherit from Distribution"</span><span class="p">)</span>
+    <span class="n">nparams</span> <span class="o">=</span> <span class="n">distribution</span><span class="o">.</span><span class="n">num_params</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+        <span class="s2">"parameters"</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">,</span>
+        <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">nparams</span><span class="p">,),</span>
+        <span class="n">allow_none</span><span class="o">=</span><span class="n">nparams</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">tail_probability</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">level</span>
     <span class="n">gaussian_var</span> <span class="o">=</span> <span class="o">-</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">tail_probability</span><span class="p">)</span>

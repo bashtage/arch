@@ -23,7 +23,7 @@
     
   
       
-        <title>Introduction to ARCH Models - arch v8.0.1 (+413)</title>
+        <title>Introduction to ARCH Models - arch v8.0.1 (+566)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+413)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+413)
+            arch v8.0.1 (+566)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+413)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+413)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+413)
+    arch v8.0.1 (+566)
   </label>
   
     <div class="md-nav__source">
@@ -525,6 +525,16 @@
     
     <span class="md-ellipsis">
       <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.univariate.arch_model-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
     </span>
   </a>
   
@@ -1351,6 +1361,16 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#arch.univariate.arch_model-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1484,25 +1504,27 @@ using a simple model constructor.</p>
 regressors.</p>
 </dd>
 <dt id="arch.univariate.arch_model.mean"><span class="n sig-name">mean</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'Constant'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'Zero'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'LS'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'AR'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'ARX'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'HAR'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'HARX'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'constant'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'zero'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'Constant'</span></code><a class="headerlink" href="#arch.univariate.arch_model.mean" title="Permalink to this definition">¶</a></dt><dd><p>Name of the mean model.  Currently supported options are: ‘Constant’,
-‘Zero’, ‘LS’, ‘AR’, ‘ARX’, ‘HAR’ and  ‘HARX’.</p>
+‘Zero’, ‘LS’, ‘AR’, ‘ARX’, ‘HAR’ and  ‘HARX’.  Not case sensitive.</p>
 </dd>
 <dt id="arch.univariate.arch_model.lags"><span class="n sig-name">lags</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>int32<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>int64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code><a class="headerlink" href="#arch.univariate.arch_model.lags" title="Permalink to this definition">¶</a></dt><dd><p>Either a scalar integer value indicating lag length or a list of
 integers specifying lag locations.</p>
 </dd>
 <dt id="arch.univariate.arch_model.vol"><span class="n sig-name">vol</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'GARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'ARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'EGARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'FIGARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'FIAPARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'APARCH'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'HARCH'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'GARCH'</span></code><a class="headerlink" href="#arch.univariate.arch_model.vol" title="Permalink to this definition">¶</a></dt><dd><p>Name of the volatility model.  Currently supported options are:
 ‘GARCH’ (default), ‘ARCH’, ‘EGARCH’, ‘FIGARCH’, ‘FIAPARCH’, ‘APARCH’
-and ‘HARCH’.</p>
+and ‘HARCH’.  Not case sensitive.</p>
 </dd>
 <dt id="arch.univariate.arch_model.p"><span class="n sig-name">p</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.arch_model.p" title="Permalink to this definition">¶</a></dt><dd><p>Lag order of the symmetric innovation.  A list of lags can only be used
-with the ‘HARCH’ volatility model.</p>
+with the ‘HARCH’ volatility model.  Must be at least 0, and integers
+only (2.0 and True are not accepted).</p>
 </dd>
-<dt id="arch.univariate.arch_model.o"><span class="n sig-name">o</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code><a class="headerlink" href="#arch.univariate.arch_model.o" title="Permalink to this definition">¶</a></dt><dd><p>Lag order of the asymmetric innovation.</p>
+<dt id="arch.univariate.arch_model.o"><span class="n sig-name">o</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code><a class="headerlink" href="#arch.univariate.arch_model.o" title="Permalink to this definition">¶</a></dt><dd><p>Lag order of the asymmetric innovation.  Must be at least 0.</p>
 </dd>
-<dt id="arch.univariate.arch_model.q"><span class="n sig-name">q</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.arch_model.q" title="Permalink to this definition">¶</a></dt><dd><p>Lag order of lagged volatility or equivalent.</p>
+<dt id="arch.univariate.arch_model.q"><span class="n sig-name">q</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#arch.univariate.arch_model.q" title="Permalink to this definition">¶</a></dt><dd><p>Lag order of lagged volatility or equivalent.  Must be at least 0.</p>
 </dd>
-<dt id="arch.univariate.arch_model.power"><span class="n sig-name">power</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">2.0</span></code><a class="headerlink" href="#arch.univariate.arch_model.power" title="Permalink to this definition">¶</a></dt><dd><p>Power to use with GARCH and related models.</p>
+<dt id="arch.univariate.arch_model.power"><span class="n sig-name">power</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">2.0</span></code><a class="headerlink" href="#arch.univariate.arch_model.power" title="Permalink to this definition">¶</a></dt><dd><p>Power to use with GARCH and related models.  Must be finite and positive.</p>
 </dd>
-<dt id="arch.univariate.arch_model.dist"><span class="n sig-name">dist</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'normal'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'gaussian'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'t'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'studentst'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'skewstudent'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'skewt'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'ged'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'generalized error'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'normal'</span></code><a class="headerlink" href="#arch.univariate.arch_model.dist" title="Permalink to this definition">¶</a></dt><dd><p><p>Name of the error distribution.  Currently supported options are:</p>
+<dt id="arch.univariate.arch_model.dist"><span class="n sig-name">dist</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><span class="s">'normal'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'gaussian'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'t'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'studentst'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'skewstudent'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'skewt'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'ged'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="s">'generalized error'</span></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'normal'</span></code><a class="headerlink" href="#arch.univariate.arch_model.dist" title="Permalink to this definition">¶</a></dt><dd><p><p>Name of the error distribution.  Not case sensitive.  Currently
+supported options are:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Normal: ‘normal’, ‘gaussian’ (default)</p></li>
@@ -1531,10 +1553,22 @@ reported in the estimation results.</p>
 <dt class="field-odd" id="arch.univariate.arch_model-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.univariate.arch_model-return-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><a class="reference internal" href="generated/arch.univariate.base.ARCHModel.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel (Python class) — Abstract base class for mean models in ARCH processes."><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.base.ARCHModel</span></code></a></p>
 </dd>
+<dt class="field-even" id="arch.univariate.arch_model-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.univariate.arch_model-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">vol</span></code> or <code class="docutils literal notranslate"><span class="pre">dist</span></code> is not a string, <code class="docutils literal notranslate"><span class="pre">lags</span></code>, <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">o</span></code>,
+    <code class="docutils literal notranslate"><span class="pre">q</span></code> or <code class="docutils literal notranslate"><span class="pre">hold_back</span></code> is not an integer (a float, including 5.0, and a
+    bool are not accepted), <code class="docutils literal notranslate"><span class="pre">rescale</span></code> is not a bool or None, <code class="docutils literal notranslate"><span class="pre">power</span></code> is not
+    a real number, or <code class="docutils literal notranslate"><span class="pre">x</span></code> cannot be converted to numbers.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">vol</span></code> or <code class="docutils literal notranslate"><span class="pre">dist</span></code> is not one of the options, <code class="docutils literal notranslate"><span class="pre">lags</span></code>, <code class="docutils literal notranslate"><span class="pre">p</span></code>,
+    <code class="docutils literal notranslate"><span class="pre">o</span></code>, <code class="docutils literal notranslate"><span class="pre">q</span></code> or <code class="docutils literal notranslate"><span class="pre">hold_back</span></code> is negative, <code class="docutils literal notranslate"><span class="pre">power</span></code> is not finite and
+    positive, or <code class="docutils literal notranslate"><span class="pre">x</span></code> contains NaN or inf or does not have a row for each
+    observation of <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p></li>
+</ul>
+</dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Input that are not relevant for a particular specification, such as <cite>lags</cite>
-when <cite>mean=’zero’</cite>, are silently ignored.</p>
+when <cite>mean=’zero’</cite>, are silently ignored, and so are not checked.</p>
 <p class="example rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.data.sp500</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">load</span><span class="p">()</span>
