@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import inspect
 import itertools
 from typing import TYPE_CHECKING, Any, cast
-from warnings import warn
+from warnings import catch_warnings, simplefilter, warn
 
 import numpy as np
 from numpy.random import RandomState
@@ -1960,8 +1960,11 @@ def _check_harch_lags(lags: Any) -> Int32Array:
     """
     rule = "a positive integer or a non-empty 1-d array of positive integers"
     try:
-        is_scalar = np.ndim(lags) == 0
-    except ValueError:  # A ragged list
+        with catch_warnings():
+            # NumPy < 1.24 warns and returns an object array for a ragged list
+            simplefilter("error")
+            is_scalar = np.ndim(lags) == 0
+    except (ValueError, Warning):  # A ragged list
         _fail(ValueError, "lags", rule, _describe(lags))
     if is_scalar:
         failure = None
