@@ -685,8 +685,10 @@ class StepM(MultipleComparison):
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
-        self.models = ensure2d(models, "models")
+        self.size: float = check_float(
+            "size", size, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        # The SPA checks the data and the arguments that it shares with StepM
         self.spa: SPA = SPA(
             benchmark,
             models,
@@ -697,11 +699,12 @@ class StepM(MultipleComparison):
             nested=nested,
             seed=seed,
         )
+        self.benchmark = self.spa.benchmark
+        self.models = self.spa.models
         self.block_size: int = self.spa.block_size
         self.t: int = self.models.shape[0]
         self.k: int = self.models.shape[1]
-        self.reps: int = reps
-        self.size: float = size
+        self.reps: int = self.spa.reps
         self._superior_models: list[int] | None = None
         self._bootstrap = self.spa.bootstrap
 
