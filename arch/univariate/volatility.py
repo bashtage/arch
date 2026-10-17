@@ -3211,11 +3211,19 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be non-negative.
     o : int, optional
-        Order of the asymmetric innovation.
+        Order of the asymmetric innovation. Must be non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer.
+    ValueError
+        If ``p``, ``o`` or ``q`` is negative, or ``p`` and ``o`` are both 0.
 
     Notes
     -----
