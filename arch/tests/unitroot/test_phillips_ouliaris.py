@@ -89,9 +89,11 @@ def test_smoke(trivariate_data, trend, test_type, kernel, bandwidth, force_int):
 
 def test_errors(trivariate_data):
     y, x = trivariate_data
-    with pytest.raises(ValueError, match=r"kernel is not a known kernel estimator"):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         phillips_ouliaris(y, x, kernel="fancy-kernel")
-    with pytest.raises(ValueError, match=r"Unknown test_type: z-alpha."):
+    with pytest.raises(
+        ValueError, match=r"test_type must be one of 'Za', 'Zt', 'Pu' or 'Pz'"
+    ):
         phillips_ouliaris(y, x, test_type="z-alpha")
 
 
@@ -130,7 +132,7 @@ def test_p_test_direct(trivariate_data, trend, bandwidth):
 def test_cv_exceptions():
     with pytest.raises(ValueError, match=r"test_type must be one of"):
         phillips_ouliaris_cv("unknown", "c", 2, 500)
-    with pytest.raises(ValueError, match=r"trend must by one of:"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         phillips_ouliaris_cv("Pu", "unknown", 2, 500)
     with pytest.raises(ValueError, match=r"The number of stochastic trends must"):
         phillips_ouliaris_cv("Pu", "ct", 25, 500)
@@ -143,7 +145,7 @@ def test_cv_exceptions():
 def test_pval_exceptions():
     with pytest.raises(ValueError, match=r"test_type must be one of"):
         phillips_ouliaris_pval(3.0, "unknown", "c", 2)
-    with pytest.raises(ValueError, match=r"trend must by one of:"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         phillips_ouliaris_pval(3.0, "Pu", "unknown", 2)
     with pytest.raises(ValueError, match=r"The number of stochastic trends must"):
         phillips_ouliaris_pval(3.0, "Pu", "ct", 25)

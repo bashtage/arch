@@ -50,7 +50,7 @@ def test_exceptions(trivariate_data, estimator):
     ):
         estimator(y[1:], x)
     mod = estimator(y, x)
-    with pytest.raises(ValueError, match=r"kernel is not a known kernel estimator"):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         mod.fit(kernel="unknown")
 
 

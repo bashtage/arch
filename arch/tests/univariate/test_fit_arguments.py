@@ -255,7 +255,7 @@ def test_fit_show_warning_false_is_silent_and_local(returns):
         mod.fit(disp="off", options={"maxiter": 2})
 
 
-@pytest.mark.parametrize("bad", ["White", "HC0", "foo", "Robust", "CLASSIC", "mle", ""])
+@pytest.mark.parametrize("bad", ["White", "HC0", "foo", "mle", ""])
 @pytest.mark.parametrize(
     "model", ["constant", "garch", "arx-garch", "ma", "fixed-variance"]
 )
@@ -270,8 +270,16 @@ def test_unknown_cov_type(returns, model, bad):
         mod = MAMean(returns, lags=1, volatility=GARCH())
     else:
         mod = ConstantMean(returns, volatility=FixedVariance(np.ones(returns.shape[0])))
-    with pytest.raises(ValueError, match=r"Unknown cov_type.*'robust'.*'classic'"):
+    with pytest.raises(
+        ValueError, match=r"cov_type must be one of 'robust' or 'classic'"
+    ):
         mod.fit(disp="off", cov_type=bad)
+
+
+@pytest.mark.parametrize("bad", [None, 1, b"robust"], ids=["none", "int", "bytes"])
+def test_cov_type_not_a_string(returns, bad):
+    with pytest.raises(TypeError, match=r"cov_type must be one of 'robust' or 'cla"):
+        ConstantMean(returns).fit(disp="off", cov_type=bad)
 
 
 @pytest.mark.parametrize("cov_type", ["robust", "classic"])

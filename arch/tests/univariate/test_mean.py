@@ -598,7 +598,9 @@ class TestMeanModel:
         res.plot(annualize="D")
         res.plot(annualize="W")
         res.plot(annualize="M")
-        with pytest.raises(ValueError, match=r"annualize not recognized"):
+        with pytest.raises(
+            ValueError, match=r"annualize must be one of 'D', 'W' or 'M'"
+        ):
             res.plot(annualize="unknown")
 
         close_plots()
@@ -724,11 +726,11 @@ class TestMeanModel:
         am = arch_model(self.y, vol="aparch")
         assert isinstance(am.volatility, APARCH)
 
-        with pytest.raises(ValueError, match=r"Unknown model type in mean"):
+        with pytest.raises(ValueError, match=r"mean must be one of"):
             arch_model(self.y, mean="unknown")
-        with pytest.raises(ValueError, match=r"Unknown model type in vol"):
+        with pytest.raises(ValueError, match=r"vol must be one of"):
             arch_model(self.y, vol="unknown")
-        with pytest.raises(ValueError, match=r"Unknown model type in dist"):
+        with pytest.raises(ValueError, match=r"dist must be one of"):
             arch_model(self.y, dist="unknown")
 
         am.fit(disp=DISPLAY)
@@ -793,7 +795,7 @@ class TestMeanModel:
             ar.simulate(np.ones(3), 100, initial_value=self.rng.standard_normal(10))
 
         ar.volatility = ConstantVariance()
-        with pytest.raises(ValueError, match=r"Unknown cov_type"):
+        with pytest.raises(ValueError, match=r"cov_type must be one of"):
             ar.fit(cov_type="unknown")
 
     def test_warnings(self):
@@ -964,7 +966,7 @@ class TestMeanModel:
             direct.iloc[: (i + 1), i] = np.nan
         assert_frame_equal(aligned, direct)
 
-        with pytest.raises(ValueError, match=r"Unknown alignment"):
+        with pytest.raises(ValueError, match=r"align must be one of"):
             _align_forecast(forecasts, align="unknown")
 
     def test_fixed_user_parameters(self):

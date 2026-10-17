@@ -27,6 +27,7 @@ from arch._typing import (
     NDArray,
     RandomStateState,
 )
+from arch.utility._validation import check_option
 from arch.utility.array import DocStringInheritor, ensure2d
 from arch.utility.exceptions import (
     StudentizationError,
@@ -48,6 +49,20 @@ try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample
 except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
+
+# Lower case names of the confidence interval methods, including the aliases
+_CONF_INT_METHODS = {
+    "basic": "basic",
+    "percentile": "percentile",
+    "studentized": "studentized",
+    "norm": "norm",
+    "var": "norm",
+    "cov": "norm",
+    "bc": "bc",
+    "debiased": "bc",
+    "bias-corrected": "bc",
+    "bca": "bca",
+}
 
 
 def _get_prng_state(
@@ -787,22 +802,25 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         studentized = "studentized"
         if not 0.0 < size < 1.0:
             raise ValueError("size must be strictly between 0 and 1")
-        tail_name = tail.lower()
-        if tail_name not in ("two", "lower", "upper"):
-            raise ValueError("tail must be one of two-sided, lower or upper")
+        tail_name = check_option("tail", tail, ("two", "lower", "upper"))
+        method = check_option("method", method, _CONF_INT_METHODS)
         if method == studentized and std_err_func is None and studentize_reps < 1:
             raise ValueError(
                 "studentize_reps must be at least 1 when std_err_func is not "
                 "provided and method is 'studentized'."
             )
         studentize_reps = studentize_reps if method == studentized else 0
-        if sampling in ("semi", "semi-parametric", "semiparametric"):
-            sampling = "semiparametric"
-        elif sampling not in ("nonparametric", "parametric"):
-            raise ValueError(
-                'sampling must be one of "nonparametric", "parametric", "semi", '
-                '"semi-parametric", or "semiparametric"'
-            )
+        sampling = check_option(
+            "sampling",
+            sampling,
+            {
+                "nonparametric": "nonparametric",
+                "parametric": "parametric",
+                "semi": "semiparametric",
+                "semi-parametric": "semiparametric",
+                "semiparametric": "semiparametric",
+            },
+        )
         _reuse = False
         if reuse:
             # check conditions for reuse
@@ -835,7 +853,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         studentized_results = self._studentized_results
 
         std_err = np.empty((0,))
-        if method in ("norm", "var", "cov", studentized):
+        if method in ("norm", studentized):
             errors = results - results.mean(axis=0)
             std_err = np.asarray(np.sqrt(np.diag(errors.T.dot(errors) / reps)))
 
@@ -847,25 +865,17 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         percentiles = np.array([[alpha, 1.0 - alpha]] * nreps)
         norm_quantiles = stats.norm.ppf(percentiles)
 
-        if method in ("norm", "var", "cov"):
+        if method == "norm":
             lower = base + norm_quantiles[:, 0] * std_err
             upper = base + norm_quantiles[:, 1] * std_err
 
-        elif method in (
-            "percentile",
-            "basic",
-            studentized,
-            "debiased",
-            "bc",
-            "bias-corrected",
-            "bca",
-        ):
+        else:
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
                 values = cast("Float64Array", studentized_results)
 
-            if method in ("debiased", "bc", "bias-corrected", "bca"):
+            if method in ("bc", "bca"):
                 # bias corrected uses modified percentiles, but is
                 # otherwise identical to the percentile method
                 b = self._bca_bias()
@@ -905,9 +915,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 lower_copy = lower + 0.0
                 lower = base - upper * std_err
                 upper = base - lower_copy * std_err
-
-        else:
-            raise ValueError("Unknown method")
 
         if tail_name == "lower":
             upper = np.zeros_like(base)

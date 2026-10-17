@@ -249,17 +249,25 @@ def test_method_case(var_data, method):
     assert upper._ics == lower._ics
 
 
-@pytest.mark.parametrize("method", ["unknown", "t-stat", "", None, 1])
-def test_unknown_method(var_data, method):
+@pytest.mark.parametrize(
+    ("method", "error"),
+    [("unknown", ValueError), ("t-stat", ValueError), ("", ValueError)]
+    + [(None, TypeError), (1, TypeError)],
+)
+def test_unknown_method(var_data, method, error):
     # Previously any value other than "aic" and "hqc" used BIC
-    with pytest.raises(ValueError, match="method must be one of"):
+    with pytest.raises(error, match="method must be one of"):
         PreWhitenedRecolored(var_data, method=method)
 
 
-@pytest.mark.parametrize("kernel", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
-def test_unknown_kernel(covariance_data, kernel):
+@pytest.mark.parametrize(
+    ("kernel", "error"),
+    [("unknown", ValueError), ("", ValueError), ("zerolag", ValueError)]
+    + [("ZeroLag", ValueError), ("zero-lag", ValueError), (1, TypeError)],
+)
+def test_unknown_kernel(covariance_data, kernel, error):
     # ZeroLag is used by kernel=None and is not available by name
-    with pytest.raises(ValueError, match="kernel is not a known kernel estimator"):
+    with pytest.raises(error, match="kernel must be one of"):
         PreWhitenedRecolored(covariance_data, kernel=kernel)
 
 
