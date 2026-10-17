@@ -220,7 +220,7 @@ def test_forecast_align_values(result):
 
 @pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
 def test_forecast_align_invalid(result, bad, exc):
-    match = r"align must be one of 'origin' or 'target'"
+    match = r"align must be one of 'origin', 'target' or 'horizon'"
     with pytest.raises(exc, match=match):
         result.forecast(horizon=2, start=300, align=bad)
     frame = pd.DataFrame(np.ones((4, 2)))

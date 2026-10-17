@@ -152,9 +152,9 @@ def fit_dates(**kwargs: Any):
 FIT: dict[str, Any] = {}
 FIT_FAST: dict[str, Any] = {"options": {"maxiter": 3}}
 POSITION_BAD = [
-    (-1, ValueError),
+    (-NOBS - 1, ValueError),
     (-1000, ValueError),
-    (np.int64(-5), ValueError),
+    (np.int64(-NOBS - 5), ValueError),
     (NOBS + 1, ValueError),
     (10**6, ValueError),
     (2.5, TypeError),
@@ -220,8 +220,8 @@ FIT_ROWS = [
         [
             ("zzz", ValueError),
             ("", ValueError),
-            (0, TypeError),
-            (1, TypeError),
+            (2, ValueError),
+            (-1, ValueError),
             (None, TypeError),
             (1.0, TypeError),
             (np.array([True]), TypeError),
@@ -245,14 +245,18 @@ FIT_ROWS = [
     *bad_value_rows("fit", fit, FIT_FAST, "first_obs", POSITION_BAD),
     *bad_value_rows("fit", fit, FIT_FAST, "last_obs", POSITION_BAD),
     *good_value_rows(
-        "fit", fit, FIT_FAST, "first_obs", [None, 0, 10, np.int64(10), np.uint8(10)]
+        "fit",
+        fit,
+        FIT_FAST,
+        "first_obs",
+        [None, 0, 10, np.int64(10), np.uint8(10), -10, -NOBS, np.int64(-100)],
     ),
     *good_value_rows(
         "fit",
         fit,
         FIT_FAST,
         "last_obs",
-        [None, NOBS, 100, np.int32(100), np.int64(NOBS)],
+        [None, NOBS, 100, np.int32(100), np.int64(NOBS), -1, -10, np.int64(-100)],
     ),
     *bad_value_rows(
         "fit",
@@ -371,8 +375,12 @@ FIX_ROWS = [
     *good_value_rows("fix", fix, {}, "params", PARAMS_GOOD),
     *bad_value_rows("fix", fix, {}, "first_obs", POSITION_BAD),
     *bad_value_rows("fix", fix, {}, "last_obs", POSITION_BAD),
-    *good_value_rows("fix", fix, {}, "first_obs", [None, 0, 10, np.int64(10)]),
-    *good_value_rows("fix", fix, {}, "last_obs", [None, NOBS, np.int32(100)]),
+    *good_value_rows(
+        "fix", fix, {}, "first_obs", [None, 0, 10, np.int64(10), -10, np.int8(-100)]
+    ),
+    *good_value_rows(
+        "fix", fix, {}, "last_obs", [None, NOBS, np.int32(100), -1, np.int64(-10)]
+    ),
     *bad_value_rows("fix-dates", fix_dates, {}, "first_obs", DATE_BAD),
     *bad_value_rows("fix-dates", fix_dates, {}, "last_obs", DATE_BAD),
     *good_value_rows("fix-dates", fix_dates, {}, "first_obs", DATE_GOOD),
@@ -469,11 +477,15 @@ FORECAST_ROWS = [
         forecast,
         FORECAST_BASE,
         "start",
-        [None, 0, 100, NOBS - 1, NOBS, np.int64(100), np.int16(100)],
+        [None, 0, 100, NOBS - 1, NOBS, np.int64(100), np.int16(100), -1, -NOBS],
     ),
     *bad_value_rows("forecast", forecast, FORECAST_BASE, "align", OPTION_BAD),
     *good_value_rows(
-        "forecast", forecast, FORECAST_BASE, "align", ["origin", "TARGET", "target"]
+        "forecast",
+        forecast,
+        FORECAST_BASE,
+        "align",
+        ["origin", "TARGET", "target", "horizon", "Horizon"],
     ),
     *bad_value_rows("forecast", forecast, FORECAST_BASE, "method", OPTION_BAD),
     *good_value_rows(
@@ -551,7 +563,11 @@ HEDGEHOG_ROWS = [
     *good_value_rows("hedgehog", hedgehog, HEDGEHOG_BASE, "step", [1000, *INT_GOOD]),
     *bad_value_rows("hedgehog", hedgehog, HEDGEHOG_BASE, "start", POSITION_BAD),
     *good_value_rows(
-        "hedgehog", hedgehog, HEDGEHOG_BASE, "start", [None, 0, 100, np.int64(100)]
+        "hedgehog",
+        hedgehog,
+        HEDGEHOG_BASE,
+        "start",
+        [None, 0, 100, np.int64(100), -100, np.int64(-NOBS)],
     ),
     *bad_value_rows("hedgehog", hedgehog, HEDGEHOG_BASE, "plot_type", OPTION_BAD),
     *good_value_rows(

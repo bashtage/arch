@@ -150,8 +150,11 @@ same way everywhere.
 The rules
 ~~~~~~~~~
 
-1. **Flags** accept ``bool`` and ``np.bool_`` only. ``0``, ``1``, ``"no"`` and arrays are
-   rejected. ``None`` is accepted only where it is the documented default.
+1. **Flags** accept ``bool``, ``np.bool_`` and the integers ``0`` and ``1`` (Python and
+   NumPy integers), and ``check_bool`` returns a Python ``bool``. An integer other than
+   ``0`` and ``1`` raises a ``ValueError``. Floats (including ``1.0``), ``"no"`` and
+   arrays raise a ``TypeError``. ``None`` is accepted only where it is the documented
+   default.
 2. **Integers** accept Python and NumPy integers (``operator.index``). A float is
    rejected, including ``5.0``, and so is a ``bool``.
 3. **Floats** accept Python and NumPy real numbers, including integers. ``bool`` is
@@ -165,8 +168,13 @@ The rules
    diagnostics that drop NaN, outputs padded with NaN), which the docstring says.
 6. **String options** are not case sensitive (``check_option``).
 7. **Positions and dates** (``first_obs``, ``last_obs``, ``start``) must be in
-   ``[0, nobs]`` or, for a data set with a date index, a date within the index.
-   Negative positions are rejected.
+   ``[-nobs, nobs]`` or, for a data set with a date index, a date within the index. A
+   negative position counts from the end with the semantics that Python gives the
+   argument: ``first_obs`` and ``last_obs`` are slice bounds, so ``last_obs=-1`` drops
+   the last observation, and ``start`` is the index of an observation, so ``start=-1``
+   is the last observation. The helper returns the position as a non-negative integer.
+   A position outside the range raises a ``ValueError``. Say this in the docstring of
+   every argument that takes a position.
 8. **When:** everything that can be decided from the arguments (type, range, option,
    shape, finiteness, lags against the number of observations) is checked when the object
    is created or the function is called. Only errors in the numerical work (a singular
@@ -251,7 +259,8 @@ returns the value in its canonical type: a Python ``int``, ``float`` or ``bool``
      - arrays that are passed to compiled code and must not be converted
    * - ``check_index(name, value, nobs, *, index=None, default=None, upper=None,
        allow_none=True)``
-     - ``first_obs``, ``last_obs`` and ``start``
+     - ``first_obs``, ``last_obs`` and ``start``, with negative positions counted from
+       the end
 
 .. code-block:: python
 

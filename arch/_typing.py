@@ -19,6 +19,7 @@ __all__ = [
     "Float64Array1D",
     "Float64Array2D",
     "FloatOrArray",
+    "ForecastAlignment",
     "ForecastingMethod",
     "Int32Array",
     "Int64Array",
@@ -66,3 +67,4 @@ Label = Optional[Hashable]
 FloatOrArray = TypeVar("FloatOrArray", float, np.ndarray)
 UnitRootTrend = Literal["n", "c", "ct", "ctt"]
 ForecastingMethod = Literal["analytic", "simulation", "bootstrap"]
+ForecastAlignment = Literal["origin", "target", "horizon"]

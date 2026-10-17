@@ -637,8 +637,10 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
     ----------
     cutoff : int, str, date, datetime, datetime64, Timestamp, Period or None
         The cutoff point to use. An int is the location of the observation, and
-        must be between 0 and the length of index, inclusive. Dates, strings
-        and periods can only be used when index is a DatetimeIndex or a
+        must be between -len(index) and len(index), inclusive. A negative int
+        counts from the end, as in Python slicing, so that -1 is len(index) - 1
+        and the result is never negative. Dates, strings and periods can only
+        be used when index is a DatetimeIndex or a
         PeriodIndex, and must not be before the first or after the last date
         in index. A Period is converted to the first instant in the period.
     index : Index
@@ -651,7 +653,7 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
     Returns
     -------
     int
-        The integer location of the cutoff.
+        The integer location of the cutoff, which is not negative.
 
     Raises
     ------
@@ -659,8 +661,9 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
         If cutoff is not None, an integer or a date-like value, index is not an
         Index, or default is not an integer.
     ValueError
-        If cutoff or default is an integer that is not between 0 and the length
-        of index, or cutoff is a date-like value and the index is not a
+        If default is an integer that is not between 0 and the length of index,
+        cutoff is an integer that is not between -len(index) and len(index), or
+        cutoff is a date-like value and the index is not a
         DatetimeIndex or a PeriodIndex, or the date is not within the index.
     """
     # Imported here because the validation module imports this module
@@ -681,7 +684,8 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
     if isinstance(cutoff, (int, np.integer)) and not isinstance(
         cutoff, (bool, np.bool_)
     ):
-        return check_int("cutoff", cutoff, lower=0, upper=nobs)
+        cutoff = check_int("cutoff", cutoff, lower=-nobs, upper=nobs)
+        return cutoff + nobs if cutoff < 0 else cutoff
     if isinstance(cutoff, Period):
         cutoff = cutoff.start_time
     elif isinstance(cutoff, dt.date) and not isinstance(cutoff, dt.datetime):
@@ -729,14 +733,16 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     s : Series or DataFrame
         Series or DataFrame to use in lookup.
     index : int, str, datetime, datetime64 or Timestamp
-        Index value, either an integer location between 0 and the number of
-        observations, which is returned unchanged, a string convertible to a
-        datetime or a datetime.
+        Index value, either an integer location between -nobs and nobs, where
+        nobs is the number of observations, a string convertible to a datetime
+        or a datetime. A negative location counts from the end, as in Python
+        indexing, so that -1 is nobs - 1. A non-negative location is returned
+        unchanged.
 
     Returns
     -------
     int
-        Integer location of index value.
+        Integer location of index value, which is not negative.
 
     Raises
     ------
@@ -744,8 +750,8 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
         If s is not a Series or a DataFrame, or index is not an integer, a str
         or a date-like value.
     ValueError
-        If index is an integer that is not between 0 and the number of
-        observations, is a str that cannot be converted to a date, or is a
+        If index is an integer that is not between -nobs and nobs, is a str
+        that cannot be converted to a date, or is a
         date that is not in the index of s.
     """
     # Imported here because the validation module imports this module
@@ -758,7 +764,9 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
 
     check_instance("s", s, (Series, DataFrame))
     if isinstance(index, (int, np.integer)) and not isinstance(index, (bool, np.bool_)):
-        return check_int("index", index, lower=0, upper=s.shape[0])
+        nobs = s.shape[0]
+        loc = check_int("index", index, lower=-nobs, upper=nobs)
+        return loc + nobs if loc < 0 else loc
     if not isinstance(index, (str, dt.datetime, np.datetime64, Timestamp)):
         _fail(
             TypeError,

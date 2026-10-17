@@ -15,7 +15,8 @@ The rules that decide which values are accepted are in the small private functio
 ``_is_*`` and ``_float_in_range``. They are the only code to change if the policy
 changes (decisions 66, 67 and 68 in the release plan are provisional):
 
-* flags accept ``bool`` and ``np.bool_`` only (``_is_bool``);
+* flags accept ``bool``, ``np.bool_`` and the integers 0 and 1 (``_is_bool`` and
+  ``_is_flag_integer``);
 * integers are accepted by ``operator.index``, which rejects floats, including 5.0, and
   Booleans (``_is_integer``);
 * floats must be real numbers that are finite, unless ``allow_nan`` or ``allow_inf``
@@ -106,8 +107,13 @@ def _with_none(rule: str, allow_none: bool) -> str:
 
 
 def _is_bool(value: Any) -> bool:
-    """Flags: bool and np.bool_ only. Change here to accept 0/1 or any truth value."""
+    """Booleans: bool and np.bool_. They are not integers or real numbers here."""
     return isinstance(value, (bool, np.bool_))
+
+
+def _is_flag_integer(value: Any) -> bool:
+    """Python and NumPy integers, which a flag accepts if they are 0 or 1."""
+    return isinstance(value, (int, np.integer)) and not _is_bool(value)
 
 
 def _is_integer(value: Any) -> bool:
@@ -155,8 +161,9 @@ def check_bool(name: str, value: Any, *, allow_none: bool = False) -> bool | Non
     name : str
         The name of the argument, which is used in the error message.
     value : object
-        The value passed by the user. Only ``bool`` and ``np.bool_`` are accepted, so
-        0, 1, "no" and arrays are rejected.
+        The value passed by the user. ``bool``, ``np.bool_`` and the integers 0 and 1
+        (Python ``int`` and NumPy integers) are accepted. Other integers, floats
+        (including 1.0), strings and arrays are rejected.
     allow_none : bool, optional
         If True, None is accepted and returned unchanged. Use this only where None is
         the documented default.
@@ -169,13 +176,20 @@ def check_bool(name: str, value: Any, *, allow_none: bool = False) -> bool | Non
     Raises
     ------
     TypeError
-        If the value is not a bool (or None if ``allow_none``).
+        If the value is not a bool or an integer (or None if ``allow_none``).
+    ValueError
+        If the value is an integer other than 0 and 1.
     """
     if _is_bool(value):
         return bool(value)
-    if allow_none and value is None:
+    exc: type[Exception] = TypeError
+    if _is_flag_integer(value):
+        if value in (0, 1):
+            return bool(value)
+        exc = ValueError
+    elif allow_none and value is None:
         return None
-    _fail(TypeError, name, _with_none("True or False", allow_none), _describe(value))
+    _fail(exc, name, _with_none("True or False", allow_none), _describe(value))
 
 
 def _int_rule(lower: int | None, upper: int | None, allow_none: bool) -> str:
@@ -851,6 +865,13 @@ def _date_value(value: Any) -> np.datetime64 | None:
 _DATE_TYPES = (str, dt.date, np.datetime64, pd.Timestamp, pd.Period)
 
 
+def _position_rule(nobs: int, stop: int) -> str:
+    """The positions that are accepted, for the message of ``check_index``."""
+    if stop >= nobs:
+        return f"an integer position in [{-nobs}, {stop}]"
+    return f"an integer position in [0, {stop}] or in [{-nobs}, {stop - nobs}]"
+
+
 def check_index(
     name: str,
     value: Any,
@@ -865,7 +886,9 @@ def check_index(
     Check a position or a date that selects a point in a sample.
 
     This is the check for ``first_obs``, ``last_obs`` and ``start``. A position must be
-    in ``[0, nobs]``, and a date must be within the index.
+    in ``[-nobs, nobs]``, and a date must be within the index. A negative position
+    counts from the end, as in Python indexing, so that ``-1`` is ``nobs - 1`` and
+    ``-nobs`` is 0. The result is always the non-negative position.
 
     Parameters
     ----------
@@ -874,8 +897,8 @@ def check_index(
     value : int, str, date, datetime, datetime64, Timestamp, Period or None
         The position of an observation, or, if ``index`` is a DatetimeIndex or a
         PeriodIndex, a date, a datetime, a datetime64, a Timestamp, a Period or a string
-        that can be converted to a date. Negative integers (positions from the end) are
-        not accepted.
+        that can be converted to a date. A negative integer is a position counted from
+        the end of the sample.
     nobs : int
         The number of observations.
     index : Index, optional
@@ -883,7 +906,8 @@ def check_index(
     default : int, optional
         The result when ``value`` is None.
     upper : int, optional
-        The largest accepted position. The default is ``nobs``.
+        The largest accepted position after a negative position has been converted.
+        The default is ``nobs``.
     allow_none : bool, optional
         If True (the default), None is accepted and ``default`` is returned. If False,
         None raises a TypeError.
@@ -891,22 +915,25 @@ def check_index(
     Returns
     -------
     int or None
-        The position, or ``default`` if ``value`` is None, which is None if there is no
-        default.
+        The position, which is not negative, or ``default`` if ``value`` is None, which
+        is None if there is no default.
 
     Raises
     ------
     TypeError
         If the value is not an integer, a date or None (if ``allow_none``).
     ValueError
-        If the position is not in ``[0, nobs]`` (or ``upper``), the date is outside the
-        index or cannot be parsed, or a date is given without a date index.
+        If the position is not in ``[-nobs, nobs]`` (or is larger than ``upper`` once
+        it is not negative), the date is outside the index or cannot be parsed, or a
+        date is given without a date index.
     """
     if value is None and allow_none:
         return default
     stop = nobs if upper is None else upper
     if _is_integer(value):
         position = operator.index(value)
+        if -nobs <= position < 0:
+            position += nobs
         if 0 <= position <= stop:
             return position
         exc: type[Exception] = ValueError
@@ -922,7 +949,7 @@ def check_index(
                 pass  # date_to_index requires a monotonic, unique index
     else:
         exc = TypeError
-    rule = f"an integer position in [0, {stop}]"
+    rule = _position_rule(nobs, stop)
     if isinstance(index, (pd.DatetimeIndex, pd.PeriodIndex)):
         rule += (
             ", a date within the index" if allow_none else " or a date within the index"

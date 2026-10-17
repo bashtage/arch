@@ -29,6 +29,7 @@ from arch._typing import (
     Float64Array,
     Float64Array1D,
     Float64Array2D,
+    ForecastAlignment,
     ForecastingMethod,
     Label,
     Literal,
@@ -861,9 +862,10 @@ class ARCHModel(metaclass=ABCMeta):
 
         Notes
         -----
-        Positions are in [0, nobs] and dates must be in the index. Whether the
-        positions leave any observation after hold_back is checked when the sample
-        is set.
+        Positions are in [-nobs, nobs] and dates must be in the index. A negative
+        position counts from the end, as in a slice, and the positions returned are
+        not negative. Whether the positions leave any observation after hold_back is
+        checked when the sample is set.
         """
         nobs = int(self._y.shape[0])
         index = self._y_series.index
@@ -889,11 +891,16 @@ class ARCHModel(metaclass=ABCMeta):
         first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when fixing model. Dates, strings and
             periods can only be used with pandas inputs that have a
-            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
-            a date must be in the index.
+            DatetimeIndex or a PeriodIndex. An integer must be in [-nobs, nobs],
+            and a date must be in the index. A negative integer counts from the
+            end, as in a slice, so that ``first_obs=-100`` uses the last 100
+            observations.
         last_obs : int, str, date, datetime, Timestamp or Period, optional
             Last observation to use when fixing model. An integer must be in
-            [0, nobs], and a date must be in the index.
+            [-nobs, nobs], and a date must be in the index. As in a slice, the
+            observation at ``last_obs`` is not used, and a negative integer
+            counts from the end, so that ``last_obs=-1`` drops the last
+            observation.
 
         Returns
         -------
@@ -1000,7 +1007,7 @@ class ARCHModel(metaclass=ABCMeta):
         disp : bool or {"off", "final"}, optional
             Either 'final' to print optimization result or 'off' to display
             nothing. Not case sensitive. If using a boolean, False is "off" and
-            True is "final".
+            True is "final". The integers 0 and 1 are accepted as booleans.
         starting_values : array_like, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components. Must have one finite element
@@ -1018,11 +1025,16 @@ class ARCHModel(metaclass=ABCMeta):
         first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when estimating model. Dates, strings and
             periods can only be used with pandas inputs that have a
-            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
-            a date must be in the index.
+            DatetimeIndex or a PeriodIndex. An integer must be in [-nobs, nobs],
+            and a date must be in the index. A negative integer counts from the
+            end, as in a slice, so that ``first_obs=-100`` uses the last 100
+            observations.
         last_obs : int, str, date, datetime, Timestamp or Period, optional
             Last observation to use when estimating model. An integer must be in
-            [0, nobs], and a date must be in the index.
+            [-nobs, nobs], and a date must be in the index. As in a slice, the
+            observation at ``last_obs`` is not used, and a negative integer
+            counts from the end, so that ``last_obs=-1`` drops the last
+            observation.
         tol : float, optional
             Tolerance for termination. Must not be negative.
         options : dict, optional
@@ -1045,14 +1057,15 @@ class ARCHModel(metaclass=ABCMeta):
             If the model was created without data.
         TypeError
             If an argument is not of the documented type, for example a float for
-            ``update_freq`` or an integer (0 or 1) for ``disp``.
+            ``update_freq`` or ``disp``.
         ValueError
             If ``update_freq`` is negative, ``tol`` is negative or not finite,
             ``backcast`` is not positive and finite, ``starting_values`` does not
             have one finite element for each parameter, ``first_obs`` or
             ``last_obs`` is outside the sample, ``cov_type`` or ``disp`` is not one
-            of the options, or the model has more parameters than the number of
-            observations used to estimate it.
+            of the options (``disp`` can also be an integer other than 0 and 1), or
+            the model has more parameters than the number of observations used to
+            estimate it.
 
         Notes
         -----
@@ -1479,7 +1492,7 @@ class ARCHModel(metaclass=ABCMeta):
         params: ArrayLike1D,
         horizon: int = 1,
         start: int | DateLike | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
@@ -1503,15 +1516,17 @@ class ARCHModel(metaclass=ABCMeta):
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
-            '1945-01-01'. An integer must be in [0, nobs], and a date must be in
-            the index.
-        align : {"origin", "target"}, optional
+            '1945-01-01'. An integer must be in [-nobs, nobs], and a date must be
+            in the index. A negative integer counts from the end, as in Python
+            indexing, so that ``start=-1`` is the last observation.
+        align : {"origin", "target", "horizon"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned. Not case sensitive.
+            realization and h-step forecast are aligned. 'horizon' is an alias
+            of 'target'. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
@@ -1599,8 +1614,8 @@ class ARCHModel(metaclass=ABCMeta):
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
         example, y[100,2] contains the 3-step ahead forecast using the first
         100 data points, which will correspond to the realization y[100 + 2].
-        If `align` is 'target', then the same forecast is in location
-        [102, 2], so that it is aligned with the observation to use when
+        If `align` is 'target' (or its alias 'horizon'), then the same forecast is in
+        location [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
 
         Examples
@@ -2027,7 +2042,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         params: ArrayLike1D | None = None,
         horizon: int = 1,
         start: int | DateLike | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
@@ -2052,15 +2067,17 @@ class ARCHModelFixedResult(_SummaryRepr):
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
-            '1945-01-01'. An integer must be in [0, nobs], and a date must be in
-            the index.
-        align : {"origin", "target"}, optional
+            '1945-01-01'. An integer must be in [-nobs, nobs], and a date must be
+            in the index. A negative integer counts from the end, as in Python
+            indexing, so that ``start=-1`` is the last observation.
+        align : {"origin", "target", "horizon"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned. Not case sensitive.
+            realization and h-step forecast are aligned. 'horizon' is an alias
+            of 'target'. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
@@ -2146,8 +2163,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
         example, y[100,2] contains the 3-step ahead forecast using the first
         100 data points, which will correspond to the realization y[100 + 2].
-        If `align` is 'target', then the same forecast is in location
-        [102, 2], so that it is aligned with the observation to use when
+        If `align` is 'target' (or its alias 'horizon'), then the same forecast is in
+        location [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
         nobs = int(self.model._y.shape[0])
@@ -2161,12 +2178,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         start = check_index("start", start, nobs, index=self._index)
         align = cast(
             "Literal['origin', 'target']",
-            check_option(
-                "align",
-                align,
-                {"origin": "origin", "target": "target", "horizon": "target"},
-                display=("origin", "target"),
-            ),
+            _check_align(align),
         )
         method = cast(
             "ForecastingMethod",
@@ -2220,7 +2232,9 @@ class ARCHModelFixedResult(_SummaryRepr):
             inputs that have a datetime index.  Strings must be convertible
             to a date time, such as in '1945-01-01'.  If not provided, the start
             is set to the earliest forecastable date. An integer must be in
-            [0, nobs], and a date must be in the index.
+            [-nobs, nobs], and a date must be in the index. A negative integer
+            counts from the end, as in Python indexing, so that ``start=-1`` is
+            the last observation.
         plot_type : {"volatility", "mean"}, optional
             Quantity to plot, the forecast volatility or the forecast mean. Not case
             sensitive.
@@ -2758,15 +2772,20 @@ class ARCHModelResult(ARCHModelFixedResult):
         return self._optim_output
 
 
-def _align_forecast(
-    f: pd.DataFrame, align: Literal["origin", "target"]
-) -> pd.DataFrame:
-    align = check_option(
-        "align",
-        align,
-        {"origin": "origin", "target": "target", "horizon": "target"},
-        display=("origin", "target"),
-    )
+_ALIGN_OPTIONS = {"origin": "origin", "target": "target", "horizon": "target"}
+
+
+def _check_align(align: Any) -> str:
+    """
+    Check ``align`` of the forecasts and return it as "origin" or "target".
+
+    "horizon" is an alias of "target", and the options are not case sensitive.
+    """
+    return check_option("align", align, _ALIGN_OPTIONS, display=tuple(_ALIGN_OPTIONS))
+
+
+def _align_forecast(f: pd.DataFrame, align: ForecastAlignment) -> pd.DataFrame:
+    align = _check_align(align)
     if align == "origin":
         return f
     for i, col in enumerate(f):
@@ -2897,9 +2916,9 @@ class ARCHModelForecast:
         ``simulated_paths``.
     simulated_residuals : ndarray, optional
         Simulated residuals, with the same dimensions as ``simulated_paths``.
-    align : {"origin", "target"}, optional
+    align : {"origin", "target", "horizon"}, optional
         Alignment of the forecasts.  See the ``align`` parameter of the
-        ``forecast`` method.
+        ``forecast`` method. 'horizon' is an alias of 'target'.
     reindex : bool, optional
         Whether to reindex the forecasts to have the same dimension as the series
         being forecast.
@@ -2921,7 +2940,7 @@ class ARCHModelForecast:
         simulated_variances: Float64Array | None = None,
         simulated_residual_variances: Float64Array | None = None,
         simulated_residuals: Float64Array | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         *,
         reindex: bool = False,
     ) -> None:
