@@ -46,14 +46,21 @@ OPTIONS = {"options": {"maxiter": 5}}
 QUIET = {"disp": "off", "show_warning": False}
 
 
-@pytest.fixture(scope="module")
-def model():
+def _model():
     return arch_model(Y, mean="constant", vol="GARCH", p=1, q=1)
 
 
+# A new model for each test: fit and fix store the sample on the model, and forecast
+# checks start against it, so a model shared by the tests made the results depend on
+# the order in which the tests ran
+@pytest.fixture
+def model():
+    return _model()
+
+
 @pytest.fixture(scope="module")
-def result(model):
-    return model.fit(**QUIET)
+def result():
+    return _model().fit(**QUIET)
 
 
 # first_obs and last_obs are slice bounds
