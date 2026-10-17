@@ -32,7 +32,7 @@ import datetime as dt
 import math
 import numbers
 import operator
-from typing import Any, Literal, NoReturn, overload
+from typing import Any, Literal, NoReturn, cast, overload
 
 import numpy as np
 from numpy.random import Generator, RandomState
@@ -821,11 +821,11 @@ def check_ndarray(
 
 def _date_values(index: pd.Index) -> np.ndarray:
     """The values of a DatetimeIndex or PeriodIndex as naive datetime64, in UTC."""
-    if isinstance(index, pd.PeriodIndex):
-        index = index.to_timestamp()
-    if index.tz is not None:
-        index = index.tz_convert("GMT").tz_localize(None)
-    return index.to_numpy()
+    dates = index.to_timestamp() if isinstance(index, pd.PeriodIndex) else index
+    assert isinstance(dates, pd.DatetimeIndex)
+    if dates.tz is not None:
+        dates = dates.tz_convert("GMT").tz_localize(None)
+    return dates.to_numpy()
 
 
 def _date_value(value: Any) -> np.datetime64 | None:
@@ -917,7 +917,7 @@ def check_index(
                 when = _date_value(value)
                 values = _date_values(index)
                 if when is not None and values[0] <= when <= values[-1]:
-                    return cutoff_to_index(value, index, 0)
+                    return cutoff_to_index(cast("Any", value), index, 0)
             except ValueError:
                 pass  # date_to_index requires a monotonic, unique index
     else:
