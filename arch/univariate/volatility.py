@@ -4657,11 +4657,13 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation. Must satisfy p>=o.
+        Order of the symmetric innovation. Must satisfy p>=o and be positive.
     o : int, optional
-        Order of the asymmetric innovation. Must satisfy o<=p.
+        Order of the asymmetric innovation. Must satisfy o<=p and be
+        non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
     delta : float, optional
         Value to use for a fixed delta in the APARCH model. If
         not provided, the value of delta is jointly estimated
@@ -4671,6 +4673,15 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Restrict all asymmetry terms to share the same asymmetry
         parameter. If False (default), then there are no restrictions
         on the ``o`` asymmetry parameters.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer, ``delta`` is not a real number
+        or None, or ``common_asym`` is not a bool.
+    ValueError
+        If ``p`` is smaller than 1, ``o`` or ``q`` is negative, ``o`` is larger than
+        ``p``, or ``delta`` is NaN, inf or not in (0.05, 4.0).
 
     Notes
     -----
