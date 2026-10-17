@@ -16,7 +16,7 @@ _MAX_REPR = 40
 
 
 def _short_repr(value: Any) -> str:
-    """The repr of a value, shortened so that an error message stays readable"""
+    """Return the repr of a value, shortened to keep error messages readable."""
     text = repr(value)
     if len(text) > _MAX_REPR:
         text = text[: _MAX_REPR - 3] + "..."
@@ -47,7 +47,7 @@ def check_option(
         The name of the argument, which is used in the error message.
     value : object
         The value passed by the user. It must be a string.
-    allowed : {iterable[str], mapping[str, str]}
+    allowed : iterable of str or mapping of str to str
         The lower case allowed values. A mapping maps each lower case spelling,
         including any alias, to the canonical value that is returned. The
         canonical value may use any case, for example "R" or "Za".
