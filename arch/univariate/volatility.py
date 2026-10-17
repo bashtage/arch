@@ -1011,10 +1011,20 @@ class VolatilityProcess(metaclass=ABCMeta):
         method_name = check_option(
             "method", method, ("analytic", "simulation", "bootstrap")
         )
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
+        horizon = check_int("horizon", horizon, lower=1)
+        nobs = resids.shape[0]
+        start = check_int("start", start, lower=0, upper=nobs, allow_none=True)
+        simulations = check_int("simulations", simulations, lower=1)
+        rng = cast(
+            "RNGType | None",
+            check_callable("rng", rng, allow_none=method_name != "simulation"),
+        )
+        random_state = check_instance(
+            "random_state", random_state, RandomState, allow_none=True
+        )
+        asym_weight = check_float("asym_weight", asym_weight, lower=0.0, upper=1.0)
         self._check_forecasting_method(cast("ForecastingMethod", method_name), horizon)
-        start = len(resids) - 1 if start is None else start
+        start = max(nobs - 1, 0) if start is None else start
         if method_name == "analytic":
             analytic = self._analytic_forecast
             kwargs = {}
