@@ -419,6 +419,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
             A summary instance with methods that support export to text, csv
             or latex.
         """
+        full = check_bool("full", full)
         if self._bandwidth != int(self._bandwidth):
             bw = str_format(self._bandwidth)
         else:

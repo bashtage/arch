@@ -4,6 +4,8 @@ Input validation of the cointegration tests and estimators.
 The table-driven rows are built on arch.tests.validation_table.
 """
 
+from arch.compat.matplotlib import HAS_MATPLOTLIB
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -520,4 +522,70 @@ FM_ROWS = [
 
 @pytest.mark.parametrize("row", to_params(FM_ROWS))
 def test_fmols_ccr(row):
+    run_row(row)
+
+
+RES_EG = engle_granger(Y, X)
+RES_PO = phillips_ouliaris(Y, X)
+RES_DOLS = DynamicOLS(Y, X, lags=1, leads=1).fit()
+STR_BAD = [(5, TypeError), (["t"], TypeError), (True, TypeError), (b"t", TypeError)]
+
+
+class NewAxes:
+    """Marks a row that plots in axes that the test creates"""
+
+
+def _plot(res):
+    def func(**kw):
+        import matplotlib.pyplot as plt  # noqa: PLC0415
+
+        if isinstance(kw.get("axes"), NewAxes):
+            _, kw["axes"] = plt.subplots(1, 1)
+        fig = res.plot(**kw)
+        plt.close(fig)
+
+    return func
+
+
+def _summary(**kw):
+    return RES_DOLS.summary(**kw)
+
+
+def _plot_rows():
+    rows = []
+    for name, res in (("eg", RES_EG), ("po", RES_PO)):
+        func = _plot(res)
+        rows += [
+            *bad_value_rows(
+                f"plot-{name}",
+                func,
+                {},
+                "axes",
+                [("ax", TypeError), (5, TypeError), ([], TypeError)],
+                rule=r"an instance of Axes or None",
+            ),
+            *bad_value_rows(
+                f"plot-{name}", func, {}, "title", STR_BAD, rule=r"a string or None"
+            ),
+            *good_value_rows(f"plot-{name}", func, {}, "axes", [None, NewAxes()]),
+            *good_value_rows(f"plot-{name}", func, {}, "title", [None, "Title", ""]),
+        ]
+    return rows
+
+
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not available")
+@pytest.mark.usefixtures("agg_backend")
+@pytest.mark.parametrize("row", to_params(_plot_rows()))
+def test_plot(row):
+    run_row(row)
+
+
+SUMMARY_ROWS = [
+    *bad_value_rows("summary", _summary, {}, "full", BOOL_BAD, rule=r"True or False"),
+    *good_value_rows("summary", _summary, {}, "full", BOOL_GOOD),
+]
+
+
+@pytest.mark.parametrize("row", to_params(SUMMARY_ROWS))
+def test_summary(row):
     run_row(row)

@@ -5,7 +5,12 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
-from arch.utility._validation import check_array, check_option
+from arch.utility._validation import (
+    check_array,
+    check_instance,
+    check_option,
+    check_str,
+)
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -238,6 +243,10 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         Figure
             The matplotlib Figure instance.
         """
+        from matplotlib.axes import Axes  # noqa: PLC0415
+
+        axes = check_instance("axes", axes, Axes, allow_none=True)
+        title = check_str("title", title, allow_none=True)
         resid = self.resid
         df = pd.DataFrame(resid)
         title = "Cointegrating Residual" if title is None else title
