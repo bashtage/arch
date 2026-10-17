@@ -47,6 +47,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+from arch.utility._validation import check_option
 from arch.utility.array import append_same_type, to_array_1d
 
 if TYPE_CHECKING:
@@ -1881,7 +1882,7 @@ class ARCHInMean(ARX):
                 )
             self._form_id = 3
             self._form_power = float_form
-        self._form = form
+        self._form = form.lower() if isinstance(form, str) else form
 
         if not self.volatility.updateable:
             raise ValueError(
@@ -2865,15 +2866,9 @@ def arch_model(
         "ged",
         "generalized error",
     )
-    mean_model = mean.lower()
-    vol_model = vol.lower()
-    dist_name = dist.lower()
-    if mean_model not in known_mean:
-        raise ValueError("Unknown model type in mean")
-    if vol_model not in known_vol:
-        raise ValueError("Unknown model type in vol")
-    if dist_name not in known_dist:
-        raise ValueError("Unknown model type in dist")
+    mean_model = check_option("mean", mean, known_mean)
+    vol_model = check_option("vol", vol, known_vol)
+    dist_name = check_option("dist", dist, known_dist)
 
     if mean_model == "harx":
         am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)

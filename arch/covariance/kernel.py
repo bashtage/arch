@@ -9,6 +9,7 @@ import numpy as np
 from pandas import DataFrame, Index
 
 from arch._typing import ArrayLike, Float64Array, Float64Array2D
+from arch.utility._validation import check_option
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor._decorators import Substitution
 
@@ -983,10 +984,11 @@ def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
     ValueError
         If the name is not one of the names in ``KERNELS``.
     """
-    key = normalize_kernel_name(kernel) if isinstance(kernel, str) else None
-    if key not in KERNEL_ESTIMATORS:
-        known = "\n ".join(sorted(KERNELS))
-        raise ValueError(
-            f"kernel is not a known kernel estimator. Must be one of:\n {known}"
-        )
+    key = check_option(
+        "kernel",
+        kernel,
+        tuple(KERNEL_ESTIMATORS),
+        display=sorted(KERNELS),
+        normalize=normalize_kernel_name,
+    )
     return KERNEL_ESTIMATORS[key]

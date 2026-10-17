@@ -17,6 +17,7 @@ from arch.covariance.kernel import (
     ZeroLag,
     get_kernel_estimator,
 )
+from arch.utility._validation import check_option
 from arch.utility.array import ensure2d
 from arch.vendor._decorators import Appender
 
@@ -281,9 +282,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         )
         self._lags = 0
         self._diagonal_lags = 0
-        if not isinstance(method, str) or method.lower() not in ("aic", "hqc", "bic"):
-            raise ValueError("method must be one of 'aic', 'hqc' or 'bic'")
-        self._method = method.lower()
+        self._method = check_option("method", method, ("aic", "hqc", "bic"))
         self._diagonal = diagonal
         if max_lag is not None and not _is_non_negative_integer(max_lag):
             raise ValueError("max_lag must be a non-negative integer.")

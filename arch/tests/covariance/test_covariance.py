@@ -337,14 +337,19 @@ def test_get_kernel_estimator(name):
         assert get_kernel_estimator(variant.lower()) is estimator
 
 
-@pytest.mark.parametrize("name", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
-def test_get_kernel_estimator_errors(name):
-    with pytest.raises(ValueError, match="kernel is not a known kernel estimator") as e:
+@pytest.mark.parametrize(
+    ("name", "error"),
+    [("unknown", ValueError), ("", ValueError), ("zerolag", ValueError)]
+    + [("ZeroLag", ValueError), ("zero-lag", ValueError), (1, TypeError)],
+)
+def test_get_kernel_estimator_errors(name, error):
+    with pytest.raises(error, match="kernel must be one of") as e:
         get_kernel_estimator(name)
     # The message lists every available kernel
     for known in KERNELS:
         assert known in str(e.value)
-    assert "ZeroLag" not in str(e.value)
+    # Excluding the value that was received
+    assert "ZeroLag" not in str(e.value).split("; got")[0]
 
 
 @pytest.mark.parametrize(

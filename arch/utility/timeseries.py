@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from arch._typing import Float64Array, Literal, NDArrayOrFrame
+from arch.utility._validation import check_option
 from arch.utility.array import ensure1d, ensure2d
 
 
@@ -128,9 +129,11 @@ def add_trend(
     trend whenever applicable. There is currently no checking for an existing
     trend.
     """
-    if trend not in ("n", "c", "ct", "ctt", "t"):
-        raise ValueError(f"trend {trend} not understood")
-    trend_name = trend.lower()
+    trend_name = check_option("trend", trend, ("n", "c", "ct", "ctt", "t"))
+    has_constant = cast(
+        "Literal['raise', 'add', 'skip']",
+        check_option("has_constant", has_constant, ("raise", "add", "skip")),
+    )
     if (x is None and nobs is None) or (x is not None and nobs is not None):
         raise ValueError("One and only one of x or nobs must be provided.")
     if x is not None:
@@ -171,7 +174,7 @@ def add_trend(
             raise ValueError("x already contains a constant")
         elif has_constant == "add":
             pass
-        elif has_constant == "skip" and trend in ("c", "ct", "ctt"):
+        elif has_constant == "skip" and trend_name in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
     if isinstance(x, pd.DataFrame):
         columns: list[str] = ["const", "trend", "quadratic_trend"]

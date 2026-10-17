@@ -24,6 +24,7 @@ from arch.unitroot._phillips_ouliaris import (
 )
 from arch.unitroot._shared import _check_cointegrating_regression, _cross_section
 from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
+from arch.utility._validation import check_option
 from arch.utility.array import ensure2d
 from arch.utility.io import pval_format, str_format
 from arch.utility.timeseries import add_trend
@@ -547,19 +548,13 @@ class DynamicOLS:
         self._leads = leads
         self._max_lag = max_lag
         self._max_lead = max_lead
-        self._method = method
+        self._method = check_option("method", method, ("aic", "bic", "hqic"))
         self._common = bool(common)
         self._y_df = pd.DataFrame(self._y)
         self._check_inputs()
 
     def _check_inputs(self) -> None:
         """Validate the inputs"""
-        if not isinstance(self._method, str) or self._method.lower() not in (
-            "aic",
-            "bic",
-            "hqic",
-        ):
-            raise ValueError('method must be one of "aic", "bic", or "hqic"')
         max_lag = self._max_lag
         self._max_lag = int(max_lag) if max_lag is not None else max_lag
         max_lead = self._max_lead
@@ -754,6 +749,14 @@ class DynamicOLS:
         Consistent estimator of the covariance of the regression scores
         :math:`Z_t\epsilon_t`.
         """
+        cov_type = cast(
+            "Literal['unadjusted', 'homoskedastic', 'robust', 'kernel']",
+            check_option(
+                "cov_type",
+                cov_type,
+                ("unadjusted", "homoskedastic", "robust", "kernel"),
+            ),
+        )
         leads, lags = self._leads_and_lags()
         # TODO: Rank check and drop??
         lhs, rhs = self._format_variables(leads, lags)
@@ -810,7 +813,7 @@ class DynamicOLS:
             s = est.cov.long_run
             cov = scale * sigma_xx_inv @ s @ sigma_xx_inv / nobs
         else:
-            raise ValueError("Unknown cov_type")
+            raise ValueError(f"Unknown cov_type: {cov_type}")
         cov_df = pd.DataFrame(cov, columns=rhs.columns, index=rhs.columns)
         return cov_df, est
 

@@ -21,6 +21,7 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
     PVAL_TAU_STAR,
 )
 from arch.unitroot.unitroot import TREND_DESCRIPTION
+from arch.utility._validation import check_option
 from arch.utility.array import ensure2d
 from arch.utility.io import str_format
 from arch.utility.timeseries import add_trend
@@ -28,6 +29,10 @@ from arch.utility.timeseries import add_trend
 
 class CriticalValueWarning(RuntimeWarning):
     pass
+
+
+# Lower case names of the tests, which map to the canonical names
+_TEST_TYPES = {"za": "Za", "zt": "Zt", "pu": "Pu", "pz": "Pz"}
 
 
 def _po_ptests(
@@ -269,11 +274,11 @@ def phillips_ouliaris(
        residual based tests for cointegration. Econometrica: Journal of the
        Econometric Society, 165-193.
     """
-    test_type_key = test_type.lower()
-    if test_type_key not in ("za", "zt", "pu", "pz"):
-        raise ValueError(
-            f"Unknown test_type: {test_type}. Only Za, Zt, Pu and Pz are supported."
-        )
+    test_type = cast(
+        "Literal['Za', 'Zt', 'Pu', 'Pz']",
+        check_option("test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()),
+    )
+    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     kernel_est = get_kernel_estimator(kernel)
     y_2d = ensure2d(y, "y")
     x = ensure2d(x, "x")
@@ -281,7 +286,7 @@ def phillips_ouliaris(
     data = xsection.model.data
     x_df = data.orig_exog.iloc[:, : x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)
-    if test_type_key in ("pu", "pz"):
+    if test_type in ("Pu", "Pz"):
         return _po_ptests(
             z,
             xsection,
@@ -457,14 +462,10 @@ def phillips_ouliaris_cv(
     Series
         The critical values for 1, 5 and 10%.
     """
-    test_types = ("Za", "Zt", "Pu", "Pz")
-    test_type_key = test_type.capitalize()
-    if test_type_key not in test_types:
-        raise ValueError(f"test_type must be one of: {', '.join(test_types)}")
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"trend must by one of: {valid}")
+    test_type_key = check_option(
+        "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
+    )
+    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     if not 2 <= num <= 13:
         raise ValueError(
             "The number of stochastic trends must be between 2 and 12 (inclusive)"
@@ -516,14 +517,10 @@ def phillips_ouliaris_pval(
     float
         The asymptotic p-value.
     """
-    test_types = ("Za", "Zt", "Pu", "Pz")
-    test_type_key = test_type.capitalize()
-    if test_type_key not in test_types:
-        raise ValueError(f"test_type must be one of: {', '.join(test_types)}")
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"trend must by one of: {valid}")
+    test_type_key = check_option(
+        "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
+    )
+    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     if not 2 <= num <= 13:
         raise ValueError(
             "The number of stochastic trends must be between 2 and 12 (inclusive)"

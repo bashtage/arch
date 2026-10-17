@@ -832,7 +832,7 @@ class TestVarianceForecasts:
                 method="bootstrap",
                 random_state=self.rng,
             )
-        with pytest.raises(ValueError, match=r"unknown is not a known forecasting"):
+        with pytest.raises(ValueError, match=r"method must be one of"):
             vol.forecast(params, self.resid, backcast, var_bounds, method="unknown")
 
     def test_harch_forecast_simulation(self):
