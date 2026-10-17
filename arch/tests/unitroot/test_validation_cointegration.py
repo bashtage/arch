@@ -469,3 +469,55 @@ DOLS_FIT_ROWS = [
 @pytest.mark.parametrize("row", to_params(DOLS_FIT_ROWS))
 def test_dynamic_ols_fit(row):
     run_row(row)
+
+
+X_TREND_RULE = r"one of 'c', 'ct' or 'ctt'"
+X_TREND_BAD = [
+    ("zzz", ValueError),
+    ("", ValueError),
+    (5, TypeError),
+    (["c"], TypeError),
+    (np.str_("zzz"), ValueError),
+]
+X_TREND_GOOD = [None, "c", "ct", "ctt", "CT", np.str_("ct"), "n", "t"]
+
+
+def _fm_fit(cls):
+    def func(**kw):
+        return cls(Y, X).fit(**kw)
+
+    return func
+
+
+def _fm_rows(name, ctor, fit):
+    return [
+        *bad_value_rows(
+            f"{name}", ctor, BASE, "x_trend", X_TREND_BAD, rule=X_TREND_RULE
+        ),
+        *good_value_rows(f"{name}", ctor, BASE, "x_trend", X_TREND_GOOD),
+        *bad_value_rows(
+            f"{name}-fit", fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
+        ),
+        *[
+            row
+            for flag in ("force_int", "diff", "df_adjust")
+            for row in (
+                *bad_value_rows(
+                    f"{name}-fit", fit, FIT_BASE, flag, BOOL_BAD, rule=r"True or False"
+                ),
+                *good_value_rows(f"{name}-fit", fit, FIT_BASE, flag, BOOL_GOOD),
+            )
+        ],
+        *good_value_rows(f"{name}-fit", fit, FIT_BASE, "bandwidth", BANDWIDTH_GOOD),
+    ]
+
+
+FM_ROWS = [
+    *_fm_rows("fmols", _fm, _fm_fit(FullyModifiedOLS)),
+    *_fm_rows("ccr", _ccr, _fm_fit(CanonicalCointegratingReg)),
+]
+
+
+@pytest.mark.parametrize("row", to_params(FM_ROWS))
+def test_fmols_ccr(row):
+    run_row(row)

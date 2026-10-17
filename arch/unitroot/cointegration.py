@@ -1045,6 +1045,18 @@ FMOLS_ESTIMATOR = r"""
 """
 
 
+def _check_fit_arguments(
+    bandwidth: float | None, force_int: bool, diff: bool, df_adjust: bool
+) -> tuple[float | None, bool, bool, bool]:
+    """Check the arguments of the fit method of FMOLS and CCR"""
+    return (
+        check_float("bandwidth", bandwidth, lower=0.0, allow_none=True),
+        cast("bool", check_bool("force_int", force_int)),
+        cast("bool", check_bool("diff", diff)),
+        cast("bool", check_bool("df_adjust", df_adjust)),
+    )
+
+
 @Substitution(method=FMOLS_METHOD, estimator=FMOLS_ESTIMATOR)
 @Appender(COMMON_DOCSTRING)
 class FullyModifiedOLS:
@@ -1059,7 +1071,18 @@ class FullyModifiedOLS:
         self._y = setup.y
         self._x = setup.x
         self._trend = setup.trend
-        self._x_trend = x_trend
+        self._x_trend: UnitRootTrend | None = None
+        if x_trend is not None:
+            # The documented options are "c", "ct" and "ctt", "n" and "t" also work
+            self._x_trend = cast(
+                "UnitRootTrend",
+                check_option(
+                    "x_trend",
+                    x_trend,
+                    ("n", "c", "ct", "ctt", "t"),
+                    display=("c", "ct", "ctt"),
+                ),
+            )
         self._y_df = pd.DataFrame(self._y)
 
     def _common_fit(
@@ -1144,6 +1167,9 @@ class FullyModifiedOLS:
         CointegrationAnalysisResults
             The estimation results instance.
         """
+        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust
+        )
         cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1219,6 +1245,9 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         diff: bool = False,
         df_adjust: bool = False,
     ) -> CointegrationAnalysisResults:
+        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust
+        )
         cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
