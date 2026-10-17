@@ -27,14 +27,20 @@ from arch._typing import (
     NDArray,
     RandomStateState,
 )
-from arch.utility._validation import check_option
-from arch.utility.array import DocStringInheritor, ensure2d
-from arch.utility.exceptions import (
-    StudentizationError,
-    arg_type_error,
-    kwarg_type_error,
-    studentization_error,
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_callable,
+    check_float,
+    check_instance,
+    check_int,
+    check_option,
+    check_seed,
 )
+from arch.utility.array import DocStringInheritor
+from arch.utility.exceptions import StudentizationError, studentization_error
 
 __all__ = [
     "CircularBlockBootstrap",
@@ -83,6 +89,11 @@ def _get_random_integers(
     else:
         assert isinstance(prng, RandomState)
         return cast("Int64Array1D", prng.randint(upper, size=size, dtype=np.int64))
+
+
+# The estimator uses the autocovariances up to m_max = ceil(sqrt(n)) +
+# max(5, int(log10(n))), which needs n >= m_max + 2. This holds for n >= 11.
+_MIN_OPTIMAL_BLOCK_OBS = 11
 
 
 def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
@@ -146,7 +157,8 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     ----------
     x : array_like
         The data, which can be one-dimensional or two-dimensional.  Operates
-        column by column if 2-dimensional.
+        column by column if 2-dimensional. The data are converted to float64
+        and must be finite and have at least 11 observations.
 
     Returns
     -------
@@ -156,6 +168,15 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
         optimal block size for the circular bootstrap. The index contains the
         column names of x if it is a DataFrame, the name of x if it is a Series
         and the column positions otherwise.
+
+    Raises
+    ------
+    TypeError
+        If ``x`` cannot be converted to float64 (strings, dates, complex
+        numbers or None).
+    ValueError
+        If ``x`` has more than 2 dimensions, no columns or fewer than 11
+        observations, or contains NaN or inf.
 
     See Also
     --------
@@ -207,8 +228,14 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
        Bootstrap” by D. Politis and H. White, Econometric Reviews, 28:4,
        372-375, DOI: 10.1080/07474930802459016.
     """
-    # TODO: This should use overload ensure2d definitions to know it is ndarray
-    x_arr = np.asarray(ensure2d(x, "x"), dtype=float)
+    rule = (
+        "a 1-d or 2-d array of finite numbers with at least "
+        f"{_MIN_OPTIMAL_BLOCK_OBS} rows and 1 column"
+    )
+    data = check_array("x", x)
+    x_arr = data.reshape(-1, 1) if data.ndim < 2 else data
+    if x_arr.ndim > 2 or x_arr.shape[0] < _MIN_OPTIMAL_BLOCK_OBS or x_arr.shape[1] < 1:
+        _fail(ValueError, "x", rule, _describe(data))
     opt = [_single_optimal_block(col) for col in x_arr.T]
     if isinstance(x, pd.DataFrame):
         idx: list[Hashable] = list(x.columns)
