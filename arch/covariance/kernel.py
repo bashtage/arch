@@ -592,7 +592,8 @@ class CovarianceEstimator(ABC):
         --------
         CovarianceEstimate : The container of the covariance estimates.
         """
-        x = np.ascontiguousarray(self._x, dtype=float)
+        dtype = None if not np.issubdtype(self._x.dtype, np.inexact) else float
+        x = np.ascontiguousarray(self._x, dtype=dtype)
         k = x.shape[1]
         df = self._df
         sr = x.T @ x / df

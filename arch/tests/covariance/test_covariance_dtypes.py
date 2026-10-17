@@ -53,3 +53,28 @@ def test_uncentered_integer_newey_west(lags):
         expected += Fraction(2 * (lags + 1 - lag) * products, (lags + 1) * nobs)
 
     assert_allclose(cov_nw(data, lags=lags, demean=False), float(expected))
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_preserve_floating_kernel_dtype(dtype):
+    data = np.arange(12).reshape(6, 2).astype(dtype) / 10
+    result = Bartlett(data, bandwidth=2, center=False).cov
+    expected = data.T @ data / len(data)
+    assert result.short_run.dtype == expected.dtype
+    assert_array_equal(result.short_run, expected)
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("lags", [0, 2])
+def test_preserve_inexact_newey_west(dtype, lags):
+    data = np.arange(12).reshape(6, 2).astype(dtype) / 10
+    if np.issubdtype(dtype, np.complexfloating):
+        data = data + 1j * data[::-1]
+    expected = data.T @ data
+    for lag in range(1, lags + 1):
+        gamma = data[lag:].T @ data[:-lag]
+        expected += (1 - lag / (lags + 1)) * (gamma + gamma.T)
+    expected /= len(data)
+    result = cov_nw(data, lags=lags, demean=False)
+    assert result.dtype == expected.dtype
+    assert_array_equal(result, expected)

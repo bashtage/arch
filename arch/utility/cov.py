@@ -1,4 +1,4 @@
-from numpy import asarray, squeeze
+from numpy import asarray, inexact, issubdtype, squeeze
 
 from arch._typing import Float64Array
 from arch.utility._validation import (
@@ -50,7 +50,10 @@ def cov_nw(
         If y is not 1-d or 2-d, is empty or contains NaN or infinite values, or if
         lags, axis or ddof are outside their range.
     """
+    z = asarray(y)
     z = check_array("y", y)
+    if not issubdtype(z.dtype, inexact):
+        z = z.astype(float)
     if z.ndim not in (1, 2) or z.size == 0:
         _fail(
             ValueError,
