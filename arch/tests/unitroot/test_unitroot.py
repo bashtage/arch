@@ -554,12 +554,27 @@ kpss_autolag_data = (
 )
 
 
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 @pytest.mark.parametrize(("data", "trend", "lags"), kpss_autolag_data)
 def test_kpss_data_dependent_lags(data, trend, lags):
     # real GDP from macrodata data set
     kpss = KPSS(data, trend=trend)
     assert_equal(kpss.lags, lags)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct"])
+def test_kpss_default_lags_no_warning(trend):
+    y = np.random.default_rng(20240).standard_normal(250).cumsum() * 0.05
+    y += np.random.default_rng(20241).standard_normal(250)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        default = KPSS(y, trend=trend)
+        stat = default.stat
+        lags = default.lags
+    # The default is the data-dependent rule, and lags=-1 keeps the legacy rule
+    explicit = KPSS(y, trend=trend, lags=lags)
+    assert_allclose(stat, explicit.stat, rtol=1e-12)
+    legacy = KPSS(y, trend=trend, lags=-1)
+    assert_equal(legacy.lags, int(np.ceil(12.0 * (250 / 100) ** 0.25)))
 
 
 class ZATestResult(NamedTuple):
@@ -713,7 +728,6 @@ def test_invalid_trend():
         ADF(np.random.default_rng(1234).standard_normal(100), trend="unknown")
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -729,7 +743,6 @@ def test_wrong_exceptions(stat, nobs, trend):
         pass
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", [2, 10, 100])
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])

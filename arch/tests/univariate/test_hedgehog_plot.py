@@ -252,3 +252,9 @@ def test_hedgehog_period_index(period_data, plot_type, agg_backend):
             values = np.sqrt(fcast.variance.iloc[0].to_numpy())
             first = res.conditional_volatility.iloc[origin]
         assert_allclose(line[:, 1], np.hstack([first, values]), rtol=1e-10)
+
+
+def test_hedgehog_type_keyword_removed(data, agg_backend):
+    res = arch_model(data, mean="AR", lags=2).fit(disp="off", show_warning=False)
+    with pytest.raises(TypeError, match="unexpected keyword argument 'type'"):
+        res.hedgehog_plot(type="mean")
