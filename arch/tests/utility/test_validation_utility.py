@@ -316,6 +316,35 @@ def test_nan_is_still_data(func):
     assert np.isnan(out).sum() == 1
 
 
+LONGDOUBLE = np.arange(4.0).astype(np.longdouble)
+LONGDOUBLE_DATA = {
+    "ndarray": LONGDOUBLE,
+    "Series": pd.Series(LONGDOUBLE),
+    "DataFrame": pd.DataFrame({"x": LONGDOUBLE}),
+}
+
+
+@pytest.mark.parametrize(
+    ("func", "kind"),
+    [
+        pytest.param(func, kind, id=f"{func.__name__}-{kind}")
+        for func in (as_float64, ensure1d, ensure2d)
+        for kind in LONGDOUBLE_DATA
+    ]
+    + [
+        pytest.param(to_array_1d, kind, id=f"to_array_1d-{kind}")
+        for kind in ("ndarray", "Series")
+    ],
+)
+def test_longdouble_is_converted_to_float64(func, kind):
+    # np.longdouble is 8 bytes on Windows and Apple Silicon. It then compares equal
+    # to float64, but it is a different type that numpy.linalg does not accept
+    value = LONGDOUBLE_DATA[kind]
+    out = np.asarray(func(value) if func is to_array_1d else func(value, "x"))
+    assert out.dtype.char == "d"
+    assert_array_equal(out.ravel(), [0.0, 1.0, 2.0, 3.0])
+
+
 # ------------------------------------------------------ cutoff_to_index etc.
 def _cutoff(**kw):
     return cutoff_to_index(**kw)

@@ -70,20 +70,20 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
         If x is not a Series or an ndarray.
     """
     if isinstance(x, np.ndarray):
-        if x.ndim == 1 and x.dtype == np.float64:
+        if x.ndim == 1 and x.dtype.type is np.float64:
             return cast("Float64Array1D", x)
         _x = x.squeeze()
         if _x.ndim == 1:
             return cast("Float64Array1D", _x.astype(float))
         elif _x.ndim == 0:
-            return cast("Float64Array1D", np.atleast_1d(_x).astype(float, copy=False))
+            return cast("Float64Array1D", np.atleast_1d(_x).astype(float))
         else:
             # Imported here because the validation module imports this module
             from arch.utility._validation import _describe, _fail  # noqa: PLC0415
 
             _fail(ValueError, "x", "1D or 1D convertible", _describe(x))
     elif isinstance(x, Series):
-        return x.to_numpy().astype(float, copy=False)
+        return np.asarray(x.to_numpy(), dtype=float)
     else:
         from arch.utility._validation import _describe, _fail  # noqa: PLC0415
 
@@ -129,7 +129,8 @@ def as_float64(x: Any, name: str) -> Any:
             "got None (NoneType)"
         )
     arr = np.asarray(x)
-    if arr.dtype == np.float64:
+    # An 8-byte long double compares equal to float64, but it is a different type
+    if arr.dtype.type is np.float64:
         return arr
     if arr.dtype.kind in "biuf":
         return arr.astype(np.float64)
@@ -178,7 +179,9 @@ def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
         If the data cannot be converted to real float64 values.
     """
     dtypes = x.dtypes if isinstance(x, DataFrame) else [x.dtype]
-    if all(isinstance(dtype, np.dtype) and dtype == np.float64 for dtype in dtypes):
+    if all(
+        isinstance(dtype, np.dtype) and dtype.type is np.float64 for dtype in dtypes
+    ):
         return x
     if not all(
         is_float_dtype(dtype)
@@ -193,6 +196,16 @@ def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
             f"shape {x.shape} and data type(s) {', '.join(map(str, set(dtypes)))}."
         )
     try:
+        if any(
+            isinstance(dtype, np.dtype) and dtype.type is np.longdouble
+            for dtype in dtypes
+        ):
+            # pandas does not convert an 8-byte long double, which it treats as
+            # float64
+            values = np.asarray(x.to_numpy(), dtype=np.float64)
+            if isinstance(x, Series):
+                return Series(values, index=x.index, name=x.name)
+            return DataFrame(values, index=x.index, columns=x.columns)
         return x.astype(np.float64)
     except (TypeError, ValueError) as exc:
         raise TypeError(

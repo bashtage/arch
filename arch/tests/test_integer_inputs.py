@@ -909,3 +909,40 @@ def test_bootstrap_data_are_not_converted(dtype: type) -> None:
         assert resampled[0][0].dtype == dtype
     assert seen
     assert set(seen) == {np.dtype(dtype)}
+
+
+# ---------------------------------------------------------------------------
+# Long double data
+# ---------------------------------------------------------------------------
+def _arx_with_x(y: Any, x: Any) -> dict[str, Any]:
+    return _result(arch_model(y, x=x, mean="ARX", lags=1).fit(disp="off"))
+
+
+def _adf(y: Any, x: Any) -> dict[str, Any]:
+    # The lag length is selected, which uses numpy.linalg
+    return _test_result(ADF(y, trend="c", max_lags=4))
+
+
+def _engle_granger(y: Any, x: Any) -> dict[str, Any]:
+    test = engle_granger(y, x, trend="c")
+    return {"stat": test.stat, "vector": test.cointegrating_vector}
+
+
+@pytest.mark.parametrize(
+    ("run", "convert"),
+    [
+        pytest.param(_arx_with_x, ("x",), id="arch_model-ARX-x"),
+        pytest.param(_adf, ("y",), id="ADF"),
+        pytest.param(_engle_granger, ("y", "x"), id="engle_granger"),
+    ],
+)
+def test_longdouble_matches_float64(
+    run: Callable[[Any, Any], dict[str, Any]], convert: tuple[str, ...]
+) -> None:
+    # np.longdouble is 8 bytes on Windows and Apple Silicon. It then compares equal
+    # to float64, but it is a different type that numpy.linalg does not accept
+    data = {"y": _walk(10), "x": _walk(11, nvar=2)}
+    reference = run(data["y"], data["x"])
+    for name in convert:
+        data[name] = data[name].astype(np.longdouble)
+    assert_same(run(data["y"], data["x"]), reference, "longdouble")
