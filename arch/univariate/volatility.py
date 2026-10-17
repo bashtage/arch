@@ -2295,8 +2295,8 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
-        self.m: int = int(m)
-        self._asym = bool(asym)
+        self.m: int = _check_count("m", m, 1)
+        self._asym = check_bool("asym", asym)
         self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
         self._volatility_updater = rec.MIDASUpdater(self.m, self._asym)
