@@ -1,6 +1,5 @@
 from functools import cached_property
-from numbers import Integral, Real
-from typing import NamedTuple, cast
+from typing import NamedTuple
 import warnings
 
 import numpy as np
@@ -17,21 +16,16 @@ from arch.covariance.kernel import (
     ZeroLag,
     get_kernel_estimator,
 )
-from arch.utility._validation import check_option
-from arch.utility.array import ensure2d
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_bool,
+    check_int,
+    check_option,
+)
 from arch.vendor._decorators import Appender
 
 __all__ = ["PreWhitenedRecolored"]
-
-
-def _is_non_negative_integer(value: object) -> bool:
-    """Test for a real, finite, non-negative value that is a whole number"""
-    if isinstance(value, bool) or not isinstance(value, Real):
-        return False
-    if isinstance(value, Integral):
-        return cast("int", value) >= 0
-    number = cast("float", value)
-    return bool(np.isfinite(number)) and number >= 0 and int(number) == number
 
 
 class VARModel(NamedTuple):  # numpydoc ignore=PR02
@@ -269,9 +263,6 @@ class PreWhitenedRecolored(CovarianceEstimator):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ) -> None:
-        x = ensure2d(x, "x")
-        if not np.all(np.isfinite(np.asarray(x))):
-            raise ValueError("x must not contain NaN or infinite values.")
         super().__init__(
             x,
             bandwidth=bandwidth,
@@ -283,16 +274,19 @@ class PreWhitenedRecolored(CovarianceEstimator):
         self._lags = 0
         self._diagonal_lags = 0
         self._method = check_option("method", method, ("aic", "hqc", "bic"))
-        self._diagonal = diagonal
-        if max_lag is not None and not _is_non_negative_integer(max_lag):
-            raise ValueError("max_lag must be a non-negative integer.")
-        self._max_lag = None if max_lag is None else int(max_lag)
+        self._diagonal = check_bool("diagonal", diagonal)
+        self._max_lag = check_int("max_lag", max_lag, lower=0, allow_none=True)
         self._auto_lag_selection = True
         self._format_lags(lags)
-        self._sample_autocov = sample_autocov
+        self._sample_autocov = check_bool("sample_autocov", sample_autocov)
         if kernel is None:
             if self._bandwidth not in (0, None):
-                raise ValueError("bandwidth must be None or 0 when kernel is None")
+                _fail(
+                    ValueError,
+                    "bandwidth",
+                    "None or 0 when kernel is None",
+                    _describe(bandwidth),
+                )
             self._bandwidth = 0.0
             self._auto_bandwidth = False
             self._kernel: type[CovarianceEstimator] = ZeroLag
@@ -309,23 +303,24 @@ class PreWhitenedRecolored(CovarianceEstimator):
         """
         Check lag inputs and standard values for lags and diagonal lags
         """
+        largest = self._largest_lag()
+        nobs, nvar = self._x.shape
+        lags = check_int("lags", lags, lower=0, allow_none=True)
         if lags is None:
             return
 
         self._auto_lag_selection = False
-        if not _is_non_negative_integer(lags):
-            raise ValueError("lags must be a non-negative integer.")
-        self._lags = int(cast("float", lags))
-        largest = self._largest_lag()
-        if self._lags > largest:
-            nobs, nvar = self._x.shape
-            raise ValueError(
-                f"lags must be at most {largest} when x has {nobs} observations "
-                f"and {nvar} series so that each equation of the VAR has more "
-                "observations than parameters."
+        if lags > largest:
+            _fail(
+                ValueError,
+                "lags",
+                f"at most {largest} when x has {nobs} observations and {nvar} "
+                "series so that each equation of the VAR has more observations "
+                "than parameters",
+                _describe(lags),
             )
-        self._diagonal_lags = self._lags
-        return
+        self._lags = lags
+        self._diagonal_lags = lags
 
     def _largest_lag(self) -> int:
         """
