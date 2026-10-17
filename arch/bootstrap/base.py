@@ -332,7 +332,7 @@ def _loo_jackknife(
                 kwargs_copy[k] = v[items]
         if extra_kwargs is not None:
             kwargs_copy.update(extra_kwargs)
-        results.append(func(*args_copy, **kwargs_copy))
+        results.append(np.array(func(*args_copy, **kwargs_copy)))
     return np.array(results)
 
 
@@ -1219,8 +1219,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             semi = True
 
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        # Allows lists, tuples, scalars and 0-d arrays
-        base = np.asarray(func(*self._args, **kwargs))
+        # Snapshot lists, tuples, scalars and arrays before evaluating func again.
+        base = np.array(func(*self._args, **kwargs))
         if real_only:
             _check_real_statistic(base)
 
