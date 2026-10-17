@@ -88,7 +88,8 @@ def add_trend(
     ----------
     x : array_like or DataFrame, optional
         Original array of data. If None, then nobs must be a positive integer.
-        Integer, unsigned integer and Boolean data are converted to float64.
+        Integer, unsigned integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         NaN and inf in x are not checked and are returned unchanged.
     trend : {"n", "c", "t", "ct", "ctt"}, optional
         The trend(s) to add. Not case sensitive. Supported options are:
@@ -115,13 +116,15 @@ def add_trend(
         The trend if x is None, an ndarray with nobs rows. Otherwise x with the
         trend columns added, which is a DataFrame if x is a DataFrame and an
         ndarray otherwise. The trend columns of a DataFrame are named "const",
-        "trend" and "quadratic_trend".
+        "trend" and "quadratic_trend". The trend columns are real, and the data are
+        complex128 if x is complex.
 
     Raises
     ------
     TypeError
         If trend or has_constant is not a str, prepend is not a bool, nobs is
-        not an integer, or x cannot be converted to float64 data.
+        not an integer, or x cannot be converted to float64 or complex128 data
+        (it is float16, or contains strings or objects that are not numbers).
     ValueError
         If trend or has_constant is not one of the supported options, if both
         or neither of x and nobs are provided, if nobs is not positive, or if
@@ -146,7 +149,11 @@ def add_trend(
         # A Series is stacked into an ndarray, as before
         x = cast(
             "NDArrayOrFrame",
-            ensure1d(x, "x") if isinstance(x, pd.Series) else ensure2d(x, "x"),
+            (
+                ensure1d(x, "x", allow_complex=True)
+                if isinstance(x, pd.Series)
+                else ensure2d(x, "x", allow_complex=True)
+            ),
         )
     if trend_name == "n":
         if x is not None:
