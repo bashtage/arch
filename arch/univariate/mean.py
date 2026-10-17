@@ -479,7 +479,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     y : ndarray or Series, optional
         Vector of nobs elements containing the dependent variable.
     x : ndarray or DataFrame, optional
-        Array with nobs rows and k columns containing exogenous regressors.
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
     lags : int or array_like, optional
         Description of lag structure of the HAR.
 
@@ -489,6 +490,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         * A 2-d (2,n)-element array that includes the HAR lags of the form
           lags[0,j]:lags[1,j]+1 for all columns of lags.
 
+        The lags must be integers (2.5, 5.0 and True are not accepted). A scalar
+        must be at least 0, and the values of an array at least 1.
+
     constant : bool, optional
         Flag whether the model should include a constant.
     use_rotated : bool, optional
@@ -497,7 +501,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -507,6 +512,23 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant``, ``use_rotated`` or ``rescale`` is not
+        a bool (``rescale`` can also be None), if ``volatility`` or ``distribution`` is
+        not an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        or if ``x`` contains NaN or inf or does not have a row for each observation of
+        ``y``.
 
     Notes
     -----
@@ -717,14 +739,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         ------
         TypeError
             If the type of ``y`` or ``x`` differs from the type of the data in
-            the model.
+            the model, or if ``x`` cannot be converted to numbers.
         ValueError
             If ``y`` is empty, contains non-finite values or, when using
             pandas, has an index that is not unique, overlaps the existing
             index, or does not follow an increasing index of the existing data.
             Also raised if ``x`` is provided when the model does not have
-            exogenous regressors, is not provided when the model does, cannot
-            be converted to float, or does not have the same number of
+            exogenous regressors, is not provided when the model does,
+            contains NaN or inf, or does not have the same number of
             observations as ``y``.
         RuntimeError
             If the model was created without data.
@@ -945,6 +967,19 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
             containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params``, ``x``,
+            ``initial_value`` or ``initial_value_vol`` cannot be converted to
+            numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``x`` does not
+            have ``nobs + burn`` rows or is not finite, ``initial_value`` is not
+            finite or does not have ``max(lags)`` values, or ``initial_value_vol``
+            is not finite.
 
         Examples
         --------
@@ -1591,7 +1626,8 @@ class ConstantMean(HARX):
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -1601,6 +1637,19 @@ class ConstantMean(HARX):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``rescale`` is not a bool or None, or if ``volatility`` or
+        ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``hold_back`` is negative.
 
     Notes
     -----
@@ -1688,6 +1737,17 @@ class ConstantMean(HARX):
             volatility, containing the conditional volatility and errors
             containing the errors used in the simulation.
 
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a constant mean model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
+
         Examples
         --------
         Basic data simulation with a constant mean and volatility
@@ -1742,7 +1802,8 @@ class ZeroMean(HARX):
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -1752,6 +1813,19 @@ class ZeroMean(HARX):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``rescale`` is not a bool or None, or if ``volatility`` or
+        ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``hold_back`` is negative.
 
     Notes
     -----
@@ -1840,6 +1914,17 @@ class ZeroMean(HARX):
             volatility, containing the conditional volatility and errors
             containing the errors used in the simulation.
 
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a zero mean model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
+
         Examples
         --------
         Basic data simulation with no mean and constant volatility
@@ -1899,17 +1984,21 @@ class ARX(HARX):
     y : ndarray or Series, optional
         Vector of nobs elements containing the dependent variable.
     x : ndarray or DataFrame, optional
-        Array with nobs rows and k columns containing exogenous regressors.
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
     lags : int or array_like, optional
         Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
-        lags[1], ...
+        lags[1], ...  The lags must be integers (2.5, 5.0 and True are not
+        accepted). A scalar must be at least 0, and the values of an array at
+        least 1.
     constant : bool, optional
         Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -1919,6 +2008,23 @@ class ARX(HARX):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        or if ``x`` contains NaN or inf or does not have a row for each observation of
+        ``y``.
 
     Notes
     -----
@@ -2023,13 +2129,15 @@ class LS(HARX):
     y : ndarray or Series, optional
         Vector of nobs elements containing the dependent variable.
     x : ndarray or DataFrame, optional
-        Array with nobs rows and k columns containing exogenous regressors.
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
     constant : bool, optional
         Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -2039,6 +2147,21 @@ class LS(HARX):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``constant`` or ``rescale`` is not a bool (``rescale`` can also be
+        None), if ``volatility`` or ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``hold_back`` is negative, or if ``x`` contains NaN or inf or does not have
+        a row for each observation of ``y``.
 
     Notes
     -----
@@ -2092,17 +2215,21 @@ class ARCHInMean(ARX):
     y : ndarray or Series, optional
         Vector of nobs elements containing the dependent variable.
     x : ndarray or DataFrame, optional
-        Array with nobs rows and k columns containing exogenous regressors.
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
     lags : int or array_like, optional
         Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
-        lags[1], ...
+        lags[1], ...  The lags must be integers (2.5, 5.0 and True are not
+        accepted). A scalar must be at least 0, and the values of an array at
+        least 1.
     constant : bool, optional
         Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model. ``volatility.updateable`` must
         return ``True``.
@@ -2113,13 +2240,31 @@ class ARCHInMean(ARX):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
     form : {"log", "vol", "var"}, int or float, optional
         The form of the conditional variance that appears in the mean equation. The
         string names use the log of the conditional variance ("log"), the square-root
         of the conditional variance ("vol") or the conditional variance. When
         specified using a float, interpreted as :math:`\sigma_t^{form}` so that
         1 is equivalent to "vol" and 2 is equivalent to "var". When using a number,
-        must be different from 0.
+        must be finite and different from 0.  The strings are not case sensitive.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers, or if ``form`` is not a string or a number.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        if ``form`` is a string other than "log", "vol" or "var" or is not finite or
+        is 0, or if ``x`` contains NaN or inf or does not have a row for each
+        observation of ``y``.
 
     Notes
     -----
@@ -2503,7 +2648,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
-        estimating model parameters.
+        estimating model parameters.  Must be a non-negative integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.
     distribution : Distribution, optional
@@ -2513,6 +2658,8 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
 
     Attributes
     ----------
@@ -2520,6 +2667,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         The order of the moving average
     constant : bool
         Whether the model includes a constant
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), or if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``lags`` is smaller than 1 or ``hold_back`` is negative.
 
     Notes
     -----
@@ -2821,6 +2979,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             volatility, containing the conditional volatility and errors
             containing the errors used in the simulation.
 
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a moving average model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
+
         Notes
         -----
         The innovations are the errors of the volatility process, and so the
@@ -3074,13 +3243,14 @@ def arch_model(
         and 'HARCH'.
     p : int or list of int, optional
         Lag order of the symmetric innovation.  A list of lags can only be used
-        with the 'HARCH' volatility model.
+        with the 'HARCH' volatility model.  Must be at least 0, and integers
+        only (2.0 and True are not accepted).
     o : int, optional
-        Lag order of the asymmetric innovation.
+        Lag order of the asymmetric innovation.  Must be at least 0.
     q : int, optional
-        Lag order of lagged volatility or equivalent.
+        Lag order of lagged volatility or equivalent.  Must be at least 0.
     power : float, optional
-        Power to use with GARCH and related models.
+        Power to use with GARCH and related models.  Must be finite and positive.
     dist : str, optional
         Name of the error distribution.  Currently supported options are:
 
@@ -3105,10 +3275,23 @@ def arch_model(
     model : ARCHModel
         Configured ARCH model.
 
+    Raises
+    ------
+    TypeError
+        If ``mean``, ``vol`` or ``dist`` is not a string, ``lags``, ``p``, ``o``,
+        ``q`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), ``rescale`` is not a bool or None, ``power`` is not
+        a real number, or ``x`` cannot be converted to numbers.
+    ValueError
+        If ``mean``, ``vol`` or ``dist`` is not one of the options, ``lags``, ``p``,
+        ``o``, ``q`` or ``hold_back`` is negative, ``power`` is not finite and
+        positive, or ``x`` contains NaN or inf or does not have a row for each
+        observation of ``y``.
+
     Notes
     -----
     Input that are not relevant for a particular specification, such as `lags`
-    when `mean='zero'`, are silently ignored.
+    when `mean='zero'`, are silently ignored, and so are not checked.
 
     Examples
     --------
@@ -3177,6 +3360,8 @@ def arch_model(
     if vol_model == "constant":
         v: VolatilityProcess = ConstantVariance()
     elif vol_model == "harch":
+        # An integer, or a list of lags
+        _check_lags(p, "p", allow_2d=False)
         v = HARCH(lags=p)
     else:
         # p, o and q must be integers, which includes NumPy integers
