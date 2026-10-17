@@ -235,7 +235,9 @@ class TestUnitRoot:
         assert dfgls._low_memory
 
     def test_negative_lag(self):
-        with pytest.raises(ValueError, match=r"lags must be non-negative"):
+        with pytest.raises(
+            ValueError, match=r"lags must be an integer >= 0 or None; got -1 \(int\)"
+        ):
             ADF(self.inflation, lags=-1)
 
     def test_invalid_determinstic(self):
@@ -315,7 +317,7 @@ class TestUnitRoot:
 
     def test_variance_ratio_invalid_lags(self):
         y = self.inflation
-        with pytest.raises(ValueError, match=r"lags must be an integer larger than 2"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 2; got 1"):
             VarianceRatio(y, lags=1)
 
     def test_variance_ratio_generic(self):
@@ -484,7 +486,7 @@ def test_auto_low_memory():
 
 def test_mackinnonp_errors():
     with pytest.raises(
-        ValueError, match=r"Cointegration results \(num_unit_roots > 1\)"
+        ValueError, match=r"num_unit_roots must be 1 for dist_type='adf-z'"
     ):
         mackinnonp(-1.0, regression="c", num_unit_roots=2, dist_type="ADF-z")
     with pytest.raises(ValueError, match=r"dist_type must be one of "):
@@ -514,20 +516,18 @@ def test_mackinnoncrit_errors():
 
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
-    adf = ADF(x)
     # ValueError: maxlag should be < nobs
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries2():
     x = np.asarray([0, 0])
-    adf = ADF(x)
     # IndexError: index 0 is out of bounds for axis 0 with size 0
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries3():
@@ -541,10 +541,11 @@ def test_adf_buggy_timeseries3():
 
 def test_kpss_buggy_timeseries1():
     x = np.asarray([0])
-    adf = KPSS(x, lags=0)
     # ValueError: cannot convert float NaN to integer
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 2 observations"):
-        assert np.isfinite(adf.stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 2 observations long"
+    ):
+        KPSS(x, lags=0)
 
 
 kpss_autolag_data = (
@@ -661,7 +662,7 @@ def test_zivot_andrews(series_name):
 def test_zivot_andrews_error():
     series_name = "REAL_GNP"
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
-    with pytest.raises(ValueError, match=r"trim must be a float in range \[0, 1/3\]"):
+    with pytest.raises(ValueError, match=r"trim must be a finite float in \[0, 0.33"):
         ZivotAndrews(y, trim=0.5)
 
 
@@ -705,7 +706,7 @@ def test_bw_selection():
         auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(
-        ValueError, match=r"Data must contain more than one observation"
+        ValueError, match=r"y must be a 1-d array .* at least 2 elements"
     ):
         auto_bandwidth([1])
 
@@ -764,14 +765,18 @@ def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
 
 def test_phillips_perron_specifed_lag():
     y = np.zeros((10,))
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 12 observations"):
-        assert np.isfinite(PhillipsPerron(y, lags=12).stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"lags must be at most 9 for the 10 observations"
+    ):
+        PhillipsPerron(y, lags=12)
 
 
 def test_kpss_legacy():
     y = np.random.default_rng(1234).standard_normal(4)
-    with pytest.raises(InfeasibleTestException, match=r"The number of observations 4"):
-        assert np.isfinite(KPSS(y, lags=-1).stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 6 observations long"
+    ):
+        KPSS(y, lags=-1)
 
 
 @pytest.mark.parametrize(
