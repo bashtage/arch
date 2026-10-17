@@ -244,7 +244,7 @@ INT_NONE_BAD = _no_none(INT_BAD)
 BOOL_NONE_BAD = _no_none(BOOL_BAD)
 FLOAT_NONE_BAD = _no_none(FLOAT_BAD)
 LAGS_RULE = r"an integer >= 0 or None"
-BOOL_RULE = r"True or False or None"
+BOOL_RULE = r"True or False( or None)?"
 
 EG_ROWS = [
     *bad_value_rows("eg", _eg, BASE, "lags", INT_NONE_BAD, rule=LAGS_RULE),
@@ -292,4 +292,46 @@ EG_ROWS = [
 
 @pytest.mark.parametrize("row", to_params(EG_ROWS))
 def test_engle_granger(row):
+    run_row(row)
+
+
+BANDWIDTH_RULE = r"a finite float >= 0 or None"
+BANDWIDTH_BAD = [
+    *FLOAT_NONE_BAD,
+    (-1, ValueError),
+    (-0.5, ValueError),
+    (np.float64(-1.0), ValueError),
+    ([3], TypeError),
+]
+BANDWIDTH_GOOD = [None, 0, 0.0, 3, 3.5, np.int64(3), np.float32(2.5), np.float64(3.0)]
+KERNEL_FIT_BASE = {"y": Y, "x": X}
+
+
+def _po_rows(func, base, prefix):
+    return [
+        *bad_value_rows(
+            prefix, func, base, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
+        ),
+        *bad_value_rows(prefix, func, base, "force_int", BOOL_BAD, rule=BOOL_RULE),
+        *good_value_rows(prefix, func, base, "bandwidth", BANDWIDTH_GOOD),
+        *good_value_rows(prefix, func, base, "force_int", BOOL_GOOD),
+    ]
+
+
+PO_ROWS = [
+    *_po_rows(_po, {**BASE, "test_type": "Zt"}, "po"),
+    Row(
+        "po",
+        _po,
+        {**BASE, "x": np.ones((NOBS, 13)) * RNG.standard_normal((NOBS, 13))},
+        ValueError,
+        r"^The number of stochastic trends must be between 2 and 12",
+        id="po-too-many-columns",
+        form=False,
+    ),
+]
+
+
+@pytest.mark.parametrize("row", to_params(PO_ROWS))
+def test_phillips_ouliaris_arguments(row):
     run_row(row)

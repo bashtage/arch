@@ -25,7 +25,7 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
     PVAL_TAU_STAR,
 )
 from arch.unitroot.unitroot import TREND_DESCRIPTION
-from arch.utility._validation import check_option
+from arch.utility._validation import check_bool, check_float, check_option
 from arch.utility.io import str_format
 from arch.utility.timeseries import add_trend
 
@@ -38,13 +38,20 @@ class CriticalValueWarning(RuntimeWarning):
 _TEST_TYPES = {"za": "Za", "zt": "Zt", "pu": "Pu", "pz": "Pz"}
 
 
+def _check_num_trends(num: int) -> None:
+    if not 2 <= num <= 13:
+        raise ValueError(
+            "The number of stochastic trends must be between 2 and 12 (inclusive)"
+        )
+
+
 def _po_ptests(
     z: pd.DataFrame,
     xsection: RegressionResults,
     test_type: Literal["Pu", "Pz"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
-    bandwidth: int | None,
+    bandwidth: float | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
     nobs = z.shape[0]
@@ -96,7 +103,7 @@ def _po_ztests(
     test_type: Literal["Za", "Zt"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
-    bandwidth: int | None,
+    bandwidth: float | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
     # Za and Zt tests
@@ -141,7 +148,7 @@ def phillips_ouliaris(
     *,
     test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
     kernel: str = "bartlett",
-    bandwidth: int | None = None,
+    bandwidth: float | None = None,
     force_int: bool = False,
 ) -> "PhillipsOuliarisTestResults":
     r"""
@@ -284,7 +291,10 @@ def phillips_ouliaris(
         check_option("test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()),
     )
     kernel_est = get_kernel_estimator(kernel)
+    bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
+    force_int = check_bool("force_int", force_int)
     setup = _check_cointegrating_regression(y, x, trend)
+    _check_num_trends(setup.x.shape[1] + 1)
     trend = setup.trend
     xsection = _cross_section(setup.y, setup.x, trend)
     data = xsection.model.data
@@ -470,10 +480,7 @@ def phillips_ouliaris_cv(
         "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
     )
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
-    if not 2 <= num <= 13:
-        raise ValueError(
-            "The number of stochastic trends must be between 2 and 12 (inclusive)"
-        )
+    _check_num_trends(num)
     key = (test_type_key, trend, num)
     tbl = CV_PARAMETERS[key]
     min_size = CV_TAU_MIN[key]
@@ -525,10 +532,7 @@ def phillips_ouliaris_pval(
         "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
     )
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
-    if not 2 <= num <= 13:
-        raise ValueError(
-            "The number of stochastic trends must be between 2 and 12 (inclusive)"
-        )
+    _check_num_trends(num)
     key = (test_type_key, trend, num)
     if test_type_key in ("Pu", "Pz"):
         # These are upper tail, so we multiply by -1 to make lower tail
