@@ -41,7 +41,12 @@ from arch.univariate.diagnostics import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility._validation import check_option
+from arch.utility._validation import (
+    check_array,
+    check_float,
+    check_int,
+    check_option,
+)
 from arch.utility.array import append_same_type, ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
@@ -129,6 +134,8 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
     -----
     Parameter constraints satisfy a.dot(parameters) - b >= 0
     """
+    a = check_array("a", a, ndim=2, squeeze=False)
+    b = check_array("b", b, ndim=1, shape=(a.shape[0],), squeeze=False)
 
     def factory(coeff: Float64Array, val: float) -> Callable[..., float]:
         def f(params: Float64Array, *args: Any) -> float:
@@ -166,6 +173,9 @@ def format_float_fixed(x: float, max_digits: int = 10, decimal: int = 4) -> str:
     str
         The formatted number.
     """
+    x = check_float("x", x, allow_nan=True, allow_inf=True)
+    max_digits = check_int("max_digits", max_digits, lower=1)
+    decimal = check_int("decimal", decimal, lower=0)
     # basic_format = '{:0.' + str(digits) + 'g}'
     if x == 0:
         return ("{:0." + str(decimal) + "f}").format(0.0)
@@ -193,6 +203,7 @@ def implicit_constant(x: Float64Array) -> bool:
         Flag indicating whether the array has an implicit constant - whether
         the array has a set of columns that adds to a constant value.
     """
+    x = check_array("x", x, ndim=2)
     nobs = x.shape[0]
     rank = np.linalg.matrix_rank(np.hstack((np.ones((nobs, 1)), x)))
     return rank == x.shape[1]
