@@ -7,6 +7,7 @@ from numpy.testing import assert_array_equal
 import pandas as pd
 import pytest
 
+from arch.utility.array import as_float64, ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
 
@@ -35,3 +36,24 @@ def test_add_trend_frame_skip_constant(trend, expected_columns):
         assert_array_equal(result[name].to_numpy(), columns[name])
     assert_array_equal(result.to_numpy(), add_trend(x.to_numpy(), trend))
     assert result.index.equals(x.index)
+
+
+@pytest.mark.parametrize("func", [as_float64, ensure1d, ensure2d])
+@pytest.mark.parametrize(
+    "value",
+    [None, [1.0, None], (None,), np.array([1.0, None], dtype=object), [[None]]],
+    ids=["None", "list-with-None", "tuple-None", "object-with-None", "nested-None"],
+)
+def test_none_is_not_nan(func, value):
+    # np.asarray(None) is an object array and astype(float) turns None into NaN
+    with pytest.raises(TypeError, match=r"^x must .*None"):
+        func(value, "x")
+
+
+@pytest.mark.parametrize("func", [as_float64, ensure1d, ensure2d])
+def test_nan_is_still_data(func):
+    # NaN is a number and missing values in float data are NaN
+    out = func(np.array([1.0, np.nan]), "x")
+    assert np.isnan(out).sum() == 1
+    out = func(np.array([1.0, None], dtype=float), "x")
+    assert np.isnan(out).sum() == 1

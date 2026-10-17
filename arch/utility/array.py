@@ -108,15 +108,33 @@ def as_float64(x: Any, name: str) -> Any:
     ------
     TypeError
         If the data cannot be converted to real float64 values, e.g., if the
-        data contain strings, dates, complex values or objects that are not
-        numbers.
+        data are None or contain None, strings, dates, complex values or objects
+        that are not numbers.
+
+    Notes
+    -----
+    NumPy converts None to NaN when it converts an object array, so that
+    ``np.asarray(None).astype(float)`` is NaN. None is rejected here, as a value
+    and as an element of an object array, so that a missing argument or value
+    is not turned into a NaN.
     """
+    if x is None:
+        raise TypeError(
+            f"{name} must be array_like data that can be converted to float64; "
+            "got None (NoneType)"
+        )
     arr = np.asarray(x)
     if arr.dtype == np.float64:
         return arr
     if arr.dtype.kind in "biuf":
         return arr.astype(np.float64)
     if arr.dtype.kind == "O":
+        if any(item is None for item in arr.flat):
+            raise TypeError(
+                f"{name} must contain real numbers that can be converted to "
+                f"float64; got None in an object array with shape {arr.shape} "
+                f"({type(x).__name__})"
+            )
         try:
             return arr.astype(np.float64)
         except (TypeError, ValueError) as exc:
