@@ -330,7 +330,7 @@ to restore the previous results.
   covariance (see the entry about complex data). The fixes of the covariance estimators
   and of the ``axis`` of ``cov_nw``, and the first support of ``float32`` and complex
   data in the covariance estimators, were contributed by antonsoo (:issue:`942`,
-  :issue:`943`).
+  :issue:`943`, :issue:`957`).
 - The kernel covariance estimators in :mod:`arch.covariance.kernel` and ``cov_nw``
   accept complex data, and estimate the Hermitian long-run covariance. The products use
   the conjugate transpose, so that the lag-j autocovariance is the sum of ``x[t]`` times
@@ -350,7 +350,7 @@ to restore the previous results.
   has no interval. :class:`~arch.covariance.var.PreWhitenedRecolored`, the tests and the
   models do not accept complex data, since there is no single model of complex data for
   the VAR that prewhitens the data. Thanks to antonsoo for the support of complex data
-  in the covariance estimators that this builds on (:issue:`942`).
+  in the covariance estimators that this builds on (:issue:`942`, :issue:`957`).
 
 - ``fit`` ignores ``starting_values`` that violate the bounds or constraints of the
   model, with the ``StartingValueWarning`` that was always issued. In previous versions
@@ -663,9 +663,19 @@ Backward-incompatible changes
 - ``arch.utility.array.ensure1d`` and ``ensure2d`` convert every input to ``float64``,
   including integer, Boolean, ``float32`` and object data, and raise a ``TypeError``
   that names the argument if the data cannot be converted, for example for strings,
-  where they returned an array of strings. Code outside of arch that calls them and
-  needs the original data type should not use them. They no longer rename the Series
-  that they are given (:issue:`948`).
+  where they returned an array of strings, and for ``float16`` data. Complex data
+  raise a ``TypeError`` unless ``allow_complex=True``, which converts them to
+  ``complex128``. Code outside of arch that calls them and needs the original data
+  type should not use them. They no longer rename the Series that they are given
+  (:issue:`948`, :issue:`957`).
+- ``float16`` data now raise a ``TypeError`` in the estimators, the tests, the models,
+  the volatility processes and the distributions. Earlier versions converted them to
+  ``float64`` in some places and failed with an error from NumPy in others. The 11 bits
+  of ``float16`` are about 3 decimal digits, which is not enough for these estimators,
+  and the message names the accepted data types. Convert the data with
+  ``astype(np.float32)`` or ``astype(np.float64)`` if that is intended. Complex data
+  raise a ``TypeError`` too, except in the kernel covariance estimators, ``cov_nw``,
+  ``add_trend`` and the ``apply``, ``cov`` and ``var`` of the bootstraps (:issue:`957`).
 
 Bug fixes
 ~~~~~~~~~
