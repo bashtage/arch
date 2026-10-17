@@ -2702,11 +2702,11 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lam: float | None = 0.94) -> None:
         super().__init__()
-        self.lam: float | None = lam
+        self.lam: float | None = check_float(
+            "lam", lam, lower=0.0, upper=1.0, inclusive="neither", allow_none=True
+        )
         self._estimate_lam = lam is None
         self._num_params = 1 if self._estimate_lam else 0
-        if lam is not None and not 0.0 < lam < 1.0:
-            raise ValueError("lam must be strictly between 0 and 1")
         self._name = "EWMA/RiskMetrics"
         self._volatility_updater = rec.EWMAUpdater(self.lam)
 
