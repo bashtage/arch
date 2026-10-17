@@ -635,7 +635,7 @@ Backward-incompatible changes
   ``"quadratic-spectral"`` for kernels. All of the previous spellings, such as
   ``vol="GARCH"``, ``method="R"`` and ``annualize="D"``, are still accepted and give the
   same results. Code that compares ``MCS.method`` with ``"R"``, or matches the text of
-  an error message, needs to be updated (:issue:`947`).
+  an error message, needs to be updated (:issue:`955`).
 
 - ``arch.utility.array.ensure1d`` and ``ensure2d`` convert every input to ``float64``,
   including integer, Boolean, ``float32`` and object data, and raise a ``TypeError``
