@@ -110,11 +110,11 @@ def test_covariance_smoke(data: ArrayLike, estimator: type[CovarianceEstimator])
 
 
 def test_covariance_errors(data: ArrayLike, estimator: type[CovarianceEstimator]):
-    with pytest.raises(ValueError, match=r"Degrees of freedom is <= 0"):
+    with pytest.raises(ValueError, match=r"df_adjust must be an integer in \[0, "):
         estimator(data, df_adjust=data.shape[0] + 1)
-    with pytest.raises(ValueError, match=r"df_adjust must be a non-negative"):
+    with pytest.raises(ValueError, match=r"df_adjust must be an integer in "):
         estimator(data, df_adjust=-2)
-    with pytest.raises(ValueError, match=r"df_adjust must be a non-negative"):
+    with pytest.raises(TypeError, match=r"df_adjust must be an integer"):
         # Type ignored due to invalid type used in test
         estimator(data, df_adjust=np.ones(2))  # type: ignore[arg-type]
     with pytest.raises(ValueError, match=r"bandwidth must be"):
@@ -337,14 +337,19 @@ def test_get_kernel_estimator(name):
         assert get_kernel_estimator(variant.lower()) is estimator
 
 
-@pytest.mark.parametrize("name", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
-def test_get_kernel_estimator_errors(name):
-    with pytest.raises(ValueError, match="kernel is not a known kernel estimator") as e:
+@pytest.mark.parametrize(
+    ("name", "error"),
+    [("unknown", ValueError), ("", ValueError), ("zerolag", ValueError)]
+    + [("ZeroLag", ValueError), ("zero-lag", ValueError), (1, TypeError)],
+)
+def test_get_kernel_estimator_errors(name, error):
+    with pytest.raises(error, match="kernel must be one of") as e:
         get_kernel_estimator(name)
     # The message lists every available kernel
     for known in KERNELS:
         assert known in str(e.value)
-    assert "ZeroLag" not in str(e.value)
+    # Excluding the value that was received
+    assert "ZeroLag" not in str(e.value).split("; got")[0]
 
 
 @pytest.mark.parametrize(

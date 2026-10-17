@@ -226,11 +226,11 @@ def test_data(covariance_data, sample_autocov, kernel):
 
 def test_pwrc_errors():
     x = np.random.default_rng(0).standard_normal((500, 2))
-    with pytest.raises(ValueError, match="lags must be a"):
+    with pytest.raises(ValueError, match="lags must be an integer >= 0"):
         PreWhitenedRecolored(x, lags=-1)
-    with pytest.raises(ValueError, match="lags must be a"):
+    with pytest.raises(TypeError, match="lags must be an integer >= 0"):
         PreWhitenedRecolored(x, lags=np.array([2]))
-    with pytest.raises(ValueError, match="lags must be a"):
+    with pytest.raises(TypeError, match="lags must be an integer >= 0"):
         PreWhitenedRecolored(x, lags=3.5)
 
 
@@ -249,17 +249,25 @@ def test_method_case(var_data, method):
     assert upper._ics == lower._ics
 
 
-@pytest.mark.parametrize("method", ["unknown", "t-stat", "", None, 1])
-def test_unknown_method(var_data, method):
+@pytest.mark.parametrize(
+    ("method", "error"),
+    [("unknown", ValueError), ("t-stat", ValueError), ("", ValueError)]
+    + [(None, TypeError), (1, TypeError)],
+)
+def test_unknown_method(var_data, method, error):
     # Previously any value other than "aic" and "hqc" used BIC
-    with pytest.raises(ValueError, match="method must be one of"):
+    with pytest.raises(error, match="method must be one of"):
         PreWhitenedRecolored(var_data, method=method)
 
 
-@pytest.mark.parametrize("kernel", ["unknown", "", "zerolag", "ZeroLag", "zero-lag", 1])
-def test_unknown_kernel(covariance_data, kernel):
+@pytest.mark.parametrize(
+    ("kernel", "error"),
+    [("unknown", ValueError), ("", ValueError), ("zerolag", ValueError)]
+    + [("ZeroLag", ValueError), ("zero-lag", ValueError), (1, TypeError)],
+)
+def test_unknown_kernel(covariance_data, kernel, error):
     # ZeroLag is used by kernel=None and is not available by name
-    with pytest.raises(ValueError, match="kernel is not a known kernel estimator"):
+    with pytest.raises(error, match="kernel must be one of"):
         PreWhitenedRecolored(covariance_data, kernel=kernel)
 
 
@@ -767,9 +775,9 @@ def test_non_finite_x(var_data, kind, bad, kernel):
         x = pd.DataFrame(x, columns=["a", "b", "c"])
     elif kind == "series":
         x = pd.Series(x[:, 1], name="b")
-    with pytest.raises(ValueError, match="x must not contain NaN or infinite"):
+    with pytest.raises(ValueError, match="x must be a 2-d array of finite numbers"):
         PreWhitenedRecolored(x, lags=1, kernel=kernel)
-    with pytest.raises(ValueError, match="x must not contain NaN or infinite"):
+    with pytest.raises(ValueError, match="x must be a 2-d array of finite numbers"):
         PreWhitenedRecolored(x)
 
 
@@ -812,14 +820,15 @@ def test_lags_limit_estimates(center):
 
 @pytest.mark.parametrize("lags", ["2", True, False, np.inf, np.nan, -1, 2.5, [2]])
 def test_lags_invalid(var_data, lags):
-    with pytest.raises(ValueError, match="lags must be a non-negative integer"):
+    exc = ValueError if isinstance(lags, int) and lags == -1 else TypeError
+    with pytest.raises(exc, match="lags must be an integer >= 0"):
         PreWhitenedRecolored(var_data, lags=lags)
 
 
 @pytest.mark.parametrize(
     "lags",
-    [2, 2.0, np.int64(2), np.int8(2), np.float64(2.0)],
-    ids=["int", "float", "int64", "int8", "float64"],
+    [2, np.int64(2), np.int8(2)],
+    ids=["int", "int64", "int8"],
 )
 def test_lags_valid_types(var_data, lags):
     expected = PreWhitenedRecolored(var_data, lags=2).cov.long_run
@@ -828,7 +837,8 @@ def test_lags_valid_types(var_data, lags):
 
 @pytest.mark.parametrize("max_lag", ["2", True, np.inf, np.nan, -1, 2.5, [2]])
 def test_max_lag_invalid(var_data, max_lag):
-    with pytest.raises(ValueError, match="max_lag must be a non-negative integer"):
+    exc = ValueError if isinstance(max_lag, int) and max_lag == -1 else TypeError
+    with pytest.raises(exc, match="max_lag must be an integer >= 0"):
         PreWhitenedRecolored(var_data, max_lag=max_lag)
 
 

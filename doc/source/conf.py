@@ -301,6 +301,7 @@ napoleon_type_aliases = {
     "AxesSubplot": "matplotlib.axes.Axes",
     "DataFrame": "pandas.DataFrame",
     "Series": "pandas.Series",
+    "callable": ":py:func:`callable`",
     "ndarray": "numpy.ndarray",
     "np.ndarray": "numpy.array",
     "pd.Series": "pandas.Series",

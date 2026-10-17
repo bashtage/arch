@@ -123,6 +123,8 @@ dev = [
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
+  # docstrings: the numpydoc linter and arch/tests/test_docstrings.py
+  "numpydoc>=1.10",
   # formatting
   "black[jupyter]~=25.9.0",
   "isort~=6.0",
@@ -323,7 +325,6 @@ filterwarnings = [
   "error:invalid value encountered in cos:RuntimeWarning",
   "error:invalid value encountered in log:RuntimeWarning",
   "error:divide by zero encountered in double_scalars:RuntimeWarning",
-  "error:Lag selection has changed:DeprecationWarning",
   "error:More than 20 figures have been opened:RuntimeWarning:",
   "error:invalid value encountered in sqrt:RuntimeWarning:",
   "error:Inequality constraints incompatible::",
@@ -513,7 +514,8 @@ exclude_files = [
   # Implementations that are only used through documented objects
   '(.*/)?_samplers_python\.py',
   '(.*/)?recursions_python\.py',
-  # Build helpers and vendored code
+  # Build helpers, the generated version file and vendored code
   '(.*/)?_build/',
-  '(.*/)?_decorators\.py',
+  '(.*/)?_version\.py',
+  '(.*/)?vendor/',
 ]

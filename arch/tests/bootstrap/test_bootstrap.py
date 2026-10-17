@@ -158,17 +158,25 @@ def test_mixed_types(bs_setup, seed):
 def test_errors(bs_setup):
     x = np.arange(10)
     y = np.arange(100)
-    with pytest.raises(ValueError, match=r"All inputs must hav"):
+    with pytest.raises(
+        ValueError, match=r"args\[1\] must be an array with 10 rows, as args\[0\]"
+    ):
         IIDBootstrap(x, y)
-    with pytest.raises(ValueError, match=r"index is a reserved name"):
+    with pytest.raises(
+        ValueError, match=r"kwargs must be keywords that are not .*'index'"
+    ):
         IIDBootstrap(index=x)
     bs = IIDBootstrap(y)
 
-    with pytest.raises(ValueError, match=r"Unknown method"):
+    with pytest.raises(ValueError, match=r"method must be one of 'basic'"):
         bs.conf_int(bs_setup.func, method="unknown")
-    with pytest.raises(ValueError, match=r"tail must be one of two-sided"):
+    with pytest.raises(
+        ValueError, match=r"tail must be one of 'two', 'lower' or 'upper'"
+    ):
         bs.conf_int(bs_setup.func, tail="dragon")
-    with pytest.raises(ValueError, match=r"size must be strictly between 0 and 1"):
+    with pytest.raises(
+        ValueError, match=r"size must be a finite float in \(0, 1\); got 95"
+    ):
         bs.conf_int(bs_setup.func, size=95)
 
 
@@ -491,7 +499,7 @@ def test_conf_int_parametric(bs_setup):
         count += 1
     assert_allclose(bs._results, results)
 
-    with pytest.raises(ValueError, match=r"sampling must be one"):
+    with pytest.raises(ValueError, match=r"sampling must be one of 'nonparametric'"):
         bs.conf_int(func=semi_func, reps=100, sampling="other")
 
 
@@ -503,7 +511,10 @@ def test_extra_kwargs(bs_setup):
     bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     bs = IIDBootstrap(axis=bs_setup.x)
-    with pytest.raises(ValueError, match=r"extra_kwargs contains keys used"):
+    with pytest.raises(
+        ValueError,
+        match=r"extra_kwargs must be a dict with str keys that are not names",
+    ):
         bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
 
@@ -893,10 +904,10 @@ def test_list_input():
     # GH 315
     rs = RandomState(1234)
     vals = rs.standard_normal(25).tolist()
-    with pytest.raises(TypeError, match=r"Positional input 0 "):
+    with pytest.raises(TypeError, match=r"args\[0\] must be an instance of ndarray"):
         IIDBootstrap(vals)
     vals = rs.standard_normal(25).tolist()
-    with pytest.raises(TypeError, match=r"Input `data` "):
+    with pytest.raises(TypeError, match=r"data must be an instance of ndarray"):
         IIDBootstrap(data=vals)
 
 
@@ -992,7 +1003,7 @@ def test_bc_extremum_error():
 
 
 def test_invalid_random_state_generator():
-    with pytest.raises(TypeError, match=r"generator keyword argument"):
+    with pytest.raises(TypeError, match=r"seed must be None, a non-negative integer"):
         IIDBootstrap(np.empty(100), seed="123")
 
 
@@ -1002,7 +1013,9 @@ def test_generator(seed):
     assert isinstance(bs.generator, typ)
     gen_copy = copy.deepcopy(bs.generator)
     bs.generator = gen_copy
-    with pytest.raises(TypeError, match=r"Only a Generator or RandomState"):
+    with pytest.raises(
+        TypeError, match=r"generator must be an instance of Generator or RandomState"
+    ):
         bs.generator = 3
     assert isinstance(bs.generator, typ)
     assert bs.generator is gen_copy
@@ -1022,3 +1035,40 @@ def test_staionary_seed(bs_setup, seed):
     sb = StationaryBootstrap(10, bs_setup.y, seed=seed)
     for pos, _ in sb.bootstrap(10):
         assert pos[0].shape[0] == bs_setup.y.shape[0]
+
+
+BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBootstrap]
+
+
+@pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
+def test_block_size_read_only(cls):
+    bs = cls(5, np.arange(100.0), seed=0)
+    assert bs.block_size == 5
+    with pytest.raises(AttributeError, match="block_size cannot be changed"):
+        bs.block_size = 20
+    assert bs.block_size == 5
+    assert cls(5, np.arange(100.0)).clone(np.arange(50.0)).block_size == 5
+
+
+@pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
+def test_block_size_clone(cls):
+    bs = cls(7, np.arange(100.0), seed=0)
+    clone = bs.clone(np.arange(60.0), seed=1)
+    assert isinstance(clone, cls)
+    assert clone.block_size == 7
+    assert clone.update_indices().shape == (60,)
+
+
+def test_stationary_mean_block_length_is_block_size():
+    # The mean length of the runs of consecutive indices is the block size
+    x = np.arange(1000.0)
+    rng_seed = 0
+    for block_size in (2, 20):
+        bs = StationaryBootstrap(block_size, x, seed=rng_seed)
+        runs = []
+        for _ in range(200):
+            index = bs.update_indices()
+            breaks = np.count_nonzero(np.diff(index) % x.shape[0] != 1)
+            runs.append(index.shape[0] / (1 + breaks))
+        # A new block can continue the previous one with probability 1/n
+        assert_allclose(np.mean(runs), block_size, rtol=0.06)

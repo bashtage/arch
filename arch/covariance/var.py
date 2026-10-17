@@ -1,6 +1,5 @@
 from functools import cached_property
-from numbers import Integral, Real
-from typing import NamedTuple, cast
+from typing import NamedTuple
 import warnings
 
 import numpy as np
@@ -17,22 +16,36 @@ from arch.covariance.kernel import (
     ZeroLag,
     get_kernel_estimator,
 )
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_bool,
+    check_int,
+    check_option,
+)
 from arch.vendor._decorators import Appender
 
 __all__ = ["PreWhitenedRecolored"]
 
 
-def _is_non_negative_integer(value: object) -> bool:
-    """Test for a real, finite, non-negative value that is a whole number"""
-    if isinstance(value, bool) or not isinstance(value, Real):
-        return False
-    if isinstance(value, Integral):
-        return cast("int", value) >= 0
-    number = cast("float", value)
-    return bool(np.isfinite(number)) and number >= 0 and int(number) == number
+class VARModel(NamedTuple):  # numpydoc ignore=PR02
+    """
+    The estimated VAR model used to prewhiten the data.
 
+    Parameters
+    ----------
+    resids : ndarray
+        The residuals of the VAR.
+    params : ndarray
+        The estimated coefficients of the VAR, with one row for each equation.
+    var_order : int
+        The number of lags in the VAR, which is also the number of observations
+        lost to the VAR.
+    intercept : bool
+        Whether the VAR includes an intercept, which is the first column of
+        ``params``.
+    """
 
-class VARModel(NamedTuple):
     resids: Float64Array
     params: Float64Array
     var_order: int
@@ -49,29 +62,33 @@ class PreWhitenedRecolored(CovarianceEstimator):
     Parameters
     ----------
     x : array_like
-        The data to use in covariance estimation. Must not contain NaN or
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
-    lags : int, default None
+    lags : int, optional
         The number of lags to include in the VAR. If None, a specification
-        search is used to select the order. Must be small enough that each
-        equation of the VAR has more observations than parameters, see Notes.
-    method : {"aic", "hqc", "bic"}, default "aic"
+        search is used to select the order. Must be non-negative and small
+        enough that each equation of the VAR has more observations than
+        parameters, see Notes.
+    method : {"aic", "hqc", "bic"}, optional
         The information criteria to use in the model specification search.
-        Input is not case sensitive.
-    diagonal : bool, default True
+        Not case sensitive.
+    diagonal : bool, optional
         Flag indicating whether the specification search also considers
         models where the coefficient matrices on the final lags are
         diagonal. A diagonal coefficient matrix restricts all off-diagonal
         coefficients to be zero. Only used when lags is None and x has more
         than one column.
-    max_lag : int, default None
+    max_lag : int, optional
         The maximum lag to use in the model specification search. If None,
-        then int(nobs**(1/3)) is used. The value used is limited, see Notes.
-    sample_autocov : bool, default False
+        then int(nobs**(1/3)) is used. Must be non-negative. The value used is
+        limited, see Notes.
+    sample_autocov : bool, optional
         Whether to use the sample autocovariance of x or the autocovariance
         implied by the estimated VAR when computing the short-run and
         one-sided covariances. Does not affect the long-run covariance.
-    kernel : {str, None}, default "bartlett"
+    kernel : str or None, optional
         The name of the kernel to use, which can be the name of any of the
         kernels in ``arch.covariance.kernel.KERNELS``. The name is not case
         sensitive and any underscores or hyphens are ignored, so that
@@ -79,26 +96,46 @@ class PreWhitenedRecolored(CovarianceEstimator):
         all the same. Use None to compute the VAR-HAC estimator, which
         recolors the residual covariance without applying a kernel to the
         residuals.
-    bandwidth : float, default None
+    bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated
-        from the VAR residuals. Must be None or 0 when kernel is None.
-    df_adjust : int, default 0
+        from the VAR residuals. Must be finite and non-negative, and None or 0
+        when kernel is None.
+    df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products, see Notes.
-    center : bool, default True
+        inner-products, see Notes. Must be at least 0 and smaller than the
+        number of observations in x.
+    center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
-    weights : array_like, default None
+    weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
-    force_int : bool, default False
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x or weights cannot be converted to float64, if lags, max_lag or
+        df_adjust is not an integer (a float, including 5.0, or a Boolean is
+        not accepted), if bandwidth is not a real number, if diagonal,
+        sample_autocov, center or force_int is not a bool, or if method or
+        kernel is not a str.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if lags or max_lag is negative or lags is larger than
+        the largest order that can be estimated; if bandwidth is negative, not
+        finite or not None or 0 when kernel is None; if df_adjust is negative
+        or not smaller than the number of observations; if weights does not
+        have nvar finite non-negative elements, or has only zeros; or if
+        method or kernel is not one of the available names.
 
     See Also
     --------
     arch.covariance.kernel
-        Kernel-based long-run covariance estimators
+        Kernel-based long-run covariance estimators.
 
     Notes
     -----
@@ -198,6 +235,15 @@ class PreWhitenedRecolored(CovarianceEstimator):
     these require the VAR to be covariance stationary, so they are available
     even when :attr:`cov` raises an error because it is not.
 
+    References
+    ----------
+    .. [1] Andrews, D. W., & Monahan, J. C. (1992). An improved
+       heteroskedasticity and autocorrelation consistent covariance matrix
+       estimator. Econometrica: Journal of the Econometric Society, 953-966.
+    .. [2] Haan, W. J. D., & Levin, A. T. (2000). Robust covariance matrix
+       estimation with data-dependent VAR prewhitening order (No. 255).
+       National Bureau of Economic Research.
+
     Examples
     --------
     >>> import numpy as np
@@ -222,15 +268,6 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     >>> var_hac = PreWhitenedRecolored(x, kernel=None, method="bic")
     >>> lrcov = var_hac.cov.long_run
-
-    References
-    ----------
-    .. [1] Andrews, D. W., & Monahan, J. C. (1992). An improved
-       heteroskedasticity and autocorrelation consistent covariance matrix
-       estimator. Econometrica: Journal of the Econometric Society, 953-966.
-    .. [2] Haan, W. J. D., & Levin, A. T. (2000). Robust covariance matrix
-       estimation with data-dependent VAR prewhitening order (No. 255).
-       National Bureau of Economic Research.
     """
 
     def __init__(
@@ -249,8 +286,6 @@ class PreWhitenedRecolored(CovarianceEstimator):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ) -> None:
-        if not np.all(np.isfinite(np.asarray(x, dtype=float))):
-            raise ValueError("x must not contain NaN or infinite values.")
         super().__init__(
             x,
             bandwidth=bandwidth,
@@ -261,19 +296,20 @@ class PreWhitenedRecolored(CovarianceEstimator):
         )
         self._lags = 0
         self._diagonal_lags = 0
-        if not isinstance(method, str) or method.lower() not in ("aic", "hqc", "bic"):
-            raise ValueError("method must be one of 'aic', 'hqc' or 'bic'")
-        self._method = method.lower()
-        self._diagonal = diagonal
-        if max_lag is not None and not _is_non_negative_integer(max_lag):
-            raise ValueError("max_lag must be a non-negative integer.")
-        self._max_lag = None if max_lag is None else int(max_lag)
+        self._method = check_option("method", method, ("aic", "hqc", "bic"))
+        self._diagonal = check_bool("diagonal", diagonal)
+        self._max_lag = check_int("max_lag", max_lag, lower=0, allow_none=True)
         self._auto_lag_selection = True
         self._format_lags(lags)
-        self._sample_autocov = sample_autocov
+        self._sample_autocov = check_bool("sample_autocov", sample_autocov)
         if kernel is None:
             if self._bandwidth not in (0, None):
-                raise ValueError("bandwidth must be None or 0 when kernel is None")
+                _fail(
+                    ValueError,
+                    "bandwidth",
+                    "None or 0 when kernel is None",
+                    _describe(bandwidth),
+                )
             self._bandwidth = 0.0
             self._auto_bandwidth = False
             self._kernel: type[CovarianceEstimator] = ZeroLag
@@ -290,23 +326,24 @@ class PreWhitenedRecolored(CovarianceEstimator):
         """
         Check lag inputs and standard values for lags and diagonal lags
         """
+        largest = self._largest_lag()
+        nobs, nvar = self._x.shape
+        lags = check_int("lags", lags, lower=0, allow_none=True)
         if lags is None:
             return
 
         self._auto_lag_selection = False
-        if not _is_non_negative_integer(lags):
-            raise ValueError("lags must be a non-negative integer.")
-        self._lags = int(cast("float", lags))
-        largest = self._largest_lag()
-        if self._lags > largest:
-            nobs, nvar = self._x.shape
-            raise ValueError(
-                f"lags must be at most {largest} when x has {nobs} observations "
-                f"and {nvar} series so that each equation of the VAR has more "
-                "observations than parameters."
+        if lags > largest:
+            _fail(
+                ValueError,
+                "lags",
+                f"at most {largest} when x has {nobs} observations and {nvar} "
+                "series so that each equation of the VAR has more observations "
+                "than parameters",
+                _describe(lags),
             )
-        self._diagonal_lags = self._lags
-        return
+        self._lags = lags
+        self._diagonal_lags = lags
 
     def _largest_lag(self) -> int:
         """
@@ -636,10 +673,28 @@ VAR(1) coefficient matrix is {max_eig}.""")
 
     @property
     def bandwidth_scale(self) -> float:
+        """
+        The power used in optimal bandwidth calculation.
+
+        Returns
+        -------
+        float
+            The power value used in the optimal bandwidth calculation of the
+            kernel that is applied to the residuals of the VAR.
+        """
         return self._setup()[1].bandwidth_scale
 
     @property
     def kernel_const(self) -> float:
+        """
+        The constant used in optimal bandwidth calculation.
+
+        Returns
+        -------
+        float
+            The constant value used in the optimal bandwidth calculation of the
+            kernel that is applied to the residuals of the VAR.
+        """
         return self._setup()[1].kernel_const
 
     def _weights(self) -> Float64Array:
@@ -647,6 +702,15 @@ VAR(1) coefficient matrix is {max_eig}.""")
 
     @property
     def rate(self) -> float:
+        """
+        The optimal rate used in bandwidth selection.
+
+        Returns
+        -------
+        float
+            The rate used in the bandwidth selection of the kernel that is
+            applied to the residuals of the VAR.
+        """
         return self._setup()[1].rate
 
     def _wrap_matrix(self, value: Float64Array) -> Float64Array | pd.DataFrame:

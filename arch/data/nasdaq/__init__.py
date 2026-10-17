@@ -1,3 +1,5 @@
+"""NASDAQ Composite data used in the examples."""
+
 from pandas import DataFrame
 
 from arch.data.utility import load_file
@@ -5,7 +7,7 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the NASDAQ Composite data used in the examples
+    Load the NASDAQ Composite data used in the examples.
 
     Returns
     -------

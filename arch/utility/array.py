@@ -1,5 +1,5 @@
 """
-Utility functions that do not explicitly relate to Volatility modeling
+Utility functions that do not explicitly relate to Volatility modeling.
 """
 
 from arch.compat.pandas import is_datetime64_any_dtype
@@ -23,6 +23,7 @@ from pandas import (
     concat,
     to_datetime,
 )
+from pandas.api.types import is_bool_dtype, is_float_dtype, is_integer_dtype
 
 from arch._typing import (
     AnyArray,
@@ -46,24 +47,27 @@ __all__ = [
     "to_array_1d",
 ]
 
-deprecation_doc: str = """
-{func} has been moved.  Please use {new_location}.{func}.
-"""
-
 
 def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     """
-    Ensure array is 1D and float64
+    Ensure an array is 1D and float64.
 
     Parameters
     ----------
-    x : {ndarray, Series}
-        Array to convert
+    x : ndarray or Series
+        Array to convert.
 
     Returns
     -------
     ndarray
-        1D float64 array
+        1D float64 array.
+
+    Raises
+    ------
+    ValueError
+        If x is an ndarray that cannot be converted to 1D.
+    TypeError
+        If x is not a Series or an ndarray.
     """
     if isinstance(x, np.ndarray):
         if x.ndim == 1 and x.dtype == np.float64:
@@ -74,19 +78,136 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
         elif _x.ndim == 0:
             return cast("Float64Array1D", np.atleast_1d(_x).astype(float, copy=False))
         else:
-            raise ValueError("x must be 1D or 1D convertible")
+            # Imported here because the validation module imports this module
+            from arch.utility._validation import _describe, _fail  # noqa: PLC0415
+
+            _fail(ValueError, "x", "1D or 1D convertible", _describe(x))
     elif isinstance(x, Series):
         return x.to_numpy().astype(float, copy=False)
     else:
-        raise TypeError("x must be a Series or ndarray")
+        from arch.utility._validation import _describe, _fail  # noqa: PLC0415
+
+        _fail(TypeError, "x", "a Series or ndarray", _describe(x))
+
+
+def as_float64(x: Any, name: str) -> Any:
+    """
+    Convert array_like data to a float64 ndarray.
+
+    Parameters
+    ----------
+    x : array_like
+        The data. Integer, unsigned integer, Boolean and other real floating
+        point data are converted. Object data are converted if every element is
+        a real number.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    ndarray
+        The data as float64, with the shape of x. This is x if x is an ndarray with
+        dtype float64.
+
+    Raises
+    ------
+    TypeError
+        If the data cannot be converted to real float64 values, e.g., if the
+        data are None or contain None, strings, dates, complex values or objects
+        that are not numbers.
+
+    Notes
+    -----
+    NumPy converts None to NaN when it converts an object array, so that
+    ``np.asarray(None).astype(float)`` is NaN. None is rejected here, as a value
+    and as an element of an object array, so that a missing argument or value
+    is not turned into a NaN.
+    """
+    if x is None:
+        raise TypeError(
+            f"{name} must be array_like data that can be converted to float64; "
+            "got None (NoneType)"
+        )
+    arr = np.asarray(x)
+    if arr.dtype == np.float64:
+        return arr
+    if arr.dtype.kind in "biuf":
+        return arr.astype(np.float64)
+    if arr.dtype.kind == "O":
+        if any(item is None for item in arr.flat):
+            raise TypeError(
+                f"{name} must contain real numbers that can be converted to "
+                f"float64; got None in an object array with shape {arr.shape} "
+                f"({type(x).__name__})"
+            )
+        try:
+            return arr.astype(np.float64)
+        except (TypeError, ValueError) as exc:
+            raise TypeError(
+                f"{name} must contain real numbers that can be converted to "
+                f"float64. Received an object array with shape {arr.shape} that "
+                f"contains elements that cannot be converted ({exc})."
+            ) from exc
+    raise TypeError(
+        f"{name} must be array_like with integer, Boolean or floating point "
+        f"values that can be converted to float64. Received an array with shape "
+        f"{arr.shape} and data type {arr.dtype}."
+    )
+
+
+def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
+    """
+    Convert a Series or DataFrame to float64, keeping the index and labels.
+
+    Parameters
+    ----------
+    x : Series or DataFrame
+        The data.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    Series or DataFrame
+        x if every column is a float64 NumPy dtype. Otherwise a new object,
+        so that the input is never modified.
+
+    Raises
+    ------
+    TypeError
+        If the data cannot be converted to real float64 values.
+    """
+    dtypes = x.dtypes if isinstance(x, DataFrame) else [x.dtype]
+    if all(isinstance(dtype, np.dtype) and dtype == np.float64 for dtype in dtypes):
+        return x
+    if not all(
+        is_float_dtype(dtype)
+        or is_integer_dtype(dtype)
+        or is_bool_dtype(dtype)
+        or (isinstance(dtype, np.dtype) and dtype.kind == "O")
+        for dtype in dtypes
+    ):
+        raise TypeError(
+            f"{name} must contain integer, Boolean or floating point values that "
+            f"can be converted to float64. Received a {type(x).__name__} with "
+            f"shape {x.shape} and data type(s) {', '.join(map(str, set(dtypes)))}."
+        )
+    try:
+        return x.astype(np.float64)
+    except (TypeError, ValueError) as exc:
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to float64. "
+            f"Received a {type(x).__name__} with shape {x.shape} that contains "
+            f"elements that cannot be converted ({exc})."
+        ) from exc
 
 
 @overload
 def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[True] = ...,
-) -> Series:  # pragma: no cover
+    series: Literal[False] = ...,
+) -> AnyArray1D:  # pragma: no cover
     ...  # pragma: no cover
 
 
@@ -94,8 +215,8 @@ def ensure1d(
 def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[False],
-) -> AnyArray1D:  # pragma: no cover
+    series: Literal[True],
+) -> Series:  # pragma: no cover
     ...  # pragma: no cover
 
 
@@ -104,27 +225,84 @@ def ensure1d(
     name: Hashable | None,
     series: bool = False,
 ) -> AnyArray1D | Series:
+    """
+    Convert data to a 1-d float64 ndarray or Series.
+
+    Parameters
+    ----------
+    x : array_like, Series or DataFrame
+        The data to convert. A DataFrame must have a single column, and any
+        other input must have at most one dimension with more than one element.
+        Integer, unsigned integer and Boolean data are converted to float64.
+    name : Hashable or None
+        The name of the variable. Used in error messages and as the name of
+        the Series if x is not a Series or a DataFrame and series is True.
+    series : bool, optional
+        If True, return a Series. If False, return an ndarray.
+
+    Returns
+    -------
+    ndarray or Series
+        The 1-d data. A Series if series is True and an ndarray otherwise. The
+        dtype is float64. The index of a Series is kept. x is returned, or is
+        a view of x, if x is float64 data. The name of a Series that is not a
+        str is converted to a str.
+
+    Raises
+    ------
+    ValueError
+        If x cannot be squeezed to 1 dimension.
+    TypeError
+        If x cannot be converted to real float64 values (None cannot be
+        converted), name is not hashable or series is not a bool.
+
+    Notes
+    -----
+    x is never modified. NaN and inf are not checked, because the function
+    is used by code that handles them; the callers that need finite data
+    check it.
+    """
+    if series is not True and series is not False:
+        # Slow path only. ensure1d is called by the volatility models in the
+        # likelihood, so the default must not cost anything
+        from arch.utility._validation import check_bool  # noqa: PLC0415
+
+        series = check_bool("series", series)
+    if name is not None and not isinstance(name, str):
+        from arch.utility._validation import check_instance  # noqa: PLC0415
+
+        check_instance("name", name, Hashable)
     if isinstance(x, Series):
-        if not isinstance(x.name, str):
-            x.name = str(x.name)
+        x_ser = _float64_pandas(x, str(name))
+        if not isinstance(x_ser.name, str):
+            # Rename a new Series so that the Series of the caller is unchanged
+            x_ser = x_ser.rename(str(x_ser.name))
         if series:
-            return x
+            return x_ser
         else:
-            return x.to_numpy()
+            return x_ser.to_numpy()
 
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
-            raise ValueError(f"{name} must be squeezable to 1 dimension")
+            raise ValueError(
+                f"{name} must be squeezable to 1 dimension. Received a DataFrame "
+                f"with shape {x.shape}, and a DataFrame must have a single column."
+            )
+        x_frame = _float64_pandas(x, str(name))
         if not series:
-            return x.iloc[:, 0].to_numpy()
-        x_series = Series(x.iloc[:, 0], x.index)
+            return x_frame.iloc[:, 0].to_numpy()
+        x_series = Series(x_frame.iloc[:, 0], x_frame.index)
         if not isinstance(x_series.name, str):
             x_series.name = str(x_series.name)
         return x_series
 
-    x_arr = np.asarray(x)
+    x_arr = as_float64(x, str(name))
     if sum([s > 1 for s in x_arr.shape]) > 1:
-        raise ValueError(f"{name} must be squeezable to 1 dimension")
+        raise ValueError(
+            f"{name} must be squeezable to 1 dimension. Received an array with "
+            f"shape {x_arr.shape}, and at most one dimension can have more than "
+            "one element."
+        )
     x_arr = x_arr.ravel()
     if series:
         return Series(x_arr, name=name)
@@ -136,21 +314,61 @@ def ensure2d(
     x: Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike,
     name: str,
 ) -> DataFrame | NDArray:
+    """
+    Convert data to a 2-d float64 DataFrame or ndarray.
+
+    Parameters
+    ----------
+    x : array_like, Series or DataFrame
+        The data to convert. A Series is converted to a DataFrame with a
+        single column. A scalar is converted to an array with a single row and
+        column, and a 1-d array_like to an array with a single column.
+        Integer, unsigned integer and Boolean data are converted to float64.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    DataFrame or ndarray
+        The 2-d data with dtype float64. A DataFrame if x is a Series or a
+        DataFrame and an ndarray otherwise. The index and the column labels
+        are kept. x is returned if it is a DataFrame or an ndarray with float64
+        data.
+
+    Raises
+    ------
+    ValueError
+        If x has more than 2 dimensions.
+    TypeError
+        If x cannot be converted to real float64 values (None cannot be
+        converted) or name is not a str.
+
+    Notes
+    -----
+    x is never modified. NaN and inf are not checked, because the function
+    is used by code that handles them; the callers that need finite data
+    check it.
+    """
+    if not isinstance(name, str):
+        from arch.utility._validation import check_str  # noqa: PLC0415
+
+        check_str("name", name)
     if isinstance(x, Series):
-        return DataFrame(x)
+        return DataFrame(_float64_pandas(x, name))
     elif isinstance(x, DataFrame):
-        return x
-    elif isinstance(x, np.ndarray):
-        if x.ndim == 0:
-            return np.asarray([[x]])
-        elif x.ndim == 1:
-            return x[:, None]
-        elif x.ndim == 2:
-            return x
-        else:
-            raise ValueError(f"Variable {name} must be 2d or reshapable to 2d")
+        return _float64_pandas(x, name)
+    arr = as_float64(x, name)
+    if arr.ndim == 0:
+        return np.asarray([[arr]])
+    elif arr.ndim == 1:
+        return arr[:, None]
+    elif arr.ndim == 2:
+        return arr
     else:
-        raise TypeError(f"Variable {name} must be a Series, DataFrame or ndarray.")
+        raise ValueError(
+            f"Variable {name} must be 2d or reshapable to 2d. Received an array "
+            f"with {arr.ndim} dimensions and shape {arr.shape}."
+        )
 
 
 def parse_dataframe(
@@ -160,6 +378,36 @@ def parse_dataframe(
     | tuple[list[Hashable | None], Index]
     | tuple[list[str], NDArray]
 ):
+    """
+    Extract the column labels and the index of data.
+
+    Parameters
+    ----------
+    x : array_like, Series, DataFrame or None
+        The data. Pandas objects provide their own labels.
+    name : str or list of str
+        The column labels to use if x is not a Series or a DataFrame. Must be a
+        str if x is None.
+
+    Returns
+    -------
+    columns : Index or list
+        The columns of x if x is a DataFrame, a list containing the name of x
+        if x is a Series, and otherwise a list of the labels in name.
+    index : Index or ndarray
+        The index of x if x is a Series or a DataFrame, an empty ndarray if x
+        is None, and otherwise the integers 0, 1, ..., nobs - 1 where nobs is
+        the number of observations in x.
+
+    Raises
+    ------
+    TypeError
+        If name is not a str or a list, or is not a str when x is None.
+    """
+    if not isinstance(name, (str, list)) or (x is None and not isinstance(name, str)):
+        from arch.utility._validation import check_instance  # noqa: PLC0415
+
+        check_instance("name", name, str if x is None else (str, list))
     if x is None:
         assert isinstance(name, str)
         return [name], np.empty(0)
@@ -173,11 +421,22 @@ def parse_dataframe(
         return name, np.arange(np.squeeze(x).shape[0])
 
 
-class DocStringInheritor(type):
+class DocStringInheritor(type):  # numpydoc ignore=PR02
     """
+    Metaclass that copies the missing docstrings of a class from its bases.
+
     A variation on
     https://groups.google.com/group/comp.lang.python/msg/26f7b4fcb4d66c95
-    by Paul McGuire
+    by Paul McGuire.
+
+    Parameters
+    ----------
+    name : str
+        The name of the class.
+    bases : tuple of type
+        The base classes of the class.
+    clsdict : dict
+        The namespace of the class.
     """
 
     def __new__(
@@ -216,6 +475,22 @@ class DocStringInheritor(type):
 
 
 class ConcreteClassMeta(ABCMeta):
+    """
+    Metaclass that requires a class to implement all abstract methods.
+
+    Parameters
+    ----------
+    *args : tuple, optional
+        The name, base classes and namespace of the class.
+    **kwargs : dict, optional
+        Keyword arguments passed to ``ABCMeta``.
+
+    Raises
+    ------
+    TypeError
+        If the class has abstract methods that are not implemented.
+    """
+
     def __init__(cls, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         missing: list[str] = getattr(cls, "__abstractmethods__", [])
@@ -226,8 +501,21 @@ class ConcreteClassMeta(ABCMeta):
             )
 
 
-class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
-    pass
+class AbstractDocStringInheritor(  # numpydoc ignore=PR02
+    ConcreteClassMeta, DocStringInheritor
+):
+    """
+    Metaclass that copies missing docstrings and requires concrete classes.
+
+    Combines `DocStringInheritor` and `ConcreteClassMeta`.
+
+    Parameters
+    ----------
+    *args : tuple, optional
+        The name, base classes and namespace of the class.
+    **kwargs : dict, optional
+        Keyword arguments passed to ``ABCMeta``.
+    """
 
 
 def date_to_index(
@@ -235,26 +523,47 @@ def date_to_index(
     date_index: Union[DatetimeIndex, NDArray, "Series[Timestamp]"],
 ) -> int:
     """
-    Looks up a date in an array of dates
+    Look up a date in an array of dates.
 
     Parameters
     ----------
-    date : {str, datetime, datetime64, Timestamp}
-        Date to use when returning the index
-    date_index : {DatetimeIndex, ndarray}
-        Index data containing datetime64 values
+    date : str, datetime, datetime64 or Timestamp
+        Date to use when returning the index.
+    date_index : DatetimeIndex or ndarray
+        Index data containing datetime64 values.
 
     Returns
     -------
     int
-        Index location
+        Index location.
+
+    Raises
+    ------
+    TypeError
+        If date is not a str, a datetime, a datetime64 or a Timestamp, or
+        date_index does not contain datetime64 values.
+    ValueError
+        If date_index is empty, is not increasing and unique, or date is a str
+        that cannot be parsed to a date.
 
     Notes
     -----
-    Assumes dates are increasing and unique.
+    Assumes dates are increasing and unique. The result is the location of date
+    if it is in date_index, and otherwise the location where it would be
+    inserted: 0 for a date before the first date and the length of date_index
+    for a date after the last date. `cutoff_to_index` rejects the dates that
+    are not within the index.
     """
+    # Imported here because the validation module imports this module
+    from arch.utility._validation import _describe, _fail  # noqa: PLC0415
+
     if not is_datetime64_any_dtype(date_index):
-        raise ValueError("date_index must be a datetime64 array")
+        _fail(
+            TypeError,
+            "date_index",
+            "a datetime64 array",
+            _describe(date_index),
+        )
     if isinstance(date_index, DatetimeIndex):
         if date_index.tzinfo is not None:
             # The same UTC values without a time zone that .values returned. Using
@@ -263,10 +572,27 @@ def date_to_index(
         values = date_index.to_numpy()
     else:
         values = np.asarray(date_index)
+    if values.shape[0] == 0:
+        _fail(
+            ValueError,
+            "date_index",
+            "a non-empty array of dates",
+            _describe(date_index),
+        )
     if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
-        raise ValueError("date_index is not monotonic and unique")
+        _fail(
+            ValueError,
+            "date_index",
+            "increasing and unique",
+            _describe(date_index),
+        )
     if not isinstance(date, (dt.datetime, np.datetime64, str, Timestamp)):
-        raise ValueError("date must be a datetime, datetime64, Timestamp or string")
+        _fail(
+            TypeError,
+            "date",
+            "a datetime, datetime64, Timestamp or string",
+            _describe(date),
+        )
 
     if isinstance(date, Timestamp):
         # A naive Timestamp is used as is, like a date string
@@ -278,17 +604,23 @@ def date_to_index(
     elif isinstance(date, str):
         pd_dt = to_datetime(date, errors="coerce")
         if pd_dt is NaT:
-            raise ValueError(f"date: {date} cannot be parsed to a date.")
+            _fail(
+                ValueError,
+                "date",
+                "a string that can be parsed to a date",
+                _describe(date),
+            )
         assert isinstance(pd_dt, Timestamp)
         date_64 = pd_dt.to_datetime64()
     else:
         assert isinstance(date, np.datetime64)
         date_64 = date
 
+    if np.isnat(date_64):
+        _fail(ValueError, "date", "a date, not NaT", _describe(date))
     locs = np.nonzero(values <= date_64)[0]
     if locs.shape[0] == 0:
         return 0
-
     loc = locs.max()
     in_array = np.any(values == date_64)
     if not in_array:
@@ -299,37 +631,57 @@ def date_to_index(
 
 def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -> int:
     """
-    Converts a cutoff to a numerical index
+    Convert a cutoff to a numerical index.
 
     Parameters
     ----------
-    cutoff : {None, int, str, date, datetime, datetime64, Timestamp, Period}
-        The cutoff point to use. An int is the location of the observation.
-        Dates, strings and periods can only be used when index is a
-        DatetimeIndex or a PeriodIndex. A Period is converted to the first
-        instant in the period.
-    index : {DatetimeIndex, PeriodIndex}
-        Pandas index
+    cutoff : int, str, date, datetime, datetime64, Timestamp, Period or None
+        The cutoff point to use. An int is the location of the observation, and
+        must be between 0 and the length of index, inclusive. Dates, strings
+        and periods can only be used when index is a DatetimeIndex or a
+        PeriodIndex, and must not be before the first or after the last date
+        in index. A Period is converted to the first instant in the period.
+    index : Index
+        Pandas index. Must be a DatetimeIndex or a PeriodIndex if cutoff is a
+        date, a datetime, a datetime64, a Timestamp, a Period or a string.
     default : int
-        The value to return if cutoff is None
+        The value to return if cutoff is None. Must be between 0 and the length
+        of index, inclusive.
 
     Returns
     -------
     int
-        Integer value where
+        The integer location of the cutoff.
 
     Raises
     ------
     TypeError
-        If cutoff is not None, an integer or a date-like value
+        If cutoff is not None, an integer or a date-like value, index is not an
+        Index, or default is not an integer.
     ValueError
-        If cutoff is a date-like value and the index is not a DatetimeIndex or
-        a PeriodIndex
+        If cutoff or default is an integer that is not between 0 and the length
+        of index, or cutoff is a date-like value and the index is not a
+        DatetimeIndex or a PeriodIndex, or the date is not within the index.
     """
+    # Imported here because the validation module imports this module
+    from arch.utility._validation import (  # noqa: PLC0415
+        _date_value,
+        _date_values,
+        _describe,
+        _fail,
+        check_instance,
+        check_int,
+    )
+
+    check_instance("index", index, Index)
+    nobs = len(index)
+    default = check_int("default", default, lower=0, upper=nobs)
     if cutoff is None:
         return default
-    if isinstance(cutoff, (int, np.integer)):
-        return int(cutoff)
+    if isinstance(cutoff, (int, np.integer)) and not isinstance(
+        cutoff, (bool, np.bool_)
+    ):
+        return check_int("cutoff", cutoff, lower=0, upper=nobs)
     if isinstance(cutoff, Period):
         cutoff = cutoff.start_time
     elif isinstance(cutoff, dt.date) and not isinstance(cutoff, dt.datetime):
@@ -338,43 +690,94 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
         if isinstance(index, PeriodIndex):
             index = index.to_timestamp()
         if not isinstance(index, DatetimeIndex):
-            raise ValueError(
-                "A cutoff that is a date, a datetime or a string can only be used "
-                "when the data has a DatetimeIndex or a PeriodIndex."
+            _fail(
+                ValueError,
+                "cutoff",
+                "an integer when the data does not have a DatetimeIndex or a "
+                "PeriodIndex",
+                _describe(cutoff),
             )
-        return date_to_index(cutoff, index)
-    raise TypeError(
-        "cutoffs must be None, an integer, a string, a date, a datetime, a datetime64, "
-        f"a Timestamp or a Period. Got {type(cutoff).__name__}."
+        when = _date_value(cutoff)
+        if nobs == 0 or when is None:
+            first = last = "-"
+        else:
+            values = _date_values(index)
+            first, last = values[0], values[-1]
+            if first <= when <= last:
+                return date_to_index(cutoff, index)
+        _fail(
+            ValueError,
+            "cutoff",
+            f"a date within the index, from {first} to {last}",
+            _describe(cutoff),
+        )
+    _fail(
+        TypeError,
+        "cutoffs",
+        "None, an integer, a string, a date, a datetime, a datetime64, a Timestamp "
+        "or a Period",
+        _describe(cutoff),
     )
 
 
 def find_index(s: AnyPandas, index: int | DateLike) -> int:
     """
-    Returns the numeric index for a string or datetime
+    Return the numeric index for a string or datetime.
 
     Parameters
     ----------
     s : Series or DataFrame
-        Series or DataFrame to use in lookup
-    index : datetime-like, str
-        Index value, either a string convertible to a datetime or a datetime
+        Series or DataFrame to use in lookup.
+    index : int, str, datetime, datetime64 or Timestamp
+        Index value, either an integer location between 0 and the number of
+        observations, which is returned unchanged, a string convertible to a
+        datetime or a datetime.
 
     Returns
     -------
     int
-        Integer location of index value
+        Integer location of index value.
+
+    Raises
+    ------
+    TypeError
+        If s is not a Series or a DataFrame, or index is not an integer, a str
+        or a date-like value.
+    ValueError
+        If index is an integer that is not between 0 and the number of
+        observations, is a str that cannot be converted to a date, or is a
+        date that is not in the index of s.
     """
-    if isinstance(index, (int, np.int64)):
-        return int(index)
-    assert isinstance(index, (str, dt.datetime, np.datetime64, Timestamp))
+    # Imported here because the validation module imports this module
+    from arch.utility._validation import (  # noqa: PLC0415
+        _describe,
+        _fail,
+        check_instance,
+        check_int,
+    )
+
+    check_instance("s", s, (Series, DataFrame))
+    if isinstance(index, (int, np.integer)) and not isinstance(index, (bool, np.bool_)):
+        return check_int("index", index, lower=0, upper=s.shape[0])
+    if not isinstance(index, (str, dt.datetime, np.datetime64, Timestamp)):
+        _fail(
+            TypeError,
+            "index",
+            "an integer, a string, a datetime, a datetime64 or a Timestamp",
+            _describe(index),
+        )
     date_index = to_datetime(index, errors="coerce")
     # TODO: Bug in pandas-stubs does not return correct types when errors=coerce
     if date_index is NaT:
-        raise ValueError(f"{index} cannot be converted to datetime")
+        _fail(
+            ValueError,
+            "index",
+            "a value that can be converted to a date",
+            _describe(index),
+        )
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
-        raise ValueError("index not found")
+        _fail(ValueError, "index", "a date in the index of s", _describe(index))
     return int(loc)
 
 
@@ -475,13 +878,13 @@ def append_same_type(
     sequence: bool = False,
 ) -> Any:
     """
-    Append observations to existing data, preserving the type of the data
+    Append observations to existing data, preserving the type of the data.
 
     Parameters
     ----------
-    original : {ndarray, Series, DataFrame, list, tuple}
+    original : ndarray, Series, DataFrame, list or tuple
         The existing data.
-    new : {ndarray, Series, DataFrame, list, tuple, float}
+    new : ndarray, Series, DataFrame, list, tuple or float
         The data to append. This must have the same type as original, unless
         original is an ndarray, list or tuple, in which case a scalar can be
         appended as a single observation. 1-d data appended to a 2-d ndarray
@@ -495,7 +898,7 @@ def append_same_type(
 
     Returns
     -------
-    {ndarray, Series, DataFrame, list, tuple}
+    ndarray, Series, DataFrame, list or tuple
         The extended data. Has the same type as original. The inputs are never
         modified.
 

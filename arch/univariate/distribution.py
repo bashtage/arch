@@ -1,11 +1,13 @@
 """
-Distributions to use in ARCH models.  All distributions must inherit from
-:class:`Distribution` and provide the same methods with the same inputs.
+Distributions to use in ARCH models.
+
+All distributions must inherit from :class:`Distribution` and provide the same
+methods with the same inputs.
 """
 
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable, Sequence
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 from numpy import (
@@ -16,7 +18,6 @@ from numpy import (
     exp,
     float64,
     int64,
-    integer,
     isscalar,
     log,
     nan,
@@ -32,14 +33,106 @@ from scipy import stats
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 
 from arch._typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_seed,
+)
+from arch.utility.array import (
+    AbstractDocStringInheritor,
+    as_float64,
+    ensure1d,
+    to_array_1d,
+)
 
 __all__ = ["Distribution", "GeneralizedError", "Normal", "SkewStudent", "StudentsT"]
 
 
+def _check_size(size: Any) -> int | tuple[int, ...]:
+    """
+    Check the size of the draws of a simulator.
+
+    Parameters
+    ----------
+    size : int or tuple of int
+        The size passed to the simulator.
+
+    Returns
+    -------
+    int or tuple of int
+        The size with Python integers.
+
+    Raises
+    ------
+    TypeError
+        If size is not an integer or a tuple or list of integers.
+    ValueError
+        If an element of size is negative.
+    """
+    if isinstance(size, (tuple, list)):
+        return tuple(
+            check_int(f"size[{i}]", element, lower=0) for i, element in enumerate(size)
+        )
+    try:
+        return check_int("size", size, lower=0)
+    except TypeError:
+        _fail(TypeError, "size", "an integer >= 0 or a tuple of them", _describe(size))
+
+
+def _check_pits(pits: Any) -> Float64Array:
+    """
+    Check the probabilities passed to a ppf and convert them to float64.
+
+    Parameters
+    ----------
+    pits : float or array_like
+        The probability-integral-transformed values.
+
+    Returns
+    -------
+    ndarray
+        The values as float64. A scalar is a 0-d array.
+
+    Raises
+    ------
+    TypeError
+        If pits cannot be converted to float64.
+    ValueError
+        If pits contain NaN or inf or values outside [0, 1].
+    """
+    values = check_array("pits", pits)
+    if values.size and (values.min() < 0.0 or values.max() > 1.0):
+        _fail(
+            ValueError,
+            "pits",
+            "a number or an array of numbers in [0, 1]",
+            f"min {values.min():g}, max {values.max():g} ({type(pits).__name__})",
+        )
+    return values
+
+
 class Distribution(metaclass=ABCMeta):
     """
-    Template for subclassing only
+    Template for subclassing only.
+
+    Parameters
+    ----------
+    seed : int, Generator or RandomState, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, which must not be negative, the
+        argument is passed to ``np.random.default_rng``.  If not provided,
+        ``default_rng`` is used with system-provided entropy.
+
+    Raises
+    ------
+    TypeError
+        If seed is not None, an integer, a Generator or a RandomState.
+    ValueError
+        If seed is a negative integer.
     """
 
     def __init__(
@@ -50,21 +143,17 @@ class Distribution(metaclass=ABCMeta):
         self._name = "Distribution"
         self.num_params: int = 0
         self._parameters: Float64Array1D | None = None
-        _seed = seed
+        _seed = check_seed("seed", seed)
         if _seed is None:
             self._generator: Generator | RandomState = default_rng()
-        elif isinstance(_seed, (int, integer)):
+        elif isinstance(_seed, int):
             self._generator = default_rng(_seed)
-        elif isinstance(_seed, (RandomState, Generator)):
-            self._generator = _seed
         else:
-            raise TypeError(
-                "seed must by a NumPy Generator or RandomState or int, if not None."
-            )
+            self._generator = _seed
 
     @property
     def name(self) -> str:
-        """The name of the distribution"""
+        """The name of the distribution."""
         return self._name
 
     def _check_constraints(
@@ -72,25 +161,81 @@ class Distribution(metaclass=ABCMeta):
     ) -> Float64Array1D:
         bounds = self.bounds(empty(0))
         if parameters is not None:
-            params = asarray(ensure1d(parameters, "parameters", False))
+            params = check_array("parameters", parameters, ndim=1)
             nparams = len(params)
         else:
             nparams = 0
             params = empty(0)
         if nparams != len(bounds):
-            raise ValueError(f"parameters must have {len(bounds)} elements")
+            raise ValueError(
+                f"parameters must have {len(bounds)} elements; got "
+                f"{_describe(parameters)}"
+            )
         if len(bounds) == 0:
             return empty(0)
-        for p, n, b in zip(params, self.name, bounds, strict=False):
-            if not (b[0] <= p <= b[1]):
-                raise ValueError(
-                    f"{n} does not satisfy the bounds requirement of ({b[0]}, {b[1]})"
-                )
+        names = self.parameter_names()
+        for i, (p, n, b) in enumerate(zip(params, names, bounds, strict=True)):
+            check_float(f"parameters[{i}] ({n})", float(p), lower=b[0], upper=b[1])
         return asarray(params)
+
+    def _check_simulate_parameters(
+        self, parameters: float | Sequence[float | int] | ArrayLike1D
+    ) -> Float64Array1D:
+        """
+        Check the parameters passed to simulate.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The shape parameters.
+
+        Returns
+        -------
+        ndarray
+            The parameters as a 1-d float64 array.
+
+        Raises
+        ------
+        TypeError
+            If parameters cannot be converted to float64.
+        ValueError
+            If parameters contains NaN or inf, or does not have one element for
+            each shape parameter.
+        """
+        params = check_array("parameters", parameters, ndim=1)
+        if params.shape[0] != self.num_params:
+            raise ValueError(
+                f"parameters must have {self.num_params} elements; got "
+                f"{_describe(parameters)}"
+            )
+        return cast("Float64Array1D", params)
+
+    def _check_loglikelihood_parameters(self, parameters: Float64Array1D) -> None:
+        """
+        Check the length of the parameters of the likelihood.
+
+        Only the length is checked, because the likelihood is evaluated for any
+        value of the parameters by the optimizer.
+
+        Parameters
+        ----------
+        parameters : ndarray
+            The shape parameters, as a 1-d array.
+
+        Raises
+        ------
+        ValueError
+            If parameters does not have one element for each shape parameter.
+        """
+        if parameters.shape[0] != self.num_params:
+            raise ValueError(
+                f"parameters must have {self.num_params} elements; got "
+                f"{_describe(parameters)}"
+            )
 
     @property
     def generator(self) -> RandomState | Generator:
-        """The NumPy Generator or RandomState attached to the distribution"""
+        """The NumPy Generator or RandomState attached to the distribution."""
         return self._generator
 
     @abstractmethod
@@ -118,18 +263,30 @@ class Distribution(metaclass=ABCMeta):
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         """
-        Simulates i.i.d. draws from the distribution
+        Simulate i.i.d. draws from the distribution.
 
         Parameters
         ----------
-        parameters : ndarray
-            Distribution parameters
+        parameters : array_like
+            Distribution parameters. Must have one element for each shape
+            parameter, and be empty for a distribution without shape parameters.
 
         Returns
         -------
         simulator : callable
             Callable that take a single output size argument and returns i.i.d.
-            draws from the distribution
+            draws from the distribution. The size must be a non-negative integer
+            or a tuple of them.
+
+        Raises
+        ------
+        TypeError
+            If parameters cannot be converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter,
+            contains NaN or inf, or is outside the range of the distribution,
+            for example if the degrees of freedom of a Student's t is not larger
+            than 2.
         """
 
     @abstractmethod
@@ -140,9 +297,9 @@ class Distribution(metaclass=ABCMeta):
         Returns
         -------
         A : ndarray
-            Constraint loadings
+            Constraint loadings.
         b : ndarray
-            Constraint values
+            Constraint values.
 
         Notes
         -----
@@ -152,17 +309,25 @@ class Distribution(metaclass=ABCMeta):
     @abstractmethod
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         """
-        Parameter bounds for use in optimization.
+        Construct parameter bounds for use in optimization.
 
         Parameters
         ----------
-        resids : ndarray
-             Residuals to use when computing the bounds
+        resids : array_like
+            Residuals to use when computing the bounds. Must be 1-d. NaN and inf
+            are not checked.
 
         Returns
         -------
-        bounds : list
-            List containing a single tuple with (lower, upper) bounds
+        bounds : list of tuple of float
+            List of (lower, upper) bounds, with one tuple for each shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If resids cannot be converted to float64.
+        ValueError
+            If resids is not 1-d.
         """
 
     @abstractmethod
@@ -174,24 +339,41 @@ class Distribution(metaclass=ABCMeta):
         individual: bool = False,
     ) -> float | Float64Array1D:
         """
-        Loglikelihood evaluation.
+        Evaluate the loglikelihood.
 
         Parameters
         ----------
-        parameters : ndarray
-            Distribution shape parameters
-        resids : ndarray
-            nobs array of model residuals
-        sigma2 : ndarray
-            nobs array of conditional variances
+        parameters : array_like
+            Distribution shape parameters.
+        resids : array_like
+            Array of nobs model residuals.
+        sigma2 : array_like
+            Array of nobs conditional variances.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
+
+        Returns
+        -------
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
         Returns the loglikelihood where resids are the "data",
-        and parameters and sigma2 are inputs.
+        and parameters and sigma2 are inputs. The values of the arguments are not
+        checked, since the optimizer evaluates the log-likelihood at any value of
+        the parameters: only the type of individual and the number of parameters
+        are checked.
         """
 
     @abstractmethod
@@ -201,14 +383,22 @@ class Distribution(metaclass=ABCMeta):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
-            The estimated shape parameters for the distribution
+            The estimated shape parameters for the distribution.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
@@ -218,12 +408,12 @@ class Distribution(metaclass=ABCMeta):
     @abstractmethod
     def parameter_names(self) -> list[str]:
         """
-        Names of distribution shape parameters
+        Return the names of the distribution shape parameters.
 
         Returns
         -------
-        names : list (str)
-            Parameter names
+        names : list of str
+            Parameter names.
         """
 
     @abstractmethod
@@ -233,20 +423,29 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         """
-        Inverse cumulative density function (ICDF)
+        Compute the inverse cumulative density function (ICDF).
 
         Parameters
         ----------
-        pits : {float, ndarray}
-            Probability-integral-transformed values in the interval (0, 1).
-        parameters : ndarray, optional
+        pits : float or array_like
+            Probability-integral-transformed values in the interval [0, 1].
+        parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
 
         Returns
         -------
-        i : {float, ndarray}
-            Inverse CDF values
+        i : float or ndarray
+            Inverse CDF values.
+
+        Raises
+        ------
+        TypeError
+            If pits or parameters cannot be converted to float64.
+        ValueError
+            If pits contains NaN, inf or values outside [0, 1], or parameters
+            does not have one element for each shape parameter, contains NaN or
+            inf, or is outside the bounds of the distribution.
         """
 
     @abstractmethod
@@ -256,20 +455,29 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         """
-        Cumulative distribution function
+        Compute the cumulative distribution function.
 
         Parameters
         ----------
-        resids : ndarray
-            Values at which to evaluate the cdf
-        parameters : ndarray
+        resids : array_like
+            Values at which to evaluate the cdf. NaN is not allowed.
+        parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
 
         Returns
         -------
-        f : ndarray
-            CDF values
+        f : float or ndarray
+            CDF values.
+
+        Raises
+        ------
+        TypeError
+            If resids or parameters cannot be converted to float64.
+        ValueError
+            If resids contains NaN, or parameters does not have one element for
+            each shape parameter, contains NaN or inf, or is outside the bounds
+            of the distribution.
         """
 
     @abstractmethod
@@ -277,19 +485,27 @@ class Distribution(metaclass=ABCMeta):
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
         """
-        Moment of order n
+        Compute the moment of order n.
 
         Parameters
         ----------
         n : int
-            Order of moment
-        parameters : ndarray, optional
+            Order of moment. NaN is returned if n is negative.
+        parameters : array_like, optional
             Distribution parameters. Use None for parameterless distributions.
 
         Returns
         -------
         float
-            Calculated moment
+            Calculated moment.
+
+        Raises
+        ------
+        TypeError
+            If n is not an integer, or parameters cannot be converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter,
+            contains NaN or inf, or is outside the bounds of the distribution.
         """
 
     @abstractmethod
@@ -300,26 +516,31 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
         r"""
-        Order n lower partial moment from -inf to z
+        Compute the order n lower partial moment from -inf to z.
 
         Parameters
         ----------
         n : int
-            Order of partial moment
+            Order of partial moment. NaN is returned if n is negative.
         z : float, optional
-            Upper bound for partial moment integral
-        parameters : ndarray, optional
+            Upper bound for partial moment integral. inf is allowed.
+        parameters : array_like, optional
             Distribution parameters.  Use None for parameterless distributions.
 
         Returns
         -------
         float
-            Partial moment
+            Partial moment.
 
-        References
-        ----------
-        .. [1] Winkler et al. (1972) "The Determination of Partial Moments"
-               *Management Science* Vol. 19 No. 3
+        Raises
+        ------
+        TypeError
+            If n is not an integer, z is not a real number, or parameters cannot
+            be converted to float64.
+        ValueError
+            If z is NaN, or parameters does not have one element for each shape
+            parameter, contains NaN or inf, or is outside the bounds of the
+            distribution.
 
         Notes
         -----
@@ -330,6 +551,11 @@ class Distribution(metaclass=ABCMeta):
             \int_{-\infty}^{z}x^{n}f(x)dx
 
         See [1]_ for more details.
+
+        References
+        ----------
+        .. [1] Winkler et al. (1972) "The Determination of Partial Moments"
+               *Management Science* Vol. 19 No. 3
         """
 
     def __str__(self) -> str:
@@ -344,15 +570,22 @@ class Distribution(metaclass=ABCMeta):
 
 class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Standard normal distribution for use with ARCH models
+    Standard normal distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
-        reproducibility. If using an int, the argument is passed to
-        ``np.random.default_rng``.  If not provided, ``default_rng``
-        is used with system-provided entropy.
+        reproducibility. If using an int, which must not be negative, the
+        argument is passed to ``np.random.default_rng``.  If not provided,
+        ``default_rng`` is used with system-provided entropy.
+
+    Raises
+    ------
+    TypeError
+        If seed is not None, an integer, a Generator or a RandomState.
+    ValueError
+        If seed is a negative integer.
     """
 
     def __init__(
@@ -367,6 +600,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         return empty(0), empty(0)
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        check_array("resids", resids, ndim=1, allow_nan=True, allow_inf=True)
         return []
 
     def loglikelihood(
@@ -376,26 +610,37 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> float | Float64Array1D:
-        r"""Computes the log-likelihood of assuming residuals are normally
-        distributed, conditional on the variance
+        r"""
+        Compute the log-likelihood of normally distributed residuals.
+
+        The log-likelihood is conditional on the variance.
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             The normal likelihood has no shape parameters. Empty since the
             standard normal has no shape parameters.
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
-        sigma2 : ndarray
-            Conditional variances of resids
+        resids : array_like
+            The residuals to use in the log-likelihood calculation.
+        sigma2 : array_like
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
@@ -405,8 +650,14 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
             \ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
             +\frac{x^{2}}{\sigma^{2}}\right)
-
         """
+        if not (isinstance(parameters, ndarray) and parameters.size == 0):
+            if parameters is not None and np.size(parameters) != 0:
+                self._check_loglikelihood_parameters(ensure1d(parameters, "parameters"))
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
+        if individual is not True and individual is not False:
+            individual = check_bool("individual", individual)
         lls = -0.5 * (log(2 * pi) + log(sigma2) + resids**2.0 / sigma2)
         if individual:
             return lls
@@ -414,14 +665,16 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             return sum(lls)
 
     def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
+        check_array("std_resid", std_resid, ndim=1, min_length=1)
         return empty(0)
 
     def _simulator(self, size: int | tuple[int, ...]) -> Float64Array:
-        return self._generator.standard_normal(size)
+        return self._generator.standard_normal(_check_size(size))
 
     def simulate(
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
+        self._check_constraints(parameters)
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -433,7 +686,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> Float64Array:
         self._check_constraints(parameters)
-        return stats.norm.cdf(asarray(resids))
+        return stats.norm.cdf(check_array("resids", resids, allow_inf=True))
 
     def ppf(
         self,
@@ -442,11 +695,9 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     ) -> float | Float64Array:
         self._check_constraints(parameters)
         scalar = isscalar(pits)
+        _pits = _check_pits(pits)
         if scalar:
-            assert isinstance(pits, float)
-            _pits = array([pits], dtype=np.float64)
-        else:
-            _pits = asarray(pits, dtype=float)
+            _pits = _pits.reshape(1)
         ppf = stats.norm.ppf(_pits)
         if scalar:
             return float(ppf[0])
@@ -456,6 +707,8 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def moment(
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
+        n = check_int("n", n)
+        self._check_constraints(parameters)
         if n < 0:
             return nan
 
@@ -467,6 +720,28 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         z: float = 0.0,
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
+        n = check_int("n", n)
+        z = check_float("z", z, allow_inf=True)
+        self._check_constraints(parameters)
+        return self._normal_partial_moment(n, z)
+
+    @staticmethod
+    def _normal_partial_moment(n: int, z: float) -> float:
+        """
+        Partial moment of the standard normal.
+
+        Parameters
+        ----------
+        n : int
+            Order of partial moment.
+        z : float
+            Upper bound for partial moment integral.
+
+        Returns
+        -------
+        float
+            Partial moment.
+        """
         if n < 0:
             return nan
         elif n == 0:
@@ -474,22 +749,29 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         elif n == 1:
             return -stats.norm.pdf(z)
         else:
-            return -(z ** (n - 1)) * stats.norm.pdf(z) + (n - 1) * self.partial_moment(
-                n - 2, z, parameters
+            return -(z ** (n - 1)) * stats.norm.pdf(z) + (n - 1) * (
+                Normal._normal_partial_moment(n - 2, z)
             )
 
 
 class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Standardized Student's distribution for use with ARCH models
+    Standardized Student's distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
-        reproducibility. If using an int, the argument is passed to
-        ``np.random.default_rng``.  If not provided, ``default_rng``
-        is used with system-provided entropy.
+        reproducibility. If using an int, which must not be negative, the
+        argument is passed to ``np.random.default_rng``.  If not provided,
+        ``default_rng`` is used with system-provided entropy.
+
+    Raises
+    ------
+    TypeError
+        If seed is not None, an integer, a Generator or a RandomState.
+    ValueError
+        If seed is a negative integer.
     """
 
     def __init__(
@@ -505,6 +787,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         return array([[1], [-1]]), array([2.05, -500.0])
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        check_array("resids", resids, ndim=1, allow_nan=True, allow_inf=True)
         return [(2.05, 500.0)]
 
     def loglikelihood(
@@ -514,26 +797,37 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> float | Float64Array1D:
-        r"""Computes the log-likelihood of assuming residuals are have a
-        standardized (to have unit variance) Student's t distribution,
-        conditional on the variance.
+        r"""
+        Compute the log-likelihood of Student's t distributed residuals.
+
+        The residuals are assumed to have a standardized (to have unit variance)
+        Student's t distribution, conditional on the variance.
 
         Parameters
         ----------
-        parameters : ndarray
-            Shape parameter of the t distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
-        sigma2 : ndarray
-            Conditional variances of resids
+        parameters : array_like
+            Shape parameter of the t distribution.
+        resids : array_like
+            The residuals to use in the log-likelihood calculation.
+        sigma2 : array_like
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
@@ -548,6 +842,12 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
         where :math:`\Gamma` is the gamma function.
         """
+        parameters = ensure1d(parameters, "parameters")
+        self._check_loglikelihood_parameters(parameters)
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
+        if individual is not True and individual is not False:
+            individual = check_bool("individual", individual)
         nu = parameters[0]
         lls = gammaln((nu + 1) / 2) - gammaln(nu / 2) - log(pi * (nu - 2)) / 2
         lls -= 0.5 * (log(sigma2))
@@ -564,20 +864,29 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
+        std_resid = check_array("std_resid", std_resid, ndim=1, min_length=1)
         k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
@@ -586,17 +895,21 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         assert self._parameters is not None
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
+        size = _check_size(size)
         return self._generator.standard_t(self._parameters[0], size=size) / std_dev
 
     def simulate(
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
-        parameters = ensure1d(parameters, "parameters", False)
-        if parameters[0] <= 2.0:
-            raise ValueError("The shape parameter must be larger than 2")
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
-            float
-        )
+        params = self._check_simulate_parameters(parameters)
+        if params[0] <= 2.0:
+            _fail(
+                ValueError,
+                "The shape parameter",
+                "larger than 2",
+                _describe(float(params[0])),
+            )
+        self._parameters = params
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -610,7 +923,9 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
-        return stats.t(nu, scale=1.0 / sqrt(var)).cdf(asarray(resids))
+        return stats.t(nu, scale=1.0 / sqrt(var)).cdf(
+            check_array("resids", resids, allow_inf=True)
+        )
 
     def ppf(
         self,
@@ -618,7 +933,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
-        _pits = asarray(pits, dtype=float)
+        _pits = _check_pits(pits)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(_pits)
@@ -626,9 +941,10 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def moment(
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
+        n = check_int("n", n)
+        parameters = self._check_constraints(parameters)
         if n < 0:
             return nan
-        parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t.moment(n, nu, scale=1.0 / sqrt(var))
@@ -639,6 +955,8 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         z: float = 0.0,
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
+        n = check_int("n", n)
+        z = check_float("z", z, allow_inf=True)
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
@@ -697,15 +1015,22 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
 class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     r"""
-    Standardized Skewed Student's distribution for use with ARCH models
+    Standardized Skewed Student's distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
-        reproducibility. If using an int, the argument is passed to
-        ``np.random.default_rng``.  If not provided, ``default_rng``
-        is used with system-provided entropy.
+        reproducibility. If using an int, which must not be negative, the
+        argument is passed to ``np.random.default_rng``.  If not provided,
+        ``default_rng`` is used with system-provided entropy.
+
+    Raises
+    ------
+    TypeError
+        If seed is not None, an integer, a Generator or a RandomState.
+    ValueError
+        If seed is a negative integer.
 
     Notes
     -----
@@ -720,7 +1045,6 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
        *International Economic Review*, 35(3), 705-730.
        <https://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
-
     """
 
     def __init__(
@@ -736,6 +1060,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        check_array("resids", resids, ndim=1, allow_nan=True, allow_inf=True)
         return [(2.05, 300.0), (-1, 1)]
 
     def loglikelihood(
@@ -746,26 +1071,37 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         individual: bool = False,
     ) -> Float64Array1D:
         r"""
-        Computes the log-likelihood of assuming residuals are have a
-        standardized (to have unit variance) Skew Student's t distribution,
-        conditional on the variance.
+        Compute the log-likelihood of skew Student's t distributed residuals.
+
+        The residuals are assumed to have a standardized (to have unit variance)
+        Skew Student's t distribution, conditional on the variance.
 
         Parameters
         ----------
-        parameters : ndarray
-            Shape parameter of the skew-t distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
-        sigma2 : ndarray
-            Conditional variances of resids
+        parameters : array_like
+            Shape parameters of the skew-t distribution, the tail shape and the
+            skewness.
+        resids : array_like
+            The residuals to use in the log-likelihood calculation.
+        sigma2 : array_like
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
@@ -791,6 +1127,12 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         and :math:`\Gamma` is the gamma function.
         """
+        parameters = ensure1d(parameters, "parameters")
+        self._check_loglikelihood_parameters(parameters)
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
+        if individual is not True and individual is not False:
+            individual = check_bool("individual", individual)
         parameters_arr: Float64Array1D
         parameters_arr = np.ravel(asarray(parameters, dtype=float))
         eta, lam = parameters_arr
@@ -819,20 +1161,31 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter and the
+            skewness parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
         Uses relationship between kurtosis and degree of freedom parameter to
-        produce a moment-based estimator for the starting values.
+        produce a moment-based estimator for the starting value of the shape
+        parameter.  The starting value of the skewness parameter is 0.
         """
+        std_resid = check_array("std_resid", std_resid, ndim=1, min_length=1)
         k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
@@ -840,6 +1193,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def _simulator(self, size: int | tuple[int, ...]) -> Float64Array:
         # No need to normalize since it is already done in parameterization
         assert self._parameters is not None
+        size = _check_size(size)
         if isinstance(self._generator, Generator):
             uniforms = self._generator.random(size=size)
         else:
@@ -851,16 +1205,22 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def simulate(
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
-        parameters = ensure1d(parameters, "parameters", False)
-        if parameters[0] <= 2.0:
-            raise ValueError("The shape parameter must be larger than 2")
-        if abs(parameters[1]) > 1.0:
-            raise ValueError(
-                "The skew parameter must be smaller than 1 in absolute value"
+        params = self._check_simulate_parameters(parameters)
+        if params[0] <= 2.0:
+            _fail(
+                ValueError,
+                "The shape parameter",
+                "larger than 2",
+                _describe(float(params[0])),
             )
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
-            float
-        )
+        if abs(params[1]) > 1.0:
+            _fail(
+                ValueError,
+                "The skew parameter",
+                "smaller than 1 in absolute value",
+                _describe(float(params[1])),
+            )
+        self._parameters = params
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -931,7 +1291,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     ) -> float | Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
-        _resids = ensure1d(resids, "resids").astype(float)
+        _resids = check_array("resids", resids, ndim=1, allow_inf=True)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -953,10 +1313,10 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         parameters = self._check_constraints(parameters)
-        scalar = isscalar(pits)
+        scalar = np.ndim(pits) == 0
+        pits = _check_pits(pits)
         if scalar:
-            pits = array([pits])
-        pits = asarray(pits, dtype=float)
+            pits = pits.reshape(1)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -981,6 +1341,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def moment(
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
+        n = check_int("n", n)
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
 
@@ -1016,6 +1377,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         z: float = 0.0,
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
+        n = check_int("n", n)
+        z = check_float("z", z, allow_inf=True)
         parameters_arr = self._check_constraints(parameters)
         eta, lam = parameters_arr
 
@@ -1063,15 +1426,22 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
 class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Generalized Error distribution for use with ARCH models
+    Generalized Error distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
-        reproducibility. If using an int, the argument is passed to
-        ``np.random.default_rng``.  If not provided, ``default_rng``
-        is used with system-provided entropy.
+        reproducibility. If using an int, which must not be negative, the
+        argument is passed to ``np.random.default_rng``.  If not provided,
+        ``default_rng`` is used with system-provided entropy.
+
+    Raises
+    ------
+    TypeError
+        If seed is not None, an integer, a Generator or a RandomState.
+    ValueError
+        If seed is a negative integer.
     """
 
     def __init__(  # noqa: B042
@@ -1087,6 +1457,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return array([[1], [-1]]), array([1.01, -500.0])
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        check_array("resids", resids, ndim=1, allow_nan=True, allow_inf=True)
         return [(1.01, 500.0)]
 
     def loglikelihood(
@@ -1097,25 +1468,36 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         individual: bool = False,
     ) -> Float64Array1D:
         r"""
-        Computes the log-likelihood of assuming residuals are have a
-        Generalized Error Distribution, conditional on the variance.
+        Compute the log-likelihood of Generalized Error Distribution residuals.
+
+        The residuals are assumed to have a Generalized Error Distribution,
+        conditional on the variance.
 
         Parameters
         ----------
-        parameters : ndarray
-            Shape parameter of the GED distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
-        sigma2 : ndarray
-            Conditional variances of resids
+        parameters : array_like
+            Shape parameter of the GED distribution.
+        resids : array_like
+            The residuals to use in the log-likelihood calculation.
+        sigma2 : array_like
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
@@ -1134,6 +1516,12 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
             \ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})
             -\ln\Gamma(\frac{3}{\nu})\right).
         """
+        parameters = ensure1d(parameters, "parameters")
+        self._check_loglikelihood_parameters(parameters)
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
+        if individual is not True and individual is not False:
+            individual = check_bool("individual", individual)
         nu = parameters[0]
         log_c = 0.5 * (-2 / nu * log(2) + gammaln(1 / nu) - gammaln(3 / nu))
         c = exp(log_c)
@@ -1152,25 +1540,35 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d or is empty.
 
         Notes
         -----
-        Defaults to 1.5 which is implies heavier tails than a normal
+        Defaults to 1.5 which implies heavier tails than a normal.
         """
+        check_array("std_resid", std_resid, ndim=1, min_length=1)
         return to_array_1d(array([1.5]))
 
     def _simulator(self, size: int | tuple[int, ...]) -> Float64Array:
         assert self._parameters is not None
         parameters = self._parameters
         nu = parameters[0]
+        size = _check_size(size)
         randoms = self._generator.standard_gamma(1 / nu, size) ** (1.0 / nu)
         if isinstance(self._generator, Generator):
             random_ints = self._generator.integers(0, 2, size, dtype=int64)
@@ -1184,12 +1582,15 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def simulate(
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
-        parameters = ensure1d(parameters, "parameters", False)
-        if parameters[0] <= 1.0:
-            raise ValueError("The shape parameter must be larger than 1")
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
-            float
-        )
+        params = self._check_simulate_parameters(parameters)
+        if params[0] <= 1.0:
+            _fail(
+                ValueError,
+                "The shape parameter",
+                "larger than 1",
+                _describe(float(params[0])),
+            )
+        self._parameters = params
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -1201,7 +1602,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
-        _pits = asarray(pits, dtype=float)
+        _pits = _check_pits(pits)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(_pits)
@@ -1214,16 +1615,17 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
-        _resids = ensure1d(resids, "resids", series=False).astype(float)
+        _resids = check_array("resids", resids, ndim=1, allow_inf=True)
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(_resids)
 
     def moment(
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
+        n = check_int("n", n)
+        parameters = self._check_constraints(parameters)
         if n < 0:
             return nan
 
-        parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm.moment(n, nu, scale=1.0 / sqrt(var))
@@ -1234,6 +1636,8 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         z: float = 0.0,
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
+        n = check_int("n", n)
+        z = check_float("z", z, allow_inf=True)
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         scale = 1.0 / sqrt(stats.gennorm(nu).var())

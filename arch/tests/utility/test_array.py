@@ -5,9 +5,10 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
 from pandas import DataFrame, DatetimeIndex, Series, Timedelta, Timestamp, date_range
+from pandas.testing import assert_frame_equal, assert_index_equal
 import pytest
 
-from arch import doc
+from arch import arch_model, doc
 from arch.univariate.base import implicit_constant
 from arch.utility.array import (
     ConcreteClassMeta,
@@ -90,6 +91,35 @@ def test_ensure1d():
         ensure1d(y, "y")
 
 
+@pytest.mark.parametrize("series", [True, False], ids=["series", "ndarray"])
+@pytest.mark.parametrize("name", [None, 1, ("a", "b"), "name"], ids=str)
+def test_ensure1d_does_not_modify_series(series, name):
+    y = Series(np.arange(5.0), name=name)
+    ys = ensure1d(y, "y", series)
+    assert y.name is name
+    assert_equal(np.asarray(ys), np.arange(5.0))
+    if series:
+        assert isinstance(ys.name, str)
+
+
+@pytest.mark.parametrize("series", [True, False], ids=["series", "ndarray"])
+def test_ensure1d_does_not_modify_dataframe(series):
+    df = DataFrame({0: np.arange(5.0)})
+    original = df.copy()
+    ensure1d(df, "y", series)
+    assert df.columns.tolist() == [0]
+    assert_frame_equal(df, original)
+
+
+def test_ensure2d_does_not_modify_inputs():
+    s = Series(np.arange(5.0))
+    df = DataFrame({0: np.arange(5.0)})
+    ensure2d(s, "x")
+    ensure2d(df, "x")
+    assert s.name is None
+    assert df.columns.tolist() == [0]
+
+
 def test_ensure2d():
     s = Series([1, 2, 3], name="x")
     df = ensure2d(s, "x")
@@ -108,10 +138,143 @@ def test_ensure2d():
 
     with pytest.raises(ValueError, match=r"Variable x must be 2d"):
         ensure2d(np.array([[[1]]]), "x")
-    with pytest.raises(
-        TypeError, match=r"Variable x must be a Series, DataFrame or ndarray"
-    ):
-        ensure2d([1], "x")
+    with pytest.raises(TypeError, match=r"x must be array_like with integer"):
+        ensure2d(["a", "b"], "x")
+
+
+INT_DTYPES = [np.int8, np.int32, np.int64, np.uint8, np.uint64, np.bool_, np.float32]
+
+
+@pytest.mark.parametrize("dtype", INT_DTYPES, ids=lambda d: np.dtype(d).name)
+def test_ensure1d_float64_ndarray(dtype):
+    x = np.array([1, 0, 1, 1, 0]).astype(dtype)
+    out = ensure1d(x, "y")
+    assert out.dtype == np.float64
+    assert_equal(out, [1.0, 0.0, 1.0, 1.0, 0.0])
+    assert x.dtype == dtype
+    out = ensure1d(x[:, None], "y", series=True)
+    assert isinstance(out, Series)
+    assert out.dtype == np.float64
+
+
+@pytest.mark.parametrize("data", [[1, 2, 3], (1, 2, 3), [1.0, 2.0, 3.0], 5, [[1], [2]]])
+def test_ensure1d_array_like(data):
+    out = ensure1d(data, "y")
+    assert isinstance(out, np.ndarray)
+    assert out.dtype == np.float64
+    assert out.ndim == 1
+
+
+def test_ensure1d_float64_is_not_copied():
+    x = np.arange(5.0)
+    assert np.shares_memory(ensure1d(x, "y"), x)
+    s = Series(x, name="y")
+    assert ensure1d(s, "y", series=True) is s
+    df = DataFrame({"y": x})
+    assert np.shares_memory(ensure1d(df, "y"), df.to_numpy())
+
+
+def test_ensure1d_pandas_keeps_labels():
+    index = date_range("2000-1-1", periods=4, freq="D", name="date")
+    s = Series([1, 2, 3, 4], index=index, name="count")
+    out = ensure1d(s, "y", series=True)
+    assert out.dtype == np.float64
+    assert out.name == "count"
+    assert_index_equal(out.index, index)
+    assert s.dtype == np.int64
+    df = DataFrame({"count": [1, 2, 3, 4]}, index=index)
+    out = ensure1d(df, "y", series=True)
+    assert out.dtype == np.float64
+    assert out.name == "count"
+    assert_index_equal(out.index, index)
+    assert df["count"].dtype == np.int64
+
+
+def test_ensure1d_pandas_extension_dtypes():
+    s = Series([1, 2, 3], dtype="Int64")
+    out = ensure1d(s, "y")
+    assert out.dtype == np.float64
+    assert_equal(out, [1.0, 2.0, 3.0])
+    b = Series([True, False, True], dtype="boolean")
+    assert_equal(ensure1d(b, "y"), [1.0, 0.0, 1.0])
+
+
+def test_ensure1d_object():
+    out = ensure1d(np.array([1, 2.5, 3], dtype=object), "y")
+    assert out.dtype == np.float64
+    assert_equal(out, [1.0, 2.5, 3.0])
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        ["a", "b"],
+        np.array([1 + 1j, 2]),
+        np.array(["2000-01-01", "2000-01-02"], dtype="datetime64[ns]"),
+        np.array([1, "a"], dtype=object),
+        Series(["a", "b"]),
+        DataFrame({"a": ["a", "b"]}),
+        Series([1, 2], dtype="category"),
+    ],
+    ids=str,
+)
+def test_ensure1d_not_numeric(data):
+    with pytest.raises(TypeError, match=r"^my_data must .*(float64|real numbers)"):
+        ensure1d(data, "my_data")
+
+
+def test_ensure1d_error_messages():
+    with pytest.raises(TypeError, match=r"data type <U1"):
+        ensure1d(["a", "b"], "y")
+    with pytest.raises(ValueError, match=r"y must be squeezable.*shape \(2, 2\)"):
+        ensure1d(np.ones((2, 2)), "y")
+    with pytest.raises(ValueError, match=r"y must be squeezable.*shape \(3, 2\)"):
+        ensure1d(DataFrame(np.ones((3, 2))), "y")
+
+
+@pytest.mark.parametrize("dtype", INT_DTYPES, ids=lambda d: np.dtype(d).name)
+def test_ensure2d_float64(dtype):
+    x = np.array([[1, 0], [0, 1], [1, 1]]).astype(dtype)
+    out = ensure2d(x, "x")
+    assert isinstance(out, np.ndarray)
+    assert out.dtype == np.float64
+    assert_equal(out, x.astype(float))
+    out = ensure2d(DataFrame(x, columns=["a", "b"], index=[3, 4, 5]), "x")
+    assert isinstance(out, DataFrame)
+    assert (out.dtypes == np.float64).all()
+    assert out.columns.tolist() == ["a", "b"]
+    assert out.index.tolist() == [3, 4, 5]
+    out = ensure2d(Series(x[:, 0], name="a"), "x")
+    assert out.dtypes.tolist() == [np.float64]
+    assert out.columns.tolist() == ["a"]
+
+
+@pytest.mark.parametrize(
+    ("data", "shape"),
+    [([1, 2, 3], (3, 1)), ([[1, 2], [3, 4]], (2, 2)), (4, (1, 1)), ((1, 2), (2, 1))],
+)
+def test_ensure2d_array_like(data, shape):
+    out = ensure2d(data, "x")
+    assert isinstance(out, np.ndarray)
+    assert out.dtype == np.float64
+    assert out.shape == shape
+
+
+def test_ensure2d_float64_is_not_copied():
+    x = np.arange(6.0).reshape(3, 2)
+    assert ensure2d(x, "x") is x
+    df = DataFrame(x)
+    assert ensure2d(df, "x") is df
+    assert np.shares_memory(ensure2d(x[:, 0], "x"), x)
+
+
+def test_ensure2d_errors():
+    with pytest.raises(TypeError, match=r"^my_x must be array_like.*data type <U1"):
+        ensure2d([["a", "b"]], "my_x")
+    with pytest.raises(TypeError, match=r"^my_x must contain.*DataFrame"):
+        ensure2d(DataFrame({"a": ["a", "b"]}), "my_x")
+    with pytest.raises(ValueError, match=r"my_x must be 2d.*3 dimensions.*\(1, 1, 1\)"):
+        ensure2d(np.ones((1, 1, 1)), "my_x")
 
 
 def test_parse_dataframe():
@@ -175,24 +338,26 @@ def test_date_to_index():
     assert_equal(index, 500)
     index = date_to_index(dt.datetime(2009, 8, 1), date_index)
     assert_equal(index, 500)
-    with pytest.raises(ValueError, match=r"date must be a datetime"):
+    with pytest.raises(TypeError, match=r"date must be a datetime"):
         date_to_index(dt.date(2009, 8, 1), date_index)
     z = y + 0.0
     z.index = np.arange(3000)
     num_index = z.index
-    with pytest.raises(ValueError, match=r"date_index must be a datetime64 array"):
+    with pytest.raises(TypeError, match=r"date_index must be a datetime64 array"):
         date_to_index(dt.datetime(2009, 8, 1), num_index)
     idx = date_range("1999-12-31", periods=3)
 
     df = DataFrame([1, 2, 3], index=idx[::-1])
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index(idx[0], df.index)
 
     df = DataFrame([1, 2, 3], index=[idx[0]] * 3)
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index(idx[0], df.index)
 
-    with pytest.raises(ValueError, match=r"date: NaT cannot be parsed to a date"):
+    with pytest.raises(
+        ValueError, match=r"date must be a string that can be parsed to a date"
+    ):
         date_to_index("NaT", idx)
 
     #  check whether this also works for a localized datetimeindex
@@ -272,10 +437,10 @@ def test_date_to_index_tz_aware_timestamp_other_zone():
 def test_date_to_index_tz_aware_not_monotonic():
     utc = ["2021-03-13 12:00", "2021-03-14 12:00", "2021-03-14 12:00"]
     date_index = DatetimeIndex(utc).tz_localize("UTC").tz_convert("Asia/Kolkata")
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index("2021-03-14", date_index)
     date_index = DatetimeIndex(utc[::-1]).tz_localize("UTC").tz_convert("Asia/Kolkata")
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index("2021-03-14", date_index)
 
 
@@ -354,9 +519,11 @@ def test_find_index():
     npy_date = np.datetime64(series.index[3000].to_pydatetime())
     found_loc = find_index(series, npy_date)
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError, match=r"bad-date cannot"):
+    with pytest.raises(
+        ValueError, match=r"index must be a value that can be converted to a date"
+    ):
         find_index(series, "bad-date")
-    with pytest.raises(ValueError, match=r"index not found"):
+    with pytest.raises(ValueError, match=r"index must be a date in the index of s"):
         find_index(series, "1900-01-01")
 
     assert_equal(find_index(df, "2000-01-01"), 0)
@@ -365,9 +532,11 @@ def test_find_index():
     assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
     found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError, match=r"bad-date cannot be converted to datetime"):
+    with pytest.raises(
+        ValueError, match=r"index must be a value that can be converted to a date"
+    ):
         find_index(df, "bad-date")
-    with pytest.raises(ValueError, match=r"index not found"):
+    with pytest.raises(ValueError, match=r"index must be a date in the index of s"):
         find_index(df, "1900-01-01")
 
     idx = find_index(df, 1)
@@ -422,3 +591,9 @@ def test_to_array_1d_err():
         to_array_1d(0)
     with pytest.raises(TypeError, match=r"x must be a Series or ndarray"):
         to_array_1d(DataFrame([[0, 1]]))
+
+
+def test_arch_model_does_not_rename_series():
+    y = Series(np.random.default_rng(0).standard_normal(100))
+    arch_model(y)
+    assert y.name is None

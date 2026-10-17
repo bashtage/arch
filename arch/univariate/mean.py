@@ -1,11 +1,12 @@
 """
-Mean models to use with ARCH processes.  All mean models must inherit from
-:class:`ARCHModel` and provide the same methods with the same inputs.
+Mean models to use with ARCH processes.
+
+All mean models must inherit from :class:`ARCHModel` and provide the same methods
+with the same inputs.
 """
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
-import operator
 from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
@@ -45,6 +46,18 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_callable,
+    check_float,
+    check_index,
+    check_instance,
+    check_int,
+    check_option,
+)
 from arch.utility.array import append_same_type, to_array_1d
 
 if TYPE_CHECKING:
@@ -75,8 +88,7 @@ from arch.univariate.volatility import (
 )
 from arch.utility.array import (
     AbstractDocStringInheritor,
-    cutoff_to_index,
-    ensure1d,
+    as_float64,
     parse_dataframe,
 )
 
@@ -169,32 +181,310 @@ def _check_simulation_params(
     model: ARCHModel, params: ArrayLike1D | Sequence[float]
 ) -> Float64Array1D:
     """Convert params to a 1-d array and check the number of parameters"""
-    _params = cast("Float64Array1D", ensure1d(params, "params", False).astype(float))
     num_params = (
         int(model.num_params)
         + int(model.volatility.num_params)
         + int(model.distribution.num_params)
     )
-    if _params.shape[0] != num_params:
-        raise ValueError(
-            "params has the wrong number of elements. "
-            f"Expected {num_params}, got {_params.shape[0]}"
+    return cast(
+        "Float64Array1D", check_array("params", params, ndim=1, shape=(num_params,))
+    )
+
+
+def _check_model_arguments(
+    constant: Any,
+    hold_back: Any,
+    volatility: Any,
+    distribution: Any,
+    rescale: Any,
+) -> tuple[bool, int | None, bool | None]:
+    """
+    Check the arguments that all of the mean models share
+
+    Returns
+    -------
+    constant : bool
+        The flag for the constant.
+    hold_back : int or None
+        The number of observations to hold back.
+    rescale : bool or None
+        The flag for rescaling.
+    """
+    constant = check_bool("constant", constant)
+    hold_back = check_int("hold_back", hold_back, lower=0, allow_none=True)
+    check_instance("volatility", volatility, VolatilityProcess, allow_none=True)
+    check_instance("distribution", distribution, Distribution, allow_none=True)
+    rescale = check_bool("rescale", rescale, allow_none=True)
+    return constant, hold_back, rescale
+
+
+def _check_lags(lags: Any, name: str = "lags", *, allow_2d: bool = True) -> None:
+    """
+    Check the format and the values of lags
+
+    Parameters
+    ----------
+    lags : int or array_like
+        The lags. A scalar is a non-negative integer, a 1-d array_like contains
+        integers that are at least 1 and, if allow_2d, a (2, n) array_like
+        contains the first and last lag of each entry.
+    name : str
+        The name of the argument for the error message.
+    allow_2d : bool
+        Whether the (2, n) format is allowed.
+    """
+    rule = "an integer >= 0 or a non-empty 1-d array_like of integers >= 1"
+    if allow_2d:
+        rule += (
+            ", or a (2, n) array_like of integers with 1 <= lags[0, j] <= lags[1, j]"
         )
-    return _params
+    try:
+        with warnings.catch_warnings():
+            # NumPy < 1.24 warns and returns an object array for a ragged sequence
+            warnings.simplefilter("error")
+            arr = np.asarray(lags)
+    except (ValueError, Warning):  # Ragged sequences
+        _fail(ValueError, name, rule, _describe(lags))
+    if arr.ndim == 0:
+        check_int(name, lags, lower=0)
+        return
+    if (
+        arr.size == 0
+        or arr.ndim > 2
+        or (arr.ndim == 2 and (not allow_2d or arr.shape[0] != 2))
+    ):
+        _fail(ValueError, name, rule, _describe(lags))
+    if arr.dtype.kind not in "iu":
+        # Floats, including 5.0, Booleans and strings are rejected
+        for value in arr.ravel().tolist():
+            check_int(name, value)
+    if arr.ndim == 1:
+        check_int(name, min(arr.tolist()), lower=1)
+    elif np.any(arr[0] < 1) or np.any(arr[1] < arr[0]):
+        _fail(ValueError, name, rule, _describe(lags))
+
+
+def _fit_sample(
+    model: ARCHModel,
+    first_obs: int | DateLike | None,
+    last_obs: int | DateLike | None,
+) -> tuple[int, int]:
+    """
+    Check first_obs, last_obs and the observations that are held back
+
+    Returns
+    -------
+    first : int
+        The position of the first observation used in estimation, which is after the
+        observations that are held back.
+    last : int
+        The position after the last observation used in estimation.
+    """
+    index = model._y_series.index
+    nobs = int(model._y.shape[0])
+    if nobs == 0:
+        check_array("y", model._y, ndim=1, min_length=1)
+    raw_first = check_index("first_obs", first_obs, nobs, index=index, default=0)
+    last = check_index("last_obs", last_obs, nobs, index=index, default=nobs)
+    assert raw_first is not None
+    assert last is not None
+    if last <= raw_first:
+        if last_obs is None:
+            rule = f"smaller than the number of observations ({nobs})"
+            _fail(ValueError, "first_obs", rule, _describe(first_obs))
+        rule = f"larger than first_obs ({raw_first})"
+        _fail(ValueError, "last_obs", rule, _describe(last_obs))
+    hold_back = model._hold_back
+    if last - raw_first <= hold_back:
+        rule = (
+            "smaller than the number of observations in the estimation sample "
+            f"({last - raw_first}), where hold_back is at least the largest lag"
+        )
+        _fail(ValueError, "hold_back", rule, _describe(hold_back))
+    return raw_first + hold_back, last
+
+
+def _check_resid_params(params: Any, size: int) -> Float64Array1D:
+    """
+    Check the parameters of the mean in resids
+
+    Notes
+    -----
+    resids is called with any parameters by the likelihood while the model is fit,
+    and so NaN and inf are not rejected here. The check of the type and the shape
+    is skipped for an array that is already valid.
+    """
+    if (
+        type(params) is np.ndarray
+        and params.dtype == np.float64
+        and params.shape == (size,)
+    ):
+        return cast("Float64Array1D", params)
+    return cast(
+        "Float64Array1D",
+        check_array(
+            "params", params, ndim=1, shape=(size,), allow_nan=True, allow_inf=True
+        ),
+    )
+
+
+def _check_resid_data(
+    y: Any, regressors: Any, num_regressors: int | None
+) -> tuple[Float64Array1D | None, Float64Array2D | None]:
+    """
+    Check the alternative data in resids
+
+    Parameters
+    ----------
+    y : array_like or None
+        The alternative values of the dependent variable.
+    regressors : array_like or None
+        The alternative values of the regressors.
+    num_regressors : int or None
+        The number of columns of regressors. None for models that do not use the
+        regressors, which are only checked to be a 2-d array_like if provided.
+    """
+    _y = None
+    nobs = None
+    if y is not None:
+        _y = cast("Float64Array1D", check_array("y", y, ndim=1, min_length=1))
+        nobs = _y.shape[0]
+    if num_regressors is None:
+        _regressors = check_array("regressors", regressors, ndim=2, allow_none=True)
+    elif regressors is None and y is None:
+        _regressors = None
+    else:
+        _regressors = check_array(
+            "regressors", regressors, ndim=2, shape=(nobs, num_regressors)
+        )
+    return _y, cast("Float64Array2D | None", _regressors)
+
+
+def _check_initial_value_vol(initial_value_vol: Any) -> Any:
+    """Check the initial value of the volatility process in simulate"""
+    if initial_value_vol is None:
+        return None
+    if np.ndim(initial_value_vol) == 0:
+        return check_float("initial_value_vol", initial_value_vol)
+    return check_array("initial_value_vol", initial_value_vol)
+
+
+def _check_simulation_no_dynamics(
+    model: str,
+    nobs: Any,
+    burn: Any,
+    initial_value: Any,
+    x: Any,
+    initial_value_vol: Any,
+) -> tuple[int, int, Any]:
+    """
+    Check the arguments of simulate for a model without mean dynamics or regressors
+
+    Parameters
+    ----------
+    model : str
+        The description of the model for the error message.
+
+    Returns
+    -------
+    nobs : int
+        The number of observations.
+    burn : int
+        The number of burn-in observations.
+    initial_value_vol : float, ndarray or None
+        The initial value of the volatility process.
+    """
+    nobs = check_int("nobs", nobs, lower=1)
+    burn = check_int("burn", burn, lower=0)
+    if initial_value is not None:
+        rule = f"None, since a {model} has no mean dynamics"
+        _fail(ValueError, "initial_value", rule, _describe(initial_value))
+    if x is not None:
+        rule = f"None, since a {model} has no exogenous variables"
+        _fail(ValueError, "x", rule, _describe(x))
+    return nobs, burn, _check_initial_value_vol(initial_value_vol)
+
+
+def _check_forecast_arguments(
+    model: ARCHModel,
+    params: Any,
+    horizon: Any,
+    start: Any,
+    align: Any,
+    method: Any,
+    simulations: Any,
+    rng: Any,
+    random_state: Any,
+    reindex: Any,
+) -> tuple[
+    Float64Array1D, int, int, Literal["origin", "target"], ForecastingMethod, int, bool
+]:
+    """
+    Check the arguments of forecast
+
+    Returns
+    -------
+    params : ndarray
+        The parameters of the model as a float64 array.
+    horizon : int
+        The forecast horizon.
+    start_index : int
+        The position of the first forecast, which is the default start if start is
+        None.
+    align : str
+        The alignment, in lower case.
+    method : str
+        The forecasting method, in lower case.
+    simulations : int
+        The number of simulations.
+    reindex : bool
+        Whether to reindex the forecasts.
+    """
+    num_params = (
+        int(model.num_params)
+        + int(model.volatility.num_params)
+        + int(model.distribution.num_params)
+    )
+    params = check_array("params", params, ndim=1, shape=(num_params,))
+    horizon = check_int("horizon", horizon, lower=1)
+    align = cast(
+        "Literal['origin', 'target']",
+        check_option("align", align, ("origin", "target")),
+    )
+    method = cast(
+        "ForecastingMethod",
+        check_option("method", method, ("analytic", "simulation", "bootstrap")),
+    )
+    simulations = check_int("simulations", simulations, lower=1)
+    check_callable("rng", rng, allow_none=True)
+    check_instance("random_state", random_state, np.random.RandomState, allow_none=True)
+    reindex = check_bool("reindex", reindex)
+    default_start = max(0, model._fit_indices[1] - 1)
+    start_index = check_index(
+        "start",
+        start,
+        int(model._y.shape[0]),
+        index=model._y_series.index,
+        default=default_start,
+    )
+    assert start_index is not None
+    return params, horizon, start_index, align, method, simulations, reindex
 
 
 class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
-    Heterogeneous Autoregression (HAR), with optional exogenous regressors,
-    model estimation and simulation
+    Heterogeneous Autoregression (HAR) model with optional exogenous regressors.
+
+    Provides model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : {scalar, ndarray}, optional
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : array_like or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
+    lags : int or array_like, optional
         Description of lag structure of the HAR.
 
         * Scalar included all lags between 1 and the value.
@@ -203,24 +493,57 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         * A 2-d (2,n)-element array that includes the HAR lags of the form
           lags[0,j]:lags[1,j]+1 for all columns of lags.
 
+        The lags must be integers (2.5, 5.0 and True are not accepted). A scalar
+        must be at least 0, and the values of an array at least 1.
+
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     use_rotated : bool, optional
         Flag indicating to use the alternative rotated form of the HAR where
-        HAR lags do not overlap
-    hold_back : int
+        HAR lags do not overlap.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant``, ``use_rotated`` or ``rescale`` is not
+        a bool (``rescale`` can also be None), if ``volatility`` or ``distribution`` is
+        not an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        or if ``x`` contains NaN or inf or does not have a row for each observation of
+        ``y``.
+
+    Notes
+    -----
+    The HAR-X model is described by
+
+    .. math::
+
+        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
+        + \gamma' x_t + \epsilon_t
+
+    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
+    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
 
     Examples
     --------
@@ -231,7 +554,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> y = np.random.RandomState(1234).randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
-
 
     A standard HAR with average lags 1 and 6 but holding back 10 observations
 
@@ -262,18 +584,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> models = [harx_1, harx_2, harx_3, harx_4]
     >>> print([round(mod.fit().rsquared, 3) for mod in models])
     [0.085, 0.085, 0.085, 0.085]
-
-    Notes
-    -----
-    The HAR-X model is described by
-
-    .. math::
-
-        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
-        + \gamma' x_t + \epsilon_t
-
-    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
-    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
     """
 
     # To allow for addition mean parameters in simulation
@@ -298,6 +608,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         distribution: Distribution | None = None,
         rescale: bool | None = None,
     ) -> None:
+        constant, hold_back, rescale = _check_model_arguments(
+            constant, hold_back, volatility, distribution, rescale
+        )
+        use_rotated = check_bool("use_rotated", use_rotated)
+        if lags is not None:
+            _check_lags(lags)
         super().__init__(
             y,
             hold_back=hold_back,
@@ -326,7 +642,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if self._x_original is not None:
             self._name += "-X"
         if lags is not None:
-            max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
+            max_lags = int(np.max(np.asarray(lags, dtype=np.int64)))
         else:
             max_lags = 0
         self._max_lags = max_lags
@@ -382,14 +698,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "x must be provided when appending to a model that includes "
                 "exogenous regressors."
             )
+        # Finite numbers, as when constructing the model
+        check_array("x", x)
         x_original = append_same_type(self._x_original, x)
-        try:
-            # Same conversion as used when constructing the model
-            np.asarray(x, dtype=float)
-        except (TypeError, ValueError) as exc:
-            raise ValueError(
-                "x must contain only values that can be converted to float."
-            ) from exc
         nobs_x_new = np.shape(x_original)[0] - np.shape(self._x_original)[0]
         if nobs_x_new != nobs_new:
             raise ValueError(
@@ -405,11 +716,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         x: ArrayLike | ArrayLike2D | None = None,
     ) -> None:
         """
-        Append observations to the model in-place
+        Append observations to the model in-place.
 
         Parameters
         ----------
-        y : {ndarray, Series, DataFrame, list, float}
+        y : ndarray, Series, DataFrame, list or float
             The observations to append. Must have the same type as the data
             used to construct the model. If the model was constructed using a
             pandas object, then the index of the new data must be unique and
@@ -418,7 +729,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             must follow the existing observations. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
-        x : {ndarray, Series, DataFrame}, optional
+        x : ndarray, Series or DataFrame, optional
             The values of the exogenous regressors for the new observations.
             Must be provided if, and only if, the model includes exogenous
             regressors, must have the same type and number of columns as the
@@ -431,14 +742,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         ------
         TypeError
             If the type of ``y`` or ``x`` differs from the type of the data in
-            the model.
+            the model, or if ``x`` cannot be converted to numbers.
         ValueError
             If ``y`` is empty, contains non-finite values or, when using
             pandas, has an index that is not unique, overlaps the existing
             index, or does not follow an increasing index of the existing data.
             Also raised if ``x`` is provided when the model does not have
-            exogenous regressors, is not provided when the model does, cannot
-            be converted to float, or does not have the same number of
+            exogenous regressors, is not provided when the model does,
+            contains NaN or inf, or does not have the same number of
             observations as ``y``.
         RuntimeError
             If the model was created without data.
@@ -496,7 +807,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     @property
     def x(self) -> ArrayLike2D | None:
-        """Gets the value of the exogenous regressors in the model"""
+        """The exogenous regressors in the model."""
         return self._x
 
     def parameter_names(self) -> list[str]:
@@ -551,18 +862,38 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        _regressors = self._fit_regressors if y is None else regressors
-        y = self._fit_y if y is None else y
-        assert _regressors is not None
-        return y - np.asarray(_regressors, dtype=float).dot(params)
+        k = int(self.regressors.shape[1])
+        params = _check_resid_params(params, k)
+        if y is None and regressors is None:
+            # The path used by the likelihood
+            return self._fit_y - self._fit_regressors.dot(params)
+        _y, _x = _check_resid_data(y, regressors, k)
+        if _y is None:
+            _y, _x = self._fit_y, self._fit_regressors
+        assert _x is not None
+        return _y - _x.dot(params)
 
     @cached_property
     def num_params(self) -> int:
         """
-        Returns the number of parameters
+        Number of parameters in the model.
         """
         assert self.regressors is not None
         return int(self.regressors.shape[1])
+
+    def _check_initial_value(
+        self, initial_value: float | Float64Array | None
+    ) -> float | Float64Array | None:
+        """Check the initial value of the mean, a scalar or one value for each lag"""
+        if initial_value is None:
+            return None
+        if np.ndim(initial_value) == 0:
+            return check_float("initial_value", initial_value)
+        max_lag = 0 if not self._lags.size else int(np.max(self._lags))
+        return cast(
+            "Float64Array",
+            check_array("initial_value", initial_value, ndim=1, shape=(max_lag,)),
+        )
 
     def _simulate_mean(
         self,
@@ -577,14 +908,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y = np.zeros(nobs_and_burn)
         if initial_value is None:
             initial_value = 0.0
-        elif not np.isscalar(initial_value):
-            initial_value = np.asarray(
-                ensure1d(initial_value, "initial_value"), dtype=float
-            )
-            if initial_value.shape[0] != max_lag:
-                raise ValueError(
-                    f"initial_value has the wrong shape. Expected {max_lag} values"
-                )
         y[:max_lag] = initial_value
         k_x = x.shape[1]
 
@@ -613,7 +936,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulates data from a linear regression, AR or HAR models
+        Simulate data from a linear regression, AR or HAR models.
 
         Parameters
         ----------
@@ -625,17 +948,17 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             the model and ex[j] is the coefficient on the jth exogenous
             variable.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : {ndarray, float}, optional
+        initial_value : float or array_like, optional
             Either a scalar value or `max(lags)` array set of initial values to
             use when initializing the model.  If omitted, 0.0 is used.
-        x : {ndarray, DataFrame}, optional
-            nobs + burn by k array of exogenous variables to include in the
-            simulation.
-        initial_value_vol : {ndarray, float}, optional
+        x : array_like, optional
+            Array of exogenous variables to include in the simulation, with nobs +
+            burn rows and k columns.
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -646,7 +969,20 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params``, ``x``,
+            ``initial_value`` or ``initial_value_vol`` cannot be converted to
+            numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``x`` does not
+            have ``nobs + burn`` rows or is not finite, ``initial_value`` is not
+            finite or does not have ``max(lags)`` values, or ``initial_value_vol``
+            is not finite.
 
         Examples
         --------
@@ -670,14 +1006,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> sim_data = harx.simulate(params, nobs=nobs, burn=burn, x=x)
         """
 
+        nobs = check_int("nobs", nobs, lower=1)
+        burn = check_int("burn", burn, lower=0)
         if x is None:
             x_arr: Float64Array2D = np.empty((nobs + burn, 0))
         else:
-            _x = np.asarray(x, dtype=float)
-            x_arr = _x.reshape((_x.shape[0], -1))
+            # The shape in the message has nobs + burn rows
+            x_arr = check_array("x", x, shape=(nobs + burn, None))
         k_x = x_arr.shape[1]
-        if x_arr.shape[0] != nobs + burn:
-            raise ValueError("x must have nobs + burn rows")
         assert self._lags is not None
         mc = (
             int(self.constant)
@@ -688,12 +1024,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
-        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
-        if params.shape[0] != num_params:
-            raise ValueError(
-                "params has the wrong number of elements. "
-                "Expected " + str(num_params) + ", got " + str(params.shape[0])
-            )
+        params = cast(
+            "Float64Array1D", check_array("params", params, ndim=1, shape=(num_params,))
+        )
+        initial_value = self._check_initial_value(initial_value)
+        initial_value_vol = _check_initial_value_vol(initial_value_vol)
 
         dist_params = np.empty(0) if dc == 0 else params[-dc:]
         vol_params = cast("Float64Array1D", params[mc : mc + vc])
@@ -739,22 +1074,24 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             "x must be nobs by n, where nobs is the same as the number of elements in y"
         )
         if self._x_original is not None:
+            # Numbers that are finite
+            check_array("x", as_float64(self._x_original, "x"))
             if isinstance(self._x_original, pd.Series):
                 self._x = pd.DataFrame(self._x_original)
             elif isinstance(self._x_original, pd.DataFrame):
                 self._x = self._x_original
             else:
-                x_original = np.asarray(self._x_original, dtype=float)
+                x_original = as_float64(self._x_original, "x")
                 if x_original.ndim == 1:
                     x_original = x_original[:, None]
                 self._x = cast("Float64Array2D", x_original)
             assert isinstance(self._x, (np.ndarray, pd.DataFrame))
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
-                raise ValueError(err_msg)
+                raise ValueError(f"{err_msg}; got {_describe(self._x_original)}")
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
             names, self._x_index = parse_dataframe(self._x, def_names)
             self._x_names = [str(name) for name in names]
-            self._x = cast("Float64Array2D", np.asarray(self._x, dtype=float))
+            self._x = cast("Float64Array2D", as_float64(self._x, "x"))
 
     def _reformat_lags(self) -> None:
         """
@@ -764,18 +1101,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         if self.lags is None:
             return
+        # The format and the values of lags are checked when the model is created
         lags = np.asarray(self.lags)
-        if np.any(lags < 0):
-            raise ValueError("Input to lags must be non-negative")
 
         if lags.ndim == 0:
             lags = np.arange(1, int(lags) + 1)
 
         if lags.ndim == 1:
-            if np.any(lags <= 0):
-                raise ValueError(
-                    "When using the 1-d format of lags, values must be positive"
-                )
             lags = np.unique(lags)
             temp = cast("Int64Array2D", np.array([lags, lags], dtype=int))
             if self.use_rotated:
@@ -784,14 +1116,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             else:
                 temp[0, :] = 0
             self._lags = temp
-        elif lags.ndim == 2:
-            if lags.shape[0] != 2:
-                raise ValueError("When using a 2-d array, lags must by k by 2")
-            if np.any(lags[0] <= 0) or np.any(lags[1] < lags[0]):
-                raise ValueError(
-                    "When using a 2-d array, all values must be larger than 0 and "
-                    "lags[0,j] <= lags[1,j] for all lags values."
-                )
+        else:
             ind = np.lexsort(np.flipud(lags))
             lags = cast("Int64Array2D", lags[:, ind])
             test_mat = np.zeros((lags.shape[1], np.max(lags)), dtype=int)
@@ -809,8 +1134,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "Rotation is not available when using the 2-d lags input format",
                     stacklevel=2,
                 )
-        else:
-            raise ValueError("Incorrect format for lags")
 
     def _har_to_ar(self, params: Float64Array) -> Float64Array:
         if self._max_lags == 0:
@@ -837,6 +1160,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         if self.lags is not None and nobs_orig > 0:
             maxlag = np.max(self.lags)
+            if maxlag >= nobs_orig:
+                _fail(
+                    ValueError,
+                    "lags",
+                    f"smaller than the number of observations ({nobs_orig})",
+                    f"a largest lag of {maxlag} ({type(self.lags).__name__})",
+                )
             lag_array = lagmat(self._y, maxlag)
             reg_lags = np.empty((nobs_orig, self._lags.shape[1]), dtype=np.double)
             for i, lags in enumerate(self._lags.T):
@@ -879,12 +1209,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         first_obs: int | DateLike | None,
         last_obs: int | DateLike | None,
     ) -> None:
-        index = self._y_series.index
-        _first_obs_index = cutoff_to_index(first_obs, index, 0)
-        _first_obs_index += self._hold_back
-        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
-        if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce an empty array.")
+        _first_obs_index, _last_obs_index = _fit_sample(self, first_obs, last_obs)
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
         reg = self.regressors
@@ -1077,7 +1402,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         f"the included exogenous regressors. {key} not found in: "
                         f"{keys}"
                     )
-                temp = np.asarray(x[key], dtype=float)
+                temp = check_array("x", x[key], allow_nan=True)
                 if temp.ndim == 1:
                     temp = temp.reshape((1, -1))
                 collected.append(temp)
@@ -1090,12 +1415,22 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "expected x values."
                 )
             if len(base_shape) != 2:
-                raise ValueError(
-                    "The arrays contained in the dictionary must be 1 or 2-dimensional."
+                _fail(
+                    ValueError,
+                    "x",
+                    "a dict of 1-d or 2-d array_like",
+                    f"arrays with {len(base_shape)} dimensions (dict)",
                 )
             arr: Float64Array = np.array(collected)
         else:
-            arr = np.asarray(x)
+            arr = check_array("x", x, allow_nan=True)
+            if arr.ndim not in (1, 2, 3):
+                _fail(
+                    ValueError,
+                    "x",
+                    "a 1-d, 2-d or 3-d array_like or a dict of array_like",
+                    _describe(x),
+                )
 
             if arr.ndim == 1:
                 arr = arr.reshape((1, -1))
@@ -1145,12 +1480,27 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         reindex: bool = False,
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
-        # Check start
-        earliest, default_start = self._fit_indices
-        default_start = max(0, default_start - 1)
-        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        (
+            params,
+            horizon,
+            start_index,
+            align,
+            method,
+            simulations,
+            reindex,
+        ) = _check_forecast_arguments(
+            self,
+            params,
+            horizon,
+            start,
+            align,
+            method,
+            simulations,
+            rng,
+            random_state,
+            reindex,
+        )
+        earliest = self._fit_indices[0]
         if start_index < (earliest - 1):
             raise ValueError(
                 "Due to backcasting and/or data availability start cannot be less "
@@ -1158,8 +1508,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "variables used to fit the first observation.  In this model, "
                 f"this value is {max(0, earliest - 1)}."
             )
-        # Parse params
-        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
 
         #####################################
@@ -1255,7 +1603,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             mean_paths = mean_paths[:, :, m:]
 
         index = self._y_series.index
-        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
             start_index,
@@ -1277,29 +1624,35 @@ class ConstantMean(HARX):
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    hold_back : int
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ConstantMean
-    >>> y = np.random.randn(100)
-    >>> cm = ConstantMean(y)
-    >>> res = cm.fit()
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``rescale`` is not a bool or None, or if ``volatility`` or
+        ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``hold_back`` is negative.
 
     Notes
     -----
@@ -1308,6 +1661,14 @@ class ConstantMean(HARX):
     .. math::
 
         y_t = \mu + \epsilon_t
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ConstantMean
+    >>> y = np.random.randn(100)
+    >>> cm = ConstantMean(y)
+    >>> res = cm.fit()
     """
 
     def __init__(
@@ -1347,7 +1708,7 @@ class ConstantMean(HARX):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulated data from a constant mean model
+        Simulate data from a constant mean model.
 
         Parameters
         ----------
@@ -1356,17 +1717,17 @@ class ConstantMean(HARX):
             [mean volatility distribution]. There is one parameter in the mean
             model, mu.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None, since there are no mean dynamics. A ValueError is
             raised if it is not None.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1377,7 +1738,18 @@ class ConstantMean(HARX):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a constant mean model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
 
         Examples
         --------
@@ -1392,11 +1764,9 @@ class ConstantMean(HARX):
         >>> params = np.concatenate((cm_params, garch_params))
         >>> sim_data = cm.simulate(params, 1000)
         """
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when "
-                "simulating a constant mean process."
-            )
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "constant mean model", nobs, burn, initial_value, x, initial_value_vol
+        )
 
         mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
@@ -1417,39 +1787,48 @@ class ConstantMean(HARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
-        return _y - params[0]
+        params = _check_resid_params(params, 1)
+        if y is None and regressors is None:
+            return self._fit_y - params[0]
+        _y, _ = _check_resid_data(y, regressors, None)
+        return (self._fit_y if _y is None else _y) - params[0]
 
 
 class ZeroMean(HARX):
     r"""
-    Model with zero conditional mean estimation and simulation
+    Model with zero conditional mean estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    hold_back : int
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ZeroMean
-    >>> y = np.random.randn(100)
-    >>> zm = ZeroMean(y)
-    >>> res = zm.fit()
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``rescale`` is not a bool or None, or if ``volatility`` or
+        ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``hold_back`` is negative.
 
     Notes
     -----
@@ -1459,6 +1838,13 @@ class ZeroMean(HARX):
 
         y_t = \epsilon_t
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ZeroMean
+    >>> y = np.random.randn(100)
+    >>> zm = ZeroMean(y)
+    >>> res = zm.fit()
     """
 
     def __init__(
@@ -1500,25 +1886,25 @@ class ZeroMean(HARX):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulated data from a zero mean model
+        Simulate data from a zero mean model.
 
         Parameters
         ----------
-        params : {ndarray, DataFrame}
+        params : array_like
             Parameters to use when simulating the model.  Parameter order is
             [volatility distribution]. There are no mean parameters.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None, since there are no mean dynamics. A ValueError is
             raised if it is not None.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1529,7 +1915,18 @@ class ZeroMean(HARX):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a zero mean model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
 
         Examples
         --------
@@ -1547,12 +1944,10 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "zero mean model", nobs, burn, initial_value, x, initial_value_vol
+        )
         _params = _check_simulation_params(self, params)
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when "
-                "simulating a zero mean process."
-            )
 
         _, vp, dp = self._parse_parameters(_params)
 
@@ -1573,42 +1968,75 @@ class ZeroMean(HARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        if y is not None:
-            return y
+        _check_resid_params(params, 0)
+        _y, _ = _check_resid_data(y, regressors, None)
+        if _y is not None:
+            return _y
         assert self._fit_y is not None
         return self._fit_y
 
 
 class ARX(HARX):
     r"""
-    Autoregressive model with optional exogenous regressors estimation and
-    simulation
+    Autoregressive model with optional exogenous regressors.
+
+    Provides model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : scalar, 1-d array, optional
-        Description of lag structure of the HAR.  Scalar included all lags
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : array_like or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
+    lags : int or array_like, optional
+        Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
-        lags[1], ...
+        lags[1], ...  The lags must be integers (2.5, 5.0 and True are not
+        accepted). A scalar must be at least 0, and the values of an array at
+        least 1.
     constant : bool, optional
-        Flag whether the model should include a constant
-    hold_back : int
+        Flag whether the model should include a constant.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        or if ``x`` contains NaN or inf or does not have a row for each observation of
+        ``y``.
+
+    Notes
+    -----
+    The AR-X model is described by
+
+    .. math::
+
+        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
+        + \epsilon_t
 
     Examples
     --------
@@ -1623,16 +2051,6 @@ class ARX(HARX):
     >>> from arch.univariate import GARCH
     >>> arx.volatility = GARCH()
     >>> res = arx.fit(update_freq=0, disp='off')
-
-    Notes
-    -----
-    The AR-X model is described by
-
-    .. math::
-
-        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
-        + \epsilon_t
-
     """
 
     def __init__(
@@ -1649,21 +2067,17 @@ class ARX(HARX):
         # Convert lags to 2-d format
 
         if lags is not None:
+            _check_lags(lags, allow_2d=False)
             lags_arr = np.asarray(lags)
             assert lags_arr is not None
             if lags_arr.ndim == 0:
-                if lags_arr < 0:
-                    raise ValueError("lags must be a positive integer.")
-                elif lags_arr == 0:
+                if lags_arr == 0:
                     lags = None
                 else:
                     lags_arr = np.arange(1, int(lags_arr) + 1)
             if lags is not None:
-                if lags_arr.ndim != 1:
-                    raise ValueError("lags does not follow a supported format")
-                else:
-                    lags_arr = np.vstack((lags_arr, lags_arr))
-                    assert lags_arr is not None
+                lags_arr = np.vstack((lags_arr, lags_arr))
+                assert lags_arr is not None
 
         super().__init__(
             y,
@@ -1711,38 +2125,46 @@ class ARX(HARX):
 
 class LS(HARX):
     r"""
-    Least squares model estimation and simulation
+    Least squares model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : array_like or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
     constant : bool, optional
-        Flag whether the model should include a constant
-    hold_back : int
+        Flag whether the model should include a constant.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import LS
-    >>> y = np.random.randn(100)
-    >>> x = np.random.randn(100,2)
-    >>> ls = LS(y, x)
-    >>> res = ls.fit()
+    Raises
+    ------
+    TypeError
+        If ``hold_back`` is not an integer (a float, including 5.0, and a bool are not
+        accepted), if ``constant`` or ``rescale`` is not a bool (``rescale`` can also be
+        None), if ``volatility`` or ``distribution`` is not an instance of
+        :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers.
+    ValueError
+        If ``hold_back`` is negative, or if ``x`` contains NaN or inf or does not have
+        a row for each observation of ``y``.
 
     Notes
     -----
@@ -1752,6 +2174,14 @@ class LS(HARX):
 
         y_t = \mu + \gamma' x_t + \epsilon_t
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import LS
+    >>> y = np.random.randn(100)
+    >>> x = np.random.randn(100,2)
+    >>> ls = LS(y, x)
+    >>> res = ls.fit()
     """
 
     def __init__(
@@ -1781,51 +2211,63 @@ class LS(HARX):
 
 class ARCHInMean(ARX):
     r"""
-    (G)ARCH-in-mean model and simulation
+    (G)ARCH-in-mean model and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : {scalar, 1-d array}, optional
-        Description of lag structure of the HAR.  Scalar included all lags
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : array_like or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.  Must
+        contain only finite values.
+    lags : int or array_like, optional
+        Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
-        lags[1], ...
+        lags[1], ...  The lags must be integers (2.5, 5.0 and True are not
+        accepted). A scalar must be at least 0, and the values of an array at
+        least 1.
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.
+        lag lengths to estimate on the common sample.  Must be a non-negative
+        integer.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model. ``volatility.updateable`` must
         return ``True``.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
-    form : {"log", "vol", "var", int, float}
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
+    form : {"log", "vol", "var"}, int or float, optional
         The form of the conditional variance that appears in the mean equation. The
         string names use the log of the conditional variance ("log"), the square-root
         of the conditional variance ("vol") or the conditional variance. When
         specified using a float, interpreted as :math:`\sigma_t^{form}` so that
         1 is equivalent to "vol" and 2 is equivalent to "var". When using a number,
-        must be different from 0.
+        must be finite and different from 0.  The strings are not case sensitive.
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ARCHInMean, GARCH
-    >>> from arch.data.sp500 import load
-    >>> sp500 = load()
-    >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
-    >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
-    >>> res = gim.fit(disp="off")
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`, or if ``x`` cannot be
+        converted to numbers, or if ``form`` is not a string or a number.
+    ValueError
+        If ``lags`` is negative, empty or in an unsupported format, if the largest lag
+        is not smaller than the number of observations, if ``hold_back`` is negative,
+        if ``form`` is a string other than "log", "vol" or "var" or is not finite or
+        is 0, or if ``x`` contains NaN or inf or does not have a row for each
+        observation of ``y``.
 
     Notes
     -----
@@ -1837,6 +2279,16 @@ class ARCHInMean(ARX):
               + \gamma' x_t +  \epsilon_t
 
     where :math:`f(\cdot)` is the function specified by ``form``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ARCHInMean, GARCH
+    >>> from arch.data.sp500 import load
+    >>> sp500 = load()
+    >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
+    >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
+    >>> res = gim.fit(disp="off")
     """
 
     # To account for GIM param
@@ -1854,30 +2306,28 @@ class ARCHInMean(ARX):
         rescale: bool | None = None,
         form: float | Literal["log", "vol", "var"] = "vol",
     ) -> None:
+        form_rule = "'log', 'vol', 'var' or a finite number that is not 0"
+        if isinstance(form, str):
+            if form.lower() not in ("log", "vol", "var"):
+                _fail(ValueError, "form", form_rule, _describe(form))
+            form = cast("Literal['log', 'vol', 'var']", form.lower())
+        elif not isinstance(form, (bool, np.bool_)) and isinstance(
+            form, (int, float, np.floating, np.integer)
+        ):
+            if not np.isfinite(form) or form == 0:
+                _fail(ValueError, "form", form_rule, _describe(form))
+        else:
+            _fail(TypeError, "form", form_rule, _describe(form))
         super().__init__(
             y, x, lags, constant, hold_back, volatility, distribution, rescale
         )
         self._name = "ARCH-in-mean"
-        form_err = (
-            "form must be a floating point number of one of 'log', 'vol' or 'var', got "
-        )
-        if not isinstance(form, (str, int, float, np.floating, np.integer)):
-            raise TypeError(form_err + f"{type(form)}")
         if isinstance(form, str):
-            lower_form = form.lower()
-            if lower_form not in ("log", "vol", "var"):
-                raise ValueError(form_err + f"{form}")
-            self._form_id = {"log": 0, "vol": 1, "var": 2}[lower_form]
+            self._form_id = {"log": 0, "vol": 1, "var": 2}[form]
             self._form_power = float(self._form_id)
         else:
-            float_form = float(form)
-            if float_form == 0:
-                raise ValueError(
-                    "When using a floating point number for form, its value "
-                    "must be different from 0"
-                )
             self._form_id = 3
-            self._form_power = float_form
+            self._form_power = float(form)
         self._form = form
 
         if not self.volatility.updateable:
@@ -1892,7 +2342,7 @@ class ARCHInMean(ARX):
 
     @property
     def form(self) -> int | float | Literal["log", "vol", "var"]:
-        """The form of the conditional variance in the mean"""
+        """The form of the conditional variance in the mean."""
         return self._form
 
     def _model_description(self, include_lags: bool = False) -> dict[str, str]:
@@ -1941,6 +2391,7 @@ class ARCHInMean(ARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
+        params = _check_resid_params(params, self.num_params)
         return super().resids(
             cast("Float64Array1D", params[:-1]), y=y, regressors=regressors
         )
@@ -2072,14 +2523,6 @@ class ARCHInMean(ARX):
         y = np.zeros(nobs_and_burn)
         if initial_value is None:
             initial_value = 0.0
-        elif not np.isscalar(initial_value):
-            initial_value = np.asarray(
-                ensure1d(initial_value, "initial_value"), dtype=float
-            )
-            if initial_value.shape[0] != max_lag:
-                raise ValueError(
-                    f"initial_value has the wrong shape. Expected {max_lag} values"
-                )
         y[:max_lag] = initial_value
         k_x = x.shape[1]
 
@@ -2194,29 +2637,32 @@ def _ma_starting_values(y: Float64Array1D, lags: int, constant: bool) -> Float64
 
 class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
-    Moving average (MA) mean model, with optional constant, model estimation,
-    simulation and forecasting
+    Moving average (MA) mean model, with optional constant.
+
+    Provides model estimation, simulation and forecasting.
 
     Parameters
     ----------
-    y : {ndarray, Series}, optional
-        nobs element vector containing the dependent variable
+    y : array_like or Series, optional
+        Vector of nobs elements containing the dependent variable.
     lags : int, optional
         The order of the moving average, q. Must be at least 1.
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
-        estimating model parameters.
+        estimating model parameters.  Must be a non-negative integer.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
 
     Attributes
     ----------
@@ -2224,6 +2670,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         The order of the moving average
     constant : bool
         Whether the model includes a constant
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), if ``constant`` or ``rescale`` is not a bool
+        (``rescale`` can also be None), or if ``volatility`` or ``distribution`` is not
+        an instance of :class:`~arch.univariate.volatility.VolatilityProcess` or
+        :class:`~arch.univariate.distribution.Distribution`.
+    ValueError
+        If ``lags`` is smaller than 1 or ``hold_back`` is negative.
 
     Notes
     -----
@@ -2293,6 +2750,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         distribution: Distribution | None = None,
         rescale: bool | None = None,
     ) -> None:
+        lags = check_int("lags", lags, lower=1)
+        constant, hold_back, rescale = _check_model_arguments(
+            constant, hold_back, volatility, distribution, rescale
+        )
         super().__init__(
             y,
             hold_back=hold_back,
@@ -2300,14 +2761,8 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
-        if (
-            isinstance(lags, (bool, np.bool_))
-            or not isinstance(lags, (int, np.integer))
-            or lags < 1
-        ):
-            raise ValueError("lags must be a positive integer.")
-        self.lags: int = int(lags)
-        self.constant: bool = bool(constant)
+        self.lags: int = lags
+        self.constant: bool = constant
         self._name = "MA"
 
     def _model_description(self, include_lags: bool = True) -> dict[str, str]:
@@ -2350,17 +2805,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
     @cached_property
     def num_params(self) -> int:
         """
-        Returns the number of parameters
+        Number of parameters in the model.
         """
         return int(self.constant) + self.lags
 
     def bounds(self) -> list[tuple[float, float]]:
         """
-        Construct bounds for parameters to use in non-linear optimization
+        Construct bounds for parameters to use in non-linear optimization.
 
         Returns
         -------
-        bounds : list (2-tuple of float)
+        bounds : list of tuple of float
             Bounds for parameters to use in estimation. The coefficient of
             an MA(1) is restricted to [-1, 1], which makes it invertible.
         """
@@ -2371,14 +2826,14 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """
-        Construct linear constraint arrays for use in non-linear optimization
+        Construct linear constraint arrays for use in non-linear optimization.
 
         Returns
         -------
         a : ndarray
-            Number of constraints by number of parameters loading array
+            Number of constraints by number of parameters loading array.
         b : ndarray
-            Number of constraints array of lower bounds
+            Number of constraints array of lower bounds.
 
         Notes
         -----
@@ -2398,7 +2853,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
+        params = _check_resid_params(params, self.num_params)
+        _y, _ = _check_resid_data(y, regressors, None)
+        if _y is None:
+            _y = self._fit_y
         mu = params[0] if self.constant else 0.0
         theta = params[int(self.constant) :]
         resids = lfilter([1.0], np.r_[1.0, theta], _y - mu)
@@ -2429,12 +2887,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         first_obs: int | DateLike | None,
         last_obs: int | DateLike | None,
     ) -> None:
-        index = self._y_series.index
-        _first_obs_index = cutoff_to_index(first_obs, index, 0)
-        _first_obs_index += self._hold_back
-        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
-        if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce an empty array.")
+        _first_obs_index, _last_obs_index = _fit_sample(self, first_obs, last_obs)
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
         self.volatility.start, self.volatility.stop = self._fit_indices
@@ -2496,7 +2949,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulates data from a moving average model
+        Simulate data from a moving average model.
 
         Parameters
         ----------
@@ -2506,17 +2959,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             model are ordered [mu theta[1] ... theta[q]], and mu is not
             included when the model does not have a constant.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None. A ValueError is raised if it is not None. The
             innovations before the first observation are 0.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -2527,7 +2980,18 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, or if ``params`` or
+            ``initial_value_vol`` cannot be converted to numbers.
+        ValueError
+            If ``nobs`` is less than 1, ``burn`` is negative, ``params`` does not
+            have one finite value for each parameter of the model, ``initial_value``
+            or ``x`` is not None, since a moving average model has no mean dynamics or
+            exogenous variables, or ``initial_value_vol`` is not finite.
 
         Notes
         -----
@@ -2546,21 +3010,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> params = np.concatenate((ma_params, garch_params))
         >>> sim_data = ma.simulate(params, 1000)
         """
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when simulating a "
-                "moving average process."
-            )
-        mc = self.num_params
-        vc = self.volatility.num_params
-        dc = self.distribution.num_params
-        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
-        if params.shape[0] != mc + vc + dc:
-            raise ValueError(
-                "params has the wrong number of elements. "
-                f"Expected {mc + vc + dc}, got {params.shape[0]}"
-            )
-        mp, vp, dp = self._parse_parameters(params)
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "moving average model", nobs, burn, initial_value, x, initial_value_vol
+        )
+        mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
         sim_values = self.volatility.simulate(
             vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol
@@ -2588,16 +3041,31 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         reindex: bool = False,
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
+        (
+            params,
+            horizon,
+            start_index,
+            align,
+            method,
+            simulations,
+            reindex,
+        ) = _check_forecast_arguments(
+            self,
+            params,
+            horizon,
+            start,
+            align,
+            method,
+            simulations,
+            rng,
+            random_state,
+            reindex,
+        )
         if x is not None:
             raise TypeError(
                 "x is not None but the model does not contain any exogenous variables."
             )
-        # Check start
-        earliest, default_start = self._fit_indices
-        default_start = max(0, default_start - 1)
-        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        earliest = self._fit_indices[0]
         if start_index < (earliest - 1):
             raise ValueError(
                 "Due to backcasting and/or data availability start cannot be less "
@@ -2605,8 +3073,6 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "variables used to fit the first observation.  In this model, "
                 f"this value is {max(0, earliest - 1)}."
             )
-        # Parse params
-        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
         mu = mp[0] if self.constant else 0.0
         theta = mp[int(self.constant) :]
@@ -2705,7 +3171,6 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
                 )
 
         index = self._y_series.index
-        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
             start_index,
@@ -2721,12 +3186,15 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
 
 
-def _scalar_int(value: Any, name: str, suffix: str = "") -> int:
-    """Convert an integer or NumPy integer to int, otherwise raise a TypeError"""
-    try:
-        return operator.index(value)
-    except TypeError as exc:
-        raise TypeError(f"{name} must be a scalar int{suffix}.") from exc
+def _check_order(name: str, value: Any) -> int:
+    """Check the order of a volatility process, which is an integer, not a list"""
+    if isinstance(value, (Sequence, np.ndarray, pd.Series)) and not isinstance(
+        value, (str, bytes)
+    ):
+        # A sequence of lags is only used by HARCH
+        rule = "an integer (a list of lags can only be used with vol='harch')"
+        _fail(TypeError, name, rule, _describe(value))
+    return check_int(name, value, lower=0)
 
 
 def arch_model(
@@ -2757,46 +3225,49 @@ def arch_model(
     rescale: bool | None = None,
 ) -> HARX:
     """
-    Initialization of common ARCH model specifications
+    Initialize common ARCH model specifications.
 
     Parameters
     ----------
-    y : ndarray, Series, None
-        The dependent variable
-    x : ndarray, DataFrame, optional
+    y : array_like, Series or None
+        The dependent variable.
+    x : array_like or DataFrame, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
         Name of the mean model.  Currently supported options are: 'Constant',
-        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'
-    lags : int or list[int], optional
+        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.  Not case sensitive.
+    lags : int or list of int, optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
         'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
-        and 'HARCH'
-    p : int, optional
-        Lag order of the symmetric innovation
+        and 'HARCH'.  Not case sensitive.
+    p : int or list of int, optional
+        Lag order of the symmetric innovation.  A list of lags can only be used
+        with the 'HARCH' volatility model.  Must be at least 0, and integers
+        only (2.0 and True are not accepted).
     o : int, optional
-        Lag order of the asymmetric innovation
+        Lag order of the asymmetric innovation.  Must be at least 0.
     q : int, optional
-        Lag order of lagged volatility or equivalent
+        Lag order of lagged volatility or equivalent.  Must be at least 0.
     power : float, optional
-        Power to use with GARCH and related models
-    dist : int, optional
-        Name of the error distribution.  Currently supported options are:
+        Power to use with GARCH and related models.  Must be finite and positive.
+    dist : str, optional
+        Name of the error distribution.  Not case sensitive.  Currently
+        supported options are:
 
             * Normal: 'normal', 'gaussian' (default)
-            * Students's t: 't', 'studentst'
+            * Student's t: 't', 'studentst'
             * Skewed Student's t: 'skewstudent', 'skewt'
-            * Generalized Error Distribution: 'ged', 'generalized error"
+            * Generalized Error Distribution: 'ged', 'generalized error'
 
-    hold_back : int
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
-    rescale : bool
+    rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale
         of the data is likely to produce convergence issues when estimating
         model parameters. If False, the model is estimated on the data without
@@ -2806,7 +3277,25 @@ def arch_model(
     Returns
     -------
     model : ARCHModel
-        Configured ARCH model
+        Configured ARCH model.
+
+    Raises
+    ------
+    TypeError
+        If ``mean``, ``vol`` or ``dist`` is not a string, ``lags``, ``p``, ``o``,
+        ``q`` or ``hold_back`` is not an integer (a float, including 5.0, and a
+        bool are not accepted), ``rescale`` is not a bool or None, ``power`` is not
+        a real number, or ``x`` cannot be converted to numbers.
+    ValueError
+        If ``mean``, ``vol`` or ``dist`` is not one of the options, ``lags``, ``p``,
+        ``o``, ``q`` or ``hold_back`` is negative, ``power`` is not finite and
+        positive, or ``x`` contains NaN or inf or does not have a row for each
+        observation of ``y``.
+
+    Notes
+    -----
+    Input that are not relevant for a particular specification, such as `lags`
+    when `mean='zero'`, are silently ignored, and so are not checked.
 
     Examples
     --------
@@ -2829,11 +3318,6 @@ def arch_model(
 
     >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1,
     ...                 power=1.0, dist='StudentsT')
-
-    Notes
-    -----
-    Input that are not relevant for a particular specification, such as `lags`
-    when `mean='zero'`, are silently ignored.
     """
     am: ARCHModel
 
@@ -2858,15 +3342,9 @@ def arch_model(
         "ged",
         "generalized error",
     )
-    mean_model = mean.lower()
-    vol_model = vol.lower()
-    dist_name = dist.lower()
-    if mean_model not in known_mean:
-        raise ValueError("Unknown model type in mean")
-    if vol_model not in known_vol:
-        raise ValueError("Unknown model type in vol")
-    if dist_name not in known_dist:
-        raise ValueError("Unknown model type in dist")
+    mean_model = check_option("mean", mean, known_mean)
+    vol_model = check_option("vol", vol, known_vol)
+    dist_name = check_option("dist", dist, known_dist)
 
     if mean_model == "harx":
         am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)
@@ -2886,14 +3364,18 @@ def arch_model(
     if vol_model == "constant":
         v: VolatilityProcess = ConstantVariance()
     elif vol_model == "harch":
+        # An integer, or a list of lags
+        _check_lags(p, "p", allow_2d=False)
         v = HARCH(lags=p)
     else:
         # p, o and q must be integers, which includes NumPy integers
-        p = _scalar_int(p, "p", " for all volatility processes except HARCH")
+        p = _check_order("p", p)
         if vol_model in ("garch", "egarch", "aparch", "fiaparch"):
-            o = _scalar_int(o, "o")
+            o = _check_order("o", o)
         if vol_model != "arch":
-            q = _scalar_int(q, "q")
+            q = _check_order("q", q)
+        if vol_model in ("garch", "figarch"):
+            power = check_float("power", power, lower=0.0, inclusive="neither")
         if vol_model == "arch":
             v = ARCH(p=p)
         elif vol_model == "figarch":

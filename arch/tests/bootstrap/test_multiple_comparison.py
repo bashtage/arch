@@ -1,5 +1,6 @@
 import itertools
 from typing import NamedTuple
+import warnings
 
 import numpy as np
 from numpy import linspace
@@ -467,7 +468,8 @@ def test_zero_loss_differential():
     rng = np.random.default_rng(0)
     benchmark = rng.standard_normal(100)
     models = np.column_stack([benchmark, benchmark - 0.1 + rng.standard_normal(100)])
-    spa = SPA(benchmark, models, block_size=5, reps=50, seed=1)
+    with pytest.warns(RuntimeWarning, match="variance of 0 for the models"):
+        spa = SPA(benchmark, models, block_size=5, reps=50, seed=1)
     spa.compute()
     assert np.all(np.isfinite(spa._simulated_vals))
     assert_equal(spa._simulated_vals[0], np.zeros((50, 3)))
@@ -590,12 +592,12 @@ def test_errors(spa_data):
     ):
         _ = spa.better_models()
 
-    with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
+    with pytest.raises(ValueError, match=r"bootstrap must be one of 'stationary'"):
         _ = SPA(spa_data.benchmark, spa_data.models, bootstrap="unknown")
     spa.compute()
-    with pytest.raises(ValueError, match=r"Unknown pvalue type"):
+    with pytest.raises(ValueError, match=r"pvalue_type must be one of 'lower'"):
         _ = spa.better_models(pvalue_type="unknown")
-    with pytest.raises(ValueError, match=r"pvalue must be in \(0,1\)"):
+    with pytest.raises(ValueError, match=r"pvalue must be a finite float in \(0, 1\)"):
         _ = spa.critical_values(pvalue=1.0)
 
 
@@ -931,7 +933,9 @@ class TestMCS:
             _ = mcs.included
 
     def test_errors(self):
-        with pytest.raises(ValueError, match=r"losses must have at least two columns"):
+        with pytest.raises(
+            ValueError, match=r"losses must be a 2-d array with at least 2 columns"
+        ):
             MCS(self.losses[:, 1], 0.05)
         mcs = MCS(
             self.losses,
@@ -951,7 +955,7 @@ class TestMCS:
             bootstrap="moving block",
         )
         mcs.compute()
-        with pytest.raises(ValueError, match=r"Unknown bootstrap: unknown"):
+        with pytest.raises(ValueError, match=r"bootstrap must be one of 'stationary'"):
             MCS(self.losses, 0.05, bootstrap="unknown")
 
     def test_str_repr(self):
@@ -1002,3 +1006,78 @@ def test_bad_values():
     q = MCS(qlike, size=0.05, method="max")
     with pytest.warns(RuntimeWarning, match=r"During computation of a step"):
         q.compute()
+
+
+@pytest.fixture(scope="module")
+def mcs_losses():
+    rng = np.random.default_rng(0)
+    return rng.standard_normal((120, 5)) + np.array([0.0, 0.05, 0.1, 0.2, 0.3])
+
+
+@pytest.mark.parametrize("method", ["R", "max"])
+def test_mcs_included_excluded_boundary(mcs_losses, method):
+    # A model is in the MCS of size alpha if its p-value is at least alpha
+    # (Hansen, Lunde and Nason, 2011), so a p-value equal to size is included
+    reps = 100
+    pvalues = MCS(mcs_losses, 0.1, reps=reps, seed=1, method=method)
+    pvalues.compute()
+    pvals = pvalues.pvalues["Pvalue"]
+    values = np.unique(pvals[(pvals > 0) & (pvals < 1)])
+    assert values.shape[0] >= 1
+    for size in values:
+        mcs = MCS(mcs_losses, float(size), reps=reps, seed=1, method=method)
+        mcs.compute()
+        expected_included = sorted(pvals.index[pvals >= size])
+        expected_excluded = sorted(pvals.index[pvals < size])
+        assert mcs.included == expected_included
+        assert mcs.excluded == expected_excluded
+        assert (pvals == size).any()
+        assert set(pvals.index[pvals == size]) <= set(mcs.included)
+        assert sorted(mcs.included + mcs.excluded) == list(range(5))
+
+
+def test_mcs_included_excluded_boundary_frame(mcs_losses):
+    losses = pd.DataFrame(mcs_losses, columns=list("abcde"))
+    mcs = MCS(losses, 0.1, reps=100, seed=1)
+    mcs.compute()
+    pvals = mcs.pvalues["Pvalue"]
+    size = float(np.unique(pvals[(pvals > 0) & (pvals < 1)])[0])
+    mcs = MCS(losses, size, reps=100, seed=1)
+    mcs.compute()
+    assert mcs.included == sorted(pvals.index[pvals >= size])
+    assert mcs.excluded == sorted(pvals.index[pvals < size])
+
+
+@pytest.mark.parametrize("procedure", [SPA, StepM])
+@pytest.mark.parametrize("frame", [False, True], ids=["array", "frame"])
+def test_constant_loss_differential_warns(procedure, frame):
+    # A model identical to the benchmark, and one that is always 0.5 worse
+    rng = np.random.default_rng(0)
+    benchmark = rng.standard_normal(100) ** 2
+    models = np.column_stack(
+        [
+            benchmark - 1.0 + 0.3 * rng.standard_normal(100),
+            benchmark,
+            benchmark + rng.standard_normal(100),
+            benchmark + 0.5,
+        ]
+    )
+    expected = [1, 3]
+    if frame:
+        models = pd.DataFrame(models, columns=list("abcd"))
+        expected = ["b", "d"]
+    with pytest.warns(RuntimeWarning, match="variance of 0 for the models") as record:
+        procedure(benchmark, models, reps=20, seed=1)
+    messages = [str(r.message) for r in record if r.category is RuntimeWarning]
+    assert len(messages) == 1
+    assert str(expected) in messages[0]
+
+
+@pytest.mark.parametrize("procedure", [SPA, StepM])
+def test_no_warning_without_constant_loss_differential(procedure):
+    rng = np.random.default_rng(0)
+    benchmark = rng.standard_normal(100) ** 2
+    models = benchmark[:, None] + rng.standard_normal((100, 3))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        procedure(benchmark, models, reps=20, seed=1)

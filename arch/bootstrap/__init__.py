@@ -1,5 +1,5 @@
 """
-Tools for implementing statistical bootstraps
+Tools for implementing statistical bootstraps.
 """
 
 from arch.bootstrap import _samplers_python

@@ -1,5 +1,5 @@
 class InvalidLengthWarning(Warning):
-    pass
+    """Warning issued if observations are dropped to form complete blocks."""
 
 
 invalid_length_doc: str = """
@@ -7,13 +7,9 @@ The length of {var} is not an exact multiple of {block}, and so the final
 {drop} observations have been dropped.
 """
 
-deprecation_doc: str = """
-{old_func} has been deprecated.  Please use {new_func}.
-"""
-
 
 class ConvergenceWarning(Warning):
-    pass
+    """Warning issued if the optimizer does not report that it has converged."""
 
 
 convergence_warning: str = """\
@@ -24,7 +20,7 @@ See scipy.optimize.fmin_slsqp for code meaning.
 
 
 class StartingValueWarning(Warning):
-    pass
+    """Warning issued if the starting values are not valid for the model."""
 
 
 starting_value_warning: str = """\
@@ -34,7 +30,7 @@ provided starting values will be ignored.
 
 
 class InitialValueWarning(Warning):
-    pass
+    """Warning issued if the parameters are not consistent with stationarity."""
 
 
 initial_value_warning: str = """\
@@ -44,7 +40,7 @@ to initialize the model.
 
 
 class DataScaleWarning(Warning):
-    pass
+    """Warning issued if the data are poorly scaled."""
 
 
 data_scale_warning: str = """\
@@ -70,7 +66,7 @@ arguments. Input `{key}` has type {arg_type}.
 
 
 class StudentizationError(RuntimeError):
-    pass
+    """Error raised if the covariance used to studentize is numerically 0."""
 
 
 studentization_error: str = """
@@ -82,12 +78,18 @@ is:\n\n {cov}
 """
 
 
-class InfeasibleTestException(RuntimeError):
-    pass
+class InfeasibleTestException(RuntimeError, ValueError):
+    """
+    Error raised if a test cannot be computed using the data provided.
+
+    This is a ``ValueError``, since the data or the specification are not valid for
+    the test, and also a ``RuntimeError``, which it was before ``ValueError`` was
+    added, so that code that catches either keeps working.
+    """
 
 
 class PerformanceWarning(UserWarning):
-    """Warning issued if recursions are run in CPython"""
+    """Warning issued if recursions are run in CPython."""
 
 
 class ValueWarning(UserWarning):

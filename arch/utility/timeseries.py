@@ -1,14 +1,16 @@
-from typing import overload
+from typing import cast, overload
 import warnings
 
 import numpy as np
 import pandas as pd
 
 from arch._typing import Float64Array, Literal, NDArrayOrFrame
+from arch.utility._validation import check_bool, check_int, check_option
+from arch.utility.array import ensure1d, ensure2d
 
 
 class ColumnNameConflict(Warning):
-    pass
+    """Warning issued if column names are renamed to be unique."""
 
 
 column_name_conflict_doc: str = """\
@@ -80,41 +82,72 @@ def add_trend(
     has_constant: Literal["raise", "add", "skip"] = "skip",
 ) -> Float64Array | pd.DataFrame:
     """
-    Adds a trend and/or constant to an array.
+    Add a trend and/or constant to an array.
 
     Parameters
     ----------
-    x : {ndarray, DataFrame}
-        Original array of data. If None, then nobs must be a positive integer
-    trend : str {"n", "c","t","ct","ctt"}
-        The trend(s) to add. Supported options are:
+    x : array_like or DataFrame, optional
+        Original array of data. If None, then nobs must be a positive integer.
+        Integer, unsigned integer and Boolean data are converted to float64.
+        NaN and inf in x are not checked and are returned unchanged.
+    trend : {"n", "c", "t", "ct", "ctt"}, optional
+        The trend(s) to add. Not case sensitive. Supported options are:
 
         * "n" no trend (no-op)
         * "c" add constant only
         * "t" add trend only
         * "ct" add constant and linear trend
         * "ctt" add constant and linear and quadratic trend.
-    prepend : bool
+    prepend : bool, optional
         If True, prepends the new data to the columns of x.
-    nobs : int, positive
-        Positive integer containing the length of the trend series.  Only used
-        if x is none.
-    has_constant : str {'raise', 'add', 'skip'}
-        Controls what happens when trend is 'c' and a constant already
-        exists in X. 'raise' will raise an error. 'add' will duplicate a
-        constant. 'skip' will return the data without change. 'skip' is the
-        default.
+    nobs : int, optional
+        Positive integer containing the length of the trend series. Must be
+        None if x is provided.
+    has_constant : {"raise", "add", "skip"}, optional
+        Controls what happens when trend is "c", "ct" or "ctt" and a constant
+        already exists in x. "raise" will raise an error. "add" will duplicate a
+        constant. "skip" will return the data without change. "skip" is the
+        default. Not case sensitive.
+
+    Returns
+    -------
+    ndarray or DataFrame
+        The trend if x is None, an ndarray with nobs rows. Otherwise x with the
+        trend columns added, which is a DataFrame if x is a DataFrame and an
+        ndarray otherwise. The trend columns of a DataFrame are named "const",
+        "trend" and "quadratic_trend".
+
+    Raises
+    ------
+    TypeError
+        If trend or has_constant is not a str, prepend is not a bool, nobs is
+        not an integer, or x cannot be converted to float64 data.
+    ValueError
+        If trend or has_constant is not one of the supported options, if both
+        or neither of x and nobs are provided, if nobs is not positive, or if
+        has_constant is "raise" and x already contains a constant.
 
     Notes
     -----
-    Returns columns as ["ctt","ct","t","c"] whenever applicable. There is
-    currently no checking for an existing trend.
+    The columns of the trend are ordered constant, linear trend and quadratic
+    trend whenever applicable. There is currently no checking for an existing
+    trend.
     """
-    if trend not in ("n", "c", "ct", "ctt", "t"):
-        raise ValueError(f"trend {trend} not understood")
-    trend_name = trend.lower()
+    trend_name = check_option("trend", trend, ("n", "c", "ct", "ctt", "t"))
+    has_constant = cast(
+        "Literal['raise', 'add', 'skip']",
+        check_option("has_constant", has_constant, ("raise", "add", "skip")),
+    )
+    prepend = check_bool("prepend", prepend)
+    nobs = check_int("nobs", nobs, lower=1, allow_none=True)
     if (x is None and nobs is None) or (x is not None and nobs is not None):
         raise ValueError("One and only one of x or nobs must be provided.")
+    if x is not None:
+        # A Series is stacked into an ndarray, as before
+        x = cast(
+            "NDArrayOrFrame",
+            ensure1d(x, "x") if isinstance(x, pd.Series) else ensure2d(x, "x"),
+        )
     if trend_name == "n":
         if x is not None:
             return x
@@ -129,8 +162,7 @@ def add_trend(
 
     if x is not None:
         nobs = len(np.asanyarray(x))
-    elif nobs is None or nobs <= 0:
-        raise ValueError("nobs must be a positive integer if x is None")
+    assert nobs is not None
     trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.double), trend_order + 1)
     # put in order ctt
     trend_array = np.fliplr(trend_array)
@@ -140,6 +172,7 @@ def add_trend(
     if x is None:
         return np.asarray(trend_array, dtype=float)
     x_array = np.asarray(x)
+    skipped_constant = False
     if "c" in trend_name and np.any(
         np.logical_and(np.ptp(x_array, axis=0) == 0, np.all(x_array != 0, axis=0))
     ):
@@ -147,14 +180,17 @@ def add_trend(
             raise ValueError("x already contains a constant")
         elif has_constant == "add":
             pass
-        elif has_constant == "skip" and trend in ("c", "ct", "ctt"):
+        elif has_constant == "skip" and trend_name in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
+            skipped_constant = True
     if isinstance(x, pd.DataFrame):
         columns: list[str] = ["const", "trend", "quadratic_trend"]
         if trend_name == "t":
             columns = [columns[1]]
         else:
             columns = columns[0 : trend_order + 1]
+        if skipped_constant:
+            columns = columns[1:]
         columns = _enforce_unique_col_name([str(col) for col in x.columns], columns)
         trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:

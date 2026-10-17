@@ -40,15 +40,11 @@ SUPPORTED = [
 
 
 def test_exceptions():
-    with pytest.raises(TypeError, match=r"form must be a floating point "):
+    with pytest.raises(TypeError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form=0 + 3j, volatility=GARCH())
-    with pytest.raises(
-        ValueError, match=r"When using a floating point number for form"
-    ):
+    with pytest.raises(ValueError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form=0, volatility=GARCH())
-    with pytest.raises(
-        ValueError, match=r"form must be a floating point number of one"
-    ):
+    with pytest.raises(ValueError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form="unknown", volatility=GARCH())
 
 
@@ -134,7 +130,7 @@ def test_simulate():
     kappa = res.params.iloc[1]
     rescaled_vol = vol / kappa
     np.testing.assert_allclose(rescaled_vol, sim.volatility)
-    with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
+    with pytest.raises(ValueError, match=r"initial_value must be a 1-d array"):
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
 
 
