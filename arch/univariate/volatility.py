@@ -3539,11 +3539,21 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     variance : ndarray or Series
         Array containing the variances to use.  Should have the same shape as the
         data used in the model. This is not checked since the model is not
-        available when the FixedVariance process is created.
+        available when the FixedVariance process is created. The variances must
+        be finite and positive.
     unit_scale : bool, optional
         Flag whether to enforce a unit scale.  If False, a scale parameter will be
         estimated so that the model variance will be proportional to ``variance``.
         If True, the model variance is set to ``variance``.
+
+    Raises
+    ------
+    TypeError
+        If ``variance`` cannot be converted to a float64 array or ``unit_scale`` is
+        not a bool.
+    ValueError
+        If ``variance`` is not 1-d, or contains NaN, inf, or a value that is not
+        positive.
 
     Notes
     -----
