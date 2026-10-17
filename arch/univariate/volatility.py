@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 import inspect
 import itertools
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 from warnings import warn
 
 import numpy as np
@@ -25,7 +25,12 @@ from arch._typing import (
     RNGType,
 )
 from arch.univariate.distribution import Normal
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
+from arch.utility.array import (
+    AbstractDocStringInheritor,
+    ensure1d,
+    ensure2d,
+    to_array_1d,
+)
 from arch.utility.exceptions import (
     InitialValueWarning,
     ValueWarning,
@@ -155,6 +160,25 @@ def ewma_recursion(
         var_bounds,
     )
     return sigma2
+
+
+def _float_backcast(backcast: Any) -> float | Float64Array1D:
+    """
+    Convert a backcast value to a float or a float64 1-d array.
+
+    Parameters
+    ----------
+    backcast : array_like
+        A scalar, or a 1-d array_like for models with multiple components.
+
+    Returns
+    -------
+    float or ndarray
+        A float if backcast is a scalar and otherwise a float64 1-d ndarray.
+    """
+    if np.ndim(backcast) == 0:
+        return float(backcast)
+    return ensure1d(backcast, "backcast")
 
 
 class VarianceForecast:
@@ -548,6 +572,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             Array containing columns of lower and upper bounds with the same
             number of elements as resids
         """
+        resids = ensure1d(resids, "resids")
         nobs = resids.shape[0]
 
         tau = min(75, nobs)
@@ -603,6 +628,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         backcast : float
             Value to use in backcasting in the volatility recursion
         """
+        resids = ensure1d(resids, "resids")
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
         w = w / sum(w)
@@ -625,6 +651,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         backcast : {float, ndarray}
             Backcast transformed to the model-appropriate scale
         """
+        backcast = _float_backcast(backcast)
         if np.any(backcast < 0):
             raise ValueError("User backcast value must be strictly positive.")
         return backcast
@@ -761,7 +788,10 @@ class VolatilityProcess(metaclass=ABCMeta):
         The analytic ``method`` is not supported for all models.  Attempting
         to use this method when not available will raise a ValueError.
         """
-        _parameters = to_array_1d(parameters)
+        _parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         valid_methods = ("analytic", "simulation", "bootstrap")
         method_name = method.lower() if isinstance(method, str) else method
         if method_name not in valid_methods:
@@ -924,10 +954,12 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
         sigma2[:] = parameters[0]
         return sigma2
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         return to_array_1d(np.array([np.var(resids)]))
 
     def simulate(
@@ -950,13 +982,16 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def backcast_transform(
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
+        backcast = _float_backcast(backcast)
         backcast = super().backcast_transform(backcast)
         return backcast
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
+        resids = ensure1d(resids, "resids")
         return float(np.var(resids))
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         v = float(np.var(resids))
         return [(v / 100000.0, 10.0 * (v + float(resids.mean()) ** 2.0))]
 
@@ -1101,6 +1136,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def variance_bounds(
         self, resids: ArrayLike1D, power: float = 2.0
     ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -1130,6 +1166,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return model_name
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         v = float(np.mean(np.absolute(resids) ** self.power))
 
         bounds = [(1e-8 * v, 10.0 * float(v))]
@@ -1174,6 +1211,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
         # sresids is I(resids<0)
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         power = self.power
         fresids = np.absolute(resids) ** power
         sresids = np.sign(resids)
@@ -1192,6 +1233,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def backcast_transform(
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
+        backcast = _float_backcast(backcast)
         backcast = super().backcast_transform(backcast)
         _backcast = np.sqrt(backcast) ** self.power
         if np.isscalar(_backcast):
@@ -1200,6 +1242,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return to_array_1d(_backcast)
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
+        resids = ensure1d(resids, "resids")
         power = self.power
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
@@ -1216,6 +1259,8 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q, power = self.p, self.o, self.q, self.power
         errors = rng(nobs + burn)
@@ -1263,6 +1308,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[burn:], sigma2[burn:]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         p, o, q = self.p, self.o, self.q
         power = self.power
         alphas = [0.01, 0.05, 0.1, 0.2]
@@ -1544,7 +1590,6 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 "lags must be a positive integer or a non-empty 1-d array-like of "
                 "positive integers."
             )
-        lags_arr = ensure1d(lags_arr, "lags")
         self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
@@ -1559,6 +1604,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return descr
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         lags = self.lags
         k_arch = lags.shape[0]
 
@@ -1585,6 +1631,10 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         lags = self.lags
         nobs = resids.shape[0]
 
@@ -1601,6 +1651,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         lags = self.lags
         errors = rng(nobs + burn)
@@ -1637,6 +1689,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[burn:], sigma2[burn:]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         k_arch = self._num_lags
 
         alpha = 0.9
@@ -1810,6 +1863,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return descr
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         bounds = [(0.0, 10 * float(np.mean(resids**2.0)))]  # omega
         bounds.extend([(0.0, 1.0)])  # 0 <= alpha < 1
         if self._asym:
@@ -1864,6 +1918,10 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         nobs = resids.shape[0]
         weights = self._weights(parameters)
         if not self._asym:
@@ -1883,6 +1941,8 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         _parameters = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
         if self._asym:
             omega, alpha, gamma = _parameters[:3]
@@ -1933,6 +1993,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[burn:], sigma2[burn:]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         theta = [0.1, 0.5, 0.8, 0.9]
         alpha = [0.8, 0.9, 0.95, 0.98]
         var = (resids**2).mean()
@@ -2122,6 +2183,7 @@ class ARCH(GARCH):
         self._num_params = p + 1
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         p = self.p
 
         alphas = np.arange(0.1, 0.95, 0.05)
@@ -2211,6 +2273,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
         lam = parameters[0] if self._estimate_lam else self.lam
         assert isinstance(lam, float)
         return ewma_recursion(
@@ -2232,6 +2297,8 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         errors = rng(nobs + burn)
 
@@ -2425,6 +2492,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             Backcast values for each EWMA component
         """
 
+        resids = ensure1d(resids, "resids")
         nobs = resids.shape[0]
         mus = self._ewma_smoothing_parameters()
 
@@ -2442,6 +2510,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def backcast_transform(
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
+        backcast = _float_backcast(backcast)
         backcast = super().backcast_transform(backcast)
         mus = self._ewma_smoothing_parameters()
         backcast_arr = np.asarray(backcast)
@@ -2464,6 +2533,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def variance_bounds(
         self, resids: ArrayLike1D, power: float = 2.0
     ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
         return np.ones((resids.shape[0], 1)) * np.array([-1.0, np.finfo(np.double).max])
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
@@ -2480,6 +2550,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
         nobs = resids.shape[0]
         kmax = self.kmax
         w = self._ewma_combination_weights()
@@ -2505,6 +2577,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         errors = rng(nobs + burn)
 
         kmax = self.kmax
@@ -2706,9 +2780,11 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def variance_bounds(
         self, resids: ArrayLike1D, power: float = 2.0
     ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
         return super().variance_bounds(resids, 2.0)
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         v = np.mean(resids**2.0)
         log_const = np.log(10000.0)
         lnv = np.log(v)
@@ -2735,6 +2811,10 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
         if (self._arrays is not None) and (self._arrays[0].shape[0] == nobs):
@@ -2765,10 +2845,12 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def backcast_transform(
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
+        backcast = _float_backcast(backcast)
         backcast = super().backcast_transform(backcast)
         return float(np.log(backcast))
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
+        resids = ensure1d(resids, "resids")
         return float(np.log(super().backcast(resids)))
 
     def simulate(
@@ -2779,6 +2861,8 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
@@ -2826,6 +2910,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[burn:], sigma2[burn:]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         p, o, q = self.p, self.o, self.q
         alphas = [0.01, 0.05, 0.1, 0.2]
         gammas = [-0.1, 0.0, 0.1]
@@ -2973,7 +3058,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._name = "Fixed Variance"
         self._name += " (Unit Scale)" if unit_scale else ""
         self._variance_series = ensure1d(variance, "variance", True)
-        self._variance = np.atleast_1d(variance)
+        self._variance = ensure1d(variance, "variance")
 
     def compute_variance(
         self,
@@ -2983,6 +3068,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
         if self._stop - self._start != sigma2.shape[0]:
             raise ValueError("start and stop do not have the correct values.")
         sigma2[:] = self._variance[self._start : self._stop]
@@ -2991,6 +3077,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         if self._variance.ndim != 1 or self._variance.shape[0] < self._stop:
             raise ValueError(
                 f"variance must be a 1-d array with at least {self._stop} elements"
@@ -3020,6 +3107,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return 1.0
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         if not self._unit_scale:
             v = float(np.squeeze(self.starting_values(resids)))
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
@@ -3218,6 +3306,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def variance_bounds(
         self, resids: ArrayLike1D, power: float = 2.0
     ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -3238,6 +3327,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return f"Power FIGARCH (power: {self.power:0.1f})"
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         eps_half = np.sqrt(np.finfo(np.double).eps)
         v = np.mean(np.absolute(resids) ** self.power)
 
@@ -3285,6 +3375,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         power = self.power
         fresids = np.absolute(resids) ** power
 
@@ -3302,6 +3396,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def backcast_transform(
         self, backcast: float | Float64Array1D
     ) -> float | Float64Array1D:
+        backcast = _float_backcast(backcast)
         backcast = super().backcast_transform(backcast)
         _backcast = np.sqrt(backcast) ** self.power
         if np.isscalar(_backcast):
@@ -3310,6 +3405,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return to_array_1d(_backcast)
 
     def backcast(self, resids: ArrayLike1D) -> float | Float64Array1D:
+        resids = ensure1d(resids, "resids")
         power = self.power
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
@@ -3326,6 +3422,8 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
         p, q, power = self.p, self.q, self.power
@@ -3375,6 +3473,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[truncation + burn :], sigma2[truncation + burn :]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         truncation = self.truncation
         ds = [0.2, 0.5, 0.7]
         phi_ratio = [0.2, 0.5, 0.8] if self.p else [0]
@@ -3656,6 +3755,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return "FI Power ARCH"
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         eps_half = np.sqrt(np.finfo(np.double).eps)
         delta = 2.0 if self._est_delta else self._delta
         v = max(
@@ -3752,6 +3852,10 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         nobs = resids.shape[0]
         abs_resids = np.absolute(resids)
         if self._sigma_delta.shape[0] != nobs:
@@ -3795,6 +3899,8 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
         p, o, q = self.p, self.o, self.q
@@ -3858,6 +3964,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return data[truncation + burn :], sigma2[truncation + burn :]
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         truncation = self.truncation
         p, o, q = self.p, self.o, self.q
         ds = [0.2, 0.5, 0.7]
@@ -3920,6 +4027,7 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def variance_bounds(
         self, resids: ArrayLike1D, power: float = 2.0
     ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
         return super().variance_bounds(resids, power)
 
     def _check_forecasting_method(
@@ -4140,6 +4248,10 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
+        parameters = ensure1d(parameters, "parameters")
+        resids = ensure1d(resids, "resids")
+        backcast = _float_backcast(backcast)
+        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
         abs_resids = np.absolute(resids)
         if self._sigma_delta.shape[0] != resids.shape[0]:
             self._sigma_delta = np.empty(resids.shape[0])
@@ -4164,6 +4276,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
         v = max(float(np.mean(np.absolute(resids) ** 0.5)), float(np.mean(resids**2)))
 
         bounds = [(0.0, 10.0 * float(v))]
@@ -4177,6 +4290,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return bounds
 
     def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
         p, o, q = self.p, self.o, self.q
         alphas = [0.03, 0.05, 0.08, 0.15]
         alpha_beta = [0.8, 0.9, 0.95, 0.975, 0.99]
@@ -4264,6 +4378,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
+        if initial_value is not None:
+            initial_value = _float_backcast(initial_value)
         params = ensure1d(parameters, "parameters", False).astype(float)
         params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q

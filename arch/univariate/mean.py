@@ -75,6 +75,7 @@ from arch.univariate.volatility import (
 )
 from arch.utility.array import (
     AbstractDocStringInheritor,
+    as_float64,
     cutoff_to_index,
     ensure1d,
     parse_dataframe,
@@ -551,8 +552,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
+        params = ensure1d(params, "params")
         _regressors = self._fit_regressors if y is None else regressors
-        y = self._fit_y if y is None else y
+        y = self._fit_y if y is None else ensure1d(y, "y")
         assert _regressors is not None
         return y - np.asarray(_regressors, dtype=float).dot(params)
 
@@ -744,7 +746,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             elif isinstance(self._x_original, pd.DataFrame):
                 self._x = self._x_original
             else:
-                x_original = np.asarray(self._x_original, dtype=float)
+                x_original = as_float64(self._x_original, "x")
                 if x_original.ndim == 1:
                     x_original = x_original[:, None]
                 self._x = cast("Float64Array2D", x_original)
@@ -754,7 +756,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
             names, self._x_index = parse_dataframe(self._x, def_names)
             self._x_names = [str(name) for name in names]
-            self._x = cast("Float64Array2D", np.asarray(self._x, dtype=float))
+            self._x = cast("Float64Array2D", as_float64(self._x, "x"))
 
     def _reformat_lags(self) -> None:
         """
@@ -1417,6 +1419,7 @@ class ConstantMean(HARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
+        params = ensure1d(params, "params")
         _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
         return _y - params[0]
 
@@ -1574,7 +1577,7 @@ class ZeroMean(HARX):
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         if y is not None:
-            return y
+            return ensure1d(y, "y")
         assert self._fit_y is not None
         return self._fit_y
 
@@ -1941,6 +1944,7 @@ class ARCHInMean(ARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
+        params = ensure1d(params, "params")
         return super().resids(
             cast("Float64Array1D", params[:-1]), y=y, regressors=regressors
         )
@@ -2398,6 +2402,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
+        params = ensure1d(params, "params")
         _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
         mu = params[0] if self.constant else 0.0
         theta = params[int(self.constant) :]
