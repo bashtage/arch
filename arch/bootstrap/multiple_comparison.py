@@ -1,6 +1,6 @@
 from collections.abc import Hashable, Sequence
 import copy
-from typing import cast
+from typing import Any, cast
 import warnings
 
 import numpy as np
@@ -22,10 +22,19 @@ from arch.bootstrap.base import (
     StationaryBootstrap,
     _get_random_integers,
 )
-from arch.utility._validation import check_option
-from arch.utility.array import DocStringInheritor, ensure2d
+from arch.utility._validation import (
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+    check_seed,
+)
+from arch.utility.array import DocStringInheritor, as_float64, ensure2d
 
 __all__ = ["MCS", "SPA", "RealityCheck", "StepM"]
+
+_PVALUE_TYPES = ("lower", "consistent", "upper")
 
 # Lower case names of the MCS methods, which map to the canonical names
 _MCS_METHODS = {"r": "R", "max": "max"}
@@ -51,6 +60,45 @@ def _bootstrap_class(bootstrap: str) -> type[CircularBlockBootstrap]:
         normalize=lambda value: value.replace(" ", "_"),
     )
     return _BOOTSTRAPS[name]
+
+
+# The smallest number of observations. The SPA needs log(log(t)) > 0. The MCS of a
+# single observation runs and warns that the MCS is not valid for this problem.
+_MIN_OBS_MCS = 1
+_MIN_OBS_SPA = 3
+
+
+def _check_data(name: str, value: object, **kwargs: Any) -> np.ndarray:
+    """
+    Check the shape of losses, allowing NaN and inf that are rejected later.
+
+    Data that cannot be converted to numbers keep the message of the conversion,
+    which says that float64 is required.
+    """
+    try:
+        return check_array(name, value, allow_nan=True, allow_inf=True, **kwargs)
+    except TypeError:
+        as_float64(value, name)
+        raise
+
+
+def _require_columns(name: str, arr: np.ndarray, minimum: int, value: object) -> None:
+    """Check the number of columns of 2-d data that has been checked to be 2-d"""
+    if arr.shape[1] < minimum:
+        plural = "" if minimum == 1 else "s"
+        raise ValueError(
+            f"{name} must be a 2-d array with at least {minimum} column{plural}; "
+            f"got shape {arr.shape} ({type(value).__name__})"
+        )
+
+
+def _check_resampling(
+    reps: object, block_size: object, seed: object, t: int
+) -> tuple[int, int | None, int | np.random.Generator | np.random.RandomState | None]:
+    """Check the arguments that control the bootstrap and that all procedures share"""
+    reps = check_int("reps", reps, lower=1)
+    block_size = check_int("block_size", block_size, lower=1, upper=t, allow_none=True)
+    return reps, block_size, check_seed("seed", seed)
 
 
 def _info_to_str(
@@ -242,16 +290,17 @@ class MCS(MultipleComparison):
     Parameters
     ----------
     losses : ndarray or DataFrame
-        T by k array containing losses from a set of models.
+        T by k array containing losses from a set of models. There must be at
+        least one row and two columns, and the losses must be finite.
     size : float
         Value in (0,1) to use as the test size when implementing the
         MCS. There is no default value.
     reps : int, optional
-        Number of bootstrap replications to use.
+        Number of bootstrap replications to use. Must be at least 1.
     block_size : int, optional
-        Length of window to use in the bootstrap.  If not provided, sqrt(T)
-        is used.  In general, this should be provided and chosen to be
-        appropriate for the data.
+        Length of window to use in the bootstrap, between 1 and T.  If not
+        provided, sqrt(T) is used.  In general, this should be provided and
+        chosen to be appropriate for the data.
     method : {"R", "max"}, optional
         MCS test and elimination implementation method, either "max" or "R".
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
@@ -264,6 +313,18 @@ class MCS(MultipleComparison):
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
+
+    Raises
+    ------
+    TypeError
+        If reps or block_size is not an integer, size is not a real number,
+        seed is not an integer, a Generator, a RandomState or None, an option
+        is not a string, or the losses cannot be converted to float64.
+    ValueError
+        If the losses are not 2-d with at least one row and two columns, or
+        contain NaN or inf, size is not in (0,1), reps is less than 1,
+        block_size is not between 1 and T, seed is negative, or an option is
+        not one of the allowed values.
 
     Notes
     -----
@@ -289,20 +350,26 @@ class MCS(MultipleComparison):
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
+        # Non-finite losses are rejected below with a message about the losses
+        _check_data("losses", losses, ndim=2, min_length=_MIN_OBS_MCS)
         self.losses = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses, dtype=float)
         if not np.all(np.isfinite(self._losses_arr)):
             raise ValueError(
                 "losses must be finite. The losses contain NaN or infinite values."
             )
-        if self._losses_arr.shape[1] < 2:
-            raise ValueError("losses must have at least two columns")
-        self.size: float = size
+        _require_columns("losses", self._losses_arr, 2, losses)
+        self.size: float = check_float(
+            "size", size, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        reps, block_arg, seed = _check_resampling(
+            reps, block_size, seed, self.losses.shape[0]
+        )
         self.reps: int = reps
-        if block_size is None:
+        if block_arg is None:
             self.block_size = int(np.sqrt(self.losses.shape[0]))
         else:
-            self.block_size = block_size
+            self.block_size = block_arg
 
         self.t: int = self.losses.shape[0]
         self.k: int = self.losses.shape[1]
@@ -558,18 +625,20 @@ class StepM(MultipleComparison):
     Parameters
     ----------
     benchmark : ndarray or Series
-        T element array of benchmark model *losses*.
+        T element array of benchmark model *losses*.  There must be at least
+        three observations, and the losses must be finite.
     models : ndarray or DataFrame
-        T by k element array of alternative model *losses*.
+        T by k element array of alternative model *losses*, with the same T as
+        benchmark and k at least 1.
     size : float, optional
         Value in (0,1) to use as the test size when implementing the
         comparison.
     block_size : int, optional
-        Length of window to use in the bootstrap.  If not provided, sqrt(T)
-        is used.  In general, this should be provided and chosen to be
-        appropriate for the data.
+        Length of window to use in the bootstrap, between 1 and T.  If not
+        provided, sqrt(T) is used.  In general, this should be provided and
+        chosen to be appropriate for the data.
     reps : int, optional
-        Number of bootstrap replications to use.
+        Number of bootstrap replications to use. Must be at least 1.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Options are
 
@@ -592,6 +661,20 @@ class StepM(MultipleComparison):
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
+
+    Raises
+    ------
+    TypeError
+        If reps or block_size is not an integer, size is not a real number,
+        studentize or nested is not a bool, seed is not an integer, a
+        Generator, a RandomState or None, bootstrap is not a string, or the
+        losses cannot be converted to float64.
+    ValueError
+        If benchmark is not 1-d, models is not 2-d with T rows, there are fewer
+        than three observations, the losses contain NaN or inf, size is not in
+        (0,1), reps is less than 1, block_size is not between 1 and T, seed is
+        negative, nested is True and studentize is False, or bootstrap is not
+        one of the allowed values.
 
     See Also
     --------
@@ -631,8 +714,10 @@ class StepM(MultipleComparison):
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
-        self.models = ensure2d(models, "models")
+        self.size: float = check_float(
+            "size", size, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        # The SPA checks the data and the arguments that it shares with StepM
         self.spa: SPA = SPA(
             benchmark,
             models,
@@ -643,11 +728,12 @@ class StepM(MultipleComparison):
             nested=nested,
             seed=seed,
         )
+        self.benchmark = self.spa.benchmark
+        self.models = self.spa.models
         self.block_size: int = self.spa.block_size
         self.t: int = self.models.shape[0]
         self.k: int = self.models.shape[1]
-        self.reps: int = reps
-        self.size: float = size
+        self.reps: int = self.spa.reps
         self._superior_models: list[int] | None = None
         self._bootstrap = self.spa.bootstrap
 
@@ -716,15 +802,17 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     Parameters
     ----------
     benchmark : ndarray or Series
-        T element array of benchmark model *losses*.
+        T element array of benchmark model *losses*.  There must be at least
+        three observations, and the losses must be finite.
     models : ndarray or DataFrame
-        T by k element array of alternative model *losses*.
+        T by k element array of alternative model *losses*, with the same T as
+        benchmark and k at least 1.
     block_size : int, optional
-        Length of window to use in the bootstrap.  If not provided, sqrt(T)
-        is used.  In general, this should be provided and chosen to be
-        appropriate for the data.
+        Length of window to use in the bootstrap, between 1 and T.  If not
+        provided, sqrt(T) is used.  In general, this should be provided and
+        chosen to be appropriate for the data.
     reps : int, optional
-        Number of bootstrap replications to use.
+        Number of bootstrap replications to use. Must be at least 1.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
         Bootstrap to use.  Options are
 
@@ -747,6 +835,19 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         Seed value to use when creating the bootstrap used in the comparison.
         If an integer or None, the NumPy default_rng is used with the seed
         value.  If a Generator or a RandomState, the argument is used.
+
+    Raises
+    ------
+    TypeError
+        If reps or block_size is not an integer, studentize or nested is not a
+        bool, seed is not an integer, a Generator, a RandomState or None,
+        bootstrap is not a string, or the losses cannot be converted to float64.
+    ValueError
+        If benchmark is not 1-d, models is not 2-d with T rows, there are fewer
+        than three observations, the losses contain NaN or inf, reps is less
+        than 1, block_size is not between 1 and T, seed is negative, nested is
+        True and studentize is False, or bootstrap is not one of the allowed
+        values.
 
     See Also
     --------
@@ -828,16 +929,33 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         *,
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
+        studentize = check_bool("studentize", studentize)
+        nested = check_bool("nested", nested)
         if nested and not studentize:
             raise ValueError("nested can only be True when studentize is True")
         super().__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
+        # Non-finite values are rejected below with a message about the data
+        benchmark_1d = _check_data(
+            "benchmark", benchmark, ndim=1, min_length=_MIN_OBS_SPA
+        )
+        # Series and DataFrames keep their labels. Other data, which can be a column
+        # or a row, becomes a column.
+        self.benchmark = ensure2d(benchmark_1d, "benchmark")
+        if isinstance(benchmark, (pd.Series, pd.DataFrame)):
+            labeled = ensure2d(benchmark, "benchmark")
+            if labeled.shape[1] == 1:
+                self.benchmark = labeled
+        _check_data("models", models, shape=(self.benchmark.shape[0], None))
         self.models = ensure2d(models, "models")
+        _require_columns("models", np.asarray(self.models), 1, models)
+        reps, block_arg, seed = _check_resampling(
+            reps, block_size, seed, self.benchmark.shape[0]
+        )
         self.reps: int = reps
-        if block_size is None:
+        if block_arg is None:
             self.block_size = int(np.sqrt(self.benchmark.shape[0]))
         else:
-            self.block_size = block_size
+            self.block_size = block_arg
         self.studentize: bool = studentize
         self.nested: bool = nested
         # Subtract in floating point. Unsigned integer losses would wrap around
@@ -916,10 +1034,31 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         Parameters
         ----------
         selector : ndarray
-            Boolean array indicating which columns to use when computing the
-            p-values.  This is primarily for use by StepM.
+            Boolean array with k elements indicating which columns to use when
+            computing the p-values.  At least one element must be True. This is
+            primarily for use by StepM.
+
+        Raises
+        ------
+        TypeError
+            If selector is not an array of Booleans.
+        ValueError
+            If selector does not have one element for each model or selects no
+            model.
         """
-        self._selector = selector
+        checked = check_array("selector", selector, shape=(self.k,))
+        rule = f"a Boolean array with {self.k} elements and at least one True"
+        if np.asarray(selector).dtype != np.bool_:
+            raise TypeError(
+                f"selector must be {rule}; got {np.asarray(selector).dtype} data "
+                f"({type(selector).__name__})"
+            )
+        if not checked.any():
+            raise ValueError(
+                f"selector must be {rule}; got no True element "
+                f"({type(selector).__name__})"
+            )
+        self._selector = np.asarray(selector)
 
     def compute(self) -> None:
         """
@@ -1093,10 +1232,20 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             Series containing critical values for the lower, consistent and
             upper methodologies. When studentize is True, the critical values
             apply to the studentized mean loss differentials.
+
+        Raises
+        ------
+        TypeError
+            If pvalue is not a real number.
+        ValueError
+            If pvalue is not in (0,1).
+        RuntimeError
+            If compute has not been called.
         """
+        pvalue = check_float(
+            "pvalue", pvalue, lower=0.0, upper=1.0, inclusive="neither"
+        )
         self._check_compute()
-        if not (0.0 < pvalue < 1.0):
-            raise ValueError("pvalue must be in (0,1)")
         # Subset if needed
         assert self._simulated_vals is not None
         simulated_values = self._simulated_vals[self._selector, :, :]
@@ -1126,14 +1275,27 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             superior models. Positions are returned, and not column names, even
             if models is a DataFrame.
 
+        Raises
+        ------
+        TypeError
+            If pvalue is not a real number or pvalue_type is not a string.
+        ValueError
+            If pvalue is not in (0,1) or pvalue_type is not one of the allowed
+            values.
+        RuntimeError
+            If compute has not been called.
+
         Notes
         -----
         List of superior models returned is always with respect to the initial
         set of models, even when using subset().
         """
+        pvalue = check_float(
+            "pvalue", pvalue, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        pvalue_key = check_option("pvalue_type", pvalue_type, _PVALUE_TYPES)
         self._check_compute()
-        pvalue_type = check_option("pvalue_type", pvalue_type, tuple(self._pvalues))
-        crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
+        crit_val = self.critical_values(pvalue=pvalue)[pvalue_key]
         better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)
         return np.argwhere(better_models).flatten()
