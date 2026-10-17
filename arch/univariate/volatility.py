@@ -1114,6 +1114,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             for horizons in [1, horizon].
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
+            Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be 1 or larger.

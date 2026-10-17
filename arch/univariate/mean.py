@@ -3233,14 +3233,14 @@ def arch_model(
         regressors.
     mean : str, optional
         Name of the mean model.  Currently supported options are: 'Constant',
-        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.
+        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.  Not case sensitive.
     lags : int or list of int, optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
         'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
-        and 'HARCH'.
+        and 'HARCH'.  Not case sensitive.
     p : int or list of int, optional
         Lag order of the symmetric innovation.  A list of lags can only be used
         with the 'HARCH' volatility model.  Must be at least 0, and integers
@@ -3252,7 +3252,8 @@ def arch_model(
     power : float, optional
         Power to use with GARCH and related models.  Must be finite and positive.
     dist : str, optional
-        Name of the error distribution.  Currently supported options are:
+        Name of the error distribution.  Not case sensitive.  Currently
+        supported options are:
 
             * Normal: 'normal', 'gaussian' (default)
             * Student's t: 't', 'studentst'

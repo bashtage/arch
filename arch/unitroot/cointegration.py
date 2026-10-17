@@ -485,7 +485,8 @@ class DynamicOLS:
         parameters in the cointegrating regression (the number of columns of x
         and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
-        Trend to include in the cointegrating regression. Trends are:
+        Trend to include in the cointegrating regression. Not case sensitive.
+        Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
@@ -511,7 +512,8 @@ class DynamicOLS:
         The maximum lead to consider. See Notes for value used when None. It
         must be an integer between 0 and nobs - 2.
     method : {"aic", "bic", "hqic"}, optional
-        The method used to select lag length when lags or leads is None.
+        The method used to select lag length when lags or leads is None. Not
+        case sensitive.
 
         * "aic" - Akaike Information Criterion
         * "hqic" - Hannan-Quinn Information Criterion
@@ -753,12 +755,13 @@ class DynamicOLS:
         ----------
         cov_type : {"unadjusted", "homoskedastic", "robust", "kernel"}, optional
             Either "unadjusted" (or its equivalent "homoskedastic") or "robust"
-            (or its equivalent "kernel").
+            (or its equivalent "kernel"). Not case sensitive.
         kernel : str, optional
             The string name of any known kernel-based long-run
             covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
-            and "quadratic-spectral" for the Quadratic Spectral kernel.
+            and "quadratic-spectral" for the Quadratic Spectral kernel. Not case
+            sensitive.
         bandwidth : float, optional
             The bandwidth to use. It must be a finite non-negative number. If
             not provided, the optimal bandwidth is estimated from the data.
@@ -976,7 +979,8 @@ COMMON_DOCSTRING = r"""
         parameters in the cointegrating regression (the number of columns of x
         and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
-        Trend to include in the cointegrating regression. Trends are:
+        Trend to include in the cointegrating regression. Not case sensitive.
+        Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
@@ -987,7 +991,7 @@ COMMON_DOCSTRING = r"""
         Trends that affect the x-data but do not appear in the
         cointegrating regression. x_trend must be at least as large as
         trend, so that if trend is "ct", x_trend must be either "ct" or
-        "ctt". If None, x_trend is the same as trend.
+        "ctt". If None, x_trend is the same as trend. Not case sensitive.
 
     Raises
     ------
@@ -1204,7 +1208,8 @@ class FullyModifiedOLS:
             The string name of any known kernel-based long-run
             covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
-            and "quadratic-spectral" for the Quadratic Spectral kernel.
+            and "quadratic-spectral" for the Quadratic Spectral kernel. Not case
+            sensitive.
         bandwidth : float, optional
             The bandwidth to use. It must be a finite non-negative number. If
             not provided, the optimal bandwidth is estimated from the data.

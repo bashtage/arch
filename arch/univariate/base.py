@@ -999,7 +999,8 @@ class ARCHModel(metaclass=ABCMeta):
             Must not be negative.
         disp : bool or {"off", "final"}, optional
             Either 'final' to print optimization result or 'off' to display
-            nothing. If using a boolean, False is "off" and True is "final".
+            nothing. Not case sensitive. If using a boolean, False is "off" and
+            True is "final".
         starting_values : array_like, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components. Must have one finite element
@@ -1010,8 +1011,8 @@ class ARCHModel(metaclass=ABCMeta):
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimator. Any
-            other value raises a ValueError.
+            corresponds to Bollerslev-Wooldridge covariance estimator. Not case
+            sensitive. Any other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
         first_obs : int, str, date, datetime, Timestamp or Period, optional
@@ -1510,13 +1511,13 @@ class ARCHModel(metaclass=ABCMeta):
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned.
+            realization and h-step forecast are aligned. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.
@@ -2059,13 +2060,13 @@ class ARCHModelFixedResult(_SummaryRepr):
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned.
+            realization and h-step forecast are aligned. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.
@@ -2221,7 +2222,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             is set to the earliest forecastable date. An integer must be in
             [0, nobs], and a date must be in the index.
         plot_type : {"volatility", "mean"}, optional
-            Quantity to plot, the forecast volatility or the forecast mean.
+            Quantity to plot, the forecast volatility or the forecast mean. Not case
+            sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
@@ -2229,7 +2231,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             models that do not evolve in squares such as EGARCH or TARCH do not
             support the 'analytic' method for horizons > 1. For these models,
             hedgehog_plot raises a ValueError unless horizon is 1 or method is
-            'simulation' or 'bootstrap'.
+            'simulation' or 'bootstrap'. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.

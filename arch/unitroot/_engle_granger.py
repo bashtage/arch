@@ -57,7 +57,8 @@ def engle_granger(
         parameters in the cointegrating regression (the number of columns of x
         and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
-        Trend to include in the cointegrating regression. Trends are:
+        Trend to include in the cointegrating regression. Not case sensitive.
+        Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
@@ -75,7 +76,7 @@ def engle_granger(
         integer between 0 and nobs - 2.
     method : {"aic", "bic", "t-stat", "maic"}, optional
         The method used to select the number of lags included in the
-        Augmented Dickey-Fuller regression.
+        Augmented Dickey-Fuller regression. Not case sensitive.
 
         * "aic": Select the minimum of the Akaike IC
         * "bic": Select the minimum of the Schwarz/Bayesian IC
@@ -314,7 +315,7 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     Parameters
     ----------
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model.
+        The trend included in the model. Not case sensitive.
     num_x : int
         The number of cross-sectional regressors in the model.
         Must be between 1 and 12.
@@ -347,7 +348,7 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     stat : float
         The test statistic.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model.
+        The trend included in the model. Not case sensitive.
     num_x : int
         The number of cross-sectional regressors in the model.
         Must be between 1 and 12.

@@ -73,7 +73,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         parameters, see Notes.
     method : {"aic", "hqc", "bic"}, optional
         The information criteria to use in the model specification search.
-        Input is not case sensitive.
+        Not case sensitive.
     diagonal : bool, optional
         Flag indicating whether the specification search also considers
         models where the coefficient matrices on the final lags are
