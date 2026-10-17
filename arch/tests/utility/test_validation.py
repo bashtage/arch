@@ -39,7 +39,7 @@ from arch.utility._validation import (
 
 FORM = r"^{name} must be .+; got .+ \(\w+\)$"
 
-BOOL_BAD_VALUES = [value for value, _ in BOOL_BAD if value is not None]
+BOOL_BAD_VALUES = [(value, exc) for value, exc in BOOL_BAD if value is not None]
 INT_BAD_VALUES = [value for value, _ in INT_BAD]
 FLOAT_BAD_TYPE = [value for value, exc in FLOAT_BAD if exc is TypeError]
 FLOAT_BAD_VALUE = [value for value, exc in FLOAT_BAD if exc is ValueError]
@@ -126,21 +126,51 @@ def test_bool_accepts(value):
     assert type(out) is bool
 
 
-@pytest.mark.parametrize("value", BOOL_BAD_VALUES, ids=ids_for(BOOL_BAD_VALUES))
-def test_bool_rejects(value):
-    with pytest.raises(TypeError, match=r"^flag must be True or False; got ") as e:
+@pytest.mark.parametrize(
+    ("value", "exc"), BOOL_BAD_VALUES, ids=ids_for(BOOL_BAD_VALUES)
+)
+def test_bool_rejects(value, exc):
+    with pytest.raises(exc, match=r"^flag must be True, False, 0 or 1; got ") as e:
         check_bool("flag", value)
     assert_form(e, "flag")
+
+
+ZERO_ONE = [0, 1, np.int8(0), np.uint64(1), np.int64(1)]
+NOT_ZERO_ONE = [2, -1, np.int16(5), np.uint8(255)]
+NOT_INTEGER = [1.0, 0.0, np.float32(1), "1", b"", [1], (0,)]
+
+
+@pytest.mark.parametrize("value", ZERO_ONE, ids=ids_for(ZERO_ONE))
+def test_bool_accepts_zero_and_one(value):
+    out = check_bool("flag", value)
+    assert out is bool(value)
+    assert type(out) is bool
+
+
+@pytest.mark.parametrize("value", NOT_ZERO_ONE, ids=ids_for(NOT_ZERO_ONE))
+def test_bool_integer_not_zero_or_one_is_a_value_error(value):
+    with pytest.raises(ValueError, match=r"^flag must be True, False, 0 or 1; got "):
+        check_bool("flag", value)
+    with pytest.raises(
+        ValueError, match=r"^flag must be True, False, 0, 1 or None; got "
+    ):
+        check_bool("flag", value, allow_none=True)
+
+
+@pytest.mark.parametrize("value", NOT_INTEGER, ids=ids_for(NOT_INTEGER))
+def test_bool_float_string_and_sequence_are_type_errors(value):
+    with pytest.raises(TypeError, match=r"^flag must be True, False, 0 or 1; got "):
+        check_bool("flag", value)
 
 
 def test_bool_none():
     assert check_bool("flag", None, allow_none=True) is None
     with pytest.raises(
-        TypeError, match=r"flag must be True or False; got None \(NoneType\)"
+        TypeError, match=r"flag must be True, False, 0 or 1; got None \(NoneType\)"
     ):
         check_bool("flag", None)
     with pytest.raises(
-        TypeError, match=r"flag must be True or False or None; got 'no'"
+        TypeError, match=r"flag must be True, False, 0, 1 or None; got 'no'"
     ):
         check_bool("flag", "no", allow_none=True)
 
@@ -748,28 +778,55 @@ def test_index_none_and_default():
     assert check_index("last_obs", None, 10, default=10) == 10
     with pytest.raises(
         TypeError,
-        match=r"^first_obs must be an integer position in \[0, 10\]; got None",
+        match=r"^first_obs must be an integer position in \[-10, 10\]; got None",
     ):
         check_index("first_obs", None, 10, allow_none=False)
 
 
-@pytest.mark.parametrize("value", [-1, -1000, 11, 10**6, np.int64(-3)])
+@pytest.mark.parametrize("value", [-11, -1000, 11, 10**6, np.int64(-30)])
 def test_index_out_of_range(value):
     with pytest.raises(
         ValueError,
-        match=r"^first_obs must be an integer position in \[0, 10\] or None; got ",
+        match=r"^first_obs must be an integer position in \[-10, 10\] or None; got ",
     ) as e:
         check_index("first_obs", value, 10)
     assert_form(e, "first_obs")
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (-1, 9),
+        (-10, 0),
+        (-4, 6),
+        (np.int64(-3), 7),
+        (np.int8(-10), 0),
+        (0, 0),
+        (10, 10),
+    ],
+)
+def test_index_negative_positions_count_from_the_end(value, expected):
+    out = check_index("first_obs", value, 10)
+    assert out == expected
+    assert type(out) is int
+    # The same as Python indexing of the observations
+    assert list(range(10))[int(value) :] == list(range(10))[expected:]
+
+
 def test_index_upper():
     assert check_index("start", 9, 10, upper=9) == 9
+    assert check_index("start", -1, 10, upper=9) == 9
+    assert check_index("start", -10, 10, upper=9) == 0
     with pytest.raises(
         ValueError,
-        match=r"start must be an integer position in \[0, 9\] or None; got 10",
+        match=r"start must be an integer position in \[0, 9\] or in \[-10, -1\] "
+        r"or None; got 10",
     ):
         check_index("start", 10, 10, upper=9)
+    # A negative position that is converted to a position above upper
+    with pytest.raises(ValueError, match=r"in \[0, 5\] or in \[-10, -5\]; got -4"):
+        check_index("start", -4, 10, upper=5, allow_none=False)
+    assert check_index("start", -5, 10, upper=5) == 5
 
 
 @pytest.mark.parametrize(
@@ -781,7 +838,8 @@ def test_index_wrong_types(value):
     # "x" is a string and a date-like value, without a date index it is a ValueError
     exc = ValueError if isinstance(value, str) else TypeError
     with pytest.raises(
-        exc, match=r"^first_obs must be an integer position in \[0, 10\] or None; got "
+        exc,
+        match=r"^first_obs must be an integer position in \[-10, 10\] or None; got ",
     ):
         check_index("first_obs", value, 10)
 
@@ -807,7 +865,7 @@ def test_index_dates_outside(dates):
     for value in ("2019-12-31", "2020-01-11", "1999-01-01", pd.Timestamp("2021-01-01")):
         with pytest.raises(
             ValueError,
-            match=r"^first_obs must be an integer position in \[0, 10\], "
+            match=r"^first_obs must be an integer position in \[-10, 10\], "
             r"a date within the index or None; got ",
         ) as e:
             check_index("first_obs", value, 10, index=dates)
@@ -828,14 +886,17 @@ def test_index_dates_unparseable_and_wrong_type(dates):
     with pytest.raises(ValueError, match="a date within the index"):
         check_index("first_obs", np.datetime64("NaT", "ns"), 10, index=dates)
     with pytest.raises(ValueError, match="a date within the index"):
-        check_index("first_obs", -1, 10, index=dates)
+        check_index("first_obs", -11, 10, index=dates)
+    # Negative positions are positions, not dates, with a date index
+    assert check_index("first_obs", -1, 10, index=dates) == 9
+    assert check_index("last_obs", -10, 10, index=dates) == 0
 
 
 def test_index_dates_need_a_date_index():
     for index in (None, pd.RangeIndex(10), pd.Index(list("abcdefghij"))):
         with pytest.raises(
             ValueError,
-            match=r"^first_obs must be an integer position in \[0, 10\] or None; "
+            match=r"^first_obs must be an integer position in \[-10, 10\] or None; "
             r"got '2020-01-05' \(str\)",
         ):
             check_index("first_obs", "2020-01-05", 10, index=index)
@@ -872,6 +933,10 @@ def test_policy_functions():
     assert v._is_bool(True)
     assert v._is_bool(np.False_)
     assert not v._is_bool(1)
+    assert v._is_flag_integer(1)
+    assert v._is_flag_integer(np.uint8(0))
+    assert not v._is_flag_integer(True)
+    assert not v._is_flag_integer(1.0)
     assert v._is_integer(np.int16(1))
     assert not v._is_integer(True)
     assert v._is_real(Fraction(1, 2))

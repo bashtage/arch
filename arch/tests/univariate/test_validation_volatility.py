@@ -477,12 +477,12 @@ add_forecast_bad(
     "start",
     [
         *not_none(INT_BAD),
-        (-1, ValueError),
-        (np.int64(-10), ValueError),
+        (-301, ValueError),
+        (np.int64(-310), ValueError),
         (301, ValueError),
     ],
 )
-add_forecast_good("start", [None, 0, 1, 299, 300, *INT_GOOD])
+add_forecast_good("start", [None, 0, 1, 299, 300, -1, -300, np.int64(-10), *INT_GOOD])
 add_forecast_bad("simulations", [*INT_BAD, (0, ValueError), (-1, ValueError)])
 add_forecast_bad(
     "simulations", [*INT_BAD, (0, ValueError), (-1, ValueError)], SIMULATION

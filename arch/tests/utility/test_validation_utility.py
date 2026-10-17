@@ -324,7 +324,7 @@ def _cutoff(**kw):
 CUT_BASE = {"cutoff": 3, "index": IDX, "default": 0}
 CUT_INT_BAD = [
     *[(v, ValueError if v == "2" else e) for v, e in INT_BAD if v is not None],
-    (-1, ValueError),
+    (-NOBS - 1, ValueError),
     (np.int64(-1000), ValueError),
     (NOBS + 1, ValueError),
     (np.int32(10**6), ValueError),
@@ -356,7 +356,7 @@ CUT_ROWS = [
         _cutoff,
         CUT_BASE,
         "cutoff",
-        [0, NOBS, None, np.int64(NOBS), np.uint8(5), *INT_GOOD],
+        [0, NOBS, None, np.int64(NOBS), np.uint8(5), -1, -NOBS, np.int8(-3), *INT_GOOD],
     ),
     *bad_value_rows(
         "cutoff_to_index",
@@ -537,7 +537,7 @@ FIND_ROWS = [
             (np.True_, TypeError),
             (None, TypeError),
             ([3], TypeError),
-            (-1, ValueError),
+            (-NOBS - 1, ValueError),
             (NOBS + 1, ValueError),
             ("not a date", ValueError),
             ("2021-01-01", ValueError),
@@ -548,7 +548,16 @@ FIND_ROWS = [
         _find_index,
         FIND_BASE,
         "index",
-        [0, NOBS, np.int64(4), "2020-01-03", pd.Timestamp("2020-01-04")],
+        [
+            0,
+            NOBS,
+            np.int64(4),
+            -1,
+            -NOBS,
+            np.int8(-3),
+            "2020-01-03",
+            pd.Timestamp("2020-01-04"),
+        ],
     ),
     *bad_value_rows(
         "find_index",

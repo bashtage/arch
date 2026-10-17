@@ -25,6 +25,7 @@ from arch._typing import (
     Float64Array,
     Float64Array1D,
     Float64Array2D,
+    ForecastAlignment,
     ForecastingMethod,
     Int32Array,
     Int64Array,
@@ -37,6 +38,7 @@ from arch.univariate.base import (
     ARCHModelForecast,
     ARCHModelResult,
     _callback_info,
+    _check_align,
     implicit_constant,
 )
 from arch.univariate.distribution import (
@@ -432,7 +434,8 @@ def _check_forecast_arguments(
         The position of the first forecast, which is the default start if start is
         None.
     align : str
-        The alignment, in lower case.
+        The alignment, "origin" or "target". The alias "horizon" is returned as
+        "target".
     method : str
         The forecasting method, in lower case.
     simulations : int
@@ -449,7 +452,7 @@ def _check_forecast_arguments(
     horizon = check_int("horizon", horizon, lower=1)
     align = cast(
         "Literal['origin', 'target']",
-        check_option("align", align, ("origin", "target")),
+        _check_align(align),
     )
     method = cast(
         "ForecastingMethod",
@@ -1471,7 +1474,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         params: ArrayLike1D,
         horizon: int = 1,
         start: int | DateLike | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
@@ -2372,7 +2375,7 @@ class ARCHInMean(ARX):
         params: ArrayLike1D,
         horizon: int = 1,
         start: int | DateLike | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
@@ -3032,7 +3035,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         params: ArrayLike1D,
         horizon: int = 1,
         start: int | DateLike | None = None,
-        align: Literal["origin", "target"] = "origin",
+        align: ForecastAlignment = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,

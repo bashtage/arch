@@ -282,7 +282,7 @@ FIX_FUNCS = {
     "MAMean": lambda **kw: MAMean(Y, lags=1).fix([0.1, 0.2, 1.0], **kw),
 }
 SAMPLE_BAD = [
-    (-1, ValueError),
+    (-NOBS - 1, ValueError),
     (np.int64(-1000), ValueError),
     (NOBS + 1, ValueError),
     (10**6, ValueError),
@@ -297,7 +297,7 @@ for _name, _func in FIT_FUNCS.items():
     for _arg in ("first_obs", "last_obs"):
         ROWS += bad_value_rows(f"fit-{_name}-{_arg}", _func, {}, _arg, SAMPLE_BAD)
         ROWS += good_value_rows(
-            f"fit-{_name}-{_arg}", _func, {}, _arg, [None, np.int64(10)]
+            f"fit-{_name}-{_arg}", _func, {}, _arg, [None, np.int64(10), -10]
         )
 for _name, _func in FIX_FUNCS.items():
     ROWS += bad_value_rows(f"fix-{_name}", _func, {}, "first_obs", SAMPLE_BAD)
@@ -587,8 +587,8 @@ for _name, _params in FORECAST_PARAMS.items():
         _base,
         "start",
         [
-            (-1, ValueError),
-            (np.int64(-7), ValueError),
+            (-NOBS - 1, ValueError),
+            (np.int64(-NOBS - 7), ValueError),
             (NOBS + 1, ValueError),
             (10**6, ValueError),
             (2.5, TypeError),
@@ -600,7 +600,11 @@ for _name, _params in FORECAST_PARAMS.items():
         ],
     )
     ROWS += good_value_rows(
-        f"forecast-{_name}", _func, _base, "start", [None, NOBS - 1, np.int64(NOBS - 1)]
+        f"forecast-{_name}",
+        _func,
+        _base,
+        "start",
+        [None, NOBS - 1, np.int64(NOBS - 1), -1, np.int64(-100)],
     )
     ROWS += bad_value_rows(
         f"forecast-{_name}",
@@ -1021,7 +1025,7 @@ def test_message_shows_the_value():
     assert str(info.value) == "lags must be an integer >= 0; got 2.5 (float)"
     with pytest.raises(TypeError) as info:
         HARX(Y, constant="no")
-    assert str(info.value) == "constant must be True or False; got 'no' (str)"
+    assert str(info.value) == "constant must be True, False, 0 or 1; got 'no' (str)"
     with pytest.raises(ValueError, match=r"^p must be") as info:
         arch_model(Y, p=-1)
     assert str(info.value) == "p must be an integer >= 0; got -1 (int)"

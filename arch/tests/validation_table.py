@@ -30,9 +30,10 @@ The message of every row also has to follow the common form, which `run_row` che
 cannot follow it, for example an error raised by a lower level routine.
 
 The ``*_BAD`` lists are ``(value, exception)`` pairs and the ``*_GOOD`` lists are
-values that must be accepted, for the provisional policy of decisions 63 and 66-68.
-If the maintainer chooses another answer, change the lists here (and the helpers in
-``arch/utility/_validation.py``); the tests of all areas follow.
+values that must be accepted, for the policy of decisions 63 and 66-68. A flag accepts
+``bool``, ``np.bool_`` and the integers 0 and 1 (decision 66). To change the policy,
+change the lists here (and the helpers in ``arch/utility/_validation.py``); the tests of
+all areas follow.
 """
 
 from __future__ import annotations
@@ -67,13 +68,18 @@ __all__ = [
 # Values that must be rejected: (value, exception). None is a bad value for a
 # parameter that does not accept None; remove it from the list for one that does.
 BOOL_BAD: list[tuple[Any, type[Exception]]] = [
-    (0, TypeError),
-    (1, TypeError),
+    (2, ValueError),
+    (-1, ValueError),
+    (np.int64(2), ValueError),
+    (np.uint8(255), ValueError),
     ("no", TypeError),
     ("", TypeError),
     (None, TypeError),
     (np.array([True]), TypeError),
+    (np.array(1), TypeError),
     (1.0, TypeError),
+    (0.0, TypeError),
+    (np.float64(1.0), TypeError),
 ]
 INT_BAD: list[tuple[Any, type[Exception]]] = [
     (2.5, TypeError),
@@ -109,7 +115,17 @@ SEED_BAD: list[tuple[Any, type[Exception]]] = [
 ]
 
 # Valid values: Python and NumPy scalars are accepted wherever the Python type is
-BOOL_GOOD: list[Any] = [True, False, np.True_, np.False_]
+BOOL_GOOD: list[Any] = [
+    True,
+    False,
+    np.True_,
+    np.False_,
+    0,
+    1,
+    np.int8(0),
+    np.int64(1),
+    np.uint16(1),
+]
 INT_GOOD: list[Any] = [3, np.int8(3), np.int32(3), np.int64(3), np.uint16(3)]
 FLOAT_GOOD: list[Any] = [
     0.5,

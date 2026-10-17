@@ -173,9 +173,9 @@ for _name, _func, _base in SPA_PROCEDURES:
         Row(
             _name,
             _func,
-            {**_base, "studentize": 0, "nested": True},
+            {**_base, "studentize": "no", "nested": True},
             TypeError,
-            r"^studentize must be True or False; got 0 \(int\)$",
+            r"^studentize must be True, False, 0 or 1; got 'no' \(str\)$",
             id=f"{_name}-studentize-checked-first",
             name="studentize",
         )

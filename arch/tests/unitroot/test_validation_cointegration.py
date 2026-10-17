@@ -250,7 +250,7 @@ INT_NONE_BAD = _no_none(INT_BAD)
 BOOL_NONE_BAD = _no_none(BOOL_BAD)
 FLOAT_NONE_BAD = _no_none(FLOAT_BAD)
 LAGS_RULE = r"an integer >= 0 or None"
-BOOL_RULE = r"True or False( or None)?"
+BOOL_RULE = r"True, False, 0(, 1 or None| or 1)"
 
 EG_ROWS = [
     *bad_value_rows("eg", _eg, BASE, "lags", INT_NONE_BAD, rule=LAGS_RULE),
@@ -378,7 +378,7 @@ DOLS_ROWS = [
     *_order_rows("max_lag"),
     *_order_rows("max_lead"),
     *bad_value_rows(
-        "dols", _dols, DOLS_BASE, "common", BOOL_BAD, rule=r"True or False"
+        "dols", _dols, DOLS_BASE, "common", BOOL_BAD, rule=r"True, False, 0 or 1"
     ),
     *good_value_rows(
         "dols", _dols, {**DOLS_BASE, "lags": 2, "leads": 2}, "common", BOOL_GOOD
@@ -465,10 +465,20 @@ DOLS_FIT_ROWS = [
         "dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
     ),
     *bad_value_rows(
-        "dols-fit", _dols_fit, FIT_BASE, "force_int", BOOL_BAD, rule=r"True or False"
+        "dols-fit",
+        _dols_fit,
+        FIT_BASE,
+        "force_int",
+        BOOL_BAD,
+        rule=r"True, False, 0 or 1",
     ),
     *bad_value_rows(
-        "dols-fit", _dols_fit, FIT_BASE, "df_adjust", BOOL_BAD, rule=r"True or False"
+        "dols-fit",
+        _dols_fit,
+        FIT_BASE,
+        "df_adjust",
+        BOOL_BAD,
+        rule=r"True, False, 0 or 1",
     ),
     *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_GOOD),
     *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "force_int", BOOL_GOOD),
@@ -518,7 +528,12 @@ def _fm_rows(name, ctor, fit):
             for flag in ("force_int", "diff", "df_adjust")
             for row in (
                 *bad_value_rows(
-                    f"{name}-fit", fit, FIT_BASE, flag, BOOL_BAD, rule=r"True or False"
+                    f"{name}-fit",
+                    fit,
+                    FIT_BASE,
+                    flag,
+                    BOOL_BAD,
+                    rule=r"True, False, 0 or 1",
                 ),
                 *good_value_rows(f"{name}-fit", fit, FIT_BASE, flag, BOOL_GOOD),
             )
@@ -594,7 +609,9 @@ def test_plot(row):
 
 
 SUMMARY_ROWS = [
-    *bad_value_rows("summary", _summary, {}, "full", BOOL_BAD, rule=r"True or False"),
+    *bad_value_rows(
+        "summary", _summary, {}, "full", BOOL_BAD, rule=r"True, False, 0 or 1"
+    ),
     *good_value_rows("summary", _summary, {}, "full", BOOL_GOOD),
 ]
 

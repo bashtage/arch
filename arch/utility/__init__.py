@@ -40,12 +40,19 @@ def test(
 
     Raises
     ------
+    TypeError
+        If ``exit`` or ``append`` is not a bool.
     ImportError
         If pytest is not installed.
     RuntimeError
         If the location of the tests does not exist.
     """
 
+    # Imported here to keep importing arch.utility light
+    from arch.utility._validation import check_bool  # noqa: PLC0415
+
+    exit = check_bool("exit", exit)
+    append = check_bool("append", append)
     try:
         import pytest  # noqa: PLC0415
     except ImportError as exc:

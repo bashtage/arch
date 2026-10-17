@@ -120,6 +120,19 @@ New features
   volatility processes. It is the value of :math:`E[z^2 1(z<0)]` of the distribution
   that the analytic forecasts of processes with an asymmetric term use, and the default
   is 0.5 (:issue:`933`, :issue:`939`).
+- Integer positions can be negative, and then count from the end as in Python indexing.
+  This applies to ``first_obs`` and ``last_obs`` of ``fit`` and ``fix``, to ``start`` of
+  ``forecast`` and ``hedgehog_plot``, to ``start`` of the ``forecast`` method of the
+  volatility processes, and to the integer arguments of ``cutoff_to_index`` and
+  ``find_index`` in ``arch.utility.array``. ``first_obs`` and ``last_obs`` are slice
+  bounds, so ``last_obs=-1`` drops the last observation and ``first_obs=-100`` starts
+  100 observations from the end. ``start`` is the index of an observation, so
+  ``start=-1`` is the last observation. A position outside ``[-nobs, nobs]`` raises a
+  ``ValueError``, and dates are unchanged (:issue:`956`).
+- ``"horizon"`` is an official alias of ``"target"`` for the ``align`` argument of
+  ``forecast`` and of ``ARCHModelForecast``. It is documented, listed in the error for
+  an invalid ``align``, and now accepted by the ``forecast`` method of the models, which
+  rejected it, as well as by the results (:issue:`956`).
 
 Changes that alter results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -426,10 +439,10 @@ Backward-incompatible changes
   ``"mle"``, was silently treated as ``"classic"`` unless the model has a closed-form
   estimator, and the results reported the unknown value (:issue:`925`).
 - ``first_obs``, ``last_obs`` and ``start`` of ``fit``, ``fix`` and ``forecast`` must be
-  an integer position in ``[0, nobs]``, a date inside the index, or ``None``. A float
-  such as ``first_obs=10.0``, a Boolean or a list raises a ``TypeError`` (they were
-  silently ignored, so the whole sample was used), and a position or date outside the
-  sample raises a ``ValueError``: ``fit(first_obs=-1000)`` recorded ``-1000`` as
+  an integer position in ``[-nobs, nobs]``, a date inside the index, or ``None``. A
+  float such as ``first_obs=10.0``, a Boolean or a list raises a ``TypeError`` (they
+  were silently ignored, so the whole sample was used), and a position or date outside
+  the sample raises a ``ValueError``: ``fit(first_obs=-1000)`` recorded ``-1000`` as
   ``fit_start``, ``fit(last_obs=10**6)`` recorded ``10**6`` as ``fit_stop``, and
   ``forecast(start=10**6)`` failed with "negative dimensions are not allowed". A string
   or date used with data that have no ``DatetimeIndex`` or ``PeriodIndex`` raises a
@@ -442,13 +455,23 @@ Backward-incompatible changes
   ``TypeError`` and a value that is not allowed (outside its range, not one of the
   options, of the wrong shape or length, or NaN or inf where finite values are needed)
   raises a ``ValueError``. Integer arguments must be Python or NumPy integers: floats,
-  including ``5.0``, and Booleans are rejected. Flags must be ``bool`` or ``np.bool_``:
-  ``"no"``, ``None`` and ``0`` were accepted before and used for their truth value. NaN
-  and inf in data raise, except where they are handled by design (the data of the
-  bootstraps, which are passed to the function of the user, the diagnostics that drop
-  NaN, and the residuals of a fitted model). Code that relied on the earlier behavior
-  needs to change. The entries below list the calls that are affected, and the policy is
-  described in the contributing guide (:issue:`949`).
+  including ``5.0``, and Booleans are rejected. Flags must be ``bool``, ``np.bool_`` or
+  the integers ``0`` and ``1``: ``"no"``, ``None`` and ``2`` were accepted before and
+  used for their truth value. NaN and inf in data raise, except where they are handled
+  by design (the data of the bootstraps, which are passed to the function of the user,
+  the diagnostics that drop NaN, and the residuals of a fitted model). Code that relied
+  on the earlier behavior needs to change. The entries below list the calls that are
+  affected, and the policy is described in the contributing guide (:issue:`949`,
+  :issue:`956`).
+- Flags accept ``bool``, ``np.bool_`` and the integers ``0`` and ``1`` (Python and NumPy
+  integers), which are converted to ``bool``. This applies to every argument that the
+  entries on the validation of arguments call a ``bool``. An integer other than ``0``
+  and ``1`` raises a ``ValueError``, and a float (including ``1.0``), a string, an
+  array and ``None`` raise a ``TypeError``, except that ``None`` is accepted where it is
+  the documented default (``low_memory`` and ``rescale``). The ``disp`` of ``fit`` is
+  ``"off"``, ``"final"`` or a flag, so that ``disp=0`` is ``"off"`` and ``disp=1`` is
+  ``"final"``. The ``exit`` and ``append`` of ``arch.test`` are now checked as flags
+  (:issue:`956`).
 
 - The unit root tests (:class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS`,
   :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.KPSS`,
@@ -506,8 +529,8 @@ Backward-incompatible changes
   leads must be larger than the number of parameters. The ``bandwidth`` of the
   cointegration estimators must be a finite real number of at least 0 or ``None``
   (``bandwidth=True`` ran as 1), and ``low_memory``, ``force_int``, ``diff``,
-  ``df_adjust``, ``common`` and similar flags must be ``bool`` (``"yes"``, ``None`` and
-  ``0`` were accepted). The error for an invalid ``x_trend`` is raised when the object
+  ``df_adjust``, ``common`` and similar flags must be ``bool`` (``"yes"`` and ``None``
+  were accepted). The error for an invalid ``x_trend`` is raised when the object
   is created and names ``x_trend`` (:issue:`949`).
 
 - The arguments of the kernel covariance estimators in ``arch.covariance.kernel``,
@@ -560,7 +583,7 @@ Backward-incompatible changes
   :meth:`~arch.univariate.base.ARCHModel.compute_param_cov` are checked when the method
   is called. A negative or NaN ``tol`` (``tol=0`` is still accepted), a ``backcast``
   that is NaN or inf, a negative ``update_freq`` (treated as 0), a ``show_warning`` that
-  is not ``bool`` (``0`` and ``"no"`` were accepted), a ``disp`` that is neither a
+  is not ``bool`` (``"no"`` was accepted), a ``disp`` that is neither a
   string nor a ``bool``, ``options`` that is not a mapping, and ``params`` of ``fix``
   with the wrong length or with NaN or inf now raise. ``fit(starting_values=...)``
   raises a ``ValueError`` if the starting values do not have one finite element for each
@@ -618,7 +641,7 @@ Backward-incompatible changes
   ``unit_scale`` must be ``bool`` (``asym="no"`` was asymmetric). ``simulate`` rejects
   ``nobs`` below 1, ``burn`` below 0 and an ``initial_value`` that is NaN, inf or
   negative (except for ``EGARCH``, where it is the log of the variance). ``forecast``
-  rejects ``start`` outside ``[0, len(resids)]``, ``simulations=0`` and an
+  rejects ``start`` outside ``[-len(resids), len(resids)]``, ``simulations=0`` and an
   ``asym_weight`` that is not in [0, 1]. ``rng=None`` with ``method="simulation"``
   raises a ``TypeError`` and not an ``AssertionError`` (:issue:`949`).
 

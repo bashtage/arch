@@ -1107,8 +1107,9 @@ class VolatilityProcess(metaclass=ABCMeta):
             2-d array containing columns of lower and upper bounds.
         start : int, optional
             Index of the first observation to use as the starting point for
-            the forecast, between 0 and ``len(resids)``.  Default is
-            ``len(resids) - 1``.
+            the forecast, between ``-len(resids)`` and ``len(resids)``.  A
+            negative value counts from the end, as in Python indexing, so that
+            -1 is the last observation.  Default is ``len(resids) - 1``.
         horizon : int, optional
             Forecast horizon.  Must be 1 or larger.  Forecasts are produced
             for horizons in [1, horizon].
@@ -1150,7 +1151,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             * If ``asym_weight`` is not a real number
         ValueError
             * If the method is not known
-            * If ``start`` is not in [0, len(resids)], ``horizon`` or
+            * If ``start`` is not in [-len(resids), len(resids)], ``horizon`` or
               ``simulations`` is smaller than 1, or ``asym_weight`` is not in
               [0, 1]
 
@@ -1167,7 +1168,9 @@ class VolatilityProcess(metaclass=ABCMeta):
         )
         horizon = check_int("horizon", horizon, lower=1)
         nobs = resids.shape[0]
-        start = check_int("start", start, lower=0, upper=nobs, allow_none=True)
+        start = check_int("start", start, lower=-nobs, upper=nobs, allow_none=True)
+        if start is not None and start < 0:
+            start += nobs
         simulations = check_int("simulations", simulations, lower=1)
         rng = cast(
             "RNGType | None",
