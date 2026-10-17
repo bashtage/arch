@@ -167,6 +167,7 @@ def add_trend(
     if x is None:
         return np.asarray(trend_array, dtype=float)
     x_array = np.asarray(x)
+    skipped_constant = False
     if "c" in trend_name and np.any(
         np.logical_and(np.ptp(x_array, axis=0) == 0, np.all(x_array != 0, axis=0))
     ):
@@ -176,12 +177,15 @@ def add_trend(
             pass
         elif has_constant == "skip" and trend_name in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
+            skipped_constant = True
     if isinstance(x, pd.DataFrame):
         columns: list[str] = ["const", "trend", "quadratic_trend"]
         if trend_name == "t":
             columns = [columns[1]]
         else:
             columns = columns[0 : trend_order + 1]
+        if skipped_constant:
+            columns = columns[1:]
         columns = _enforce_unique_col_name([str(col) for col in x.columns], columns)
         trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:
