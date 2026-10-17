@@ -335,9 +335,9 @@ def _loo_jackknife(
     return np.array(results)
 
 
-def _check_block_size(block_size: Any, integer: bool = True) -> None:
+def _check_block_size(block_size: Any, integer: bool = True) -> int | float:
     """
-    Check that the block size of a block bootstrap is valid
+    Check the block size of a block bootstrap
 
     Parameters
     ----------
@@ -347,6 +347,10 @@ def _check_block_size(block_size: Any, integer: bool = True) -> None:
         Whether the block size must be an integer. The block size of the
         stationary bootstrap is the mean block length, which can be any
         number that is at least 1.
+    Returns
+    -------
+    int or float
+        The block size. An integer is returned as a Python int.
 
     Raises
     ------
@@ -355,24 +359,19 @@ def _check_block_size(block_size: Any, integer: bool = True) -> None:
     ValueError
         If the block size is less than 1 or not finite
     """
-    kind = "an integer" if integer else "a number"
-    valid_types = (
-        (int, np.integer) if integer else (int, float, np.integer, np.floating)
-    )
-    if not isinstance(block_size, valid_types):
-        raise TypeError(
-            f"block_size must be {kind}, but {block_size!r} has type "
-            f"{type(block_size).__name__}."
-        )
-    if not np.isfinite(block_size) or block_size < 1:
-        raise ValueError(f"block_size must be {kind} that is at least 1.")
+    if integer:
+        return check_int("block_size", block_size, lower=1)
+    checked = check_float("block_size", block_size, lower=1)
+    if isinstance(block_size, (int, np.integer)):
+        return int(block_size)
+    return checked
 
 
 def _check_extra_kwargs(
-    kwargs: dict[str, Any], extra_kwargs: dict[str, Any] | None = None
-) -> None:
+    kwargs: dict[str, Any], extra_kwargs: Mapping[str, Any] | None = None
+) -> Mapping[str, Any] | None:
     """
-    Check that the extra keyword arguments do not replace bootstrapped data
+    Check the extra keyword arguments and that they do not replace bootstrapped data
 
     Parameters
     ----------
@@ -1690,10 +1689,10 @@ class CircularBlockBootstrap(IIDBootstrap):
         seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        _check_block_size(block_size, self._integer_block_size)
+        block_size = _check_block_size(block_size, self._integer_block_size)
         super().__init__(*args, seed=seed, **kwargs)
-        self._block_size: int = block_size
-        self._parameters = [block_size]
+        self._block_size: int = cast("int", block_size)
+        self._parameters = [cast("int", block_size)]
 
     @property
     def block_size(self) -> int:
@@ -1862,7 +1861,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
         **kwargs: ArrayLike,
     ) -> None:
         super().__init__(block_size, *args, seed=seed, **kwargs)
-        self._p = 1.0 / block_size
+        self._p = 1.0 / self._block_size
 
     def update_indices(self) -> Int64Array1D:
         indices = _get_random_integers(
@@ -1962,6 +1961,10 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         **kwargs: ArrayLike,
     ) -> None:
         super().__init__(block_size, *args, seed=seed, **kwargs)
+
+    def _check_sampling(self) -> None:
+        # The blocks do not wrap around, so a block is at most the whole sample
+        check_int("block_size", self._block_size, lower=1, upper=self._num_items)
 
     def update_indices(self) -> Int64Array1D:
         num_blocks = self._num_items // self.block_size
