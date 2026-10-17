@@ -2560,7 +2560,14 @@ class ARCH(GARCH):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p`` is not an integer.
+    ValueError
+        If ``p`` is smaller than 1.
 
     Notes
     -----
