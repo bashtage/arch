@@ -2676,7 +2676,14 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     lam : float or None, optional
         Smoothing parameter. Default is 0.94. Set to None to estimate lam
-        jointly with other model parameters.
+        jointly with other model parameters. Must be strictly between 0 and 1.
+
+    Raises
+    ------
+    TypeError
+        If ``lam`` is not a real number or None.
+    ValueError
+        If ``lam`` is NaN, inf, or not strictly between 0 and 1.
 
     Notes
     -----
