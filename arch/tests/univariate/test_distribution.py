@@ -236,3 +236,21 @@ def test_no_parameters_error(distribution):
 def test_random_state_seed_transition():
     with pytest.raises(TypeError, match=r"seed must be None, a non-negative integer"):
         Normal(seed="1234")
+
+
+@pytest.mark.parametrize(
+    ("dist", "expected"),
+    [
+        (Normal(), []),
+        (StudentsT(), [12.0]),
+        (SkewStudent(), [12.0, 0.0]),
+        (GeneralizedError(), [1.5]),
+    ],
+)
+def test_starting_values_non_finite_std_resid(dist, expected):
+    # A model fit to a constant series can produce 0/0 standardized residuals, as on
+    # macOS on x86-64, and fit must still be able to compute starting values
+    std_resid = np.full(100, np.nan)
+    assert_array_equal(dist.starting_values(std_resid), expected)
+    std_resid[:50] = np.inf
+    assert_array_equal(dist.starting_values(std_resid), expected)
