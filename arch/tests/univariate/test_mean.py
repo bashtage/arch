@@ -1066,10 +1066,10 @@ class TestMeanModel:
 
     def test_first_after_last(self):
         am = arch_model(self.y_series)
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(disp=DISPLAY, first_obs=500, last_obs=480)
 
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(
                 disp=DISPLAY,
                 first_obs=self.y_series.index[500],
@@ -1080,7 +1080,7 @@ class TestMeanModel:
         am = arch_model(self.y_series, vol="Constant")
         res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0] + 1)
+        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0])
         assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
         assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 

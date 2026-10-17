@@ -1065,7 +1065,7 @@ def test_append_short_sample():
     assert mod._fit_indices == [0, 15]
     mod.append(SMALL.iloc[15:20])
     assert mod._fit_indices == [0, 20]
-    with pytest.raises(ValueError, match="empty array"):
+    with pytest.raises(ValueError, match="hold_back must be smaller than"):
         mod.fit(disp="off")
     mod.append(SMALL.iloc[20:25])
     assert mod._fit_indices == [20, 25]

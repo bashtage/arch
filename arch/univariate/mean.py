@@ -1169,12 +1169,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         first_obs: int | DateLike | None,
         last_obs: int | DateLike | None,
     ) -> None:
-        index = self._y_series.index
-        _first_obs_index = cutoff_to_index(first_obs, index, 0)
-        _first_obs_index += self._hold_back
-        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
-        if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce an empty array.")
+        _first_obs_index, _last_obs_index = _fit_sample(self, first_obs, last_obs)
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
         reg = self.regressors
@@ -2713,12 +2708,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         first_obs: int | DateLike | None,
         last_obs: int | DateLike | None,
     ) -> None:
-        index = self._y_series.index
-        _first_obs_index = cutoff_to_index(first_obs, index, 0)
-        _first_obs_index += self._hold_back
-        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
-        if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce an empty array.")
+        _first_obs_index, _last_obs_index = _fit_sample(self, first_obs, last_obs)
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = cast("Float64Array1D", self._y[_first_obs_index:_last_obs_index])
         self.volatility.start, self.volatility.stop = self._fit_indices

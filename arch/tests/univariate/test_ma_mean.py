@@ -658,7 +658,7 @@ def test_fit_date_cutoffs():
     by_index = model.fit(disp="off", first_obs=first, last_obs=last)
     assert_allclose(by_date.params, by_index.params)
     assert by_date.nobs == by_index.nobs
-    with pytest.raises(ValueError, match="first_obs and last_obs produce an empty"):
+    with pytest.raises(ValueError, match="last_obs must be larger than first_obs"):
         model.fit(disp="off", first_obs=100, last_obs=50)
 
 
