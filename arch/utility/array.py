@@ -23,6 +23,7 @@ from pandas import (
     concat,
     to_datetime,
 )
+from pandas.api.types import is_bool_dtype, is_float_dtype, is_integer_dtype
 
 from arch._typing import (
     AnyArray,
@@ -88,12 +89,106 @@ def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
         raise TypeError("x must be a Series or ndarray")
 
 
+def as_float64(x: Any, name: str) -> Any:
+    """
+    Convert array_like data to a float64 ndarray.
+
+    Parameters
+    ----------
+    x : array_like
+        The data. Integer, unsigned integer, Boolean and other real floating
+        point data are converted. Object data are converted if every element is
+        a real number.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    ndarray
+        The data as float64, with the shape of x. This is x if x is an ndarray with
+        dtype float64.
+
+    Raises
+    ------
+    TypeError
+        If the data cannot be converted to real float64 values, e.g., if the
+        data contain strings, dates, complex values or objects that are not
+        numbers.
+    """
+    arr = np.asarray(x)
+    if arr.dtype == np.float64:
+        return arr
+    if arr.dtype.kind in "biuf":
+        return arr.astype(np.float64)
+    if arr.dtype.kind == "O":
+        try:
+            return arr.astype(np.float64)
+        except (TypeError, ValueError) as exc:
+            raise TypeError(
+                f"{name} must contain real numbers that can be converted to "
+                f"float64. Received an object array with shape {arr.shape} that "
+                f"contains elements that cannot be converted ({exc})."
+            ) from exc
+    raise TypeError(
+        f"{name} must be array_like with integer, Boolean or floating point "
+        f"values that can be converted to float64. Received an array with shape "
+        f"{arr.shape} and data type {arr.dtype}."
+    )
+
+
+def _float64_pandas(x: Series | DataFrame, name: str) -> Any:
+    """
+    Convert a Series or DataFrame to float64, keeping the index and labels.
+
+    Parameters
+    ----------
+    x : Series or DataFrame
+        The data.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    Series or DataFrame
+        x if every column is a float64 NumPy dtype. Otherwise a new object,
+        so that the input is never modified.
+
+    Raises
+    ------
+    TypeError
+        If the data cannot be converted to real float64 values.
+    """
+    dtypes = x.dtypes if isinstance(x, DataFrame) else [x.dtype]
+    if all(isinstance(dtype, np.dtype) and dtype == np.float64 for dtype in dtypes):
+        return x
+    if not all(
+        is_float_dtype(dtype)
+        or is_integer_dtype(dtype)
+        or is_bool_dtype(dtype)
+        or (isinstance(dtype, np.dtype) and dtype.kind == "O")
+        for dtype in dtypes
+    ):
+        raise TypeError(
+            f"{name} must contain integer, Boolean or floating point values that "
+            f"can be converted to float64. Received a {type(x).__name__} with "
+            f"shape {x.shape} and data type(s) {', '.join(map(str, set(dtypes)))}."
+        )
+    try:
+        return x.astype(np.float64)
+    except (TypeError, ValueError) as exc:
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to float64. "
+            f"Received a {type(x).__name__} with shape {x.shape} that contains "
+            f"elements that cannot be converted ({exc})."
+        ) from exc
+
+
 @overload
 def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[True] = ...,
-) -> Series:  # pragma: no cover
+    series: Literal[False] = ...,
+) -> AnyArray1D:  # pragma: no cover
     ...  # pragma: no cover
 
 
@@ -101,8 +196,8 @@ def ensure1d(
 def ensure1d(
     x: float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[False],
-) -> AnyArray1D:  # pragma: no cover
+    series: Literal[True],
+) -> Series:  # pragma: no cover
     ...  # pragma: no cover
 
 
@@ -112,13 +207,14 @@ def ensure1d(
     series: bool = False,
 ) -> AnyArray1D | Series:
     """
-    Convert data to a 1-d ndarray or a Series.
+    Convert data to a 1-d float64 ndarray or Series.
 
     Parameters
     ----------
     x : array_like, Series or DataFrame
         The data to convert. A DataFrame must have a single column, and any
         other input must have at most one dimension with more than one element.
+        Integer, unsigned integer and Boolean data are converted to float64.
     name : Hashable or None
         The name of the variable. Used in error messages and as the name of
         the Series if x is not a Series or a DataFrame and series is True.
@@ -128,35 +224,53 @@ def ensure1d(
     Returns
     -------
     ndarray or Series
-        The 1-d data. A Series if series is True and an ndarray otherwise.
+        The 1-d data. A Series if series is True and an ndarray otherwise. The
+        dtype is float64. The index of a Series is kept. x is returned, or is
+        a view of x, if x is float64 data. The name of a Series that is not a
+        str is converted to a str.
 
     Raises
     ------
     ValueError
         If x cannot be squeezed to 1 dimension.
+    TypeError
+        If x cannot be converted to real float64 values.
+
+    Notes
+    -----
+    x is never modified.
     """
     if isinstance(x, Series):
-        if not isinstance(x.name, str):
+        x_ser = _float64_pandas(x, str(name))
+        if not isinstance(x_ser.name, str):
             # Rename a new Series so that the Series of the caller is unchanged
-            x = x.rename(str(x.name))
+            x_ser = x_ser.rename(str(x_ser.name))
         if series:
-            return x
+            return x_ser
         else:
-            return x.to_numpy()
+            return x_ser.to_numpy()
 
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
-            raise ValueError(f"{name} must be squeezable to 1 dimension")
+            raise ValueError(
+                f"{name} must be squeezable to 1 dimension. Received a DataFrame "
+                f"with shape {x.shape}, and a DataFrame must have a single column."
+            )
+        x_frame = _float64_pandas(x, str(name))
         if not series:
-            return x.iloc[:, 0].to_numpy()
-        x_series = Series(x.iloc[:, 0], x.index)
+            return x_frame.iloc[:, 0].to_numpy()
+        x_series = Series(x_frame.iloc[:, 0], x_frame.index)
         if not isinstance(x_series.name, str):
             x_series.name = str(x_series.name)
         return x_series
 
-    x_arr = np.asarray(x)
+    x_arr = as_float64(x, str(name))
     if sum([s > 1 for s in x_arr.shape]) > 1:
-        raise ValueError(f"{name} must be squeezable to 1 dimension")
+        raise ValueError(
+            f"{name} must be squeezable to 1 dimension. Received an array with "
+            f"shape {x_arr.shape}, and at most one dimension can have more than "
+            "one element."
+        )
     x_arr = x_arr.ravel()
     if series:
         return Series(x_arr, name=name)
@@ -169,46 +283,53 @@ def ensure2d(
     name: str,
 ) -> DataFrame | NDArray:
     """
-    Convert data to a 2-d DataFrame or ndarray.
+    Convert data to a 2-d float64 DataFrame or ndarray.
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
+    x : array_like, Series or DataFrame
         The data to convert. A Series is converted to a DataFrame with a
-        single column. A DataFrame is returned unchanged. A scalar ndarray is
-        converted to an array with a single row and column, and a 1-d ndarray
-        to an array with a single column.
+        single column. A scalar is converted to an array with a single row and
+        column, and a 1-d array_like to an array with a single column.
+        Integer, unsigned integer and Boolean data are converted to float64.
     name : str
         The name of the variable. Used in error messages.
 
     Returns
     -------
     DataFrame or ndarray
-        The 2-d data. A DataFrame if x is a Series or a DataFrame and an
-        ndarray otherwise.
+        The 2-d data with dtype float64. A DataFrame if x is a Series or a
+        DataFrame and an ndarray otherwise. The index and the column labels
+        are kept. x is returned if it is a DataFrame or an ndarray with float64
+        data.
 
     Raises
     ------
     ValueError
-        If x is an ndarray with more than 2 dimensions.
+        If x has more than 2 dimensions.
     TypeError
-        If x is not a Series, DataFrame or ndarray.
+        If x cannot be converted to real float64 values.
+
+    Notes
+    -----
+    x is never modified.
     """
     if isinstance(x, Series):
-        return DataFrame(x)
+        return DataFrame(_float64_pandas(x, name))
     elif isinstance(x, DataFrame):
-        return x
-    elif isinstance(x, np.ndarray):
-        if x.ndim == 0:
-            return np.asarray([[x]])
-        elif x.ndim == 1:
-            return x[:, None]
-        elif x.ndim == 2:
-            return x
-        else:
-            raise ValueError(f"Variable {name} must be 2d or reshapable to 2d")
+        return _float64_pandas(x, name)
+    arr = as_float64(x, name)
+    if arr.ndim == 0:
+        return np.asarray([[arr]])
+    elif arr.ndim == 1:
+        return arr[:, None]
+    elif arr.ndim == 2:
+        return arr
     else:
-        raise TypeError(f"Variable {name} must be a Series, DataFrame or ndarray.")
+        raise ValueError(
+            f"Variable {name} must be 2d or reshapable to 2d. Received an array "
+            f"with {arr.ndim} dimensions and shape {arr.shape}."
+        )
 
 
 def parse_dataframe(

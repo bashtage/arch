@@ -17,6 +17,7 @@ from arch.covariance.kernel import (
     ZeroLag,
     get_kernel_estimator,
 )
+from arch.utility.array import ensure2d
 from arch.vendor._decorators import Appender
 
 __all__ = ["PreWhitenedRecolored"]
@@ -65,9 +66,10 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation. Must not contain NaN or
-        infinite values.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
+        Must not contain NaN or infinite values.
     lags : int, optional
         The number of lags to include in the VAR. If None, a specification
         search is used to select the order. Must be small enough that each
@@ -266,7 +268,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ) -> None:
-        if not np.all(np.isfinite(np.asarray(x, dtype=float))):
+        x = ensure2d(x, "x")
+        if not np.all(np.isfinite(np.asarray(x))):
             raise ValueError("x must not contain NaN or infinite values.")
         super().__init__(
             x,

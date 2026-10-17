@@ -1,6 +1,7 @@
 from numpy import asarray, squeeze
 
 from arch._typing import Float64Array
+from arch.utility.array import as_float64
 
 
 def cov_nw(
@@ -11,10 +12,10 @@ def cov_nw(
 
     Parameters
     ----------
-    y : ndarray
+    y : array_like
         Values to use when computing the Newey-West covariance estimator, either
         1-d or 2-d. When y is 2d, default behavior is to treat columns as variables
-        and rows as observations.
+        and rows as observations. Integer and Boolean data are converted to float64.
     lags : int, optional
         Number of lags to include in the Newey-West covariance estimator.
     demean : bool, optional
@@ -31,7 +32,7 @@ def cov_nw(
         The estimated covariance. A float if y is 1-d and a 2-d ndarray
         otherwise.
     """
-    z = asarray(y, dtype=float)
+    z = as_float64(y, "y")
     is_1d = False
     if axis < -z.ndim or axis >= z.ndim:
         raise ValueError("axis must be less than the dimension of y")

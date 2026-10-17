@@ -189,8 +189,9 @@ def _kernel_covariance_template() -> None:
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
     df_adjust : int, optional
@@ -252,8 +253,9 @@ class CovarianceEstimator(ABC):
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
     df_adjust : int, optional
@@ -829,8 +831,9 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
     df_adjust : int, optional
@@ -858,8 +861,9 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
     df_adjust : int, optional
@@ -888,8 +892,9 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
 
     Parameters
     ----------
-    x : ndarray, Series or DataFrame
-        The data to use in covariance estimation.
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer and Boolean data are converted to float64.
     bandwidth : float, optional
         The kernel's bandwidth.  If None, optimal bandwidth is estimated.
     df_adjust : int, optional
