@@ -505,39 +505,26 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
+        _seed = check_seed("seed", seed)
         self._args = list(args)
         self._kwargs = kwargs
         self._generator: Generator | RandomState
-        _seed = seed
-
-        if isinstance(_seed, (RandomState, Generator)):
-            self._generator = _seed
-        elif isinstance(_seed, (int, np.integer)):
-            self._generator = np.random.default_rng(int(_seed))
-        elif _seed is None:
-            self._generator = np.random.default_rng()
-        else:
-            raise TypeError(
-                "generator keyword argument must contain a NumPy Generator or "
-                "RandomState instance or an integer when used."
-            )
-
-        self._initial_state = _get_prng_state(self._generator)
 
         self._check_data()
         if args:
             self._num_items = len(args[0])
-        elif kwargs:
+        else:
             key = next(iter(kwargs.keys()))
             self._num_items = len(kwargs[key])
-        all_args = list(args)
-        all_args.extend(list(kwargs.values()))
-        if self._common_size_required:
-            for arg in all_args:
-                if len(arg) != self._num_items:
-                    raise ValueError(
-                        "All inputs must have the same number of elements in axis 0"
-                    )
+
+        if isinstance(_seed, (RandomState, Generator)):
+            self._generator = _seed
+        elif _seed is None:
+            self._generator = np.random.default_rng()
+        else:
+            self._generator = np.random.default_rng(_seed)
+
+        self._initial_state = _get_prng_state(self._generator)
         self._index: BootstrapIndexT = np.arange(self._num_items, dtype=np.int64)
 
         self._parameters: list[int] = []
@@ -552,12 +539,16 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self._results: Float64Array | None = None
         self._studentized_results: Float64Array | None = None
         self._last_func: Callable[..., ArrayLike] | None = None
+        for key in kwargs:
+            if getattr(self, key, None) is not None:
+                _fail(
+                    ValueError,
+                    "kwargs",
+                    "keywords that are not attributes or methods of the bootstrap",
+                    f"{key!r} (str)",
+                )
         for key, value in kwargs.items():
-            attr = getattr(self, key, None)
-            if attr is None:
-                self.__setattr__(key, value)
-            else:
-                raise ValueError(key + " is a reserved name")
+            self.__setattr__(key, value)
 
     def __str__(self) -> str:
         txt = self._name
@@ -954,13 +945,37 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def _check_data(self) -> None:
         supported = (np.ndarray, pd.DataFrame, pd.Series)
-        for i, arg in enumerate(self._args):
-            if not isinstance(arg, supported):
-                raise TypeError(arg_type_error.format(i=i, arg_type=type(arg)))
-        for key in self._kwargs:
-            if not isinstance(self._kwargs[key], supported):
-                arg_type = type(self._kwargs[key])
-                raise TypeError(kwarg_type_error.format(key=key, arg_type=arg_type))
+        inputs: list[tuple[str, Any]] = [
+            (f"args[{i}]", arg) for i, arg in enumerate(self._args)
+        ]
+        inputs.extend(self._kwargs.items())
+        if not inputs:
+            _fail(
+                ValueError,
+                "args",
+                "at least one NumPy array, Series or DataFrame, as a positional "
+                "or a keyword argument",
+                "no data (tuple)",
+            )
+        for name, arg in inputs:
+            check_instance(name, arg, supported)
+            if arg.ndim == 0 or len(arg) == 0:
+                _fail(
+                    ValueError,
+                    name,
+                    "an array, Series or DataFrame with at least 1 row",
+                    _describe(arg),
+                )
+        if self._common_size_required:
+            first_name, first = inputs[0]
+            for name, arg in inputs[1:]:
+                if len(arg) != len(first):
+                    _fail(
+                        ValueError,
+                        name,
+                        f"an array with {len(first)} rows, as {first_name}",
+                        _describe(arg),
+                    )
 
     def _bca_bias(self) -> Float64Array:
         assert self._results is not None
