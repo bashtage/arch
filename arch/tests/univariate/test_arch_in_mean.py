@@ -40,15 +40,11 @@ SUPPORTED = [
 
 
 def test_exceptions():
-    with pytest.raises(TypeError, match=r"form must be a floating point "):
+    with pytest.raises(TypeError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form=0 + 3j, volatility=GARCH())
-    with pytest.raises(
-        ValueError, match=r"When using a floating point number for form"
-    ):
+    with pytest.raises(ValueError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form=0, volatility=GARCH())
-    with pytest.raises(
-        ValueError, match=r"form must be a floating point number of one"
-    ):
+    with pytest.raises(ValueError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(SP500, form="unknown", volatility=GARCH())
 
 

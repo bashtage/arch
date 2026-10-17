@@ -2139,31 +2139,29 @@ class ARCHInMean(ARX):
         rescale: bool | None = None,
         form: float | Literal["log", "vol", "var"] = "vol",
     ) -> None:
+        form_rule = "'log', 'vol', 'var' or a finite number that is not 0"
+        if isinstance(form, str):
+            if form.lower() not in ("log", "vol", "var"):
+                _fail(ValueError, "form", form_rule, _describe(form))
+            form = cast("Literal['log', 'vol', 'var']", form.lower())
+        elif not isinstance(form, (bool, np.bool_)) and isinstance(
+            form, (int, float, np.floating, np.integer)
+        ):
+            if not np.isfinite(form) or form == 0:
+                _fail(ValueError, "form", form_rule, _describe(form))
+        else:
+            _fail(TypeError, "form", form_rule, _describe(form))
         super().__init__(
             y, x, lags, constant, hold_back, volatility, distribution, rescale
         )
         self._name = "ARCH-in-mean"
-        form_err = (
-            "form must be a floating point number of one of 'log', 'vol' or 'var', got "
-        )
-        if not isinstance(form, (str, int, float, np.floating, np.integer)):
-            raise TypeError(form_err + f"{type(form)}")
         if isinstance(form, str):
-            lower_form = form.lower()
-            if lower_form not in ("log", "vol", "var"):
-                raise ValueError(form_err + f"{form}")
-            self._form_id = {"log": 0, "vol": 1, "var": 2}[lower_form]
+            self._form_id = {"log": 0, "vol": 1, "var": 2}[form]
             self._form_power = float(self._form_id)
         else:
-            float_form = float(form)
-            if float_form == 0:
-                raise ValueError(
-                    "When using a floating point number for form, its value "
-                    "must be different from 0"
-                )
             self._form_id = 3
-            self._form_power = float_form
-        self._form = form.lower() if isinstance(form, str) else form
+            self._form_power = float(form)
+        self._form = form
 
         if not self.volatility.updateable:
             raise ValueError(
