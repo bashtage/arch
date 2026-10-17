@@ -292,21 +292,21 @@ def test_arch_model_loop_over_numpy_ints():
 )
 def test_arch_model_invalid_p(vol, p):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="p must be a scalar int"):
+    with pytest.raises(TypeError, match="p must be an integer"):
         arch_model(y, vol=vol, p=p)
 
 
 @pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "APARCH", "FIAPARCH"])
 def test_arch_model_invalid_o(vol):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="o must be a scalar int"):
+    with pytest.raises(TypeError, match="o must be an integer"):
         arch_model(y, vol=vol, o=1.0)
 
 
 @pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"])
 def test_arch_model_invalid_q(vol):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="q must be a scalar int"):
+    with pytest.raises(TypeError, match="q must be an integer"):
         arch_model(y, vol=vol, q=1.5)
 
 

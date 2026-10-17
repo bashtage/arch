@@ -1467,7 +1467,7 @@ def test_invalid_vol_dist():
 
 
 def test_fiaparch_non_int_p():
-    with pytest.raises(TypeError, match=r"p must be a scalar int"):
+    with pytest.raises(TypeError, match=r"p must be an integer"):
         arch_model(SP500, vol="fiaparch", p=[1, 2])
 
 

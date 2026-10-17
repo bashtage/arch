@@ -7,7 +7,6 @@ with the same inputs.
 
 from collections.abc import Callable, Mapping, Sequence
 import copy
-import operator
 from typing import TYPE_CHECKING, Any, cast, overload
 import warnings
 
@@ -3015,12 +3014,15 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
 
 
-def _scalar_int(value: Any, name: str, suffix: str = "") -> int:
-    """Convert an integer or NumPy integer to int, otherwise raise a TypeError"""
-    try:
-        return operator.index(value)
-    except TypeError as exc:
-        raise TypeError(f"{name} must be a scalar int{suffix}.") from exc
+def _check_order(name: str, value: Any) -> int:
+    """Check the order of a volatility process, which is an integer, not a list"""
+    if isinstance(value, (Sequence, np.ndarray, pd.Series)) and not isinstance(
+        value, (str, bytes)
+    ):
+        # A sequence of lags is only used by HARCH
+        rule = "an integer (a list of lags can only be used with vol='harch')"
+        _fail(TypeError, name, rule, _describe(value))
+    return check_int(name, value, lower=0)
 
 
 def arch_model(
@@ -3178,11 +3180,13 @@ def arch_model(
         v = HARCH(lags=p)
     else:
         # p, o and q must be integers, which includes NumPy integers
-        p = _scalar_int(p, "p", " for all volatility processes except HARCH")
+        p = _check_order("p", p)
         if vol_model in ("garch", "egarch", "aparch", "fiaparch"):
-            o = _scalar_int(o, "o")
+            o = _check_order("o", o)
         if vol_model != "arch":
-            q = _scalar_int(q, "q")
+            q = _check_order("q", q)
+        if vol_model in ("garch", "figarch"):
+            power = check_float("power", power, lower=0.0, inclusive="neither")
         if vol_model == "arch":
             v = ARCH(p=p)
         elif vol_model == "figarch":
