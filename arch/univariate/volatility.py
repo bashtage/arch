@@ -27,8 +27,14 @@ from arch._typing import (
 )
 from arch.univariate.distribution import Normal
 from arch.utility._validation import (
+    _describe,
+    _fail,
     check_array,
+    check_bool,
+    check_callable,
     check_float,
+    check_instance,
+    check_int,
     check_ndarray,
     check_option,
 )
@@ -99,18 +105,22 @@ class BootstrapRng:
         start: int,
         random_state: RandomState | None = None,
     ) -> None:
-        if start <= 0 or start > std_resid.shape[0]:
-            raise ValueError("start must be > 0 and <= len(std_resid).")
+        # NaN and inf are not rejected: the draws are only resampled
+        std_resid = check_array(
+            "std_resid", std_resid, ndim=1, allow_nan=True, allow_inf=True
+        )
+        start = check_int("start", start, lower=1, upper=std_resid.shape[0])
+        random_state = check_instance(
+            "random_state", random_state, RandomState, allow_none=True
+        )
 
         self.std_resid: Float64Array = std_resid
         self.start: int = start
         self._index = start
         if random_state is None:
             self._random_state = RandomState()
-        elif isinstance(random_state, RandomState):
-            self._random_state = random_state
         else:
-            raise TypeError("random_state must be a NumPy RandomState instance.")
+            self._random_state = random_state
 
     @property
     def random_state(self) -> RandomState:
