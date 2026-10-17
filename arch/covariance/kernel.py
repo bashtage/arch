@@ -3,14 +3,22 @@ from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from functools import cached_property
-from typing import SupportsInt, TypeVar, cast
+from typing import TypeVar, cast
 
 import numpy as np
 from pandas import DataFrame, Index
 
 from arch._typing import ArrayLike, Float64Array, Float64Array2D
-from arch.utility._validation import check_option
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+)
+from arch.utility.array import AbstractDocStringInheritor, ensure2d
 from arch.vendor._decorators import Substitution
 
 __all__ = [
@@ -301,43 +309,49 @@ class CovarianceEstimator(ABC):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
+        x_checked = check_array("x", x, ndim=2, min_length=2)
+        nobs, nvar = x_checked.shape
+        if nvar < 1:
+            _fail(
+                ValueError,
+                "x",
+                "a 2-d array of finite numbers with at least 2 rows and 1 column",
+                _describe(x),
+            )
+        bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
+        df_adjust = check_int("df_adjust", df_adjust, lower=0, upper=nobs - 1)
+        center = check_bool("center", center)
+        weights_checked = check_array(
+            "weights", weights, shape=(nvar,), allow_none=True
+        )
+        if weights_checked is not None and (
+            np.any(weights_checked < 0) or np.all(weights_checked == 0)
+        ):
+            _fail(
+                ValueError,
+                "weights",
+                "non-negative with at least one value that is strictly greater "
+                "than 0",
+                _describe(weights),
+            )
+        force_int = check_bool("force_int", force_int)
+
         self._x_orig = ensure2d(x, "x")
         self._x = np.asarray(self._x_orig)
         self._center = center
         if self._center:
             self._x = self._x - self._x.mean(0)
-        if bandwidth is not None:
-            _bandwidth = bandwidth
-            if not np.isscalar(_bandwidth) or (cast("float", _bandwidth) < 0.0):
-                raise ValueError("bandwidth must be a non-negative scalar.")
         self._bandwidth: float | None = bandwidth
         self._auto_bandwidth = bandwidth is None
-        if not np.isscalar(df_adjust) or (cast("int", df_adjust) < 0):
-            raise ValueError("df_adjust must be a non-negative integer.")
-        self._df_adjust = int(cast("SupportsInt", df_adjust))
-        self._df = self._x.shape[0] - self._df_adjust
-        if self._df <= 0:
-            raise ValueError(
-                "Degrees of freedom is <= 0 after adjusting the sample "
-                "size of x using df_adjust. df_adjust must be less than"
-                f" {self._x.shape[0]}"
-            )
-        xw: Float64Array2D
-        if weights is None:
-            xw = self._x_weights = np.ones((self._x.shape[1], 1))
+        self._df_adjust = df_adjust
+        self._df = nobs - self._df_adjust
+        self._x_weights: Float64Array2D
+        if weights_checked is None:
+            self._x_weights = np.ones((nvar, 1))
         else:
-            _xw = ensure1d(np.asarray(weights), "weights", series=False).astype(float)
-            xw = self._x_weights = cast("Float64Array2D", _xw[:, None])
-        if (
-            xw.shape[0] != self._x.shape[1]
-            or xw.shape[1] != 1
-            or np.any(xw < 0)
-            or np.all(xw == 0)
-        ):
-            raise ValueError(
-                f"weights must be a 1 by {self._x.shape[1]} (x.shape[1]) "
-                f"array with non-negative values where at least one value is "
-                "strictly greater than 0."
+            self._x_weights = cast(
+                "Float64Array2D",
+                np.array(weights_checked, dtype=float).ravel()[:, None],
             )
         self._force_int = force_int
 
