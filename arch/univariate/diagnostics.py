@@ -9,13 +9,19 @@ from scipy import stats
 
 from arch._typing import ArrayLike1D
 from arch.univariate.distribution import Distribution, Normal
-from arch.utility.array import ensure1d
+from arch.utility._validation import (
+    check_array,
+    check_float,
+    check_instance,
+    check_int,
+)
 
 __all__ = ["excess_kurtosis", "hill_estimator", "var_ratio"]
 
 
 def _clean_std_resid(std_resid: Sequence[float] | ArrayLike1D) -> np.ndarray:
-    resids = np.asarray(ensure1d(std_resid, "std_resid", series=False), dtype=float)
+    # NaN and inf are removed by design, and so they are accepted
+    resids = check_array("std_resid", std_resid, ndim=1, allow_nan=True, allow_inf=True)
     resids = resids[np.isfinite(resids)]
     if resids.shape[0] == 0:
         raise ValueError("std_resid must contain at least one finite observation")
@@ -76,6 +82,7 @@ def hill_estimator(
 
     where ``X`` contains the positive absolute standardized residuals.
     """
+    k = check_int("k", k, lower=1, allow_none=True)
     abs_resids = np.abs(_clean_std_resid(std_resid))
     nobs = abs_resids.shape[0]
     resids = np.sort(abs_resids[abs_resids > 0.0])
@@ -87,14 +94,8 @@ def hill_estimator(
 
     if k is None:
         k = int(np.sqrt(nobs))
-    elif not isinstance(k, (int, np.integer)):
-        raise TypeError("k must be an integer")
-
-    if not 1 <= int(k) < positive:
-        raise ValueError(
-            "k must satisfy 1 <= k < the number of non-zero finite observations"
-        )
-    k = int(k)
+    # k is at most the number of non-zero finite observations less one
+    k = check_int("k", k, lower=1, upper=positive - 1)
 
     threshold = resids[-k - 1]
     hill = np.mean(np.log(resids[-k:]) - np.log(threshold))
@@ -127,14 +128,20 @@ def var_ratio(
         Ratio of the Gaussian left-tail VaR to the VaR implied by the supplied
         model distribution.
     """
-    level = float(level)
-    if not 0.5 < level < 1.0:
-        raise ValueError("level must be larger than 0.5 and smaller than 1.0")
-
+    level = check_float("level", level, lower=0.5, upper=1.0, inclusive="neither")
+    distribution = check_instance(
+        "distribution", distribution, Distribution, allow_none=True
+    )
     if distribution is None:
         distribution = Normal()
-    elif not isinstance(distribution, Distribution):
-        raise TypeError("distribution must inherit from Distribution")
+    nparams = distribution.num_params
+    parameters = check_array(
+        "parameters",
+        parameters,
+        ndim=1,
+        shape=(nparams,),
+        allow_none=nparams == 0,
+    )
 
     tail_probability = 1.0 - level
     gaussian_var = -stats.norm.ppf(tail_probability)
