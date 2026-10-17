@@ -484,7 +484,7 @@ def test_auto_low_memory():
 
 def test_mackinnonp_errors():
     with pytest.raises(
-        ValueError, match=r"Cointegration results \(num_unit_roots > 1\)"
+        ValueError, match=r"num_unit_roots must be 1 for dist_type='adf-z'"
     ):
         mackinnonp(-1.0, regression="c", num_unit_roots=2, dist_type="ADF-z")
     with pytest.raises(ValueError, match=r"dist_type must be one of "):

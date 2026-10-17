@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from collections.abc import Sequence
-from typing import cast
+from collections.abc import Callable, Sequence
+from typing import NoReturn, cast
 import warnings
 
 import numpy as np
@@ -77,7 +77,13 @@ from arch.unitroot.critical_values.dickey_fuller import (
 )
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
-from arch.utility._validation import check_option
+from arch.utility._validation import (
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+)
 from arch.utility.array import (
     AbstractDocStringInheritor,
     ensure1d,
@@ -1886,14 +1892,16 @@ def mackinnonp(
     Parameters
     ----------
     stat : float
-        "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
+        "T-value" from an Augmented Dickey-Fuller or DFGLS regression. It can be
+        inf or -inf, but not NaN.
     regression : {"c", "n", "ct", "ctt"}, optional
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "n" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
     num_unit_roots : int, optional
-        The number of series believed to be I(1).  For (Augmented) Dickey-
-        Fuller N = 1.
+        The number of series believed to be I(1), from 1 to 6.  For
+        (Augmented) Dickey-Fuller N = 1. Values larger than 1 are only available
+        when `dist_type` is "adf-t".
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         The test type to use when computing p-values.  Options include
 
@@ -1905,6 +1913,16 @@ def mackinnonp(
     -------
     p-value : float
         The p-value for the ADF statistic estimated using MacKinnon 1994.
+
+    Raises
+    ------
+    TypeError
+        If `stat` is not a real number, `num_unit_roots` is not an integer or
+        `regression` or `dist_type` is not a str.
+    ValueError
+        If `stat` is NaN, `num_unit_roots` is not between 1 and 6, `regression` or
+        `dist_type` is not one of the options, or `num_unit_roots` is larger than 1
+        when `dist_type` is not "adf-t".
 
     Notes
     -----
@@ -1918,6 +1936,22 @@ def mackinnonp(
         Unit-Root and Cointegration Tests." Journal of Business & Economics
         Statistics, 12.2, 167-76.
     """
+    stat = cast("float", check_float("stat", stat, allow_inf=True))
+    dist_type, regression, num_unit_roots = _check_critical_value_options(
+        regression, num_unit_roots, dist_type, 6
+    )
+    return _mackinnonp(stat, regression, num_unit_roots, dist_type)
+
+
+def _check_critical_value_options(
+    regression: str, num_unit_roots: int, dist_type: str, max_unit_roots: int
+) -> tuple[Literal["adf-t", "adf-z", "dfgls"], Literal["c", "n", "ct", "ctt"], int]:
+    """
+    Check the options that mackinnonp and mackinnoncrit share
+
+    max_unit_roots is the largest num_unit_roots of the ADF-t tables, which is 1 if
+    regression is "n" and the function is mackinnoncrit.
+    """
     dist_type = cast(
         "Literal['adf-t', 'adf-z', 'dfgls']",
         check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls")),
@@ -1927,11 +1961,33 @@ def mackinnonp(
         "Literal['c', 'n', 'ct', 'ctt']",
         check_option("regression", regression, valid_regression),
     )
+    if regression == "n" and max_unit_roots > 6:
+        max_unit_roots = 1  # The critical values for "n" are only available for 1
+    num_unit_roots = cast(
+        "int",
+        check_int("num_unit_roots", num_unit_roots, lower=1, upper=max_unit_roots),
+    )
     if num_unit_roots > 1 and dist_type != "adf-t":
         raise ValueError(
-            "Cointegration results (num_unit_roots > 1) are"
-            "only available for ADF-t values"
+            f"num_unit_roots must be 1 for dist_type={dist_type!r}, since values for "
+            f"more than one unit root are only available for 'adf-t'; got "
+            f"{num_unit_roots} (int)"
         )
+    return dist_type, regression, num_unit_roots
+
+
+def _mackinnonp(
+    stat: float,
+    regression: Literal["c", "n", "ct", "ctt"],
+    num_unit_roots: int,
+    dist_type: Literal["adf-t", "adf-z", "dfgls"],
+) -> float:
+    """
+    The p-value of mackinnonp for arguments that have been checked.
+
+    A NaN statistic gives a NaN p-value here, which is how the tests report a
+    statistic that could not be computed.
+    """
     if dist_type == "adf-t":
         maxstat = tau_max[regression][num_unit_roots - 1]
         minstat = tau_min[regression][num_unit_roots - 1]
