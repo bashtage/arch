@@ -2870,13 +2870,26 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     tau0 : int or float, optional
-        Length of long cycle. Default is 1560.
+        Length of long cycle. Default is 1560. Must be finite and larger than
+        ``tau1``.
     tau1 : int or float, optional
-        Length of short cycle. Default is 4.
+        Length of short cycle. Default is 4. Must be finite and positive.
     kmax : int, optional
-        Number of components. Default is 14.
+        Number of components. Default is 14. Must be positive, and
+        ``tau1 * rho ** (kmax - 1)`` cannot be larger than ``tau0``.
     rho : float, optional
-        Relative scale of adjacent cycles. Default is sqrt(2).
+        Relative scale of adjacent cycles. Default is sqrt(2). Must be finite and
+        larger than 1.
+
+    Raises
+    ------
+    TypeError
+        If ``tau0``, ``tau1`` or ``rho`` is not a real number or ``kmax`` is not an
+        integer.
+    ValueError
+        If ``tau0``, ``tau1`` or ``rho`` is NaN or inf, ``tau1`` is not positive,
+        ``tau0`` is not larger than ``tau1``, ``kmax`` is smaller than 1, ``rho`` is
+        not larger than 1, or ``tau1 * rho ** (kmax - 1)`` is larger than ``tau0``.
 
     Notes
     -----
