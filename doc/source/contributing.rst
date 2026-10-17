@@ -140,9 +140,9 @@ same way everywhere.
 
 .. note::
 
-   Decisions 63 and 66-73 of the 9.0 plan are provisional until the maintainer answers
-   them. The rules below use the recommended answer of each. They are switches in the
-   helpers (the private functions ``_is_bool``, ``_is_integer``, ``_is_real`` and
+   The rules below are the decisions of the 9.0 release. They are switches in the
+   helpers (the private functions ``_is_bool``, ``_is_flag_integer``, ``_is_integer``,
+   ``_is_real`` and
    ``_float_in_range`` in ``arch/utility/_validation.py``) and in the lists of values in
    ``arch/tests/validation_table.py``, so that a different answer changes those places
    and not the code that calls them.

@@ -13,7 +13,7 @@ or length, NaN or inf where finite values are needed).
 
 The rules that decide which values are accepted are in the small private functions named
 ``_is_*`` and ``_float_in_range``. They are the only code to change if the policy
-changes (decisions 66, 67 and 68 in the release plan are provisional):
+changes:
 
 * flags accept ``bool``, ``np.bool_`` and the integers 0 and 1 (``_is_bool`` and
   ``_is_flag_integer``);
