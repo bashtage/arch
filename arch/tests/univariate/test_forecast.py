@@ -258,11 +258,11 @@ class TestForecasting:
         assert_frame_equal(fcast.variance, alt_fcast.variance)
         assert_frame_equal(fcast.residual_variance, alt_fcast.residual_variance)
 
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon=3.0)
         with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon=-1)
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon="3")
 
         fcast_reindex = res.forecast(res.params, horizon=3, reindex=True)
@@ -888,9 +888,9 @@ def test_invalid_horizon():
     res = arch_model(SP500).fit(disp="off")
     with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=-1)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon=1.0)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon="5")
 
 

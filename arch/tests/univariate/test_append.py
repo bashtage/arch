@@ -422,7 +422,7 @@ def test_append_non_finite(kind, bad):
         new = as_type(new, kind)
     mod = ARXWrapper(as_type(SMALL_initial, mod_kind), volatility=GARCH())
     snap = snapshot(mod)
-    with pytest.raises(ValueError, match="NaN or inf values found in y"):
+    with pytest.raises(ValueError, match="y must be a 1-d array of finite numbers"):
         mod.append(new)
     assert_snapshot_unchanged(mod, snap)
 
@@ -960,7 +960,7 @@ def test_failed_append_is_atomic(kind):
     snap = snapshot(mod)
     bad = SMALL_append.copy()
     bad.iloc[3] = np.inf
-    with pytest.raises(ValueError, match="NaN or inf"):
+    with pytest.raises(ValueError, match="y must be a 1-d array of finite numbers"):
         mod.append(as_type(bad, kind))
     assert_snapshot_unchanged(mod, snap)
     other = "array" if kind == "series" else "series"

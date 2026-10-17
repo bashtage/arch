@@ -333,7 +333,7 @@ class TestMeanModel:
         assert_equal(a, np.empty((0, 5)))
         assert_equal(b, np.empty(0))
         res = harx.fit(disp=DISPLAY)
-        with pytest.raises(ValueError, match=r"params have incorrect"):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array"):
             res.forecast(params=np.array([1.0, 1.0]))
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
@@ -774,11 +774,11 @@ class TestMeanModel:
 
         ar = ARX(self.y, lags=1)
         d = Normal()
-        with pytest.raises(ValueError, match=r"Must subclass VolatilityProcess"):
+        with pytest.raises(TypeError, match=r"volatility must be an instance of"):
             ar.volatility = d
 
         v = GARCH()
-        with pytest.raises(ValueError, match=r"Must subclass Distribution"):
+        with pytest.raises(TypeError, match=r"distribution must be an instance of"):
             ar.distribution = v
         x = self.rng.randn(1000, 1)
         with pytest.raises(ValueError, match=r"x must be a 2-d array .* \(600, n\)"):
@@ -1051,7 +1051,7 @@ class TestMeanModel:
                 1.26381761,
             ]
         )
-        am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
+        am = arch_model(y, mean="ARX", lags=10, p=3, q=0)
 
         with pytest.warns(DataScaleWarning, match=r"y is poorly scaled"):
             am.fit(disp=DISPLAY)
@@ -1078,8 +1078,11 @@ class TestMeanModel:
         am = arch_model(self.y_series, vol="Constant")
         res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0])
+        nobs = self.y_series.shape[0]
+        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs)
         assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
+        with pytest.raises(ValueError, match=r"last_obs must be an integer position"):
+            am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs + 1)
         assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100)
@@ -1222,7 +1225,7 @@ def test_backcast(volatility, simulated_data):
 
 def test_backcast_error(simulated_data):
     zm = ZeroMean(simulated_data, volatility=GARCH())
-    with pytest.raises(ValueError, match=r"User backcast value"):
+    with pytest.raises(ValueError, match=r"backcast must be a finite float > 0"):
         zm.fit(backcast=-1, disp=DISPLAY)
     zm = ZeroMean(simulated_data, volatility=RiskMetrics2006())
     with pytest.raises(ValueError, match=r"User backcast must be either"):
@@ -1350,7 +1353,7 @@ def test_arch_lm_invalid_lags_type(simulated_data, lags):
 @pytest.mark.parametrize("lags", [0, -1, np.int64(0)], ids=["0", "-1", "np-0"])
 def test_arch_lm_invalid_lags_value(simulated_data, lags):
     res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
-    with pytest.raises(ValueError, match="lags must be a positive integer"):
+    with pytest.raises(ValueError, match=r"lags must be an integer >= 1 or None"):
         res.arch_lm_test(lags=lags)
 
 
@@ -1436,15 +1439,15 @@ def test_missing_data_exception():
     rng = np.random.default_rng(1234)
     y = rng.standard_normal(1000)
     y[::29] = np.nan
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
     y = rng.standard_normal(1000)
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
     y[::29] = np.nan
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
 
 

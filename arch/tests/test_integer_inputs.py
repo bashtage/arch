@@ -396,7 +396,7 @@ def simulate_arguments(d: dict[str, Any]) -> dict[str, Any]:
 
 @case(lambda: {"y": _garch_counts(), "sv": np.array([50.0, 2.0, 0.0, 0.0])})
 def fit_starting_values(d: dict[str, Any]) -> dict[str, Any]:
-    mod = ConstantMean(d["y"])
+    mod = ConstantMean(d["y"], volatility=GARCH())
     return _result(mod.fit(starting_values=d["sv"], disp="off"))
 
 

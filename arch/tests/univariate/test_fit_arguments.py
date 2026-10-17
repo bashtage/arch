@@ -32,9 +32,6 @@ def default_start_params(returns):
     [
         pytest.param([0.0, -5.0, 0.5, 0.5], id="outside-bounds"),
         pytest.param([0.0, 0.1, 0.7, 0.6], id="violates-constraint"),
-        pytest.param([0.0, 0.1, 0.1], id="too-short"),
-        pytest.param([0.0, 0.1, 0.1, 0.1, 0.1, 0.1], id="too-long"),
-        pytest.param([0.0, np.nan, 0.1, 0.1], id="nan"),
     ],
 )
 def test_invalid_starting_values_ignored(returns, default_start_params, bad):
@@ -44,6 +41,25 @@ def test_invalid_starting_values_ignored(returns, default_start_params, bad):
             disp="off", starting_values=bad, options={"maxiter": 0}, show_warning=False
         )
     assert_allclose(res.params, default_start_params)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        pytest.param([0.0, 0.1, 0.1], id="too-short"),
+        pytest.param([0.0, 0.1, 0.1, 0.1, 0.1, 0.1], id="too-long"),
+    ],
+)
+def test_starting_values_of_wrong_length_raise(returns, bad):
+    mod = arch_model(returns)
+    with pytest.raises(ValueError, match=r"starting_values must be .*shape \(4,\)"):
+        mod.fit(disp="off", starting_values=bad)
+
+
+def test_starting_values_with_nan_raise(returns):
+    mod = arch_model(returns)
+    with pytest.raises(ValueError, match=r"starting_values must be .*; got 1 NaN"):
+        mod.fit(disp="off", starting_values=[0.0, np.nan, 0.1, 0.1])
 
 
 def test_valid_starting_values_used(returns):
