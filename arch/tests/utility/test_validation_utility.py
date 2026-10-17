@@ -335,8 +335,22 @@ CUT_ROWS = [
         _cutoff,
         CUT_BASE,
         "cutoff",
-        CUT_INT_BAD,
+        [(v, e) for v, e in CUT_INT_BAD if e is ValueError],
     ),
+    # The type error keeps the word "cutoffs", which fit and forecast report
+    *[
+        Row(
+            "cutoff_to_index",
+            _cutoff,
+            {**CUT_BASE, "cutoff": value},
+            TypeError,
+            r"^cutoffs must be None, an integer, a string, a date",
+            id=f"cutoff_to_index-cutoff-type-{i}",
+            name="cutoffs",
+        )
+        for i, (value, e) in enumerate(CUT_INT_BAD)
+        if e is TypeError
+    ],
     *good_value_rows(
         "cutoff_to_index",
         _cutoff,
