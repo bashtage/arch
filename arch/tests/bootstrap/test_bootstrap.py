@@ -158,9 +158,13 @@ def test_mixed_types(bs_setup, seed):
 def test_errors(bs_setup):
     x = np.arange(10)
     y = np.arange(100)
-    with pytest.raises(ValueError, match=r"All inputs must hav"):
+    with pytest.raises(
+        ValueError, match=r"args\[1\] must be an array with 10 rows, as args\[0\]"
+    ):
         IIDBootstrap(x, y)
-    with pytest.raises(ValueError, match=r"index is a reserved name"):
+    with pytest.raises(
+        ValueError, match=r"kwargs must be keywords that are not .*'index'"
+    ):
         IIDBootstrap(index=x)
     bs = IIDBootstrap(y)
 
@@ -170,7 +174,9 @@ def test_errors(bs_setup):
         ValueError, match=r"tail must be one of 'two', 'lower' or 'upper'"
     ):
         bs.conf_int(bs_setup.func, tail="dragon")
-    with pytest.raises(ValueError, match=r"size must be strictly between 0 and 1"):
+    with pytest.raises(
+        ValueError, match=r"size must be a finite float in \(0, 1\); got 95"
+    ):
         bs.conf_int(bs_setup.func, size=95)
 
 
@@ -505,7 +511,10 @@ def test_extra_kwargs(bs_setup):
     bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     bs = IIDBootstrap(axis=bs_setup.x)
-    with pytest.raises(ValueError, match=r"extra_kwargs contains keys used"):
+    with pytest.raises(
+        ValueError,
+        match=r"extra_kwargs must be a dict with str keys that are not names",
+    ):
         bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
 
@@ -895,10 +904,10 @@ def test_list_input():
     # GH 315
     rs = RandomState(1234)
     vals = rs.standard_normal(25).tolist()
-    with pytest.raises(TypeError, match=r"Positional input 0 "):
+    with pytest.raises(TypeError, match=r"args\[0\] must be an instance of ndarray"):
         IIDBootstrap(vals)
     vals = rs.standard_normal(25).tolist()
-    with pytest.raises(TypeError, match=r"Input `data` "):
+    with pytest.raises(TypeError, match=r"data must be an instance of ndarray"):
         IIDBootstrap(data=vals)
 
 
@@ -994,7 +1003,7 @@ def test_bc_extremum_error():
 
 
 def test_invalid_random_state_generator():
-    with pytest.raises(TypeError, match=r"generator keyword argument"):
+    with pytest.raises(TypeError, match=r"seed must be None, a non-negative integer"):
         IIDBootstrap(np.empty(100), seed="123")
 
 
@@ -1004,7 +1013,9 @@ def test_generator(seed):
     assert isinstance(bs.generator, typ)
     gen_copy = copy.deepcopy(bs.generator)
     bs.generator = gen_copy
-    with pytest.raises(TypeError, match=r"Only a Generator or RandomState"):
+    with pytest.raises(
+        TypeError, match=r"generator must be an instance of Generator or RandomState"
+    ):
         bs.generator = 3
     assert isinstance(bs.generator, typ)
     assert bs.generator is gen_copy
