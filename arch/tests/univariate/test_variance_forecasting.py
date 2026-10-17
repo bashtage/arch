@@ -2648,7 +2648,9 @@ class TestBootstrapRng:
             rng(1)
 
         y = self.rng.random_sample(1000)
-        with pytest.raises(ValueError, match=r"start must be > 0 and"):
+        with pytest.raises(
+            ValueError, match=r"start must be an integer in \[1, 1000\]"
+        ):
             BootstrapRng(y, 0)
 
     def test_bootstrap_rng(self):
@@ -2665,7 +2667,7 @@ class TestBootstrapRng:
         assert bs_rs is rs
 
         with pytest.raises(
-            TypeError, match=r"random_state must be a NumPy RandomState instance"
+            TypeError, match=r"random_state must be an instance of RandomState or None"
         ):
             BootstrapRng(resid, start=100, random_state=1234)
 
