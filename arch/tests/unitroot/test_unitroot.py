@@ -317,7 +317,7 @@ class TestUnitRoot:
 
     def test_variance_ratio_invalid_lags(self):
         y = self.inflation
-        with pytest.raises(ValueError, match=r"lags must be an integer larger than 2"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 2; got 1"):
             VarianceRatio(y, lags=1)
 
     def test_variance_ratio_generic(self):

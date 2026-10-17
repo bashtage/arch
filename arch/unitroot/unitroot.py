@@ -1904,6 +1904,19 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         multiple of lags.  If this condition is not satisfied, some values at
         the end of y will be discarded.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer, `debiased`,
+        `robust` or `overlap` is not a bool, or `trend` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is less than 2, or `trend`
+        is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `lags`. At least `lags` + 1
+        observations are needed (`lags` + 2 if `debiased`), or 2 * `lags` if
+        `overlap` is False. This is also a ``ValueError``.
+
     Notes
     -----
     The null hypothesis of a VR is that the process is a random walk, possibly
@@ -1929,6 +1942,9 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     0.1504
     """
 
+    # The multi-period variance needs lags of at least 2
+    _min_lags = 2
+
     def __init__(
         self,
         y: ArrayLike,
@@ -1938,21 +1954,21 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         robust: bool = True,
         overlap: bool = True,
     ) -> None:
-        if lags < 2:
-            raise ValueError("lags must be an integer larger than 2")
+        lags = check_int("lags", lags, lower=2)
         valid_trends = ("n", "c")
         super().__init__(y, lags, trend, valid_trends)
         self._test_name = "Variance-Ratio Test"
         self._null_hypothesis = "The process is a random walk."
         self._alternative_hypothesis = "The process is not a random walk."
-        self._robust = robust
-        self._debiased = debiased
-        self._overlap = overlap
+        self._robust = check_bool("robust", robust)
+        self._debiased = check_bool("debiased", debiased)
+        self._overlap = check_bool("overlap", overlap)
         self._vr: float | None = None
         self._stat_variance: float | None = None
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         for q, cv in zip(quantiles, norm.ppf(quantiles), strict=False):
             self._critical_values[str(int(100 * q)) + "%"] = cv
+        self._check_specification()
 
     @property
     def vr(self) -> float:
@@ -1983,14 +1999,14 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._debiased
 
     def _check_specification(self) -> None:
-        assert self._lags is not None
-        lags = self._lags
-        required = 2 * lags if not self._overlap else lags + 1 + int(self.debiased)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+        # Non-overlapping blocks need two blocks of lags observations. Overlapping
+        # blocks need lags + 1 observations, and one more if debiased.
+        overlap, debiased = self._overlap, self._debiased
+
+        def limit(nobs: int) -> int:
+            return nobs // 2 if not overlap else nobs - 1 - int(debiased)
+
+        self._check_nobs("variance ratio", limit)
 
     def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust
