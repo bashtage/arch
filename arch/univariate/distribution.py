@@ -268,13 +268,25 @@ class Distribution(metaclass=ABCMeta):
         Parameters
         ----------
         parameters : array_like
-            Distribution parameters.
+            Distribution parameters. Must have one element for each shape
+            parameter, and be empty for a distribution without shape parameters.
 
         Returns
         -------
         simulator : callable
             Callable that take a single output size argument and returns i.i.d.
-            draws from the distribution.
+            draws from the distribution. The size must be a non-negative integer
+            or a tuple of them.
+
+        Raises
+        ------
+        TypeError
+            If parameters cannot be converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter,
+            contains NaN or inf, or is outside the range of the distribution,
+            for example if the degrees of freedom of a Student's t is not larger
+            than 2.
         """
 
     @abstractmethod
@@ -301,13 +313,21 @@ class Distribution(metaclass=ABCMeta):
 
         Parameters
         ----------
-        resids : ndarray
-            Residuals to use when computing the bounds.
+        resids : array_like
+            Residuals to use when computing the bounds. Must be 1-d. NaN and inf
+            are not checked.
 
         Returns
         -------
         bounds : list of tuple of float
             List of (lower, upper) bounds, with one tuple for each shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If resids cannot be converted to float64.
+        ValueError
+            If resids is not 1-d.
         """
 
     @abstractmethod
@@ -323,11 +343,11 @@ class Distribution(metaclass=ABCMeta):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             Distribution shape parameters.
-        resids : ndarray
+        resids : array_like
             Array of nobs model residuals.
-        sigma2 : ndarray
+        sigma2 : array_like
             Array of nobs conditional variances.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -339,10 +359,21 @@ class Distribution(metaclass=ABCMeta):
             The log-likelihood if individual is False, and otherwise the vector of
             individual log-likelihoods.
 
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
+
         Notes
         -----
         Returns the loglikelihood where resids are the "data",
-        and parameters and sigma2 are inputs.
+        and parameters and sigma2 are inputs. The values of the arguments are not
+        checked, since the optimizer evaluates the log-likelihood at any value of
+        the parameters: only the type of individual and the number of parameters
+        are checked.
         """
 
     @abstractmethod
@@ -352,14 +383,22 @@ class Distribution(metaclass=ABCMeta):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter.
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
             The estimated shape parameters for the distribution.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
@@ -389,7 +428,7 @@ class Distribution(metaclass=ABCMeta):
         Parameters
         ----------
         pits : float or array_like
-            Probability-integral-transformed values in the interval (0, 1).
+            Probability-integral-transformed values in the interval [0, 1].
         parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
@@ -398,6 +437,15 @@ class Distribution(metaclass=ABCMeta):
         -------
         i : float or ndarray
             Inverse CDF values.
+
+        Raises
+        ------
+        TypeError
+            If pits or parameters cannot be converted to float64.
+        ValueError
+            If pits contains NaN, inf or values outside [0, 1], or parameters
+            does not have one element for each shape parameter, contains NaN or
+            inf, or is outside the bounds of the distribution.
         """
 
     @abstractmethod
@@ -412,7 +460,7 @@ class Distribution(metaclass=ABCMeta):
         Parameters
         ----------
         resids : array_like
-            Values at which to evaluate the cdf.
+            Values at which to evaluate the cdf. NaN is not allowed.
         parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
@@ -421,6 +469,15 @@ class Distribution(metaclass=ABCMeta):
         -------
         f : float or ndarray
             CDF values.
+
+        Raises
+        ------
+        TypeError
+            If resids or parameters cannot be converted to float64.
+        ValueError
+            If resids contains NaN, or parameters does not have one element for
+            each shape parameter, contains NaN or inf, or is outside the bounds
+            of the distribution.
         """
 
     @abstractmethod
@@ -433,7 +490,7 @@ class Distribution(metaclass=ABCMeta):
         Parameters
         ----------
         n : int
-            Order of moment.
+            Order of moment. NaN is returned if n is negative.
         parameters : array_like, optional
             Distribution parameters. Use None for parameterless distributions.
 
@@ -441,6 +498,14 @@ class Distribution(metaclass=ABCMeta):
         -------
         float
             Calculated moment.
+
+        Raises
+        ------
+        TypeError
+            If n is not an integer, or parameters cannot be converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter,
+            contains NaN or inf, or is outside the bounds of the distribution.
         """
 
     @abstractmethod
@@ -456,9 +521,9 @@ class Distribution(metaclass=ABCMeta):
         Parameters
         ----------
         n : int
-            Order of partial moment.
+            Order of partial moment. NaN is returned if n is negative.
         z : float, optional
-            Upper bound for partial moment integral.
+            Upper bound for partial moment integral. inf is allowed.
         parameters : array_like, optional
             Distribution parameters.  Use None for parameterless distributions.
 
@@ -466,6 +531,16 @@ class Distribution(metaclass=ABCMeta):
         -------
         float
             Partial moment.
+
+        Raises
+        ------
+        TypeError
+            If n is not an integer, z is not a real number, or parameters cannot
+            be converted to float64.
+        ValueError
+            If z is NaN, or parameters does not have one element for each shape
+            parameter, contains NaN or inf, or is outside the bounds of the
+            distribution.
 
         Notes
         -----
@@ -558,6 +633,14 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         ll : float or ndarray
             The log-likelihood if individual is False, and otherwise the vector of
             individual log-likelihoods.
+
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
 
         Notes
         -----
@@ -738,6 +821,14 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
             The log-likelihood if individual is False, and otherwise the vector of
             individual log-likelihoods.
 
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
+
         Notes
         -----
         The log-likelihood of a single data point x is
@@ -773,14 +864,22 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter.
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
             Array containing starting values for the shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
@@ -996,6 +1095,14 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             The log-likelihood if individual is False, and otherwise the vector of
             individual log-likelihoods.
 
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
+
         Notes
         -----
         The log-likelihood of a single data point x is
@@ -1054,15 +1161,23 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter.
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
             Array containing starting values for the shape parameter and the
             skewness parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d, is empty, or contains NaN or inf.
 
         Notes
         -----
@@ -1376,6 +1491,14 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
             The log-likelihood if individual is False, and otherwise the vector of
             individual log-likelihoods.
 
+        Raises
+        ------
+        TypeError
+            If individual is not a bool, or parameters, resids or sigma2 cannot be
+            converted to float64.
+        ValueError
+            If parameters does not have one element for each shape parameter.
+
         Notes
         -----
         The log-likelihood of a single data point x is
@@ -1417,14 +1540,22 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        std_resid : ndarray
+        std_resid : array_like
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter.
+            values for the shape parameter. Must be 1-d and have at least one
+            observation.
 
         Returns
         -------
         sv : ndarray
             Array containing starting values for the shape parameter.
+
+        Raises
+        ------
+        TypeError
+            If std_resid cannot be converted to float64.
+        ValueError
+            If std_resid is not 1-d or is empty.
 
         Notes
         -----
