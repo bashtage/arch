@@ -476,9 +476,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Array with nobs rows and k columns containing exogenous regressors.  Must
         contain only finite values.
     lags : int or array_like, optional
@@ -955,7 +955,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         x : array_like, optional
             Array of exogenous variables to include in the simulation, with nobs +
             burn rows and k columns.
-        initial_value_vol : float or ndarray, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1621,7 +1621,7 @@ class ConstantMean(HARX):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
@@ -1724,7 +1724,7 @@ class ConstantMean(HARX):
         x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : float or ndarray, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1797,7 +1797,7 @@ class ZeroMean(HARX):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
@@ -1901,7 +1901,7 @@ class ZeroMean(HARX):
         x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : float or ndarray, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1981,9 +1981,9 @@ class ARX(HARX):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Array with nobs rows and k columns containing exogenous regressors.  Must
         contain only finite values.
     lags : int or array_like, optional
@@ -2126,9 +2126,9 @@ class LS(HARX):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Array with nobs rows and k columns containing exogenous regressors.  Must
         contain only finite values.
     constant : bool, optional
@@ -2212,9 +2212,9 @@ class ARCHInMean(ARX):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Array with nobs rows and k columns containing exogenous regressors.  Must
         contain only finite values.
     lags : int or array_like, optional
@@ -2640,7 +2640,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         Vector of nobs elements containing the dependent variable.
     lags : int, optional
         The order of the moving average, q. Must be at least 1.
@@ -2966,7 +2966,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : float or ndarray, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -3226,9 +3226,9 @@ def arch_model(
 
     Parameters
     ----------
-    y : ndarray, Series or None
+    y : array_like, Series or None
         The dependent variable.
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
