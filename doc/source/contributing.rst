@@ -11,16 +11,21 @@ of a line of a docstring.
 
 1. **Optional parameters.** A parameter with a default has ``, optional`` in its type.
    The default value goes in the description only when the signature does not make it
-   obvious.
+   obvious. A parameter whose default cannot be used, because the value has to be
+   provided, is still ``optional``, and its description says that it must be provided.
 
-   - Good: ``reps : int, optional``
-   - Bad: ``reps : int, default 1000`` or ``reps : int`` for ``reps=1000``
+   - Good: ``reps : int, optional``, and ``adf : ADF, optional`` described as "The ADF
+     instance used to perform the test. It must be provided."
+   - Bad: ``reps : int, default 1000`` or ``reps : int`` for ``reps=1000``, and
+     ``adf : ADF`` for ``adf=None``
 
-2. **Unions.** Write a union of types with ``or``. Braces are only for a set of literal
-   values.
+2. **Unions.** Write a union of types with ``or``. A union of three or more types is
+   written "A, B or C", with no comma before ``or``. Braces are only for a set of
+   literal values.
 
-   - Good: ``x : ndarray or Series`` and ``method : {"aic", "bic"}``
-   - Bad: ``x : {ndarray, Series}``
+   - Good: ``x : ndarray or Series``, ``seed : int, Generator or RandomState`` and
+     ``method : {"aic", "bic"}``
+   - Bad: ``x : {ndarray, Series}`` and ``seed : int, Generator, or RandomState``
 
 3. **No subscripted types.** Spell out the contents.
 
@@ -61,11 +66,13 @@ of a line of a docstring.
    - Bad: a missing parameter, one in a different order, ``resids `` with a trailing
      space, or ``method: str`` without a space before the colon
 
-9. **Punctuation.** The summary is one line that starts with a verb in the imperative
-   mood. The summary, the parameter descriptions and the return descriptions start with
-   a capital letter and end with a period.
+9. **Punctuation.** The summary is one line. The summary of a function or a method
+   starts with a verb in the imperative mood, and the summary of a class or a property
+   is a noun phrase. The summary, the parameter descriptions and the return descriptions
+   start with a capital letter and end with a period.
 
-   - Good: ``Compute the log-likelihood.``
+   - Good: ``Compute the log-likelihood.`` for a method and ``Augmented Dickey-Fuller
+     unit root test.`` for a class
    - Bad: ``Computes the log-likelihood``
 
 10. **Bugs.** A bug found while editing a docstring is not fixed in the docstring commit.
