@@ -298,5 +298,5 @@ def test_arch_in_mean_form_case(returns, form):
 
 @pytest.mark.parametrize("bad", ["bogus", ""])
 def test_arch_in_mean_form_invalid(returns, bad):
-    with pytest.raises(ValueError, match=r"form must be a floating point number"):
+    with pytest.raises(ValueError, match=r"form must be 'log', 'vol', 'var' or a "):
         ARCHInMean(returns, volatility=GARCH(), form=bad)

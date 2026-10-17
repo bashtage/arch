@@ -84,9 +84,15 @@ def ma2_constant_variance():
 
 
 # Construction and attributes
-@pytest.mark.parametrize("lags", [0, -1, 1.5, True, False, "2", None, [1, 2], np.nan])
+@pytest.mark.parametrize("lags", [0, -1])
 def test_invalid_lags(lags):
-    with pytest.raises(ValueError, match="lags must be a positive integer"):
+    with pytest.raises(ValueError, match="lags must be an integer >= 1"):
+        MAMean(lags=lags)
+
+
+@pytest.mark.parametrize("lags", [1.5, True, False, "2", None, [1, 2], np.nan])
+def test_invalid_lags_type(lags):
+    with pytest.raises(TypeError, match="lags must be an integer >= 1"):
         MAMean(lags=lags)
 
 
@@ -263,13 +269,13 @@ def test_simulate_reproducible():
 def test_simulate_errors():
     model = MAMean(lags=2)
     params = np.r_[MA2_PARAMS, 1.0]
-    with pytest.raises(ValueError, match="Both initial value and x must be none"):
+    with pytest.raises(ValueError, match="initial_value must be None"):
         model.simulate(params, 10, initial_value=1.0)
-    with pytest.raises(ValueError, match="Both initial value and x must be none"):
+    with pytest.raises(ValueError, match="x must be None"):
         model.simulate(params, 10, x=np.zeros((510, 1)))
-    with pytest.raises(ValueError, match="params has the wrong number of elements"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(4,\)"):
         model.simulate(params[:-1], 10)
-    with pytest.raises(ValueError, match="params has the wrong number of elements"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(3,\)"):
         MAMean(lags=2, constant=False).simulate(params, 10)
 
 
@@ -652,7 +658,7 @@ def test_fit_date_cutoffs():
     by_index = model.fit(disp="off", first_obs=first, last_obs=last)
     assert_allclose(by_date.params, by_index.params)
     assert by_date.nobs == by_index.nobs
-    with pytest.raises(ValueError, match="first_obs and last_obs produce an empty"):
+    with pytest.raises(ValueError, match="last_obs must be larger than first_obs"):
         model.fit(disp="off", first_obs=100, last_obs=50)
 
 

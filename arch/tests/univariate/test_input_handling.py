@@ -157,12 +157,12 @@ def test_simulate_params_length(mean, dist):
     else:
         assert_allclose(sim["data"], sim["errors"])
     for extra in (1, 2):
-        with pytest.raises(ValueError, match=f"Expected {len(valid)}, got "):
+        with pytest.raises(ValueError, match=rf"shape \({len(valid)},\); got "):
             mod.simulate([*valid, *([0.5] * extra)], 25)
     for missing in (1, 2):
-        with pytest.raises(ValueError, match=f"Expected {len(valid)}, got "):
+        with pytest.raises(ValueError, match=rf"shape \({len(valid)},\); got "):
             mod.simulate(valid[:-missing], 25)
-    with pytest.raises(ValueError, match="Expected"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array"):
         mod.simulate([], 25)
 
 
@@ -174,7 +174,7 @@ def test_simulate_params_shape(mean):
     # a column or row vector is fine
     assert mod.simulate(params[:, None], 10, burn=5).shape[0] == 10
     assert mod.simulate(params[None, :], 10, burn=5).shape[0] == 10
-    with pytest.raises(ValueError, match=r"1D|squeezable"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array"):
         mod.simulate(np.tile(params, (2, 2)), 10)
 
 
@@ -292,21 +292,21 @@ def test_arch_model_loop_over_numpy_ints():
 )
 def test_arch_model_invalid_p(vol, p):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="p must be a scalar int"):
+    with pytest.raises(TypeError, match="p must be an integer"):
         arch_model(y, vol=vol, p=p)
 
 
 @pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "APARCH", "FIAPARCH"])
 def test_arch_model_invalid_o(vol):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="o must be a scalar int"):
+    with pytest.raises(TypeError, match="o must be an integer"):
         arch_model(y, vol=vol, o=1.0)
 
 
 @pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"])
 def test_arch_model_invalid_q(vol):
     y = np.random.default_rng(10).standard_normal(100)
-    with pytest.raises(TypeError, match="q must be a scalar int"):
+    with pytest.raises(TypeError, match="q must be an integer"):
         arch_model(y, vol=vol, q=1.5)
 
 
@@ -381,5 +381,5 @@ def test_simulate_initial_value_message(mean, message):
     mod = mean(volatility=GARCH())
     params = [0.0, 0.05, 0.1, 0.8][-mod.num_params - 3 :]
     for kwargs in ({"initial_value": 1.0}, {"x": np.ones(10)}):
-        with pytest.raises(ValueError, match=f"simulating a {message} process"):
+        with pytest.raises(ValueError, match=f"None, since a {message} model has no"):
             mod.simulate(params, 10, **kwargs)

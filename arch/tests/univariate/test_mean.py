@@ -193,7 +193,7 @@ class TestMeanModel:
         random_state = np.random.RandomState(seed)
         zm.distribution = Normal(seed=random_state)
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"initial_value must be None"):
             zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)
         date_index = pd.date_range("2000-12-31", periods=1000, freq="W")
         cls.y = sim_data.data.values
@@ -216,7 +216,7 @@ class TestMeanModel:
         parameters = np.array([5.0, 1.0])
         cm.simulate(parameters, self.T)
         assert_equal(cm.num_params, 1)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"x must be None"):
             cm.simulate(parameters, self.T, x=np.array(10))
         bounds = cm.bounds()
         assert_equal(bounds, [(-np.inf, np.inf)])
@@ -357,17 +357,17 @@ class TestMeanModel:
         assert isinstance(res.__repr__(), str)
 
     def test_harx_error(self):
-        with pytest.raises(ValueError, match=r"Input to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got -5"):
             HARX(self.y, self.x, lags=[1, -5, 22])
-        with pytest.raises(ValueError, match=r"When using the 1-d format of lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got 0"):
             HARX(self.y, self.x, lags=[0, 1, 5, 22])
-        with pytest.raises(ValueError, match=r"nput to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[-1], [3]])
-        with pytest.raises(ValueError, match=r"When using a 2-d array, all values"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[0], [0]])
         with pytest.raises(ValueError, match=r"lags contains redundant entries"):
             HARX(self.y, self.x, lags=[[1, 1, 3], [2, 3, 3]])
-        with pytest.raises(ValueError, match=r"Incorrect format for lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[[1], [3]]])
 
     @pytest.mark.parametrize("constant", [True, False])
@@ -760,20 +760,16 @@ class TestMeanModel:
         res.summary()
 
     def test_errors(self):
-        with pytest.raises(
-            ValueError, match=r"lags does not follow a supported format"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             ARX(self.y, lags=np.array([[1, 2], [3, 4]]))
         x = self.rng.randn(self.y.shape[0] + 1, 1)
         with pytest.raises(ValueError, match=r"x must be nobs by n"):
             ARX(self.y, x=x)
-        with pytest.raises(
-            ValueError, match=r"When using a 2-d array, lags must by k by 2"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, lags=np.eye(3))
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, lags=-1)
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, x=self.rng.randn(1, 1), lags=-1)
 
         ar = ARX(self.y, lags=1)
@@ -785,13 +781,11 @@ class TestMeanModel:
         with pytest.raises(ValueError, match=r"Must subclass Distribution"):
             ar.distribution = v
         x = self.rng.randn(1000, 1)
-        with pytest.raises(ValueError, match=r"x must have nobs \+ burn rows"):
+        with pytest.raises(ValueError, match=r"x must be a 2-d array .* \(600, n\)"):
             ar.simulate(np.ones(5), 100, x=x)
-        with pytest.raises(
-            ValueError, match=r"params has the wrong number of elements"
-        ):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(3,\)"):
             ar.simulate(np.ones(5), 100)
-        with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
+        with pytest.raises(ValueError, match=r"initial_value must be a 1-d array"):
             ar.simulate(np.ones(3), 100, initial_value=self.rng.standard_normal(10))
 
         ar.volatility = ConstantVariance()
@@ -1070,10 +1064,10 @@ class TestMeanModel:
 
     def test_first_after_last(self):
         am = arch_model(self.y_series)
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(disp=DISPLAY, first_obs=500, last_obs=480)
 
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(
                 disp=DISPLAY,
                 first_obs=self.y_series.index[500],
@@ -1084,7 +1078,7 @@ class TestMeanModel:
         am = arch_model(self.y_series, vol="Constant")
         res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0] + 1)
+        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0])
         assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
         assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 
@@ -1466,14 +1460,14 @@ def test_parameterless_fit(first_obs, last_obs, vol):
 
 
 def test_invalid_vol_dist():
-    with pytest.raises(TypeError, match=r"volatility must inherit"):
+    with pytest.raises(TypeError, match=r"volatility must be an instance of"):
         ConstantMean(SP500, volatility="GARCH")
-    with pytest.raises(TypeError, match=r"distribution must inherit"):
+    with pytest.raises(TypeError, match=r"distribution must be an instance of"):
         ConstantMean(SP500, distribution="Skew-t")
 
 
 def test_fiaparch_non_int_p():
-    with pytest.raises(TypeError, match=r"p must be a scalar int"):
+    with pytest.raises(TypeError, match=r"p must be an integer"):
         arch_model(SP500, vol="fiaparch", p=[1, 2])
 
 

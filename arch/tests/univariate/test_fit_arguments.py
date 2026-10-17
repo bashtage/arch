@@ -192,16 +192,16 @@ def test_ma_mean_cutoff_types(indexed, kind):
 )
 def test_unsupported_cutoff_types(returns, bad):
     mod = ConstantMean(returns, volatility=GARCH())
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         mod.fit(disp="off", first_obs=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="last_obs must be an integer position"):
         mod.fit(disp="off", last_obs=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         mod.fix([0.0, 0.1, 0.1, 0.8], first_obs=bad)
     res = mod.fit(disp="off")
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="start must be an integer position"):
         res.forecast(start=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         MAMean(returns, lags=1).fit(disp="off", first_obs=bad)
 
 
@@ -212,12 +212,12 @@ def test_unsupported_cutoff_types(returns, bad):
 )
 def test_date_cutoff_requires_datetime_index(value):
     y = np.random.RandomState(3).standard_normal(100)
-    with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
+    with pytest.raises(ValueError, match="first_obs must be an integer position"):
         ConstantMean(y).fit(disp="off", first_obs=value)
-    with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
+    with pytest.raises(ValueError, match="first_obs must be an integer position"):
         ConstantMean(pd.Series(y)).fit(disp="off", first_obs=value)
     res = ConstantMean(y).fit(disp="off")
-    with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
+    with pytest.raises(ValueError, match="start must be an integer position"):
         res.forecast(start=value)
 
 
