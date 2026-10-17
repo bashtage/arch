@@ -516,20 +516,18 @@ def test_mackinnoncrit_errors():
 
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
-    adf = ADF(x)
     # ValueError: maxlag should be < nobs
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries2():
     x = np.asarray([0, 0])
-    adf = ADF(x)
     # IndexError: index 0 is out of bounds for axis 0 with size 0
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries3():
