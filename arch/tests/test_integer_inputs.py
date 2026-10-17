@@ -865,7 +865,7 @@ STRINGS_2D = [["a", "b"], ["c", "d"]] * 30
 def test_non_numeric_1d_raises_type_error(
     func: Callable[[Any], Any], name: str
 ) -> None:
-    with pytest.raises(TypeError, match=rf"^{name} must .*float64"):
+    with pytest.raises(TypeError, match=rf"^{name} must .*(float64|numbers)"):
         func(STRINGS_1D)
 
 
@@ -887,7 +887,7 @@ def test_non_numeric_1d_raises_type_error(
 def test_non_numeric_2d_raises_type_error(
     func: Callable[[Any], Any], name: str
 ) -> None:
-    with pytest.raises(TypeError, match=rf"^{name} must .*float64"):
+    with pytest.raises(TypeError, match=rf"^{name} must .*(float64|numbers)"):
         func(STRINGS_2D)
 
 
