@@ -1293,9 +1293,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         pvalue = check_float(
             "pvalue", pvalue, lower=0.0, upper=1.0, inclusive="neither"
         )
-        pvalue_type = check_option("pvalue_type", pvalue_type, _PVALUE_TYPES)
+        pvalue_key = check_option("pvalue_type", pvalue_type, _PVALUE_TYPES)
         self._check_compute()
-        crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
+        crit_val = self.critical_values(pvalue=pvalue)[pvalue_key]
         better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)
         return np.argwhere(better_models).flatten()
