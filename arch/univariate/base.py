@@ -2310,9 +2310,17 @@ class ARCHModelFixedResult(_SummaryRepr):
         fig, ax = plt.subplots(1, 1)
         plot_index = _plot_index(self._dep_var.index)
         use_date = isinstance(plot_index, pd.DatetimeIndex)
-        plot_fn = ax.plot
+        plot_fn: Callable[..., Any] = ax.plot
         if MPL_LT_310 and hasattr(ax, "plot_date") and use_date:
-            plot_fn = ax.plot_date
+
+            def _plot_date(
+                x: Any, y: Any, linestyle: str = "-", marker: str = "", **kwargs: Any
+            ) -> Any:
+                # The default fmt of plot_date, "o", conflicts with the linestyle and
+                # marker keywords, so the style is passed as fmt
+                return ax.plot_date(x, y, fmt=linestyle + marker, **kwargs)
+
+            plot_fn = _plot_date
         x_values = np.array(plot_index)
         if plot_mean:
             y_values = np.asarray(self._dep_var)
@@ -2617,7 +2625,7 @@ class ARCHModelResult(ARCHModelFixedResult):
             np.asarray(self.std_err),
             np.asarray(self.tvalues),
             np.asarray(self.pvalues),
-            pd.Series(conf_int_str),
+            pd.Series(conf_int_str, dtype=object),
         )
         # (0,0) is a dummy format
         formats = [(10, 4), (9, 3), (9, 3), (9, 3), (0, 0)]
