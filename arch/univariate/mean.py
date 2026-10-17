@@ -47,7 +47,18 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.utility._validation import check_option
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_callable,
+    check_float,
+    check_index,
+    check_instance,
+    check_int,
+    check_option,
+)
 from arch.utility.array import append_same_type, to_array_1d
 
 if TYPE_CHECKING:
@@ -173,18 +184,291 @@ def _check_simulation_params(
     model: ARCHModel, params: ArrayLike1D | Sequence[float]
 ) -> Float64Array1D:
     """Convert params to a 1-d array and check the number of parameters"""
-    _params = cast("Float64Array1D", ensure1d(params, "params", False).astype(float))
     num_params = (
         int(model.num_params)
         + int(model.volatility.num_params)
         + int(model.distribution.num_params)
     )
-    if _params.shape[0] != num_params:
-        raise ValueError(
-            "params has the wrong number of elements. "
-            f"Expected {num_params}, got {_params.shape[0]}"
+    return cast(
+        "Float64Array1D", check_array("params", params, ndim=1, shape=(num_params,))
+    )
+
+
+def _check_model_arguments(
+    constant: Any,
+    hold_back: Any,
+    volatility: Any,
+    distribution: Any,
+    rescale: Any,
+) -> tuple[bool, int | None, bool | None]:
+    """
+    Check the arguments that all of the mean models share
+
+    Returns
+    -------
+    constant : bool
+        The flag for the constant.
+    hold_back : int or None
+        The number of observations to hold back.
+    rescale : bool or None
+        The flag for rescaling.
+    """
+    constant = check_bool("constant", constant)
+    hold_back = check_int("hold_back", hold_back, lower=0, allow_none=True)
+    check_instance("volatility", volatility, VolatilityProcess, allow_none=True)
+    check_instance("distribution", distribution, Distribution, allow_none=True)
+    rescale = check_bool("rescale", rescale, allow_none=True)
+    return constant, hold_back, rescale
+
+
+def _check_lags(lags: Any, name: str = "lags", *, allow_2d: bool = True) -> None:
+    """
+    Check the format and the values of lags
+
+    Parameters
+    ----------
+    lags : int or array_like
+        The lags. A scalar is a non-negative integer, a 1-d array_like contains
+        integers that are at least 1 and, if allow_2d, a (2, n) array_like
+        contains the first and last lag of each entry.
+    name : str
+        The name of the argument for the error message.
+    allow_2d : bool
+        Whether the (2, n) format is allowed.
+    """
+    rule = "an integer >= 0 or a non-empty 1-d array_like of integers >= 1"
+    if allow_2d:
+        rule += (
+            ", or a (2, n) array_like of integers with 1 <= lags[0, j] <= lags[1, j]"
         )
-    return _params
+    try:
+        arr = np.asarray(lags)
+    except ValueError:  # Ragged sequences
+        _fail(ValueError, name, rule, _describe(lags))
+    if arr.ndim == 0:
+        check_int(name, lags, lower=0)
+        return
+    if (
+        arr.size == 0
+        or arr.ndim > 2
+        or (arr.ndim == 2 and (not allow_2d or arr.shape[0] != 2))
+    ):
+        _fail(ValueError, name, rule, _describe(lags))
+    if arr.dtype.kind not in "iu":
+        # Floats, including 5.0, Booleans and strings are rejected
+        for value in arr.ravel().tolist():
+            check_int(name, value)
+    if arr.ndim == 1:
+        check_int(name, min(arr.tolist()), lower=1)
+    elif np.any(arr[0] < 1) or np.any(arr[1] < arr[0]):
+        _fail(ValueError, name, rule, _describe(lags))
+
+
+def _fit_sample(
+    model: ARCHModel,
+    first_obs: int | DateLike | None,
+    last_obs: int | DateLike | None,
+) -> tuple[int, int]:
+    """
+    Check first_obs, last_obs and the observations that are held back
+
+    Returns
+    -------
+    first : int
+        The position of the first observation used in estimation, which is after the
+        observations that are held back.
+    last : int
+        The position after the last observation used in estimation.
+    """
+    index = model._y_series.index
+    nobs = int(model._y.shape[0])
+    if nobs == 0:
+        check_array("y", model._y, ndim=1, min_length=1)
+    raw_first = check_index("first_obs", first_obs, nobs, index=index, default=0)
+    last = check_index("last_obs", last_obs, nobs, index=index, default=nobs)
+    assert raw_first is not None
+    assert last is not None
+    if last <= raw_first:
+        if last_obs is None:
+            rule = f"smaller than the number of observations ({nobs})"
+            _fail(ValueError, "first_obs", rule, _describe(first_obs))
+        rule = f"larger than first_obs ({raw_first})"
+        _fail(ValueError, "last_obs", rule, _describe(last_obs))
+    hold_back = model._hold_back
+    if last - raw_first <= hold_back:
+        rule = (
+            "smaller than the number of observations in the estimation sample "
+            f"({last - raw_first}), where hold_back is at least the largest lag"
+        )
+        _fail(ValueError, "hold_back", rule, _describe(hold_back))
+    return raw_first + hold_back, last
+
+
+def _check_resid_params(params: Any, size: int) -> Float64Array1D:
+    """
+    Check the parameters of the mean in resids
+
+    Notes
+    -----
+    resids is called with any parameters by the likelihood while the model is fit,
+    and so NaN and inf are not rejected here. The check of the type and the shape
+    is skipped for an array that is already valid.
+    """
+    if (
+        type(params) is np.ndarray
+        and params.dtype == np.float64
+        and params.shape == (size,)
+    ):
+        return cast("Float64Array1D", params)
+    return cast(
+        "Float64Array1D",
+        check_array(
+            "params", params, ndim=1, shape=(size,), allow_nan=True, allow_inf=True
+        ),
+    )
+
+
+def _check_resid_data(
+    y: Any, regressors: Any, num_regressors: int | None
+) -> tuple[Float64Array1D | None, Float64Array2D | None]:
+    """
+    Check the alternative data in resids
+
+    Parameters
+    ----------
+    y : array_like or None
+        The alternative values of the dependent variable.
+    regressors : array_like or None
+        The alternative values of the regressors.
+    num_regressors : int or None
+        The number of columns of regressors. None for models that do not use the
+        regressors, which are only checked to be a 2-d array_like if provided.
+    """
+    _y = None
+    nobs = None
+    if y is not None:
+        _y = cast("Float64Array1D", check_array("y", y, ndim=1, min_length=1))
+        nobs = _y.shape[0]
+    if num_regressors is None:
+        _regressors = check_array("regressors", regressors, ndim=2, allow_none=True)
+    elif regressors is None and y is None:
+        _regressors = None
+    else:
+        _regressors = check_array(
+            "regressors", regressors, ndim=2, shape=(nobs, num_regressors)
+        )
+    return _y, cast("Float64Array2D | None", _regressors)
+
+
+def _check_initial_value_vol(initial_value_vol: Any) -> Any:
+    """Check the initial value of the volatility process in simulate"""
+    if initial_value_vol is None:
+        return None
+    if np.ndim(initial_value_vol) == 0:
+        return check_float("initial_value_vol", initial_value_vol)
+    return check_array("initial_value_vol", initial_value_vol)
+
+
+def _check_simulation_no_dynamics(
+    model: str,
+    nobs: Any,
+    burn: Any,
+    initial_value: Any,
+    x: Any,
+    initial_value_vol: Any,
+) -> tuple[int, int, Any]:
+    """
+    Check the arguments of simulate for a model without mean dynamics or regressors
+
+    Parameters
+    ----------
+    model : str
+        The description of the model for the error message.
+
+    Returns
+    -------
+    nobs : int
+        The number of observations.
+    burn : int
+        The number of burn-in observations.
+    initial_value_vol : float, ndarray or None
+        The initial value of the volatility process.
+    """
+    nobs = check_int("nobs", nobs, lower=1)
+    burn = check_int("burn", burn, lower=0)
+    if initial_value is not None:
+        rule = f"None, since a {model} has no mean dynamics"
+        _fail(ValueError, "initial_value", rule, _describe(initial_value))
+    if x is not None:
+        rule = f"None, since a {model} has no exogenous variables"
+        _fail(ValueError, "x", rule, _describe(x))
+    return nobs, burn, _check_initial_value_vol(initial_value_vol)
+
+
+def _check_forecast_arguments(
+    model: ARCHModel,
+    params: Any,
+    horizon: Any,
+    start: Any,
+    align: Any,
+    method: Any,
+    simulations: Any,
+    rng: Any,
+    random_state: Any,
+    reindex: Any,
+) -> tuple[
+    Float64Array1D, int, int, Literal["origin", "target"], ForecastingMethod, int, bool
+]:
+    """
+    Check the arguments of forecast
+
+    Returns
+    -------
+    params : ndarray
+        The parameters of the model as a float64 array.
+    horizon : int
+        The forecast horizon.
+    start_index : int
+        The position of the first forecast, which is the default start if start is
+        None.
+    align : str
+        The alignment, in lower case.
+    method : str
+        The forecasting method, in lower case.
+    simulations : int
+        The number of simulations.
+    reindex : bool
+        Whether to reindex the forecasts.
+    """
+    num_params = (
+        int(model.num_params)
+        + int(model.volatility.num_params)
+        + int(model.distribution.num_params)
+    )
+    params = check_array("params", params, ndim=1, shape=(num_params,))
+    horizon = check_int("horizon", horizon, lower=1)
+    align = cast(
+        "Literal['origin', 'target']",
+        check_option("align", align, ("origin", "target")),
+    )
+    method = cast(
+        "ForecastingMethod",
+        check_option("method", method, ("analytic", "simulation", "bootstrap")),
+    )
+    simulations = check_int("simulations", simulations, lower=1)
+    check_callable("rng", rng, allow_none=True)
+    check_instance("random_state", random_state, np.random.RandomState, allow_none=True)
+    reindex = check_bool("reindex", reindex)
+    default_start = max(0, model._fit_indices[1] - 1)
+    start_index = check_index(
+        "start",
+        start,
+        int(model._y.shape[0]),
+        index=model._y_series.index,
+        default=default_start,
+    )
+    assert start_index is not None
+    return params, horizon, start_index, align, method, simulations, reindex
 
 
 class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
@@ -302,6 +586,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         distribution: Distribution | None = None,
         rescale: bool | None = None,
     ) -> None:
+        constant, hold_back, rescale = _check_model_arguments(
+            constant, hold_back, volatility, distribution, rescale
+        )
+        use_rotated = check_bool("use_rotated", use_rotated)
+        if lags is not None:
+            _check_lags(lags)
         super().__init__(
             y,
             hold_back=hold_back,
@@ -330,7 +620,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if self._x_original is not None:
             self._name += "-X"
         if lags is not None:
-            max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
+            max_lags = int(np.max(np.asarray(lags, dtype=np.int64)))
         else:
             max_lags = 0
         self._max_lags = max_lags
@@ -744,6 +1034,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             "x must be nobs by n, where nobs is the same as the number of elements in y"
         )
         if self._x_original is not None:
+            # Numbers that are finite
+            check_array("x", as_float64(self._x_original, "x"))
             if isinstance(self._x_original, pd.Series):
                 self._x = pd.DataFrame(self._x_original)
             elif isinstance(self._x_original, pd.DataFrame):
@@ -755,7 +1047,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 self._x = cast("Float64Array2D", x_original)
             assert isinstance(self._x, (np.ndarray, pd.DataFrame))
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
-                raise ValueError(err_msg)
+                raise ValueError(f"{err_msg}; got {_describe(self._x_original)}")
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
             names, self._x_index = parse_dataframe(self._x, def_names)
             self._x_names = [str(name) for name in names]
@@ -769,18 +1061,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         if self.lags is None:
             return
+        # The format and the values of lags are checked when the model is created
         lags = np.asarray(self.lags)
-        if np.any(lags < 0):
-            raise ValueError("Input to lags must be non-negative")
 
         if lags.ndim == 0:
             lags = np.arange(1, int(lags) + 1)
 
         if lags.ndim == 1:
-            if np.any(lags <= 0):
-                raise ValueError(
-                    "When using the 1-d format of lags, values must be positive"
-                )
             lags = np.unique(lags)
             temp = cast("Int64Array2D", np.array([lags, lags], dtype=int))
             if self.use_rotated:
@@ -789,14 +1076,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             else:
                 temp[0, :] = 0
             self._lags = temp
-        elif lags.ndim == 2:
-            if lags.shape[0] != 2:
-                raise ValueError("When using a 2-d array, lags must by k by 2")
-            if np.any(lags[0] <= 0) or np.any(lags[1] < lags[0]):
-                raise ValueError(
-                    "When using a 2-d array, all values must be larger than 0 and "
-                    "lags[0,j] <= lags[1,j] for all lags values."
-                )
+        else:
             ind = np.lexsort(np.flipud(lags))
             lags = cast("Int64Array2D", lags[:, ind])
             test_mat = np.zeros((lags.shape[1], np.max(lags)), dtype=int)
@@ -814,8 +1094,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "Rotation is not available when using the 2-d lags input format",
                     stacklevel=2,
                 )
-        else:
-            raise ValueError("Incorrect format for lags")
 
     def _har_to_ar(self, params: Float64Array) -> Float64Array:
         if self._max_lags == 0:
@@ -842,6 +1120,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         if self.lags is not None and nobs_orig > 0:
             maxlag = np.max(self.lags)
+            if maxlag >= nobs_orig:
+                _fail(
+                    ValueError,
+                    "lags",
+                    f"smaller than the number of observations ({nobs_orig})",
+                    f"a largest lag of {maxlag} ({type(self.lags).__name__})",
+                )
             lag_array = lagmat(self._y, maxlag)
             reg_lags = np.empty((nobs_orig, self._lags.shape[1]), dtype=np.double)
             for i, lags in enumerate(self._lags.T):
@@ -1654,21 +1939,17 @@ class ARX(HARX):
         # Convert lags to 2-d format
 
         if lags is not None:
+            _check_lags(lags, allow_2d=False)
             lags_arr = np.asarray(lags)
             assert lags_arr is not None
             if lags_arr.ndim == 0:
-                if lags_arr < 0:
-                    raise ValueError("lags must be a positive integer.")
-                elif lags_arr == 0:
+                if lags_arr == 0:
                     lags = None
                 else:
                     lags_arr = np.arange(1, int(lags_arr) + 1)
             if lags is not None:
-                if lags_arr.ndim != 1:
-                    raise ValueError("lags does not follow a supported format")
-                else:
-                    lags_arr = np.vstack((lags_arr, lags_arr))
-                    assert lags_arr is not None
+                lags_arr = np.vstack((lags_arr, lags_arr))
+                assert lags_arr is not None
 
         super().__init__(
             y,

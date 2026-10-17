@@ -357,17 +357,17 @@ class TestMeanModel:
         assert isinstance(res.__repr__(), str)
 
     def test_harx_error(self):
-        with pytest.raises(ValueError, match=r"Input to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got -5"):
             HARX(self.y, self.x, lags=[1, -5, 22])
-        with pytest.raises(ValueError, match=r"When using the 1-d format of lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got 0"):
             HARX(self.y, self.x, lags=[0, 1, 5, 22])
-        with pytest.raises(ValueError, match=r"nput to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[-1], [3]])
-        with pytest.raises(ValueError, match=r"When using a 2-d array, all values"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[0], [0]])
         with pytest.raises(ValueError, match=r"lags contains redundant entries"):
             HARX(self.y, self.x, lags=[[1, 1, 3], [2, 3, 3]])
-        with pytest.raises(ValueError, match=r"Incorrect format for lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[[1], [3]]])
 
     @pytest.mark.parametrize("constant", [True, False])
@@ -760,20 +760,16 @@ class TestMeanModel:
         res.summary()
 
     def test_errors(self):
-        with pytest.raises(
-            ValueError, match=r"lags does not follow a supported format"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             ARX(self.y, lags=np.array([[1, 2], [3, 4]]))
         x = self.rng.randn(self.y.shape[0] + 1, 1)
         with pytest.raises(ValueError, match=r"x must be nobs by n"):
             ARX(self.y, x=x)
-        with pytest.raises(
-            ValueError, match=r"When using a 2-d array, lags must by k by 2"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, lags=np.eye(3))
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, lags=-1)
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, x=self.rng.randn(1, 1), lags=-1)
 
         ar = ARX(self.y, lags=1)
@@ -1466,9 +1462,9 @@ def test_parameterless_fit(first_obs, last_obs, vol):
 
 
 def test_invalid_vol_dist():
-    with pytest.raises(TypeError, match=r"volatility must inherit"):
+    with pytest.raises(TypeError, match=r"volatility must be an instance of"):
         ConstantMean(SP500, volatility="GARCH")
-    with pytest.raises(TypeError, match=r"distribution must inherit"):
+    with pytest.raises(TypeError, match=r"distribution must be an instance of"):
         ConstantMean(SP500, distribution="Skew-t")
 
 
