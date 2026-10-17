@@ -1990,7 +1990,15 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     lags : int or array_like, optional
         List of lags to include in the model, or if scalar, includes all lags up to
-        the value.
+        the value. The lags must be positive integers, and the list cannot be empty.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` is not an integer or an array of integers.
+    ValueError
+        If ``lags`` is smaller than 1, is empty, is not 1-d, or contains a lag
+        smaller than 1.
 
     Notes
     -----
