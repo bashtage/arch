@@ -713,7 +713,7 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
         )
     _fail(
         TypeError,
-        "cutoff",
+        "cutoffs",
         "None, an integer, a string, a date, a datetime, a datetime64, a Timestamp "
         "or a Period",
         _describe(cutoff),
