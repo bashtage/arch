@@ -20,7 +20,15 @@ from arch.unitroot.critical_values.engle_granger import (
     TAU_STAR,
 )
 from arch.unitroot.unitroot import ADF, TREND_DESCRIPTION
-from arch.utility._validation import check_option
+from arch.utility._validation import check_bool, check_int, check_option
+
+
+def _check_num_x(num_x: int) -> None:
+    if not 1 <= num_x <= 12:
+        raise ValueError(
+            "The number of cross-sectional variables must be between 1 and "
+            "12 (inclusive)"
+        )
 
 
 def engle_granger(
@@ -108,6 +116,12 @@ def engle_granger(
     hypothesis is true.
     """
     setup = _check_cointegrating_regression(y, x, trend)
+    nobs = setup.y.shape[0]
+    # The ADF regression of the residual cannot use more than nobs - 2 lags
+    lags = check_int("lags", lags, lower=0, allow_none=True)
+    max_lags = check_int("max_lags", max_lags, lower=0, upper=nobs - 2, allow_none=True)
+    low_memory = check_bool("low_memory", low_memory, allow_none=True)
+    _check_num_x(setup.x.shape[1])
     xsection = _cross_section(setup.y, setup.x, setup.trend)
     resid = xsection.resid
     # Never pass in the trend here since only used in x-section
@@ -290,11 +304,7 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
         The critical values for 1, 5 and 10%.
     """
     trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
-    if not 1 <= num_x <= 12:
-        raise ValueError(
-            "The number of cross-sectional variables must be between 1 and "
-            "12 (inclusive)"
-        )
+    _check_num_x(num_x)
     tbl = CV_PARAMETERS[trend]
 
     crit_vals = {}
@@ -325,11 +335,7 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
         The asymptotic p-value.
     """
     trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
-    if not 1 <= num_x <= 12:
-        raise ValueError(
-            "The number of cross-sectional variables must be between 1 and "
-            "12 (inclusive)"
-        )
+    _check_num_x(num_x)
     key = (trend, num_x)
     if stat > TAU_MAX[key]:
         return 1.0

@@ -9,6 +9,12 @@ import pandas as pd
 import pytest
 
 from arch.tests.validation_table import (
+    BOOL_BAD,
+    BOOL_GOOD,
+    FLOAT_BAD,
+    FLOAT_GOOD,
+    INT_BAD,
+    INT_GOOD,
     Row,
     bad_value_rows,
     good_value_rows,
@@ -227,4 +233,63 @@ def _good_data_rows():
 
 @pytest.mark.parametrize("row", to_params(_good_data_rows()))
 def test_good_data(row):
+    run_row(row)
+
+
+def _no_none(bad):
+    return [(value, exc) for value, exc in bad if value is not None]
+
+
+INT_NONE_BAD = _no_none(INT_BAD)
+BOOL_NONE_BAD = _no_none(BOOL_BAD)
+FLOAT_NONE_BAD = _no_none(FLOAT_BAD)
+LAGS_RULE = r"an integer >= 0 or None"
+BOOL_RULE = r"True or False or None"
+
+EG_ROWS = [
+    *bad_value_rows("eg", _eg, BASE, "lags", INT_NONE_BAD, rule=LAGS_RULE),
+    Row(
+        "eg",
+        _eg,
+        {**BASE, "lags": -1},
+        ValueError,
+        rf"^lags must be {LAGS_RULE}; got -1",
+        id="eg-lags-negative",
+        name="lags",
+    ),
+    *bad_value_rows(
+        "eg",
+        _eg,
+        BASE,
+        "max_lags",
+        INT_NONE_BAD,
+        rule=rf"an integer in \[0, {NOBS - 2}\] or None",
+    ),
+    Row(
+        "eg",
+        _eg,
+        {**BASE, "max_lags": -1},
+        ValueError,
+        rf"^max_lags must be an integer in \[0, {NOBS - 2}\] or None; got -1",
+        id="eg-max_lags-negative",
+        name="max_lags",
+    ),
+    Row(
+        "eg",
+        _eg,
+        {**BASE, "max_lags": NOBS - 1},
+        ValueError,
+        rf"^max_lags must be an integer in \[0, {NOBS - 2}\] or None; got {NOBS - 1}",
+        id="eg-max_lags-large",
+        name="max_lags",
+    ),
+    *bad_value_rows("eg", _eg, BASE, "low_memory", BOOL_NONE_BAD, rule=BOOL_RULE),
+    *good_value_rows("eg", _eg, BASE, "lags", [None, 0, *INT_GOOD]),
+    *good_value_rows("eg", _eg, BASE, "max_lags", [None, 0, *INT_GOOD]),
+    *good_value_rows("eg", _eg, BASE, "low_memory", [None, *BOOL_GOOD]),
+]
+
+
+@pytest.mark.parametrize("row", to_params(EG_ROWS))
+def test_engle_granger(row):
     run_row(row)
