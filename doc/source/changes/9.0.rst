@@ -868,6 +868,19 @@ Bug fixes
 
   .. PR: a90-val1-input-validation
 
+- Fixed crashes of the interpreter, and reads and writes outside of an array, when the
+  recursions were called directly with missing or too short arrays. The
+  ``initialize_update`` methods of the implementations of
+  :class:`~arch.univariate.recursions.VolatilityUpdater` (GARCH, HARCH, EWMA, MIDAS,
+  FIGARCH, FIAPARCH and EGARCH) and ``ARCHInMeanRecursion.recursion`` now raise a
+  ``TypeError`` for ``None`` and a ``ValueError`` for an array that is too short, as
+  the pure Python versions do. The FIGARCH and FIAPARCH updaters require an integer
+  ``truncation`` of at least 1, and the HARCH updater rejects ``lags=None``, which
+  computed a model without lags. The models were not affected, since they check these
+  values before they call the recursions.
+
+  .. PR: a90-pyx1-guards
+
 - Fixed the functions that look up critical values and p-values in
   ``arch.unitroot.unitroot``. ``mackinnonp`` and ``mackinnoncrit`` with
   ``num_unit_roots=0`` or ``-1`` silently used the last row of the table
@@ -958,12 +971,19 @@ Documentation and maintenance
   pandas (``freq="M"``) and NumPy, the failing docstring examples and the broken cross
   references are fixed. The notebooks have examples of :class:`~arch.univariate.MAMean`,
   :class:`~arch.univariate.FIAPARCH` and ``append``. The documentation build goes from
-  1444 to 7 warnings (:issue:`919`, :issue:`930`).
+  1444 warnings to none (:issue:`919`, :issue:`930`).
+
+  .. PR: a90-ds4-docstrings
+
 - Every public docstring follows the NumPy docstring rules, which are described in the
-  contributing guide and checked by a test (:issue:`935`). The contributing guide also
-  describes the policy for the validation of arguments.
+  contributing guide and checked by a test (:issue:`935`) and by ``numpydoc lint`` in
+  the continuous integration. The contributing guide also describes the policy for the
+  validation of arguments. The descriptions of the string options say that they are not
+  case sensitive, and the arguments that accept any ``array_like`` are documented as
+  such.
 
   .. PR: a90-docstrings
+  .. PR: a90-ds4-docstrings
 
 - Corrected the documented default of ``force_int`` in
   :meth:`~arch.unitroot.cointegration.FullyModifiedOLS.fit`, which is ``True``, and the
