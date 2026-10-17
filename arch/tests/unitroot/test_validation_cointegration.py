@@ -335,3 +335,137 @@ PO_ROWS = [
 @pytest.mark.parametrize("row", to_params(PO_ROWS))
 def test_phillips_ouliaris_arguments(row):
     run_row(row)
+
+
+DOLS_BASE = {**BASE, "lags": 1, "leads": 1}
+ORDER_RULE = rf"an integer in \[0, {NOBS - 2}\] or None"
+
+
+def _order_rows(name):
+    return [
+        *bad_value_rows("dols", _dols, DOLS_BASE, name, INT_NONE_BAD, rule=ORDER_RULE),
+        Row(
+            "dols",
+            _dols,
+            {**DOLS_BASE, name: -1},
+            ValueError,
+            rf"^{name} must be {ORDER_RULE}; got -1",
+            id=f"dols-{name}-negative",
+            name=name,
+        ),
+        Row(
+            "dols",
+            _dols,
+            {**DOLS_BASE, name: NOBS - 1},
+            ValueError,
+            rf"^{name} must be {ORDER_RULE}; got {NOBS - 1}",
+            id=f"dols-{name}-large",
+            name=name,
+        ),
+        *good_value_rows("dols", _dols, DOLS_BASE, name, [None, 0, *INT_GOOD]),
+    ]
+
+
+DOLS_ROWS = [
+    *_order_rows("lags"),
+    *_order_rows("leads"),
+    *_order_rows("max_lag"),
+    *_order_rows("max_lead"),
+    *bad_value_rows("dols", _dols, DOLS_BASE, "common", BOOL_BAD, rule=r"True or False"),
+    *good_value_rows("dols", _dols, {**DOLS_BASE, "lags": 2, "leads": 2}, "common", BOOL_GOOD),
+    Row(
+        "dols",
+        _dols,
+        {**DOLS_BASE, "lags": 1, "leads": 2, "common": True},
+        ValueError,
+        r"^common is specified but leads and lags have different values",
+        id="dols-common-lags-leads",
+        form=False,
+    ),
+    Row(
+        "dols",
+        _dols,
+        {**BASE, "max_lag": 3, "max_lead": 4, "common": True},
+        ValueError,
+        r"^common is specified but max_lead and max_lag have different values",
+        id="dols-common-max",
+        form=False,
+    ),
+]
+
+# Too many lags and leads for the sample: the message names all four arguments
+TOO_LARGE = r"^lags, leads, max_lag and max_lead are too large for the amount of data"
+DOLS_SIZE_ROWS = [
+    Row(
+        "dols",
+        _dols,
+        {"y": Y[:20], "x": X[:20]},
+        ValueError,
+        TOO_LARGE,
+        id="dols-default-20-observations",
+        form=False,
+    ),
+    Row(
+        "dols",
+        _dols,
+        {**BASE, "lags": 60, "leads": 59},
+        ValueError,
+        TOO_LARGE,
+        id="dols-lags-leads-exceed-sample",
+        form=False,
+    ),
+    Row(
+        "dols",
+        _dols,
+        {"y": Y[:40], "x": X[:40], "lags": 6, "leads": 6},
+        ValueError,
+        TOO_LARGE,
+        id="dols-more-parameters-than-rows",
+        form=False,
+    ),
+    Row(
+        "dols",
+        _dols,
+        {"y": Y[:40], "x": X[:40], "lags": 6, "leads": 5},
+        None,
+        id="dols-fewest-rows-ok",
+    ),
+    Row(
+        "dols",
+        _dols,
+        {"y": Y[:40], "x": X[:40], "lags": 3, "leads": 3, "max_lag": 4},
+        None,
+        id="dols-lags-before-max_lag-ok",
+    ),
+]
+
+
+@pytest.mark.parametrize("row", to_params(DOLS_ROWS + DOLS_SIZE_ROWS))
+def test_dynamic_ols(row):
+    run_row(row)
+
+
+def _dols_fit(**kw):
+    return DynamicOLS(Y, X, lags=1, leads=1).fit(**kw)
+
+
+FIT_BASE = {"kernel": "bartlett", "bandwidth": 3}
+DOLS_FIT_ROWS = [
+    *bad_value_rows(
+        "dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
+    ),
+    *bad_value_rows(
+        "dols-fit", _dols_fit, FIT_BASE, "force_int", BOOL_BAD, rule=r"True or False"
+    ),
+    *bad_value_rows(
+        "dols-fit", _dols_fit, FIT_BASE, "df_adjust", BOOL_BAD, rule=r"True or False"
+    ),
+    *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_GOOD),
+    *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "force_int", BOOL_GOOD),
+    *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "df_adjust", BOOL_GOOD),
+]
+
+
+@pytest.mark.parametrize("row", to_params(DOLS_FIT_ROWS))
+def test_dynamic_ols_fit(row):
+    run_row(row)
