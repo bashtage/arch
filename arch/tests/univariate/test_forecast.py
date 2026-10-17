@@ -258,11 +258,11 @@ class TestForecasting:
         assert_frame_equal(fcast.variance, alt_fcast.variance)
         assert_frame_equal(fcast.residual_variance, alt_fcast.residual_variance)
 
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon=3.0)
         with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon=-1)
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon="3")
 
         fcast_reindex = res.forecast(res.params, horizon=3, reindex=True)
@@ -888,9 +888,9 @@ def test_invalid_horizon():
     res = arch_model(SP500).fit(disp="off")
     with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=-1)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon=1.0)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon="5")
 
 
@@ -1046,7 +1046,7 @@ def test_x_exceptions():
     with pytest.raises(KeyError, match=r"The keys of x must exactly"):
         res.forecast(x={"z": x})
     _x = np.asarray(x).reshape((1, x.shape[0], 1))
-    with pytest.raises(ValueError, match=r"The arrays contained in the dictionary"):
+    with pytest.raises(ValueError, match=r"x must be a dict of 1-d or 2-d array_like"):
         res.forecast(x={"Exog": _x})
     x2 = pd.concat([x, x], axis=1)
     x2.columns = ["x0", "x1"]
@@ -1441,7 +1441,7 @@ def test_forecast_start():
     y = rg.standard_normal(10)
     x = pd.DataFrame(rg.standard_normal((10, 1)), columns=["x"])
     mod = ARX(y, x=x, lags=3)
-    res = mod.fit(first_obs=0, last_obs=98)
+    res = mod.fit(first_obs=0, last_obs=10)
     fcast = res.forecast(start=2, x=x.shift(-1))
     fcast2 = res.forecast(start=2, method="simulation", simulations=1, x=x.shift(-1))
     assert_allclose(fcast.mean, fcast2.mean)

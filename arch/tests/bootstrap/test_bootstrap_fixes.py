@@ -56,7 +56,9 @@ BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBoot
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
 @pytest.mark.parametrize("block_size", [0, -3, np.int64(0)], ids=["0", "-3", "np-0"])
 def test_block_size_too_small(cls, block_size):
-    with pytest.raises(ValueError, match=r"block_size must be .* at least 1"):
+    with pytest.raises(
+        ValueError, match=r"block_size must be (an integer|a finite float) >= 1"
+    ):
         cls(block_size, np.arange(20.0))
 
 
@@ -116,7 +118,7 @@ def test_stationary_block_size_not_integer(block_size):
 def test_studentize_reps_positive(studentize_reps):
     x = np.random.default_rng(0).standard_normal(40)
     bs = IIDBootstrap(x, seed=1)
-    with pytest.raises(ValueError, match="studentize_reps must be at least 1"):
+    with pytest.raises(ValueError, match="studentize_reps must be an integer >= 1"):
         bs.conf_int(np.mean, 20, method="studentized", studentize_reps=studentize_reps)
 
 
@@ -217,7 +219,9 @@ def test_extra_kwargs_conflict(method):
     def func(a, y):
         return np.array([y.mean()])
 
-    with pytest.raises(ValueError, match="extra_kwargs contains keys used for"):
+    with pytest.raises(
+        ValueError, match="extra_kwargs must be a dict with str keys that are not names"
+    ):
         getattr(bs, method)(func, 3, extra_kwargs={"y": np.zeros(50)})
 
 

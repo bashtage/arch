@@ -22,9 +22,18 @@ from arch.unitroot._phillips_ouliaris import (
     PhillipsOuliarisTestResults,
     phillips_ouliaris,
 )
-from arch.unitroot._shared import _check_cointegrating_regression, _cross_section
+from arch.unitroot._shared import (
+    _TREND_TERMS,
+    _check_cointegrating_regression,
+    _cross_section,
+)
 from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
-from arch.utility._validation import check_option
+from arch.utility._validation import (
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+)
 from arch.utility.array import ensure2d
 from arch.utility.io import pval_format, str_format
 from arch.utility.timeseries import add_trend
@@ -409,7 +418,13 @@ class DynamicOLSResults(_CommonCointegrationResults):
         statsmodels.iolib.summary.Summary
             A summary instance with methods that support export to text, csv
             or latex.
+
+        Raises
+        ------
+        TypeError
+            If full is not a bool.
         """
+        full = check_bool("full", full)
         if self._bandwidth != int(self._bandwidth):
             bw = str_format(self._bandwidth)
         else:
@@ -460,9 +475,15 @@ class DynamicOLS:
     Parameters
     ----------
     y : array_like
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, at least 1 column,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -473,24 +494,43 @@ class DynamicOLS:
 
     lags : int, optional
         The number of lags to include in the model.  If None, the optimal
-        number of lags is chosen using method.
+        number of lags is chosen using method. It must be an integer between 0
+        and nobs - 2.
     leads : int, optional
         The number of leads to include in the model.  If None, the optimal
-        number of leads is chosen using method.
+        number of leads is chosen using method. It must be an integer between 0
+        and nobs - 2.
     common : bool, optional
         Flag indicating that lags and leads should be restricted to the same
         value. When common is True, lags must equal leads and max_lag must
         equal max_lead.
     max_lag : int, optional
-        The maximum lag to consider. See Notes for value used when None.
+        The maximum lag to consider. See Notes for value used when None. It
+        must be an integer between 0 and nobs - 2.
     max_lead : int, optional
-        The maximum lead to consider. See Notes for value used when None.
+        The maximum lead to consider. See Notes for value used when None. It
+        must be an integer between 0 and nobs - 2.
     method : {"aic", "bic", "hqic"}, optional
         The method used to select lag length when lags or leads is None.
 
         * "aic" - Akaike Information Criterion
         * "hqic" - Hannan-Quinn Information Criterion
         * "bic" - Schwartz/Bayesian Information Criterion
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, lags, leads, max_lag or
+        max_lead is not an integer or None, common is not a bool, or trend or
+        method is not a string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if lags,
+        leads, max_lag or max_lead is not between 0 and nobs - 2, if common is
+        True and lags and leads (or max_lag and max_lead) differ, if the sample
+        that remains after the differences, lags and leads is not larger than
+        the number of parameters of the smallest model that is estimated, or if
+        trend or method is not one of the options.
 
     Notes
     -----
@@ -544,24 +584,24 @@ class DynamicOLS:
         self._y = setup.y
         self._x = setup.x
         self._trend = setup.trend
-        self._lags = lags
-        self._leads = leads
-        self._max_lag = max_lag
-        self._max_lead = max_lead
+        # At least one observation must remain after the first difference
+        upper = self._y.shape[0] - 2
+        self._lags = check_int("lags", lags, lower=0, upper=upper, allow_none=True)
+        self._leads = check_int("leads", leads, lower=0, upper=upper, allow_none=True)
+        self._max_lag = check_int(
+            "max_lag", max_lag, lower=0, upper=upper, allow_none=True
+        )
+        self._max_lead = check_int(
+            "max_lead", max_lead, lower=0, upper=upper, allow_none=True
+        )
         self._method = check_option("method", method, ("aic", "bic", "hqic"))
-        self._common = bool(common)
+        self._common = check_bool("common", common)
         self._y_df = pd.DataFrame(self._y)
         self._check_inputs()
 
     def _check_inputs(self) -> None:
         """Validate the inputs"""
-        max_lag = self._max_lag
-        self._max_lag = int(max_lag) if max_lag is not None else max_lag
-        max_lead = self._max_lead
-        self._max_lead = int(max_lead) if max_lead is not None else max_lead
-        self._leads = int(self._leads) if self._leads is not None else self._leads
-        self._lags = int(self._lags) if self._lags is not None else self._lags
-
+        max_lag, max_lead = self._max_lag, self._max_lead
         if self._common and self._leads != self._lags:
             raise ValueError(
                 "common is specified but leads and lags have different values"
@@ -572,7 +612,8 @@ class DynamicOLS:
             )
         max_ll = self._max_lead_lag()
 
-        obs_remaining = self._y.shape[0] - 1
+        nobs = self._y.shape[0]
+        obs_remaining = nobs - 1
         obs_remaining -= max_ll if max_lag is None else max_lag
         obs_remaining -= max_ll if max_lead is None else max_lead
         if obs_remaining <= 0:
@@ -580,6 +621,25 @@ class DynamicOLS:
                 "max_lag and max_lead are too large for the amount of "
                 "data. The largest model specification in the search "
                 "cannot be estimated."
+            )
+        # The regressions use the sample of the largest model. The smallest model
+        # that is estimated must have fewer parameters than the sample has rows.
+        most_lags, most_leads = self._lags, self._leads
+        if most_lags is None:
+            most_lags = max_ll if max_lag is None else max_lag
+        if most_leads is None:
+            most_leads = max_ll if max_lead is None else max_lead
+        rows = nobs - 1 - most_lags - most_leads
+        fewest = (self._lags or 0) + (self._leads or 0)
+        num_x = self._x.shape[1]
+        # x, the trend, and the difference of x with its lags and leads
+        num_params = num_x * (fewest + 2) + _TREND_TERMS[self._trend]
+        if rows <= num_params:
+            raise ValueError(
+                "lags, leads, max_lag and max_lead are too large for the amount of "
+                f"data. {rows} observations remain after the differences, lags and "
+                f"leads, which is not more than the {num_params} parameters of the "
+                "smallest model that is estimated."
             )
 
     def _format_variables(
@@ -682,7 +742,7 @@ class DynamicOLS:
             "unadjusted", "homoskedastic", "robust", "kernel"
         ] = "unadjusted",
         kernel: str = "bartlett",
-        bandwidth: int | None = None,
+        bandwidth: float | None = None,
         force_int: bool = False,
         df_adjust: bool = False,
     ) -> DynamicOLSResults:
@@ -699,12 +759,12 @@ class DynamicOLS:
             covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
-        bandwidth : int, optional
-            The bandwidth to use. If not provided, the optimal bandwidth is
-            estimated from the data. Setting the bandwidth to 0 and using
-            "unadjusted" produces the classic OLS covariance estimator.
-            Setting the bandwidth to 0 and using "robust" produces White's
-            covariance estimator.
+        bandwidth : float, optional
+            The bandwidth to use. It must be a finite non-negative number. If
+            not provided, the optimal bandwidth is estimated from the data.
+            Setting the bandwidth to 0 and using "unadjusted" produces the
+            classic OLS covariance estimator. Setting the bandwidth to 0 and
+            using "robust" produces White's covariance estimator.
         force_int : bool, optional
             Whether to force the estimated optimal bandwidth to be an integer.
         df_adjust : bool, optional
@@ -717,6 +777,15 @@ class DynamicOLS:
         -------
         DynamicOLSResults
             The estimation results.
+
+        Raises
+        ------
+        TypeError
+            If bandwidth is not a real number or None, force_int or df_adjust is
+            not a bool, or cov_type or kernel is not a string.
+        ValueError
+            If bandwidth is negative, NaN or inf, or cov_type or kernel is not one
+            of the options.
 
         See Also
         --------
@@ -757,6 +826,10 @@ class DynamicOLS:
                 ("unadjusted", "homoskedastic", "robust", "kernel"),
             ),
         )
+        get_kernel_estimator(kernel)
+        bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
+        force_int = check_bool("force_int", force_int)
+        df_adjust = check_bool("df_adjust", df_adjust)
         leads, lags = self._leads_and_lags()
         # TODO: Rank check and drop??
         lhs, rhs = self._format_variables(leads, lags)
@@ -789,7 +862,7 @@ class DynamicOLS:
     def _cov(
         cov_type: Literal["unadjusted", "homoskedastic", "robust", "kernel"],
         kernel: str,
-        bandwidth: int | None,
+        bandwidth: float | None,
         force_int: bool,
         df_adjust: bool,
         rhs: pd.DataFrame,
@@ -893,9 +966,15 @@ COMMON_DOCSTRING = r"""
     Parameters
     ----------
     y : array_like
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, at least 1 column,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -909,6 +988,16 @@ COMMON_DOCSTRING = r"""
         cointegrating regression. x_trend must be at least as large as
         trend, so that if trend is "ct", x_trend must be either "ct" or
         "ctt". If None, x_trend is the same as trend.
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, or trend or x_trend is not a
+        string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if trend
+        or x_trend is not one of the options.
 
     Notes
     -----
@@ -1012,6 +1101,18 @@ FMOLS_ESTIMATOR = r"""
 """
 
 
+def _check_fit_arguments(
+    bandwidth: float | None, force_int: bool, diff: bool, df_adjust: bool
+) -> tuple[float | None, bool, bool, bool]:
+    """Check the arguments of the fit method of FMOLS and CCR"""
+    return (
+        check_float("bandwidth", bandwidth, lower=0.0, allow_none=True),
+        cast("bool", check_bool("force_int", force_int)),
+        cast("bool", check_bool("diff", diff)),
+        cast("bool", check_bool("df_adjust", df_adjust)),
+    )
+
+
 @Substitution(method=FMOLS_METHOD, estimator=FMOLS_ESTIMATOR)
 @Appender(COMMON_DOCSTRING)
 class FullyModifiedOLS:
@@ -1026,7 +1127,18 @@ class FullyModifiedOLS:
         self._y = setup.y
         self._x = setup.x
         self._trend = setup.trend
-        self._x_trend = x_trend
+        self._x_trend: UnitRootTrend | None = None
+        if x_trend is not None:
+            # The documented options are "c", "ct" and "ctt", "n" and "t" also work
+            self._x_trend = cast(
+                "UnitRootTrend",
+                check_option(
+                    "x_trend",
+                    x_trend,
+                    ("n", "c", "ct", "ctt", "t"),
+                    display=("c", "ct", "ctt"),
+                ),
+            )
         self._y_df = pd.DataFrame(self._y)
 
     def _common_fit(
@@ -1094,8 +1206,8 @@ class FullyModifiedOLS:
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
         bandwidth : float, optional
-            The bandwidth to use. If not provided, the optimal bandwidth is
-            estimated from the data.
+            The bandwidth to use. It must be a finite non-negative number. If
+            not provided, the optimal bandwidth is estimated from the data.
         force_int : bool, optional
             Whether to force the estimated optimal bandwidth to be an integer.
         diff : bool, optional
@@ -1110,7 +1222,19 @@ class FullyModifiedOLS:
         -------
         CointegrationAnalysisResults
             The estimation results instance.
+
+        Raises
+        ------
+        TypeError
+            If bandwidth is not a real number or None, force_int, diff or
+            df_adjust is not a bool, or kernel is not a string.
+        ValueError
+            If bandwidth is negative, NaN or inf, or kernel is not one of the
+            options.
         """
+        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust
+        )
         cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
@@ -1186,6 +1310,9 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         diff: bool = False,
         df_adjust: bool = False,
     ) -> CointegrationAnalysisResults:
+        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust
+        )
         cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)

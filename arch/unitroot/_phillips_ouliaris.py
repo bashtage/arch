@@ -10,7 +10,11 @@ from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.covariance.kernel import CovarianceEstimator, get_kernel_estimator
-from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
+from arch.unitroot._shared import (
+    ResidualCointegrationTestResult,
+    _check_cointegrating_regression,
+    _cross_section,
+)
 from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_PARAMETERS,
     CV_TAU_MIN,
@@ -21,8 +25,7 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
     PVAL_TAU_STAR,
 )
 from arch.unitroot.unitroot import TREND_DESCRIPTION
-from arch.utility._validation import check_option
-from arch.utility.array import ensure2d
+from arch.utility._validation import check_bool, check_float, check_option
 from arch.utility.io import str_format
 from arch.utility.timeseries import add_trend
 
@@ -35,13 +38,20 @@ class CriticalValueWarning(RuntimeWarning):
 _TEST_TYPES = {"za": "Za", "zt": "Zt", "pu": "Pu", "pz": "Pz"}
 
 
+def _check_num_trends(num: int) -> None:
+    if not 2 <= num <= 13:
+        raise ValueError(
+            "The number of stochastic trends must be between 2 and 12 (inclusive)"
+        )
+
+
 def _po_ptests(
     z: pd.DataFrame,
     xsection: RegressionResults,
     test_type: Literal["Pu", "Pz"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
-    bandwidth: int | None,
+    bandwidth: float | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
     nobs = z.shape[0]
@@ -79,6 +89,7 @@ def _po_ptests(
         test_stat,
         pval,
         cv,
+        trend=trend,
         order=z.shape[1],
         xsection=xsection,
         test_type=test_type,
@@ -92,7 +103,7 @@ def _po_ztests(
     test_type: Literal["Za", "Zt"],
     trend: UnitRootTrend,
     kernel_est: type[CovarianceEstimator],
-    bandwidth: int | None,
+    bandwidth: float | None,
     force_int: bool,
 ) -> "PhillipsOuliarisTestResults":
     # Za and Zt tests
@@ -122,6 +133,7 @@ def _po_ztests(
         test_stat,
         pval,
         cv,
+        trend=trend,
         order=x.shape[1] + 1,
         xsection=xsection,
         test_type=test_type,
@@ -136,7 +148,7 @@ def phillips_ouliaris(
     *,
     test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
     kernel: str = "bartlett",
-    bandwidth: int | None = None,
+    bandwidth: float | None = None,
     force_int: bool = False,
 ) -> "PhillipsOuliarisTestResults":
     r"""
@@ -144,10 +156,16 @@ def phillips_ouliaris(
 
     Parameters
     ----------
-    y : ndarray, Series or DataFrame
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+    y : array_like
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, between 1 and 12 columns,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -171,10 +189,10 @@ def phillips_ouliaris(
         covariance estimator. Common choices are "bartlett" for the
         Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
         and "quadratic-spectral" for the Quadratic Spectral kernel.
-    bandwidth : int, optional
-        The bandwidth to use. If not provided, the optimal bandwidth is
-        estimated from the data. Setting the bandwidth to 0 produces White's
-        covariance estimator.
+    bandwidth : float, optional
+        The bandwidth to use. It must be a finite non-negative number. If not
+        provided, the optimal bandwidth is estimated from the data. Setting the
+        bandwidth to 0 produces White's covariance estimator.
     force_int : bool, optional
         Whether to force the estimated optimal bandwidth to be an integer.
 
@@ -182,6 +200,18 @@ def phillips_ouliaris(
     -------
     PhillipsOuliarisTestResults
         Results of the Phillips-Ouliaris test.
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, bandwidth is not a real number
+        or None, force_int is not a bool, or trend, test_type or kernel is not a
+        string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if x has
+        more than 12 columns, bandwidth is negative, NaN or inf, or trend,
+        test_type or kernel is not one of the options.
 
     See Also
     --------
@@ -278,13 +308,15 @@ def phillips_ouliaris(
         "Literal['Za', 'Zt', 'Pu', 'Pz']",
         check_option("test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()),
     )
-    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     kernel_est = get_kernel_estimator(kernel)
-    y_2d = ensure2d(y, "y")
-    x = ensure2d(x, "x")
-    xsection = _cross_section(y_2d, x, trend)
+    bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
+    force_int = check_bool("force_int", force_int)
+    setup = _check_cointegrating_regression(y, x, trend)
+    _check_num_trends(setup.x.shape[1] + 1)
+    trend = setup.trend
+    xsection = _cross_section(setup.y, setup.x, trend)
     data = xsection.model.data
-    x_df = data.orig_exog.iloc[:, : x.shape[1]]
+    x_df = data.orig_exog.iloc[:, : setup.x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)
     if test_type in ("Pu", "Pz"):
         return _po_ptests(
@@ -466,10 +498,7 @@ def phillips_ouliaris_cv(
         "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
     )
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
-    if not 2 <= num <= 13:
-        raise ValueError(
-            "The number of stochastic trends must be between 2 and 12 (inclusive)"
-        )
+    _check_num_trends(num)
     key = (test_type_key, trend, num)
     tbl = CV_PARAMETERS[key]
     min_size = CV_TAU_MIN[key]
@@ -521,10 +550,7 @@ def phillips_ouliaris_pval(
         "test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()
     )
     trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
-    if not 2 <= num <= 13:
-        raise ValueError(
-            "The number of stochastic trends must be between 2 and 12 (inclusive)"
-        )
+    _check_num_trends(num)
     key = (test_type_key, trend, num)
     if test_type_key in ("Pu", "Pz"):
         # These are upper tail, so we multiply by -1 to make lower tail

@@ -642,47 +642,38 @@ def test_garch_many_lags(setup):
 
 
 def test_errors(setup):
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 0; got -1"):
         GARCH(p=-1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"o must be an integer >= 0; got -1"):
         GARCH(o=-1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"q must be an integer >= 0; got -1"):
         GARCH(q=-1)
-    with pytest.raises(ValueError, match=r"One of p or o must be strictly positive"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1 when o is 0"):
         GARCH(p=0, q=0)
-    with pytest.raises(
-        ValueError, match=r"power must be strictly positive, usually larger than 0.25"
-    ):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0; got -0.5"):
         GARCH(power=-0.5)
-    with pytest.raises(ValueError, match=r"lam must be strictly between 0 and 1"):
+    with pytest.raises(ValueError, match=r"lam must be a finite float in \(0, 1\) or"):
         EWMAVariance(lam=-0.5)
     with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
+        ValueError, match=r"tau0 must be a finite float greater than tau1 \(10\)"
     ):
         RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
-    ):
-        RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
-    ):
+    with pytest.raises(ValueError, match=r"tau1 must be a finite float > 0; got -10"):
         RiskMetrics2006(tau1=-10)
     with pytest.raises(
-        ValueError, match=r"tau1 \* rho \*\* \(kmax-1\) smaller than tau0"
+        ValueError,
+        match=r"kmax must be such that tau1 \* rho \*\* \(kmax - 1\) <= tau0",
     ):
         RiskMetrics2006(tau0=10, tau1=8, rho=1.5)
-    with pytest.raises(ValueError, match=r"kmax must be a positive integer"):
+    with pytest.raises(ValueError, match=r"kmax must be an integer >= 1; got 0"):
         RiskMetrics2006(kmax=0)
-    with pytest.raises(
-        ValueError, match=r"rho must be a positive number larger than 1"
-    ):
+    with pytest.raises(ValueError, match=r"rho must be a finite float > 1; got 0.5"):
         RiskMetrics2006(rho=0.5)
 
 
 def test_warnings_nonstationary(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0])
+    parameters = np.array([0.1, 0.2, 0.8])
     studt = StudentsT()
     warnings.simplefilter("always", UserWarning)
     with pytest.warns(
@@ -694,7 +685,7 @@ def test_warnings_nonstationary(setup):
 
 def test_warnings_nonstationary_garch(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
+    parameters = np.array([0.1, 0.2, 0.8])
     skewstud = SkewStudent()
     with pytest.warns(
         InitialValueWarning,
@@ -778,7 +769,7 @@ def test_ewma(setup):
     state = setup.rng.get_state()
     rng = Normal(seed=RandomState())
     rng.generator.set_state(state)
-    sim_data = ewma.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = ewma.simulate(np.array([]), setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -1024,9 +1015,9 @@ def test_egarch(setup, initial_value):
     txt = egarch.__repr__()
     assert str(hex(id(egarch))) in txt
 
-    with pytest.raises(ValueError, match=r"One of p or o must"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1 when o is 0"):
         EGARCH(p=0, o=0, q=1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"q must be an integer >= 0; got -1"):
         EGARCH(p=1, o=1, q=-1)
     # beta > 1 is explosive, so the exponential of the log-variance overflows
     parameters = np.array([0.1, 0.1, -0.1, 1.05])
@@ -1525,19 +1516,17 @@ def test_figarch_no_phi_beta(setup):
 
 
 def test_figarch_errors(setup):
-    with pytest.raises(ValueError, match=r"truncation must be a positive integer"):
+    with pytest.raises(ValueError, match=r"truncation must be an integer >= 1"):
         FIGARCH(truncation=-1)
-    with pytest.raises(
-        ValueError, match=r"invalid literal for int\(\) with base 10: 'apple'"
-    ):
+    with pytest.raises(TypeError, match=r"truncation must be an integer >= 1; got 'a"):
         FIGARCH(truncation="apple")
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"p must be an integer in \[0, 1\]"):
         FIGARCH(p=2)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"q must be an integer in \[0, 1\]"):
         FIGARCH(q=-1)
-    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0"):
         FIGARCH(power=0)
-    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0"):
         FIGARCH(power=-0.25)
 
 
@@ -1774,15 +1763,16 @@ def test_aparch_against_garch(setup):
 
 
 def test_aparch_exceptions(setup):
-    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
+    delta_rule = r"delta must be a finite float in \(0.05, 4\)"
+    with pytest.raises(ValueError, match=delta_rule):
         APARCH(delta=0.0)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
+    with pytest.raises(ValueError, match=delta_rule):
         APARCH(delta=4.1)
-    with pytest.raises(TypeError, match=r"delta must be convertible"):
+    with pytest.raises(TypeError, match=delta_rule):
         APARCH(delta="a")
-    with pytest.raises(ValueError, match=r"All lags lengths must be"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1"):
         APARCH(p=0)
-    with pytest.raises(ValueError, match=r"o must be <= p"):
+    with pytest.raises(ValueError, match=r"o must be an integer <= p \(1\)"):
         APARCH(p=1, o=2)
 
 
@@ -2415,19 +2405,20 @@ def test_fiaparch_minimal(setup):
 
 
 def test_fiaparch_errors(setup):
-    with pytest.raises(ValueError, match=r"truncation must be a positive integer"):
+    delta_rule = r"delta must be a finite float in \(0.05, 4\)"
+    with pytest.raises(ValueError, match=r"truncation must be an integer >= 1"):
         FIAPARCH(truncation=-1)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"p must be an integer in \[0, 1\]"):
         FIAPARCH(p=2)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"q must be an integer in \[0, 1\]"):
         FIAPARCH(q=-1)
-    with pytest.raises(ValueError, match=r"o must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"o must be an integer in \[0, 1\]"):
         FIAPARCH(o=2)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05 and 4"):
+    with pytest.raises(ValueError, match=delta_rule):
         FIAPARCH(delta=0.0)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05 and 4"):
+    with pytest.raises(ValueError, match=delta_rule):
         FIAPARCH(delta=4.1)
-    with pytest.raises(TypeError, match=r"delta must be convertible"):
+    with pytest.raises(TypeError, match=delta_rule):
         FIAPARCH(delta="a")
 
 

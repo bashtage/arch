@@ -30,7 +30,7 @@ def test_negative_covariance_axis(axis, demean, lags):
 def test_covariance_axis_bounds(ndim, offset):
     data = np.ones((4,) * ndim)
     for axis in [ndim + offset, -ndim - 1 - offset]:
-        with pytest.raises(ValueError, match="axis must be less than"):
+        with pytest.raises(ValueError, match="axis must be an integer in"):
             cov_nw(data, axis=axis)
 
 

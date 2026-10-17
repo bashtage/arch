@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import inspect
 import itertools
 from typing import TYPE_CHECKING, Any, cast
-from warnings import warn
+from warnings import catch_warnings, simplefilter, warn
 
 import numpy as np
 from numpy.random import RandomState
@@ -26,11 +26,21 @@ from arch._typing import (
     RNGType,
 )
 from arch.univariate.distribution import Normal
-from arch.utility._validation import check_option
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_callable,
+    check_float,
+    check_instance,
+    check_int,
+    check_ndarray,
+    check_option,
+)
 from arch.utility.array import (
     AbstractDocStringInheritor,
     ensure1d,
-    ensure2d,
     to_array_1d,
 )
 from arch.utility.exceptions import (
@@ -64,6 +74,43 @@ __all__ = [
 ]
 
 
+# The compiled updaters take the orders, lags and truncation as a C int
+_INT_MAX = int(np.iinfo(np.int32).max)
+
+
+def _check_count(name: str, value: Any, lower: int) -> int:
+    """
+    Check an order, a lag or a length that is passed to the compiled updaters.
+
+    Parameters
+    ----------
+    name : str
+        The name of the argument.
+    value : int
+        The value.
+    lower : int
+        The smallest accepted value.
+
+    Returns
+    -------
+    int
+        The value as a Python int.
+
+    Raises
+    ------
+    TypeError
+        If the value is not an integer.
+    ValueError
+        If the value is smaller than ``lower`` or larger than the largest int32.
+    """
+    result = check_int(name, value, lower=lower)
+    if result > _INT_MAX:
+        _fail(
+            ValueError, name, f"an integer in [{lower}, {_INT_MAX}]", _describe(value)
+        )
+    return result
+
+
 def _common_names(p: int, o: int, q: int) -> list[str]:
     names = ["omega"]
     names.extend(["alpha[" + str(i + 1) + "]" for i in range(p)])
@@ -82,11 +129,20 @@ class BootstrapRng:
     Parameters
     ----------
     std_resid : ndarray
-        Array containing standardized residuals.
+        Array containing standardized residuals. NaN and inf are not rejected.
     start : int
-        Location of first forecast.
+        Location of first forecast, between 1 and the number of residuals.
     random_state : RandomState, optional
         NumPy RandomState instance.
+
+    Raises
+    ------
+    TypeError
+        If ``std_resid`` cannot be converted to a float64 array, ``start`` is not an
+        integer or ``random_state`` is not a RandomState.
+    ValueError
+        If ``std_resid`` is not 1-d or ``start`` is not between 1 and the number of
+        residuals.
     """
 
     def __init__(
@@ -95,18 +151,22 @@ class BootstrapRng:
         start: int,
         random_state: RandomState | None = None,
     ) -> None:
-        if start <= 0 or start > std_resid.shape[0]:
-            raise ValueError("start must be > 0 and <= len(std_resid).")
+        # NaN and inf are not rejected: the draws are only resampled
+        std_resid = check_array(
+            "std_resid", std_resid, ndim=1, allow_nan=True, allow_inf=True
+        )
+        start = check_int("start", start, lower=1, upper=std_resid.shape[0])
+        random_state = check_instance(
+            "random_state", random_state, RandomState, allow_none=True
+        )
 
         self.std_resid: Float64Array = std_resid
         self.start: int = start
         self._index = start
         if random_state is None:
             self._random_state = RandomState()
-        elif isinstance(random_state, RandomState):
-            self._random_state = random_state
         else:
-            raise TypeError("random_state must be a NumPy RandomState instance.")
+            self._random_state = random_state
 
     @property
     def random_state(self) -> RandomState:
@@ -204,6 +264,49 @@ def _float_backcast(backcast: Any) -> float | Float64Array1D:
     return ensure1d(backcast, "backcast")
 
 
+def _check_initial_value(
+    initial_value: Any, size: int, lower: float | None
+) -> float | Float64Array1D | None:
+    """
+    Check the initial value of a simulation.
+
+    Parameters
+    ----------
+    initial_value : float, array_like or None
+        A finite scalar, a vector with 1 or ``size`` elements, or None.
+    size : int
+        The number of initial values that the process uses. 0 if the process only
+        accepts a scalar.
+    lower : float or None
+        The smallest allowed value, or None if there is no lower bound.
+
+    Returns
+    -------
+    float, ndarray or None
+        A float if the value is a scalar and otherwise a float64 vector. None if the
+        value is None.
+
+    Raises
+    ------
+    TypeError
+        If the value cannot be converted to a float.
+    ValueError
+        If the value is NaN, inf or smaller than ``lower``, or a vector has the wrong
+        length.
+    """
+    if initial_value is None:
+        return None
+    if size == 0 or np.ndim(initial_value) == 0:
+        return check_float("initial_value", initial_value, lower=lower)
+    values = check_array("initial_value", initial_value, ndim=1)
+    if values.shape[0] not in (1, size) or (lower is not None and values.min() < lower):
+        rule = "a finite float or a 1-d array of finite floats"
+        rule += "" if lower is None else f" >= {lower:g}"
+        rule += f" with {1 if size == 1 else f'1 or {size}'} elements"
+        _fail(ValueError, "initial_value", rule, _describe(initial_value))
+    return values
+
+
 class VarianceForecast:
     """
     Container for variance forecasts.
@@ -257,6 +360,12 @@ class VolatilityProcess(metaclass=ABCMeta):
     """
 
     _updatable: bool = True
+    # Whether compute_variance and forecast use backcast and var_bounds, and the length
+    # of the backcast (None for a scalar). The arguments that are not used are not
+    # checked.
+    _uses_backcast: bool = True
+    _uses_var_bounds: bool = True
+    _backcast_size: int | None = None
 
     def __init__(self) -> None:
         self._num_params = 0
@@ -326,6 +435,227 @@ class VolatilityProcess(metaclass=ABCMeta):
             raise NotImplementedError("Subclasses may optionally implement")
         assert self._volatility_updater is not None
         return self._volatility_updater
+
+    def _check_parameters(self, parameters: Any) -> Float64Array1D:
+        """
+        Check the parameters of the process and convert them to a float64 vector.
+
+        The values are not checked, since the optimizer can try any value. The length
+        is checked because the compiled recursions read the parameters without
+        checking it.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The parameters of the volatility process.
+
+        Returns
+        -------
+        ndarray
+            The parameters, with ``num_params`` elements.
+        """
+        return check_array(
+            "parameters",
+            parameters,
+            shape=(self.num_params,),
+            allow_nan=True,
+            allow_inf=True,
+        )
+
+    def _check_variance_inputs(
+        self,
+        parameters: Any,
+        resids: Any,
+        backcast: Any,
+        var_bounds: Any,
+    ) -> tuple[Float64Array1D, Float64Array1D, float | Float64Array1D, Float64Array2D]:
+        """
+        Check the arrays that are passed to the compiled recursions.
+
+        The recursions read these arrays without checking their type, dtype or length,
+        so None, an array that is too short or a Fortran ordered array can crash the
+        interpreter or read memory that does not belong to the array. The values are
+        not checked, since the optimizer can try any value.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The parameters, with ``num_params`` elements.
+        resids : array_like
+            The residuals, a vector with ``nobs`` elements.
+        backcast : float or array_like
+            The backcast value, a float, or a vector for processes with components.
+            It is not checked if the process does not use it.
+        var_bounds : array_like
+            An array with ``nobs`` rows and 2 columns. It is not checked if the
+            process does not use it.
+
+        Returns
+        -------
+        parameters : ndarray
+            The parameters, as a float64 vector.
+        resids : ndarray
+            The residuals, as a float64 vector.
+        backcast : float or ndarray
+            The backcast, as a float or a float64 vector.
+        var_bounds : ndarray
+            The bounds, as a C contiguous float64 array.
+
+        Raises
+        ------
+        TypeError
+            If an argument is not a number or an array that can be converted to
+            float64.
+        ValueError
+            If an argument does not have the required dimensions or length.
+        """
+        parameters = self._check_parameters(parameters)
+        resids = np.ascontiguousarray(
+            check_array("resids", resids, ndim=1, allow_nan=True, allow_inf=True)
+        )
+        nobs = resids.shape[0]
+        if self._uses_backcast:
+            if self._backcast_size is None:
+                backcast = check_float(
+                    "backcast", backcast, allow_nan=True, allow_inf=True
+                )
+            else:
+                backcast = np.ascontiguousarray(
+                    check_array(
+                        "backcast",
+                        backcast,
+                        shape=(self._backcast_size,),
+                        allow_nan=True,
+                        allow_inf=True,
+                    )
+                )
+        if self._uses_var_bounds:
+            var_bounds = np.ascontiguousarray(
+                check_array(
+                    "var_bounds",
+                    var_bounds,
+                    shape=(nobs, 2),
+                    allow_nan=True,
+                    allow_inf=True,
+                )
+            )
+        return parameters, resids, backcast, var_bounds
+
+    def _check_compute_variance(
+        self,
+        parameters: Any,
+        resids: Any,
+        sigma2: Any,
+        backcast: Any,
+        var_bounds: Any,
+    ) -> tuple[Float64Array1D, Float64Array1D, float | Float64Array1D, Float64Array2D]:
+        """
+        Check the arguments of compute_variance, including the output array.
+
+        ``sigma2`` is filled in place, so it is not converted. It must be a writeable
+        C contiguous float64 vector with the same length as ``resids``. See
+        ``_check_variance_inputs`` for the other arguments.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The parameters, with ``num_params`` elements.
+        resids : array_like
+            The residuals, a vector with ``nobs`` elements.
+        sigma2 : ndarray
+            The output array, with ``nobs`` elements.
+        backcast : float or array_like
+            The backcast value.
+        var_bounds : array_like
+            An array with ``nobs`` rows and 2 columns.
+
+        Returns
+        -------
+        parameters : ndarray
+            The parameters, as a float64 vector.
+        resids : ndarray
+            The residuals, as a float64 vector.
+        backcast : float or ndarray
+            The backcast, as a float or a float64 vector.
+        var_bounds : ndarray
+            The bounds, as a C contiguous float64 array.
+
+        Raises
+        ------
+        TypeError
+            If an argument is not a number or an array that can be converted to
+            float64, or ``sigma2`` is not a float64 ndarray.
+        ValueError
+            If an argument does not have the required dimensions or length, or
+            ``sigma2`` is read-only or not C contiguous.
+        """
+        checked = self._check_variance_inputs(parameters, resids, backcast, var_bounds)
+        check_ndarray(
+            "sigma2", sigma2, ndim=1, shape=(checked[1].shape[0],), writeable=True
+        )
+        return checked
+
+    def _check_simulate_arguments(
+        self,
+        parameters: Any,
+        nobs: Any,
+        rng: Any,
+        burn: Any,
+        initial_value: Any,
+        initial_size: int | None = 0,
+        lower: float | None = 0.0,
+    ) -> tuple[Float64Array1D, int, RNGType, int, float | Float64Array1D | None]:
+        """
+        Check the arguments of simulate.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The parameters, with ``num_params`` elements. Their values are not
+            checked.
+        nobs : int
+            The number of observations to simulate, at least 1.
+        rng : callable
+            The random number generator.
+        burn : int
+            The number of observations to discard, at least 0.
+        initial_value : float, array_like or None
+            The initial value of the process.
+        initial_size : int, optional
+            The number of initial values that the process uses. An array must have
+            1 or this many elements. 0, the default, if the process only accepts a
+            scalar. None if the process ignores ``initial_value``, which is then not
+            checked.
+        lower : float, optional
+            The smallest initial value. None if there is no lower bound.
+
+        Returns
+        -------
+        parameters : ndarray
+            The parameters, as a float64 vector.
+        nobs : int
+            The number of observations.
+        rng : callable
+            The random number generator.
+        burn : int
+            The number of burn-in observations.
+        initial_value : float, ndarray or None
+            The initial value, as a float or a float64 vector.
+
+        Raises
+        ------
+        TypeError
+            If an argument has the wrong type.
+        ValueError
+            If an argument is outside its range or has the wrong length.
+        """
+        parameters = self._check_parameters(parameters)
+        nobs = check_int("nobs", nobs, lower=1)
+        rng = cast("RNGType", check_callable("rng", rng))
+        burn = check_int("burn", burn, lower=0)
+        if initial_size is not None:
+            initial_value = _check_initial_value(initial_value, initial_size, lower)
+        return parameters, nobs, rng, burn, initial_value
 
     def update(
         self,
@@ -777,7 +1107,8 @@ class VolatilityProcess(metaclass=ABCMeta):
             2-d array containing columns of lower and upper bounds.
         start : int, optional
             Index of the first observation to use as the starting point for
-            the forecast.  Default is len(resids).
+            the forecast, between 0 and ``len(resids)``.  Default is
+            ``len(resids) - 1``.
         horizon : int, optional
             Forecast horizon.  Must be 1 or larger.  Forecasts are produced
             for horizons in [1, horizon].
@@ -785,7 +1116,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             Method to use when producing the forecast. The default is analytic.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
-            either simulation or bootstrap.
+            either simulation or bootstrap. Must be 1 or larger.
         rng : callable, optional
             Callable random number generator required if method is
             'simulation'. Must take a single shape input and return random
@@ -797,7 +1128,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             standardized distribution, which weights the variance in the expected
             value of the asymmetric terms of analytic forecasts. The default, 0.5,
             is exact for symmetric distributions. Only used by processes with an
-            asymmetric term when method is 'analytic'.
+            asymmetric term when method is 'analytic'. Must be in [0, 1].
 
         Returns
         -------
@@ -809,25 +1140,44 @@ class VolatilityProcess(metaclass=ABCMeta):
         ------
         NotImplementedError
             * If method is not supported
+        TypeError
+            * If ``start``, ``horizon`` or ``simulations`` is not an integer
+            * If ``method`` is not a string
+            * If ``rng`` is not callable, or is missing when the method is
+              'simulation'
+            * If ``random_state`` is not a RandomState or None
+            * If ``asym_weight`` is not a real number
         ValueError
             * If the method is not known
+            * If ``start`` is not in [0, len(resids)], ``horizon`` or
+              ``simulations`` is smaller than 1, or ``asym_weight`` is not in
+              [0, 1]
 
         Notes
         -----
         The analytic ``method`` is not supported for all models.  Attempting
         to use this method when not available will raise a ValueError.
         """
-        _parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        _parameters, resids, backcast, var_bounds = self._check_variance_inputs(
+            parameters, resids, backcast, var_bounds
+        )
         method_name = check_option(
             "method", method, ("analytic", "simulation", "bootstrap")
         )
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
+        horizon = check_int("horizon", horizon, lower=1)
+        nobs = resids.shape[0]
+        start = check_int("start", start, lower=0, upper=nobs, allow_none=True)
+        simulations = check_int("simulations", simulations, lower=1)
+        rng = cast(
+            "RNGType | None",
+            check_callable("rng", rng, allow_none=method_name != "simulation"),
+        )
+        random_state = check_instance(
+            "random_state", random_state, RandomState, allow_none=True
+        )
+        asym_weight = check_float("asym_weight", asym_weight, lower=0.0, upper=1.0)
         self._check_forecasting_method(cast("ForecastingMethod", method_name), horizon)
-        start = len(resids) - 1 if start is None else start
+        start = max(nobs - 1, 0) if start is None else start
         if method_name == "analytic":
             analytic = self._analytic_forecast
             kwargs = {}
@@ -892,16 +1242,20 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters : array_like
             Parameters required to simulate the volatility model.
         nobs : int
-            Number of data points to simulate.
+            Number of data points to simulate. Must be 1 or larger.
         rng : callable
             Callable function that takes a single integer input and returns
             a vector of random numbers.
         burn : int, optional
             Number of additional observations to generate when initializing
-            the simulation.
+            the simulation. Must be 0 or larger.
         initial_value : float or ndarray, optional
             Scalar or array of initial values to use when initializing the
-            simulation. The units depend on the process, see Notes.
+            simulation. The units depend on the process, see Notes. The values
+            must be finite, and not negative except for EGARCH. An array has
+            one element or as many as the process has initial values (the
+            largest lag for most processes). EWMAVariance and RiskMetrics2006
+            accept a scalar only.
 
         Returns
         -------
@@ -909,6 +1263,16 @@ class VolatilityProcess(metaclass=ABCMeta):
             The simulated residuals.
         variance : ndarray
             The simulated variance.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, ``rng`` is not callable,
+            or ``initial_value`` is not a number or an array of numbers.
+        ValueError
+            If ``parameters`` has the wrong length, ``nobs`` is smaller than 1,
+            ``burn`` is negative or ``initial_value`` is NaN, inf, out of range
+            or has the wrong length.
 
         Notes
         -----
@@ -964,6 +1328,9 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Model has the same variance in all periods
     """
 
+    _uses_backcast = False
+    _uses_var_bounds = False
+
     def __init__(self) -> None:
         super().__init__()
         self._num_params = 1
@@ -978,7 +1345,9 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
+        parameters, _, _, _ = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         sigma2[:] = parameters[0]
         return sigma2
 
@@ -994,7 +1363,9 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        parameters = ensure1d(parameters, "parameters", False)
+        parameters, nobs, rng, burn, _ = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, None
+        )
         errors = rng(nobs + burn)
         sigma2 = np.ones(nobs + burn) * parameters[0]
         data = np.sqrt(sigma2) * errors
@@ -1083,16 +1454,26 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be non-negative.
     o : int, optional
-        Order of the asymmetric innovation.
+        Order of the asymmetric innovation. Must be non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
     power : float, optional
         Power to use with the innovations, abs(e) ** power.  Default is 2.0, which
         produces ARCH and related models. Using 1.0 produces AVARCH and related
         models.  Other powers can be specified, although these should be strictly
         positive, and usually larger than 0.25.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer, or ``power`` is not a real
+        number.
+    ValueError
+        If ``p``, ``o`` or ``q`` is negative, ``p`` and ``o`` are both 0, or
+        ``power`` is not finite and strictly positive.
 
     Notes
     -----
@@ -1126,19 +1507,13 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self.power: float = power
-        self._num_params = 1 + p + o + q
-        if p < 0 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative")
-        if p == 0 and o == 0:
-            raise ValueError("One of p or o must be strictly positive")
-        if power <= 0.0:
-            raise ValueError(
-                "power must be strictly positive, usually larger than 0.25"
-            )
+        self.p: int = _check_count("p", p, 0)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        self.power: float = check_float("power", power, lower=0.0, inclusive="neither")
+        self._num_params = 1 + self.p + self.o + self.q
+        if self.p == 0 and self.o == 0:
+            _fail(ValueError, "p", "an integer >= 1 when o is 0", _describe(p))
         self._name = self._generate_name()
         self._volatility_updater = rec.GARCHUpdater(self.p, self.o, self.q, self.power)
 
@@ -1235,10 +1610,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
         # sresids is I(resids<0)
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         power = self.power
         fresids = np.absolute(resids) ** power
         sresids = np.sign(resids)
@@ -1283,10 +1657,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
         p, o, q, power = self.p, self.o, self.q, self.power
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, o, q)
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -1561,6 +1935,56 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return VarianceForecast(forecasts, paths, shocks)
 
 
+def _check_harch_lags(lags: Any) -> Int32Array:
+    """
+    Check the lags of a HARCH process.
+
+    Parameters
+    ----------
+    lags : int or array_like
+        A positive integer, which selects all lags up to this value, or a non-empty
+        1-d array of positive integers.
+
+    Returns
+    -------
+    ndarray
+        The lags, as an int32 vector.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` is not an integer or an array of integers.
+    ValueError
+        If ``lags`` is empty, is not 1-d or contains an integer smaller than 1 or
+        larger than the largest int32.
+    """
+    rule = "a positive integer or a non-empty 1-d array of positive integers"
+    try:
+        with catch_warnings():
+            # NumPy < 1.24 warns and returns an object array for a ragged list
+            simplefilter("error")
+            is_scalar = np.ndim(lags) == 0
+    except (ValueError, Warning):  # A ragged list
+        _fail(ValueError, "lags", rule, _describe(lags))
+    if is_scalar:
+        failure = None
+        try:
+            count = _check_count("lags", lags, 1)
+        except (TypeError, ValueError) as err:
+            failure = type(err)
+        if failure is not None:
+            _fail(failure, "lags", rule, _describe(lags))
+        return np.arange(1, count + 1, dtype=np.int32)
+    lags_arr = np.asarray(lags)
+    if lags_arr.size == 0:  # An empty list is a float array
+        _fail(ValueError, "lags", rule, _describe(lags))
+    if lags_arr.dtype.kind not in "iu":
+        _fail(TypeError, "lags", rule, _describe(lags))
+    if lags_arr.ndim != 1 or lags_arr.min() < 1 or lags_arr.max() > _INT_MAX:
+        _fail(ValueError, "lags", rule, _describe(lags))
+    return lags_arr.astype(np.int32)
+
+
 class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Heterogeneous ARCH process.
@@ -1569,7 +1993,15 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     lags : int or array_like, optional
         List of lags to include in the model, or if scalar, includes all lags up to
-        the value.
+        the value. The lags must be positive integers, and the list cannot be empty.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` is not an integer or an array of integers.
+    ValueError
+        If ``lags`` is smaller than 1, is empty, is not 1-d, or contains a lag
+        smaller than 1.
 
     Notes
     -----
@@ -1606,15 +2038,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
         super().__init__()
-        lags_arr = np.asarray(lags)
-        if lags_arr.ndim == 0:
-            lags_arr = np.arange(1, int(lags_arr) + 1)
-        if lags_arr.ndim != 1 or lags_arr.shape[0] == 0 or np.any(lags_arr < 1):
-            raise ValueError(
-                "lags must be a positive integer or a non-empty 1-d array-like of "
-                "positive integers."
-            )
-        self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
+        lags_arr = _check_harch_lags(lags)
+        self.lags: Int32Array = lags_arr
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
         self._name = "HARCH"
@@ -1655,10 +2080,9 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         lags = self.lags
         nobs = resids.shape[0]
 
@@ -1675,10 +2099,10 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
         lags = self.lags
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, int(np.max(lags))
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -1825,9 +2249,16 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     m : int, optional
-        Length of maximum lag to include in the model.
+        Length of maximum lag to include in the model. Must be positive.
     asym : bool, optional
         Flag indicating whether to include an asymmetric term.
+
+    Raises
+    ------
+    TypeError
+        If ``m`` is not an integer or ``asym`` is not a bool.
+    ValueError
+        If ``m`` is smaller than 1.
 
     Notes
     -----
@@ -1874,8 +2305,8 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
-        self.m: int = int(m)
-        self._asym = bool(asym)
+        self.m: int = _check_count("m", m, 1)
+        self._asym = check_bool("asym", asym)
         self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
         self._volatility_updater = rec.MIDASUpdater(self.m, self._asym)
@@ -1950,10 +2381,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         nobs = resids.shape[0]
         weights = self._weights(parameters)
         if not self._asym:
@@ -1973,9 +2403,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        _parameters = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
+        _parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, self.m
+        )
         if self._asym:
             omega, alpha, gamma = _parameters[:3]
         else:
@@ -2188,7 +2618,14 @@ class ARCH(GARCH):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p`` is not an integer.
+    ValueError
+        If ``p`` is smaller than 1.
 
     Notes
     -----
@@ -2210,6 +2647,7 @@ class ARCH(GARCH):
     """
 
     def __init__(self, p: int = 1) -> None:
+        p = _check_count("p", p, 1)
         super().__init__(p, 0, 0, 2.0)
         self._num_params = p + 1
 
@@ -2241,7 +2679,14 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     lam : float or None, optional
         Smoothing parameter. Default is 0.94. Set to None to estimate lam
-        jointly with other model parameters.
+        jointly with other model parameters. Must be strictly between 0 and 1.
+
+    Raises
+    ------
+    TypeError
+        If ``lam`` is not a real number or None.
+    ValueError
+        If ``lam`` is NaN, inf, or not strictly between 0 and 1.
 
     Notes
     -----
@@ -2263,13 +2708,15 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     >>> rm = EWMAVariance(0.94)
     """
 
+    _uses_var_bounds = False
+
     def __init__(self, lam: float | None = 0.94) -> None:
         super().__init__()
-        self.lam: float | None = lam
+        self.lam: float | None = check_float(
+            "lam", lam, lower=0.0, upper=1.0, inclusive="neither", allow_none=True
+        )
         self._estimate_lam = lam is None
         self._num_params = 1 if self._estimate_lam else 0
-        if lam is not None and not 0.0 < lam < 1.0:
-            raise ValueError("lam must be strictly between 0 and 1")
         self._name = "EWMA/RiskMetrics"
         self._volatility_updater = rec.EWMAUpdater(self.lam)
 
@@ -2304,9 +2751,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
+        parameters, resids, backcast, _ = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         lam = parameters[0] if self._estimate_lam else self.lam
         assert isinstance(lam, float)
         return ewma_recursion(
@@ -2328,9 +2775,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -2426,13 +2873,26 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     tau0 : int or float, optional
-        Length of long cycle. Default is 1560.
+        Length of long cycle. Default is 1560. Must be finite and larger than
+        ``tau1``.
     tau1 : int or float, optional
-        Length of short cycle. Default is 4.
+        Length of short cycle. Default is 4. Must be finite and positive.
     kmax : int, optional
-        Number of components. Default is 14.
+        Number of components. Default is 14. Must be positive, and
+        ``tau1 * rho ** (kmax - 1)`` cannot be larger than ``tau0``.
     rho : float, optional
-        Relative scale of adjacent cycles. Default is sqrt(2).
+        Relative scale of adjacent cycles. Default is sqrt(2). Must be finite and
+        larger than 1.
+
+    Raises
+    ------
+    TypeError
+        If ``tau0``, ``tau1`` or ``rho`` is not a real number or ``kmax`` is not an
+        integer.
+    ValueError
+        If ``tau0``, ``tau1`` or ``rho`` is NaN or inf, ``tau1`` is not positive,
+        ``tau0`` is not larger than ``tau1``, ``kmax`` is smaller than 1, ``rho`` is
+        not larger than 1, or ``tau1 * rho ** (kmax - 1)`` is larger than ``tau0``.
 
     Notes
     -----
@@ -2450,6 +2910,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     >>> rm = RiskMetrics2006()
     """
 
+    _uses_var_bounds = False
+
     def __init__(
         self,
         tau0: float = 1560,
@@ -2458,20 +2920,22 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rho: float = 1.4142135623730951,
     ) -> None:
         super().__init__()
-        self.tau0: float = tau0
-        self.tau1: float = tau1
-        self.kmax: int = kmax
-        self.rho: float = rho
+        self.tau0: float = check_float("tau0", tau0, lower=0.0, inclusive="neither")
+        self.tau1: float = check_float("tau1", tau1, lower=0.0, inclusive="neither")
+        self.kmax: int = _check_count("kmax", kmax, 1)
+        self._backcast_size = self.kmax
+        self.rho: float = check_float("rho", rho, lower=1.0, inclusive="neither")
         self._num_params = 0
 
-        if tau0 <= tau1 or tau1 <= 0:
-            raise ValueError("tau0 must be greater than tau1 and tau1 > 0")
-        if tau1 * rho ** (kmax - 1) > tau0:
-            raise ValueError("tau1 * rho ** (kmax-1) smaller than tau0")
-        if not kmax >= 1:
-            raise ValueError("kmax must be a positive integer")
-        if not rho > 1:
-            raise ValueError("rho must be a positive number larger than 1")
+        if self.tau0 <= self.tau1:
+            rule = f"a finite float greater than tau1 ({self.tau1:g})"
+            _fail(ValueError, "tau0", rule, _describe(tau0))
+        with np.errstate(over="ignore"):
+            # The power overflows to inf for a large kmax, which is then too large
+            longest = np.float64(self.tau1) * np.float64(self.rho) ** (self.kmax - 1)
+        if longest > self.tau0:
+            rule = f"such that tau1 * rho ** (kmax - 1) <= tau0 ({self.tau0:g})"
+            _fail(ValueError, "kmax", rule, _describe(kmax))
         self._name = "RiskMetrics2006"
         self._volatility_updater = rec.RiskMetrics2006Updater(
             self.kmax,
@@ -2581,8 +3045,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
+        _, resids, backcast, _ = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         nobs = resids.shape[0]
         kmax = self.kmax
         w = self._ewma_combination_weights()
@@ -2608,8 +3073,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
+        _, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value
+        )
         errors = rng(nobs + burn)
 
         kmax = self.kmax
@@ -2748,11 +3214,19 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be non-negative.
     o : int, optional
-        Order of the asymmetric innovation.
+        Order of the asymmetric innovation. Must be non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer.
+    ValueError
+        If ``p``, ``o`` or ``q`` is negative, or ``p`` and ``o`` are both 0.
 
     Notes
     -----
@@ -2787,15 +3261,13 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self._num_params = 1 + p + o + q
-        if p < 0 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative")
-        if p == 0 and o == 0:
-            raise ValueError("One of p or o must be strictly positive")
-        self._name = "EGARCH" if q > 0 else "EARCH"
+        self.p: int = _check_count("p", p, 0)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        self._num_params = 1 + self.p + self.o + self.q
+        if self.p == 0 and self.o == 0:
+            _fail(ValueError, "p", "an integer >= 1 when o is 0", _describe(p))
+        self._name = "EGARCH" if self.q > 0 else "EARCH"
         # Helpers for fitting variance
         self._arrays: tuple[Float64Array, Float64Array, Float64Array] | None = None
         self._volatility_updater = rec.EGARCHUpdater(self.p, self.o, self.q)
@@ -2842,10 +3314,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
         if (self._arrays is not None) and (self._arrays[0].shape[0] == nobs):
@@ -2892,10 +3363,11 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
         p, o, q = self.p, self.o, self.q
+        # The initial value is the log of the variance, which can be negative
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, o, q), None
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -3070,11 +3542,21 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     variance : ndarray or Series
         Array containing the variances to use.  Should have the same shape as the
         data used in the model. This is not checked since the model is not
-        available when the FixedVariance process is created.
+        available when the FixedVariance process is created. The variances must
+        be finite and positive.
     unit_scale : bool, optional
         Flag whether to enforce a unit scale.  If False, a scale parameter will be
         estimated so that the model variance will be proportional to ``variance``.
         If True, the model variance is set to ``variance``.
+
+    Raises
+    ------
+    TypeError
+        If ``variance`` cannot be converted to a float64 array or ``unit_scale`` is
+        not a bool.
+    ValueError
+        If ``variance`` is not 1-d, or contains NaN, inf, or a value that is not
+        positive.
 
     Notes
     -----
@@ -3082,8 +3564,16 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     allowing GLS estimation.
     """
 
+    _uses_backcast = False
+    _uses_var_bounds = False
+
     def __init__(self, variance: Float64Array, unit_scale: bool = False) -> None:
         super().__init__()
+        unit_scale = check_bool("unit_scale", unit_scale)
+        values = check_array("variance", variance, ndim=1)
+        if values.size and values.min() <= 0.0:
+            rule = "a 1-d array of finite numbers > 0"
+            _fail(ValueError, "variance", rule, _describe(variance))
         self._num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
         self._name = "Fixed Variance"
@@ -3099,7 +3589,9 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
+        parameters, _, _, _ = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         if self._stop - self._start != sigma2.shape[0]:
             raise ValueError("start and stop do not have the correct values.")
         sigma2[:] = self._variance[self._start : self._stop]
@@ -3243,7 +3735,16 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         these should be strictly positive, and usually larger than 0.25.
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
-        Default is 1000.
+        Default is 1000. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``q`` or ``truncation`` is not an integer, or ``power`` is not a
+        real number.
+    ValueError
+        If ``p`` or ``q`` is not 0 or 1, ``truncation`` is smaller than 1, or
+        ``power`` is not finite and strictly positive.
 
     Notes
     -----
@@ -3300,21 +3801,15 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, p: int = 1, q: int = 1, power: float = 2.0, truncation: int = 1000
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.q: int = int(q)
-        self.power: float = power
-        self._num_params = 2 + p + q
-        self._truncation = int(truncation)
-        if p < 0 or q < 0 or p > 1 or q > 1:
-            raise ValueError("p and q must be either 0 or 1.")
-        if self._truncation <= 0:
-            raise ValueError("truncation must be a positive integer")
-        if power <= 0.0:
-            raise ValueError(
-                "power must be strictly positive, usually larger than 0.25"
-            )
+        self.p: int = check_int("p", p, lower=0, upper=1)
+        self.q: int = check_int("q", q, lower=0, upper=1)
+        self.power: float = check_float("power", power, lower=0.0, inclusive="neither")
+        self._num_params = 2 + self.p + self.q
+        self._truncation = _check_count("truncation", truncation, 1)
         self._name = self._generate_name()
-        self._volatility_updater = rec.FIGARCHUpdater(p, q, power, truncation)
+        self._volatility_updater = rec.FIGARCHUpdater(
+            self.p, self.q, self.power, self._truncation
+        )
 
     @property
     def truncation(self) -> int:
@@ -3406,10 +3901,9 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
         # fresids is abs(resids) ** power
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         power = self.power
         fresids = np.absolute(resids) ** power
 
@@ -3453,10 +3947,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, truncation
+        )
         p, q, power = self.p, self.q, self.power
         lam = rec.figarch_weights(parameters[1:], p, q, truncation)
         lam_rev = lam[::-1]
@@ -3682,7 +4176,16 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         User provided delta is restricted to lie in (0.05, 4.0).
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
-        Default is 1000.
+        Default is 1000. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o``, ``q`` or ``truncation`` is not an integer, or ``delta`` is
+        not a real number or None.
+    ValueError
+        If ``p``, ``o`` or ``q`` is not 0 or 1, ``truncation`` is smaller than 1, or
+        ``delta`` is NaN, inf or not in (0.05, 4.0).
 
     Notes
     -----
@@ -3733,31 +4236,25 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         truncation: int = 1000,
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self._truncation = int(truncation)
+        self.p: int = check_int("p", p, lower=0, upper=1)
+        self.o: int = check_int("o", o, lower=0, upper=1)
+        self.q: int = check_int("q", q, lower=0, upper=1)
+        self._truncation = _check_count("truncation", truncation, 1)
         self._est_delta = delta is None
-        self._delta = float(np.nan)
-        if not self._est_delta:
-            try:
-                assert delta is not None
-                self._delta = float(delta)
-            except (ValueError, TypeError) as exc:
-                raise TypeError("delta must be convertible to a float.") from exc
-            if not 0.05 < self._delta < 4:
-                raise ValueError("delta must be between 0.05 and 4")
-        if p < 0 or q < 0 or p > 1 or q > 1:
-            raise ValueError("p and q must be either 0 or 1.")
-        if o < 0 or o > 1:
-            raise ValueError("o must be either 0 or 1.")
-        if self._truncation <= 0:
-            raise ValueError("truncation must be a positive integer")
-        self._num_params = 2 + p + q + o + int(self._est_delta)
+        fixed_delta = check_float(
+            "delta",
+            delta,
+            lower=0.05,
+            upper=4.0,
+            inclusive="neither",
+            allow_none=True,
+        )
+        self._delta = float(np.nan) if fixed_delta is None else fixed_delta
+        self._num_params = 2 + self.p + self.q + self.o + int(self._est_delta)
         self._name = self._generate_name()
         delta_init = 2.0 if self._est_delta else self._delta
         self._volatility_updater = rec.FIAPARCHUpdater(
-            p, q, o, self._truncation, self._est_delta, delta_init
+            self.p, self.q, self.o, self._truncation, self._est_delta, delta_init
         )
         self._sigma_delta = np.empty(0)
 
@@ -3883,10 +4380,9 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         nobs = resids.shape[0]
         abs_resids = np.absolute(resids)
         if self._sigma_delta.shape[0] != nobs:
@@ -3930,10 +4426,10 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, truncation
+        )
         p, o, q = self.p, self.o, self.q
 
         fig_params = parameters[: 1 + p + 1 + q]
@@ -4164,11 +4660,13 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation. Must satisfy p>=o.
+        Order of the symmetric innovation. Must satisfy p>=o and be positive.
     o : int, optional
-        Order of the asymmetric innovation. Must satisfy o<=p.
+        Order of the asymmetric innovation. Must satisfy o<=p and be
+        non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
     delta : float, optional
         Value to use for a fixed delta in the APARCH model. If
         not provided, the value of delta is jointly estimated
@@ -4178,6 +4676,15 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Restrict all asymmetry terms to share the same asymmetry
         parameter. If False (default), then there are no restrictions
         on the ``o`` asymmetry parameters.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer, ``delta`` is not a real number
+        or None, or ``common_asym`` is not a bool.
+    ValueError
+        If ``p`` is smaller than 1, ``o`` or ``q`` is negative, ``o`` is larger than
+        ``p``, or ``delta`` is NaN, inf or not in (0.05, 4.0).
 
     Notes
     -----
@@ -4220,30 +4727,27 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         common_asym: bool = False,
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
+        self.p: int = _check_count("p", p, 1)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        if self.o > self.p:
+            _fail(ValueError, "o", f"an integer <= p ({self.p})", _describe(o))
         self._est_delta = delta is None
-        self._common_asym = bool(common_asym) and self.o > 0
-        self._delta = float(np.nan)
-        if not self._est_delta:
-            try:
-                assert delta is not None
-                self._delta = float(delta)
-            except (ValueError, TypeError) as exc:
-                raise TypeError("delta must be convertible to a float.") from exc
-            if not 0.05 < delta < 4:
-                raise ValueError("delta must be between 0.05 and 4")
-            self._delta = delta
-        if p < 1 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative, and p >= 1")
-        if o > p:
-            raise ValueError("o must be <= p.")
-        self._name = "APARCH" if o > 0 else "Power ARCH"
+        self._common_asym = check_bool("common_asym", common_asym) and self.o > 0
+        fixed_delta = check_float(
+            "delta",
+            delta,
+            lower=0.05,
+            upper=4.0,
+            inclusive="neither",
+            allow_none=True,
+        )
+        self._delta = float(np.nan) if fixed_delta is None else fixed_delta
+        self._name = "APARCH" if self.o > 0 else "Power ARCH"
         self._sigma_delta = np.empty(0)
         self._parameters = np.empty(1 + self.p + self.o + self.q + 1)
-        o = 1 if self._common_asym else o
-        self._num_params = 1 + p + o + q + int(self._est_delta)
+        o = 1 if self._common_asym else self.o
+        self._num_params = 1 + self.p + o + self.q + int(self._est_delta)
         self._repack = self._common_asym or not self._est_delta
 
     @property
@@ -4279,10 +4783,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         var_bounds: Float64Array2D,
     ) -> Float64Array1D:
-        parameters = ensure1d(parameters, "parameters")
-        resids = ensure1d(resids, "resids")
-        backcast = _float_backcast(backcast)
-        var_bounds = np.asarray(ensure2d(var_bounds, "var_bounds"))
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
         abs_resids = np.absolute(resids)
         if self._sigma_delta.shape[0] != resids.shape[0]:
             self._sigma_delta = np.empty(resids.shape[0])
@@ -4350,15 +4853,15 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 sv[1 + p + o : 1 + p + o + q] = ab / q
             if est_delta:
                 sv[-1] = delta
+            if self._common_asym:
+                # The parameters have a single gamma
+                sv = np.r_[sv[: p + 1 + (o > 0)], sv[p + o + 1 :]]
             svs.append(sv)
             llfs[i] = self._gaussian_loglikelihood(
                 to_array_1d(sv), to_array_1d(resids), backcast, var_bounds
             )
         loc = np.argmax(llfs)
-        sv = svs[int(loc)]
-        if self._common_asym:
-            sv = np.r_[sv[: p + 1 + (o > 0)], sv[p + o + 1 :]]
-        return sv
+        return svs[int(loc)]
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         p, o, q = self.p, self.o, self.q
@@ -4409,11 +4912,11 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        params = ensure1d(parameters, "parameters", False).astype(float)
-        params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, q)
+        )
+        params = self._repack_parameters(parameters.astype(float))
         errors = rng(nobs + burn)
 
         sigma2 = np.zeros(nobs + burn)

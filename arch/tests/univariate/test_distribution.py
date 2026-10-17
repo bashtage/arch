@@ -218,7 +218,9 @@ def test_invalid_params():
     with pytest.raises(ValueError, match=r"parameters must have 0 elements"):
         dist.ppf(pits, [1.0])
     dist = StudentsT()
-    with pytest.raises(ValueError, match=r"S does not satisfy the bounds requirement"):
+    with pytest.raises(
+        ValueError, match=r"parameters\[0\] \(nu\) must be a finite float in"
+    ):
         dist.ppf(pits, [1.0])
 
 
@@ -232,7 +234,5 @@ def test_no_parameters_error(distribution):
 
 
 def test_random_state_seed_transition():
-    with pytest.raises(
-        TypeError, match=r"seed must by a NumPy Generator or RandomState"
-    ):
+    with pytest.raises(TypeError, match=r"seed must be None, a non-negative integer"):
         Normal(seed="1234")

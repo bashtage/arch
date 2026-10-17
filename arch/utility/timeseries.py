@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from arch._typing import Float64Array, Literal, NDArrayOrFrame
-from arch.utility._validation import check_option
+from arch.utility._validation import check_bool, check_int, check_option
 from arch.utility.array import ensure1d, ensure2d
 
 
@@ -89,6 +89,7 @@ def add_trend(
     x : array_like or DataFrame, optional
         Original array of data. If None, then nobs must be a positive integer.
         Integer, unsigned integer and Boolean data are converted to float64.
+        NaN and inf in x are not checked and are returned unchanged.
     trend : {"n", "c", "t", "ct", "ctt"}, optional
         The trend(s) to add. Supported options are:
 
@@ -100,8 +101,8 @@ def add_trend(
     prepend : bool, optional
         If True, prepends the new data to the columns of x.
     nobs : int, optional
-        Positive integer containing the length of the trend series.  Only used
-        if x is None.
+        Positive integer containing the length of the trend series. Must be
+        None if x is provided.
     has_constant : {"raise", "add", "skip"}, optional
         Controls what happens when trend is "c", "ct" or "ctt" and a constant
         already exists in x. "raise" will raise an error. "add" will duplicate a
@@ -118,10 +119,13 @@ def add_trend(
 
     Raises
     ------
+    TypeError
+        If trend or has_constant is not a str, prepend is not a bool, nobs is
+        not an integer, or x cannot be converted to float64 data.
     ValueError
-        If trend is not one of the supported options, if both or neither of x
-        and nobs are provided, if nobs is not positive, or if has_constant is
-        "raise" and x already contains a constant.
+        If trend or has_constant is not one of the supported options, if both
+        or neither of x and nobs are provided, if nobs is not positive, or if
+        has_constant is "raise" and x already contains a constant.
 
     Notes
     -----
@@ -134,6 +138,8 @@ def add_trend(
         "Literal['raise', 'add', 'skip']",
         check_option("has_constant", has_constant, ("raise", "add", "skip")),
     )
+    prepend = check_bool("prepend", prepend)
+    nobs = check_int("nobs", nobs, lower=1, allow_none=True)
     if (x is None and nobs is None) or (x is not None and nobs is not None):
         raise ValueError("One and only one of x or nobs must be provided.")
     if x is not None:
@@ -156,8 +162,7 @@ def add_trend(
 
     if x is not None:
         nobs = len(np.asanyarray(x))
-    elif nobs is None or nobs <= 0:
-        raise ValueError("nobs must be a positive integer if x is None")
+    assert nobs is not None
     trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.double), trend_order + 1)
     # put in order ctt
     trend_array = np.fliplr(trend_array)
@@ -167,6 +172,7 @@ def add_trend(
     if x is None:
         return np.asarray(trend_array, dtype=float)
     x_array = np.asarray(x)
+    skipped_constant = False
     if "c" in trend_name and np.any(
         np.logical_and(np.ptp(x_array, axis=0) == 0, np.all(x_array != 0, axis=0))
     ):
@@ -176,12 +182,15 @@ def add_trend(
             pass
         elif has_constant == "skip" and trend_name in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
+            skipped_constant = True
     if isinstance(x, pd.DataFrame):
         columns: list[str] = ["const", "trend", "quadratic_trend"]
         if trend_name == "t":
             columns = [columns[1]]
         else:
             columns = columns[0 : trend_order + 1]
+        if skipped_constant:
+            columns = columns[1:]
         columns = _enforce_unique_col_name([str(col) for col in x.columns], columns)
         trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:

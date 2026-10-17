@@ -338,24 +338,26 @@ def test_date_to_index():
     assert_equal(index, 500)
     index = date_to_index(dt.datetime(2009, 8, 1), date_index)
     assert_equal(index, 500)
-    with pytest.raises(ValueError, match=r"date must be a datetime"):
+    with pytest.raises(TypeError, match=r"date must be a datetime"):
         date_to_index(dt.date(2009, 8, 1), date_index)
     z = y + 0.0
     z.index = np.arange(3000)
     num_index = z.index
-    with pytest.raises(ValueError, match=r"date_index must be a datetime64 array"):
+    with pytest.raises(TypeError, match=r"date_index must be a datetime64 array"):
         date_to_index(dt.datetime(2009, 8, 1), num_index)
     idx = date_range("1999-12-31", periods=3)
 
     df = DataFrame([1, 2, 3], index=idx[::-1])
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index(idx[0], df.index)
 
     df = DataFrame([1, 2, 3], index=[idx[0]] * 3)
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index(idx[0], df.index)
 
-    with pytest.raises(ValueError, match=r"date: NaT cannot be parsed to a date"):
+    with pytest.raises(
+        ValueError, match=r"date must be a string that can be parsed to a date"
+    ):
         date_to_index("NaT", idx)
 
     #  check whether this also works for a localized datetimeindex
@@ -435,10 +437,10 @@ def test_date_to_index_tz_aware_timestamp_other_zone():
 def test_date_to_index_tz_aware_not_monotonic():
     utc = ["2021-03-13 12:00", "2021-03-14 12:00", "2021-03-14 12:00"]
     date_index = DatetimeIndex(utc).tz_localize("UTC").tz_convert("Asia/Kolkata")
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index("2021-03-14", date_index)
     date_index = DatetimeIndex(utc[::-1]).tz_localize("UTC").tz_convert("Asia/Kolkata")
-    with pytest.raises(ValueError, match=r"date_index is not monotonic and unique"):
+    with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
         date_to_index("2021-03-14", date_index)
 
 
@@ -517,9 +519,11 @@ def test_find_index():
     npy_date = np.datetime64(series.index[3000].to_pydatetime())
     found_loc = find_index(series, npy_date)
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError, match=r"bad-date cannot"):
+    with pytest.raises(
+        ValueError, match=r"index must be a value that can be converted to a date"
+    ):
         find_index(series, "bad-date")
-    with pytest.raises(ValueError, match=r"index not found"):
+    with pytest.raises(ValueError, match=r"index must be a date in the index of s"):
         find_index(series, "1900-01-01")
 
     assert_equal(find_index(df, "2000-01-01"), 0)
@@ -528,9 +532,11 @@ def test_find_index():
     assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
     found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
     assert_equal(found_loc, 3000)
-    with pytest.raises(ValueError, match=r"bad-date cannot be converted to datetime"):
+    with pytest.raises(
+        ValueError, match=r"index must be a value that can be converted to a date"
+    ):
         find_index(df, "bad-date")
-    with pytest.raises(ValueError, match=r"index not found"):
+    with pytest.raises(ValueError, match=r"index must be a date in the index of s"):
         find_index(df, "1900-01-01")
 
     idx = find_index(df, 1)

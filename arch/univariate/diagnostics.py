@@ -9,13 +9,19 @@ from scipy import stats
 
 from arch._typing import ArrayLike1D
 from arch.univariate.distribution import Distribution, Normal
-from arch.utility.array import ensure1d
+from arch.utility._validation import (
+    check_array,
+    check_float,
+    check_instance,
+    check_int,
+)
 
 __all__ = ["excess_kurtosis", "hill_estimator", "var_ratio"]
 
 
 def _clean_std_resid(std_resid: Sequence[float] | ArrayLike1D) -> np.ndarray:
-    resids = np.asarray(ensure1d(std_resid, "std_resid", series=False), dtype=float)
+    # NaN and inf are removed by design, and so they are accepted
+    resids = check_array("std_resid", std_resid, ndim=1, allow_nan=True, allow_inf=True)
     resids = resids[np.isfinite(resids)]
     if resids.shape[0] == 0:
         raise ValueError("std_resid must contain at least one finite observation")
@@ -30,12 +36,20 @@ def excess_kurtosis(std_resid: Sequence[float] | ArrayLike1D) -> float:
     ----------
     std_resid : array_like
         Standardized residuals. Non-finite observations are removed before
-        computing the statistic.
+        computing the statistic, since the residuals of a fitted model are NaN
+        outside the estimation sample.
 
     Returns
     -------
     float
         Sample excess kurtosis computed using sample central moments.
+
+    Raises
+    ------
+    TypeError
+        If ``std_resid`` cannot be converted to numbers.
+    ValueError
+        If ``std_resid`` is not 1-d or has no finite observation.
     """
     resids = _clean_std_resid(std_resid)
     demeaned = resids - resids.mean()
@@ -55,15 +69,27 @@ def hill_estimator(
     ----------
     std_resid : array_like
         Standardized residuals. The estimator is computed from the largest
-        absolute standardized residuals after removing non-finite observations.
+        absolute standardized residuals after removing non-finite observations,
+        since the residuals of a fitted model are NaN outside the estimation
+        sample.
     k : int, optional
         Number of upper order statistics to use. If not provided, uses
-        ``int(sqrt(n))`` where ``n`` is the number of finite residuals.
+        ``int(sqrt(n))`` where ``n`` is the number of finite residuals. Must be at
+        least 1 and less than the number of non-zero finite residuals.
 
     Returns
     -------
     float
         Inverse Hill estimate of the tail index.
+
+    Raises
+    ------
+    TypeError
+        If ``std_resid`` cannot be converted to numbers or ``k`` is not an
+        integer.
+    ValueError
+        If ``std_resid`` is not 1-d, has fewer than two non-zero finite
+        observations, or ``k`` is outside the allowed range.
 
     Notes
     -----
@@ -76,6 +102,7 @@ def hill_estimator(
 
     where ``X`` contains the positive absolute standardized residuals.
     """
+    k = check_int("k", k, lower=1, allow_none=True)
     abs_resids = np.abs(_clean_std_resid(std_resid))
     nobs = abs_resids.shape[0]
     resids = np.sort(abs_resids[abs_resids > 0.0])
@@ -87,14 +114,8 @@ def hill_estimator(
 
     if k is None:
         k = int(np.sqrt(nobs))
-    elif not isinstance(k, (int, np.integer)):
-        raise TypeError("k must be an integer")
-
-    if not 1 <= int(k) < positive:
-        raise ValueError(
-            "k must satisfy 1 <= k < the number of non-zero finite observations"
-        )
-    k = int(k)
+    # k is at most the number of non-zero finite observations less one
+    k = check_int("k", k, lower=1, upper=positive - 1)
 
     threshold = resids[-k - 1]
     hill = np.mean(np.log(resids[-k:]) - np.log(threshold))
@@ -114,27 +135,44 @@ def var_ratio(
     Parameters
     ----------
     level : float, optional
-        VaR confidence level. Must be between 0.5 and 1.0.
+        VaR confidence level. Must be finite and between 0.5 and 1.0, exclusive.
     distribution : Distribution, optional
         Standardized distribution used to compute the model VaR. If not
         provided, uses the standard normal distribution.
     parameters : array_like, optional
-        Distribution parameters. Use ``None`` for parameterless distributions.
+        Distribution parameters. Must have one finite element for each parameter
+        of ``distribution``. Use ``None`` for parameterless distributions.
 
     Returns
     -------
     float
         Ratio of the Gaussian left-tail VaR to the VaR implied by the supplied
         model distribution.
-    """
-    level = float(level)
-    if not 0.5 < level < 1.0:
-        raise ValueError("level must be larger than 0.5 and smaller than 1.0")
 
+    Raises
+    ------
+    TypeError
+        If ``level`` is not a real number, ``distribution`` is not a Distribution
+        or ``parameters`` cannot be converted to numbers.
+    ValueError
+        If ``level`` is not in (0.5, 1.0), ``parameters`` does not have one finite
+        element for each parameter of the distribution, or the model distribution
+        does not produce a positive finite VaR.
+    """
+    level = check_float("level", level, lower=0.5, upper=1.0, inclusive="neither")
+    distribution = check_instance(
+        "distribution", distribution, Distribution, allow_none=True
+    )
     if distribution is None:
         distribution = Normal()
-    elif not isinstance(distribution, Distribution):
-        raise TypeError("distribution must inherit from Distribution")
+    nparams = distribution.num_params
+    parameters = check_array(
+        "parameters",
+        parameters,
+        ndim=1,
+        shape=(nparams,),
+        allow_none=nparams == 0,
+    )
 
     tail_probability = 1.0 - level
     gaussian_var = -stats.norm.ppf(tail_probability)

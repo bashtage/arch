@@ -47,9 +47,9 @@ def test_hill_estimator_default_k():
 
 def test_hill_estimator_invalid_k():
     x = np.arange(1.0, 10.0)
-    with pytest.raises(ValueError, match="k must satisfy"):
+    with pytest.raises(ValueError, match=r"k must be an integer >= 1 or None; got 0"):
         hill_estimator(x, 0)
-    with pytest.raises(ValueError, match="k must satisfy"):
+    with pytest.raises(ValueError, match=r"k must be an integer in \[1, 8\]; got 9"):
         hill_estimator(x, 9)
     with pytest.raises(TypeError, match="k must be an integer"):
         hill_estimator(x, 2.0)
@@ -76,9 +76,11 @@ def test_var_ratio():
 
 
 def test_var_ratio_invalid():
-    with pytest.raises(ValueError, match=r"larger than 0\.5"):
+    with pytest.raises(ValueError, match=r"level must be a finite float in \(0.5, 1\)"):
         var_ratio(0.5)
-    with pytest.raises(TypeError, match="must inherit"):
+    with pytest.raises(
+        TypeError, match=r"distribution must be an instance of Distribution or None"
+    ):
         var_ratio(distribution="normal")
 
 

@@ -78,8 +78,14 @@ is:\n\n {cov}
 """
 
 
-class InfeasibleTestException(RuntimeError):
-    """Error raised if a test cannot be computed using the data provided."""
+class InfeasibleTestException(RuntimeError, ValueError):
+    """
+    Error raised if a test cannot be computed using the data provided.
+
+    This is a ``ValueError``, since the data or the specification are not valid for
+    the test, and also a ``RuntimeError``, which it was before ``ValueError`` was
+    added, so that code that catches either keeps working.
+    """
 
 
 class PerformanceWarning(UserWarning):

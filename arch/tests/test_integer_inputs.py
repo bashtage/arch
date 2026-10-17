@@ -398,7 +398,7 @@ def simulate_arguments(d: dict[str, Any]) -> dict[str, Any]:
 
 @case(lambda: {"y": _garch_counts(), "sv": np.array([50.0, 2.0, 0.0, 0.0])})
 def fit_starting_values(d: dict[str, Any]) -> dict[str, Any]:
-    mod = ConstantMean(d["y"])
+    mod = ConstantMean(d["y"], volatility=GARCH())
     return _result(mod.fit(starting_values=d["sv"], disp="off"))
 
 
@@ -867,7 +867,7 @@ STRINGS_2D = [["a", "b"], ["c", "d"]] * 30
 def test_non_numeric_1d_raises_type_error(
     func: Callable[[Any], Any], name: str
 ) -> None:
-    with pytest.raises(TypeError, match=rf"^{name} must .*float64"):
+    with pytest.raises(TypeError, match=rf"^{name} must .*(float64|numbers)"):
         func(STRINGS_1D)
 
 
@@ -889,7 +889,7 @@ def test_non_numeric_1d_raises_type_error(
 def test_non_numeric_2d_raises_type_error(
     func: Callable[[Any], Any], name: str
 ) -> None:
-    with pytest.raises(TypeError, match=rf"^{name} must .*float64"):
+    with pytest.raises(TypeError, match=rf"^{name} must .*(float64|numbers)"):
         func(STRINGS_2D)
 
 

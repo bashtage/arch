@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from collections.abc import Sequence
-from typing import cast
+from collections.abc import Callable, Sequence
+from typing import NoReturn, cast
 import warnings
 
 import numpy as np
@@ -77,13 +77,14 @@ from arch.unitroot.critical_values.dickey_fuller import (
 )
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
-from arch.utility._validation import check_option
-from arch.utility.array import (
-    AbstractDocStringInheritor,
-    ensure1d,
-    ensure2d,
-    to_array_1d,
+from arch.utility._validation import (
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
 )
+from arch.utility.array import AbstractDocStringInheritor, ensure2d, to_array_1d
 from arch.utility.cov import cov_nw
 from arch.utility.exceptions import (
     InfeasibleTestException,
@@ -528,6 +529,42 @@ def _estimate_df_regression(
     return OLS(lhs, rhs).fit()
 
 
+def _newey_west_lags(nobs: int) -> int:
+    """The rule of thumb for the number of lags of a Newey-West estimator"""
+    return int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+
+
+def _y_too_short(
+    test: str, required: int, nobs: int, trend: str, lags_text: str = ""
+) -> NoReturn:
+    """Raise the error for a series that is too short to run a test"""
+    raise InfeasibleTestException(
+        f"y must be at least {required} observations long to run the {test} test with "
+        f"trend {trend!r}{lags_text}; got {nobs} observations (ndarray)"
+    )
+
+
+def _lags_too_large(name: str, value: int, limit: int, nobs: int) -> NoReturn:
+    """Raise the error for lags that the observations in y cannot support"""
+    raise InfeasibleTestException(
+        f"{name} must be at most {limit} for the {nobs} observations in y; "
+        f"got {value} (int)"
+    )
+
+
+def _check_max_lags(
+    max_lags: int | None, lags: int | None, nobs: int, limit: int
+) -> None:
+    """
+    Check the maximum lag of the lag selection against the observations
+
+    max_lags is not used if lags is given, so it is only checked against nobs if
+    lags is None.
+    """
+    if max_lags is not None and lags is None and max_lags > limit:
+        _lags_too_large("max_lags", max_lags, limit, nobs)
+
+
 class UnitRootTest(metaclass=ABCMeta):
     """
     Base class to be used for inheritance in unit root tests.
@@ -544,7 +581,22 @@ class UnitRootTest(metaclass=ABCMeta):
         ``valid_trends``.
     valid_trends : list of str or tuple of str
         The trends that are supported by the test.
+
+    Raises
+    ------
+    TypeError
+        If y cannot be converted to numbers, lags is not an integer or trend is not
+        a str.
+    ValueError
+        If y is not 1-d, contains NaN or inf, lags is negative or trend is not one
+        of valid_trends.
+    InfeasibleTestException
+        If y has too few observations for the test and lags. This is also a
+        ``ValueError``.
     """
+
+    # The smallest number of lags that the test accepts
+    _min_lags = 0
 
     def __init__(
         self,
@@ -553,12 +605,10 @@ class UnitRootTest(metaclass=ABCMeta):
         trend: UnitRootTrend | Literal["t"],
         valid_trends: list[str] | tuple[str, ...],
     ) -> None:
-        self._y = ensure1d(y, "y", series=False)
+        self._y = check_array("y", y, ndim=1)
         self._delta_y = diff(self._y)
         self._nobs = self._y.shape[0]
-        self._lags = int(lags) if lags is not None else lags
-        if self._lags is not None and self._lags < 0:
-            raise ValueError("lags must be non-negative.")
+        self._lags = check_int("lags", lags, lower=self._min_lags, allow_none=True)
         self._valid_trends = list(valid_trends)
         self._trend = check_option("trend", trend, self._valid_trends)
         self._stat: float | None = None
@@ -584,7 +634,47 @@ class UnitRootTest(metaclass=ABCMeta):
     def _check_specification(self) -> None:
         """
         Check that the data are compatible with running a test.
+
+        This is called when the test is created.
         """
+
+    def _check_nobs(
+        self,
+        test: str,
+        limit: Callable[[int], int],
+        default: Callable[[int], int] | None = None,
+    ) -> None:
+        """
+        Check the number of observations in y against the lags.
+
+        Parameters
+        ----------
+        test : str
+            The name of the test, used in the message.
+        limit : callable
+            The largest number of lags that nobs observations can support, which is
+            below the smallest number of lags if nobs is too small to run the test.
+        default : callable, optional
+            The number of lags that the test uses if lags is None, if that is
+            known from nobs.
+        """
+        nobs, lags = self._nobs, self._lags
+        max_lags = limit(nobs)
+        if max_lags < self._min_lags:
+            required = nobs + 1
+            while limit(required) < self._min_lags:
+                required += 1
+            _y_too_short(test, required, nobs, self._trend)
+        if lags is not None:
+            if lags > max_lags:
+                _lags_too_large("lags", lags, max_lags, nobs)
+        elif default is not None and default(nobs) > max_lags:
+            required = nobs + 1
+            while default(required) > limit(required):
+                required += 1
+            _y_too_short(
+                test, required, nobs, self._trend, " and the default number of lags"
+            )
 
     @abstractmethod
     def _compute_statistic(self) -> None:
@@ -597,7 +687,6 @@ class UnitRootTest(metaclass=ABCMeta):
         needed
         """
         if self._stat is None:
-            self._check_specification()
             self._compute_statistic()
 
     def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat", "maic"]:
@@ -789,6 +878,21 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         to be used in very long time series. If None, the low memory algorithm
         is used when the series has more than 100,000 observations.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` or `max_lags` is not an
+        integer, `low_memory` is not a bool or None, or `trend` or `method` is not
+        a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
+        negative, or `trend` or `method` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` or `max_lags`
+        is larger than the observations can support. A regression with `lags`
+        lags needs at least 3 + 2 * `lags` + the number of trend terms
+        observations. This is also a ``ValueError``.
+
     Notes
     -----
     The null hypothesis of the Augmented Dickey-Fuller is that there is a unit
@@ -856,13 +960,13 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("n", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
-        self._max_lags = max_lags
+        self._max_lags = check_int("max_lags", max_lags, lower=0, allow_none=True)
         self._method = self._clean_method(method)
         self._test_name = "Augmented Dickey-Fuller"
         self._regression = None
-        self._low_memory = bool(low_memory)
-        if low_memory is None:
-            self._low_memory = True if self.y.shape[0] > 1e5 else False
+        low_memory = check_bool("low_memory", low_memory, allow_none=True)
+        self._low_memory: bool = self._nobs > 1e5 if low_memory is None else low_memory
+        self._check_specification()
 
     def _select_lag(self) -> None:
         ic_best, best_lag = _df_select_lags(
@@ -876,14 +980,15 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._lags = best_lag
 
     def _check_specification(self) -> None:
-        trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
-        lag_len = 0 if self._lags is None else self._lags
-        required = 3 + trend_order + lag_len
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+        # The regression has nobs - 1 - lags rows and 1 + lags + trend_order columns,
+        # and it needs at least one degree of freedom for the t-statistic
+        trend_order = 0 if self._trend == "n" else len(self._trend)
+
+        def limit(nobs: int) -> int:
+            return (nobs - 3 - trend_order) // 2
+
+        self._check_nobs("ADF", limit)
+        _check_max_lags(self._max_lags, self._lags, self._nobs, limit(self._nobs))
 
     def _compute_statistic(self) -> None:
         if self._lags is None:
@@ -894,10 +999,11 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._regression = resols
         self._stat, *_ = (stat, *_) = resols.tvalues
         self._nobs = int(resols.nobs)
-        self._pvalue = mackinnonp(
+        self._pvalue = _mackinnonp(
             stat,
             regression=cast("Literal['n', 'c', 'ct', 'ctt']", trend),
             num_unit_roots=1,
+            dist_type="adf-t",
         )
         critical_values = mackinnoncrit(
             num_unit_roots=1,
@@ -964,6 +1070,21 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         to be used in very long time series. If None, the low memory algorithm
         is used when the series has at least 100,000 observations.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` or `max_lags` is not an
+        integer, `low_memory` is not a bool or None, or `trend` or `method` is not
+        a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
+        negative, or `trend` or `method` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` or `max_lags`
+        is larger than the observations can support. A regression with `lags`
+        lags needs at least 3 + 2 * `lags` observations. This is also a
+        ``ValueError``.
+
     Notes
     -----
     The null hypothesis of the Dickey-Fuller GLS is that there is a unit
@@ -1020,27 +1141,28 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
-        self._max_lags = max_lags
+        self._max_lags = check_int("max_lags", max_lags, lower=0, allow_none=True)
         self._method = self._clean_method(method)
         self._regression = None
-        self._low_memory = low_memory
-        if low_memory is None:
-            self._low_memory = True if self.y.shape[0] >= 1e5 else False
+        low_memory = check_bool("low_memory", low_memory, allow_none=True)
+        self._low_memory: bool = self._nobs >= 1e5 if low_memory is None else low_memory
         self._test_name = "Dickey-Fuller GLS"
         if self._trend == "c":
             self._c = -7.0
         else:
             self._c = -13.5
+        self._check_specification()
 
     def _check_specification(self) -> None:
+        # The regression of the detrended data has nobs - 1 - lags rows and 1 + lags
+        # columns, and it needs at least one degree of freedom for the t-statistic
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = 3 + trend_order + lag_len
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+
+        def limit(nobs: int) -> int:
+            return min(nobs - 3 - trend_order, (nobs - 3) // 2)
+
+        self._check_nobs("DFGLS", limit)
+        _check_max_lags(self._max_lags, self._lags, self._nobs, (self._nobs - 3) // 2)
 
     def _compute_statistic(self) -> None:
         """Core routine to estimate DF-GLS test statistic"""
@@ -1062,7 +1184,6 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         # 2. determine lag length, if needed
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
-            assert self._low_memory is not None
             ols_detrend_coef = lstsq(z, y, rcond=None)[0]
             y_ols_detrend = y - z @ ols_detrend_coef
             _, bestlag = _df_select_lags(
@@ -1078,8 +1199,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._nobs = int(resols.nobs)
         self._stat, *_ = resols.tvalues
         assert self._stat is not None
-        self._pvalue = mackinnonp(
-            self._stat, regression=cast("Literal['c', 'ct']", trend), dist_type="dfgls"
+        self._pvalue = _mackinnonp(
+            self._stat,
+            regression=cast("Literal['c', 'ct']", trend),
+            num_unit_roots=1,
+            dist_type="dfgls",
         )
         critical_values = mackinnoncrit(
             regression=cast("Literal['c', 'ct']", trend),
@@ -1131,6 +1255,19 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The test to use when computing the test statistic. "tau" is based on
         the t-stat and "rho" uses a test based on nobs times the re-centered
         regression coefficient.
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer, or
+        `trend` or `test_type` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is negative, or `trend`
+        or `test_type` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` (the default
+        number of lags if it is None) is larger than the number of observations
+        in y minus 1. This is also a ``ValueError``.
 
     Notes
     -----
@@ -1212,18 +1349,18 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_rho = None
         self._stat_tau = None
         self._test_name = "Phillips-Perron Test"
-        self._lags = lags
         self._regression = None
+        self._check_specification()
 
     def _check_specification(self) -> None:
-        trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
-        lag_len = 0 if self._lags is None else self._lags
-        required = max(3 + trend_order, lag_len)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+        # The regression has nobs - 1 residuals, and the long-run covariance
+        # estimator can use at most that many lags
+        trend_order = 0 if self._trend == "n" else len(self._trend)
+
+        def limit(nobs: int) -> int:
+            return nobs - 1 if nobs >= 3 + trend_order else -1
+
+        self._check_nobs("Phillips-Perron", limit, _newey_west_lags)
 
     def _compute_statistic(self) -> None:
         """Core routine to estimate PP test statistics"""
@@ -1232,7 +1369,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         nobs = y.shape[0]
 
         if self._lags is None:
-            self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+            self._lags = _newey_west_lags(nobs)
         lags = self._lags
 
         rhs = asarray(y, dtype=float)[:-1, None]
@@ -1246,12 +1383,6 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._regression = mod.fit(cov_type="HAC", cov_kwds={"maxlags": lags})
         k = rhs_df.shape[1]
         n, u = resols.nobs, resols.resid
-        if u.shape[0] < lags:
-            raise InfeasibleTestException(
-                f"The number of observations {u.shape[0]} is less than the number of"
-                f"lags in the long-run covariance estimator, {lags}. You must have "
-                "lags <= nobs."
-            )
         lam2 = cov_nw(u, lags, demean=False)
         lam = sqrt(lam2)
         # 2. Compute components
@@ -1281,7 +1412,9 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._stat = self._stat_tau
             dist_type = "adf-t"
         assert self._stat is not None
-        self._pvalue = mackinnonp(self._stat, regression=trend, dist_type=dist_type)
+        self._pvalue = _mackinnonp(
+            self._stat, regression=trend, num_unit_roots=1, dist_type=dist_type
+        )
         critical_values = mackinnoncrit(regression=trend, nobs=n, dist_type=dist_type)
         self._critical_values = {
             "1%": critical_values[0],
@@ -1332,6 +1465,19 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
         - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer or None,
+        or `trend` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is less than -1, or
+        `trend` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` (the number from
+        the rule 12 * (nobs/100) ** (1/4) if it is -1) is larger than the number
+        of observations in y. This is also a ``ValueError``.
 
     Notes
     -----
@@ -1407,6 +1553,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("c", "ct")
         self._legacy_lag_selection = False
+        lags = check_int("lags", lags, lower=-1, allow_none=True)
         if lags == -1:
             self._legacy_lag_selection = True
             lags = None
@@ -1415,16 +1562,18 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids: ArrayLike1D | None = None
+        self._check_specification()
 
     def _check_specification(self) -> None:
+        # The long-run covariance estimator can use at most nobs lags. The default
+        # number of lags is only known from nobs for the legacy selection.
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = max(1 + trend_order, lag_len)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+
+        def limit(nobs: int) -> int:
+            return nobs if nobs >= 1 + trend_order else -1
+
+        default = _newey_west_lags if self._legacy_lag_selection else None
+        self._check_nobs("KPSS", limit, default)
 
     def _compute_statistic(self) -> None:
         # 1. Estimate model with trend
@@ -1435,13 +1584,13 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._resids = u = res.resid
         if self._lags is None:
             if self._legacy_lag_selection:
-                self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+                self._lags = _newey_west_lags(nobs)
             else:
                 self._autolag()
         assert self._lags is not None
         if u.shape[0] < self._lags:
             raise InfeasibleTestException(
-                f"The number of observations {u.shape[0]} is less than the number of"
+                f"The number of observations {u.shape[0]} is less than the number of "
                 f"lags in the long-run covariance estimator, {self._lags}. You must "
                 "have lags <= nobs."
             )
@@ -1454,7 +1603,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             lit_trend: Literal["c", "ct"] = "c"
         else:
             lit_trend = "ct"
-        self._pvalue, critical_values = kpss_crit(self._stat, lit_trend)
+        self._pvalue, critical_values = _kpss_crit(self._stat, lit_trend)
         self._critical_values = {
             "1%": critical_values[0],
             "5%": critical_values[1],
@@ -1485,8 +1634,8 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if s0 <= 0:
             raise InfeasibleTestException(
                 "Residuals are all zero and so automatic bandwidth selection cannot "
-                "be used. This is usually an indication that the series being testes "
-                "is too small or have constant values."
+                "be used. This is usually an indication that the series being tested "
+                "is too small or has constant values."
             )
         s_hat = s1 / s0
         pwr = 1.0 / 3.0
@@ -1520,7 +1669,9 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     trim : float, optional
         Percentage of series at begin/end to exclude from break-period
-        calculation in range [0, 0.333].
+        calculation in range [0, 0.333]. The number of observations that are
+        excluded, int(nobs * trim), must be larger than the number of lags, so
+        that trim cannot be 0.
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length.
     method : {"aic", "bic", "t-stat", "maic"}, optional
@@ -1532,6 +1683,20 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
           of the last lag is significant, using a cut-off of 1.645 for the
           absolute value of the t-statistic
         - "maic" - Select the minimum of Ng and Perron's modified Akaike IC
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` or `max_lags` is not an
+        integer, `trim` is not a real number, or `trend` or `method` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
+        negative, `trim` is not in [0, 1/3], or `trend` or `method` is not one of
+        the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, `lags` or `max_lags`, or
+        int(nobs * trim) is too small for `lags` and `trend`. This is also a
+        ``ValueError``.
 
     Notes
     -----
@@ -1576,10 +1741,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         method: Literal["aic", "bic", "t-stat", "maic"] = "aic",
     ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
-        if not isinstance(trim, float) or not 0 <= trim <= (1 / 3):
-            raise ValueError("trim must be a float in range [0, 1/3]")
-        self._trim = trim
-        self._max_lags = max_lags
+        self._trim = check_float("trim", trim, lower=0.0, upper=1 / 3)
+        self._max_lags = check_int("max_lags", max_lags, lower=0, allow_none=True)
         self._method = self._clean_method(method)
 
         self._test_name = "Zivot-Andrews"
@@ -1588,6 +1751,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             "The process contains a unit root with a single structural break."
         )
         self._alternative_hypothesis = "The process is trend and break stationary."
+        self._check_specification()
 
     @staticmethod
     def _quick_ols(endog: Float64Array, exog: Float64Array) -> Float64Array:
@@ -1603,14 +1767,30 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return b / sqrt(diag(sigma2 * xpxi))
 
     def _check_specification(self) -> None:
+        # The regression has nobs - 1 - lags rows and basecols + lags columns, and it
+        # needs at least one degree of freedom for the t-statistic
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = 3 + trend_order + lag_len
-        if self._y.shape[0] < required:
+        basecols = 5 if self._trend == "ct" else 4
+        nobs = self._nobs
+
+        def limit(n: int) -> int:
+            return min(n - 3 - trend_order, (n - 2 - basecols) // 2)
+
+        self._check_nobs("Zivot-Andrews", limit)
+        # The break dummies need observations before the first break date, which is
+        # int(nobs * trim) + 1. The regressors are collinear unless there are at
+        # least 1 (trend "c"), 2 (trend "ct") or 3 (trend "t") observations before the
+        # break that are not used by the lags.
+        lags = 0 if self._lags is None else self._lags
+        required = lags + {"c": 1, "ct": 2, "t": 3}[self._trend]
+        if int(nobs * self._trim) < required:
             raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
+                f"trim must be large enough that int(nobs * trim) is at least "
+                f"{required} for lags={lags} and trend {self._trend!r} with the "
+                f"{nobs} observations in y; got {self._trim} (float)"
             )
+        # An ADF with a constant and a trend selects the lags
+        _check_max_lags(self._max_lags, self._lags, nobs, (nobs - 5) // 2)
 
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
@@ -1661,7 +1841,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             if cutoff <= 0:
                 raise InfeasibleTestException(
                     f"The number of observations is too small to use the Zivot-Andrews "
-                    f"test with trend {trend} and {self._lags} lags."
+                    f"test with trend {trend}, trim {self._trim} and {self._lags} "
+                    "lags."
                 )
             if trend != "t":
                 exog[:cutoff, 1] = 0
@@ -1679,7 +1860,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
                     raise InfeasibleTestException(
-                        f"The regressor matrix is singular. The can happen if the data "
+                        "The regressor matrix is singular. This can happen if the data "
                         "contains regions of constant observations, if the number of "
                         f"lags ({self._lags}) is too large, or if the series is very "
                         "short."
@@ -1740,6 +1921,19 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         multiple of lags.  If this condition is not satisfied, some values at
         the end of y will be discarded.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer, `debiased`,
+        `robust` or `overlap` is not a bool, or `trend` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is less than 2, or `trend`
+        is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `lags`. At least `lags` + 1
+        observations are needed (`lags` + 2 if `debiased`), or 2 * `lags` if
+        `overlap` is False. This is also a ``ValueError``.
+
     Notes
     -----
     The null hypothesis of a VR is that the process is a random walk, possibly
@@ -1765,6 +1959,9 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     0.1504
     """
 
+    # The multi-period variance needs lags of at least 2
+    _min_lags = 2
+
     def __init__(
         self,
         y: ArrayLike,
@@ -1774,21 +1971,21 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         robust: bool = True,
         overlap: bool = True,
     ) -> None:
-        if lags < 2:
-            raise ValueError("lags must be an integer larger than 2")
+        lags = check_int("lags", lags, lower=2)
         valid_trends = ("n", "c")
         super().__init__(y, lags, trend, valid_trends)
         self._test_name = "Variance-Ratio Test"
         self._null_hypothesis = "The process is a random walk."
         self._alternative_hypothesis = "The process is not a random walk."
-        self._robust = robust
-        self._debiased = debiased
-        self._overlap = overlap
+        self._robust = check_bool("robust", robust)
+        self._debiased = check_bool("debiased", debiased)
+        self._overlap = check_bool("overlap", overlap)
         self._vr: float | None = None
         self._stat_variance: float | None = None
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         for q, cv in zip(quantiles, norm.ppf(quantiles), strict=False):
             self._critical_values[str(int(100 * q)) + "%"] = cv
+        self._check_specification()
 
     @property
     def vr(self) -> float:
@@ -1819,14 +2016,14 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._debiased
 
     def _check_specification(self) -> None:
-        assert self._lags is not None
-        lags = self._lags
-        required = 2 * lags if not self._overlap else lags + 1 + int(self.debiased)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+        # Non-overlapping blocks need two blocks of lags observations. Overlapping
+        # blocks need lags + 1 observations, and one more if debiased.
+        overlap, debiased = self._overlap, self._debiased
+
+        def limit(nobs: int) -> int:
+            return nobs // 2 if not overlap else nobs - 1 - int(debiased)
+
+        self._check_nobs("variance ratio", limit)
 
     def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust
@@ -1904,14 +2101,16 @@ def mackinnonp(
     Parameters
     ----------
     stat : float
-        "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
+        "T-value" from an Augmented Dickey-Fuller or DFGLS regression. It can be
+        inf or -inf, but not NaN.
     regression : {"c", "n", "ct", "ctt"}, optional
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "n" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
     num_unit_roots : int, optional
-        The number of series believed to be I(1).  For (Augmented) Dickey-
-        Fuller N = 1.
+        The number of series believed to be I(1), from 1 to 6.  For
+        (Augmented) Dickey-Fuller N = 1. Values larger than 1 are only available
+        when `dist_type` is "adf-t".
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         The test type to use when computing p-values.  Options include
 
@@ -1923,6 +2122,16 @@ def mackinnonp(
     -------
     p-value : float
         The p-value for the ADF statistic estimated using MacKinnon 1994.
+
+    Raises
+    ------
+    TypeError
+        If `stat` is not a real number, `num_unit_roots` is not an integer or
+        `regression` or `dist_type` is not a str.
+    ValueError
+        If `stat` is NaN, `num_unit_roots` is not between 1 and 6, `regression` or
+        `dist_type` is not one of the options, or `num_unit_roots` is larger than 1
+        when `dist_type` is not "adf-t".
 
     Notes
     -----
@@ -1936,6 +2145,22 @@ def mackinnonp(
         Unit-Root and Cointegration Tests." Journal of Business & Economics
         Statistics, 12.2, 167-76.
     """
+    stat = cast("float", check_float("stat", stat, allow_inf=True))
+    dist_type, regression, num_unit_roots = _check_critical_value_options(
+        regression, num_unit_roots, dist_type, 6
+    )
+    return _mackinnonp(stat, regression, num_unit_roots, dist_type)
+
+
+def _check_critical_value_options(
+    regression: str, num_unit_roots: int, dist_type: str, max_unit_roots: int
+) -> tuple[Literal["adf-t", "adf-z", "dfgls"], Literal["c", "n", "ct", "ctt"], int]:
+    """
+    Check the options that mackinnonp and mackinnoncrit share
+
+    max_unit_roots is the largest num_unit_roots of the ADF-t tables, which is 1 if
+    regression is "n" and the function is mackinnoncrit.
+    """
     dist_type = cast(
         "Literal['adf-t', 'adf-z', 'dfgls']",
         check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls")),
@@ -1945,11 +2170,33 @@ def mackinnonp(
         "Literal['c', 'n', 'ct', 'ctt']",
         check_option("regression", regression, valid_regression),
     )
+    if regression == "n" and max_unit_roots > 6:
+        max_unit_roots = 1  # The critical values for "n" are only available for 1
+    num_unit_roots = cast(
+        "int",
+        check_int("num_unit_roots", num_unit_roots, lower=1, upper=max_unit_roots),
+    )
     if num_unit_roots > 1 and dist_type != "adf-t":
         raise ValueError(
-            "Cointegration results (num_unit_roots > 1) are"
-            "only available for ADF-t values"
+            f"num_unit_roots must be 1 for dist_type={dist_type!r}, since values for "
+            f"more than one unit root are only available for 'adf-t'; got "
+            f"{num_unit_roots} (int)"
         )
+    return dist_type, regression, num_unit_roots
+
+
+def _mackinnonp(
+    stat: float,
+    regression: Literal["c", "n", "ct", "ctt"],
+    num_unit_roots: int,
+    dist_type: Literal["adf-t", "adf-z", "dfgls"],
+) -> float:
+    """
+    The p-value of mackinnonp for arguments that have been checked.
+
+    A NaN statistic gives a NaN p-value here, which is how the tests report a
+    statistic that could not be computed.
+    """
     if dist_type == "adf-t":
         maxstat = tau_max[regression][num_unit_roots - 1]
         minstat = tau_min[regression][num_unit_roots - 1]
@@ -1999,9 +2246,9 @@ def mackinnoncrit(
     ----------
     num_unit_roots : int, optional
         The number of series of I(1) series for which the null of
-        non-cointegration is being tested.  For N > 12, the critical values
-        are linearly interpolated (not yet implemented).  For the ADF test,
-        N = 1.
+        non-cointegration is being tested, from 1 to 12.  For the ADF test,
+        N = 1. Values larger than 1 are only available when `dist_type` is
+        "adf-t" and `regression` is not "n".
     regression : {"c", "ct", "ctt", "n"}, optional
         Following MacKinnon (1996), these stand for the type of regression run.
         "c" for constant and no trend, "ct" for constant with a linear trend,
@@ -2010,8 +2257,8 @@ def mackinnoncrit(
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
     nobs : int or float, optional
-        This is the sample size.  If the sample size is numpy.inf, then the
-        asymptotic critical values are returned.
+        This is the sample size, which must be positive.  If the sample size is
+        numpy.inf, then the asymptotic critical values are returned.
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         Type of test statistic.
 
@@ -2019,6 +2266,17 @@ def mackinnoncrit(
     -------
     crit_vals : ndarray
         Three critical values corresponding to 1%, 5% and 10% cut-offs.
+
+    Raises
+    ------
+    TypeError
+        If `num_unit_roots` is not an integer, `nobs` is not a real number or
+        `regression` or `dist_type` is not a str.
+    ValueError
+        If `num_unit_roots` is not between 1 and 12 (1 if `regression` is "n"),
+        `nobs` is not positive or is NaN, `regression` or `dist_type` is not one of
+        the options, or `num_unit_roots` is larger than 1 when `dist_type` is not
+        "adf-t".
 
     Notes
     -----
@@ -2034,13 +2292,11 @@ def mackinnoncrit(
         Queen's University, Dept of Economics Working Papers 1227.
         https://ideas.repec.org/p/qed/wpaper/1227.html
     """
-    lower_dist_type = check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls"))
-    valid_regression = ("c", "ct", "n", "ctt")
-    if lower_dist_type == "dfgls":
-        valid_regression = ("c", "ct")
-    regression = cast(
-        "Literal['c', 'n', 'ct', 'ctt']",
-        check_option("regression", regression, valid_regression),
+    lower_dist_type, regression, num_unit_roots = _check_critical_value_options(
+        regression, num_unit_roots, dist_type, 12
+    )
+    nobs = cast(
+        "float", check_float("nobs", nobs, lower=0, inclusive="right", allow_inf=True)
     )
 
     if lower_dist_type == "adf-t":
@@ -2053,8 +2309,9 @@ def mackinnoncrit(
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
 
-    if nobs is inf:
-        return asymptotic_cv
+    if nobs == inf:
+        # Copy so that changing the result does not change the table
+        return asymptotic_cv.copy()
     else:
         # Flip so that highest power to lowest power
         return polyval(poly_coef[::-1], 1.0 / nobs).astype(float)
@@ -2069,7 +2326,7 @@ def kpss_crit(
     Parameters
     ----------
     stat : float
-        The KPSS test statistic.
+        The KPSS test statistic, which is not negative. It can be inf.
     trend : {"c", "ct"}, optional
         The trend used when computing the KPSS statistic.
 
@@ -2081,13 +2338,31 @@ def kpss_crit(
         Three element array containing the 1%, 5% and 10% critical values,
         in order.
 
+    Raises
+    ------
+    TypeError
+        If `stat` is not a real number or `trend` is not a str.
+    ValueError
+        If `stat` is negative or NaN, or `trend` is not one of the options.
+
     Notes
     -----
     The p-values are linear interpolated from the quantiles of the simulated
     KPSS test statistic distribution using 100,000,000 replications and 2000
     data points.
     """
+    stat = cast("float", check_float("stat", stat, lower=0, allow_inf=True))
     trend = cast("Literal['c', 'ct']", check_option("trend", trend, ("c", "ct")))
+    return _kpss_crit(stat, trend)
+
+
+def _kpss_crit(stat: float, trend: Literal["c", "ct"]) -> tuple[float, Float64Array]:
+    """
+    The p-value and critical values of kpss_crit for arguments that have been checked.
+
+    A NaN statistic gives a NaN p-value here, which is how the test reports a
+    statistic that could not be computed.
+    """
     table = kpss_critical_values[trend]
     y = table[:, 0]
     x = table[:, 1]
@@ -2123,10 +2398,16 @@ def auto_bandwidth(
     -------
     float
         The estimated optimal bandwidth.
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers or `kernel` is not a str.
+    ValueError
+        If `y` is not 1-d, has fewer than 2 observations or contains NaN or inf, or
+        `kernel` is not one of the options.
     """
-    y_arr = to_array_1d(ensure1d(y, "y"))
-    if y_arr.shape[0] < 2:
-        raise ValueError("Data must contain more than one observation")
+    y_arr = to_array_1d(check_array("y", y, ndim=1, min_length=2))
 
     kernel = check_option(
         "kernel",
