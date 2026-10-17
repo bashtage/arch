@@ -118,3 +118,172 @@ remove an entry when you fix it.
 
 A check that is wrong for one object can be silenced with a comment on the line that
 starts its definition, for example ``def method(self):  # numpydoc ignore=PR01``.
+
+Input validation
+----------------
+
+Every public function, constructor and method checks its arguments when it is called,
+before any computation, so that a bad argument never fails deep inside NumPy, SciPy or
+the optimizer. The checks are in ``arch/utility/_validation.py`` and are used in the
+same way everywhere.
+
+.. note::
+
+   Decisions 63 and 66-73 of the 9.0 plan are provisional until the maintainer answers
+   them. The rules below use the recommended answer of each. They are switches in the
+   helpers (the private functions ``_is_bool``, ``_is_integer``, ``_is_real`` and
+   ``_float_in_range`` in ``arch/utility/_validation.py``) and in the lists of values in
+   ``arch/tests/validation_table.py``, so that a different answer changes those places
+   and not the code that calls them.
+
+The rules
+~~~~~~~~~
+
+1. **Flags** accept ``bool`` and ``np.bool_`` only. ``0``, ``1``, ``"no"`` and arrays are
+   rejected. ``None`` is accepted only where it is the documented default.
+2. **Integers** accept Python and NumPy integers (``operator.index``). A float is
+   rejected, including ``5.0``, and so is a ``bool``.
+3. **Floats** accept Python and NumPy real numbers, including integers. ``bool`` is
+   rejected. NaN and inf are rejected unless the argument is documented to accept them.
+4. **NumPy scalars** are accepted wherever the Python type of the same kind is accepted.
+5. **Data** is ``array_like`` and is converted to ``float64`` (``as_float64`` in
+   ``arch/utility/array.py``). Strings, dates, complex numbers, ``None`` and objects that
+   are not numbers cannot be converted. NaN and inf in the data of the tests, the
+   estimators and the covariance estimators raise a ``ValueError`` that names the
+   argument, except where NaN is handled by design (the data of the bootstraps, the
+   diagnostics that drop NaN, outputs padded with NaN), which the docstring says.
+6. **String options** are not case sensitive (``check_option``).
+7. **Positions and dates** (``first_obs``, ``last_obs``, ``start``) must be in
+   ``[0, nobs]`` or, for a data set with a date index, a date within the index.
+   Negative positions are rejected.
+8. **When:** everything that can be decided from the arguments (type, range, option,
+   shape, finiteness, lags against the number of observations) is checked when the object
+   is created or the function is called. Only errors in the numerical work (a singular
+   matrix, no convergence) and errors in the order of calls stay lazy.
+9. An argument that does not apply to the selected model is ignored, as documented
+   (``arch_model`` ignores the arguments of a model that it does not select).
+10. Methods of the volatility processes and distributions that are part of the API
+    reference (``compute_variance``, ``simulate``, ``forecast``, ``bounds``, ...) check
+    the type, ``float64`` dtype, contiguity, dimensions and length of the arrays that they
+    pass to the compiled recursions, since a wrong array reads or writes memory that
+    does not belong to it. The rules for the values (for example that the variance is
+    positive) stay with the caller, because the optimizer tries any value.
+
+The message
+~~~~~~~~~~~
+
+Every message has one form, built by the helpers::
+
+    <name> must be <rule>; got <value> (<type>)
+
+``name`` is the name of the argument as the user wrote it, ``rule`` states what is
+accepted, and the value received is shortened to about 40 characters. For an array
+the value is its shape. Examples:
+
+.. code-block:: text
+
+   lags must be an integer >= 0; got 2.5 (float)
+   size must be a finite float in (0, 1); got 1.5 (float)
+   method must be one of 'aic', 'bic', 't-stat' or 'maic'; got 'xyz' (str)
+   y must be a 1-d array of finite numbers; got 1 NaN (list)
+   seed must be None, a non-negative integer, a NumPy Generator or a NumPy RandomState;
+   got -1 (int)
+
+The exception
+~~~~~~~~~~~~~
+
+* ``TypeError`` for a value of the wrong type, including a non-string for a string option
+  and data that cannot be converted to numbers.
+* ``ValueError`` for a value of the right type that is not allowed: outside its range,
+  not one of the options, the wrong shape or length, NaN or inf where finite values are
+  needed.
+
+``InfeasibleTestException`` is both a ``RuntimeError`` and a ``ValueError``.
+
+Using the helpers
+~~~~~~~~~~~~~~~~~
+
+Each helper takes the name of the argument first and the value second, checks it, and
+returns the value in its canonical type: a Python ``int``, ``float`` or ``bool`` and a
+``float64`` ndarray.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Helper
+     - Use it for
+   * - ``check_bool(name, value, *, allow_none=False)``
+     - flags
+   * - ``check_int(name, value, *, lower=None, upper=None, allow_none=False)``
+     - integers, with inclusive bounds
+   * - ``check_float(name, value, *, lower=None, upper=None, inclusive="both",
+       allow_nan=False, allow_inf=False, allow_none=False)``
+     - real numbers, with bounds and ``inclusive`` in ``"both"``, ``"neither"``,
+       ``"left"`` or ``"right"``
+   * - ``check_seed(name, value, *, allow_none=True)``
+     - ``seed``: None, a non-negative integer, a ``Generator`` or a ``RandomState``
+   * - ``check_option(name, value, allowed, *, display=None, normalize=None)``
+     - string options, not case sensitive
+   * - ``check_str(name, value, *, allow_none=False)``
+     - free strings, such as names
+   * - ``check_callable(name, value, *, allow_none=False)``
+     - functions
+   * - ``check_instance(name, value, types, *, allow_none=False)``
+     - objects of a class, such as a distribution
+   * - ``check_array(name, value, *, ndim=None, shape=None, min_length=None,
+       squeeze=True, allow_nan=False, allow_inf=False, allow_none=False)``
+     - ``array_like`` data, converted to ``float64``, with its dimensions, length and
+       finiteness
+   * - ``check_ndarray(name, value, *, ndim, shape=None, writeable=False,
+       allow_none=False)``
+     - arrays that are passed to compiled code and must not be converted
+   * - ``check_index(name, value, nobs, *, index=None, default=None, upper=None,
+       allow_none=True)``
+     - ``first_obs``, ``last_obs`` and ``start``
+
+.. code-block:: python
+
+   from arch.utility._validation import check_array, check_float, check_int
+
+
+   def fit(y, lags=1, size=0.05):
+       lags = check_int("lags", lags, lower=0)
+       size = check_float("size", size, lower=0, upper=1, inclusive="neither")
+       y = check_array("y", y, ndim=1, min_length=lags + 2)
+       ...
+
+Call the helpers at the top of the function or in ``__init__``, and use the value that
+they return. The helpers are private (``arch.utility._validation`` is not part of the
+API), so a library that wants the same checks copies them.
+
+Testing validation
+~~~~~~~~~~~~~~~~~~
+
+Add a ``test_validation_<area>.py`` file to the tests of the area. Build a list of rows
+that give the callable, its arguments, the exception and a pattern for the message with
+``arch/tests/validation_table.py``. The helper checks that every message has the form
+above, supplies the usual bad and good values of flags, integers, floats and seeds, and
+gives every row a unique id (pytest requires it):
+
+.. code-block:: python
+
+   import pytest
+
+   from arch.tests.validation_table import INT_BAD, INT_GOOD, bad_value_rows
+   from arch.tests.validation_table import good_value_rows, run_row, to_params
+   from arch.unitroot import ADF
+
+   BASE = {"y": Y}
+   ROWS = [
+       *bad_value_rows("ADF", lambda **kw: ADF(**kw), BASE, "lags", INT_BAD),
+       *good_value_rows("ADF", lambda **kw: ADF(**kw), BASE, "lags", INT_GOOD),
+   ]
+
+
+   @pytest.mark.parametrize("row", to_params(ROWS))
+   def test_validation(row):
+       run_row(row)
+
+Every fix needs a test that fails before it and passes after it. The pattern of a row
+names the argument, which most of the old errors from NumPy and SciPy did not.
