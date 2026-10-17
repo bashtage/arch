@@ -106,18 +106,15 @@ New features
   is stored as ``"R"`` or ``"max"``, and the ``cov_type`` of ``fit`` and the ``form`` of
   ``ARCHInMean`` in lower case. An option that is not accepted raises a ``ValueError``
   that lists the accepted values (a ``TypeError`` for a value that is not a string). See
-  "Bug fixes" for the options that were silently accepted.
-
-  .. PR: a90-str1-string-options
+  "Bug fixes" for the options that were silently accepted (:issue:`947`).
 
 - Lists and other ``array_like`` objects are accepted as the data of the covariance
   estimators, :class:`~arch.covariance.var.PreWhitenedRecolored`, ``cov_nw``,
   :class:`~arch.bootstrap.SPA`, :class:`~arch.bootstrap.StepM`,
   :class:`~arch.bootstrap.MCS` and the methods of the volatility processes, as the
   models and the unit root tests already did. Data that cannot be converted to
-  ``float64``, such as strings, raise a ``TypeError`` that names the argument.
-
-  .. PR: a90-inp1-numeric-inputs
+  ``float64``, such as strings, raise a ``TypeError`` that names the argument
+  (:issue:`948`).
 
 - Added the keyword argument ``asym_weight`` to the ``forecast`` method of the
   volatility processes. It is the value of :math:`E[z^2 1(z<0)]` of the distribution
@@ -315,10 +312,9 @@ to restore the previous results.
   took the square root of ``uint8`` variances in ``float16``. All of these now give the
   same result as the same data stored as ``float64``, which is passed through without a
   copy. The data of the bootstraps are not converted, since they are passed to the
-  function of the user as given. Contributed by antonsoo (the covariance estimators and
-  the ``axis`` of ``cov_nw``, :issue:`942`, :issue:`943`).
-
-  .. PR: a90-inp1-numeric-inputs
+  function of the user as given (:issue:`948`). The fixes of the covariance estimators
+  and of the ``axis`` of ``cov_nw`` were contributed by antonsoo (:issue:`942`,
+  :issue:`943`).
 
 - ``fit`` ignores ``starting_values`` that violate the bounds or constraints of the
   model, with the ``StartingValueWarning`` that was always issued. In previous versions
@@ -333,25 +329,19 @@ to restore the previous results.
 - Fixed :class:`~arch.unitroot.cointegration.DynamicOLS` with ``method`` in upper case.
   The method was validated in lower case but compared in its original case, so that
   ``"AIC"`` and ``"HQIC"`` selected the leads and lags using BIC, and now select them
-  using the criterion that was requested.
-
-  .. PR: a90-str1-string-options
+  using the criterion that was requested (:issue:`947`).
 
 - Fixed ``APARCH.starting_values`` with ``common_asym=True`` and ``o > 1``, which ranked
   the candidate starting values using the likelihood at the wrong parameters (the betas
   were taken from the positions of the gammas). The starting values, and so the
-  estimates, of these models can change.
-
-  .. PR: a90-val1-input-validation
+  estimates, of these models can change (:issue:`949`).
 
 - :class:`~arch.bootstrap.MCS` now includes a model in ``included`` if its p-value is
   greater than or equal to ``size`` (previously strictly greater), and lists it in
   ``excluded`` only if the p-value is less than ``size`` (previously less than or
   equal). A model is in the model confidence set of size alpha if its MCS p-value is at
   least alpha. Bootstrap p-values are multiples of ``1 / reps``, so a p-value equal to
-  ``size`` occurs in practice and the model was previously excluded.
-
-  .. PR: a90-bug2b-semantics
+  ``size`` occurs in practice and the model was previously excluded (:issue:`944`).
 
 - The simulation and bootstrap forecasts of :class:`~arch.univariate.FIGARCH` add the
   terms of the ARCH(:math:`\infty`) representation in a different order, so that, given
@@ -382,9 +372,8 @@ Backward-incompatible changes
   it raises an ``AttributeError``. In previous versions the attribute could be set, but
   the stationary bootstrap ignored the new value when sampling and ``clone``, which is
   used for the nested bootstrap of studentized confidence intervals, used the value
-  passed to the constructor. Create a new bootstrap to use a different block size.
-
-  .. PR: a90-bug2b-semantics
+  passed to the constructor. Create a new bootstrap to use a different block size
+  (:issue:`944`).
 
 - ``std_err_func`` in ``conf_int`` no longer receives the ``params`` and ``state``
   keywords that are used to simulate data when ``sampling`` is ``"semi-parametric"`` or
@@ -394,9 +383,7 @@ Backward-incompatible changes
   ``TypeError`` for these samplers (:issue:`916`).
 - The ``type`` keyword argument of
   :meth:`~arch.univariate.base.ARCHModelFixedResult.hedgehog_plot` has been removed. See
-  "Deprecations and removals".
-
-  .. PR: a90-dep1-deprecations
+  "Deprecations and removals" (:issue:`945`).
 
 - ``fit`` raises a ``ValueError`` for a ``cov_type`` other than ``"robust"`` or
   ``"classic"`` (in any case). Previously any other value, such as ``"White"`` or
@@ -410,9 +397,7 @@ Backward-incompatible changes
   ``fit_start``, ``fit(last_obs=10**6)`` recorded ``10**6`` as ``fit_stop``, and
   ``forecast(start=10**6)`` failed with "negative dimensions are not allowed". A string
   or date used with data that have no ``DatetimeIndex`` or ``PeriodIndex`` raises a
-  ``ValueError``, where it was an ``AssertionError`` (:issue:`925`).
-
-  .. PR: a90-val1-input-validation
+  ``ValueError``, where it was an ``AssertionError`` (:issue:`925`, :issue:`949`).
 
 - Every public function, constructor and method now checks its arguments when it is
   called or created, before any computation. An error names the argument, says what is
@@ -427,9 +412,7 @@ Backward-incompatible changes
   bootstraps, which are passed to the function of the user, the diagnostics that drop
   NaN, and the residuals of a fitted model). Code that relied on the earlier behavior
   needs to change. The entries below list the calls that are affected, and the policy is
-  described in the contributing guide.
-
-  .. PR: a90-val1-input-validation
+  described in the contributing guide (:issue:`949`).
 
 - The unit root tests (:class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS`,
   :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.KPSS`,
@@ -444,9 +427,7 @@ Backward-incompatible changes
   ``ADF``, ``DFGLS`` and ``ZivotAndrews`` raised ``LinAlgError``, ``PhillipsPerron``
   statsmodels' ``MissingDataError``, ``KPSS`` a ``ValueError`` about converting NaN, and
   ``VarianceRatio`` returned NaN. The same applies to
-  :func:`~arch.unitroot.auto_bandwidth`.
-
-  .. PR: a90-val1-input-validation
+  :func:`~arch.unitroot.auto_bandwidth` (:issue:`949`).
 
 - The unit root tests no longer return a statistic that cannot be estimated. A
   regression in ``ADF`` or ``DFGLS`` with as many parameters as observations used to
@@ -458,16 +439,12 @@ Backward-incompatible changes
   :class:`~arch.utility.exceptions.InfeasibleTestException` when the test is created.
   The messages of this exception name the test, ``y`` and the number of observations
   (the messages of ``PhillipsPerron``, ``KPSS`` and ``VarianceRatio`` said that an "ADF"
-  could not be run).
-
-  .. PR: a90-val1-input-validation
+  could not be run) (:issue:`949`).
 
 - :class:`~arch.utility.exceptions.InfeasibleTestException`, which the unit root tests
   raise if the series is too short or the specification cannot be estimated, is now also
   a ``ValueError``. It is still a ``RuntimeError``, so code that catches either keeps
-  working.
-
-  .. PR: a90-val1-input-validation
+  working (:issue:`949`).
 
 - The cointegration tests and estimators
   (:func:`~arch.unitroot.cointegration.engle_granger`,
@@ -482,9 +459,7 @@ Backward-incompatible changes
   ``y=None`` raises a ``TypeError``, and the sample must have at least two more
   observations than the regression has parameters, where shorter samples raised
   ``ZeroDivisionError`` or ``LinAlgError`` or returned a statistic computed without
-  residual degrees of freedom.
-
-  .. PR: a90-val1-input-validation
+  residual degrees of freedom (:issue:`949`).
 
 - The ``lags``, ``max_lags`` of ``engle_granger``, and the ``lags``, ``leads``,
   ``max_lag`` and ``max_lead`` of ``DynamicOLS`` must be integers (``lags=2.5``, ``"2"``
@@ -497,9 +472,7 @@ Backward-incompatible changes
   (``bandwidth=True`` ran as 1), and ``low_memory``, ``force_int``, ``diff``,
   ``df_adjust``, ``common`` and similar flags must be ``bool`` (``"yes"``, ``None`` and
   ``0`` were accepted). The error for an invalid ``x_trend`` is raised when the object
-  is created and names ``x_trend``.
-
-  .. PR: a90-val1-input-validation
+  is created and names ``x_trend`` (:issue:`949`).
 
 - The arguments of the kernel covariance estimators in ``arch.covariance.kernel``,
   :class:`~arch.covariance.var.PreWhitenedRecolored` and ``cov_nw`` are checked when the
@@ -514,9 +487,7 @@ Backward-incompatible changes
   number of observations (which divided by zero and returned inf) raise an error, and so
   do ``bandwidth=nan`` and ``bandwidth=inf`` of ``QuadraticSpectral`` and ``ZeroLag``.
   NumPy Booleans are accepted for every flag
-  (``PreWhitenedRecolored(x, center=np.True_)`` raised a ``TypeError``).
-
-  .. PR: a90-val1-input-validation
+  (``PreWhitenedRecolored(x, center=np.True_)`` raised a ``TypeError``) (:issue:`949`).
 
 - The arguments of the bootstraps (:class:`~arch.bootstrap.IIDBootstrap`,
   :class:`~arch.bootstrap.IndependentSamplesBootstrap`,
@@ -533,9 +504,7 @@ Backward-incompatible changes
   for NaN or inf, a scalar and fewer than 11 observations. A moving block bootstrap with
   a block longer than the data raises a ``ValueError`` that names ``block_size``.
   Setting ``state`` to a value of the wrong type raises a ``TypeError`` and not an
-  ``AssertionError``.
-
-  .. PR: a90-val1-input-validation
+  ``AssertionError`` (:issue:`949`).
 
 - The arguments of :class:`~arch.bootstrap.MCS`, :class:`~arch.bootstrap.SPA`,
   ``RealityCheck`` and :class:`~arch.bootstrap.StepM` are checked when the object is
@@ -548,9 +517,7 @@ Backward-incompatible changes
   observations (one or two gave NaN warnings) raise a ``ValueError``. ``SPA.subset``
   needs a Boolean selector of the right length with at least one ``True``, and the
   arguments of ``critical_values`` and ``better_models`` are checked before the "compute
-  must be called" error.
-
-  .. PR: a90-val1-input-validation
+  must be called" error (:issue:`949`).
 
 - The arguments of :meth:`~arch.univariate.base.ARCHModel.fit`,
   :meth:`~arch.univariate.base.ARCHModel.fix` and
@@ -566,9 +533,7 @@ Backward-incompatible changes
   ``ValueError`` if the model has more parameters than the number of observations used
   to estimate it: ``GARCH(p=300)`` on 250 observations ran for minutes and now fails at
   once. There is no limit on the lags of a model that has fewer parameters, or on the
-  ``truncation`` of FIGARCH.
-
-  .. PR: a90-val1-input-validation
+  ``truncation`` of FIGARCH (:issue:`949`).
 
 - The arguments of the results of the models are checked before any computation.
   :meth:`~arch.univariate.base.ARCHModelResult.conf_int` raises a ``ValueError`` for an
@@ -584,9 +549,7 @@ Backward-incompatible changes
   ``bool``. ``var_ratio`` raises for a ``level`` that is not a number and for
   ``parameters`` that do not have one finite element for each parameter of the
   distribution, and ``hill_estimator`` for a ``k`` that is not an integer or is outside
-  ``[1, n - 1]``.
-
-  .. PR: a90-val1-input-validation
+  ``[1, n - 1]`` (:issue:`949`).
 
 - The mean models (:class:`~arch.univariate.HARX`, :class:`~arch.univariate.ARX`,
   :class:`~arch.univariate.LS`, :class:`~arch.univariate.ConstantMean`,
@@ -605,9 +568,7 @@ Backward-incompatible changes
   ``q`` below 0 and with a ``power`` that is NaN, inf or not positive now raise, as does
   a ``form`` of ``ARCHInMean`` that is ``True``, NaN or inf (``NotImplementedError``
   before). Arguments of ``arch_model`` that do not apply to the selected model are still
-  ignored.
-
-  .. PR: a90-val1-input-validation
+  ignored (:issue:`949`).
 
 - The arguments of the volatility processes are checked when the process is created, and
   those of ``simulate`` and ``forecast`` when they are called. The orders ``p``, ``o``
@@ -623,9 +584,7 @@ Backward-incompatible changes
   negative (except for ``EGARCH``, where it is the log of the variance). ``forecast``
   rejects ``start`` outside ``[0, len(resids)]``, ``simulations=0`` and an
   ``asym_weight`` that is not in [0, 1]. ``rng=None`` with ``method="simulation"``
-  raises a ``TypeError`` and not an ``AssertionError``.
-
-  .. PR: a90-val1-input-validation
+  raises a ``TypeError`` and not an ``AssertionError`` (:issue:`949`).
 
 - The arguments of the distributions (``Normal``, ``StudentsT``, ``SkewStudent`` and
   ``GeneralizedError``) and of the functions in ``arch.utility`` are checked. ``ppf``
@@ -639,9 +598,7 @@ Backward-incompatible changes
   ``date`` is not a string or a datetime. The error for parameters outside the bounds in
   ``cdf``, ``ppf`` and the moments names the parameter, for example
   ``parameters[0] (nu) must be a finite float in [2.05, 500]; got 1.0 (float)``, where
-  it named the first letter of the name of the distribution.
-
-  .. PR: a90-val1-input-validation
+  it named the first letter of the name of the distribution (:issue:`949`).
 
 - Some exceptions changed type. An argument of the wrong type now raises a ``TypeError``
   where it raised a ``ValueError``, an ``AssertionError``, a ``KeyError`` or an
@@ -652,9 +609,7 @@ Backward-incompatible changes
   for example "Degrees of freedom is <= 0 after adjusting the sample size" is now
   "df_adjust must be an integer in [0, 99]", and "p and q must be either 0 or 1" is now
   "p must be an integer in [0, 1]". Code that matches on the text of an error, or
-  catches ``ValueError`` for a wrong type, needs to be updated.
-
-  .. PR: a90-val1-input-validation
+  catches ``ValueError`` for a wrong type, needs to be updated (:issue:`949`).
 
 - An invalid string option raises an error of one form: a ``ValueError`` that names the
   argument, lists the accepted values and shows the value received
@@ -667,18 +622,14 @@ Backward-incompatible changes
   :class:`~arch.unitroot.PhillipsPerron` (any value other than ``"rho"`` was ``"tau"``),
   the ``has_constant`` of ``add_trend`` (any value other than ``"raise"`` and ``"skip"``
   was ``"add"``) and the ``method`` of :class:`~arch.bootstrap.MCS` (any value other
-  than ``"R"`` was ``"max"``).
-
-  .. PR: a90-str1-string-options
+  than ``"R"`` was ``"max"``) (:issue:`947`).
 
 - ``arch.utility.array.ensure1d`` and ``ensure2d`` convert every input to ``float64``,
   including integer, Boolean, ``float32`` and object data, and raise a ``TypeError``
   that names the argument if the data cannot be converted, for example for strings,
   where they returned an array of strings. Code outside of arch that calls them and
   needs the original data type should not use them. They no longer rename the Series
-  that they are given.
-
-  .. PR: a90-inp1-numeric-inputs
+  that they are given (:issue:`948`).
 
 Bug fixes
 ~~~~~~~~~
@@ -706,9 +657,7 @@ Bug fixes
   :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS` and
   :func:`~arch.unitroot.cointegration.engle_granger`, which raised a ``ValueError`` when
   no lag had a significant t-statistic. Zero lags are now selected, as they are when
-  ``low_memory=False``.
-
-  .. PR: a90-docstrings
+  ``low_memory=False`` (:issue:`946`).
 
 - Fixed the ``trend`` property of the results of
   :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``
@@ -716,9 +665,7 @@ Bug fixes
   :func:`~arch.unitroot.cointegration.phillips_ouliaris`. With ``trend="n"``, ``"ct"``
   or ``"ctt"`` the ``trend`` property, ``str(res)`` and ``summary()`` said constant. The
   statistic, p-value and critical values were computed with the trend that was requested
-  and do not change.
-
-  .. PR: a90-val1-input-validation
+  and do not change (:issue:`949`).
 
 - The summary of the results of
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` now has the title
@@ -814,9 +761,7 @@ Bug fixes
   ``RuntimeWarning`` if the loss differential of a model is constant, for example
   because the model is identical to the benchmark. The test statistic of such a model is
   not meaningful, and ``SPA`` reported p-values of 0 in this case. The results are
-  unchanged.
-
-  .. PR: a90-bug2b-semantics
+  unchanged (:issue:`944`).
 
 - ``conf_int(method="bca")`` in the bootstrap classes in :mod:`arch.bootstrap` now
   raises the documented ``RuntimeError`` when all of the leave-one-out jackknife
@@ -865,9 +810,8 @@ Bug fixes
   ``resids`` is a vector, that ``sigma2`` is a writeable ``float64`` vector with the
   length of ``resids`` and that ``var_bounds`` has a row of two columns for each
   residual. ``simulate`` and ``forecast`` check the length of ``parameters``, which
-  silently accepted extra elements such as the parameters of the distribution.
-
-  .. PR: a90-val1-input-validation
+  silently accepted extra elements such as the parameters of the distribution
+  (:issue:`949`).
 
 - Fixed crashes of the interpreter, and reads and writes outside of an array, when the
   recursions were called directly with missing or too short arrays. The
@@ -878,9 +822,7 @@ Bug fixes
   the pure Python versions do. The FIGARCH and FIAPARCH updaters require an integer
   ``truncation`` of at least 1, and the HARCH updater rejects ``lags=None``, which
   computed a model without lags. The models were not affected, since they check these
-  values before they call the recursions.
-
-  .. PR: a90-pyx1-guards
+  values before they call the recursions (:issue:`951`).
 
 - Fixed the functions that look up critical values and p-values in
   ``arch.unitroot.unitroot``. ``mackinnonp`` and ``mackinnoncrit`` with
@@ -896,31 +838,24 @@ Bug fixes
   process, and it now returns a copy. ``kpss_crit(-1)`` returned a p-value of 1.0 and
   ``kpss_crit(nan)`` returned NaN, and they now raise a ``ValueError``. ``mackinnonp``
   with ``dist_type="dfgls"`` raises a ``ValueError`` for the ``"n"`` and ``"ctt"``
-  regressions, which are not available, where it raised a ``KeyError``.
-
-  .. PR: a90-val1-input-validation
+  regressions, which are not available, where it raised a ``KeyError`` (:issue:`949`).
 
 - Fixed ``SkewStudent.ppf`` for a 0-d array such as ``np.array(0.4)``, which failed an
   ``assert`` (it returns a float, as for a Python float), and ``add_trend`` with a
   ``DataFrame`` that already has a constant and ``has_constant="skip"`` (the default)
   for ``trend`` ``"c"``, ``"ct"`` and ``"ctt"``, which raised
-  ``ValueError: Shape of passed values is (4, 1), indices imply (4, 2)``.
-
-  .. PR: a90-val1-input-validation
+  ``ValueError: Shape of passed values is (4, 1), indices imply (4, 2)`` (:issue:`949`).
 
 - Fixed ``cov_nw`` so that a negative ``axis`` is interpreted as in NumPy (``axis=-1``
   gave the result of ``axis=0``) and an ``axis`` that is out of range always raises a
-  ``ValueError``. Contributed by antonsoo (:issue:`943`).
-
-  .. PR: a90-inp1-numeric-inputs
+  ``ValueError``. Contributed by antonsoo (:issue:`943`, merged in :issue:`948`).
 
 - The ``starting_values``, ``backcast`` and ``compute_variance`` methods of the
   volatility processes and the ``loglikelihood`` methods of the distributions raised an
   error for integer arrays, and for lists. ``add_trend`` failed on Boolean data. A
   ``Series`` without a name that is passed by the user, for example to
-  :func:`~arch.univariate.arch_model`, is no longer renamed to the string ``"None"``.
-
-  .. PR: a90-inp1-numeric-inputs
+  :func:`~arch.univariate.arch_model`, is no longer renamed to the string ``"None"``
+  (:issue:`948`).
 
 Performance
 ~~~~~~~~~~~
@@ -972,19 +907,14 @@ Documentation and maintenance
   pandas (``freq="M"``) and NumPy, the failing docstring examples and the broken cross
   references are fixed. The notebooks have examples of :class:`~arch.univariate.MAMean`,
   :class:`~arch.univariate.FIAPARCH` and ``append``. The documentation build goes from
-  1444 warnings to none (:issue:`919`, :issue:`930`).
-
-  .. PR: a90-ds4-docstrings
+  1444 warnings to none (:issue:`919`, :issue:`930`, :issue:`950`).
 
 - Every public docstring follows the NumPy docstring rules, which are described in the
   contributing guide and checked by a test (:issue:`935`) and by ``numpydoc lint`` in
   the continuous integration. The contributing guide also describes the policy for the
   validation of arguments. The descriptions of the string options say that they are not
   case sensitive, and the arguments that accept any ``array_like`` are documented as
-  such.
-
-  .. PR: a90-docstrings
-  .. PR: a90-ds4-docstrings
+  such (:issue:`946`, :issue:`950`).
 
 - Corrected the documented default of ``force_int`` in
   :meth:`~arch.unitroot.cointegration.FullyModifiedOLS.fit`, which is ``True``, and the
@@ -1010,26 +940,18 @@ Deprecations and removals
 - Removed the ``type`` keyword argument of
   :meth:`~arch.univariate.base.ARCHModelFixedResult.hedgehog_plot`, which has been
   deprecated in favor of ``plot_type`` since 4.0. Passing ``type`` now raises a
-  ``TypeError``.
-
-  .. PR: a90-dep1-deprecations
+  ``TypeError`` (:issue:`945`).
 
 - :class:`~arch.unitroot.KPSS` no longer issues a ``DeprecationWarning`` when ``lags``
   is not provided. The data-dependent lag selection has been the default since 4.8. Use
-  ``lags=-1`` for the lag length that depends only on the sample size.
-
-  .. PR: a90-dep1-deprecations
+  ``lags=-1`` for the lag length that depends only on the sample size (:issue:`945`).
 
 - Removed the empty module ``arch.__future__``. The import
   ``from arch.__future__ import reindexing`` has been a no-op since 6.2, and now raises
-  a ``ModuleNotFoundError``.
-
-  .. PR: a90-dep1-deprecations
+  a ``ModuleNotFoundError`` (:issue:`945`).
 
 - Removed the unused module-level string templates ``deprecation_doc`` from
-  ``arch.utility.array`` and ``arch.utility.exceptions``.
-
-  .. PR: a90-dep1-deprecations
+  ``arch.utility.array`` and ``arch.utility.exceptions`` (:issue:`945`).
 
 Compatibility
 ~~~~~~~~~~~~~
