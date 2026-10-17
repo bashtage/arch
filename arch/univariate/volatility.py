@@ -4713,30 +4713,27 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         common_asym: bool = False,
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
+        self.p: int = _check_count("p", p, 1)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        if self.o > self.p:
+            _fail(ValueError, "o", f"an integer <= p ({self.p})", _describe(o))
         self._est_delta = delta is None
-        self._common_asym = bool(common_asym) and self.o > 0
-        self._delta = float(np.nan)
-        if not self._est_delta:
-            try:
-                assert delta is not None
-                self._delta = float(delta)
-            except (ValueError, TypeError) as exc:
-                raise TypeError("delta must be convertible to a float.") from exc
-            if not 0.05 < delta < 4:
-                raise ValueError("delta must be between 0.05 and 4")
-            self._delta = delta
-        if p < 1 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative, and p >= 1")
-        if o > p:
-            raise ValueError("o must be <= p.")
-        self._name = "APARCH" if o > 0 else "Power ARCH"
+        self._common_asym = check_bool("common_asym", common_asym) and self.o > 0
+        fixed_delta = check_float(
+            "delta",
+            delta,
+            lower=0.05,
+            upper=4.0,
+            inclusive="neither",
+            allow_none=True,
+        )
+        self._delta = float(np.nan) if fixed_delta is None else fixed_delta
+        self._name = "APARCH" if self.o > 0 else "Power ARCH"
         self._sigma_delta = np.empty(0)
         self._parameters = np.empty(1 + self.p + self.o + self.q + 1)
-        o = 1 if self._common_asym else o
-        self._num_params = 1 + p + o + q + int(self._est_delta)
+        o = 1 if self._common_asym else self.o
+        self._num_params = 1 + self.p + o + self.q + int(self._est_delta)
         self._repack = self._common_asym or not self._est_delta
 
     @property
