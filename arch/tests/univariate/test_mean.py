@@ -1057,7 +1057,7 @@ class TestMeanModel:
                 1.26381761,
             ]
         )
-        am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
+        am = arch_model(y, mean="ARX", lags=10, p=3, q=0)
 
         with pytest.warns(DataScaleWarning, match=r"y is poorly scaled"):
             am.fit(disp=DISPLAY)
@@ -1084,8 +1084,11 @@ class TestMeanModel:
         am = arch_model(self.y_series, vol="Constant")
         res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0] + 1)
+        nobs = self.y_series.shape[0]
+        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs)
         assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
+        with pytest.raises(ValueError, match=r"last_obs must be an integer position"):
+            am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs + 1)
         assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100)
@@ -1228,7 +1231,7 @@ def test_backcast(volatility, simulated_data):
 
 def test_backcast_error(simulated_data):
     zm = ZeroMean(simulated_data, volatility=GARCH())
-    with pytest.raises(ValueError, match=r"User backcast value"):
+    with pytest.raises(ValueError, match=r"backcast must be a finite float > 0"):
         zm.fit(backcast=-1, disp=DISPLAY)
     zm = ZeroMean(simulated_data, volatility=RiskMetrics2006())
     with pytest.raises(ValueError, match=r"User backcast must be either"):

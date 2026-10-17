@@ -32,9 +32,6 @@ def default_start_params(returns):
     [
         pytest.param([0.0, -5.0, 0.5, 0.5], id="outside-bounds"),
         pytest.param([0.0, 0.1, 0.7, 0.6], id="violates-constraint"),
-        pytest.param([0.0, 0.1, 0.1], id="too-short"),
-        pytest.param([0.0, 0.1, 0.1, 0.1, 0.1, 0.1], id="too-long"),
-        pytest.param([0.0, np.nan, 0.1, 0.1], id="nan"),
     ],
 )
 def test_invalid_starting_values_ignored(returns, default_start_params, bad):
@@ -44,6 +41,25 @@ def test_invalid_starting_values_ignored(returns, default_start_params, bad):
             disp="off", starting_values=bad, options={"maxiter": 0}, show_warning=False
         )
     assert_allclose(res.params, default_start_params)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        pytest.param([0.0, 0.1, 0.1], id="too-short"),
+        pytest.param([0.0, 0.1, 0.1, 0.1, 0.1, 0.1], id="too-long"),
+    ],
+)
+def test_starting_values_of_wrong_length_raise(returns, bad):
+    mod = arch_model(returns)
+    with pytest.raises(ValueError, match=r"starting_values must be .*shape \(4,\)"):
+        mod.fit(disp="off", starting_values=bad)
+
+
+def test_starting_values_with_nan_raise(returns):
+    mod = arch_model(returns)
+    with pytest.raises(ValueError, match=r"starting_values must be .*; got 1 NaN"):
+        mod.fit(disp="off", starting_values=[0.0, np.nan, 0.1, 0.1])
 
 
 def test_valid_starting_values_used(returns):
@@ -192,16 +208,16 @@ def test_ma_mean_cutoff_types(indexed, kind):
 )
 def test_unsupported_cutoff_types(returns, bad):
     mod = ConstantMean(returns, volatility=GARCH())
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         mod.fit(disp="off", first_obs=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="last_obs must be an integer position"):
         mod.fit(disp="off", last_obs=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         mod.fix([0.0, 0.1, 0.1, 0.8], first_obs=bad)
     res = mod.fit(disp="off")
     with pytest.raises(TypeError, match="cutoffs must be"):
         res.forecast(start=bad)
-    with pytest.raises(TypeError, match="cutoffs must be"):
+    with pytest.raises(TypeError, match="first_obs must be an integer position"):
         MAMean(returns, lags=1).fit(disp="off", first_obs=bad)
 
 
@@ -212,9 +228,9 @@ def test_unsupported_cutoff_types(returns, bad):
 )
 def test_date_cutoff_requires_datetime_index(value):
     y = np.random.RandomState(3).standard_normal(100)
-    with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
+    with pytest.raises(ValueError, match="first_obs must be an integer position"):
         ConstantMean(y).fit(disp="off", first_obs=value)
-    with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):
+    with pytest.raises(ValueError, match="first_obs must be an integer position"):
         ConstantMean(pd.Series(y)).fit(disp="off", first_obs=value)
     res = ConstantMean(y).fit(disp="off")
     with pytest.raises(ValueError, match="DatetimeIndex or a PeriodIndex"):

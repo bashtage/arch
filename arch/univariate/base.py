@@ -3,7 +3,7 @@ Core classes for ARCH models.
 """
 
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
@@ -45,6 +45,7 @@ from arch.utility._validation import (
     check_array,
     check_bool,
     check_float,
+    check_index,
     check_instance,
     check_int,
     check_option,
@@ -221,6 +222,20 @@ def _plot_index(index: pd.Index) -> pd.Index:
     if isinstance(index, pd.PeriodIndex):
         return index.to_timestamp()
     return index
+
+
+def _check_backcast(backcast: Any) -> float | Float64Array1D | None:
+    """
+    Check a backcast that is None, a positive scalar or a 1-d array of finite values.
+
+    The volatility process decides whether the length of an array is correct and
+    transforms the value to its own scale.
+    """
+    if backcast is None:
+        return None
+    if np.ndim(backcast) == 0:
+        return check_float("backcast", backcast, lower=0, inclusive="neither")
+    return check_array("backcast", backcast, ndim=1)
 
 
 class ARCHModel(metaclass=ABCMeta):
@@ -789,6 +804,38 @@ class ARCHModel(metaclass=ABCMeta):
             return 0.5
         return float(self._distribution.partial_moment(2, 0.0, distribution_params))
 
+    def _check_sample(
+        self, first_obs: int | DateLike | None, last_obs: int | DateLike | None
+    ) -> tuple[int | None, int | None]:
+        """
+        Check the first and last observations and convert them to positions
+
+        Parameters
+        ----------
+        first_obs : {int, str, datetime, datetime64, Timestamp, Period}, optional
+            First observation to use.
+        last_obs : {int, str, datetime, datetime64, Timestamp, Period}, optional
+            Last observation to use.
+
+        Returns
+        -------
+        first_obs : int or None
+            The position of the first observation, or None if not given.
+        last_obs : int or None
+            The position of the last observation, or None if not given.
+
+        Notes
+        -----
+        Positions are in [0, nobs] and dates must be in the index. Whether the
+        positions leave any observation after hold_back is checked when the sample
+        is set.
+        """
+        nobs = int(self._y.shape[0])
+        index = self._y_series.index
+        first = check_index("first_obs", first_obs, nobs, index=index)
+        last = check_index("last_obs", last_obs, nobs, index=index)
+        return first, last
+
     def fix(
         self,
         params: ArrayLike1D | Sequence[float],
@@ -822,6 +869,10 @@ class ARCHModel(metaclass=ABCMeta):
         """
         v = self.volatility
 
+        num_params = int(self.num_params + v.num_params + self.distribution.num_params)
+        values = check_array("params", params, ndim=1, shape=(num_params,))
+        first_obs, last_obs = self._check_sample(first_obs, last_obs)
+
         self._adjust_sample(first_obs, last_obs)
         resids = self.resids(self.starting_values())
         sigma2 = np.zeros(resids.shape[0], dtype=float)
@@ -830,11 +881,10 @@ class ARCHModel(metaclass=ABCMeta):
 
         var_bounds = v.variance_bounds(resids)
 
-        params = ensure1d(params, "params", False)
-        loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
+        loglikelihood = -1.0 * self._loglikelihood(values, sigma2, backcast, var_bounds)
         assert isinstance(loglikelihood, float)
 
-        resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
+        resids, vol = self._fitted_resids_variance(values, backcast, var_bounds)
         vol = to_array_1d(np.sqrt(vol))
 
         names = self._all_parameter_names()
@@ -847,7 +897,7 @@ class ARCHModel(metaclass=ABCMeta):
 
         model_copy = deepcopy(self)
         return ARCHModelFixedResult(
-            params,
+            values,
             resids_final,
             vol_final,
             self._y_series,
@@ -946,20 +996,36 @@ class ARCHModel(metaclass=ABCMeta):
         """
         if self._y_original is None:
             raise RuntimeError("Cannot estimate model without data.")
-        cov_type = cast(
-            "Literal['robust', 'classic']",
-            check_option("cov_type", cov_type, ("robust", "classic")),
-        )
+        update_freq = check_int("update_freq", update_freq, lower=0)
+        # A bool is "off" or "final". A string is not case sensitive.
         if isinstance(disp, str):
             disp = cast(
                 "Literal['off', 'final']",
                 check_option("disp", disp, ("off", "final")),
             )
+        else:
+            disp = "final" if check_bool("disp", disp) else "off"
+        cov_type = cast(
+            "Literal['robust', 'classic']",
+            check_option("cov_type", cov_type, ("robust", "classic")),
+        )
+        show_warning = check_bool("show_warning", show_warning)
+        tol = check_float("tol", tol, lower=0, allow_none=True)
+        options = check_instance("options", options, Mapping, allow_none=True)
+        backcast = _check_backcast(backcast)
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
         offsets = np.array((self.num_params, v.num_params, d.num_params), dtype=int)
-        total_params = sum(offsets)
+        total_params = int(sum(offsets))
+        starting_values = check_array(
+            "starting_values",
+            starting_values,
+            ndim=1,
+            shape=(total_params,),
+            allow_none=True,
+        )
+        first_obs, last_obs = self._check_sample(first_obs, last_obs)
 
         # Closed form is applicable when model has no parameters
         # Or when distribution is normal and constant variance
@@ -970,6 +1036,12 @@ class ARCHModel(metaclass=ABCMeta):
         self._adjust_sample(first_obs, last_obs)
 
         resids = self.resids(self.starting_values())
+        nobs_fit = int(resids.shape[0])
+        if total_params > nobs_fit:
+            raise ValueError(
+                "the number of parameters must be at most the number of observations "
+                f"used to estimate the model ({nobs_fit}); got {total_params} (int)"
+            )
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
@@ -1035,16 +1107,14 @@ class ARCHModel(metaclass=ABCMeta):
         # 3. Construct starting values from all models
         sv: Float64Array1D | None = None
         if starting_values is not None:
-            user_sv = np.asarray(
-                ensure1d(starting_values, "starting_values"), dtype=float
-            )
-            valid = user_sv.shape[0] == num_params
-            if valid and a.shape[0] > 0:
+            user_sv = starting_values
+            valid = True
+            if a.shape[0] > 0:
                 satisfies_constraints = a.dot(user_sv) - b >= 0
                 valid = bool(satisfies_constraints.all())
             if valid:
                 for i, bound in enumerate(bounds):
-                    valid = valid and bound[0] <= user_sv[i] <= bound[1]
+                    valid = valid and bool(bound[0] <= user_sv[i] <= bound[1])
             if valid:
                 sv = to_array_1d(user_sv)
             else:
@@ -1064,9 +1134,6 @@ class ARCHModel(metaclass=ABCMeta):
 
         # 4. Estimate models using constrained optimization
         _callback_info["count"], _callback_info["iter"] = 0, 0
-        if not isinstance(disp, str):
-            disp = bool(disp)
-            disp = "off" if not disp else "final"
         if update_freq <= 0 or disp == "off":
             _callback_info["display"] = 2**31
 
@@ -1274,6 +1341,12 @@ class ARCHModel(metaclass=ABCMeta):
         ndarray
             The covariance matrix of the parameters.
         """
+        num_params = int(
+            self.num_params + self.volatility.num_params + self.distribution.num_params
+        )
+        params = check_array("params", params, ndim=1, shape=(num_params,))
+        backcast = _check_backcast(backcast)
+        robust = check_bool("robust", robust)
         resids = self.resids(self.starting_values())
         var_bounds = self.volatility.variance_bounds(resids)
         nobs = resids.shape[0]
