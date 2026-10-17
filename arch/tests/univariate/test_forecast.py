@@ -1046,7 +1046,7 @@ def test_x_exceptions():
     with pytest.raises(KeyError, match=r"The keys of x must exactly"):
         res.forecast(x={"z": x})
     _x = np.asarray(x).reshape((1, x.shape[0], 1))
-    with pytest.raises(ValueError, match=r"The arrays contained in the dictionary"):
+    with pytest.raises(ValueError, match=r"x must be a dict of 1-d or 2-d array_like"):
         res.forecast(x={"Exog": _x})
     x2 = pd.concat([x, x], axis=1)
     x2.columns = ["x0", "x1"]

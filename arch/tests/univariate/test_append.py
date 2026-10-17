@@ -820,7 +820,7 @@ def test_append_exog_non_numeric(mean, kind):
     mod = mean(SMALL_initial, x=x_orig, volatility=GARCH())
     fit(mod)
     snap = snapshot(mod)
-    with pytest.raises(ValueError, match="converted to float"):
+    with pytest.raises(TypeError, match="x must be an array of finite numbers"):
         mod.append(SMALL_append, x=bad_x)
     assert_snapshot_unchanged(mod, snap)
     # The model can still be appended to

@@ -90,8 +90,6 @@ from arch.univariate.volatility import (
 from arch.utility.array import (
     AbstractDocStringInheritor,
     as_float64,
-    cutoff_to_index,
-    ensure1d,
     parse_dataframe,
 )
 
@@ -676,14 +674,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "x must be provided when appending to a model that includes "
                 "exogenous regressors."
             )
+        # Finite numbers, as when constructing the model
+        check_array("x", x)
         x_original = append_same_type(self._x_original, x)
-        try:
-            # Same conversion as used when constructing the model
-            np.asarray(x, dtype=float)
-        except (TypeError, ValueError) as exc:
-            raise ValueError(
-                "x must contain only values that can be converted to float."
-            ) from exc
         nobs_x_new = np.shape(x_original)[0] - np.shape(self._x_original)[0]
         if nobs_x_new != nobs_new:
             raise ValueError(
@@ -845,11 +838,16 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        params = ensure1d(params, "params")
-        _regressors = self._fit_regressors if y is None else regressors
-        y = self._fit_y if y is None else ensure1d(y, "y")
-        assert _regressors is not None
-        return y - np.asarray(_regressors, dtype=float).dot(params)
+        k = int(self.regressors.shape[1])
+        params = _check_resid_params(params, k)
+        if y is None and regressors is None:
+            # The path used by the likelihood
+            return self._fit_y - self._fit_regressors.dot(params)
+        _y, _x = _check_resid_data(y, regressors, k)
+        if _y is None:
+            _y, _x = self._fit_y, self._fit_regressors
+        assert _x is not None
+        return _y - _x.dot(params)
 
     @cached_property
     def num_params(self) -> int:
@@ -1367,7 +1365,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         f"the included exogenous regressors. {key} not found in: "
                         f"{keys}"
                     )
-                temp = np.asarray(x[key], dtype=float)
+                temp = check_array("x", x[key], allow_nan=True)
                 if temp.ndim == 1:
                     temp = temp.reshape((1, -1))
                 collected.append(temp)
@@ -1380,12 +1378,22 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "expected x values."
                 )
             if len(base_shape) != 2:
-                raise ValueError(
-                    "The arrays contained in the dictionary must be 1 or 2-dimensional."
+                _fail(
+                    ValueError,
+                    "x",
+                    "a dict of 1-d or 2-d array_like",
+                    f"arrays with {len(base_shape)} dimensions (dict)",
                 )
             arr: Float64Array = np.array(collected)
         else:
-            arr = np.asarray(x)
+            arr = check_array("x", x, allow_nan=True)
+            if arr.ndim not in (1, 2, 3):
+                _fail(
+                    ValueError,
+                    "x",
+                    "a 1-d, 2-d or 3-d array_like or a dict of array_like",
+                    _describe(x),
+                )
 
             if arr.ndim == 1:
                 arr = arr.reshape((1, -1))
@@ -1435,12 +1443,27 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         reindex: bool = False,
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
-        # Check start
-        earliest, default_start = self._fit_indices
-        default_start = max(0, default_start - 1)
-        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        (
+            params,
+            horizon,
+            start_index,
+            align,
+            method,
+            simulations,
+            reindex,
+        ) = _check_forecast_arguments(
+            self,
+            params,
+            horizon,
+            start,
+            align,
+            method,
+            simulations,
+            rng,
+            random_state,
+            reindex,
+        )
+        earliest = self._fit_indices[0]
         if start_index < (earliest - 1):
             raise ValueError(
                 "Due to backcasting and/or data availability start cannot be less "
@@ -1448,8 +1471,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "variables used to fit the first observation.  In this model, "
                 f"this value is {max(0, earliest - 1)}."
             )
-        # Parse params
-        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
 
         #####################################
@@ -1545,7 +1566,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             mean_paths = mean_paths[:, :, m:]
 
         index = self._y_series.index
-        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
             start_index,
@@ -1705,9 +1725,11 @@ class ConstantMean(HARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        params = ensure1d(params, "params")
-        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
-        return _y - params[0]
+        params = _check_resid_params(params, 1)
+        if y is None and regressors is None:
+            return self._fit_y - params[0]
+        _y, _ = _check_resid_data(y, regressors, None)
+        return (self._fit_y if _y is None else _y) - params[0]
 
 
 class ZeroMean(HARX):
@@ -1859,8 +1881,10 @@ class ZeroMean(HARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        if y is not None:
-            return ensure1d(y, "y")
+        _check_resid_params(params, 0)
+        _y, _ = _check_resid_data(y, regressors, None)
+        if _y is not None:
+            return _y
         assert self._fit_y is not None
         return self._fit_y
 
@@ -2220,7 +2244,7 @@ class ARCHInMean(ARX):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        params = ensure1d(params, "params")
+        params = _check_resid_params(params, self.num_params)
         return super().resids(
             cast("Float64Array1D", params[:-1]), y=y, regressors=regressors
         )
@@ -2669,8 +2693,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         y: ArrayLike1D | None = None,
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
-        params = ensure1d(params, "params")
-        _y = self._fit_y if y is None else to_array_1d(ensure1d(y, "y", series=False))
+        params = _check_resid_params(params, self.num_params)
+        _y, _ = _check_resid_data(y, regressors, None)
+        if _y is None:
+            _y = self._fit_y
         mu = params[0] if self.constant else 0.0
         theta = params[int(self.constant) :]
         resids = lfilter([1.0], np.r_[1.0, theta], _y - mu)
@@ -2844,16 +2870,31 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         reindex: bool = False,
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> ARCHModelForecast:
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
+        (
+            params,
+            horizon,
+            start_index,
+            align,
+            method,
+            simulations,
+            reindex,
+        ) = _check_forecast_arguments(
+            self,
+            params,
+            horizon,
+            start,
+            align,
+            method,
+            simulations,
+            rng,
+            random_state,
+            reindex,
+        )
         if x is not None:
             raise TypeError(
                 "x is not None but the model does not contain any exogenous variables."
             )
-        # Check start
-        earliest, default_start = self._fit_indices
-        default_start = max(0, default_start - 1)
-        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        earliest = self._fit_indices[0]
         if start_index < (earliest - 1):
             raise ValueError(
                 "Due to backcasting and/or data availability start cannot be less "
@@ -2861,8 +2902,6 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "variables used to fit the first observation.  In this model, "
                 f"this value is {max(0, earliest - 1)}."
             )
-        # Parse params
-        params = to_array_1d(params)
         mp, vp, dp = self._parse_parameters(params)
         mu = mp[0] if self.constant else 0.0
         theta = mp[int(self.constant) :]
@@ -2961,7 +3000,6 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
                 )
 
         index = self._y_series.index
-        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
             start_index,
