@@ -3789,21 +3789,15 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, p: int = 1, q: int = 1, power: float = 2.0, truncation: int = 1000
     ) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.q: int = int(q)
-        self.power: float = power
-        self._num_params = 2 + p + q
-        self._truncation = int(truncation)
-        if p < 0 or q < 0 or p > 1 or q > 1:
-            raise ValueError("p and q must be either 0 or 1.")
-        if self._truncation <= 0:
-            raise ValueError("truncation must be a positive integer")
-        if power <= 0.0:
-            raise ValueError(
-                "power must be strictly positive, usually larger than 0.25"
-            )
+        self.p: int = check_int("p", p, lower=0, upper=1)
+        self.q: int = check_int("q", q, lower=0, upper=1)
+        self.power: float = check_float("power", power, lower=0.0, inclusive="neither")
+        self._num_params = 2 + self.p + self.q
+        self._truncation = _check_count("truncation", truncation, 1)
         self._name = self._generate_name()
-        self._volatility_updater = rec.FIGARCHUpdater(p, q, power, truncation)
+        self._volatility_updater = rec.FIGARCHUpdater(
+            self.p, self.q, self.power, self._truncation
+        )
 
     @property
     def truncation(self) -> int:
