@@ -827,3 +827,33 @@ def test_autolag_warning():
     y = np.random.default_rng(1234).standard_normal(1000000)
     with pytest.warns(PerformanceWarning, match=r""):
         assert isinstance(ADF(y).stat, float)
+
+
+@pytest.mark.parametrize("trend", ["n", "c", "ct"])
+@pytest.mark.parametrize("seed", [0, 3, 8])
+def test_t_stat_lag_selection_low_memory(seed, trend):
+    # Lag 0 is always eligible, so no significant lag selects 0 lags
+    y = np.random.default_rng(seed).standard_normal(100)
+    max_lags = 6
+    # Reference: t-statistic of the last lag in each model on the common sample
+    delta_y = np.diff(y)
+    lhs = delta_y[max_lags:]
+    level = y[max_lags:-1]
+    lags = np.column_stack(
+        [delta_y[max_lags - j : delta_y.shape[0] - j] for j in range(1, max_lags + 1)]
+    )
+    nobs = lhs.shape[0]
+    trends = {
+        "n": np.empty((nobs, 0)),
+        "c": np.ones((nobs, 1)),
+        "ct": np.column_stack([np.ones(nobs), np.arange(1.0, nobs + 1)]),
+    }
+    expected = 0
+    for lag in range(1, max_lags + 1):
+        rhs = np.column_stack([level, trends[trend], lags[:, :lag]])
+        tstat = OLS(lhs, rhs).fit().tvalues[-1]
+        if abs(tstat) >= 1.6448536269514722:
+            expected = lag
+    kwargs = {"trend": trend, "max_lags": max_lags, "method": "t-stat"}
+    assert ADF(y, low_memory=False, **kwargs).lags == expected
+    assert ADF(y, low_memory=True, **kwargs).lags == expected

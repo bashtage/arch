@@ -7,20 +7,20 @@ __all__ = ["WaldTestStatistic"]
 
 class WaldTestStatistic:
     """
-    Test statistic holder for Wald-type tests
+    Test statistic holder for Wald-type tests.
 
     Parameters
     ----------
     stat : float
-        The test statistic
+        The test statistic.
     df : int
         Degree of freedom.
     null : str
-        A statement of the test's null hypothesis
+        A statement of the test's null hypothesis.
     alternative : str
-        A statement of the test's alternative hypothesis
-    name : str, default "" (empty)
-        Name of test
+        A statement of the test's alternative hypothesis.
+    name : str, optional
+        Name of test.
     """
 
     def __init__(
@@ -41,28 +41,29 @@ class WaldTestStatistic:
 
     @property
     def stat(self) -> float:
-        """Test statistic"""
+        """Test statistic."""
         return self._stat
 
     @cached_property
     def pval(self) -> float:
-        """P-value of test statistic"""
+        """P-value of test statistic."""
         return 1 - self.dist.cdf(self.stat)
 
     @cached_property
     def critical_values(self) -> dict[str, float]:
-        """Critical values test for common test sizes"""
+        """Critical values of the test for common test sizes."""
         return dict(
             zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99]), strict=False)
         )
 
     @property
     def null(self) -> str:
-        """Null hypothesis"""
+        """Null hypothesis."""
         return self._null
 
     @property
     def alternative(self) -> str:
+        """Alternative hypothesis."""
         return self._alternative
 
     def __str__(self) -> str:

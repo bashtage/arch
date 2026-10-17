@@ -1,5 +1,5 @@
 """
-Core classes for ARCH models
+Core classes for ARCH models.
 """
 
 from abc import ABCMeta, abstractmethod
@@ -110,19 +110,19 @@ def _callback(parameters: Float64Array1D) -> None:
 
 def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
     """
-    Generate constraints from arrays
+    Generate constraints from arrays.
 
     Parameters
     ----------
     a : ndarray
-        Parameter loadings
+        Parameter loadings.
     b : ndarray
-        Constraint bounds
+        Constraint bounds.
 
     Returns
     -------
-    constraints : dict
-        Dictionary of inequality constraints, one for each row of a
+    constraints : list of dict
+        Dictionaries of inequality constraints, one for each row of a.
 
     Notes
     -----
@@ -144,9 +144,27 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
 
 
 def format_float_fixed(x: float, max_digits: int = 10, decimal: int = 4) -> str:
-    """Formats a floating point number so that if it can be well expressed
-    in using a string with digits len, then it is converted simply, otherwise
-    it is expressed in scientific notation"""
+    """
+    Format a floating point number as a string.
+
+    The number is converted using fixed-point notation if it can be well expressed
+    using a string of ``max_digits`` characters, and otherwise it is expressed in
+    scientific notation.
+
+    Parameters
+    ----------
+    x : float
+        The number to format.
+    max_digits : int, optional
+        The width of the formatted string, in characters.
+    decimal : int, optional
+        The number of digits after the decimal point.
+
+    Returns
+    -------
+    str
+        The formatted number.
+    """
     # basic_format = '{:0.' + str(digits) + 'g}'
     if x == 0:
         return ("{:0." + str(decimal) + "f}").format(0.0)
@@ -161,18 +179,18 @@ def format_float_fixed(x: float, max_digits: int = 10, decimal: int = 4) -> str:
 
 def implicit_constant(x: Float64Array) -> bool:
     """
-    Test a matrix for an implicit constant
+    Test a matrix for an implicit constant.
 
     Parameters
     ----------
     x : ndarray
-        Array to be tested
+        Array to be tested.
 
     Returns
     -------
     constant : bool
         Flag indicating whether the array has an implicit constant - whether
-        the array has a set of columns that adds to a constant value
+        the array has a set of columns that adds to a constant value.
     """
     nobs = x.shape[0]
     rank = np.linalg.matrix_rank(np.hstack((np.ones((nobs, 1)), x)))
@@ -193,12 +211,35 @@ def _plot_index(index: pd.Index) -> pd.Index:
 
 class ARCHModel(metaclass=ABCMeta):
     """
-    Abstract base class for mean models in ARCH processes.  Specifies the
-    conditional mean process.
+    Abstract base class for mean models in ARCH processes.
+
+    Specifies the conditional mean process.
 
     All public methods that raise NotImplementedError should be overridden by
     any subclass.  Private methods that raise NotImplementedError are optional
     to override but recommended where applicable.
+
+    Parameters
+    ----------
+    y : ndarray or Series, optional
+        The dependent variable.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model.  If not specified, a constant
+        variance is used.
+    distribution : Distribution, optional
+        Distribution of the standardized residuals.  If not specified, a standard
+        normal is used.
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        then y is rescaled and the new scale is reported in the estimation results.
+        If None, the data is not rescaled and a warning is issued when its scale is
+        likely to produce convergence issues.
     """
 
     def __init__(
@@ -342,11 +383,11 @@ class ARCHModel(metaclass=ABCMeta):
         x: ArrayLike | ArrayLike2D | None = None,
     ) -> None:
         """
-        Append observations to the model in-place
+        Append observations to the model in-place.
 
         Parameters
         ----------
-        y : {ndarray, Series, DataFrame, list, float}
+        y : ndarray, Series, DataFrame, list or float
             The observations to append. Must have the same type as the data
             used to construct the model. If the model was constructed using a
             pandas object, then the index of the new data must be unique and
@@ -355,7 +396,7 @@ class ARCHModel(metaclass=ABCMeta):
             must follow the existing observations. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
-        x : {ndarray, Series, DataFrame}, optional
+        x : ndarray, Series or DataFrame, optional
             The values of the exogenous regressors for the new observations.
             The base class does not include exogenous regressors, and so this
             must be None. Models that include exogenous regressors override
@@ -398,14 +439,14 @@ class ARCHModel(metaclass=ABCMeta):
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """
-        Construct linear constraint arrays  for use in non-linear optimization
+        Construct linear constraint arrays for use in non-linear optimization.
 
         Returns
         -------
         a : ndarray
-            Number of constraints by number of parameters loading array
+            Number of constraints by number of parameters loading array.
         b : ndarray
-            Number of constraints array of lower bounds
+            Number of constraints array of lower bounds.
 
         Notes
         -----
@@ -415,26 +456,28 @@ class ARCHModel(metaclass=ABCMeta):
 
     def bounds(self) -> list[tuple[float, float]]:
         """
-        Construct bounds for parameters to use in non-linear optimization
+        Construct bounds for parameters to use in non-linear optimization.
 
         Returns
         -------
-        bounds : list (2-tuple of float)
-            Bounds for parameters to use in estimation.
+        bounds : list of tuple of float
+            Bounds for parameters to use in estimation, as a list of (lower, upper)
+            pairs.
         """
         num_params = self.num_params
         return [(-np.inf, np.inf)] * num_params
 
     @property
     def y(self) -> ArrayLike | None:
-        """Returns the dependent variable"""
+        """The dependent variable."""
         return self._y_original
 
     @property
     def volatility(self) -> VolatilityProcess:
-        """Set or gets the volatility process
+        """
+        Get or set the volatility process.
 
-        Volatility processes must be a subclass of VolatilityProcess
+        Volatility processes must be a subclass of VolatilityProcess.
         """
         return self._volatility
 
@@ -446,9 +489,10 @@ class ARCHModel(metaclass=ABCMeta):
 
     @property
     def distribution(self) -> Distribution:
-        """Set or gets the error distribution
+        """
+        Get or set the error distribution.
 
-        Distributions must be a subclass of Distribution
+        Distributions must be a subclass of Distribution.
         """
         return self._distribution
 
@@ -749,25 +793,25 @@ class ARCHModel(metaclass=ABCMeta):
         last_obs: int | DateLike | None = None,
     ) -> "ARCHModelFixedResult":
         """
-        Allows an ARCHModelFixedResult to be constructed from fixed parameters.
+        Construct an ARCHModelFixedResult from fixed parameters.
 
         Parameters
         ----------
-        params : {ndarray, Series}
+        params : array_like
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
-        first_obs : {int, str, date, datetime, Timestamp, Period}
+        first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when fixing model. Dates, strings and
             periods can only be used with pandas inputs that have a
             DatetimeIndex or a PeriodIndex.
-        last_obs : {int, str, date, datetime, Timestamp, Period}
-            Last observation to use when fixing model
+        last_obs : int, str, date, datetime, Timestamp or Period, optional
+            Last observation to use when fixing model.
 
         Returns
         -------
         results : ARCHModelFixedResult
-            Object containing model results
+            Object containing model results.
 
         Notes
         -----
@@ -845,23 +889,23 @@ class ARCHModel(metaclass=ABCMeta):
         backcast: float | Float64Array1D | None = None,
     ) -> "ARCHModelResult":
         r"""
-        Estimate model parameters
+        Estimate model parameters.
 
         Parameters
         ----------
         update_freq : int, optional
             Frequency of iteration updates.  Output is generated every
             `update_freq` iterations. Set to 0 to disable iterative output.
-        disp : {bool, "off", "final"}
+        disp : bool or {"off", "final"}, optional
             Either 'final' to print optimization result or 'off' to display
-            nothing. If using a boolean, False is "off" and True is "final"
-        starting_values : ndarray, optional
+            nothing. If using a boolean, False is "off" and True is "final".
+        starting_values : array_like, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components. Starting values that have
             the wrong number of elements or do not satisfy the constraints and
             bounds of the model are ignored, and a StartingValueWarning is
             issued.
-        cov_type : str, optional
+        cov_type : {"robust", "classic"}, optional
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
@@ -869,18 +913,18 @@ class ARCHModel(metaclass=ABCMeta):
             other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
-        first_obs : {int, str, date, datetime, Timestamp, Period}
+        first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when estimating model. Dates, strings and
             periods can only be used with pandas inputs that have a
             DatetimeIndex or a PeriodIndex.
-        last_obs : {int, str, date, datetime, Timestamp, Period}
-            Last observation to use when estimating model
+        last_obs : int, str, date, datetime, Timestamp or Period, optional
+            Last observation to use when estimating model.
         tol : float, optional
             Tolerance for termination.
         options : dict, optional
             Options to pass to `scipy.optimize.minimize`.  Valid entries
             include 'ftol', 'eps', 'disp', and 'maxiter'.
-        backcast : {float, ndarray}, optional
+        backcast : float or ndarray, optional
             Value to use as backcast. Should be measure :math:`\sigma^2_0`
             since model-specific non-linear transformations are applied to
             value before computing the variance recursions.
@@ -888,7 +932,7 @@ class ARCHModel(metaclass=ABCMeta):
         Returns
         -------
         results : ARCHModelResult
-            Object containing model results
+            Object containing model results.
 
         Notes
         -----
@@ -1099,23 +1143,25 @@ class ARCHModel(metaclass=ABCMeta):
 
     @abstractmethod
     def parameter_names(self) -> list[str]:
-        """List of parameters names
+        """
+        Return the names of the parameters of the mean model.
 
         Returns
         -------
-        names : list (str)
-            List of variable names for the mean model
+        names : list of str
+            List of variable names for the mean model.
         """
 
     def starting_values(self) -> Float64Array1D:
         """
-        Returns starting values for the mean model, often the same as the
-        values returned from fit
+        Return starting values for the mean model.
+
+        The starting values are often the same as the values returned from fit.
 
         Returns
         -------
         sv : ndarray
-            Starting values
+            Starting values.
         """
         return self._fit_no_arch_normal_errors_params()
 
@@ -1123,7 +1169,7 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def num_params(self) -> int:
         """
-        Number of parameters in the model
+        Number of parameters in the model.
         """
 
     @abstractmethod
@@ -1136,7 +1182,39 @@ class ARCHModel(metaclass=ABCMeta):
         x: ArrayLike | None = None,
         initial_value_vol: float | None = None,
     ) -> pd.DataFrame:
-        pass
+        """
+        Simulate data from the model.
+
+        Parameters
+        ----------
+        params : array_like
+            Parameters to use when simulating the model.  Parameter order is
+            [mean volatility distribution].
+        nobs : int
+            Length of series to simulate.
+        burn : int, optional
+            Number of values to simulate to initialize the model and remove
+            dependence on initial values.
+        initial_value : float or ndarray, optional
+            Initial values to use when initializing the mean model.  The valid
+            values depend on the mean model.
+        x : ndarray or DataFrame, optional
+            Exogenous variables to include in the simulation, if the mean model
+            includes exogenous variables.  The valid values depend on the mean
+            model.
+        initial_value_vol : float or ndarray, optional
+            An array or scalar to use when initializing the volatility process.
+            It is not always a variance. The units depend on the volatility
+            process, see
+            :meth:`~arch.univariate.volatility.VolatilityProcess.simulate`.
+
+        Returns
+        -------
+        simulated_data : DataFrame
+            DataFrame with columns data containing the simulated values,
+            volatility, containing the conditional volatility and errors
+            containing the errors used in the simulation.
+        """
 
     @abstractmethod
     def resids(
@@ -1146,21 +1224,21 @@ class ARCHModel(metaclass=ABCMeta):
         regressors: ArrayLike2D | None = None,
     ) -> ArrayLike1D:
         """
-        Compute model residuals
+        Compute model residuals.
 
         Parameters
         ----------
         params : ndarray
-            Model parameters
+            Model parameters.
         y : ndarray, optional
-            Alternative values to use when computing model residuals
+            Alternative values to use when computing model residuals.
         regressors : ndarray, optional
-            Alternative regressor values to use when computing model residuals
+            Alternative regressor values to use when computing model residuals.
 
         Returns
         -------
         resids : ndarray
-            Model residuals
+            Model residuals.
         """
 
     def compute_param_cov(
@@ -1170,18 +1248,24 @@ class ARCHModel(metaclass=ABCMeta):
         robust: bool = True,
     ) -> Float64Array:
         """
-        Computes parameter covariances using numerical derivatives.
+        Compute parameter covariances using numerical derivatives.
 
         Parameters
         ----------
         params : ndarray
-            Model parameters
-        backcast : float
-            Value to use for pre-sample observations
+            Model parameters.
+        backcast : float or ndarray, optional
+            Value to use for pre-sample observations.  If not provided, the
+            backcast stored in the model is used and, if the model has none, it
+            is computed from the residuals.
         robust : bool, optional
             Flag indicating whether to use robust standard errors (True) or
-            classic MLE (False)
+            classic MLE (False).
 
+        Returns
+        -------
+        ndarray
+            The covariance matrix of the parameters.
         """
         resids = self.resids(self.starting_values())
         var_bounds = self.volatility.variance_bounds(resids)
@@ -1228,35 +1312,35 @@ class ARCHModel(metaclass=ABCMeta):
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> "ARCHModelForecast":
         """
-        Construct forecasts from estimated model
+        Construct forecasts from estimated model.
 
         Parameters
         ----------
-        params : {ndarray, Series}
+        params : ndarray or Series
             Parameters required to forecast. Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
-           Number of steps to forecast
-        start : {int, str, date, datetime, Timestamp, Period}, optional
+            Number of steps to forecast.
+        start : int, str, date, datetime, Timestamp or Period, optional
             An integer, date, datetime, Period or str indicating the first
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
             '1945-01-01'.
-        align : str, optional
+        align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
             realization and h-step forecast are aligned.
-        method : {'analytic', 'simulation', 'bootstrap'}
+        method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
             support the 'analytic' method for horizons > 1.
-        simulations : int
+        simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
         rng : callable, optional
@@ -1264,7 +1348,7 @@ class ARCHModel(metaclass=ABCMeta):
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
         random_state : RandomState, optional
-            NumPy RandomState instance to use when method is 'bootstrap'
+            NumPy RandomState instance to use when method is 'bootstrap'.
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
             being forecast.
@@ -1273,7 +1357,7 @@ class ARCHModel(metaclass=ABCMeta):
 
                The default has been changed to False.
 
-        x : {dict[label, array_like], array_like}
+        x : dict of array_like or array_like, optional
             Values to use for exogenous regressors if any are included in the
             model. Three formats are accepted:
 
@@ -1308,17 +1392,6 @@ class ARCHModel(metaclass=ABCMeta):
             Container for forecasts. Key properties are ``mean``,
             ``variance`` and ``residual_variance``.
 
-        Examples
-        --------
-        >>> import pandas as pd
-        >>> from arch import arch_model
-        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
-        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
-        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
-        >>> res = am.fit()
-        >>> fig = res.hedgehog_plot()
-
         Notes
         -----
         The most basic 1-step ahead forecast will return a vector with the same
@@ -1339,11 +1412,22 @@ class ARCHModel(metaclass=ABCMeta):
         If `align` is 'target', then the same forecast is in location
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
+
+        Examples
+        --------
+        >>> import pandas as pd
+        >>> from arch import arch_model
+        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
+        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
+        >>> res = am.fit()
+        >>> fig = res.hedgehog_plot()
         """
 
 
 class _SummaryRepr:
-    """Base class for returning summary as repr and str"""
+    """Base class for returning summary as repr and str."""
 
     def summary(self) -> Summary:
         raise NotImplementedError("Subclasses must implement")
@@ -1360,27 +1444,27 @@ class _SummaryRepr:
 
 class ARCHModelFixedResult(_SummaryRepr):
     """
-    Results for fixed parameters for an ARCHModel model
+    Results for fixed parameters for an ARCHModel model.
 
     Parameters
     ----------
     params : ndarray
-        Estimated parameters
+        Estimated parameters.
     resid : ndarray
         Residuals from model.  Residuals have same shape as original data and
-        contain nan-values in locations not used in estimation
+        contain nan-values in locations not used in estimation.
     volatility : ndarray
-        Conditional volatility from model
+        Conditional volatility from model.
     dep_var : Series
-        Dependent variable
-    names : list (str)
-        Model parameter names
+        Dependent variable.
+    names : list of str
+        Model parameter names.
     loglikelihood : float
-        Loglikelihood at specified parameters
+        Loglikelihood at specified parameters.
     is_pandas : bool
-        Whether the original input was pandas
+        Whether the original input was pandas.
     model : ARCHModel
-        The model object used to estimate the parameters
+        The model object used to estimate the parameters.
     """
 
     def __init__(
@@ -1409,13 +1493,13 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def summary(self) -> Summary:
         """
-        Constructs a summary of the results from a fit model.
+        Construct a summary of the results from a fit model.
 
         Returns
         -------
-        summary : Summary instance
+        summary : statsmodels.iolib.summary.Summary
             Object that contains tables and facilitated export to text, html or
-            latex
+            latex.
         """
         # Summary layout
         # 1. Overall information
@@ -1510,31 +1594,33 @@ class ARCHModelFixedResult(_SummaryRepr):
     @cached_property
     def model(self) -> ARCHModel:
         """
-        Model instance used to produce the fit
+        Model instance used to produce the fit.
         """
         return self._model
 
     @cached_property
     def loglikelihood(self) -> float:
-        """Model loglikelihood"""
+        """Model loglikelihood."""
         return self._loglikelihood
 
     @cached_property
     def aic(self) -> float:
-        """Akaike Information Criteria
+        """
+        Akaike Information Criteria.
 
-        -2 * loglikelihood + 2 * num_params"""
+        -2 * loglikelihood + 2 * num_params
+        """
         return -2 * self.loglikelihood + 2 * self.num_params
 
     @cached_property
     def num_params(self) -> int:
-        """Number of parameters in model"""
+        """Number of parameters in model."""
         return len(self.params)
 
     @cached_property
     def bic(self) -> float:
         """
-        Schwarz/Bayesian Information Criteria
+        Schwarz/Bayesian Information Criteria.
 
         -2 * loglikelihood + log(nobs) * num_params
         """
@@ -1542,18 +1628,18 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     @cached_property
     def params(self) -> pd.Series:
-        """Model Parameters"""
+        """Model parameters."""
         return pd.Series(self._params, index=self._names, name="params")
 
     @cached_property
     def conditional_volatility(self) -> Float64Array1D | pd.Series:
         """
-        Estimated conditional volatility
+        Estimated conditional volatility.
 
         Returns
         -------
-        conditional_volatility : {ndarray, Series}
-            nobs element array containing the conditional volatility (square
+        conditional_volatility : ndarray or Series
+            Array with nobs elements containing the conditional volatility (square
             root of conditional variance).  The values are aligned with the
             input data so that the value in the t-th position is the variance
             of t-th error, which is computed using time-(t-1) information.
@@ -1566,14 +1652,14 @@ class ARCHModelFixedResult(_SummaryRepr):
     @cached_property
     def nobs(self) -> int:
         """
-        Number of data points used to estimate model
+        Number of data points used to estimate model.
         """
         return self._nobs
 
     @cached_property
     def resid(self) -> Float64Array1D | pd.Series:
         """
-        Model residuals
+        Model residuals.
         """
         if self._is_pandas:
             return pd.Series(self._resid, name="resid", index=self._index)
@@ -1583,7 +1669,7 @@ class ARCHModelFixedResult(_SummaryRepr):
     @cached_property
     def std_resid(self) -> Float64Array1D | pd.Series:
         """
-        Residuals standardized by conditional volatility
+        Standardized residuals, the residuals divided by the conditional volatility.
         """
         std_res = self.resid / self.conditional_volatility
         if isinstance(std_res, pd.Series):
@@ -1593,13 +1679,13 @@ class ARCHModelFixedResult(_SummaryRepr):
     @cached_property
     def excess_kurtosis(self) -> float:
         """
-        Sample excess kurtosis of standardized residuals
+        Sample excess kurtosis of standardized residuals.
         """
         return _excess_kurtosis(self.std_resid)
 
     def hill_estimator(self, k: int | None = None) -> float:
         """
-        Hill tail-index estimator of standardized residuals
+        Compute the Hill tail-index estimator of standardized residuals.
 
         Parameters
         ----------
@@ -1617,7 +1703,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def var_ratio(self, level: float = 0.999) -> float:
         """
-        Ratio of Gaussian VaR to model-distribution VaR
+        Compute the ratio of Gaussian VaR to model-distribution VaR.
 
         Parameters
         ----------
@@ -1637,7 +1723,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self, annualize: str | None = None, scale: float | None = None
     ) -> "Figure":
         """
-        Plot standardized residuals and conditional volatility
+        Plot standardized residuals and conditional volatility.
 
         Parameters
         ----------
@@ -1652,8 +1738,8 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Returns
         -------
-        fig : figure
-            Handle to the figure
+        fig : Figure
+            Handle to the figure.
 
         Examples
         --------
@@ -1726,30 +1812,30 @@ class ARCHModelFixedResult(_SummaryRepr):
         x: dict[Label, ArrayLike] | ArrayLike | None = None,
     ) -> "ARCHModelForecast":
         """
-        Construct forecasts from estimated model
+        Construct forecasts from estimated model.
 
         Parameters
         ----------
-        params : ndarray, optional
+        params : ndarray or Series, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
-           Number of steps to forecast
-        start : {int, str, date, datetime, Timestamp, Period}, optional
+            Number of steps to forecast.
+        start : int, str, date, datetime, Timestamp or Period, optional
             An integer, date, datetime, Period or str indicating the first
             observation to produce the forecast for.  Dates can only be used
             with pandas inputs that have a DatetimeIndex or a PeriodIndex.
             Strings must be convertible to a date time, such as in
             '1945-01-01'.
-        align : str, optional
+        align : {"origin", "target"}, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
             of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
             realization and h-step forecast are aligned.
-        method : {'analytic', 'simulation', 'bootstrap'}, optional
+        method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
@@ -1763,7 +1849,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
         random_state : RandomState, optional
-            NumPy RandomState instance to use when method is 'bootstrap'
+            NumPy RandomState instance to use when method is 'bootstrap'.
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
             being forecast.
@@ -1772,7 +1858,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
                The default has been changed to False.
 
-        x : {dict[label, array_like], array_like}
+        x : dict of array_like or array_like, optional
             Values to use for exogenous regressors if any are included in the
             model. Three formats are accepted:
 
@@ -1859,27 +1945,27 @@ class ARCHModelFixedResult(_SummaryRepr):
         simulations: int = 1000,
     ) -> "Figure":
         """
-        Plot forecasts from estimated model
+        Plot forecasts from estimated model.
 
         Parameters
         ----------
-        params : {ndarray, Series}
+        params : ndarray or Series, optional
             Alternative parameters to use.  If not provided, the parameters
             computed by fitting the model are used.  Must be 1-d and identical
             in shape to the parameters computed by fitting the model.
         horizon : int, optional
-            Number of steps to forecast
+            Number of steps to forecast.
         step : int, optional
-            Non-negative number of forecasts to skip between spines
+            Non-negative number of forecasts to skip between spines.
         start : int, datetime or str, optional
             An integer, datetime or str indicating the first observation to
             produce the forecast for.  Datetimes can only be used with pandas
             inputs that have a datetime index.  Strings must be convertible
             to a date time, such as in '1945-01-01'.  If not provided, the start
             is set to the earliest forecastable date.
-        plot_type : {'volatility', 'mean'}
-            Quantity to plot, the forecast volatility or the forecast mean
-        method : {'analytic', 'simulation', 'bootstrap'}
+        plot_type : {"volatility", "mean"}, optional
+            Quantity to plot, the forecast volatility or the forecast mean.
+        method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
@@ -1887,14 +1973,14 @@ class ARCHModelFixedResult(_SummaryRepr):
             support the 'analytic' method for horizons > 1. For these models,
             hedgehog_plot raises a ValueError unless horizon is 1 or method is
             'simulation' or 'bootstrap'.
-        simulations : int
+        simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
 
         Returns
         -------
-        fig : figure
-            Handle to the figure
+        fig : Figure
+            Handle to the figure.
 
         Examples
         --------
@@ -1978,7 +2064,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self, lags: int | None = None, standardized: bool = False
     ) -> WaldTestStatistic:
         r"""
-        ARCH LM test for conditional heteroskedasticity
+        Perform an ARCH LM test for conditional heteroskedasticity.
 
         Parameters
         ----------
@@ -1996,7 +2082,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         Returns
         -------
         result : WaldTestStatistic
-            Result of ARCH-LM test
+            Result of ARCH-LM test.
 
         Raises
         ------
@@ -2055,42 +2141,42 @@ class ARCHModelFixedResult(_SummaryRepr):
 
 class ARCHModelResult(ARCHModelFixedResult):
     """
-    Results from estimation of an ARCHModel model
+    Results from estimation of an ARCHModel model.
 
     Parameters
     ----------
     params : ndarray
-        Estimated parameters
-    param_cov : {ndarray, None}
+        Estimated parameters.
+    param_cov : ndarray or None
         Estimated variance-covariance matrix of params.  If none, calls method
         to compute variance from model when parameter covariance is first used
-        from result
+        from result.
     r2 : float
-        Model R-squared
+        Model R-squared.
     resid : ndarray
         Residuals from model.  Residuals have same shape as original data and
-        contain nan-values in locations not used in estimation
+        contain nan-values in locations not used in estimation.
     volatility : ndarray
-        Conditional volatility from model
+        Conditional volatility from model.
     cov_type : str
-        String describing the covariance estimator used
+        String describing the covariance estimator used.
     dep_var : Series
-        Dependent variable
-    names : list (str)
-        Model parameter names
+        Dependent variable.
+    names : list of str
+        Model parameter names.
     loglikelihood : float
-        Loglikelihood at estimated parameters
+        Loglikelihood at estimated parameters.
     is_pandas : bool
-        Whether the original input was pandas
+        Whether the original input was pandas.
     optim_output : OptimizeResult
-        Result of log-likelihood optimization
+        Result of log-likelihood optimization.
     fit_start : int
-        Integer index of the first observation used to fit the model
+        Integer index of the first observation used to fit the model.
     fit_stop : int
         Integer index of the last observation used to fit the model using
-        slice notation `fit_start:fit_stop`
+        slice notation `fit_start:fit_stop`.
     model : ARCHModel
-        The model object used to estimate the parameters
+        The model object used to estimate the parameters.
     """
 
     def __init__(
@@ -2132,7 +2218,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     def conf_int(self, alpha: float = 0.05) -> pd.DataFrame:
         """
-        Parameter confidence intervals
+        Compute parameter confidence intervals.
 
         Parameters
         ----------
@@ -2143,7 +2229,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         -------
         ci : DataFrame
             Array where the ith row contains the confidence interval  for the
-            ith parameter
+            ith parameter.
         """
         cv = stats.norm.ppf(1.0 - alpha / 2.0)
         se = self.std_err
@@ -2157,13 +2243,13 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     def summary(self) -> Summary:
         """
-        Constructs a summary of the results from a fit model.
+        Construct a summary of the results from a fit model.
 
         Returns
         -------
-        summary : Summary instance
+        summary : statsmodels.iolib.summary.Summary
             Object that contains tables and facilitated export to text, html or
-            latex
+            latex.
         """
         # Summary layout
         # 1. Overall information
@@ -2288,7 +2374,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     @cached_property
     def param_cov(self) -> pd.DataFrame:
-        """Parameter covariance"""
+        """Parameter covariance."""
         if self._param_cov is not None:
             param_cov = self._param_cov
         else:
@@ -2302,24 +2388,24 @@ class ARCHModelResult(ARCHModelFixedResult):
     @cached_property
     def rsquared(self) -> float:
         """
-        R-squared
+        R-squared.
         """
         return self._r2
 
     @cached_property
     def fit_start(self) -> int:
-        """Start of sample used to estimate parameters"""
+        """Start of sample used to estimate parameters."""
         return self._fit_indices[0]
 
     @cached_property
     def fit_stop(self) -> int:
-        """End of sample used to estimate parameters"""
+        """End of sample used to estimate parameters."""
         return self._fit_indices[1]
 
     @cached_property
     def rsquared_adj(self) -> float:
         """
-        Degree of freedom adjusted R-squared
+        Degree of freedom adjusted R-squared.
         """
         return 1 - (
             (1 - self.rsquared) * (self.nobs - 1) / (self.nobs - self.model.num_params)
@@ -2328,7 +2414,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     @cached_property
     def pvalues(self) -> pd.Series:
         """
-        Array of p-values for the t-statistics
+        Array of p-values for the t-statistics.
         """
         pvals = np.asarray(stats.norm.sf(np.abs(self.tvalues)) * 2, dtype=float)
         return pd.Series(pvals, index=self._names, name="pvalues")
@@ -2336,7 +2422,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     @cached_property
     def std_err(self) -> pd.Series:
         """
-        Array of parameter standard errors
+        Array of parameter standard errors.
         """
         se = np.asarray(np.sqrt(np.diag(self.param_cov)), dtype=float)
         return pd.Series(se, index=self._names, name="std_err")
@@ -2344,7 +2430,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     @cached_property
     def tvalues(self) -> pd.Series:
         """
-        Array of t-statistics testing the null that the coefficient are 0
+        Array of t-statistics testing the null that the coefficient are 0.
         """
         tvalues = self.params / self.std_err
         tvalues.name = "tvalues"
@@ -2353,14 +2439,14 @@ class ARCHModelResult(ARCHModelFixedResult):
     @cached_property
     def convergence_flag(self) -> int:
         """
-        scipy.optimize.minimize result flag
+        The scipy.optimize.minimize result flag.
         """
         return self._optim_output.status
 
     @property
     def optimization_result(self) -> OptimizeResult:
         """
-        Information about the convergence of the loglikelihood optimization
+        Information about the convergence of the loglikelihood optimization.
 
         Returns
         -------
@@ -2397,15 +2483,24 @@ def _format_forecasts(
 
 class ARCHModelForecastSimulation:
     """
-    Container for a simulation or bootstrap-based forecasts from an ARCH Model
+    Container for a simulation or bootstrap-based forecasts from an ARCH Model.
 
     Parameters
     ----------
-    index
-    values
-    residuals
-    variances
-    residual_variances
+    index : list or Index
+        The index aligned to dimension 0 of the simulation paths.
+    values : ndarray or None
+        Simulated values of the process.  A 3-d array with dimensions (number of
+        forecast origins, number of simulations, horizon).
+    residuals : ndarray or None
+        Simulated residuals used to produce the values.  A 3-d array with the same
+        dimensions as ``values``.
+    variances : ndarray or None
+        Simulated variances of the values.  A 3-d array with the same dimensions
+        as ``values``.
+    residual_variances : ndarray or None
+        Simulated variances of the residuals.  A 3-d array with the same
+        dimensions as ``values``.
     """
 
     def __init__(
@@ -2424,27 +2519,27 @@ class ARCHModelForecastSimulation:
 
     @property
     def index(self) -> pd.Index:
-        """The index aligned to dimension 0 of the simulation paths"""
+        """The index aligned to dimension 0 of the simulation paths."""
         return self._index
 
     @property
     def values(self) -> Float64Array | None:
-        """The values of the process"""
+        """The values of the process."""
         return self._values
 
     @property
     def residuals(self) -> Float64Array | None:
-        """Simulated residuals used to produce the values"""
+        """Simulated residuals used to produce the values."""
         return self._residuals
 
     @property
     def variances(self) -> Float64Array | None:
-        """Simulated variances of the values"""
+        """Simulated variances of the values."""
         return self._variances
 
     @property
     def residual_variances(self) -> Float64Array | None:
-        """Simulated variance of the residuals"""
+        """Simulated variance of the residuals."""
         return self._residual_variances
 
 
@@ -2464,19 +2559,40 @@ def _reindex(
 
 class ARCHModelForecast:
     """
-    Container for forecasts from an ARCH Model
+    Container for forecasts from an ARCH Model.
 
     Parameters
     ----------
-    index : {list, ndarray}
+    index : list or Index
+        The index of the data used to produce the forecasts.
+    start_index : int
+        The position in ``index`` of the first row of the forecasts.
     mean : ndarray
+        Forecasts of the conditional mean.  A 2-d array with one row for each
+        forecast origin and one column for each step of the forecast horizon.
     variance : ndarray
+        Forecasts of the conditional variance, with the same dimensions as
+        ``mean``.
     residual_variance : ndarray
+        Forecasts of the conditional variance of the residuals, with the same
+        dimensions as ``mean``.
     simulated_paths : ndarray, optional
+        Simulated paths of the process.  A 3-d array with dimensions (number of
+        forecast origins, number of simulations, horizon).
     simulated_variances : ndarray, optional
+        Simulated variances of the process, with the same dimensions as
+        ``simulated_paths``.
     simulated_residual_variances : ndarray, optional
+        Simulated variances of the residuals, with the same dimensions as
+        ``simulated_paths``.
     simulated_residuals : ndarray, optional
-    align : {'origin', 'target'}
+        Simulated residuals, with the same dimensions as ``simulated_paths``.
+    align : {"origin", "target"}, optional
+        Alignment of the forecasts.  See the ``align`` parameter of the
+        ``forecast`` method.
+    reindex : bool, optional
+        Whether to reindex the forecasts to have the same dimension as the series
+        being forecast.
     """
 
     def __init__(
@@ -2524,27 +2640,27 @@ class ARCHModelForecast:
 
     @property
     def mean(self) -> pd.DataFrame:
-        """Forecast values for the conditional mean of the process"""
+        """Forecast values for the conditional mean of the process."""
         return self._mean
 
     @property
     def variance(self) -> pd.DataFrame:
-        """Forecast values for the conditional variance of the process"""
+        """Forecast values for the conditional variance of the process."""
         return self._variance
 
     @property
     def residual_variance(self) -> pd.DataFrame:
-        """Forecast values for the conditional variance of the residuals"""
+        """Forecast values for the conditional variance of the residuals."""
         return self._residual_variance
 
     @property
     def simulations(self) -> "ARCHModelForecastSimulation":
         """
-        Detailed simulation results if using a simulation-based method
+        Detailed simulation results if using a simulation-based method.
 
         Returns
         -------
         ARCHModelForecastSimulation
-            Container for simulation results
+            Container for simulation results.
         """
         return self._sim

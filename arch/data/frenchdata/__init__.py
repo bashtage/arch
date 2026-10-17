@@ -1,3 +1,5 @@
+"""Fama-French factor data used in the examples."""
+
 from pandas import DataFrame
 
 from arch.data.utility import load_file
@@ -5,13 +7,13 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the Fama-French factor data used in the examples
+    Load the Fama-French factor data used in the examples.
 
     Returns
     -------
     data : DataFrame
         Data set containing excess market, size and value factors and the
-        risk-free rate
+        risk-free rate.
 
     Notes
     -----

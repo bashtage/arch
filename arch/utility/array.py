@@ -1,5 +1,5 @@
 """
-Utility functions that do not explicitly relate to Volatility modeling
+Utility functions that do not explicitly relate to Volatility modeling.
 """
 
 from arch.compat.pandas import is_datetime64_any_dtype
@@ -49,17 +49,24 @@ __all__ = [
 
 def to_array_1d(x: AnyArray | Series) -> Float64Array1D:
     """
-    Ensure array is 1D and float64
+    Ensure an array is 1D and float64.
 
     Parameters
     ----------
-    x : {ndarray, Series}
-        Array to convert
+    x : ndarray or Series
+        Array to convert.
 
     Returns
     -------
     ndarray
-        1D float64 array
+        1D float64 array.
+
+    Raises
+    ------
+    ValueError
+        If x is an ndarray that cannot be converted to 1D.
+    TypeError
+        If x is not a Series or an ndarray.
     """
     if isinstance(x, np.ndarray):
         if x.ndim == 1 and x.dtype == np.float64:
@@ -100,6 +107,30 @@ def ensure1d(
     name: Hashable | None,
     series: bool = False,
 ) -> AnyArray1D | Series:
+    """
+    Convert data to a 1-d ndarray or a Series.
+
+    Parameters
+    ----------
+    x : array_like, Series or DataFrame
+        The data to convert. A DataFrame must have a single column, and any
+        other input must have at most one dimension with more than one element.
+    name : Hashable or None
+        The name of the variable. Used in error messages and as the name of
+        the Series if x is not a Series or a DataFrame and series is True.
+    series : bool, optional
+        If True, return a Series. If False, return an ndarray.
+
+    Returns
+    -------
+    ndarray or Series
+        The 1-d data. A Series if series is True and an ndarray otherwise.
+
+    Raises
+    ------
+    ValueError
+        If x cannot be squeezed to 1 dimension.
+    """
     if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
@@ -132,6 +163,32 @@ def ensure2d(
     x: Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike,
     name: str,
 ) -> DataFrame | NDArray:
+    """
+    Convert data to a 2-d DataFrame or ndarray.
+
+    Parameters
+    ----------
+    x : ndarray, Series or DataFrame
+        The data to convert. A Series is converted to a DataFrame with a
+        single column. A DataFrame is returned unchanged. A scalar ndarray is
+        converted to an array with a single row and column, and a 1-d ndarray
+        to an array with a single column.
+    name : str
+        The name of the variable. Used in error messages.
+
+    Returns
+    -------
+    DataFrame or ndarray
+        The 2-d data. A DataFrame if x is a Series or a DataFrame and an
+        ndarray otherwise.
+
+    Raises
+    ------
+    ValueError
+        If x is an ndarray with more than 2 dimensions.
+    TypeError
+        If x is not a Series, DataFrame or ndarray.
+    """
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
@@ -156,6 +213,27 @@ def parse_dataframe(
     | tuple[list[Hashable | None], Index]
     | tuple[list[str], NDArray]
 ):
+    """
+    Extract the column labels and the index of data.
+
+    Parameters
+    ----------
+    x : array_like, Series, DataFrame or None
+        The data. Pandas objects provide their own labels.
+    name : str or list of str
+        The column labels to use if x is not a Series or a DataFrame. Must be a
+        str if x is None.
+
+    Returns
+    -------
+    columns : Index or list
+        The columns of x if x is a DataFrame, a list containing the name of x
+        if x is a Series, and otherwise a list of the labels in name.
+    index : Index or ndarray
+        The index of x if x is a Series or a DataFrame, an empty ndarray if x
+        is None, and otherwise the integers 0, 1, ..., nobs - 1 where nobs is
+        the number of observations in x.
+    """
     if x is None:
         assert isinstance(name, str)
         return [name], np.empty(0)
@@ -169,11 +247,22 @@ def parse_dataframe(
         return name, np.arange(np.squeeze(x).shape[0])
 
 
-class DocStringInheritor(type):
+class DocStringInheritor(type):  # numpydoc ignore=PR02
     """
+    Metaclass that copies the missing docstrings of a class from its bases.
+
     A variation on
     https://groups.google.com/group/comp.lang.python/msg/26f7b4fcb4d66c95
-    by Paul McGuire
+    by Paul McGuire.
+
+    Parameters
+    ----------
+    name : str
+        The name of the class.
+    bases : tuple of type
+        The base classes of the class.
+    clsdict : dict
+        The namespace of the class.
     """
 
     def __new__(
@@ -212,6 +301,22 @@ class DocStringInheritor(type):
 
 
 class ConcreteClassMeta(ABCMeta):
+    """
+    Metaclass that requires a class to implement all abstract methods.
+
+    Parameters
+    ----------
+    *args : tuple, optional
+        The name, base classes and namespace of the class.
+    **kwargs : dict, optional
+        Keyword arguments passed to ``ABCMeta``.
+
+    Raises
+    ------
+    TypeError
+        If the class has abstract methods that are not implemented.
+    """
+
     def __init__(cls, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         missing: list[str] = getattr(cls, "__abstractmethods__", [])
@@ -222,8 +327,21 @@ class ConcreteClassMeta(ABCMeta):
             )
 
 
-class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
-    pass
+class AbstractDocStringInheritor(  # numpydoc ignore=PR02
+    ConcreteClassMeta, DocStringInheritor
+):
+    """
+    Metaclass that copies missing docstrings and requires concrete classes.
+
+    Combines `DocStringInheritor` and `ConcreteClassMeta`.
+
+    Parameters
+    ----------
+    *args : tuple, optional
+        The name, base classes and namespace of the class.
+    **kwargs : dict, optional
+        Keyword arguments passed to ``ABCMeta``.
+    """
 
 
 def date_to_index(
@@ -231,19 +349,19 @@ def date_to_index(
     date_index: Union[DatetimeIndex, NDArray, "Series[Timestamp]"],
 ) -> int:
     """
-    Looks up a date in an array of dates
+    Look up a date in an array of dates.
 
     Parameters
     ----------
-    date : {str, datetime, datetime64, Timestamp}
-        Date to use when returning the index
-    date_index : {DatetimeIndex, ndarray}
-        Index data containing datetime64 values
+    date : str, datetime, datetime64 or Timestamp
+        Date to use when returning the index.
+    date_index : DatetimeIndex or ndarray
+        Index data containing datetime64 values.
 
     Returns
     -------
     int
-        Index location
+        Index location.
 
     Notes
     -----
@@ -295,24 +413,25 @@ def date_to_index(
 
 def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -> int:
     """
-    Converts a cutoff to a numerical index
+    Convert a cutoff to a numerical index.
 
     Parameters
     ----------
-    cutoff : {None, int, str, date, datetime, datetime64, Timestamp, Period}
+    cutoff : int, str, date, datetime, datetime64, Timestamp, Period or None
         The cutoff point to use. An int is the location of the observation.
         Dates, strings and periods can only be used when index is a
         DatetimeIndex or a PeriodIndex. A Period is converted to the first
         instant in the period.
-    index : {DatetimeIndex, PeriodIndex}
-        Pandas index
+    index : Index
+        Pandas index. Must be a DatetimeIndex or a PeriodIndex if cutoff is a
+        date, a datetime, a datetime64, a Timestamp, a Period or a string.
     default : int
-        The value to return if cutoff is None
+        The value to return if cutoff is None.
 
     Returns
     -------
     int
-        Integer value where
+        The integer location of the cutoff.
 
     Raises
     ------
@@ -347,19 +466,20 @@ def cutoff_to_index(cutoff: int | DateLike | None, index: Index, default: int) -
 
 def find_index(s: AnyPandas, index: int | DateLike) -> int:
     """
-    Returns the numeric index for a string or datetime
+    Return the numeric index for a string or datetime.
 
     Parameters
     ----------
     s : Series or DataFrame
-        Series or DataFrame to use in lookup
-    index : datetime-like, str
-        Index value, either a string convertible to a datetime or a datetime
+        Series or DataFrame to use in lookup.
+    index : int, str, datetime, datetime64 or Timestamp
+        Index value, either an integer location, which is returned unchanged,
+        a string convertible to a datetime or a datetime.
 
     Returns
     -------
     int
-        Integer location of index value
+        Integer location of index value.
     """
     if isinstance(index, (int, np.int64)):
         return int(index)
@@ -471,13 +591,13 @@ def append_same_type(
     sequence: bool = False,
 ) -> Any:
     """
-    Append observations to existing data, preserving the type of the data
+    Append observations to existing data, preserving the type of the data.
 
     Parameters
     ----------
-    original : {ndarray, Series, DataFrame, list, tuple}
+    original : ndarray, Series, DataFrame, list or tuple
         The existing data.
-    new : {ndarray, Series, DataFrame, list, tuple, float}
+    new : ndarray, Series, DataFrame, list, tuple or float
         The data to append. This must have the same type as original, unless
         original is an ndarray, list or tuple, in which case a scalar can be
         appended as a single observation. 1-d data appended to a 2-d ndarray
@@ -491,7 +611,7 @@ def append_same_type(
 
     Returns
     -------
-    {ndarray, Series, DataFrame, list, tuple}
+    ndarray, Series, DataFrame, list or tuple
         The extended data. Has the same type as original. The inputs are never
         modified.
 

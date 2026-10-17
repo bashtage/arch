@@ -8,7 +8,7 @@ from arch._typing import Float64Array, Literal, NDArrayOrFrame
 
 
 class ColumnNameConflict(Warning):
-    pass
+    """Warning issued if column names are renamed to be unique."""
 
 
 column_name_conflict_doc: str = """\
@@ -80,13 +80,13 @@ def add_trend(
     has_constant: Literal["raise", "add", "skip"] = "skip",
 ) -> Float64Array | pd.DataFrame:
     """
-    Adds a trend and/or constant to an array.
+    Add a trend and/or constant to an array.
 
     Parameters
     ----------
-    x : {ndarray, DataFrame}
-        Original array of data. If None, then nobs must be a positive integer
-    trend : str {"n", "c","t","ct","ctt"}
+    x : ndarray or DataFrame, optional
+        Original array of data. If None, then nobs must be a positive integer.
+    trend : {"n", "c", "t", "ct", "ctt"}, optional
         The trend(s) to add. Supported options are:
 
         * "n" no trend (no-op)
@@ -94,21 +94,36 @@ def add_trend(
         * "t" add trend only
         * "ct" add constant and linear trend
         * "ctt" add constant and linear and quadratic trend.
-    prepend : bool
+    prepend : bool, optional
         If True, prepends the new data to the columns of x.
-    nobs : int, positive
+    nobs : int, optional
         Positive integer containing the length of the trend series.  Only used
-        if x is none.
-    has_constant : str {'raise', 'add', 'skip'}
-        Controls what happens when trend is 'c' and a constant already
-        exists in X. 'raise' will raise an error. 'add' will duplicate a
-        constant. 'skip' will return the data without change. 'skip' is the
+        if x is None.
+    has_constant : {"raise", "add", "skip"}, optional
+        Controls what happens when trend is "c", "ct" or "ctt" and a constant
+        already exists in x. "raise" will raise an error. "add" will duplicate a
+        constant. "skip" will return the data without change. "skip" is the
         default.
+
+    Returns
+    -------
+    ndarray or DataFrame
+        The trend if x is None, an ndarray with nobs rows. Otherwise x with the
+        trend columns added, which has the same type as x. The trend columns
+        of a DataFrame are named "const", "trend" and "quadratic_trend".
+
+    Raises
+    ------
+    ValueError
+        If trend is not one of the supported options, if both or neither of x
+        and nobs are provided, if nobs is not positive, or if has_constant is
+        "raise" and x already contains a constant.
 
     Notes
     -----
-    Returns columns as ["ctt","ct","t","c"] whenever applicable. There is
-    currently no checking for an existing trend.
+    The columns of the trend are ordered constant, linear trend and quadratic
+    trend whenever applicable. There is currently no checking for an existing
+    trend.
     """
     if trend not in ("n", "c", "ct", "ctt", "t"):
         raise ValueError(f"trend {trend} not understood")
