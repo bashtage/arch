@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.unitroot.KPSS - arch v8.0.1 (+566)</title>
+        <title>arch.unitroot.KPSS - arch v8.0.1 (+576)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -1562,24 +1562,6 @@ simulation based on 100,000,000 replications using series with 2,000
 observations. See <a class="footnote-reference brackets" href="#id8" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> for the initial description of the KPSS test.
 Further details are available in <a class="footnote-reference brackets" href="#id7" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and <a class="footnote-reference brackets" href="#id10" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>. Details about the long-run
 covariance estimation can be found in <a class="footnote-reference brackets" href="#id6" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and <a class="footnote-reference brackets" href="#id9" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p>
-<p class="example rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">KPSS</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">inflation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"cpi"</span><span class="p">]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kpss</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.3916</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kpss</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.0761</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">inflation</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"ct"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kpss</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.2802</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kpss</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.0026</span>
-</code></pre></div>
-</div>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id6" role="doc-footnote">

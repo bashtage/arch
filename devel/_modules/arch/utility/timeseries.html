@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility.timeseries - arch v8.0.1 (+566)</title>
+        <title>arch.utility.timeseries - arch v8.0.1 (+576)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -619,7 +619,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    x : array_like or DataFrame, optional</span>
 <span class="sd">        Original array of data. If None, then nobs must be a positive integer.</span>
-<span class="sd">        Integer, unsigned integer and Boolean data are converted to float64.</span>
+<span class="sd">        Integer, unsigned integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
 <span class="sd">        NaN and inf in x are not checked and are returned unchanged.</span>
 <span class="sd">    trend : {"n", "c", "t", "ct", "ctt"}, optional</span>
 <span class="sd">        The trend(s) to add. Not case sensitive. Supported options are:</span>
@@ -646,13 +647,15 @@
 <span class="sd">        The trend if x is None, an ndarray with nobs rows. Otherwise x with the</span>
 <span class="sd">        trend columns added, which is a DataFrame if x is a DataFrame and an</span>
 <span class="sd">        ndarray otherwise. The trend columns of a DataFrame are named "const",</span>
-<span class="sd">        "trend" and "quadratic_trend".</span>
+<span class="sd">        "trend" and "quadratic_trend". The trend columns are real, and the data are</span>
+<span class="sd">        complex128 if x is complex.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    TypeError</span>
 <span class="sd">        If trend or has_constant is not a str, prepend is not a bool, nobs is</span>
-<span class="sd">        not an integer, or x cannot be converted to float64 data.</span>
+<span class="sd">        not an integer, or x cannot be converted to float64 or complex128 data</span>
+<span class="sd">        (it is float16, or contains strings or objects that are not numbers).</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If trend or has_constant is not one of the supported options, if both</span>
 <span class="sd">        or neither of x and nobs are provided, if nobs is not positive, or if</span>
@@ -677,7 +680,11 @@
         <span class="c1"># A Series is stacked into an ndarray, as before</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
             <span class="s2">"NDArrayOrFrame"</span><span class="p">,</span>
-            <span class="n">ensure1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="k">else</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="n">ensure1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">),</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">trend_name</span> <span class="o">==</span> <span class="s2">"n"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

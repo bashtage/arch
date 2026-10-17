@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.covariance.kernel.CovarianceEstimator - arch v8.0.1 (+566)</title>
+        <title>arch.covariance.kernel.CovarianceEstimator - arch v8.0.1 (+576)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -1417,7 +1417,8 @@
 <dt class="field-odd" id="arch.covariance.kernel.CovarianceEstimator-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.covariance.kernel.CovarianceEstimator-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.covariance.kernel.CovarianceEstimator.__init__.x"><span class="n sig-name">x</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.covariance.kernel.CovarianceEstimator.__init__.x" title="Permalink to this definition">¶</a></dt><dd><p>The data to use in covariance estimation. Observations are in rows and
-variables in columns. Integer and Boolean data are converted to float64.
+variables in columns. Integer, Boolean and float32 data are converted to
+float64, and complex data to complex128. float16 data are not accepted.
 Must have at least 2 rows and 1 column, and must not contain NaN or
 infinite values.</p>
 </dd>
@@ -1442,9 +1443,11 @@ finite and non-negative, and at least one must be strictly positive.</p>
 </dd>
 <dt class="field-even" id="arch.covariance.kernel.CovarianceEstimator-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.covariance.kernel.CovarianceEstimator-raises" title="Permalink to this headline">¶</a></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If x or weights cannot be converted to float64, if bandwidth is not a
-    real number, if df_adjust is not an integer (a float, including 5.0, or
-    a Boolean is not accepted), or if center or force_int is not a bool.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If x cannot be converted to float64 or complex128 (it is float16, or
+    contains strings or objects that are not numbers), if weights cannot be
+    converted to float64, if bandwidth is not a real number, if df_adjust is
+    not an integer (a float, including 5.0, or a Boolean is not accepted), or
+    if center or force_int is not a bool.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
     infinite values; if bandwidth is negative or not finite; if df_adjust
     is negative or not smaller than the number of observations; or if
@@ -1460,6 +1463,21 @@ where H is the bandwidth.</p>
 <p>If the bandwidth is not provided, it is estimated using the constants of
 <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the automatic lag selection of <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. See <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> for
 details.</p>
+<p><strong>Complex data.</strong> The estimators accept complex data, for which they are
+Hermitian. The lag-<span class="math notranslate nohighlight">\(j\)</span> autocovariance is
+<span class="math notranslate nohighlight">\(\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H\)</span>, where <span class="math notranslate nohighlight">\(^H\)</span> is the
+conjugate transpose, <span class="math notranslate nohighlight">\(\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H\)</span>, and the
+long-run covariance
+<span class="math notranslate nohighlight">\(\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+
+\hat{\Gamma}_j^H)\)</span> is a complex Hermitian matrix. If <span class="math notranslate nohighlight">\(x_t=a_t+ib_t\)</span>,
+then <span class="math notranslate nohighlight">\(\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+
+i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})\)</span>, where <span class="math notranslate nohighlight">\(\hat{\Omega}_{uv}\)</span> is
+the long-run covariance of the real data <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> with the same
+kernel and bandwidth. The automatic bandwidth combines the columns of x
+using <code class="docutils literal notranslate"><span class="pre">weights</span></code> and uses the real part of the autocovariances of this
+complex series. The pseudo-covariance <span class="math notranslate nohighlight">\(E[x_t x_{t-j}^\prime]\)</span> is not
+estimated, and the estimates are complex128 arrays. Real data give float64
+estimates.</p>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id3" role="doc-footnote">

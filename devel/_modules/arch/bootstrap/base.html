@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch v8.0.1 (+566)</title>
+        <title>arch.bootstrap.base - arch v8.0.1 (+576)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -687,8 +687,9 @@
 <span class="sd">    ----------</span>
 <span class="sd">    x : array_like</span>
 <span class="sd">        The data, which can be one-dimensional or two-dimensional.  Operates</span>
-<span class="sd">        column by column if 2-dimensional. The data are converted to float64</span>
-<span class="sd">        and must be finite and have at least 11 observations.</span>
+<span class="sd">        column by column if 2-dimensional. Integer, Boolean and float32 data are</span>
+<span class="sd">        converted to float64. float16 and complex data are not accepted. The data</span>
+<span class="sd">        must be finite and have at least 11 observations.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -702,8 +703,8 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    TypeError</span>
-<span class="sd">        If ``x`` cannot be converted to float64 (strings, dates, complex</span>
-<span class="sd">        numbers or None).</span>
+<span class="sd">        If ``x`` cannot be converted to float64 (strings, dates, float16 or</span>
+<span class="sd">        complex data, or None).</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``x`` has more than 2 dimensions, no columns or fewer than 11</span>
 <span class="sd">        observations, or contains NaN or inf.</span>
@@ -896,6 +897,26 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">checked</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_replication_dtype</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The data type of the replications of a statistic.</span>
+
+<span class="sd">    The imaginary part of a complex statistic must not be discarded when the</span>
+<span class="sd">    replications are stored.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"c"</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_real_statistic</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Raise a TypeError if the statistic is complex, which has no interval."""</span>
+    <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"c"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">"the value returned by func must be real numbers, since a confidence "</span>
+            <span class="sa">f</span><span class="s2">"interval is not defined for complex values; got </span><span class="si">{</span><span class="n">base</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> values "</span>
+            <span class="s2">"(ndarray)"</span>
+        <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_extra_kwargs</span><span class="p">(</span>
@@ -1358,7 +1379,8 @@
 <span class="sd">            If ``func`` or ``std_err_func`` is not callable, ``reps`` or</span>
 <span class="sd">            ``studentize_reps`` is not an int, ``size`` is not a number,</span>
 <span class="sd">            ``reuse`` is not a bool, ``method``, ``tail`` or ``sampling`` is not</span>
-<span class="sd">            a str, or ``extra_kwargs`` is not a dict.</span>
+<span class="sd">            a str, ``extra_kwargs`` is not a dict, or ``func`` returns complex</span>
+<span class="sd">            values, which have no confidence interval.</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``reps`` is less than 1, ``size`` is not in (0, 1),</span>
 <span class="sd">            ``studentize_reps`` is less than 1 when it is used, ``method``,</span>
@@ -1481,11 +1503,13 @@
                 <span class="n">std_err_func</span><span class="o">=</span><span class="n">std_err_func</span><span class="p">,</span>
                 <span class="n">studentize_reps</span><span class="o">=</span><span class="n">studentize_reps</span><span class="p">,</span>
                 <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
+                <span class="n">real_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="n">base</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
         <span class="k">assert</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">_check_real_statistic</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
         <span class="n">studentized_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_results</span>
 
         <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
@@ -1671,7 +1695,8 @@
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
 <span class="sd">            The reps by nparam array of computed function values where each row</span>
-<span class="sd">            corresponds to a bootstrap iteration.</span>
+<span class="sd">            corresponds to a bootstrap iteration. The array is complex128 if</span>
+<span class="sd">            func returns complex values and float64 otherwise.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1711,7 +1736,7 @@
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_replication_dtype</span><span class="p">(</span><span class="n">base</span><span class="p">))</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">pos_data</span><span class="p">,</span> <span class="n">kw_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
             <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="n">kw_data</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
@@ -1730,6 +1755,7 @@
         <span class="n">sampling</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
             <span class="s2">"nonparametric"</span><span class="p">,</span> <span class="s2">"semi-parametric"</span><span class="p">,</span> <span class="s2">"semi"</span><span class="p">,</span> <span class="s2">"parametric"</span><span class="p">,</span> <span class="s2">"semiparametric"</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">"nonparametric"</span><span class="p">,</span>
+        <span class="n">real_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
         <span class="c1"># Private, more complicated version of apply</span>
@@ -1743,9 +1769,11 @@
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
         <span class="c1"># Allows lists, tuples, scalars and 0-d arrays</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">real_only</span><span class="p">:</span>
+            <span class="n">_check_real_statistic</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
 
         <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_replication_dtype</span><span class="p">(</span><span class="n">base</span><span class="p">))</span>
         <span class="n">studentized_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reps</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
 
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1813,7 +1841,9 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
-<span class="sd">            Bootstrap covariance estimator.</span>
+<span class="sd">            Bootstrap covariance estimator. If func returns complex values, this</span>
+<span class="sd">            is the complex Hermitian covariance, which uses the conjugate</span>
+<span class="sd">            transpose, and a complex128 array.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1890,6 +1920,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">errors</span> <span class="o">=</span> <span class="n">results</span> <span class="o">-</span> <span class="n">base</span>
 
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+            <span class="c1"># Hermitian covariance of a complex statistic</span>
+            <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span> <span class="o">/</span> <span class="n">reps</span>
         <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span>
 
 <div class="viewcode-block" id="IIDBootstrap.var">
@@ -1921,7 +1954,9 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
-<span class="sd">            Bootstrap variance estimator.</span>
+<span class="sd">            Bootstrap variance estimator. If func returns complex values, this</span>
+<span class="sd">            is the real variance, the average of the squared absolute values of</span>
+<span class="sd">            the errors.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1985,6 +2020,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">errors</span> <span class="o">=</span> <span class="n">results</span> <span class="o">-</span> <span class="n">base</span>
 
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+            <span class="c1"># The variance of a complex statistic is real</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">errors</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">errors</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span></div>
 
 

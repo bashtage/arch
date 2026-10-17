@@ -23,7 +23,7 @@
     
   
       
-        <title>Long-run Covariance Estimation - arch v8.0.1 (+566)</title>
+        <title>Long-run Covariance Estimation - arch v8.0.1 (+576)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -1618,6 +1618,15 @@ ignore hyphens and underscores, so that <code class="docutils literal notranslat
 </tr>
 </tbody>
 </table>
+<p>The data are converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code>: integer, Boolean and <code class="docutils literal notranslate"><span class="pre">float32</span></code> data are
+accepted and the calculation is done in <code class="docutils literal notranslate"><span class="pre">float64</span></code>, and <code class="docutils literal notranslate"><span class="pre">float16</span></code> data raise a
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. Complex data are also accepted, and are converted to <code class="docutils literal notranslate"><span class="pre">complex128</span></code>. The
+estimators are then Hermitian: the lag-<span class="math notranslate nohighlight">\(j\)</span> autocovariance is
+<span class="math notranslate nohighlight">\(T^{-1}\sum_t x_t x_{t-j}^H\)</span>, where <span class="math notranslate nohighlight">\(^H\)</span> is the conjugate transpose, and the
+long-run covariance is a complex Hermitian matrix. For <span class="math notranslate nohighlight">\(x_t=a_t+ib_t\)</span> it is
+<span class="math notranslate nohighlight">\(\Omega_{aa}+\Omega_{bb}+i(\Omega_{ba}-\Omega_{ab})\)</span>, where <span class="math notranslate nohighlight">\(\Omega_{uv}\)</span> is
+the long-run covariance of the real data <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> estimated with the same
+kernel and bandwidth. <code class="xref py py-func docutils literal notranslate"><span class="pre">cov_nw()</span></code> follows the same rule.</p>
 <h3 id="module-arch.covariance.var"><span id="vector-ar-based-estimators"></span>Vector AR-based Estimators<a class="headerlink" href="#module-arch.covariance.var" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
@@ -1632,7 +1641,9 @@ of den Haan and Levin (2000). Kernel estimators can be poorly behaved when the d
 are highly persistent, since the bandwidth required to capture the dependence is large
 relative to the sample size. These estimators first remove most of the serial
 dependence using a vector autoregression, estimate the long-run covariance of the
-residuals, and then restore the dependence. They are computed in three steps.</p>
+residuals, and then restore the dependence. They accept real data only, since there is
+no single VAR for complex data (see the Notes of the class); use a kernel estimator, or
+the VAR of the stacked real and imaginary parts. They are computed in three steps.</p>
 <ol class="arabic">
 <li><p><strong>Prewhitening.</strong> A VAR is estimated by least squares,</p>
 <div class="math notranslate nohighlight">

@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v8.0.1 (+566)</title>
+        <title>Change Logs - arch v8.0.1 (+576)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -1399,7 +1399,7 @@ is 0.5 (<a class="extlink-issue reference external" href="https://github.com/bas
 <p>These changes fix bugs that returned incorrect results, or make an option that had no
 effect work as documented. Each entry says who is affected and, where there is one, how
 to restore the previous results.</p>
-<ul class="simple">
+<ul>
 <li><p>Fixed <a class="reference internal" href="multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a> and <a class="reference internal" href="multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a> so that
 <code class="docutils literal notranslate"><span class="pre">studentize=True</span></code> (the default) studentizes the loss differentials. In previous
 versions the option had no effect on the results. The loss differentials are now
@@ -1585,9 +1585,45 @@ in <code class="docutils literal notranslate"><span class="pre">int64</span></co
 took the square root of <code class="docutils literal notranslate"><span class="pre">uint8</span></code> variances in <code class="docutils literal notranslate"><span class="pre">float16</span></code>. All of these now give the
 same result as the same data stored as <code class="docutils literal notranslate"><span class="pre">float64</span></code>, which is passed through without a
 copy. The data of the bootstraps are not converted, since they are passed to the
-function of the user as given (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/948">GH948</a>). The fixes of the covariance estimators
-and of the <code class="docutils literal notranslate"><span class="pre">axis</span></code> of <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code> were contributed by antonsoo (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/942">GH942</a>,
-<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/943">GH943</a>).</p></li>
+function of the user as given (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/948">GH948</a>).</p>
+<p>The same rules for the data type apply to all of the estimators, the tests, the
+models, the volatility processes and the distributions. Integer, unsigned integer,
+Boolean, <code class="docutils literal notranslate"><span class="pre">float32</span></code> and <code class="docutils literal notranslate"><span class="pre">longdouble</span></code> data are converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code>, and every
+calculation is done in <code class="docutils literal notranslate"><span class="pre">float64</span></code>, so the result for <code class="docutils literal notranslate"><span class="pre">float32</span></code> data is the result
+for the same values stored as <code class="docutils literal notranslate"><span class="pre">float64</span></code>. <code class="docutils literal notranslate"><span class="pre">float32</span></code> is promoted because a
+calculation in <code class="docutils literal notranslate"><span class="pre">float32</span></code> is not accurate enough: when all of the arrays of the unit
+root tests are <code class="docutils literal notranslate"><span class="pre">float32</span></code>, the Phillips-Perron statistic of a series with a large
+level differs from its <code class="docutils literal notranslate"><span class="pre">float64</span></code> value by up to 0.04, and the lag search of
+<a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> fails with a singular matrix for a series with a large
+level or a trend and thousands of observations. <code class="docutils literal notranslate"><span class="pre">float16</span></code> data are never accepted:
+they raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> that names the argument and the accepted data types, and
+can be converted using <code class="docutils literal notranslate"><span class="pre">astype(np.float32)</span></code> or <code class="docutils literal notranslate"><span class="pre">astype(np.float64)</span></code>. Complex data
+also raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>, except for the functions that estimate a Hermitian
+covariance (see the entry about complex data). The fixes of the covariance estimators
+and of the <code class="docutils literal notranslate"><span class="pre">axis</span></code> of <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code>, and the first support of <code class="docutils literal notranslate"><span class="pre">float32</span></code> and complex
+data in the covariance estimators, were contributed by antonsoo (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/942">GH942</a>,
+<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/943">GH943</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/957">GH957</a>).</p>
+</li>
+<li><p>The kernel covariance estimators in <a class="reference internal" href="covariance/covariance.html#module-arch.covariance.kernel" title="arch.covariance.kernel: Kernel-based long-run covariance estimation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code></a> and <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code>
+accept complex data, and estimate the Hermitian long-run covariance. The products use
+the conjugate transpose, so that the lag-j autocovariance is the sum of <code class="docutils literal notranslate"><span class="pre">x[t]</span></code> times
+the conjugate of <code class="docutils literal notranslate"><span class="pre">x[t</span> <span class="pre">-</span> <span class="pre">j]</span></code>, the automatic bandwidth uses the real part of the
+autocovariances of the complex series, and the estimates are Hermitian <code class="docutils literal notranslate"><span class="pre">complex128</span></code>
+matrices with a real diagonal. For <code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">+</span> <span class="pre">ib</span></code> the long-run covariance is the
+covariance of <code class="docutils literal notranslate"><span class="pre">a</span></code> plus the covariance of <code class="docutils literal notranslate"><span class="pre">b</span></code> plus <code class="docutils literal notranslate"><span class="pre">i</span></code> times the cross-covariance
+of <code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">a</span></code> less that of <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>, computed from the real data of <code class="docutils literal notranslate"><span class="pre">a</span></code>
+and <code class="docutils literal notranslate"><span class="pre">b</span></code> with the same kernel and bandwidth. The pseudo-covariance, which has no
+conjugate, is not estimated. <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code> returns a real float for a 1-d complex series.
+In 8.0 the kernel estimators failed for complex data, and <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code> had no conjugate,
+so that its result was not Hermitian. <code class="docutils literal notranslate"><span class="pre">add_trend</span></code> also accepts complex data, and
+adds real trend columns to them. The <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> of the bootstraps
+accept a statistic that returns complex values: <code class="docutils literal notranslate"><span class="pre">cov</span></code> is the Hermitian covariance
+and <code class="docutils literal notranslate"><span class="pre">var</span></code> is real, where the imaginary part used to be discarded with a
+<code class="docutils literal notranslate"><span class="pre">ComplexWarning</span></code>. <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> raises a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for a complex statistic, which
+has no interval. <a class="reference internal" href="covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>, the tests and the
+models do not accept complex data, since there is no single model of complex data for
+the VAR that prewhitens the data. Thanks to antonsoo for the support of complex data
+in the covariance estimators that this builds on (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/942">GH942</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/957">GH957</a>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code> ignores <code class="docutils literal notranslate"><span class="pre">starting_values</span></code> that violate the bounds or constraints of the
 model, with the <code class="docutils literal notranslate"><span class="pre">StartingValueWarning</span></code> that was always issued. In previous versions
 the optimization was still started from the invalid values. Such fits start from the
@@ -1877,9 +1913,19 @@ than <code class="docutils literal notranslate"><span class="pre">&quot;R&quot;<
 <li><p><code class="docutils literal notranslate"><span class="pre">arch.utility.array.ensure1d</span></code> and <code class="docutils literal notranslate"><span class="pre">ensure2d</span></code> convert every input to <code class="docutils literal notranslate"><span class="pre">float64</span></code>,
 including integer, Boolean, <code class="docutils literal notranslate"><span class="pre">float32</span></code> and object data, and raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>
 that names the argument if the data cannot be converted, for example for strings,
-where they returned an array of strings. Code outside of arch that calls them and
-needs the original data type should not use them. They no longer rename the Series
-that they are given (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/948">GH948</a>).</p></li>
+where they returned an array of strings, and for <code class="docutils literal notranslate"><span class="pre">float16</span></code> data. Complex data
+raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> unless <code class="docutils literal notranslate"><span class="pre">allow_complex=True</span></code>, which converts them to
+<code class="docutils literal notranslate"><span class="pre">complex128</span></code>. Code outside of arch that calls them and needs the original data
+type should not use them. They no longer rename the Series that they are given
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/948">GH948</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/957">GH957</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float16</span></code> data now raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> in the estimators, the tests, the models,
+the volatility processes and the distributions. Earlier versions converted them to
+<code class="docutils literal notranslate"><span class="pre">float64</span></code> in some places and failed with an error from NumPy in others. The 11 bits
+of <code class="docutils literal notranslate"><span class="pre">float16</span></code> are about 3 decimal digits, which is not enough for these estimators,
+and the message names the accepted data types. Convert the data with
+<code class="docutils literal notranslate"><span class="pre">astype(np.float32)</span></code> or <code class="docutils literal notranslate"><span class="pre">astype(np.float64)</span></code> if that is intended. Complex data
+raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> too, except in the kernel covariance estimators, <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code>,
+<code class="docutils literal notranslate"><span class="pre">add_trend</span></code> and the <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> of the bootstraps (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/957">GH957</a>).</p></li>
 </ul>
 <h4 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h4>
 <ul class="simple">

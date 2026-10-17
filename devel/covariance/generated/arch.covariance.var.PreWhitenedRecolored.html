@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.covariance.var.PreWhitenedRecolored - arch v8.0.1 (+566)</title>
+        <title>arch.covariance.var.PreWhitenedRecolored - arch v8.0.1 (+576)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+566)
+            arch v8.0.1 (+576)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+566)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+566)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+566)
+    arch v8.0.1 (+576)
   </label>
   
     <div class="md-nav__source">
@@ -1743,9 +1743,9 @@ estimators.</p>
 <dt class="field-odd" id="arch.covariance.var.PreWhitenedRecolored-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.covariance.var.PreWhitenedRecolored-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
 <dt id="arch.covariance.var.PreWhitenedRecolored.__init__.x"><span class="n sig-name">x</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.6)">DataFrame</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.6)">Series</a></span></span><a class="headerlink" href="#arch.covariance.var.PreWhitenedRecolored.__init__.x" title="Permalink to this definition">¶</a></dt><dd><p>The data to use in covariance estimation. Observations are in rows and
-variables in columns. Integer and Boolean data are converted to float64.
-Must have at least 2 rows and 1 column, and must not contain NaN or
-infinite values.</p>
+variables in columns. Integer, Boolean and float32 data are converted to
+float64. float16 and complex data are not accepted. Must have at least 2
+rows and 1 column, and must not contain NaN or infinite values.</p>
 </dd>
 <dt id="arch.covariance.var.PreWhitenedRecolored.__init__.lags"><span class="n sig-name">lags</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.covariance.var.PreWhitenedRecolored.__init__.lags" title="Permalink to this definition">¶</a></dt><dd><p>The number of lags to include in the VAR. If None, a specification
 search is used to select the order. Must be non-negative and small
@@ -1799,7 +1799,8 @@ finite and non-negative, and at least one must be strictly positive.</p>
 </dd>
 <dt class="field-even" id="arch.covariance.var.PreWhitenedRecolored-raises">Raises<span class="colon">:</span><a class="headerlink" href="#arch.covariance.var.PreWhitenedRecolored-raises" title="Permalink to this headline">¶</a></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If x or weights cannot be converted to float64, if lags, max_lag or
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If x or weights cannot be converted to float64 (x is float16 or complex, or
+    contains strings or objects that are not numbers), if lags, max_lag or
     df_adjust is not an integer (a float, including 5.0, or a Boolean is
     not accepted), if bandwidth is not a real number, if diagonal,
     sample_autocov, center or force_int is not a bool, or if method or
@@ -1894,6 +1895,16 @@ satisfies <code class="docutils literal notranslate"><span class="pre">long_run<
 when the autocovariances are those of the VAR and the kernel is not used,
 that is when <code class="docutils literal notranslate"><span class="pre">sample_autocov</span></code> is False and <code class="docutils literal notranslate"><span class="pre">kernel</span></code> is None or the
 bandwidth is 0. Otherwise <code class="docutils literal notranslate"><span class="pre">long_run</span></code> differs from this sum.</p>
+<p><strong>Complex data are not supported.</strong> The kernel estimators in
+<a class="reference internal" href="../covariance.html#module-arch.covariance.kernel" title="arch.covariance.kernel: Kernel-based long-run covariance estimation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code></a> accept complex data, but this estimator raises a
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. Prewhitening fits a model, and there is no single VAR for complex
+data. A VAR with complex coefficients cannot represent real and imaginary parts
+that depend on each other in a way that is not a complex multiplication, and the
+VAR of the stacked real and imaginary parts is a different model with more
+parameters. The order that the information criteria above select depends on
+which of them is used. To prewhiten complex data, use this estimator with
+<code class="docutils literal notranslate"><span class="pre">np.column_stack([x.real,</span> <span class="pre">x.imag])</span></code>, or use a kernel estimator, which needs no
+model.</p>
 <p><strong>Inspecting the VAR.</strong> The prewhitening step determines the estimate, so
 its results are available. <a class="reference internal" href="generated/arch.covariance.var.PreWhitenedRecolored.order.html#arch.covariance.var.PreWhitenedRecolored.order" title="arch.covariance.var.PreWhitenedRecolored.order (Python property) — The order of the VAR used to prewhiten x."><code class="xref py py-attr docutils literal notranslate"><span class="pre">order</span></code></a> is the order of the VAR, which is
 the only way to learn which order was chosen when <code class="docutils literal notranslate"><span class="pre">lags</span></code> is None.
