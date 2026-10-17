@@ -597,7 +597,7 @@ def test_errors(spa_data):
     spa.compute()
     with pytest.raises(ValueError, match=r"pvalue_type must be one of 'lower'"):
         _ = spa.better_models(pvalue_type="unknown")
-    with pytest.raises(ValueError, match=r"pvalue must be in \(0,1\)"):
+    with pytest.raises(ValueError, match=r"pvalue must be a finite float in \(0, 1\)"):
         _ = spa.critical_values(pvalue=1.0)
 
 

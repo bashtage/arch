@@ -882,16 +882,33 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         *,
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
+        studentize = check_bool("studentize", studentize)
+        nested = check_bool("nested", nested)
         if nested and not studentize:
             raise ValueError("nested can only be True when studentize is True")
         super().__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
+        # Non-finite values are rejected below with a message about the data
+        benchmark_1d = _check_data(
+            "benchmark", benchmark, ndim=1, min_length=_MIN_OBS_SPA
+        )
+        # Series and DataFrames keep their labels. Other data, which can be a column
+        # or a row, becomes a column.
+        self.benchmark = ensure2d(benchmark_1d, "benchmark")
+        if isinstance(benchmark, (pd.Series, pd.DataFrame)):
+            labeled = ensure2d(benchmark, "benchmark")
+            if labeled.shape[1] == 1:
+                self.benchmark = labeled
+        _check_data("models", models, shape=(self.benchmark.shape[0], None))
         self.models = ensure2d(models, "models")
+        _require_columns("models", np.asarray(self.models), 1, models)
+        reps, block_arg, seed = _check_resampling(
+            reps, block_size, seed, self.benchmark.shape[0]
+        )
         self.reps: int = reps
-        if block_size is None:
+        if block_arg is None:
             self.block_size = int(np.sqrt(self.benchmark.shape[0]))
         else:
-            self.block_size = block_size
+            self.block_size = block_arg
         self.studentize: bool = studentize
         self.nested: bool = nested
         # Subtract in floating point. Unsigned integer losses would wrap around
@@ -973,7 +990,19 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             Boolean array indicating which columns to use when computing the
             p-values.  This is primarily for use by StepM.
         """
-        self._selector = selector
+        checked = check_array("selector", selector, shape=(self.k,))
+        rule = f"a Boolean array with {self.k} elements and at least one True"
+        if np.asarray(selector).dtype != np.bool_:
+            raise TypeError(
+                f"selector must be {rule}; got {np.asarray(selector).dtype} data "
+                f"({type(selector).__name__})"
+            )
+        if not checked.any():
+            raise ValueError(
+                f"selector must be {rule}; got no True element "
+                f"({type(selector).__name__})"
+            )
+        self._selector = np.asarray(selector)
 
     def compute(self) -> None:
         """
@@ -1148,9 +1177,10 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             upper methodologies. When studentize is True, the critical values
             apply to the studentized mean loss differentials.
         """
+        pvalue = check_float(
+            "pvalue", pvalue, lower=0.0, upper=1.0, inclusive="neither"
+        )
         self._check_compute()
-        if not (0.0 < pvalue < 1.0):
-            raise ValueError("pvalue must be in (0,1)")
         # Subset if needed
         assert self._simulated_vals is not None
         simulated_values = self._simulated_vals[self._selector, :, :]
@@ -1185,8 +1215,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         List of superior models returned is always with respect to the initial
         set of models, even when using subset().
         """
+        pvalue = check_float(
+            "pvalue", pvalue, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        pvalue_type = check_option("pvalue_type", pvalue_type, _PVALUE_TYPES)
         self._check_compute()
-        pvalue_type = check_option("pvalue_type", pvalue_type, tuple(self._pvalues))
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
         better_models = self._studentized_mean() > crit_val
         better_models = np.logical_and(better_models, self._selector)
