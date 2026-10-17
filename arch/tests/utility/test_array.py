@@ -5,6 +5,7 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
 from pandas import DataFrame, DatetimeIndex, Series, Timedelta, Timestamp, date_range
+from pandas.testing import assert_frame_equal
 import pytest
 
 from arch import doc
@@ -88,6 +89,35 @@ def test_ensure1d():
     y = DataFrame(np.reshape(np.arange(10), (5, 2)))
     with pytest.raises(ValueError, match=r"y must be squeezable to 1 dimension"):
         ensure1d(y, "y")
+
+
+@pytest.mark.parametrize("series", [True, False], ids=["series", "ndarray"])
+@pytest.mark.parametrize("name", [None, 1, ("a", "b"), "name"], ids=str)
+def test_ensure1d_does_not_modify_series(series, name):
+    y = Series(np.arange(5.0), name=name)
+    ys = ensure1d(y, "y", series)
+    assert y.name is name
+    assert_equal(np.asarray(ys), np.arange(5.0))
+    if series:
+        assert isinstance(ys.name, str)
+
+
+@pytest.mark.parametrize("series", [True, False], ids=["series", "ndarray"])
+def test_ensure1d_does_not_modify_dataframe(series):
+    df = DataFrame({0: np.arange(5.0)})
+    original = df.copy()
+    ensure1d(df, "y", series)
+    assert df.columns.tolist() == [0]
+    assert_frame_equal(df, original)
+
+
+def test_ensure2d_does_not_modify_inputs():
+    s = Series(np.arange(5.0))
+    df = DataFrame({0: np.arange(5.0)})
+    ensure2d(s, "x")
+    ensure2d(df, "x")
+    assert s.name is None
+    assert df.columns.tolist() == [0]
 
 
 def test_ensure2d():
@@ -422,3 +452,11 @@ def test_to_array_1d_err():
         to_array_1d(0)
     with pytest.raises(TypeError, match=r"x must be a Series or ndarray"):
         to_array_1d(DataFrame([[0, 1]]))
+
+
+def test_arch_model_does_not_rename_series():
+    from arch import arch_model
+
+    y = Series(np.random.default_rng(0).standard_normal(100))
+    arch_model(y)
+    assert y.name is None

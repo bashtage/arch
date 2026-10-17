@@ -137,7 +137,8 @@ def ensure1d(
     """
     if isinstance(x, Series):
         if not isinstance(x.name, str):
-            x.name = str(x.name)
+            # Rename a new Series so that the Series of the caller is unchanged
+            x = x.rename(str(x.name))
         if series:
             return x
         else:
