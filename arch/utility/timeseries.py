@@ -91,7 +91,7 @@ def add_trend(
         Integer, unsigned integer and Boolean data are converted to float64.
         NaN and inf in x are not checked and are returned unchanged.
     trend : {"n", "c", "t", "ct", "ctt"}, optional
-        The trend(s) to add. Supported options are:
+        The trend(s) to add. Not case sensitive. Supported options are:
 
         * "n" no trend (no-op)
         * "c" add constant only
@@ -107,7 +107,7 @@ def add_trend(
         Controls what happens when trend is "c", "ct" or "ctt" and a constant
         already exists in x. "raise" will raise an error. "add" will duplicate a
         constant. "skip" will return the data without change. "skip" is the
-        default.
+        default. Not case sensitive.
 
     Returns
     -------

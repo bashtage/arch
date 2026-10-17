@@ -275,7 +275,7 @@ class ARCHModel(metaclass=ABCMeta):
 
     Parameters
     ----------
-    y : ndarray or Series, optional
+    y : array_like or Series, optional
         The dependent variable.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model.  If not specified, a constant
@@ -999,7 +999,8 @@ class ARCHModel(metaclass=ABCMeta):
             Must not be negative.
         disp : bool or {"off", "final"}, optional
             Either 'final' to print optimization result or 'off' to display
-            nothing. If using a boolean, False is "off" and True is "final".
+            nothing. Not case sensitive. If using a boolean, False is "off" and
+            True is "final".
         starting_values : array_like, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components. Must have one finite element
@@ -1010,8 +1011,8 @@ class ARCHModel(metaclass=ABCMeta):
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimator. Any
-            other value raises a ValueError.
+            corresponds to Bollerslev-Wooldridge covariance estimator. Not case
+            sensitive. Any other value raises a ValueError.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
         first_obs : int, str, date, datetime, Timestamp or Period, optional
@@ -1027,7 +1028,7 @@ class ARCHModel(metaclass=ABCMeta):
         options : dict, optional
             Options to pass to `scipy.optimize.minimize`.  Valid entries
             include 'ftol', 'eps', 'disp', and 'maxiter'.
-        backcast : float or ndarray, optional
+        backcast : float or array_like, optional
             Value to use as backcast. Should be measure :math:`\sigma^2_0`
             since model-specific non-linear transformations are applied to
             value before computing the variance recursions. A float must be
@@ -1336,14 +1337,14 @@ class ARCHModel(metaclass=ABCMeta):
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values. Must not be negative.
-        initial_value : float or ndarray, optional
+        initial_value : float or array_like, optional
             Initial values to use when initializing the mean model.  The valid
             values depend on the mean model.
-        x : ndarray or DataFrame, optional
+        x : array_like or DataFrame, optional
             Exogenous variables to include in the simulation, if the mean model
             includes exogenous variables.  The valid values depend on the mean
             model.
-        initial_value_vol : float or ndarray, optional
+        initial_value_vol : float or array_like, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1378,12 +1379,12 @@ class ARCHModel(metaclass=ABCMeta):
 
         Parameters
         ----------
-        params : ndarray
+        params : array_like
             Model parameters. Must have one finite element for each parameter of
             the mean model.
-        y : ndarray, optional
+        y : array_like, optional
             Alternative values to use when computing model residuals.
-        regressors : ndarray, optional
+        regressors : array_like, optional
             Alternative regressor values to use when computing model residuals.
 
         Returns
@@ -1414,7 +1415,7 @@ class ARCHModel(metaclass=ABCMeta):
         params : array_like
             Model parameters. Must have one finite element for each parameter of
             the model.
-        backcast : float or ndarray, optional
+        backcast : float or array_like, optional
             Value to use for pre-sample observations.  If not provided, the
             backcast stored in the model is used and, if the model has none, it
             is computed from the residuals. A float must be positive, and an
@@ -1492,7 +1493,7 @@ class ARCHModel(metaclass=ABCMeta):
 
         Parameters
         ----------
-        params : ndarray or Series
+        params : array_like
             Parameters required to forecast. Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
@@ -1510,13 +1511,13 @@ class ARCHModel(metaclass=ABCMeta):
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned.
+            realization and h-step forecast are aligned. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.
@@ -2040,7 +2041,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : ndarray or Series, optional
+        params : array_like, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -2059,13 +2060,13 @@ class ARCHModelFixedResult(_SummaryRepr):
             set to 'target', the t-th row contains the 1-step ahead forecast
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
-            realization and h-step forecast are aligned.
+            realization and h-step forecast are aligned. Not case sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
-            support the 'analytic' method for horizons > 1.
+            support the 'analytic' method for horizons > 1. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.
@@ -2205,7 +2206,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : ndarray or Series, optional
+        params : array_like, optional
             Alternative parameters to use.  If not provided, the parameters
             computed by fitting the model are used.  Must be 1-d and identical
             in shape to the parameters computed by fitting the model.
@@ -2221,7 +2222,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             is set to the earliest forecastable date. An integer must be in
             [0, nobs], and a date must be in the index.
         plot_type : {"volatility", "mean"}, optional
-            Quantity to plot, the forecast volatility or the forecast mean.
+            Quantity to plot, the forecast volatility or the forecast mean. Not case
+            sensitive.
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
@@ -2229,7 +2231,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             models that do not evolve in squares such as EGARCH or TARCH do not
             support the 'analytic' method for horizons > 1. For these models,
             hedgehog_plot raises a ValueError unless horizon is 1 or method is
-            'simulation' or 'bootstrap'.
+            'simulation' or 'bootstrap'. Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be positive.
@@ -2373,7 +2375,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Returns
         -------
-        result : WaldTestStatistic
+        result : arch.utility.testing.WaldTestStatistic
             Result of ARCH-LM test.
 
         Raises

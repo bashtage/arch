@@ -913,7 +913,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        resids : ndarray
+        resids : array_like
             Approximate residuals to use to compute the lower and upper bounds
             on the conditional variance.
         power : float, optional
@@ -958,7 +958,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        resids : ndarray
+        resids : array_like
             Array of (approximate) residuals to use when computing starting
             values.
 
@@ -974,7 +974,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        resids : ndarray
+        resids : array_like
             Vector of (approximate) residuals.
 
         Returns
@@ -997,7 +997,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        backcast : float or ndarray
+        backcast : float or array_like
             User-provided ``backcast`` that approximates sigma2[0].
 
         Returns
@@ -1017,7 +1017,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        resids : ndarray
+        resids : array_like
             Vector of (approximate) residuals.
 
         Returns
@@ -1040,16 +1040,16 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             Model parameters.
-        resids : ndarray
+        resids : array_like
             Vector of mean zero residuals.
         sigma2 : ndarray
             Array with same size as resids to store the conditional variance.
-        backcast : float or ndarray
-            Value to use when initializing ARCH recursion. Can be an ndarray
+        backcast : float or array_like
+            Value to use when initializing ARCH recursion. Can be an array_like
             when the model contains multiple components.
-        var_bounds : ndarray
+        var_bounds : array_like
             Array containing columns of lower and upper bounds.
 
         Returns
@@ -1097,13 +1097,13 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         Parameters
         ----------
-        parameters : ndarray or Series
+        parameters : array_like
             Parameters required to forecast the volatility model.
-        resids : ndarray
+        resids : array_like
             Residuals to use in the recursion.
-        backcast : float or ndarray
+        backcast : float or array_like
             Value to use when initializing the recursion.
-        var_bounds : ndarray
+        var_bounds : array_like
             2-d array containing columns of lower and upper bounds.
         start : int, optional
             Index of the first observation to use as the starting point for
@@ -1114,6 +1114,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             for horizons in [1, horizon].
         method : {"analytic", "simulation", "bootstrap"}, optional
             Method to use when producing the forecast. The default is analytic.
+            Not case sensitive.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap. Must be 1 or larger.
@@ -1249,7 +1250,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         burn : int, optional
             Number of additional observations to generate when initializing
             the simulation. Must be 0 or larger.
-        initial_value : float or ndarray, optional
+        initial_value : float or array_like, optional
             Scalar or array of initial values to use when initializing the
             simulation. The units depend on the process, see Notes. The values
             must be finite, and not negative except for EGARCH. An array has
@@ -2978,7 +2979,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        resids : ndarray
+        resids : array_like
             Vector of (approximate) residuals.
 
         Returns

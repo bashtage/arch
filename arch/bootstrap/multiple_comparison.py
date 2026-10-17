@@ -303,8 +303,9 @@ class MCS(MultipleComparison):
         chosen to be appropriate for the data.
     method : {"R", "max"}, optional
         MCS test and elimination implementation method, either "max" or "R".
+        Not case sensitive.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
-        Bootstrap to use.  Options are
+        Bootstrap to use.  Not case sensitive.  Options are
 
         * "stationary" or "sb": Stationary bootstrap
         * "circular" or "cbb": Circular block bootstrap
@@ -640,7 +641,7 @@ class StepM(MultipleComparison):
     reps : int, optional
         Number of bootstrap replications to use. Must be at least 1.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
-        Bootstrap to use.  Options are
+        Bootstrap to use.  Not case sensitive.  Options are
 
         * "stationary" or "sb": Stationary bootstrap
         * "circular" or "cbb": Circular block bootstrap
@@ -814,7 +815,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     reps : int, optional
         Number of bootstrap replications to use. Must be at least 1.
     bootstrap : {"stationary", "sb", "circular", "cbb", "moving block", "mbb"}, optional
-        Bootstrap to use.  Options are
+        Bootstrap to use.  Not case sensitive.  Options are
 
         * "stationary" or "sb": Stationary bootstrap
         * "circular" or "cbb": Circular block bootstrap
@@ -1266,7 +1267,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         pvalue : float, optional
             P-value in (0,1) to use when computing superior models.
         pvalue_type : {"lower", "consistent", "upper"}, optional
-            Indicates which critical value to use.
+            Indicates which critical value to use. Not case sensitive.
 
         Returns
         -------

@@ -768,12 +768,14 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional
             The method used to construct the interval.  "norm" is identical to
             "var" and "cov", and "bc" is identical to "debiased" and
-            "bias-corrected".  See Notes for a description of each method.
+            "bias-corrected".  See Notes for a description of each method. Not case
+            sensitive.
         size : float, optional
             Coverage of confidence interval. Must be strictly between 0 and 1.
         tail : {"two", "upper", "lower"}, optional
             The tail of the interval.  When tail is "lower", all upper bounds
-            are inf.  Similarly, "upper" sets all lower bounds to -inf.
+            are inf.  Similarly, "upper" sets all lower bounds to -inf. Not case
+            sensitive.
         extra_kwargs : dict, optional
             Extra keyword arguments to use when calling func and std_err_func,
             when appropriate.
@@ -786,8 +788,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             reused even if extra_kwargs or sampling have changed, so use a new
             call without reuse (or ``reset``) after changing them.
         sampling : {"nonparametric", "semi-parametric", "parametric"}, optional
-            Type of sampling to use.  "semi" and "semiparametric" are
-            identical to "semi-parametric".  See
+            Type of sampling to use.  Not case sensitive.  "semi" and
+            "semiparametric" are identical to "semi-parametric".  See
             :ref:`semiparametric-bootstraps` and :ref:`parametric-bootstraps`
             for the changes to func required when using "semi-parametric" or
             "parametric".

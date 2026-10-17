@@ -578,7 +578,7 @@ class UnitRootTest(metaclass=ABCMeta):
         selected when the test statistic is computed.
     trend : str
         The deterministic trend used in the test. It must be one of
-        ``valid_trends``.
+        ``valid_trends``. Not case sensitive.
     valid_trends : list of str or tuple of str
         The trends that are supported by the test.
 
@@ -849,7 +849,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         `method` is used to automatically select the lag length with no more
         than `max_lags` lags included.
     trend : {"n", "c", "ct", "ctt"}, optional
-        The trend component to include in the test
+        The trend component to include in the test. Not case sensitive.
 
         - "n" - No trend components
         - "c" - Include a constant
@@ -861,7 +861,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         omitted or None, the maximum number of lags is 12 * (nobs/100) ** (1/4),
         rounded up, reduced when needed in short samples.
     method : {"aic", "bic", "t-stat", "maic"}, optional
-        The method to use when selecting the lag length
+        The method to use when selecting the lag length. Not case sensitive.
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
@@ -1041,7 +1041,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         `method` is used to automatically select the lag length with no more
         than `max_lags` lags included.
     trend : {"c", "ct"}, optional
-        The trend component to include in the test
+        The trend component to include in the test. Not case sensitive.
 
         - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
@@ -1053,7 +1053,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         the maximum number of lags is 12 * (nobs/100) ** (1/4), rounded up,
         reduced when needed in short samples.
     method : {"aic", "bic", "t-stat", "maic"}, optional
-        The method to use when selecting the lag length
+        The method to use when selecting the lag length. Not case sensitive.
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
@@ -1245,16 +1245,16 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         covariance.  If omitted or None, the lag length is set automatically to
         12 * (nobs/100) ** (1/4), rounded up.
     trend : {"n", "c", "ct"}, optional
-        The trend component to include in the test
+        The trend component to include in the test. Not case sensitive.
 
         - "n" - No trend components
         - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
 
     test_type : {"tau", "rho"}, optional
-        The test to use when computing the test statistic. "tau" is based on
-        the t-stat and "rho" uses a test based on nobs times the re-centered
-        regression coefficient.
+        The test to use when computing the test statistic. Not case sensitive.
+        "tau" is based on the t-stat and "rho" uses a test based on nobs times
+        the re-centered regression coefficient.
 
     Raises
     ------
@@ -1461,7 +1461,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         Set lags=-1 to use the old method that only depends on the sample
         size, 12 * (nobs/100) ** (1/4).
     trend : {"c", "ct"}, optional
-        The trend component to include in the test
+        The trend component to include in the test. Not case sensitive.
 
         - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
@@ -1661,7 +1661,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         `method` is used to automatically select the lag length with no more
         than `max_lags` lags included.
     trend : {"c", "t", "ct"}, optional
-        The trend component to include in the test
+        The trend component to include in the test. Not case sensitive.
 
         - "c" - Include a constant
         - "t" - Include a linear time trend
@@ -1675,7 +1675,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length.
     method : {"aic", "bic", "t-stat", "maic"}, optional
-        The method to use when selecting the lag length
+        The method to use when selecting the lag length. Not case sensitive.
 
         - "aic" - Select the minimum of the Akaike IC
         - "bic" - Select the minimum of the Schwarz/Bayesian IC
@@ -1909,7 +1909,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         the numerator of the test statistic.  Must be at least 2.
     trend : {"n", "c"}, optional
         "c" allows for a non-zero drift in the random walk, while "n" requires
-        that the increments to y are mean 0.
+        that the increments to y are mean 0. Not case sensitive.
     debiased : bool, optional
         Indicates whether to use a debiased version of the test. Only
         applicable if overlap is True.
@@ -2106,13 +2106,15 @@ def mackinnonp(
     regression : {"c", "n", "ct", "ctt"}, optional
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "n" for no constant, "ct" for
-        constant and trend, and "ctt" for constant, trend, and trend-squared.
+        constant and trend, and "ctt" for constant, trend, and trend-squared. Not
+        case sensitive.
     num_unit_roots : int, optional
         The number of series believed to be I(1), from 1 to 6.  For
         (Augmented) Dickey-Fuller N = 1. Values larger than 1 are only available
         when `dist_type` is "adf-t".
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
-        The test type to use when computing p-values.  Options include
+        The test type to use when computing p-values.  Not case sensitive.
+        Options include
 
         - "adf-t" - ADF t-stat based test
         - "adf-z" - ADF z test
@@ -2255,12 +2257,12 @@ def mackinnoncrit(
         "ctt" for constant with a linear and quadratic trend, and "n" for
         no constant.  The values for the no constant case are taken from the
         1996 paper, as they were not updated for 2010 due to the unrealistic
-        assumptions that would underlie such a case.
+        assumptions that would underlie such a case. Not case sensitive.
     nobs : int or float, optional
         This is the sample size, which must be positive.  If the sample size is
         numpy.inf, then the asymptotic critical values are returned.
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
-        Type of test statistic.
+        Type of test statistic. Not case sensitive.
 
     Returns
     -------
@@ -2328,7 +2330,7 @@ def kpss_crit(
     stat : float
         The KPSS test statistic, which is not negative. It can be inf.
     trend : {"c", "ct"}, optional
-        The trend used when computing the KPSS statistic.
+        The trend used when computing the KPSS statistic. Not case sensitive.
 
     Returns
     -------
@@ -2388,7 +2390,7 @@ def auto_bandwidth(
     y : array_like
         Data on which to apply the bandwidth selection.
     kernel : {"ba", "pa", "qs"}, optional
-        The kernel function to use for selecting the bandwidth
+        The kernel function to use for selecting the bandwidth. Not case sensitive.
 
         - "ba", "bartlett", "nw": Bartlett kernel
         - "pa", "parzen", "gallant": Parzen kernel

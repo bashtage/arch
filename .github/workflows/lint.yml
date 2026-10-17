@@ -31,7 +31,7 @@ jobs:
         id: install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install black flake8 isort ruff
+          python -m pip install black flake8 isort ruff "numpydoc>=1.10"
           python -m pip list
 
       # Every check runs even when an earlier one fails, so that the log shows all of
@@ -51,3 +51,11 @@ jobs:
       - name: isort
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: isort --check arch
+
+      # numpydoc reads the source files, so arch does not need to be built. The files
+      # that are not checked (the tests, the critical value tables and the scripts that
+      # produce them, the vendored code, the version file) are listed in
+      # [tool.numpydoc_validation] in pyproject.toml.
+      - name: numpydoc
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: python -m numpydoc lint $(git ls-files "arch/*.py")

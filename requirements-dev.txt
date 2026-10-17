@@ -19,6 +19,9 @@ pytest-xdist
 pytest-cov
 pytest-randomly
 
+# docstrings: the numpydoc linter and arch/tests/test_docstrings.py
+numpydoc>=1.10
+
 # formatting
 black[jupyter]~=25.1.0
 isort~=5.12

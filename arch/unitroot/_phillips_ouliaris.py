@@ -167,7 +167,8 @@ def phillips_ouliaris(
         parameters in the cointegrating regression (the number of columns of x
         and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
-        Trend to include in the cointegrating regression. Trends are:
+        Trend to include in the cointegrating regression. Not case sensitive.
+        Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
@@ -175,7 +176,7 @@ def phillips_ouliaris(
         * "ctt": Constant, linear and quadratic trends
 
     test_type : {"Za", "Zt", "Pu", "Pz"}, optional
-        The test statistic to compute. Supported options are:
+        The test statistic to compute. Not case sensitive. Supported options are:
 
         * "Za": The Zα test based on the debiased AR(1) coefficient.
         * "Zt": The Zt test based on the t-statistic from an AR(1).
@@ -188,7 +189,8 @@ def phillips_ouliaris(
         The string name of any known kernel-based long-run
         covariance estimator. Common choices are "bartlett" for the
         Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
-        and "quadratic-spectral" for the Quadratic Spectral kernel.
+        and "quadratic-spectral" for the Quadratic Spectral kernel. Not case
+        sensitive.
     bandwidth : float, optional
         The bandwidth to use. It must be a finite non-negative number. If not
         provided, the optimal bandwidth is estimated from the data. Setting the
@@ -480,9 +482,9 @@ def phillips_ouliaris_cv(
     Parameters
     ----------
     test_type : {"Za", "Zt", "Pu", "Pz"}
-        The test type.
+        The test type. Not case sensitive.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model.
+        The trend included in the model. Not case sensitive.
     num : int
         Number of assumed stochastic trends in the model under the null. Must
         be between 2 and 13.
@@ -534,9 +536,9 @@ def phillips_ouliaris_pval(
     stat : float
         The test statistic.
     test_type : {"Za", "Zt", "Pu", "Pz"}
-        The test type.
+        The test type. Not case sensitive.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model.
+        The trend included in the model. Not case sensitive.
     num : int
         Number of assumed stochastic trends in the model under the null. Must
         be between 2 and 13.
