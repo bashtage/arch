@@ -73,8 +73,10 @@ from arch.utility.cov import cov_nw
 from arch.utility.timeseries import add_trend
 
 NOBS = 240
-RTOL = 1e-10
-ATOL = 1e-12
+# The residuals of FMOLS and CCR differ by about 3e-12 between integer and float64
+# input with NumPy 1.22 and SciPy 1.8
+RTOL = 1e-9
+ATOL = 1e-10
 
 # How the data of a case are stored. The type of the elements is the one that is
 # tested; the container is a list, an ndarray, an unnamed Series with a DatetimeIndex
