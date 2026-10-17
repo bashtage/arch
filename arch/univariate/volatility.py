@@ -227,6 +227,49 @@ def _float_backcast(backcast: Any) -> float | Float64Array1D:
     return ensure1d(backcast, "backcast")
 
 
+def _check_initial_value(
+    initial_value: Any, size: int, lower: float | None
+) -> float | Float64Array1D | None:
+    """
+    Check the initial value of a simulation.
+
+    Parameters
+    ----------
+    initial_value : float, array_like or None
+        A finite scalar, a vector with 1 or ``size`` elements, or None.
+    size : int
+        The number of initial values that the process uses. 0 if the process only
+        accepts a scalar.
+    lower : float or None
+        The smallest allowed value, or None if there is no lower bound.
+
+    Returns
+    -------
+    float, ndarray or None
+        A float if the value is a scalar and otherwise a float64 vector. None if the
+        value is None.
+
+    Raises
+    ------
+    TypeError
+        If the value cannot be converted to a float.
+    ValueError
+        If the value is NaN, inf or smaller than ``lower``, or a vector has the wrong
+        length.
+    """
+    if initial_value is None:
+        return None
+    if size == 0 or np.ndim(initial_value) == 0:
+        return check_float("initial_value", initial_value, lower=lower)
+    values = check_array("initial_value", initial_value, ndim=1)
+    if values.shape[0] not in (1, size) or (lower is not None and values.min() < lower):
+        rule = "a finite float or a 1-d array of finite floats"
+        rule += "" if lower is None else f" >= {lower:g}"
+        rule += f" with {1 if size == 1 else f'1 or {size}'} elements"
+        _fail(ValueError, "initial_value", rule, _describe(initial_value))
+    return values
+
+
 class VarianceForecast:
     """
     Container for variance forecasts.
@@ -514,6 +557,68 @@ class VolatilityProcess(metaclass=ABCMeta):
             "sigma2", sigma2, ndim=1, shape=(checked[1].shape[0],), writeable=True
         )
         return checked
+
+    def _check_simulate_arguments(
+        self,
+        parameters: Any,
+        nobs: Any,
+        rng: Any,
+        burn: Any,
+        initial_value: Any,
+        initial_size: int | None = 0,
+        lower: float | None = 0.0,
+    ) -> tuple[Float64Array1D, int, RNGType, int, float | Float64Array1D | None]:
+        """
+        Check the arguments of simulate.
+
+        Parameters
+        ----------
+        parameters : array_like
+            The parameters, with ``num_params`` elements. Their values are not
+            checked.
+        nobs : int
+            The number of observations to simulate, at least 1.
+        rng : callable
+            The random number generator.
+        burn : int
+            The number of observations to discard, at least 0.
+        initial_value : float, array_like or None
+            The initial value of the process.
+        initial_size : int, optional
+            The number of initial values that the process uses. An array must have
+            1 or this many elements. 0, the default, if the process only accepts a
+            scalar. None if the process ignores ``initial_value``, which is then not
+            checked.
+        lower : float, optional
+            The smallest initial value. None if there is no lower bound.
+
+        Returns
+        -------
+        parameters : ndarray
+            The parameters, as a float64 vector.
+        nobs : int
+            The number of observations.
+        rng : callable
+            The random number generator.
+        burn : int
+            The number of burn-in observations.
+        initial_value : float, ndarray or None
+            The initial value, as a float or a float64 vector.
+
+        Raises
+        ------
+        TypeError
+            If an argument has the wrong type.
+        ValueError
+            If an argument is outside its range or has the wrong length.
+        """
+        parameters = self._check_parameters(parameters)
+        nobs = check_int("nobs", nobs, lower=1)
+        rng = cast("RNGType", check_callable("rng", rng))
+        burn = check_int("burn", burn, lower=0)
+        if initial_size is not None:
+            initial_value = _check_initial_value(initial_value, initial_size, lower)
+        return parameters, nobs, rng, burn, initial_value
 
     def update(
         self,
@@ -1207,7 +1312,9 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        parameters = self._check_parameters(parameters)
+        parameters, nobs, rng, burn, _ = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, None
+        )
         errors = rng(nobs + burn)
         sigma2 = np.ones(nobs + burn) * parameters[0]
         data = np.sqrt(sigma2) * errors
@@ -1495,10 +1602,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
         p, o, q, power = self.p, self.o, self.q, self.power
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, o, q)
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -1886,10 +1993,10 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
         lags = self.lags
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, int(np.max(lags))
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -2183,9 +2290,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        _parameters = self._check_parameters(parameters)
+        _parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, self.m
+        )
         if self._asym:
             omega, alpha, gamma = _parameters[:3]
         else:
@@ -2540,9 +2647,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -2824,8 +2931,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
+        _, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value
+        )
         errors = rng(nobs + burn)
 
         kmax = self.kmax
@@ -3107,10 +3215,11 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
         p, o, q = self.p, self.o, self.q
+        # The initial value is the log of the variance, which can be negative
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, o, q), None
+        )
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -3672,10 +3781,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
         truncation = self.truncation
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, truncation
+        )
         p, q, power = self.p, self.q, self.power
         lam = rec.figarch_weights(parameters[1:], p, q, truncation)
         lam_rev = lam[::-1]
@@ -4148,10 +4257,10 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        parameters = self._check_parameters(parameters)
         truncation = self.truncation
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, truncation
+        )
         p, o, q = self.p, self.o, self.q
 
         fig_params = parameters[: 1 + p + 1 + q]
@@ -4626,11 +4735,11 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        if initial_value is not None:
-            initial_value = _float_backcast(initial_value)
-        params = self._check_parameters(parameters).astype(float)
-        params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, q)
+        )
+        params = self._repack_parameters(parameters.astype(float))
         errors = rng(nobs + burn)
 
         sigma2 = np.zeros(nobs + burn)
