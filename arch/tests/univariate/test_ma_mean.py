@@ -273,9 +273,9 @@ def test_simulate_errors():
         model.simulate(params, 10, initial_value=1.0)
     with pytest.raises(ValueError, match="x must be None"):
         model.simulate(params, 10, x=np.zeros((510, 1)))
-    with pytest.raises(ValueError, match="params has the wrong number of elements"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(4,\)"):
         model.simulate(params[:-1], 10)
-    with pytest.raises(ValueError, match="params has the wrong number of elements"):
+    with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(3,\)"):
         MAMean(lags=2, constant=False).simulate(params, 10)
 
 
