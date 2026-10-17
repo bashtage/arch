@@ -1785,10 +1785,10 @@ class CircularBlockBootstrap(IIDBootstrap):
         seed: int | Generator | RandomState | None = None,
         **kwargs: ArrayLike,
     ) -> None:
-        block_size = _check_block_size(block_size, self._integer_block_size)
+        checked = cast("int", _check_block_size(block_size, self._integer_block_size))
         super().__init__(*args, seed=seed, **kwargs)
-        self._block_size: int = cast("int", block_size)
-        self._parameters = [cast("int", block_size)]
+        self._block_size: int = checked
+        self._parameters = [checked]
 
     @property
     def block_size(self) -> int:
