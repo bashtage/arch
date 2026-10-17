@@ -992,7 +992,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         parameters = self._check_constraints(parameters)
-        scalar = isscalar(pits)
+        scalar = np.ndim(pits) == 0
         if scalar:
             pits = array([pits])
         pits = asarray(pits, dtype=float)
