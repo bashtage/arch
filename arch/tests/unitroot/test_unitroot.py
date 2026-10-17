@@ -764,8 +764,10 @@ def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
 
 def test_phillips_perron_specifed_lag():
     y = np.zeros((10,))
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 12 observations"):
-        assert np.isfinite(PhillipsPerron(y, lags=12).stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"lags must be at most 9 for the 10 observations"
+    ):
+        PhillipsPerron(y, lags=12)
 
 
 def test_kpss_legacy():

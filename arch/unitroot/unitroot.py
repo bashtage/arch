@@ -1257,6 +1257,19 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         the t-stat and "rho" uses a test based on nobs times the re-centered
         regression coefficient.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer, or
+        `trend` or `test_type` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is negative, or `trend`
+        or `test_type` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` (the default
+        number of lags if it is None) is larger than the number of observations
+        in y minus 1. This is also a ``ValueError``.
+
     Notes
     -----
     The null hypothesis of the Phillips-Perron (PP) test is that there is a
@@ -1337,18 +1350,18 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_rho = None
         self._stat_tau = None
         self._test_name = "Phillips-Perron Test"
-        self._lags = lags
         self._regression = None
+        self._check_specification()
 
     def _check_specification(self) -> None:
-        trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
-        lag_len = 0 if self._lags is None else self._lags
-        required = max(3 + trend_order, lag_len)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+        # The regression has nobs - 1 residuals, and the long-run covariance
+        # estimator can use at most that many lags
+        trend_order = 0 if self._trend == "n" else len(self._trend)
+
+        def limit(nobs: int) -> int:
+            return nobs - 1 if nobs >= 3 + trend_order else -1
+
+        self._check_nobs("Phillips-Perron", limit, _newey_west_lags)
 
     def _compute_statistic(self) -> None:
         """Core routine to estimate PP test statistics"""
@@ -1357,7 +1370,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         nobs = y.shape[0]
 
         if self._lags is None:
-            self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+            self._lags = _newey_west_lags(nobs)
         lags = self._lags
 
         rhs = asarray(y, dtype=float)[:-1, None]
@@ -1371,12 +1384,6 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._regression = mod.fit(cov_type="HAC", cov_kwds={"maxlags": lags})
         k = rhs_df.shape[1]
         n, u = resols.nobs, resols.resid
-        if u.shape[0] < lags:
-            raise InfeasibleTestException(
-                f"The number of observations {u.shape[0]} is less than the number of"
-                f"lags in the long-run covariance estimator, {lags}. You must have "
-                "lags <= nobs."
-            )
         lam2 = cov_nw(u, lags, demean=False)
         lam = sqrt(lam2)
         # 2. Compute components
@@ -1406,7 +1413,9 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._stat = self._stat_tau
             dist_type = "adf-t"
         assert self._stat is not None
-        self._pvalue = mackinnonp(self._stat, regression=trend, dist_type=dist_type)
+        self._pvalue = _mackinnonp(
+            self._stat, regression=trend, num_unit_roots=1, dist_type=dist_type
+        )
         critical_values = mackinnoncrit(regression=trend, nobs=n, dist_type=dist_type)
         self._critical_values = {
             "1%": critical_values[0],
