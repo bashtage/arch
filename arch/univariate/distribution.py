@@ -617,12 +617,12 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             The normal likelihood has no shape parameters. Empty since the
             standard normal has no shape parameters.
-        resids : ndarray
+        resids : array_like
             The residuals to use in the log-likelihood calculation.
-        sigma2 : ndarray
+        sigma2 : array_like
             Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -805,11 +805,11 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             Shape parameter of the t distribution.
-        resids : ndarray
+        resids : array_like
             The residuals to use in the log-likelihood calculation.
-        sigma2 : ndarray
+        sigma2 : array_like
             Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -1078,12 +1078,12 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             Shape parameters of the skew-t distribution, the tail shape and the
             skewness.
-        resids : ndarray
+        resids : array_like
             The residuals to use in the log-likelihood calculation.
-        sigma2 : ndarray
+        sigma2 : array_like
             Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -1475,11 +1475,11 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        parameters : ndarray
+        parameters : array_like
             Shape parameter of the GED distribution.
-        resids : ndarray
+        resids : array_like
             The residuals to use in the log-likelihood calculation.
-        sigma2 : ndarray
+        sigma2 : array_like
             Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
