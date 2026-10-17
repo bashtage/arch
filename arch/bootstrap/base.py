@@ -1571,8 +1571,30 @@ class CircularBlockBootstrap(IIDBootstrap):
     ) -> None:
         _check_block_size(block_size, self._integer_block_size)
         super().__init__(*args, seed=seed, **kwargs)
-        self.block_size: int = block_size
+        self._block_size: int = block_size
         self._parameters = [block_size]
+
+    @property
+    def block_size(self) -> int:
+        """
+        The block size of the bootstrap.
+
+        Returns
+        -------
+        int
+            The block size, which is the size of each block, or the average
+            size of the blocks in the stationary bootstrap. It cannot be
+            changed after the bootstrap has been created.
+        """
+        return self._block_size
+
+    @block_size.setter
+    def block_size(self, value: int) -> None:
+        raise AttributeError(
+            "block_size cannot be changed after the bootstrap has been created. "
+            "Create a new bootstrap with the required block size, for example "
+            "using clone."
+        )
 
     def clone(
         self,
@@ -1597,8 +1619,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         bs
             Bootstrap instance
         """
-        block_size = self._parameters[0]
-        return self.__class__(block_size, *args, seed=seed, **kwargs)
+        return self.__class__(self.block_size, *args, seed=seed, **kwargs)
 
     def __str__(self) -> str:
         txt = self._name

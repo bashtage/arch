@@ -487,10 +487,11 @@ class MCS(MultipleComparison):
         Returns
         -------
         included : list
-            List of column indices or names of the included models
+            List of column indices or names of the included models, which are
+            the models with a p-value that is at least size.
         """
         self._has_been_computed()
-        incl_loc = self._pvalues.Pvalue > self.size
+        incl_loc = self._pvalues.Pvalue >= self.size
         included = list(self._pvalues.index[incl_loc])
         included.sort()
         return included
@@ -503,10 +504,11 @@ class MCS(MultipleComparison):
         Returns
         -------
         excluded : list
-            List of column indices or names of the excluded models
+            List of column indices or names of the excluded models, which are
+            the models with a p-value that is less than size.
         """
         self._has_been_computed()
-        excl_loc = self._pvalues.Pvalue <= self.size
+        excl_loc = self._pvalues.Pvalue < self.size
         excluded = list(self._pvalues.index[excl_loc])
         excluded.sort()
         return excluded
@@ -522,7 +524,7 @@ class MCS(MultipleComparison):
             DataFrame where the index is the model index (column or name)
             and the column Pvalue contains the MCS p-value of the model. The
             model is in the MCS of size alpha, and so in ``included``, if its
-            p-value is greater than alpha. The models are in the order that
+            p-value is at least alpha. The models are in the order that
             they were eliminated and the p-value of the remaining model is 1.
         """
         self._has_been_computed()
@@ -764,6 +766,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
     when computing the consistent p-value, even if ``studentize`` is False.
     No other studentization is done when ``studentize`` is False.
 
+    If the loss differential of a model is constant in the original data, for
+    example because the model is identical to the benchmark, its variance is
+    0 and its test statistic is not meaningful. A ``RuntimeWarning`` is issued
+    when the test is created, and such models should be removed.
+
     See [1]_ and [2]_ for details.
 
     See Also
@@ -823,6 +830,24 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
                 "models must be finite. The models contain NaN or infinite values."
             )
         self._loss_diff = benchmark_arr - models_arr
+        # Constant, up to rounding error, so that the variance is 0
+        constant = np.ptp(self._loss_diff, axis=0) <= (
+            8 * np.finfo(float).eps * np.abs(self._loss_diff).max(axis=0)
+        )
+        if constant.any():
+            constant_models = np.flatnonzero(constant).tolist()
+            if isinstance(self.models, pd.DataFrame):
+                constant_models = list(self.models.columns[constant])
+            warnings.warn(
+                "The loss differential has a variance of 0 for the models "
+                f"{constant_models}, for example because a model is identical to "
+                "the benchmark. The studentized test statistic of these models "
+                "is not meaningful and the p-values of the SPA, and the superior "
+                "models of StepM, are not reliable if they are included. Remove "
+                "these models before testing.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
