@@ -2189,10 +2189,16 @@ def auto_bandwidth(
     -------
     float
         The estimated optimal bandwidth.
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers or `kernel` is not a str.
+    ValueError
+        If `y` is not 1-d, has fewer than 2 observations or contains NaN or inf, or
+        `kernel` is not one of the options.
     """
-    y_arr = to_array_1d(ensure1d(y, "y"))
-    if y_arr.shape[0] < 2:
-        raise ValueError("Data must contain more than one observation")
+    y_arr = to_array_1d(check_array("y", y, ndim=1, min_length=2))
 
     kernel = check_option(
         "kernel",

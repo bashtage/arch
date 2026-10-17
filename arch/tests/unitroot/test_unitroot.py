@@ -705,7 +705,7 @@ def test_bw_selection():
         auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(
-        ValueError, match=r"Data must contain more than one observation"
+        ValueError, match=r"y must be a 1-d array .* at least 2 elements"
     ):
         auto_bandwidth([1])
 
