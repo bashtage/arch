@@ -123,6 +123,8 @@ dev = [
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
+  # docstrings: the numpydoc linter and arch/tests/test_docstrings.py
+  "numpydoc>=1.10",
   # formatting
   "black[jupyter]~=25.9.0",
   "isort~=6.0",
@@ -512,7 +514,8 @@ exclude_files = [
   # Implementations that are only used through documented objects
   '(.*/)?_samplers_python\.py',
   '(.*/)?recursions_python\.py',
-  # Build helpers and vendored code
+  # Build helpers, the generated version file and vendored code
   '(.*/)?_build/',
-  '(.*/)?_decorators\.py',
+  '(.*/)?_version\.py',
+  '(.*/)?vendor/',
 ]
