@@ -4173,7 +4173,16 @@ class FIAPARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         User provided delta is restricted to lie in (0.05, 4.0).
     truncation : int, optional
         Truncation point to use in ARCH(:math:`\infty`) representation.
-        Default is 1000.
+        Default is 1000. Must be positive.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o``, ``q`` or ``truncation`` is not an integer, or ``delta`` is
+        not a real number or None.
+    ValueError
+        If ``p``, ``o`` or ``q`` is not 0 or 1, ``truncation`` is smaller than 1, or
+        ``delta`` is NaN, inf or not in (0.05, 4.0).
 
     Notes
     -----
