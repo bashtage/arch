@@ -303,3 +303,25 @@ def test_valid_parameters_first_variance(rec):
     # EGARCH(1, 1, 1): only the beta term is available, it multiplies the backcast
     value = _t0(_egarch(rec), np.array([0.1, 0.2, 0.3, 0.4]), np.log(bc))
     assert_allclose(value, np.exp(0.1 + 0.4 * np.log(bc)), rtol=1e-12)
+
+
+@pytest.mark.parametrize("cls", ["FIGARCHUpdater", "FIAPARCHUpdater"])
+@pytest.mark.parametrize(
+    ("truncation", "exc"),
+    [(0, ValueError), (-1, ValueError), (2.5, TypeError), (None, TypeError)],
+    ids=["zero", "negative", "float", "None"],
+)
+def test_truncation(rec, cls, truncation, exc):
+    if cls == "FIGARCHUpdater":
+        args = (1, 1, 2.0, truncation)
+    else:
+        args = (1, 1, 1, truncation, True, 1.5)
+    with pytest.raises(exc, match=r"truncation must be an integer >= 1; got "):
+        getattr(rec, cls)(*args)
+
+
+def test_truncation_one(rec):
+    # The smallest truncation is valid, and the weights have one element
+    updater = rec.FIGARCHUpdater(0, 0, 2.0, 1)
+    params = np.array([0.1, 0.4])
+    assert_allclose(_t0(updater, params, 0.5), 0.1 + 0.4 * 0.5, rtol=1e-12)

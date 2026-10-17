@@ -14,7 +14,7 @@ import numpy as np
 from scipy.special import gammaln
 
 from arch._typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
-from arch.utility._validation import _describe
+from arch.utility._validation import _describe, check_int
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [
@@ -1276,6 +1276,7 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None:
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.truncation = truncation
@@ -1337,6 +1338,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         est_delta: bool,
         delta: float,
     ) -> None:
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.o = o

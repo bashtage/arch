@@ -6,7 +6,7 @@ cimport numpy as np
 from libc.float cimport DBL_MAX
 from libc.math cimport exp, fabs, lgamma, log, sqrt
 
-from arch.utility._validation import _describe
+from arch.utility._validation import _describe, check_int
 
 cdef:
     double SQRT2_OV_PI = 0.79788456080286535587989211
@@ -1246,7 +1246,8 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
         double[::1] fresids
         double backcast
 
-    def __init__(self, int p, int q, double power, int truncation):
+    def __init__(self, int p, int q, double power, object truncation):
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.truncation = truncation
@@ -1340,10 +1341,11 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
         int p,
         int q,
         int o,
-        int truncation,
+        object truncation,
         bint est_delta,
         double delta
     ):
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.o = o
