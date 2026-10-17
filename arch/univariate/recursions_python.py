@@ -14,6 +14,7 @@ import numpy as np
 from scipy.special import gammaln
 
 from arch._typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
+from arch.utility._validation import _describe, check_int
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [
@@ -38,6 +39,40 @@ __all__ = [
 
 LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
 SQRT2_OV_PI = 0.79788456080286541  # E[abs(e)], e~N(0,1)
+
+
+def _plural(count: int, noun: str) -> str:
+    return f"{count} {noun}{'' if count == 1 else 's'}"
+
+
+def _check_vector(name: str, arr: object, min_length: int) -> None:
+    """
+    Check that an argument is not None and has at least min_length elements.
+
+    This is the check of the compiled recursions, which read and write the arrays
+    without bounds checks. It is O(1) and is made once per likelihood evaluation,
+    never in the per-observation update. The messages are the same as theirs, and
+    are only built when a check fails.
+    """
+    shape = None if arr is None else np.shape(arr)
+    if shape is None or len(shape) != 1 or shape[0] < min_length:
+        rule = "a 1-d C contiguous float64 ndarray"
+        if min_length > 0:
+            rule += f" with at least {_plural(min_length, 'element')}"
+        exc = TypeError if arr is None else ValueError
+        raise exc(f"{name} must be {rule}; got {_describe(arr)}")
+
+
+def _check_matrix(name: str, arr: object, min_rows: int, min_cols: int) -> None:
+    """Check that an argument is not None and has at least min_rows by min_cols."""
+    shape = None if arr is None else np.shape(arr)
+    if shape is None or len(shape) != 2 or shape[0] < min_rows or shape[1] < min_cols:
+        rule = (
+            "a 2-d C contiguous float64 ndarray with at least "
+            f"{_plural(min_rows, 'row')} and {_plural(min_cols, 'column')}"
+        )
+        exc = TypeError if arr is None else ValueError
+        raise exc(f"{name} must be {rule}; got {_describe(arr)}")
 
 
 def bounds_check_python(sigma2: float, var_bounds: Float64Array2D) -> float:
@@ -1045,6 +1080,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = cast("float", backcast)
         if self.sigma_power.shape[0] < nobs:
             self.sigma_power = np.empty(nobs)
@@ -1093,6 +1129,10 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lags: Int32Array) -> None:
+        if lags is None:
+            raise TypeError(
+                f"lags must be a 1-d C contiguous int32 ndarray; got {_describe(lags)}"
+            )
         self.lags = lags
         self.backcast = -1.0
 
@@ -1102,6 +1142,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + len(self.lags))
         self.backcast = cast("float", backcast)
 
     def update(
@@ -1141,6 +1182,7 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         nobs: int,
     ) -> None:
         if self.estimate_lam:
+            _check_vector("parameters", parameters, 1)
             self.params[1] = 1.0 - parameters[0]
             self.params[2] = parameters[0]
         self.backcast = backcast
@@ -1196,6 +1238,8 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        # omega, alpha, gamma (if asym) and theta
+        _check_vector("parameters", parameters, 3 + int(self.asym))
         self.update_weights(parameters[2 + self.asym])
         alpha = parameters[1]
         if self.asym:
@@ -1236,6 +1280,7 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 
 class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None:
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.truncation = truncation
@@ -1249,6 +1294,8 @@ class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        # omega, phi (if p), d and beta (if q), which the weights and update read
+        _check_vector("parameters", parameters, 2 + self.p + self.q)
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         self.backcast = backcast
         if self.fresids.shape[0] < nobs:
@@ -1295,6 +1342,7 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         est_delta: bool,
         delta: float,
     ) -> None:
+        check_int("truncation", truncation, lower=1)
         self.p = p
         self.q = q
         self.o = o
@@ -1338,6 +1386,10 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        # omega, phi (if p), d, beta (if q), gamma (if o) and delta (if estimated)
+        _check_vector(
+            "parameters", parameters, 2 + self.p + self.q + self.o + int(self.est_delta)
+        )
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         # The backcast is a variance, so convert it to sigma ** delta. It is
         # stored on this scale
@@ -1443,6 +1495,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = cast("float", backcast)
         self._resize(nobs)
 
@@ -1489,7 +1542,9 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
 class ARCHInMeanRecursion:
     def __init__(self, updater: VolatilityUpdater):
         if not isinstance(updater, VolatilityUpdater):
-            raise TypeError("updater must be a VolatilityUpdater")
+            raise TypeError(
+                f"updater must be a VolatilityUpdater; got {_describe(updater)}"
+            )
         self.volatility_updater = updater
 
     def recursion(
@@ -1502,8 +1557,16 @@ class ARCHInMeanRecursion:
         var_bounds: Float64Array2D,
         power: float,
     ) -> Float64Array:
+        # Checked once per call, as in the compiled version
+        _check_vector("y", y, 0)
         nobs = y.shape[0]
+        _check_matrix("x", x, nobs, 0)
         k = x.shape[1]
+        _check_vector("mean_parameters", mean_parameters, k + 1)
+        # The length that variance_params needs depends on the updater
+        _check_vector("variance_params", variance_params, 0)
+        _check_vector("sigma2", sigma2, nobs)
+        _check_matrix("var_bounds", var_bounds, nobs, 2)
         resids = np.empty(nobs)
         gamma = mean_parameters[k]
 
