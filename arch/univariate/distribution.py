@@ -891,7 +891,9 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         std_resid = check_array(
             "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
         )
-        k = cast("float", stats.kurtosis(std_resid, fisher=False))
+        with np.errstate(invalid="ignore"):
+            # Non-finite residuals give NaN and the default starting value
+            k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
@@ -1192,7 +1194,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         std_resid = check_array(
             "std_resid", std_resid, ndim=1, min_length=1, allow_nan=True, allow_inf=True
         )
-        k = cast("float", stats.kurtosis(std_resid, fisher=False))
+        with np.errstate(invalid="ignore"):
+            # Non-finite residuals give NaN and the default starting value
+            k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
