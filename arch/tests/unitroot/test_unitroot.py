@@ -662,7 +662,7 @@ def test_zivot_andrews(series_name):
 def test_zivot_andrews_error():
     series_name = "REAL_GNP"
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
-    with pytest.raises(ValueError, match=r"trim must be a float in range \[0, 1/3\]"):
+    with pytest.raises(ValueError, match=r"trim must be a finite float in \[0, 0.33"):
         ZivotAndrews(y, trim=0.5)
 
 

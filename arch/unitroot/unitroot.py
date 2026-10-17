@@ -1652,7 +1652,9 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     trim : float, optional
         Percentage of series at begin/end to exclude from break-period
-        calculation in range [0, 0.333].
+        calculation in range [0, 0.333]. The number of observations that are
+        excluded, int(nobs * trim), must be larger than the number of lags, so
+        that trim cannot be 0.
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length.
     method : {"aic", "bic", "t-stat", "maic"}, optional
@@ -1664,6 +1666,20 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
           of the last lag is significant, using a cut-off of 1.645 for the
           absolute value of the t-statistic
         - "maic" - Select the minimum of Ng and Perron's modified Akaike IC
+
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` or `max_lags` is not an
+        integer, `trim` is not a real number, or `trend` or `method` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
+        negative, `trim` is not in [0, 1/3], or `trend` or `method` is not one of
+        the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, `lags` or `max_lags`, or
+        int(nobs * trim) is too small for `lags` and `trend`. This is also a
+        ``ValueError``.
 
     Notes
     -----
@@ -1708,10 +1724,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         method: Literal["aic", "bic", "t-stat", "maic"] = "aic",
     ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
-        if not isinstance(trim, float) or not 0 <= trim <= (1 / 3):
-            raise ValueError("trim must be a float in range [0, 1/3]")
-        self._trim = trim
-        self._max_lags = max_lags
+        self._trim = check_float("trim", trim, lower=0.0, upper=1 / 3)
+        self._max_lags = check_int("max_lags", max_lags, lower=0, allow_none=True)
         self._method = self._clean_method(method)
 
         self._test_name = "Zivot-Andrews"
@@ -1720,6 +1734,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             "The process contains a unit root with a single structural break."
         )
         self._alternative_hypothesis = "The process is trend and break stationary."
+        self._check_specification()
 
     @staticmethod
     def _quick_ols(endog: Float64Array, exog: Float64Array) -> Float64Array:
@@ -1735,14 +1750,30 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return b / sqrt(diag(sigma2 * xpxi))
 
     def _check_specification(self) -> None:
+        # The regression has nobs - 1 - lags rows and basecols + lags columns, and it
+        # needs at least one degree of freedom for the t-statistic
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = 3 + trend_order + lag_len
-        if self._y.shape[0] < required:
+        basecols = 5 if self._trend == "ct" else 4
+        nobs = self._nobs
+
+        def limit(n: int) -> int:
+            return min(n - 3 - trend_order, (n - 2 - basecols) // 2)
+
+        self._check_nobs("Zivot-Andrews", limit)
+        # The break dummies need observations before the first break date, which is
+        # int(nobs * trim) + 1. The regressors are collinear unless there are at
+        # least 1 (trend "c"), 2 (trend "ct") or 3 (trend "t") observations before the
+        # break that are not used by the lags.
+        lags = 0 if self._lags is None else self._lags
+        required = lags + {"c": 1, "ct": 2, "t": 3}[self._trend]
+        if int(nobs * self._trim) < required:
             raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
+                f"trim must be large enough that int(nobs * trim) is at least "
+                f"{required} for lags={lags} and trend {self._trend!r} with the "
+                f"{nobs} observations in y; got {self._trim} (float)"
             )
+        # An ADF with a constant and a trend selects the lags
+        _check_max_lags(self._max_lags, self._lags, nobs, (nobs - 5) // 2)
 
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
@@ -1793,7 +1824,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             if cutoff <= 0:
                 raise InfeasibleTestException(
                     f"The number of observations is too small to use the Zivot-Andrews "
-                    f"test with trend {trend} and {self._lags} lags."
+                    f"test with trend {trend}, trim {self._trim} and {self._lags} "
+                    "lags."
                 )
             if trend != "t":
                 exog[:cutoff, 1] = 0
@@ -1811,7 +1843,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
                     raise InfeasibleTestException(
-                        f"The regressor matrix is singular. The can happen if the data "
+                        "The regressor matrix is singular. This can happen if the data "
                         "contains regions of constant observations, if the number of "
                         f"lags ({self._lags}) is too large, or if the series is very "
                         "short."
