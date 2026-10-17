@@ -1467,6 +1467,19 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         - "c" - Include a constant
         - "ct" - Include a constant and linear time trend
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` is not an integer or None,
+        or `trend` is not a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` is less than -1, or
+        `trend` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` (the number from
+        the rule 12 * (nobs/100) ** (1/4) if it is -1) is larger than the number
+        of observations in y. This is also a ``ValueError``.
+
     Notes
     -----
     The null hypothesis of the KPSS test is that the series is weakly
@@ -1523,6 +1536,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("c", "ct")
         self._legacy_lag_selection = False
+        lags = check_int("lags", lags, lower=-1, allow_none=True)
         if lags == -1:
             self._legacy_lag_selection = True
             lags = None
@@ -1531,16 +1545,18 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids: ArrayLike1D | None = None
+        self._check_specification()
 
     def _check_specification(self) -> None:
+        # The long-run covariance estimator can use at most nobs lags. The default
+        # number of lags is only known from nobs for the legacy selection.
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = max(1 + trend_order, lag_len)
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+
+        def limit(nobs: int) -> int:
+            return nobs if nobs >= 1 + trend_order else -1
+
+        default = _newey_west_lags if self._legacy_lag_selection else None
+        self._check_nobs("KPSS", limit, default)
 
     def _compute_statistic(self) -> None:
         # 1. Estimate model with trend
@@ -1551,13 +1567,13 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._resids = u = res.resid
         if self._lags is None:
             if self._legacy_lag_selection:
-                self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
+                self._lags = _newey_west_lags(nobs)
             else:
                 self._autolag()
         assert self._lags is not None
         if u.shape[0] < self._lags:
             raise InfeasibleTestException(
-                f"The number of observations {u.shape[0]} is less than the number of"
+                f"The number of observations {u.shape[0]} is less than the number of "
                 f"lags in the long-run covariance estimator, {self._lags}. You must "
                 "have lags <= nobs."
             )
@@ -1570,7 +1586,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             lit_trend: Literal["c", "ct"] = "c"
         else:
             lit_trend = "ct"
-        self._pvalue, critical_values = kpss_crit(self._stat, lit_trend)
+        self._pvalue, critical_values = _kpss_crit(self._stat, lit_trend)
         self._critical_values = {
             "1%": critical_values[0],
             "5%": critical_values[1],
@@ -1601,8 +1617,8 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if s0 <= 0:
             raise InfeasibleTestException(
                 "Residuals are all zero and so automatic bandwidth selection cannot "
-                "be used. This is usually an indication that the series being testes "
-                "is too small or have constant values."
+                "be used. This is usually an indication that the series being tested "
+                "is too small or has constant values."
             )
         s_hat = s1 / s0
         pwr = 1.0 / 3.0

@@ -541,10 +541,11 @@ def test_adf_buggy_timeseries3():
 
 def test_kpss_buggy_timeseries1():
     x = np.asarray([0])
-    adf = KPSS(x, lags=0)
     # ValueError: cannot convert float NaN to integer
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 2 observations"):
-        assert np.isfinite(adf.stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 2 observations long"
+    ):
+        KPSS(x, lags=0)
 
 
 kpss_autolag_data = (
@@ -772,8 +773,10 @@ def test_phillips_perron_specifed_lag():
 
 def test_kpss_legacy():
     y = np.random.default_rng(1234).standard_normal(4)
-    with pytest.raises(InfeasibleTestException, match=r"The number of observations 4"):
-        assert np.isfinite(KPSS(y, lags=-1).stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 6 observations long"
+    ):
+        KPSS(y, lags=-1)
 
 
 @pytest.mark.parametrize(
