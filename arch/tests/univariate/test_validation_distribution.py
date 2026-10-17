@@ -161,21 +161,22 @@ def build_rows(cls: type, shape: tuple[float, ...]) -> list[Row]:
         "resids",
         [*DATA_GOOD, np.array([1.0, np.nan]), np.array([np.inf, 1.0]), np.array([])],
     )
+    # starting_values: NaN and inf are allowed, since the standardized residuals of a
+    # degenerate model, such as one fit to a constant series, can be 0/0
     start = make(cls, shape, "starting_values")
     rows += bad_value_rows(
         f"{name}.starting_values",
         start,
         {"std_resid": RESIDS},
         "std_resid",
-        [
-            *NAN_FREE_DATA_BAD,
-            ([1.0, np.nan], ValueError),
-            ([np.inf, 1.0], ValueError),
-            (np.array([]), ValueError),
-        ],
+        [*NAN_FREE_DATA_BAD, (np.array([]), ValueError)],
     )
     rows += good_value_rows(
-        f"{name}.starting_values", start, {"std_resid": RESIDS}, "std_resid", DATA_GOOD
+        f"{name}.starting_values",
+        start,
+        {"std_resid": RESIDS},
+        "std_resid",
+        [*DATA_GOOD, np.array([1.0, np.nan]), np.array([np.inf, 1.0])],
     )
 
     # loglikelihood: only individual and the number of parameters are checked
