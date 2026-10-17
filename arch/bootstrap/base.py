@@ -208,7 +208,7 @@ def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
        372-375, DOI: 10.1080/07474930802459016.
     """
     # TODO: This should use overload ensure2d definitions to know it is ndarray
-    x_arr = np.asarray(ensure2d(np.asarray(x, dtype=float), "x"), dtype=float)
+    x_arr = np.asarray(ensure2d(x, "x"), dtype=float)
     opt = [_single_optimal_block(col) for col in x_arr.T]
     if isinstance(x, pd.DataFrame):
         idx: list[Hashable] = list(x.columns)

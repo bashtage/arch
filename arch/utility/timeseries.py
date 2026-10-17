@@ -6,6 +6,7 @@ import pandas as pd
 
 from arch._typing import Float64Array, Literal, NDArrayOrFrame
 from arch.utility._validation import check_option
+from arch.utility.array import ensure1d, ensure2d
 
 
 class ColumnNameConflict(Warning):
@@ -85,8 +86,9 @@ def add_trend(
 
     Parameters
     ----------
-    x : ndarray or DataFrame, optional
+    x : array_like or DataFrame, optional
         Original array of data. If None, then nobs must be a positive integer.
+        Integer, unsigned integer and Boolean data are converted to float64.
     trend : {"n", "c", "t", "ct", "ctt"}, optional
         The trend(s) to add. Supported options are:
 
@@ -110,8 +112,9 @@ def add_trend(
     -------
     ndarray or DataFrame
         The trend if x is None, an ndarray with nobs rows. Otherwise x with the
-        trend columns added, which has the same type as x. The trend columns
-        of a DataFrame are named "const", "trend" and "quadratic_trend".
+        trend columns added, which is a DataFrame if x is a DataFrame and an
+        ndarray otherwise. The trend columns of a DataFrame are named "const",
+        "trend" and "quadratic_trend".
 
     Raises
     ------
@@ -133,6 +136,12 @@ def add_trend(
     )
     if (x is None and nobs is None) or (x is not None and nobs is not None):
         raise ValueError("One and only one of x or nobs must be provided.")
+    if x is not None:
+        # A Series is stacked into an ndarray, as before
+        x = cast(
+            "NDArrayOrFrame",
+            ensure1d(x, "x") if isinstance(x, pd.Series) else ensure2d(x, "x"),
+        )
     if trend_name == "n":
         if x is not None:
             return x

@@ -34,7 +34,12 @@ from scipy import stats
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 
 from arch._typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
+from arch.utility.array import (
+    AbstractDocStringInheritor,
+    as_float64,
+    ensure1d,
+    to_array_1d,
+)
 
 __all__ = ["Distribution", "GeneralizedError", "Normal", "SkewStudent", "StudentsT"]
 
@@ -425,6 +430,8 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             \ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
             +\frac{x^{2}}{\sigma^{2}}\right)
         """
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
         lls = -0.5 * (log(2 * pi) + log(sigma2) + resids**2.0 / sigma2)
         if individual:
             return lls
@@ -461,7 +468,6 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
-            assert isinstance(pits, float)
             _pits = array([pits], dtype=np.float64)
         else:
             _pits = asarray(pits, dtype=float)
@@ -569,6 +575,9 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
         where :math:`\Gamma` is the gamma function.
         """
+        parameters = ensure1d(parameters, "parameters")
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
         nu = parameters[0]
         lls = gammaln((nu + 1) / 2) - gammaln(nu / 2) - log(pi * (nu - 2)) / 2
         lls -= 0.5 * (log(sigma2))
@@ -599,6 +608,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         Uses relationship between kurtosis and degree of freedom parameter to
         produce a moment-based estimator for the starting values.
         """
+        std_resid = ensure1d(std_resid, "std_resid")
         k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
@@ -814,6 +824,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         and :math:`\Gamma` is the gamma function.
         """
+        parameters = ensure1d(parameters, "parameters")
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
         parameters_arr: Float64Array1D
         parameters_arr = np.ravel(asarray(parameters, dtype=float))
         eta, lam = parameters_arr
@@ -858,6 +871,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         produce a moment-based estimator for the starting value of the shape
         parameter.  The starting value of the skewness parameter is 0.
         """
+        std_resid = ensure1d(std_resid, "std_resid")
         k = cast("float", stats.kurtosis(std_resid, fisher=False))
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
@@ -1162,6 +1176,9 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
             \ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})
             -\ln\Gamma(\frac{3}{\nu})\right).
         """
+        parameters = ensure1d(parameters, "parameters")
+        resids = as_float64(resids, "resids")
+        sigma2 = as_float64(sigma2, "sigma2")
         nu = parameters[0]
         log_c = 0.5 * (-2 / nu * log(2) + gammaln(1 / nu) - gammaln(3 / nu))
         c = exp(log_c)
