@@ -2367,7 +2367,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Returns
         -------
-        result : WaldTestStatistic
+        result : arch.utility.testing.WaldTestStatistic
             Result of ARCH-LM test.
 
         Raises
