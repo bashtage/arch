@@ -92,11 +92,20 @@ class BootstrapRng:
     Parameters
     ----------
     std_resid : ndarray
-        Array containing standardized residuals.
+        Array containing standardized residuals. NaN and inf are not rejected.
     start : int
-        Location of first forecast.
+        Location of first forecast, between 1 and the number of residuals.
     random_state : RandomState, optional
         NumPy RandomState instance.
+
+    Raises
+    ------
+    TypeError
+        If ``std_resid`` cannot be converted to a float64 array, ``start`` is not an
+        integer or ``random_state`` is not a RandomState.
+    ValueError
+        If ``std_resid`` is not 1-d or ``start`` is not between 1 and the number of
+        residuals.
     """
 
     def __init__(
