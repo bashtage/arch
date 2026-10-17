@@ -5,7 +5,7 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
-from arch.utility._validation import check_option
+from arch.utility._validation import check_array, check_option
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -22,26 +22,48 @@ class CointegrationSetup(NamedTuple):
     trend: UnitRootTrend
 
 
+# The number of deterministic terms in the cointegrating regression
+_TREND_TERMS = {"n": 0, "c": 1, "ct": 2, "ctt": 3, "t": 1}
+
+
 def _check_cointegrating_regression(
     y: ArrayLike1D,
     x: ArrayLike2D,
     trend: UnitRootTrend,
     supported_trends: tuple[str, ...] = ("n", "c", "ct", "ctt"),
 ) -> CointegrationSetup:
-    y = ensure1d(y, "y", True)
-    x = ensure2d(x, "x")
-    if y.shape[0] != x.shape[0]:
+    trend_name = check_option("trend", trend, supported_trends)
+    # Checks only, the conversion below keeps the index of a pandas object
+    y_values = check_array("y", y, ndim=1)
+    x_values = check_array("x", x, ndim=2)
+    if y_values.shape[0] != x_values.shape[0]:
         raise ValueError(
             f"The number of observations in y and x differ. y has "
-            f"{y.shape[0]} observtations, and x has {x.shape[0]}."
+            f"{y_values.shape[0]} observations, and x has {x_values.shape[0]}."
         )
+    num_x = x_values.shape[1]
+    if num_x < 1:
+        raise ValueError(
+            f"x must be a 2-d array with at least 1 column; got shape "
+            f"{x_values.shape} ({type(x).__name__})"
+        )
+    # One more row than the regression has parameters is needed to estimate it, and
+    # all estimators use the first difference of the data
+    num_params = num_x + _TREND_TERMS[trend_name]
+    check_array("x", x_values, ndim=2, min_length=num_params + 2)
+    y = ensure1d(y, "y", True)
+    x = ensure2d(x, "x")
     if not isinstance(x, pd.DataFrame):
         cols = [f"x{i}" for i in range(1, x.shape[1] + 1)]
         assert isinstance(y, pd.Series)
         x_df = pd.DataFrame(x, columns=cols, index=y.index)
     else:
         x_df = x
-    trend_name = check_option("trend", trend, supported_trends)
+    if not y.index.equals(x_df.index):
+        raise ValueError(
+            f"x must be array_like with the same index as y; got a different index "
+            f"({type(x_df.index).__name__})"
+        )
     return CointegrationSetup(y, x_df, cast("UnitRootTrend", trend_name))
 
 

@@ -10,7 +10,11 @@ from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.covariance.kernel import CovarianceEstimator, get_kernel_estimator
-from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
+from arch.unitroot._shared import (
+    ResidualCointegrationTestResult,
+    _check_cointegrating_regression,
+    _cross_section,
+)
 from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_PARAMETERS,
     CV_TAU_MIN,
@@ -22,7 +26,6 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
 )
 from arch.unitroot.unitroot import TREND_DESCRIPTION
 from arch.utility._validation import check_option
-from arch.utility.array import ensure2d
 from arch.utility.io import str_format
 from arch.utility.timeseries import add_trend
 
@@ -280,13 +283,12 @@ def phillips_ouliaris(
         "Literal['Za', 'Zt', 'Pu', 'Pz']",
         check_option("test_type", test_type, _TEST_TYPES, display=_TEST_TYPES.values()),
     )
-    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     kernel_est = get_kernel_estimator(kernel)
-    y_2d = ensure2d(y, "y")
-    x = ensure2d(x, "x")
-    xsection = _cross_section(y_2d, x, trend)
+    setup = _check_cointegrating_regression(y, x, trend)
+    trend = setup.trend
+    xsection = _cross_section(setup.y, setup.x, trend)
     data = xsection.model.data
-    x_df = data.orig_exog.iloc[:, : x.shape[1]]
+    x_df = data.orig_exog.iloc[:, : setup.x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)
     if test_type in ("Pu", "Pz"):
         return _po_ptests(
