@@ -138,9 +138,9 @@ to restore the previous results.
   or from a nested bootstrap if ``nested=True``. Everyone who uses the default arguments
   is affected: the p-values, the critical values and the superior models can change. Use
   ``studentize=False`` for the statistics that were always used in previous versions.
-  Studentizing in each replication makes the default about 2 to 3 times slower (for 2000
-  observations, 100 models and 1000 replications, 1.1 seconds in 8.0 and 3.0 seconds
-  now). Started by WatchTree-19 (:issue:`871`) and completed in :issue:`882`.
+  Studentizing in each replication makes the default about 3 times slower (measured with
+  2000 observations, 100 models and 1000 replications). Started by WatchTree-19
+  (:issue:`871`) and completed in :issue:`882`.
 - The critical values of :class:`~arch.bootstrap.SPA` and :class:`~arch.bootstrap.StepM`
   apply to the studentized mean loss differentials, so code that compares
   ``critical_values`` with mean loss differentials or that uses fixed thresholds must
@@ -156,7 +156,7 @@ to restore the previous results.
   computes the variances used to studentize in every bootstrap replication using a
   nested bootstrap, and not only in the original data, and never uses the kernel
   estimator. The run time grows with the square of ``reps``: with 500 observations, 10
-  models and 200 replications it increased from 0.04 seconds to 2.6 seconds.
+  models and 200 replications it increased from 0.04 seconds to about 3 seconds.
   ``nested=True`` requires ``studentize=True`` and raises a ``ValueError`` otherwise, so
   there is no way to restore the previous statistics with ``nested=True``
   (:issue:`882`).
@@ -177,8 +177,8 @@ to restore the previous results.
   into longer horizons. For a zero mean model of the last 1,500 daily S&P 500 returns,
   the simulated variance of the first step at the last origin changes from 3.048 to
   2.774 (-9%), which is the analytic forecast, and the means of the simulated variances
-  for steps 1 to 5 change from 3.048, 2.960, 2.853, 2.789 and 2.712 to 2.774, 2.708,
-  2.623, 2.575 and 2.513. For a constant mean model of NASDAQ returns with Student's t
+  of the later steps are lower by a similar amount. For a constant mean model of NASDAQ
+  returns with Student's t
   errors the variance changes from 3.383 to 5.462 (+61%) at one origin when the
   volatility had just increased. Analytic forecasts, estimation and ``fix`` are not
   changed by this fix. Contributed by WatchTree-19 (:issue:`868`).
@@ -368,10 +368,11 @@ to restore the previous results.
 Backward-incompatible changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - The ``bootstrap`` attribute of :class:`~arch.bootstrap.SPA`,
-  :class:`~arch.bootstrap.StepM` and :class:`~arch.bootstrap.MCS` is now a read-only
-  property. Assigning a bootstrap to an existing instance raises ``AttributeError``,
-  since quantities that depend on the bootstrap are computed when the instance is
-  created. Create a new instance to use a different bootstrap (:issue:`882`).
+  :class:`~arch.bootstrap.StepM`, ``RealityCheck`` and :class:`~arch.bootstrap.MCS` is
+  now a read-only property. Assigning a bootstrap to an existing instance raises
+  ``AttributeError``, since quantities that depend on the bootstrap are computed when
+  the instance is created. Create a new instance to use a different bootstrap
+  (:issue:`882`).
 - ``nested=True`` with ``studentize=False`` in :class:`~arch.bootstrap.SPA` and
   :class:`~arch.bootstrap.StepM` raises a ``ValueError``. The combination was accepted
   in previous versions (:issue:`882`).
@@ -937,7 +938,7 @@ Performance
   is about 3, 4 and 1.4 times faster with the compiled recursions, so that estimating a
   FIGARCH model with the default truncation of 1000 is about 2.5 times faster.
   Simulating from :class:`~arch.univariate.HARCH` and
-  :class:`~arch.univariate.MIDASHyperbolic` models is 4 to 30 times faster, and the
+  :class:`~arch.univariate.MIDASHyperbolic` models is 3 to 30 times faster, and the
   multi-step analytic forecasts of :class:`~arch.univariate.ARCH` and
   :class:`~arch.univariate.GARCH` models are computed for all forecast origins at once,
   which makes forecasting every observation of a sample of 5000 observations 10 steps
@@ -945,7 +946,7 @@ Performance
 - The simulation and bootstrap forecasts of :class:`~arch.univariate.FIGARCH` compute
   the contribution of the observed history once for each forecast origin and horizon,
   and not once for each simulated path. Forecasting 100 origins 10 steps ahead using
-  1000 paths and a truncation of 1000 takes 0.1 s and not 2.2 s (:issue:`940`).
+  1000 paths and a truncation of 1000 is about 20 to 30 times faster (:issue:`940`).
 
 Documentation and maintenance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1025,6 +1026,11 @@ Deprecations and removals
 
   .. PR: a90-dep1-deprecations
 
+- Removed the unused module-level string templates ``deprecation_doc`` from
+  ``arch.utility.array`` and ``arch.utility.exceptions``.
+
+  .. PR: a90-dep1-deprecations
+
 Compatibility
 ~~~~~~~~~~~~~
 - Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux on
@@ -1036,6 +1042,8 @@ Compatibility
 - Improved compatibility with current and upcoming releases of NumPy and pandas: the
   warning of pandas 3.1 for time zone aware indices in date lookups is fixed, and the
   code no longer sets the ``shape`` of arrays (:issue:`842`, :issue:`912`).
+- The scalar results of ``Normal.ppf``, ``SkewStudent.cdf`` and ``mackinnonp`` are
+  Python ``float`` values and no longer ``numpy.float64``.
 
 Minimum versions
 ~~~~~~~~~~~~~~~~
