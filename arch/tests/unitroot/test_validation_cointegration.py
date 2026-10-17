@@ -14,7 +14,6 @@ from arch.tests.validation_table import (
     BOOL_BAD,
     BOOL_GOOD,
     FLOAT_BAD,
-    FLOAT_GOOD,
     INT_BAD,
     INT_GOOD,
     Row,
@@ -163,8 +162,12 @@ INDEX_ROWS = [
     Row(
         target,
         func,
-        {"y": pd.Series(Y, index=pd.date_range("2000-01-31", periods=NOBS, freq="ME")),
-         "x": pd.DataFrame(X)},
+        {
+            "y": pd.Series(
+                Y, index=pd.date_range("2000-01-31", periods=NOBS, freq="ME")
+            ),
+            "x": pd.DataFrame(X),
+        },
         ValueError,
         r"^x must be array_like with the same index as y; got ",
         id=f"{target}-index",
@@ -182,7 +185,7 @@ def test_mismatched_index(row):
 # The regression has num_x + the number of terms of the trend parameters and the
 # estimators need two more rows
 @pytest.mark.parametrize(
-    "trend,num_x,min_rows",
+    ("trend", "num_x", "min_rows"),
     [("n", 2, 4), ("c", 2, 5), ("ct", 2, 6), ("ctt", 2, 7), ("c", 1, 4), ("c", 3, 6)],
 )
 @pytest.mark.parametrize("target", list(DATA_TARGETS))
@@ -195,7 +198,7 @@ def test_too_few_observations(target, trend, num_x, min_rows):
         DATA_TARGETS[target](y=y, x=x, trend=trend)
 
 
-@pytest.mark.parametrize("trend,num_x,min_rows", [("n", 2, 4), ("ctt", 3, 8)])
+@pytest.mark.parametrize(("trend", "num_x", "min_rows"), [("n", 2, 4), ("ctt", 3, 8)])
 def test_minimum_observations(trend, num_x, min_rows):
     rng = np.random.default_rng(3)
     x = rng.standard_normal((min_rows, num_x))
@@ -373,8 +376,12 @@ DOLS_ROWS = [
     *_order_rows("leads"),
     *_order_rows("max_lag"),
     *_order_rows("max_lead"),
-    *bad_value_rows("dols", _dols, DOLS_BASE, "common", BOOL_BAD, rule=r"True or False"),
-    *good_value_rows("dols", _dols, {**DOLS_BASE, "lags": 2, "leads": 2}, "common", BOOL_GOOD),
+    *bad_value_rows(
+        "dols", _dols, DOLS_BASE, "common", BOOL_BAD, rule=r"True or False"
+    ),
+    *good_value_rows(
+        "dols", _dols, {**DOLS_BASE, "lags": 2, "leads": 2}, "common", BOOL_GOOD
+    ),
     Row(
         "dols",
         _dols,
@@ -498,7 +505,12 @@ def _fm_rows(name, ctor, fit):
         ),
         *good_value_rows(f"{name}", ctor, BASE, "x_trend", X_TREND_GOOD),
         *bad_value_rows(
-            f"{name}-fit", fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
+            f"{name}-fit",
+            fit,
+            FIT_BASE,
+            "bandwidth",
+            BANDWIDTH_BAD,
+            rule=BANDWIDTH_RULE,
         ),
         *[
             row
