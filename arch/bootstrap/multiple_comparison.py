@@ -1,6 +1,6 @@
 from collections.abc import Hashable, Sequence
 import copy
-from typing import cast
+from typing import Any, cast
 import warnings
 
 import numpy as np
@@ -22,10 +22,19 @@ from arch.bootstrap.base import (
     StationaryBootstrap,
     _get_random_integers,
 )
-from arch.utility._validation import check_option
-from arch.utility.array import DocStringInheritor, ensure2d
+from arch.utility._validation import (
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+    check_seed,
+)
+from arch.utility.array import DocStringInheritor, as_float64, ensure2d
 
 __all__ = ["MCS", "SPA", "RealityCheck", "StepM"]
+
+_PVALUE_TYPES = ("lower", "consistent", "upper")
 
 # Lower case names of the MCS methods, which map to the canonical names
 _MCS_METHODS = {"r": "R", "max": "max"}
@@ -51,6 +60,45 @@ def _bootstrap_class(bootstrap: str) -> type[CircularBlockBootstrap]:
         normalize=lambda value: value.replace(" ", "_"),
     )
     return _BOOTSTRAPS[name]
+
+
+# The smallest number of observations. The SPA needs log(log(t)) > 0. The MCS of a
+# single observation runs and warns that the MCS is not valid for this problem.
+_MIN_OBS_MCS = 1
+_MIN_OBS_SPA = 3
+
+
+def _check_data(name: str, value: object, **kwargs: Any) -> np.ndarray:
+    """
+    Check the shape of losses, allowing NaN and inf that are rejected later.
+
+    Data that cannot be converted to numbers keep the message of the conversion,
+    which says that float64 is required.
+    """
+    try:
+        return check_array(name, value, allow_nan=True, allow_inf=True, **kwargs)
+    except TypeError:
+        as_float64(value, name)
+        raise
+
+
+def _require_columns(name: str, arr: np.ndarray, minimum: int, value: object) -> None:
+    """Check the number of columns of 2-d data that has been checked to be 2-d"""
+    if arr.shape[1] < minimum:
+        plural = "" if minimum == 1 else "s"
+        raise ValueError(
+            f"{name} must be a 2-d array with at least {minimum} column{plural}; "
+            f"got shape {arr.shape} ({type(value).__name__})"
+        )
+
+
+def _check_resampling(
+    reps: object, block_size: object, seed: object, t: int
+) -> tuple[int, int | None, int | np.random.Generator | np.random.RandomState | None]:
+    """Check the arguments that control the bootstrap and that all procedures share"""
+    reps = check_int("reps", reps, lower=1)
+    block_size = check_int("block_size", block_size, lower=1, upper=t, allow_none=True)
+    return reps, block_size, check_seed("seed", seed)
 
 
 def _info_to_str(
@@ -289,20 +337,26 @@ class MCS(MultipleComparison):
         seed: int | np.random.Generator | np.random.RandomState | None = None,
     ) -> None:
         super().__init__()
+        # Non-finite losses are rejected below with a message about the losses
+        _check_data("losses", losses, ndim=2, min_length=_MIN_OBS_MCS)
         self.losses = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses, dtype=float)
         if not np.all(np.isfinite(self._losses_arr)):
             raise ValueError(
                 "losses must be finite. The losses contain NaN or infinite values."
             )
-        if self._losses_arr.shape[1] < 2:
-            raise ValueError("losses must have at least two columns")
-        self.size: float = size
+        _require_columns("losses", self._losses_arr, 2, losses)
+        self.size: float = check_float(
+            "size", size, lower=0.0, upper=1.0, inclusive="neither"
+        )
+        reps, block_arg, seed = _check_resampling(
+            reps, block_size, seed, self.losses.shape[0]
+        )
         self.reps: int = reps
-        if block_size is None:
+        if block_arg is None:
             self.block_size = int(np.sqrt(self.losses.shape[0]))
         else:
-            self.block_size = block_size
+            self.block_size = block_arg
 
         self.t: int = self.losses.shape[0]
         self.k: int = self.losses.shape[1]

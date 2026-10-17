@@ -933,7 +933,9 @@ class TestMCS:
             _ = mcs.included
 
     def test_errors(self):
-        with pytest.raises(ValueError, match=r"losses must have at least two columns"):
+        with pytest.raises(
+            ValueError, match=r"losses must be a 2-d array with at least 2 columns"
+        ):
             MCS(self.losses[:, 1], 0.05)
         mcs = MCS(
             self.losses,
