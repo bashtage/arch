@@ -538,7 +538,7 @@ class UnitRootTest(metaclass=ABCMeta):
         valid_trends: list[str] | tuple[str, ...],
     ) -> None:
         self._y = ensure1d(y, "y", series=False)
-        self._delta_y = diff(y)
+        self._delta_y = diff(self._y)
         self._nobs = self._y.shape[0]
         self._lags = int(lags) if lags is not None else lags
         if self._lags is not None and self._lags < 0:

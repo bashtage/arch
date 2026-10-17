@@ -274,12 +274,12 @@ class MCS(MultipleComparison):
         self.size: float = size
         self.reps: int = reps
         if block_size is None:
-            self.block_size = int(np.sqrt(losses.shape[0]))
+            self.block_size = int(np.sqrt(self.losses.shape[0]))
         else:
             self.block_size = block_size
 
-        self.t: int = losses.shape[0]
-        self.k: int = losses.shape[1]
+        self.t: int = self.losses.shape[0]
+        self.k: int = self.losses.shape[1]
         if not isinstance(method, str) or method.lower() not in ("r", "max"):
             raise ValueError(f"method must be 'R' or 'max' but is {method!r}.")
         self.method: Literal["R", "max"] = method
@@ -804,7 +804,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self.models = ensure2d(models, "models")
         self.reps: int = reps
         if block_size is None:
-            self.block_size = int(np.sqrt(benchmark.shape[0]))
+            self.block_size = int(np.sqrt(self.benchmark.shape[0]))
         else:
             self.block_size = block_size
         self.studentize: bool = studentize
