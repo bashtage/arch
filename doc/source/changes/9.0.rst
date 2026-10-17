@@ -128,11 +128,11 @@ New features
   bounds, so ``last_obs=-1`` drops the last observation and ``first_obs=-100`` starts
   100 observations from the end. ``start`` is the index of an observation, so
   ``start=-1`` is the last observation. A position outside ``[-nobs, nobs]`` raises a
-  ``ValueError``, and dates are unchanged (:issue:`949`).
+  ``ValueError``, and dates are unchanged (:issue:`956`).
 - ``"horizon"`` is an official alias of ``"target"`` for the ``align`` argument of
   ``forecast`` and of ``ARCHModelForecast``. It is documented, listed in the error for
   an invalid ``align``, and now accepted by the ``forecast`` method of the models, which
-  rejected it, as well as by the results (:issue:`947`).
+  rejected it, as well as by the results (:issue:`956`).
 
 Changes that alter results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,7 +425,8 @@ Backward-incompatible changes
   by design (the data of the bootstraps, which are passed to the function of the user,
   the diagnostics that drop NaN, and the residuals of a fitted model). Code that relied
   on the earlier behavior needs to change. The entries below list the calls that are
-  affected, and the policy is described in the contributing guide (:issue:`949`).
+  affected, and the policy is described in the contributing guide (:issue:`949`,
+  :issue:`956`).
 - Flags accept ``bool``, ``np.bool_`` and the integers ``0`` and ``1`` (Python and NumPy
   integers), which are converted to ``bool``. This applies to every argument that the
   entries on the validation of arguments call a ``bool``. An integer other than ``0``
@@ -434,7 +435,7 @@ Backward-incompatible changes
   the documented default (``low_memory`` and ``rescale``). The ``disp`` of ``fit`` is
   ``"off"``, ``"final"`` or a flag, so that ``disp=0`` is ``"off"`` and ``disp=1`` is
   ``"final"``. The ``exit`` and ``append`` of ``arch.test`` are now checked as flags
-  (:issue:`949`).
+  (:issue:`956`).
 
 - The unit root tests (:class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS`,
   :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.KPSS`,
