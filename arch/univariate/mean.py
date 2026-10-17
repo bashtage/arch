@@ -45,7 +45,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.utility._options import check_option
+from arch.utility._validation import check_option
 from arch.utility.array import append_same_type, to_array_1d
 
 if TYPE_CHECKING:
@@ -2859,9 +2859,9 @@ def arch_model(
         "ged",
         "generalized error",
     )
-    mean_model = check_option(mean, "mean", known_mean)
-    vol_model = check_option(vol, "vol", known_vol)
-    dist_name = check_option(dist, "dist", known_dist)
+    mean_model = check_option("mean", mean, known_mean)
+    vol_model = check_option("vol", vol, known_vol)
+    dist_name = check_option("dist", dist, known_dist)
 
     if mean_model == "harx":
         am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)

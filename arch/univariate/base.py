@@ -41,7 +41,7 @@ from arch.univariate.diagnostics import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility._options import check_option
+from arch.utility._validation import check_option
 from arch.utility.array import append_same_type, ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
@@ -903,12 +903,12 @@ class ARCHModel(metaclass=ABCMeta):
             raise RuntimeError("Cannot estimate model without data.")
         cov_type = cast(
             "Literal['robust', 'classic']",
-            check_option(cov_type, "cov_type", ("robust", "classic")),
+            check_option("cov_type", cov_type, ("robust", "classic")),
         )
         if isinstance(disp, str):
             disp = cast(
                 "Literal['off', 'final']",
-                check_option(disp, "disp", ("off", "final")),
+                check_option("disp", disp, ("off", "final")),
             )
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
@@ -1704,7 +1704,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             vol = vol * np.sqrt(scale)
         elif annualize is not None:
             scales = {"d": 252, "w": 52, "m": 12}
-            check_option(annualize, "annualize", scales, display=("D", "W", "M"))
+            check_option("annualize", annualize, tuple(scales), display=("D", "W", "M"))
             vol = vol * np.sqrt(scales[annualize.lower()])
         else:
             title = "Conditional Volatility"
@@ -1915,11 +1915,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         import matplotlib.pyplot as plt  # noqa: PLC0415
 
         plot_mean = (
-            check_option(plot_type, "plot_type", ("volatility", "mean")) == "mean"
+            check_option("plot_type", plot_type, ("volatility", "mean")) == "mean"
         )
         method = cast(
             "ForecastingMethod",
-            check_option(method, "method", ("analytic", "simulation", "bootstrap")),
+            check_option("method", method, ("analytic", "simulation", "bootstrap")),
         )
         search_start = start is None
         if start is None:
@@ -2385,8 +2385,8 @@ def _align_forecast(
     f: pd.DataFrame, align: Literal["origin", "target"]
 ) -> pd.DataFrame:
     align = check_option(
-        align,
         "align",
+        align,
         {"origin": "origin", "target": "target", "horizon": "target"},
         display=("origin", "target"),
     )

@@ -30,8 +30,13 @@ from arch.univariate import (
 )
 from arch.univariate.base import ARCHModelForecast, _align_forecast
 
-BAD_VALUES = ["bogus", "", None, 1]
-BAD_IDS = ["bogus", "empty", "none", "int"]
+# A string that is not an option is a ValueError and anything else a TypeError
+BAD_VALUES = [
+    pytest.param("bogus", ValueError, id="bogus"),
+    pytest.param("", ValueError, id="empty"),
+    pytest.param(None, TypeError, id="none"),
+    pytest.param(1, TypeError, id="int"),
+]
 
 
 @pytest.fixture(scope="module")
@@ -120,9 +125,9 @@ def test_arch_model_dist_case(returns, dist):
 
 
 @pytest.mark.parametrize("param", ["mean", "vol", "dist"])
-@pytest.mark.parametrize("bad", BAD_VALUES, ids=BAD_IDS)
-def test_arch_model_invalid(returns, param, bad):
-    with pytest.raises(ValueError, match=rf"{param} must be one of '.*'\. "):
+@pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
+def test_arch_model_invalid(returns, param, bad, exc):
+    with pytest.raises(exc, match=rf"{param} must be one of '.*'; got "):
         arch_model(returns, **{param: bad})
 
 
@@ -147,9 +152,11 @@ def test_fit_cov_type_case_closed_form(returns, cov_type):
         assert_allclose(res.param_cov, expected.param_cov)
 
 
-@pytest.mark.parametrize("bad", BAD_VALUES, ids=BAD_IDS)
-def test_fit_cov_type_invalid(returns, bad):
-    with pytest.raises(ValueError, match=r"cov_type must be one of 'robust' or 'cla"):
+@pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
+def test_fit_cov_type_invalid(returns, bad, exc):
+    with pytest.raises(
+        exc, match=r"cov_type must be one of 'robust' or 'classic'; got "
+    ):
         arch_model(returns).fit(disp="off", cov_type=bad)
 
 
@@ -211,26 +218,26 @@ def test_forecast_align_values(result):
         )
 
 
-@pytest.mark.parametrize("bad", BAD_VALUES, ids=BAD_IDS)
-def test_forecast_align_invalid(result, bad):
+@pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
+def test_forecast_align_invalid(result, bad, exc):
     match = r"align must be one of 'origin' or 'target'"
-    with pytest.raises(ValueError, match=match):
+    with pytest.raises(exc, match=match):
         result.forecast(horizon=2, start=300, align=bad)
     frame = pd.DataFrame(np.ones((4, 2)))
-    with pytest.raises(ValueError, match=match):
+    with pytest.raises(exc, match=match):
         _align_forecast(frame, bad)
     values = frame.to_numpy()
-    with pytest.raises(ValueError, match=match):
+    with pytest.raises(exc, match=match):
         ARCHModelForecast(frame.index, 0, values, values, values, align=bad)
 
 
-@pytest.mark.parametrize("bad", BAD_VALUES, ids=BAD_IDS)
+@pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
 @pytest.mark.parametrize("use_result", [True, False], ids=["result", "model"])
-def test_forecast_method_invalid(returns, result, bad, use_result):
-    match = r"method must be one of 'analytic', 'simulation' or 'bootstrap'"
+def test_forecast_method_invalid(returns, result, bad, exc, use_result):
+    match = r"method must be one of 'analytic', 'simulation' or 'bootstrap'; got "
     model = arch_model(returns, mean="ar", lags=1)
     forecast = result.forecast if use_result else partial(model.forecast, result.params)
-    with pytest.raises(ValueError, match=match):
+    with pytest.raises(exc, match=match):
         forecast(method=bad)
 
 
@@ -248,9 +255,11 @@ def test_plot_annualize_case(result, annualize):
         plt.close("all")
 
 
-@pytest.mark.parametrize("bad", ["bogus", "", "Q", 1])
-def test_plot_annualize_invalid(result, bad):
-    with pytest.raises(ValueError, match=r"annualize must be one of 'D', 'W' or 'M'"):
+@pytest.mark.parametrize(
+    ("bad", "exc"), [("bogus", ValueError), ("Q", ValueError), (1, TypeError)]
+)
+def test_plot_annualize_invalid(result, bad, exc):
+    with pytest.raises(exc, match=r"annualize must be one of 'D', 'W' or 'M'; got "):
         result.plot(annualize=bad)
     plt.close("all")
 
@@ -271,11 +280,11 @@ def test_hedgehog_plot_type_case(result, plot_type, returns):
         plt.close("all")
 
 
-@pytest.mark.parametrize("bad", BAD_VALUES, ids=BAD_IDS)
-def test_hedgehog_plot_invalid(result, bad):
-    with pytest.raises(ValueError, match=r"plot_type must be one of 'volatility' or"):
+@pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
+def test_hedgehog_plot_invalid(result, bad, exc):
+    with pytest.raises(exc, match=r"plot_type must be one of 'volatility' or"):
         result.hedgehog_plot(plot_type=bad)
-    with pytest.raises(ValueError, match=r"method must be one of 'analytic', 'sim"):
+    with pytest.raises(exc, match=r"method must be one of 'analytic', 'sim"):
         result.hedgehog_plot(method=bad)
     plt.close("all")
 

@@ -25,7 +25,7 @@ from arch._typing import (
     RNGType,
 )
 from arch.univariate.distribution import Normal
-from arch.utility._options import check_option
+from arch.utility._validation import check_option
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 from arch.utility.exceptions import (
     InitialValueWarning,
@@ -764,7 +764,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
         _parameters = to_array_1d(parameters)
         method_name = check_option(
-            method, "method", ("analytic", "simulation", "bootstrap")
+            "method", method, ("analytic", "simulation", "bootstrap")
         )
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
