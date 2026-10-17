@@ -418,6 +418,11 @@ class DynamicOLSResults(_CommonCointegrationResults):
         statsmodels.iolib.summary.Summary
             A summary instance with methods that support export to text, csv
             or latex.
+
+        Raises
+        ------
+        TypeError
+            If full is not a bool.
         """
         full = check_bool("full", full)
         if self._bandwidth != int(self._bandwidth):
@@ -470,9 +475,15 @@ class DynamicOLS:
     Parameters
     ----------
     y : array_like
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, at least 1 column,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -483,24 +494,43 @@ class DynamicOLS:
 
     lags : int, optional
         The number of lags to include in the model.  If None, the optimal
-        number of lags is chosen using method.
+        number of lags is chosen using method. It must be an integer between 0
+        and nobs - 2.
     leads : int, optional
         The number of leads to include in the model.  If None, the optimal
-        number of leads is chosen using method.
+        number of leads is chosen using method. It must be an integer between 0
+        and nobs - 2.
     common : bool, optional
         Flag indicating that lags and leads should be restricted to the same
         value. When common is True, lags must equal leads and max_lag must
         equal max_lead.
     max_lag : int, optional
-        The maximum lag to consider. See Notes for value used when None.
+        The maximum lag to consider. See Notes for value used when None. It
+        must be an integer between 0 and nobs - 2.
     max_lead : int, optional
-        The maximum lead to consider. See Notes for value used when None.
+        The maximum lead to consider. See Notes for value used when None. It
+        must be an integer between 0 and nobs - 2.
     method : {"aic", "bic", "hqic"}, optional
         The method used to select lag length when lags or leads is None.
 
         * "aic" - Akaike Information Criterion
         * "hqic" - Hannan-Quinn Information Criterion
         * "bic" - Schwartz/Bayesian Information Criterion
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, lags, leads, max_lag or
+        max_lead is not an integer or None, common is not a bool, or trend or
+        method is not a string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if lags,
+        leads, max_lag or max_lead is not between 0 and nobs - 2, if common is
+        True and lags and leads (or max_lag and max_lead) differ, if the sample
+        that remains after the differences, lags and leads is not larger than
+        the number of parameters of the smallest model that is estimated, or if
+        trend or method is not one of the options.
 
     Notes
     -----
@@ -729,12 +759,12 @@ class DynamicOLS:
             covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
-        bandwidth : int, optional
-            The bandwidth to use. If not provided, the optimal bandwidth is
-            estimated from the data. Setting the bandwidth to 0 and using
-            "unadjusted" produces the classic OLS covariance estimator.
-            Setting the bandwidth to 0 and using "robust" produces White's
-            covariance estimator.
+        bandwidth : float, optional
+            The bandwidth to use. It must be a finite non-negative number. If
+            not provided, the optimal bandwidth is estimated from the data.
+            Setting the bandwidth to 0 and using "unadjusted" produces the
+            classic OLS covariance estimator. Setting the bandwidth to 0 and
+            using "robust" produces White's covariance estimator.
         force_int : bool, optional
             Whether to force the estimated optimal bandwidth to be an integer.
         df_adjust : bool, optional
@@ -747,6 +777,15 @@ class DynamicOLS:
         -------
         DynamicOLSResults
             The estimation results.
+
+        Raises
+        ------
+        TypeError
+            If bandwidth is not a real number or None, force_int or df_adjust is
+            not a bool, or cov_type or kernel is not a string.
+        ValueError
+            If bandwidth is negative, NaN or inf, or cov_type or kernel is not one
+            of the options.
 
         See Also
         --------
@@ -927,9 +966,15 @@ COMMON_DOCSTRING = r"""
     Parameters
     ----------
     y : array_like
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, at least 1 column,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -943,6 +988,16 @@ COMMON_DOCSTRING = r"""
         cointegrating regression. x_trend must be at least as large as
         trend, so that if trend is "ct", x_trend must be either "ct" or
         "ctt". If None, x_trend is the same as trend.
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, or trend or x_trend is not a
+        string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if trend
+        or x_trend is not one of the options.
 
     Notes
     -----
@@ -1151,8 +1206,8 @@ class FullyModifiedOLS:
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
         bandwidth : float, optional
-            The bandwidth to use. If not provided, the optimal bandwidth is
-            estimated from the data.
+            The bandwidth to use. It must be a finite non-negative number. If
+            not provided, the optimal bandwidth is estimated from the data.
         force_int : bool, optional
             Whether to force the estimated optimal bandwidth to be an integer.
         diff : bool, optional
@@ -1167,6 +1222,15 @@ class FullyModifiedOLS:
         -------
         CointegrationAnalysisResults
             The estimation results instance.
+
+        Raises
+        ------
+        TypeError
+            If bandwidth is not a real number or None, force_int, diff or
+            df_adjust is not a bool, or kernel is not a string.
+        ValueError
+            If bandwidth is negative, NaN or inf, or kernel is not one of the
+            options.
         """
         bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
             bandwidth, force_int, diff, df_adjust
