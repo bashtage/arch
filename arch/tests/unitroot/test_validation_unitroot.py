@@ -10,6 +10,7 @@ arguments when they are called.
 from fractions import Fraction
 
 import numpy as np
+from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
@@ -627,13 +628,20 @@ def test_nan_and_inf_in_y_name_the_argument():
 
 
 def test_valid_results_are_unchanged_by_numpy_scalars():
+    # Separate calls are not bit-identical on every platform (macOS on x86-64), so the
+    # results are compared with a tolerance of a few units in the last place
     expected = ADF(Y, lags=np.int64(2), max_lags=np.int32(5)).stat
-    assert ADF(Y, lags=2, max_lags=5).stat == expected
-    assert (
-        ZivotAndrews(Y, trim=np.float32(0.25)).stat
-        == ZivotAndrews(Y, trim=float(np.float32(0.25))).stat
+    assert_allclose(ADF(Y, lags=2, max_lags=5).stat, expected, rtol=1e-12)
+    assert_allclose(
+        ZivotAndrews(Y, trim=np.float32(0.25)).stat,
+        ZivotAndrews(Y, trim=float(np.float32(0.25))).stat,
+        rtol=1e-12,
     )
-    assert mackinnonp(np.float32(-2.0)) == mackinnonp(float(np.float32(-2.0)))
-    assert np.all(
-        mackinnoncrit(np.int64(2), nobs=np.int64(100)) == mackinnoncrit(2, nobs=100)
+    assert_allclose(
+        mackinnonp(np.float32(-2.0)), mackinnonp(float(np.float32(-2.0))), rtol=1e-12
+    )
+    assert_allclose(
+        mackinnoncrit(np.int64(2), nobs=np.int64(100)),
+        mackinnoncrit(2, nobs=100),
+        rtol=1e-12,
     )
