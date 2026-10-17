@@ -333,7 +333,7 @@ class TestMeanModel:
         assert_equal(a, np.empty((0, 5)))
         assert_equal(b, np.empty(0))
         res = harx.fit(disp=DISPLAY)
-        with pytest.raises(ValueError, match=r"params have incorrect"):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array"):
             res.forecast(params=np.array([1.0, 1.0]))
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
@@ -1359,7 +1359,7 @@ def test_arch_lm_invalid_lags_type(simulated_data, lags):
 @pytest.mark.parametrize("lags", [0, -1, np.int64(0)], ids=["0", "-1", "np-0"])
 def test_arch_lm_invalid_lags_value(simulated_data, lags):
     res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
-    with pytest.raises(ValueError, match="lags must be a positive integer"):
+    with pytest.raises(ValueError, match=r"lags must be an integer >= 1 or None"):
         res.arch_lm_test(lags=lags)
 
 

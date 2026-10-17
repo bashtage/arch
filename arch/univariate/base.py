@@ -7,7 +7,6 @@ from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
-import operator
 from typing import Any, cast, overload
 import warnings
 
@@ -44,6 +43,7 @@ from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility._validation import (
     check_array,
     check_bool,
+    check_callable,
     check_float,
     check_index,
     check_instance,
@@ -1842,6 +1842,15 @@ class ARCHModelFixedResult(_SummaryRepr):
         from matplotlib.axes import Axes  # noqa: PLC0415
         from matplotlib.pyplot import figure  # noqa: PLC0415
 
+        scales = {"d": 252, "w": 52, "m": 12}
+        if annualize is not None:
+            annualize = check_option(
+                "annualize", annualize, tuple(scales), display=("D", "W", "M")
+            )
+        scale = check_float(
+            "scale", scale, lower=0, inclusive="neither", allow_none=True
+        )
+
         def _set_tight_x(axis: Axes, index: pd.Index) -> None:
             try:
                 axis.set_xlim(index[0], index[-1])
@@ -1863,9 +1872,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         if scale is not None:
             vol = vol * np.sqrt(scale)
         elif annualize is not None:
-            scales = {"d": 252, "w": 52, "m": 12}
-            check_option("annualize", annualize, tuple(scales), display=("D", "W", "M"))
-            vol = vol * np.sqrt(scales[annualize.lower()])
+            vol = vol * np.sqrt(scales[annualize])
         else:
             title = "Conditional Volatility"
 
@@ -1990,15 +1997,34 @@ class ARCHModelFixedResult(_SummaryRepr):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
+        nobs = int(self.model._y.shape[0])
         if params is None:
             params = self._params
-        elif (
-            params.size != np.array(self._params).size
-            or params.ndim != self._params.ndim
-        ):
-            raise ValueError("params have incorrect dimensions")
-        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
-            raise ValueError("horizon must be an integer >= 1.")
+        else:
+            params = check_array(
+                "params", params, ndim=1, shape=(np.asarray(self._params).size,)
+            )
+        horizon = check_int("horizon", horizon, lower=1)
+        start = check_index("start", start, nobs, index=self._index)
+        align = cast(
+            "Literal['origin', 'target']",
+            check_option(
+                "align",
+                align,
+                {"origin": "origin", "target": "target", "horizon": "target"},
+                display=("origin", "target"),
+            ),
+        )
+        method = cast(
+            "ForecastingMethod",
+            check_option("method", method, ("analytic", "simulation", "bootstrap")),
+        )
+        simulations = check_int("simulations", simulations, lower=1)
+        rng = check_callable("rng", rng, allow_none=True)
+        random_state = check_instance(
+            "random_state", random_state, np.random.RandomState, allow_none=True
+        )
+        reindex = check_bool("reindex", reindex)
         return self.model.forecast(
             params,
             horizon,
@@ -2080,6 +2106,16 @@ class ARCHModelFixedResult(_SummaryRepr):
             "ForecastingMethod",
             check_option("method", method, ("analytic", "simulation", "bootstrap")),
         )
+        horizon = check_int("horizon", horizon, lower=1)
+        step = check_int("step", step, lower=1)
+        simulations = check_int("simulations", simulations, lower=1)
+        start = check_index(
+            "start", start, int(self.model._y.shape[0]), index=self._index
+        )
+        if params is not None:
+            params = check_array(
+                "params", params, ndim=1, shape=(np.asarray(self._params).size,)
+            )
         search_start = start is None
         if start is None:
             # The earliest origin for which the model can produce a forecast
@@ -2187,15 +2223,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an
         asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.
         """
-        if lags is not None:
-            try:
-                lags = operator.index(lags)
-            except TypeError:
-                raise TypeError(
-                    f"lags must be an integer or None, got {type(lags).__name__}."
-                ) from None
-            if lags < 1:
-                raise ValueError(f"lags must be a positive integer, got {lags}.")
+        lags = check_int("lags", lags, lower=1, allow_none=True)
+        standardized = check_bool("standardized", standardized)
         resids = self.resid
         if standardized:
             resids = resids / np.asarray(self.conditional_volatility)
@@ -2315,6 +2344,7 @@ class ARCHModelResult(ARCHModelFixedResult):
             Array where the ith row contains the confidence interval  for the
             ith parameter.
         """
+        alpha = check_float("alpha", alpha, lower=0, upper=1, inclusive="neither")
         cv = stats.norm.ppf(1.0 - alpha / 2.0)
         se = self.std_err
         params = self.params

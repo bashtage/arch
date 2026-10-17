@@ -914,8 +914,11 @@ def test_forecast_start_and_alignment(garch_ma2):
 def test_forecast_errors(garch_ma2):
     model = MAMean(garch_ma2, lags=2, volatility=GARCH(), hold_back=10)
     res = model.fit(disp="off")
-    for horizon in (0, -1, 1.5, "1"):
+    for horizon in (0, -1):
         with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+            res.forecast(horizon=horizon)
+    for horizon in (1.5, "1"):
+        with pytest.raises(TypeError, match="horizon must be an integer >= 1"):
             res.forecast(horizon=horizon)
     assert res.forecast(horizon=np.int64(2), reindex=False).mean.shape[1] == 2
     with pytest.raises(TypeError, match="x is not None but the model does not"):
