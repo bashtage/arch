@@ -3250,15 +3250,13 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1) -> None:
         super().__init__()
-        self.p: int = int(p)
-        self.o: int = int(o)
-        self.q: int = int(q)
-        self._num_params = 1 + p + o + q
-        if p < 0 or o < 0 or q < 0:
-            raise ValueError("All lags lengths must be non-negative")
-        if p == 0 and o == 0:
-            raise ValueError("One of p or o must be strictly positive")
-        self._name = "EGARCH" if q > 0 else "EARCH"
+        self.p: int = _check_count("p", p, 0)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        self._num_params = 1 + self.p + self.o + self.q
+        if self.p == 0 and self.o == 0:
+            _fail(ValueError, "p", "an integer >= 1 when o is 0", _describe(p))
+        self._name = "EGARCH" if self.q > 0 else "EARCH"
         # Helpers for fitting variance
         self._arrays: tuple[Float64Array, Float64Array, Float64Array] | None = None
         self._volatility_updater = rec.EGARCHUpdater(self.p, self.o, self.q)
