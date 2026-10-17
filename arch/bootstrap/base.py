@@ -581,9 +581,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     @generator.setter
     def generator(self, value: Generator | RandomState) -> None:
-        if not isinstance(value, (Generator, RandomState)):
-            raise TypeError("Only a Generator or RandomState can be set")
-        self._generator = value
+        self._generator = check_instance("generator", value, (Generator, RandomState))
 
     @property
     def index(self) -> BootstrapIndexT:
@@ -613,11 +611,12 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     @state.setter
     def state(self, value: RandomStateState | Mapping[str, Any]) -> None:
         if isinstance(self._generator, Generator):
-            assert isinstance(value, Mapping)
-            self._generator.bit_generator.state = value
+            state = check_instance("state", value, Mapping)
+            self._generator.bit_generator.state = state
         else:
             assert isinstance(self._generator, RandomState)
-            self._generator.set_state(cast("RandomStateState", value))
+            state = check_instance("state", value, (tuple, Mapping))
+            self._generator.set_state(cast("RandomStateState", state))
 
     def reset(self, use_seed: bool = True) -> None:
         """
