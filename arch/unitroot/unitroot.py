@@ -687,7 +687,6 @@ class UnitRootTest(metaclass=ABCMeta):
         needed
         """
         if self._stat is None:
-            self._check_specification()
             self._compute_statistic()
 
     def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat", "maic"]:
