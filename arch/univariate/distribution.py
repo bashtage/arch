@@ -1,6 +1,8 @@
 """
-Distributions to use in ARCH models.  All distributions must inherit from
-:class:`Distribution` and provide the same methods with the same inputs.
+Distributions to use in ARCH models.
+
+All distributions must inherit from :class:`Distribution` and provide the same
+methods with the same inputs.
 """
 
 from abc import ABCMeta, abstractmethod
@@ -44,7 +46,15 @@ __all__ = ["Distribution", "GeneralizedError", "Normal", "SkewStudent", "Student
 
 class Distribution(metaclass=ABCMeta):
     """
-    Template for subclassing only
+    Template for subclassing only.
+
+    Parameters
+    ----------
+    seed : int, Generator or RandomState, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, the argument is passed to
+        ``np.random.default_rng``.  If not provided, ``default_rng``
+        is used with system-provided entropy.
     """
 
     def __init__(
@@ -69,7 +79,7 @@ class Distribution(metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        """The name of the distribution"""
+        """The name of the distribution."""
         return self._name
 
     def _check_constraints(
@@ -95,7 +105,7 @@ class Distribution(metaclass=ABCMeta):
 
     @property
     def generator(self) -> RandomState | Generator:
-        """The NumPy Generator or RandomState attached to the distribution"""
+        """The NumPy Generator or RandomState attached to the distribution."""
         return self._generator
 
     @abstractmethod
@@ -123,18 +133,18 @@ class Distribution(metaclass=ABCMeta):
         self, parameters: float | Sequence[float | int] | ArrayLike1D
     ) -> Callable[[int | tuple[int, ...]], Float64Array]:
         """
-        Simulates i.i.d. draws from the distribution
+        Simulate i.i.d. draws from the distribution.
 
         Parameters
         ----------
-        parameters : ndarray
-            Distribution parameters
+        parameters : array_like
+            Distribution parameters.
 
         Returns
         -------
         simulator : callable
             Callable that take a single output size argument and returns i.i.d.
-            draws from the distribution
+            draws from the distribution.
         """
 
     @abstractmethod
@@ -145,9 +155,9 @@ class Distribution(metaclass=ABCMeta):
         Returns
         -------
         A : ndarray
-            Constraint loadings
+            Constraint loadings.
         b : ndarray
-            Constraint values
+            Constraint values.
 
         Notes
         -----
@@ -157,17 +167,17 @@ class Distribution(metaclass=ABCMeta):
     @abstractmethod
     def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         """
-        Parameter bounds for use in optimization.
+        Construct parameter bounds for use in optimization.
 
         Parameters
         ----------
         resids : ndarray
-             Residuals to use when computing the bounds
+            Residuals to use when computing the bounds.
 
         Returns
         -------
-        bounds : list
-            List containing a single tuple with (lower, upper) bounds
+        bounds : list of tuple of float
+            List of (lower, upper) bounds, with one tuple for each shape parameter.
         """
 
     @abstractmethod
@@ -179,19 +189,25 @@ class Distribution(metaclass=ABCMeta):
         individual: bool = False,
     ) -> float | Float64Array1D:
         """
-        Loglikelihood evaluation.
+        Evaluate the loglikelihood.
 
         Parameters
         ----------
         parameters : ndarray
-            Distribution shape parameters
+            Distribution shape parameters.
         resids : ndarray
-            nobs array of model residuals
+            Array of nobs model residuals.
         sigma2 : ndarray
-            nobs array of conditional variances
+            Array of nobs conditional variances.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
+
+        Returns
+        -------
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
 
         Notes
         -----
@@ -208,12 +224,12 @@ class Distribution(metaclass=ABCMeta):
         ----------
         std_resid : ndarray
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter.
 
         Returns
         -------
         sv : ndarray
-            The estimated shape parameters for the distribution
+            The estimated shape parameters for the distribution.
 
         Notes
         -----
@@ -223,12 +239,12 @@ class Distribution(metaclass=ABCMeta):
     @abstractmethod
     def parameter_names(self) -> list[str]:
         """
-        Names of distribution shape parameters
+        Return the names of the distribution shape parameters.
 
         Returns
         -------
-        names : list (str)
-            Parameter names
+        names : list of str
+            Parameter names.
         """
 
     @abstractmethod
@@ -238,20 +254,20 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         """
-        Inverse cumulative density function (ICDF)
+        Compute the inverse cumulative density function (ICDF).
 
         Parameters
         ----------
-        pits : {float, ndarray}
+        pits : float or array_like
             Probability-integral-transformed values in the interval (0, 1).
-        parameters : ndarray, optional
+        parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
 
         Returns
         -------
-        i : {float, ndarray}
-            Inverse CDF values
+        i : float or ndarray
+            Inverse CDF values.
         """
 
     @abstractmethod
@@ -261,20 +277,20 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float | Float64Array:
         """
-        Cumulative distribution function
+        Compute the cumulative distribution function.
 
         Parameters
         ----------
-        resids : ndarray
-            Values at which to evaluate the cdf
-        parameters : ndarray
+        resids : array_like
+            Values at which to evaluate the cdf.
+        parameters : array_like, optional
             Distribution parameters. Use ``None`` for parameterless
             distributions.
 
         Returns
         -------
-        f : ndarray
-            CDF values
+        f : float or ndarray
+            CDF values.
         """
 
     @abstractmethod
@@ -282,19 +298,19 @@ class Distribution(metaclass=ABCMeta):
         self, n: int, parameters: Sequence[float] | ArrayLike1D | None = None
     ) -> float:
         """
-        Moment of order n
+        Compute the moment of order n.
 
         Parameters
         ----------
         n : int
-            Order of moment
-        parameters : ndarray, optional
+            Order of moment.
+        parameters : array_like, optional
             Distribution parameters. Use None for parameterless distributions.
 
         Returns
         -------
         float
-            Calculated moment
+            Calculated moment.
         """
 
     @abstractmethod
@@ -305,26 +321,21 @@ class Distribution(metaclass=ABCMeta):
         parameters: Sequence[float] | ArrayLike1D | None = None,
     ) -> float:
         r"""
-        Order n lower partial moment from -inf to z
+        Compute the order n lower partial moment from -inf to z.
 
         Parameters
         ----------
         n : int
-            Order of partial moment
+            Order of partial moment.
         z : float, optional
-            Upper bound for partial moment integral
-        parameters : ndarray, optional
+            Upper bound for partial moment integral.
+        parameters : array_like, optional
             Distribution parameters.  Use None for parameterless distributions.
 
         Returns
         -------
         float
-            Partial moment
-
-        References
-        ----------
-        .. [1] Winkler et al. (1972) "The Determination of Partial Moments"
-               *Management Science* Vol. 19 No. 3
+            Partial moment.
 
         Notes
         -----
@@ -335,6 +346,11 @@ class Distribution(metaclass=ABCMeta):
             \int_{-\infty}^{z}x^{n}f(x)dx
 
         See [1]_ for more details.
+
+        References
+        ----------
+        .. [1] Winkler et al. (1972) "The Determination of Partial Moments"
+               *Management Science* Vol. 19 No. 3
         """
 
     def __str__(self) -> str:
@@ -349,11 +365,11 @@ class Distribution(metaclass=ABCMeta):
 
 class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Standard normal distribution for use with ARCH models
+    Standard normal distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
         reproducibility. If using an int, the argument is passed to
         ``np.random.default_rng``.  If not provided, ``default_rng``
@@ -381,26 +397,29 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> float | Float64Array1D:
-        r"""Computes the log-likelihood of assuming residuals are normally
-        distributed, conditional on the variance
+        r"""
+        Compute the log-likelihood of normally distributed residuals.
+
+        The log-likelihood is conditional on the variance.
 
         Parameters
         ----------
         parameters : ndarray
             The normal likelihood has no shape parameters. Empty since the
             standard normal has no shape parameters.
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
+        resids : ndarray
+            The residuals to use in the log-likelihood calculation.
         sigma2 : ndarray
-            Conditional variances of resids
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
 
         Notes
         -----
@@ -410,7 +429,6 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
             \ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
             +\frac{x^{2}}{\sigma^{2}}\right)
-
         """
         resids = as_float64(resids, "resids")
         sigma2 = as_float64(sigma2, "sigma2")
@@ -487,11 +505,11 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
 class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Standardized Student's distribution for use with ARCH models
+    Standardized Student's distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
         reproducibility. If using an int, the argument is passed to
         ``np.random.default_rng``.  If not provided, ``default_rng``
@@ -520,26 +538,29 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> float | Float64Array1D:
-        r"""Computes the log-likelihood of assuming residuals are have a
-        standardized (to have unit variance) Student's t distribution,
-        conditional on the variance.
+        r"""
+        Compute the log-likelihood of Student's t distributed residuals.
+
+        The residuals are assumed to have a standardized (to have unit variance)
+        Student's t distribution, conditional on the variance.
 
         Parameters
         ----------
         parameters : ndarray
-            Shape parameter of the t distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
+            Shape parameter of the t distribution.
+        resids : ndarray
+            The residuals to use in the log-likelihood calculation.
         sigma2 : ndarray
-            Conditional variances of resids
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
 
         Notes
         -----
@@ -575,12 +596,12 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         ----------
         std_resid : ndarray
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter.
 
         Notes
         -----
@@ -707,11 +728,11 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
 class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     r"""
-    Standardized Skewed Student's distribution for use with ARCH models
+    Standardized Skewed Student's distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
         reproducibility. If using an int, the argument is passed to
         ``np.random.default_rng``.  If not provided, ``default_rng``
@@ -730,7 +751,6 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
        *International Economic Review*, 35(3), 705-730.
        <https://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
-
     """
 
     def __init__(
@@ -756,26 +776,29 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         individual: bool = False,
     ) -> Float64Array1D:
         r"""
-        Computes the log-likelihood of assuming residuals are have a
-        standardized (to have unit variance) Skew Student's t distribution,
-        conditional on the variance.
+        Compute the log-likelihood of skew Student's t distributed residuals.
+
+        The residuals are assumed to have a standardized (to have unit variance)
+        Skew Student's t distribution, conditional on the variance.
 
         Parameters
         ----------
         parameters : ndarray
-            Shape parameter of the skew-t distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
+            Shape parameters of the skew-t distribution, the tail shape and the
+            skewness.
+        resids : ndarray
+            The residuals to use in the log-likelihood calculation.
         sigma2 : ndarray
-            Conditional variances of resids
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
 
         Notes
         -----
@@ -834,17 +857,19 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         ----------
         std_resid : ndarray
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter and the
+            skewness parameter.
 
         Notes
         -----
         Uses relationship between kurtosis and degree of freedom parameter to
-        produce a moment-based estimator for the starting values.
+        produce a moment-based estimator for the starting value of the shape
+        parameter.  The starting value of the skewness parameter is 0.
         """
         std_resid = ensure1d(std_resid, "std_resid")
         k = cast("float", stats.kurtosis(std_resid, fisher=False))
@@ -1077,11 +1102,11 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
 class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     """
-    Generalized Error distribution for use with ARCH models
+    Generalized Error distribution for use with ARCH models.
 
     Parameters
     ----------
-    seed : {int, Generator, RandomState}, optional
+    seed : int, Generator or RandomState, optional
         Random number generator instance or int to use. Set to ensure
         reproducibility. If using an int, the argument is passed to
         ``np.random.default_rng``.  If not provided, ``default_rng``
@@ -1111,25 +1136,28 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         individual: bool = False,
     ) -> Float64Array1D:
         r"""
-        Computes the log-likelihood of assuming residuals are have a
-        Generalized Error Distribution, conditional on the variance.
+        Compute the log-likelihood of Generalized Error Distribution residuals.
+
+        The residuals are assumed to have a Generalized Error Distribution,
+        conditional on the variance.
 
         Parameters
         ----------
         parameters : ndarray
-            Shape parameter of the GED distribution
-        resids  : ndarray
-            The residuals to use in the log-likelihood calculation
+            Shape parameter of the GED distribution.
+        resids : ndarray
+            The residuals to use in the log-likelihood calculation.
         sigma2 : ndarray
-            Conditional variances of resids
+            Conditional variances of resids.
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
-            likelihoods (True) or the sum (False)
+            likelihoods (True) or the sum (False).
 
         Returns
         -------
-        ll : float
-            The log-likelihood
+        ll : float or ndarray
+            The log-likelihood if individual is False, and otherwise the vector of
+            individual log-likelihoods.
 
         Notes
         -----
@@ -1171,16 +1199,16 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         ----------
         std_resid : ndarray
             Estimated standardized residuals to use in computing starting
-            values for the shape parameter
+            values for the shape parameter.
 
         Returns
         -------
         sv : ndarray
-            Array containing starting valuer for shape parameter
+            Array containing starting values for the shape parameter.
 
         Notes
         -----
-        Defaults to 1.5 which is implies heavier tails than a normal
+        Defaults to 1.5 which implies heavier tails than a normal.
         """
         return to_array_1d(array([1.5]))
 

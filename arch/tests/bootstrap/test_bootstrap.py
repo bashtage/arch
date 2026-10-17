@@ -1022,3 +1022,40 @@ def test_staionary_seed(bs_setup, seed):
     sb = StationaryBootstrap(10, bs_setup.y, seed=seed)
     for pos, _ in sb.bootstrap(10):
         assert pos[0].shape[0] == bs_setup.y.shape[0]
+
+
+BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBootstrap]
+
+
+@pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
+def test_block_size_read_only(cls):
+    bs = cls(5, np.arange(100.0), seed=0)
+    assert bs.block_size == 5
+    with pytest.raises(AttributeError, match="block_size cannot be changed"):
+        bs.block_size = 20
+    assert bs.block_size == 5
+    assert cls(5, np.arange(100.0)).clone(np.arange(50.0)).block_size == 5
+
+
+@pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
+def test_block_size_clone(cls):
+    bs = cls(7, np.arange(100.0), seed=0)
+    clone = bs.clone(np.arange(60.0), seed=1)
+    assert isinstance(clone, cls)
+    assert clone.block_size == 7
+    assert clone.update_indices().shape == (60,)
+
+
+def test_stationary_mean_block_length_is_block_size():
+    # The mean length of the runs of consecutive indices is the block size
+    x = np.arange(1000.0)
+    rng_seed = 0
+    for block_size in (2, 20):
+        bs = StationaryBootstrap(block_size, x, seed=rng_seed)
+        runs = []
+        for _ in range(200):
+            index = bs.update_indices()
+            breaks = np.count_nonzero(np.diff(index) % x.shape[0] != 1)
+            runs.append(index.shape[0] / (1 + breaks))
+        # A new block can continue the previous one with probability 1/n
+        assert_allclose(np.mean(runs), block_size, rtol=0.06)

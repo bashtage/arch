@@ -554,12 +554,27 @@ kpss_autolag_data = (
 )
 
 
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 @pytest.mark.parametrize(("data", "trend", "lags"), kpss_autolag_data)
 def test_kpss_data_dependent_lags(data, trend, lags):
     # real GDP from macrodata data set
     kpss = KPSS(data, trend=trend)
     assert_equal(kpss.lags, lags)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct"])
+def test_kpss_default_lags_no_warning(trend):
+    y = np.random.default_rng(20240).standard_normal(250).cumsum() * 0.05
+    y += np.random.default_rng(20241).standard_normal(250)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        default = KPSS(y, trend=trend)
+        stat = default.stat
+        lags = default.lags
+    # The default is the data-dependent rule, and lags=-1 keeps the legacy rule
+    explicit = KPSS(y, trend=trend, lags=lags)
+    assert_allclose(stat, explicit.stat, rtol=1e-12)
+    legacy = KPSS(y, trend=trend, lags=-1)
+    assert_equal(legacy.lags, int(np.ceil(12.0 * (250 / 100) ** 0.25)))
 
 
 class ZATestResult(NamedTuple):
@@ -713,7 +728,6 @@ def test_invalid_trend():
         ADF(np.random.default_rng(1234).standard_normal(100), trend="unknown")
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -729,7 +743,6 @@ def test_wrong_exceptions(stat, nobs, trend):
         pass
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", [2, 10, 100])
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -814,3 +827,33 @@ def test_autolag_warning():
     y = np.random.default_rng(1234).standard_normal(1000000)
     with pytest.warns(PerformanceWarning, match=r""):
         assert isinstance(ADF(y).stat, float)
+
+
+@pytest.mark.parametrize("trend", ["n", "c", "ct"])
+@pytest.mark.parametrize("seed", [0, 3, 8])
+def test_t_stat_lag_selection_low_memory(seed, trend):
+    # Lag 0 is always eligible, so no significant lag selects 0 lags
+    y = np.random.default_rng(seed).standard_normal(100)
+    max_lags = 6
+    # Reference: t-statistic of the last lag in each model on the common sample
+    delta_y = np.diff(y)
+    lhs = delta_y[max_lags:]
+    level = y[max_lags:-1]
+    lags = np.column_stack(
+        [delta_y[max_lags - j : delta_y.shape[0] - j] for j in range(1, max_lags + 1)]
+    )
+    nobs = lhs.shape[0]
+    trends = {
+        "n": np.empty((nobs, 0)),
+        "c": np.ones((nobs, 1)),
+        "ct": np.column_stack([np.ones(nobs), np.arange(1.0, nobs + 1)]),
+    }
+    expected = 0
+    for lag in range(1, max_lags + 1):
+        rhs = np.column_stack([level, trends[trend], lags[:, :lag]])
+        tstat = OLS(lhs, rhs).fit().tvalues[-1]
+        if abs(tstat) >= 1.6448536269514722:
+            expected = lag
+    kwargs = {"trend": trend, "max_lags": max_lags, "method": "t-stat"}
+    assert ADF(y, low_memory=False, **kwargs).lags == expected
+    assert ADF(y, low_memory=True, **kwargs).lags == expected

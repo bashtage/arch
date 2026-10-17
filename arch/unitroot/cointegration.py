@@ -70,13 +70,13 @@ class _CommonCointegrationResults:
 
     @property
     def params(self) -> Series:
-        """The estimated parameters of the cointegrating vector"""
+        """The estimated parameters of the cointegrating vector."""
         return self._params.iloc[: self._ci_size]
 
     @cached_property
     def std_errors(self) -> Series:
         """
-        Standard errors  of the parameters in the cointegrating vector
+        Standard errors of the parameters in the cointegrating vector.
         """
         se = np.sqrt(np.diag(self.cov))
         return Series(se, index=self.params.index, name="std_errors")
@@ -84,45 +84,45 @@ class _CommonCointegrationResults:
     @cached_property
     def tvalues(self) -> Series:
         """
-        T-statistics of the parameters in the cointegrating vector
+        T-statistics of the parameters in the cointegrating vector.
         """
         return Series(self.params / self.std_errors, name="tvalues")
 
     @cached_property
     def pvalues(self) -> Series:
         """
-        P-value of the parameters in the cointegrating vector
+        P-values of the parameters in the cointegrating vector.
         """
         return Series(2 * (1 - stats.norm.cdf(np.abs(self.tvalues))), name="pvalues")
 
     @property
     def cov(self) -> pd.DataFrame:
-        """The estimated parameter covariance of the cointegrating vector"""
+        """The estimated parameter covariance of the cointegrating vector."""
         return self._cov.iloc[: self._ci_size, : self._ci_size]
 
     @property
     def resid(self) -> Series:
-        """The model residuals"""
+        """The model residuals."""
         return self._resid
 
     @property
     def kernel(self) -> str:
-        """The kernel used to estimate the covariance"""
+        """The kernel used to estimate the covariance."""
         return self._kernel
 
     @property
     def bandwidth(self) -> float:
-        """The bandwidth used in the parameter covariance estimation"""
+        """The bandwidth used in the parameter covariance estimation."""
         return self._bandwidth
 
     @property
     def rsquared(self) -> float:
-        """The model R²"""
+        """The model R²."""
         return self._rsquared
 
     @property
     def rsquared_adj(self) -> float:
-        """The degree-of-freedom adjusted R²"""
+        """The degree-of-freedom adjusted R²."""
         return self._rsquared_adj
 
     @cached_property
@@ -254,12 +254,12 @@ class _CommonCointegrationResults:
 
     def summary(self) -> Summary:
         """
-        Summary of the model, containing estimated parameters and std. errors
+        Summary of the model, containing estimated parameters and std. errors.
 
         Returns
         -------
-        Summary
-            A summary instance with method that support export to text, csv
+        statsmodels.iolib.summary.Summary
+            A summary instance with methods that support export to text, csv
             or latex.
         """
         if self._bandwidth != int(self._bandwidth):
@@ -298,7 +298,7 @@ class _CommonCointegrationResults:
 
 class DynamicOLSResults(_CommonCointegrationResults):
     """
-    Estimation results for Dynamic OLS models
+    Estimation results for Dynamic OLS models.
 
     Parameters
     ----------
@@ -317,6 +317,10 @@ class DynamicOLSResults(_CommonCointegrationResults):
     kernel_est : CovarianceEstimator
         The covariance estimator instance used to estimate the parameter
         covariance.
+    num_x : int
+        The number of right-hand-side variables in the cointegrating regression.
+    trend : {"n", "c", "ct", "ctt"}
+        The trend included in the cointegrating regression.
     reg_results : RegressionResults
         Regression results from fitting statsmodels OLS.
     df_adjust : bool
@@ -356,29 +360,29 @@ class DynamicOLSResults(_CommonCointegrationResults):
 
     @property
     def full_params(self) -> Series:
-        """The complete set of parameters, including leads and lags"""
+        """The complete set of parameters, including leads and lags."""
         return self._params
 
     @property
     def full_cov(self) -> pd.DataFrame:
         """
-        Parameter covariance of the all model parameters, incl. leads and lags
+        Parameter covariance of all the model parameters, incl. leads and lags.
         """
         return self._cov
 
     @property
     def lags(self) -> int:
-        """The number of lags included in the model"""
+        """The number of lags included in the model."""
         return self._lags
 
     @property
     def leads(self) -> int:
-        """The number of leads included in the model"""
+        """The number of leads included in the model."""
         return self._leads
 
     @property
     def cov_type(self) -> str:
-        """The type of parameter covariance estimator used"""
+        """The type of parameter covariance estimator used."""
         return self._cov_type
 
     @property
@@ -391,18 +395,18 @@ class DynamicOLSResults(_CommonCointegrationResults):
 
     def summary(self, full: bool = False) -> Summary:
         """
-        Summary of the model, containing estimated parameters and std. errors
+        Summary of the model, containing estimated parameters and std. errors.
 
         Parameters
         ----------
-        full : bool, default False
+        full : bool, optional
             Flag indicating whether to include all estimated parameters
-            (True) or only the parameters of the cointegrating vector
+            (True) or only the parameters of the cointegrating vector.
 
         Returns
         -------
-        Summary
-            A summary instance with method that support export to text, csv
+        statsmodels.iolib.summary.Summary
+            A summary instance with methods that support export to text, csv
             or latex.
         """
         if self._bandwidth != int(self._bandwidth):
@@ -450,36 +454,37 @@ class DynamicOLSResults(_CommonCointegrationResults):
 
 class DynamicOLS:
     r"""
-    Dynamic OLS (DOLS) cointegrating vector estimation
+    Dynamic OLS (DOLS) cointegrating vector estimation.
 
     Parameters
     ----------
     y : array_like
         The left-hand-side variable in the cointegrating regression.
-    x : array_like
+    x : ndarray, Series or DataFrame
         The right-hand-side variables in the cointegrating regression.
-    trend : {"n","c","ct","ctt"}, default "c"
+    trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
-    lags : int, default None
+
+    lags : int, optional
         The number of lags to include in the model.  If None, the optimal
         number of lags is chosen using method.
-    leads : int, default None
+    leads : int, optional
         The number of leads to include in the model.  If None, the optimal
         number of leads is chosen using method.
-    common : bool, default False
+    common : bool, optional
         Flag indicating that lags and leads should be restricted to the same
-        value. When common is None, lags must equal leads and max_lag must
+        value. When common is True, lags must equal leads and max_lag must
         equal max_lead.
-    max_lag : int, default None
+    max_lag : int, optional
         The maximum lag to consider. See Notes for value used when None.
-    max_lead : int, default None
+    max_lead : int, optional
         The maximum lead to consider. See Notes for value used when None.
-    method : {"aic","bic","hqic"}, default "bic"
+    method : {"aic", "bic", "hqic"}, optional
         The method used to select lag length when lags or leads is None.
 
         * "aic" - Akaike Information Criterion
@@ -687,28 +692,28 @@ class DynamicOLS:
         df_adjust: bool = False,
     ) -> DynamicOLSResults:
         r"""
-        Estimate the Dynamic OLS regression
+        Estimate the Dynamic OLS regression.
 
         Parameters
         ----------
-        cov_type : str, default "unadjusted"
-            Either "unadjusted" (or is equivalent "homoskedastic") or "robust"
+        cov_type : {"unadjusted", "homoskedastic", "robust", "kernel"}, optional
+            Either "unadjusted" (or its equivalent "homoskedastic") or "robust"
             (or its equivalent "kernel").
-        kernel : str, default "bartlett"
-            The string name of any of any known kernel-based long-run
-            covariance estimators. Common choices are "bartlett" for the
+        kernel : str, optional
+            The string name of any known kernel-based long-run
+            covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
-        bandwidth : int, default None
+        bandwidth : int, optional
             The bandwidth to use. If not provided, the optimal bandwidth is
             estimated from the data. Setting the bandwidth to 0 and using
             "unadjusted" produces the classic OLS covariance estimator.
             Setting the bandwidth to 0 and using "robust" produces White's
             covariance estimator.
-        force_int : bool, default False
-            Whether the force the estimated optimal bandwidth to be an integer.
-        df_adjust : bool, default False
-            Whether the adjust the parameter covariance to account for the
+        force_int : bool, optional
+            Whether to force the estimated optimal bandwidth to be an integer.
+        df_adjust : bool, optional
+            Whether to adjust the parameter covariance to account for the
             number of parameters estimated in the regression. If true, the
             parameter covariance estimator is multiplied by T/(T-k) where
             k is the number of regressors in the model.
@@ -721,9 +726,9 @@ class DynamicOLS:
         See Also
         --------
         arch.unitroot.cointegration.engle_granger
-            Cointegration testing using the Engle-Granger methodology
+            Cointegration testing using the Engle-Granger methodology.
         statsmodels.regression.linear_model.OLS
-            Ordinal Least Squares regression.
+            Ordinary Least Squares regression.
 
         Notes
         -----
@@ -874,7 +879,7 @@ class CointegrationAnalysisResults(_CommonCointegrationResults):
     @property
     def long_run_variance(self) -> float:
         """
-        Long-run variance estimate used in the parameter covariance estimator
+        Long-run variance estimate used in the parameter covariance estimator.
         """
         return self._omega_112
 
@@ -886,20 +891,21 @@ COMMON_DOCSTRING = r"""
     ----------
     y : array_like
         The left-hand-side variable in the cointegrating regression.
-    x : array_like
+    x : ndarray, Series or DataFrame
         The right-hand-side variables in the cointegrating regression.
-    trend : {"n","c","ct","ctt"}, default "c"
+    trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
-    x_trend : {None,"c","ct","ctt"}, default None
-        Trends that affects affect the x-data but do not appear in the
+
+    x_trend : {"c", "ct", "ctt"}, optional
+        Trends that affect the x-data but do not appear in the
         cointegrating regression. x_trend must be at least as large as
         trend, so that if trend is "ct", x_trend must be either "ct" or
-        "ctt".
+        "ctt". If None, x_trend is the same as trend.
 
     Notes
     -----
@@ -1079,23 +1085,20 @@ class FullyModifiedOLS:
 
         Parameters
         ----------
-        diff : bool, default False
-            Use differenced data to estimate the residuals.
-        kernel : str, default "bartlett"
-            The string name of any of any known kernel-based long-run
-            covariance estimators. Common choices are "bartlett" for the
+        kernel : str, optional
+            The string name of any known kernel-based long-run
+            covariance estimator. Common choices are "bartlett" for the
             Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
             and "quadratic-spectral" for the Quadratic Spectral kernel.
-        bandwidth : int, default None
+        bandwidth : float, optional
             The bandwidth to use. If not provided, the optimal bandwidth is
-            estimated from the data. Setting the bandwidth to 0 and using
-            "unadjusted" produces the classic OLS covariance estimator.
-            Setting the bandwidth to 0 and using "robust" produces White's
-            covariance estimator.
-        force_int : bool, default True
-            Whether the force the estimated optimal bandwidth to be an integer.
-        df_adjust : bool, default False
-            Whether the adjust the parameter covariance to account for the
+            estimated from the data.
+        force_int : bool, optional
+            Whether to force the estimated optimal bandwidth to be an integer.
+        diff : bool, optional
+            Use differenced data to estimate the residuals.
+        df_adjust : bool, optional
+            Whether to adjust the parameter covariance to account for the
             number of parameters estimated in the regression. If true, the
             parameter covariance estimator is multiplied by T/(T-k) where
             k is the number of regressors in the model.

@@ -858,6 +858,24 @@ cdef class VolatilityUpdater:
             object backcast,
             Py_ssize_t nobs
     ):
+        """
+        Initialize the recursion prior to calling update.
+
+        Parameters
+        ----------
+        parameters : ndarray
+            The model parameters.
+        backcast : float or ndarray
+            The backcast value(s).
+        nobs : int
+            The number of observations in the sample.
+
+        Notes
+        -----
+        This function is called once per likelihood evaluation and can be used
+        to pre-compute expensive parameter transformations that do not change
+        with each call to ``update``.
+        """
         pass
 
     cdef void update(self,

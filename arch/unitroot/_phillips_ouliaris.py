@@ -139,38 +139,39 @@ def phillips_ouliaris(
 
     Parameters
     ----------
-    y : array_like
+    y : ndarray, Series or DataFrame
         The left-hand-side variable in the cointegrating regression.
-    x : array_like
+    x : ndarray, Series or DataFrame
         The right-hand-side variables in the cointegrating regression.
-    trend : {"n","c","ct","ctt"}, default "c"
+    trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
-    test_type : {"Za", "Zt", "Pu", "Pz"}, default "Zt"
+
+    test_type : {"Za", "Zt", "Pu", "Pz"}, optional
         The test statistic to compute. Supported options are:
 
-        * "Za": The Zα test based on the the debiased AR(1) coefficient.
+        * "Za": The Zα test based on the debiased AR(1) coefficient.
         * "Zt": The Zt test based on the t-statistic from an AR(1).
         * "Pu": The Pᵤ variance-ratio test.
         * "Pz": The Pz test of the trace of the product of an estimate of the
           long-run residual variance and the inner-product of the data.
 
         See the notes for details on the test.
-    kernel : str, default "bartlett"
-        The string name of any of any known kernel-based long-run
-        covariance estimators. Common choices are "bartlett" for the
+    kernel : str, optional
+        The string name of any known kernel-based long-run
+        covariance estimator. Common choices are "bartlett" for the
         Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
         and "quadratic-spectral" for the Quadratic Spectral kernel.
-    bandwidth : int, default None
+    bandwidth : int, optional
         The bandwidth to use. If not provided, the optimal bandwidth is
         estimated from the data. Setting the bandwidth to 0 produces White's
         covariance estimator.
-    force_int : bool, default False
-        Whether the force the estimated optimal bandwidth to be an integer.
+    force_int : bool, optional
+        Whether to force the estimated optimal bandwidth to be an integer.
 
     Returns
     -------
@@ -314,21 +315,23 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
     crit_vals : Series
         The critical values of the Phillips-Ouliaris test specific to the sample
         size and model dimension.
-    null : str, default "No Cointegration"
+    null : str, optional
         The null hypothesis.
-    alternative : str, default "Cointegration"
+    alternative : str, optional
         The alternative hypothesis.
-    trend : str, default "c"
+    trend : str, optional
         The model's trend description.
-    order : int, default 2
+    order : int, optional
         The number of stochastic trends in the null distribution.
-    xsection : RegressionResults
-        The OLS results used in the cross-sectional regression.
-    test_type : str, default "Za"
+    xsection : RegressionResults, optional
+        The OLS results used in the cross-sectional regression. They must be
+        provided.
+    test_type : str, optional
         The type of the test, one of "Za", "Zt", "Pu" and "Pz".
-    kernel_est : CovarianceEstimator
+    kernel_est : CovarianceEstimator, optional
         The long-run covariance estimator used to compute the test statistic.
-    rho : float, default 0.0
+        It must be provided.
+    rho : float, optional
         Not used.
     """
 
@@ -365,16 +368,24 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
 
     @property
     def kernel(self) -> str:
-        """Name of the long-run covariance estimator"""
+        """Name of the long-run covariance estimator."""
         return self._kernel_est.__class__.__name__
 
     @property
     def bandwidth(self) -> float:
-        """Bandwidth used by the long-run covariance estimator"""
+        """Bandwidth used by the long-run covariance estimator."""
         return self._kernel_est.bandwidth
 
     def summary(self) -> Summary:
-        """Summary of test, containing statistic, p-value and critical values"""
+        """
+        Summary of test, containing statistic, p-value and critical values.
+
+        Returns
+        -------
+        statsmodels.iolib.summary.Summary
+            A summary instance with methods that support export to text, csv
+            or latex.
+        """
         if self.bandwidth == int(self.bandwidth):
             bw = str(int(self.bandwidth))
         else:
@@ -427,14 +438,14 @@ def phillips_ouliaris_cv(
     nobs: int,
 ) -> pd.Series:
     """
-    Critical Values for Phillips-Ouliaris tests
+    Critical values for Phillips-Ouliaris tests.
 
     Parameters
     ----------
     test_type : {"Za", "Zt", "Pu", "Pz"}
-        The test type
+        The test type.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
+        The trend included in the model.
     num : int
         Number of assumed stochastic trends in the model under the null. Must
         be between 2 and 13.
@@ -444,7 +455,7 @@ def phillips_ouliaris_cv(
     Returns
     -------
     Series
-        The critical values for 1, 5 and 10%
+        The critical values for 1, 5 and 10%.
     """
     test_types = ("Za", "Zt", "Pu", "Pz")
     test_type_key = test_type.capitalize()
@@ -486,16 +497,16 @@ def phillips_ouliaris_pval(
     num: int,
 ) -> float:
     """
-    Asymptotic P-values for Phillips-Ouliaris t-tests
+    Asymptotic P-values for Phillips-Ouliaris t-tests.
 
     Parameters
     ----------
     stat : float
-        The test statistic
+        The test statistic.
     test_type : {"Za", "Zt", "Pu", "Pz"}
-        The test type
+        The test type.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
+        The trend included in the model.
     num : int
         Number of assumed stochastic trends in the model under the null. Must
         be between 2 and 13.
@@ -503,7 +514,7 @@ def phillips_ouliaris_pval(
     Returns
     -------
     float
-        The asymptotic p-value
+        The asymptotic p-value.
     """
     test_types = ("Za", "Zt", "Pu", "Pz")
     test_type_key = test_type.capitalize()

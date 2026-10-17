@@ -1,6 +1,8 @@
 """
-Mean models to use with ARCH processes.  All mean models must inherit from
-:class:`ARCHModel` and provide the same methods with the same inputs.
+Mean models to use with ARCH processes.
+
+All mean models must inherit from :class:`ARCHModel` and provide the same methods
+with the same inputs.
 """
 
 from collections.abc import Callable, Mapping, Sequence
@@ -186,16 +188,17 @@ def _check_simulation_params(
 
 class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
-    Heterogeneous Autoregression (HAR), with optional exogenous regressors,
-    model estimation and simulation
+    Heterogeneous Autoregression (HAR) model with optional exogenous regressors.
+
+    Provides model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : {scalar, ndarray}, optional
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : ndarray or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.
+    lags : int or array_like, optional
         Description of lag structure of the HAR.
 
         * Scalar included all lags between 1 and the value.
@@ -205,23 +208,35 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
           lags[0,j]:lags[1,j]+1 for all columns of lags.
 
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     use_rotated : bool, optional
         Flag indicating to use the alternative rotated form of the HAR where
-        HAR lags do not overlap
-    hold_back : int
+        HAR lags do not overlap.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+
+    Notes
+    -----
+    The HAR-X model is described by
+
+    .. math::
+
+        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
+        + \gamma' x_t + \epsilon_t
+
+    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
+    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
 
     Examples
     --------
@@ -232,7 +247,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> y = np.random.RandomState(1234).randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
-
 
     A standard HAR with average lags 1 and 6 but holding back 10 observations
 
@@ -263,18 +277,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> models = [harx_1, harx_2, harx_3, harx_4]
     >>> print([round(mod.fit().rsquared, 3) for mod in models])
     [0.085, 0.085, 0.085, 0.085]
-
-    Notes
-    -----
-    The HAR-X model is described by
-
-    .. math::
-
-        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
-        + \gamma' x_t + \epsilon_t
-
-    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
-    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
     """
 
     # To allow for addition mean parameters in simulation
@@ -406,11 +408,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         x: ArrayLike | ArrayLike2D | None = None,
     ) -> None:
         """
-        Append observations to the model in-place
+        Append observations to the model in-place.
 
         Parameters
         ----------
-        y : {ndarray, Series, DataFrame, list, float}
+        y : ndarray, Series, DataFrame, list or float
             The observations to append. Must have the same type as the data
             used to construct the model. If the model was constructed using a
             pandas object, then the index of the new data must be unique and
@@ -419,7 +421,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             must follow the existing observations. When the model was
             constructed using an ndarray or a list, a scalar can be appended
             to add a single observation.
-        x : {ndarray, Series, DataFrame}, optional
+        x : ndarray, Series or DataFrame, optional
             The values of the exogenous regressors for the new observations.
             Must be provided if, and only if, the model includes exogenous
             regressors, must have the same type and number of columns as the
@@ -497,7 +499,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     @property
     def x(self) -> ArrayLike2D | None:
-        """Gets the value of the exogenous regressors in the model"""
+        """The exogenous regressors in the model."""
         return self._x
 
     def parameter_names(self) -> list[str]:
@@ -561,7 +563,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     @cached_property
     def num_params(self) -> int:
         """
-        Returns the number of parameters
+        Number of parameters in the model.
         """
         assert self.regressors is not None
         return int(self.regressors.shape[1])
@@ -615,7 +617,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulates data from a linear regression, AR or HAR models
+        Simulate data from a linear regression, AR or HAR models.
 
         Parameters
         ----------
@@ -627,17 +629,17 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             the model and ex[j] is the coefficient on the jth exogenous
             variable.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : {ndarray, float}, optional
+        initial_value : float or array_like, optional
             Either a scalar value or `max(lags)` array set of initial values to
             use when initializing the model.  If omitted, 0.0 is used.
-        x : {ndarray, DataFrame}, optional
-            nobs + burn by k array of exogenous variables to include in the
-            simulation.
-        initial_value_vol : {ndarray, float}, optional
+        x : array_like, optional
+            Array of exogenous variables to include in the simulation, with nobs +
+            burn rows and k columns.
+        initial_value_vol : float or ndarray, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -648,7 +650,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
 
         Examples
         --------
@@ -1279,29 +1281,21 @@ class ConstantMean(HARX):
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    hold_back : int
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ConstantMean
-    >>> y = np.random.randn(100)
-    >>> cm = ConstantMean(y)
-    >>> res = cm.fit()
 
     Notes
     -----
@@ -1310,6 +1304,14 @@ class ConstantMean(HARX):
     .. math::
 
         y_t = \mu + \epsilon_t
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ConstantMean
+    >>> y = np.random.randn(100)
+    >>> cm = ConstantMean(y)
+    >>> res = cm.fit()
     """
 
     def __init__(
@@ -1349,7 +1351,7 @@ class ConstantMean(HARX):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulated data from a constant mean model
+        Simulate data from a constant mean model.
 
         Parameters
         ----------
@@ -1358,17 +1360,17 @@ class ConstantMean(HARX):
             [mean volatility distribution]. There is one parameter in the mean
             model, mu.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None, since there are no mean dynamics. A ValueError is
             raised if it is not None.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or ndarray, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1379,7 +1381,7 @@ class ConstantMean(HARX):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
 
         Examples
         --------
@@ -1426,33 +1428,25 @@ class ConstantMean(HARX):
 
 class ZeroMean(HARX):
     r"""
-    Model with zero conditional mean estimation and simulation
+    Model with zero conditional mean estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    hold_back : int
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ZeroMean
-    >>> y = np.random.randn(100)
-    >>> zm = ZeroMean(y)
-    >>> res = zm.fit()
 
     Notes
     -----
@@ -1462,6 +1456,13 @@ class ZeroMean(HARX):
 
         y_t = \epsilon_t
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ZeroMean
+    >>> y = np.random.randn(100)
+    >>> zm = ZeroMean(y)
+    >>> res = zm.fit()
     """
 
     def __init__(
@@ -1503,25 +1504,25 @@ class ZeroMean(HARX):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulated data from a zero mean model
+        Simulate data from a zero mean model.
 
         Parameters
         ----------
-        params : {ndarray, DataFrame}
+        params : array_like
             Parameters to use when simulating the model.  Parameter order is
             [volatility distribution]. There are no mean parameters.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None, since there are no mean dynamics. A ValueError is
             raised if it is not None.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or ndarray, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -1532,7 +1533,7 @@ class ZeroMean(HARX):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
 
         Examples
         --------
@@ -1584,34 +1585,44 @@ class ZeroMean(HARX):
 
 class ARX(HARX):
     r"""
-    Autoregressive model with optional exogenous regressors estimation and
-    simulation
+    Autoregressive model with optional exogenous regressors.
+
+    Provides model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : scalar, 1-d array, optional
-        Description of lag structure of the HAR.  Scalar included all lags
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : ndarray or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.
+    lags : int or array_like, optional
+        Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
         lags[1], ...
     constant : bool, optional
-        Flag whether the model should include a constant
-    hold_back : int
+        Flag whether the model should include a constant.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
+
+    Notes
+    -----
+    The AR-X model is described by
+
+    .. math::
+
+        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
+        + \epsilon_t
 
     Examples
     --------
@@ -1626,16 +1637,6 @@ class ARX(HARX):
     >>> from arch.univariate import GARCH
     >>> arx.volatility = GARCH()
     >>> res = arx.fit(update_freq=0, disp='off')
-
-    Notes
-    -----
-    The AR-X model is described by
-
-    .. math::
-
-        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
-        + \epsilon_t
-
     """
 
     def __init__(
@@ -1714,38 +1715,29 @@ class ARX(HARX):
 
 class LS(HARX):
     r"""
-    Least squares model estimation and simulation
+    Least squares model estimation and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : ndarray or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.
     constant : bool, optional
-        Flag whether the model should include a constant
-    hold_back : int
+        Flag whether the model should include a constant.
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import LS
-    >>> y = np.random.randn(100)
-    >>> x = np.random.randn(100,2)
-    >>> ls = LS(y, x)
-    >>> res = ls.fit()
 
     Notes
     -----
@@ -1755,6 +1747,14 @@ class LS(HARX):
 
         y_t = \mu + \gamma' x_t + \epsilon_t
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import LS
+    >>> y = np.random.randn(100)
+    >>> x = np.random.randn(100,2)
+    >>> ls = LS(y, x)
+    >>> res = ls.fit()
     """
 
     def __init__(
@@ -1784,20 +1784,20 @@ class LS(HARX):
 
 class ARCHInMean(ARX):
     r"""
-    (G)ARCH-in-mean model and simulation
+    (G)ARCH-in-mean model and simulation.
 
     Parameters
     ----------
-    y : {ndarray, Series}
-        nobs element vector containing the dependent variable
-    x : {ndarray, DataFrame}, optional
-        nobs by k element array containing exogenous regressors
-    lags : {scalar, 1-d array}, optional
-        Description of lag structure of the HAR.  Scalar included all lags
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
+    x : ndarray or DataFrame, optional
+        Array with nobs rows and k columns containing exogenous regressors.
+    lags : int or array_like, optional
+        Description of lag structure of the AR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the AR lags lags[0],
         lags[1], ...
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
@@ -1806,29 +1806,19 @@ class ARCHInMean(ARX):
         Volatility process to use in the model. ``volatility.updateable`` must
         return ``True``.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
         If False, the model is estimated on the data without transformation.  If True,
         then y is rescaled and the new scale is reported in the estimation results.
-    form : {"log", "vol", "var", int, float}
+    form : {"log", "vol", "var"}, int or float, optional
         The form of the conditional variance that appears in the mean equation. The
         string names use the log of the conditional variance ("log"), the square-root
         of the conditional variance ("vol") or the conditional variance. When
         specified using a float, interpreted as :math:`\sigma_t^{form}` so that
         1 is equivalent to "vol" and 2 is equivalent to "var". When using a number,
         must be different from 0.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from arch.univariate import ARCHInMean, GARCH
-    >>> from arch.data.sp500 import load
-    >>> sp500 = load()
-    >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
-    >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
-    >>> res = gim.fit(disp="off")
 
     Notes
     -----
@@ -1840,6 +1830,16 @@ class ARCHInMean(ARX):
               + \gamma' x_t +  \epsilon_t
 
     where :math:`f(\cdot)` is the function specified by ``form``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ARCHInMean, GARCH
+    >>> from arch.data.sp500 import load
+    >>> sp500 = load()
+    >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
+    >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
+    >>> res = gim.fit(disp="off")
     """
 
     # To account for GIM param
@@ -1895,7 +1895,7 @@ class ARCHInMean(ARX):
 
     @property
     def form(self) -> int | float | Literal["log", "vol", "var"]:
-        """The form of the conditional variance in the mean"""
+        """The form of the conditional variance in the mean."""
         return self._form
 
     def _model_description(self, include_lags: bool = False) -> dict[str, str]:
@@ -2198,24 +2198,25 @@ def _ma_starting_values(y: Float64Array1D, lags: int, constant: bool) -> Float64
 
 class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
-    Moving average (MA) mean model, with optional constant, model estimation,
-    simulation and forecasting
+    Moving average (MA) mean model, with optional constant.
+
+    Provides model estimation, simulation and forecasting.
 
     Parameters
     ----------
-    y : {ndarray, Series}, optional
-        nobs element vector containing the dependent variable
+    y : ndarray or Series, optional
+        Vector of nobs elements containing the dependent variable.
     lags : int, optional
         The order of the moving average, q. Must be at least 1.
     constant : bool, optional
-        Flag whether the model should include a constant
+        Flag whether the model should include a constant.
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.
     volatility : VolatilityProcess, optional
-        Volatility process to use in the model
+        Volatility process to use in the model.
     distribution : Distribution, optional
-        Error distribution to use in the model
+        Error distribution to use in the model.
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
@@ -2354,17 +2355,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
     @cached_property
     def num_params(self) -> int:
         """
-        Returns the number of parameters
+        Number of parameters in the model.
         """
         return int(self.constant) + self.lags
 
     def bounds(self) -> list[tuple[float, float]]:
         """
-        Construct bounds for parameters to use in non-linear optimization
+        Construct bounds for parameters to use in non-linear optimization.
 
         Returns
         -------
-        bounds : list (2-tuple of float)
+        bounds : list of tuple of float
             Bounds for parameters to use in estimation. The coefficient of
             an MA(1) is restricted to [-1, 1], which makes it invertible.
         """
@@ -2375,14 +2376,14 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """
-        Construct linear constraint arrays for use in non-linear optimization
+        Construct linear constraint arrays for use in non-linear optimization.
 
         Returns
         -------
         a : ndarray
-            Number of constraints by number of parameters loading array
+            Number of constraints by number of parameters loading array.
         b : ndarray
-            Number of constraints array of lower bounds
+            Number of constraints array of lower bounds.
 
         Notes
         -----
@@ -2501,7 +2502,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value_vol: float | Float64Array | None = None,
     ) -> pd.DataFrame:
         """
-        Simulates data from a moving average model
+        Simulate data from a moving average model.
 
         Parameters
         ----------
@@ -2511,17 +2512,17 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             model are ordered [mu theta[1] ... theta[q]], and mu is not
             included when the model does not have a constant.
         nobs : int
-            Length of series to simulate
+            Length of series to simulate.
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : None
+        initial_value : None, optional
             Must be None. A ValueError is raised if it is not None. The
             innovations before the first observation are 0.
-        x : None
+        x : None, optional
             Must be None, since there are no exogenous variables. A ValueError
             is raised if it is not None.
-        initial_value_vol : {ndarray, float}, optional
+        initial_value_vol : float or ndarray, optional
             An array or scalar to use when initializing the volatility process.
             It is not always a variance. The units depend on the volatility
             process, see
@@ -2532,7 +2533,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulated_data : DataFrame
             DataFrame with columns data containing the simulated values,
             volatility, containing the conditional volatility and errors
-            containing the errors used in the simulation
+            containing the errors used in the simulation.
 
         Notes
         -----
@@ -2762,46 +2763,47 @@ def arch_model(
     rescale: bool | None = None,
 ) -> HARX:
     """
-    Initialization of common ARCH model specifications
+    Initialize common ARCH model specifications.
 
     Parameters
     ----------
-    y : ndarray, Series, None
-        The dependent variable
-    x : ndarray, DataFrame, optional
+    y : ndarray, Series or None
+        The dependent variable.
+    x : ndarray or DataFrame, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
         Name of the mean model.  Currently supported options are: 'Constant',
-        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'
-    lags : int or list[int], optional
+        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.
+    lags : int or list of int, optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
         'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'
-        and 'HARCH'
-    p : int, optional
-        Lag order of the symmetric innovation
+        and 'HARCH'.
+    p : int or list of int, optional
+        Lag order of the symmetric innovation.  A list of lags can only be used
+        with the 'HARCH' volatility model.
     o : int, optional
-        Lag order of the asymmetric innovation
+        Lag order of the asymmetric innovation.
     q : int, optional
-        Lag order of lagged volatility or equivalent
+        Lag order of lagged volatility or equivalent.
     power : float, optional
-        Power to use with GARCH and related models
-    dist : int, optional
+        Power to use with GARCH and related models.
+    dist : str, optional
         Name of the error distribution.  Currently supported options are:
 
             * Normal: 'normal', 'gaussian' (default)
-            * Students's t: 't', 'studentst'
+            * Student's t: 't', 'studentst'
             * Skewed Student's t: 'skewstudent', 'skewt'
-            * Generalized Error Distribution: 'ged', 'generalized error"
+            * Generalized Error Distribution: 'ged', 'generalized error'
 
-    hold_back : int
+    hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
-    rescale : bool
+    rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale
         of the data is likely to produce convergence issues when estimating
         model parameters. If False, the model is estimated on the data without
@@ -2811,7 +2813,12 @@ def arch_model(
     Returns
     -------
     model : ARCHModel
-        Configured ARCH model
+        Configured ARCH model.
+
+    Notes
+    -----
+    Input that are not relevant for a particular specification, such as `lags`
+    when `mean='zero'`, are silently ignored.
 
     Examples
     --------
@@ -2834,11 +2841,6 @@ def arch_model(
 
     >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1,
     ...                 power=1.0, dist='StudentsT')
-
-    Notes
-    -----
-    Input that are not relevant for a particular specification, such as `lags`
-    when `mean='zero'`, are silently ignored.
     """
     am: ARCHModel
 
