@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility - arch v8.0.1 (+576)</title>
+        <title>arch.utility - arch v8.0.1 (+591)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+591)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+576)
+            arch v8.0.1 (+591)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+591)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+576)
+    arch v8.0.1 (+591)
   </label>
   
     <div class="md-nav__source">
@@ -570,12 +570,19 @@
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``exit`` or ``append`` is not a bool.</span>
 <span class="sd">    ImportError</span>
 <span class="sd">        If pytest is not installed.</span>
 <span class="sd">    RuntimeError</span>
 <span class="sd">        If the location of the tests does not exist.</span>
 <span class="sd">    """</span>
 
+    <span class="c1"># Imported here to keep importing arch.utility light</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_bool</span>  <span class="c1"># noqa: PLC0415</span>
+
+    <span class="n">exit</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"exit"</span><span class="p">,</span> <span class="n">exit</span><span class="p">)</span>
+    <span class="n">append</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"append"</span><span class="p">,</span> <span class="n">append</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>

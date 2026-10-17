@@ -78,7 +78,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "am = arch_model(returns, vol=\"Garch\", p=1, o=0, q=1, dist=\"Normal\")\n",
+    "am = arch_model(returns, vol=\"garch\", p=1, o=0, q=1, dist=\"normal\")\n",
     "res = am.fit(update_freq=5)"
    ]
   },
@@ -245,7 +245,7 @@
    "outputs": [],
    "source": [
     "split_date = \"2017-12-31\"\n",
-    "am = arch_model(returns[:split_date], vol=\"Garch\", p=1, o=0, q=1, dist=\"Normal\")\n",
+    "am = arch_model(returns[:split_date], vol=\"garch\", p=1, o=0, q=1, dist=\"normal\")\n",
     "res = am.fit(disp=\"off\")\n",
     "print(res.forecast(horizon=3, reindex=False).variance)"
    ]
@@ -297,7 +297,7 @@
    "outputs": [],
    "source": [
     "# TARCH specification\n",
-    "am = arch_model(returns, vol=\"GARCH\", power=2.0, p=1, o=1, q=1)\n",
+    "am = arch_model(returns, vol=\"garch\", power=2.0, p=1, o=1, q=1)\n",
     "res = am.fit(update_freq=5)\n",
     "forecasts = res.forecast()\n",
     "print(forecasts.variance.iloc[-1])"
@@ -392,7 +392,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "am = arch_model(returns, vol=\"Garch\", p=1, o=0, q=1, dist=\"skewt\")\n",
+    "am = arch_model(returns, vol=\"garch\", p=1, o=0, q=1, dist=\"skewt\")\n",
     "res = am.fit(disp=\"off\", last_obs=\"2017-12-31\")"
    ]
   },

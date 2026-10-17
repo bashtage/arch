@@ -67,7 +67,7 @@ The forecast of the mean depends on the most recent innovations for the first
     res.forecast(horizon=4, reindex=False).mean
 
 ``MAMean`` is a class only. It is not available through
-:func:`~arch.univariate.arch_model`, so that ``arch_model(y, mean="MA")`` raises a
+:func:`~arch.univariate.arch_model`, so that ``arch_model(y, mean="ma")`` raises a
 ``ValueError``.
 
 Adding Observations to a Model

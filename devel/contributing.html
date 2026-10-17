@@ -23,7 +23,7 @@
     
   
       
-        <title>Contributing - arch v8.0.1 (+576)</title>
+        <title>Contributing - arch v8.0.1 (+591)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+591)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+576)
+            arch v8.0.1 (+591)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+591)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+576)
+    arch v8.0.1 (+591)
   </label>
   
     <div class="md-nav__source">
@@ -922,17 +922,20 @@ the optimizer. The checks are in <code class="docutils literal notranslate"><spa
 same way everywhere.</p>
 <div class="note admonition">
 <p class="admonition-title">Note</p>
-<p>Decisions 63 and 66-73 of the 9.0 plan are provisional until the maintainer answers
-them. The rules below use the recommended answer of each. They are switches in the
-helpers (the private functions <code class="docutils literal notranslate"><span class="pre">_is_bool</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_integer</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_real</span></code> and
+<p>The rules below are the decisions of the 9.0 release. They are switches in the
+helpers (the private functions <code class="docutils literal notranslate"><span class="pre">_is_bool</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_flag_integer</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_integer</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_is_real</span></code> and
 <code class="docutils literal notranslate"><span class="pre">_float_in_range</span></code> in <code class="docutils literal notranslate"><span class="pre">arch/utility/_validation.py</span></code>) and in the lists of values in
-<code class="docutils literal notranslate"><span class="pre">arch/tests/validation_table.py</span></code>, so that a different answer changes those places
+<code class="docutils literal notranslate"><span class="pre">arch/tests/validation_table.py</span></code>, so that a change of policy changes those places
 and not the code that calls them.</p>
 </div>
 <h3 id="the-rules">The rules<a class="headerlink" href="#the-rules" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
-<li><p><strong>Flags</strong> accept <code class="docutils literal notranslate"><span class="pre">bool</span></code> and <code class="docutils literal notranslate"><span class="pre">np.bool_</span></code> only. <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;no&quot;</span></code> and arrays are
-rejected. <code class="docutils literal notranslate"><span class="pre">None</span></code> is accepted only where it is the documented default.</p></li>
+<li><p><strong>Flags</strong> accept <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">np.bool_</span></code> and the integers <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (Python and
+NumPy integers), and <code class="docutils literal notranslate"><span class="pre">check_bool</span></code> returns a Python <code class="docutils literal notranslate"><span class="pre">bool</span></code>. An integer other than
+<code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Floats (including <code class="docutils literal notranslate"><span class="pre">1.0</span></code>), <code class="docutils literal notranslate"><span class="pre">&quot;no&quot;</span></code> and
+arrays raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> is accepted only where it is the documented
+default.</p></li>
 <li><p><strong>Integers</strong> accept Python and NumPy integers (<code class="docutils literal notranslate"><span class="pre">operator.index</span></code>). A float is
 rejected, including <code class="docutils literal notranslate"><span class="pre">5.0</span></code>, and so is a <code class="docutils literal notranslate"><span class="pre">bool</span></code>.</p></li>
 <li><p><strong>Floats</strong> accept Python and NumPy real numbers, including integers. <code class="docutils literal notranslate"><span class="pre">bool</span></code> is
@@ -948,8 +951,13 @@ data of the bootstraps, the diagnostics that drop NaN, outputs padded with NaN),
 which the docstring says.</p></li>
 <li><p><strong>String options</strong> are not case sensitive (<code class="docutils literal notranslate"><span class="pre">check_option</span></code>).</p></li>
 <li><p><strong>Positions and dates</strong> (<code class="docutils literal notranslate"><span class="pre">first_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">start</span></code>) must be in
-<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">nobs]</span></code> or, for a data set with a date index, a date within the index.
-Negative positions are rejected.</p></li>
+<code class="docutils literal notranslate"><span class="pre">[-nobs,</span> <span class="pre">nobs]</span></code> or, for a data set with a date index, a date within the index. A
+negative position counts from the end with the semantics that Python gives the
+argument: <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> are slice bounds, so <code class="docutils literal notranslate"><span class="pre">last_obs=-1</span></code> drops
+the last observation, and <code class="docutils literal notranslate"><span class="pre">start</span></code> is the index of an observation, so <code class="docutils literal notranslate"><span class="pre">start=-1</span></code>
+is the last observation. The helper returns the position as a non-negative integer.
+A position outside the range raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Say this in the docstring of
+every argument that takes a position.</p></li>
 <li><p><strong>When:</strong> everything that can be decided from the arguments (type, range, option,
 shape, finiteness, lags against the number of observations) is checked when the object
 is created or the function is called. Only errors in the numerical work (a singular
@@ -1042,7 +1050,8 @@ finiteness</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_index(name,</span> <span class="pre">value,</span> <span class="pre">nobs,</span> <span class="pre">*,</span> <span class="pre">index=None,</span> <span class="pre">default=None,</span> <span class="pre">upper=None,</span>
 <span class="pre">allow_none=True)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">first_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">start</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">first_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">start</span></code>, with negative positions counted from
+the end</p></td>
 </tr>
 </tbody>
 </table>

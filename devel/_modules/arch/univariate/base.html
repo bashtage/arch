@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+576)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+591)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+576)
+            arch v8.0.1 (+591)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+576)
+    arch v8.0.1 (+591)
   </label>
   
     <div class="md-nav__source">
@@ -557,6 +557,7 @@
     <span class="n">Float64Array</span><span class="p">,</span>
     <span class="n">Float64Array1D</span><span class="p">,</span>
     <span class="n">Float64Array2D</span><span class="p">,</span>
+    <span class="n">ForecastAlignment</span><span class="p">,</span>
     <span class="n">ForecastingMethod</span><span class="p">,</span>
     <span class="n">Label</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
@@ -1400,9 +1401,10 @@
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        Positions are in [0, nobs] and dates must be in the index. Whether the</span>
-<span class="sd">        positions leave any observation after hold_back is checked when the sample</span>
-<span class="sd">        is set.</span>
+<span class="sd">        Positions are in [-nobs, nobs] and dates must be in the index. A negative</span>
+<span class="sd">        position counts from the end, as in a slice, and the positions returned are</span>
+<span class="sd">        not negative. Whether the positions leave any observation after hold_back is</span>
+<span class="sd">        checked when the sample is set.</span>
 <span class="sd">        """</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">index</span>
@@ -1430,11 +1432,16 @@
 <span class="sd">        first_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            First observation to use when fixing model. Dates, strings and</span>
 <span class="sd">            periods can only be used with pandas inputs that have a</span>
-<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and</span>
-<span class="sd">            a date must be in the index.</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [-nobs, nobs],</span>
+<span class="sd">            and a date must be in the index. A negative integer counts from the</span>
+<span class="sd">            end, as in a slice, so that ``first_obs=-100`` uses the last 100</span>
+<span class="sd">            observations.</span>
 <span class="sd">        last_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            Last observation to use when fixing model. An integer must be in</span>
-<span class="sd">            [0, nobs], and a date must be in the index.</span>
+<span class="sd">            [-nobs, nobs], and a date must be in the index. As in a slice, the</span>
+<span class="sd">            observation at ``last_obs`` is not used, and a negative integer</span>
+<span class="sd">            counts from the end, so that ``last_obs=-1`` drops the last</span>
+<span class="sd">            observation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1544,7 +1551,7 @@
 <span class="sd">        disp : bool or {"off", "final"}, optional</span>
 <span class="sd">            Either 'final' to print optimization result or 'off' to display</span>
 <span class="sd">            nothing. Not case sensitive. If using a boolean, False is "off" and</span>
-<span class="sd">            True is "final".</span>
+<span class="sd">            True is "final". The integers 0 and 1 are accepted as booleans.</span>
 <span class="sd">        starting_values : array_like, optional</span>
 <span class="sd">            Array of starting values to use.  If not provided, starting values</span>
 <span class="sd">            are constructed by the model components. Must have one finite element</span>
@@ -1562,11 +1569,16 @@
 <span class="sd">        first_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            First observation to use when estimating model. Dates, strings and</span>
 <span class="sd">            periods can only be used with pandas inputs that have a</span>
-<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and</span>
-<span class="sd">            a date must be in the index.</span>
+<span class="sd">            DatetimeIndex or a PeriodIndex. An integer must be in [-nobs, nobs],</span>
+<span class="sd">            and a date must be in the index. A negative integer counts from the</span>
+<span class="sd">            end, as in a slice, so that ``first_obs=-100`` uses the last 100</span>
+<span class="sd">            observations.</span>
 <span class="sd">        last_obs : int, str, date, datetime, Timestamp or Period, optional</span>
 <span class="sd">            Last observation to use when estimating model. An integer must be in</span>
-<span class="sd">            [0, nobs], and a date must be in the index.</span>
+<span class="sd">            [-nobs, nobs], and a date must be in the index. As in a slice, the</span>
+<span class="sd">            observation at ``last_obs`` is not used, and a negative integer</span>
+<span class="sd">            counts from the end, so that ``last_obs=-1`` drops the last</span>
+<span class="sd">            observation.</span>
 <span class="sd">        tol : float, optional</span>
 <span class="sd">            Tolerance for termination. Must not be negative.</span>
 <span class="sd">        options : dict, optional</span>
@@ -1589,14 +1601,15 @@
 <span class="sd">            If the model was created without data.</span>
 <span class="sd">        TypeError</span>
 <span class="sd">            If an argument is not of the documented type, for example a float for</span>
-<span class="sd">            ``update_freq`` or an integer (0 or 1) for ``disp``.</span>
+<span class="sd">            ``update_freq`` or ``disp``.</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``update_freq`` is negative, ``tol`` is negative or not finite,</span>
 <span class="sd">            ``backcast`` is not positive and finite, ``starting_values`` does not</span>
 <span class="sd">            have one finite element for each parameter, ``first_obs`` or</span>
 <span class="sd">            ``last_obs`` is outside the sample, ``cov_type`` or ``disp`` is not one</span>
-<span class="sd">            of the options, or the model has more parameters than the number of</span>
-<span class="sd">            observations used to estimate it.</span>
+<span class="sd">            of the options (``disp`` can also be an integer other than 0 and 1), or</span>
+<span class="sd">            the model has more parameters than the number of observations used to</span>
+<span class="sd">            estimate it.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -2044,7 +2057,7 @@
         <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
+        <span class="n">align</span><span class="p">:</span> <span class="n">ForecastAlignment</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">"analytic"</span><span class="p">,</span>
         <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">rng</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2068,15 +2081,17 @@
 <span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
 <span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
 <span class="sd">            Strings must be convertible to a date time, such as in</span>
-<span class="sd">            '1945-01-01'. An integer must be in [0, nobs], and a date must be in</span>
-<span class="sd">            the index.</span>
-<span class="sd">        align : {"origin", "target"}, optional</span>
+<span class="sd">            '1945-01-01'. An integer must be in [-nobs, nobs], and a date must be</span>
+<span class="sd">            in the index. A negative integer counts from the end, as in Python</span>
+<span class="sd">            indexing, so that ``start=-1`` is the last observation.</span>
+<span class="sd">        align : {"origin", "target", "horizon"}, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
 <span class="sd">            set to 'target', the t-th row contains the 1-step ahead forecast</span>
 <span class="sd">            from time t-1, the 2 step from time t-2, ..., and the h-step from</span>
 <span class="sd">            time t-h.  'target' simplified computing forecast errors since the</span>
-<span class="sd">            realization and h-step forecast are aligned. Not case sensitive.</span>
+<span class="sd">            realization and h-step forecast are aligned. 'horizon' is an alias</span>
+<span class="sd">            of 'target'. Not case sensitive.</span>
 <span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
@@ -2164,18 +2179,18 @@
 <span class="sd">        y[:t] (that is, up to but not including t) for horizon h + 1.  For</span>
 <span class="sd">        example, y[100,2] contains the 3-step ahead forecast using the first</span>
 <span class="sd">        100 data points, which will correspond to the realization y[100 + 2].</span>
-<span class="sd">        If `align` is 'target', then the same forecast is in location</span>
-<span class="sd">        [102, 2], so that it is aligned with the observation to use when</span>
+<span class="sd">        If `align` is 'target' (or its alias 'horizon'), then the same forecast is in</span>
+<span class="sd">        location [102, 2], so that it is aligned with the observation to use when</span>
 <span class="sd">        evaluating, but still in the same column.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">        &gt;&gt;&gt; from arch import arch_model</span>
-<span class="sd">        &gt;&gt;&gt; am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')</span>
+<span class="sd">        &gt;&gt;&gt; am = arch_model(None,mean='har',lags=[1,5,22],vol='constant')</span>
 <span class="sd">        &gt;&gt;&gt; sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)</span>
 <span class="sd">        &gt;&gt;&gt; sim_data.index = pd.date_range('2000-01-01',periods=250)</span>
-<span class="sd">        &gt;&gt;&gt; am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')</span>
+<span class="sd">        &gt;&gt;&gt; am = arch_model(sim_data['data'],mean='har',lags=[1,5,22],  vol='constant')</span>
 <span class="sd">        &gt;&gt;&gt; res = am.fit()</span>
 <span class="sd">        &gt;&gt;&gt; fig = res.hedgehog_plot()</span>
 <span class="sd">        """</span></div>
@@ -2551,10 +2566,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        annualize : {"D", "W", "M"}, optional</span>
+<span class="sd">        annualize : {"d", "w", "m"}, optional</span>
 <span class="sd">            String containing frequency of data that indicates plot should</span>
-<span class="sd">            contain annualized volatility.  Supported values are 'D' (daily),</span>
-<span class="sd">            'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,</span>
+<span class="sd">            contain annualized volatility.  Supported values are 'd' (daily),</span>
+<span class="sd">            'w' (weekly) and 'm' (monthly), which scale variance by 252, 52,</span>
 <span class="sd">            and 12, respectively. Not case sensitive.</span>
 <span class="sd">        scale : float, optional</span>
 <span class="sd">            Value to use when scaling returns to annualize.  If scale is</span>
@@ -2585,7 +2600,7 @@
 
 <span class="sd">        Produce a plot with annualized volatility</span>
 
-<span class="sd">        &gt;&gt;&gt; fig = res.plot(annualize='D')</span>
+<span class="sd">        &gt;&gt;&gt; fig = res.plot(annualize='d')</span>
 
 <span class="sd">        Override the usual scale of 252 to use 360 for an asset that trades</span>
 <span class="sd">        most days of the year</span>
@@ -2597,9 +2612,7 @@
 
         <span class="n">scales</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"d"</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">annualize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">annualize</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
-                <span class="s2">"annualize"</span><span class="p">,</span> <span class="n">annualize</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">scales</span><span class="p">),</span> <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"D"</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">annualize</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"annualize"</span><span class="p">,</span> <span class="n">annualize</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">scales</span><span class="p">))</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span>
             <span class="s2">"scale"</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -2643,7 +2656,7 @@
         <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
+        <span class="n">align</span><span class="p">:</span> <span class="n">ForecastAlignment</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">"analytic"</span><span class="p">,</span>
         <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">rng</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2668,15 +2681,17 @@
 <span class="sd">            observation to produce the forecast for.  Dates can only be used</span>
 <span class="sd">            with pandas inputs that have a DatetimeIndex or a PeriodIndex.</span>
 <span class="sd">            Strings must be convertible to a date time, such as in</span>
-<span class="sd">            '1945-01-01'. An integer must be in [0, nobs], and a date must be in</span>
-<span class="sd">            the index.</span>
-<span class="sd">        align : {"origin", "target"}, optional</span>
+<span class="sd">            '1945-01-01'. An integer must be in [-nobs, nobs], and a date must be</span>
+<span class="sd">            in the index. A negative integer counts from the end, as in Python</span>
+<span class="sd">            indexing, so that ``start=-1`` is the last observation.</span>
+<span class="sd">        align : {"origin", "target", "horizon"}, optional</span>
 <span class="sd">            Either 'origin' or 'target'.  When set of 'origin', the t-th row</span>
 <span class="sd">            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When</span>
 <span class="sd">            set to 'target', the t-th row contains the 1-step ahead forecast</span>
 <span class="sd">            from time t-1, the 2 step from time t-2, ..., and the h-step from</span>
 <span class="sd">            time t-h.  'target' simplified computing forecast errors since the</span>
-<span class="sd">            realization and h-step forecast are aligned. Not case sensitive.</span>
+<span class="sd">            realization and h-step forecast are aligned. 'horizon' is an alias</span>
+<span class="sd">            of 'target'. Not case sensitive.</span>
 <span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
 <span class="sd">            The method only affects the variance forecast generation.  Not all</span>
@@ -2762,8 +2777,8 @@
 <span class="sd">        y[:t] (that is, up to but not including t) for horizon h + 1.  For</span>
 <span class="sd">        example, y[100,2] contains the 3-step ahead forecast using the first</span>
 <span class="sd">        100 data points, which will correspond to the realization y[100 + 2].</span>
-<span class="sd">        If `align` is 'target', then the same forecast is in location</span>
-<span class="sd">        [102, 2], so that it is aligned with the observation to use when</span>
+<span class="sd">        If `align` is 'target' (or its alias 'horizon'), then the same forecast is in</span>
+<span class="sd">        location [102, 2], so that it is aligned with the observation to use when</span>
 <span class="sd">        evaluating, but still in the same column.</span>
 <span class="sd">        """</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -2777,12 +2792,7 @@
         <span class="n">start</span> <span class="o">=</span> <span class="n">check_index</span><span class="p">(</span><span class="s2">"start"</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
         <span class="n">align</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
             <span class="s2">"Literal['origin', 'target']"</span><span class="p">,</span>
-            <span class="n">check_option</span><span class="p">(</span>
-                <span class="s2">"align"</span><span class="p">,</span>
-                <span class="n">align</span><span class="p">,</span>
-                <span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"horizon"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">},</span>
-                <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">),</span>
-            <span class="p">),</span>
+            <span class="n">_check_align</span><span class="p">(</span><span class="n">align</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
             <span class="s2">"ForecastingMethod"</span><span class="p">,</span>
@@ -2839,7 +2849,9 @@
 <span class="sd">            inputs that have a datetime index.  Strings must be convertible</span>
 <span class="sd">            to a date time, such as in '1945-01-01'.  If not provided, the start</span>
 <span class="sd">            is set to the earliest forecastable date. An integer must be in</span>
-<span class="sd">            [0, nobs], and a date must be in the index.</span>
+<span class="sd">            [-nobs, nobs], and a date must be in the index. A negative integer</span>
+<span class="sd">            counts from the end, as in Python indexing, so that ``start=-1`` is</span>
+<span class="sd">            the last observation.</span>
 <span class="sd">        plot_type : {"volatility", "mean"}, optional</span>
 <span class="sd">            Quantity to plot, the forecast volatility or the forecast mean. Not case</span>
 <span class="sd">            sensitive.</span>
@@ -2875,10 +2887,10 @@
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">        &gt;&gt;&gt; from arch import arch_model</span>
-<span class="sd">        &gt;&gt;&gt; am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')</span>
+<span class="sd">        &gt;&gt;&gt; am = arch_model(None,mean='har',lags=[1,5,22],vol='constant')</span>
 <span class="sd">        &gt;&gt;&gt; sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)</span>
 <span class="sd">        &gt;&gt;&gt; sim_data.index = pd.date_range('2000-01-01',periods=250)</span>
-<span class="sd">        &gt;&gt;&gt; am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')</span>
+<span class="sd">        &gt;&gt;&gt; am = arch_model(sim_data['data'],mean='har',lags=[1,5,22],  vol='constant')</span>
 <span class="sd">        &gt;&gt;&gt; res = am.fit()</span>
 <span class="sd">        &gt;&gt;&gt; fig = res.hedgehog_plot(plot_type='mean')</span>
 <span class="sd">        """</span>
@@ -3421,15 +3433,20 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_align_forecast</span><span class="p">(</span>
-    <span class="n">f</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">align</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
-        <span class="s2">"align"</span><span class="p">,</span>
-        <span class="n">align</span><span class="p">,</span>
-        <span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"horizon"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">},</span>
-        <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">),</span>
-    <span class="p">)</span>
+<span class="n">_ALIGN_OPTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"horizon"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_align</span><span class="p">(</span><span class="n">align</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Check ``align`` of the forecasts and return it as "origin" or "target".</span>
+
+<span class="sd">    "horizon" is an alias of "target", and the options are not case sensitive.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"align"</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">_ALIGN_OPTIONS</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">_ALIGN_OPTIONS</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_align_forecast</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="n">ForecastAlignment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="n">align</span> <span class="o">=</span> <span class="n">_check_align</span><span class="p">(</span><span class="n">align</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">align</span> <span class="o">==</span> <span class="s2">"origin"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">f</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
@@ -3565,9 +3582,9 @@
 <span class="sd">        ``simulated_paths``.</span>
 <span class="sd">    simulated_residuals : ndarray, optional</span>
 <span class="sd">        Simulated residuals, with the same dimensions as ``simulated_paths``.</span>
-<span class="sd">    align : {"origin", "target"}, optional</span>
+<span class="sd">    align : {"origin", "target", "horizon"}, optional</span>
 <span class="sd">        Alignment of the forecasts.  See the ``align`` parameter of the</span>
-<span class="sd">        ``forecast`` method.</span>
+<span class="sd">        ``forecast`` method. 'horizon' is an alias of 'target'.</span>
 <span class="sd">    reindex : bool, optional</span>
 <span class="sd">        Whether to reindex the forecasts to have the same dimension as the series</span>
 <span class="sd">        being forecast.</span>
@@ -3589,7 +3606,7 @@
         <span class="n">simulated_variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">simulated_residual_variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">simulated_residuals</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
+        <span class="n">align</span><span class="p">:</span> <span class="n">ForecastAlignment</span> <span class="o">=</span> <span class="s2">"origin"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">reindex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

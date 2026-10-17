@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.univariate.base.ARCHModel.fix - arch v8.0.1 (+576)</title>
+        <title>arch.univariate.base.ARCHModel.fix - arch v8.0.1 (+591)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+576)
+            arch v8.0.1 (+591)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+576)
+    arch v8.0.1 (+591)
   </label>
   
     <div class="md-nav__source">
@@ -1909,11 +1909,16 @@ model, volatility model and distribution, and be finite.</p>
 </dd>
 <dt id="arch.univariate.base.ARCHModel.fix.first_obs"><span class="n sig-name">first_obs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)">datetime</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.datetime64" title="(in NumPy v2.5)">datetime64</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v3.0.6)">Timestamp</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.base.ARCHModel.fix.first_obs" title="Permalink to this definition">¶</a></dt><dd><p>First observation to use when fixing model. Dates, strings and
 periods can only be used with pandas inputs that have a
-DatetimeIndex or a PeriodIndex. An integer must be in [0, nobs], and
-a date must be in the index.</p>
+DatetimeIndex or a PeriodIndex. An integer must be in [-nobs, nobs],
+and a date must be in the index. A negative integer counts from the
+end, as in a slice, so that <code class="docutils literal notranslate"><span class="pre">first_obs=-100</span></code> uses the last 100
+observations.</p>
 </dd>
 <dt id="arch.univariate.base.ARCHModel.fix.last_obs"><span class="n sig-name">last_obs</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)">datetime</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.datetime64" title="(in NumPy v2.5)">datetime64</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v3.0.6)">Timestamp</a><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)">None</a></span></span><span class="w"> </span><span class="o">=</span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#arch.univariate.base.ARCHModel.fix.last_obs" title="Permalink to this definition">¶</a></dt><dd><p>Last observation to use when fixing model. An integer must be in
-[0, nobs], and a date must be in the index.</p>
+[-nobs, nobs], and a date must be in the index. As in a slice, the
+observation at <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not used, and a negative integer
+counts from the end, so that <code class="docutils literal notranslate"><span class="pre">last_obs=-1</span></code> drops the last
+observation.</p>
 </dd>
 </dl>
 </dd>

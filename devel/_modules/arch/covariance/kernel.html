@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+576)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+591)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+576)
+            arch v8.0.1 (+591)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+576)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+576)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+591)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+591)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+576)
+    arch v8.0.1 (+591)
   </label>
   
     <div class="md-nav__source">
@@ -531,6 +531,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -603,10 +604,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The name in lower case without hyphens or underscores, so that</span>
-<span class="sd">        "QuadraticSpectral", "quadratic-spectral" and "quadratic_spectral" are</span>
-<span class="sd">        all the same.</span>
+<span class="sd">        "quadratic-spectral" and "quadratic_spectral" are both</span>
+<span class="sd">        "quadraticspectral".</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">kernel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_display_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The lower case name of a kernel with hyphens between the words"""</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(?&lt;!^)(?=[A-Z])"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="CovarianceEstimate">
@@ -1755,10 +1761,12 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    kernel : str</span>
-<span class="sd">        The name of a kernel estimator. The name is not case sensitive and</span>
-<span class="sd">        hyphens and underscores are ignored, so that "QuadraticSpectral",</span>
-<span class="sd">        "quadratic-spectral" and "quadratic_spectral" are all the same. The</span>
-<span class="sd">        available kernels are those in ``KERNELS``.</span>
+<span class="sd">        The name of a kernel estimator, such as "bartlett" or</span>
+<span class="sd">        "quadratic-spectral". The names are those of the classes in ``KERNELS``</span>
+<span class="sd">        in lower case with hyphens between the words. The name is not case</span>
+<span class="sd">        sensitive and hyphens and underscores are ignored, so that</span>
+<span class="sd">        "quadratic-spectral", "quadratic_spectral" and "quadraticspectral" are</span>
+<span class="sd">        all the same.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1774,7 +1782,7 @@
         <span class="s2">"kernel"</span><span class="p">,</span>
         <span class="n">kernel</span><span class="p">,</span>
         <span class="nb">tuple</span><span class="p">(</span><span class="n">KERNEL_ESTIMATORS</span><span class="p">),</span>
-        <span class="n">display</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">KERNELS</span><span class="p">),</span>
+        <span class="n">display</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_kernel_display_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">KERNELS</span><span class="p">),</span>
         <span class="n">normalize</span><span class="o">=</span><span class="n">normalize_kernel_name</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
