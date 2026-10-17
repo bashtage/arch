@@ -1,7 +1,13 @@
 from numpy import asarray, squeeze
 
 from arch._typing import Float64Array
-from arch.utility.array import as_float64
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_int,
+)
 
 
 def cov_nw(
@@ -32,10 +38,16 @@ def cov_nw(
         The estimated covariance. A float if y is 1-d and a 2-d ndarray
         otherwise.
     """
-    z = as_float64(y, "y")
+    z = check_array("y", y)
+    if z.ndim not in (1, 2) or z.size == 0:
+        _fail(
+            ValueError,
+            "y",
+            "a non-empty 1-d or 2-d array of finite numbers",
+            _describe(y),
+        )
+    axis = check_int("axis", axis, lower=-z.ndim, upper=z.ndim - 1)
     is_1d = False
-    if axis < -z.ndim or axis >= z.ndim:
-        raise ValueError("axis must be less than the dimension of y")
     axis %= z.ndim
     if z.ndim == 1:
         is_1d = True
@@ -43,13 +55,9 @@ def cov_nw(
     if axis == 1:
         z = z.T
     n = z.shape[0]
-    if ddof > n:
-        raise ValueError(
-            "ddof must be strictly smaller than the number of observations"
-        )
-    if lags > n:
-        error = "lags must be weakly smaller than the number of observations"
-        raise ValueError(error)
+    lags = check_int("lags", lags, lower=0, upper=n)
+    demean = check_bool("demean", demean)
+    ddof = check_int("ddof", ddof, lower=0, upper=n - 1)
 
     if demean:
         z = z - z.mean(0)

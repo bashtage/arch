@@ -66,9 +66,9 @@ class TestVarNW:
 
     def test_errors(self):
         y = self.rng.randn(100, 2)
-        with pytest.raises(ValueError, match=r"lags must be weakly smaller than"):
+        with pytest.raises(ValueError, match=r"lags must be an integer in \[0, 100\]"):
             cov_nw(y, 200)
-        with pytest.raises(ValueError, match=r"axis must be less than the"):
+        with pytest.raises(ValueError, match=r"axis must be an integer in \[-2, 1\]"):
             cov_nw(y, axis=3)
-        with pytest.raises(ValueError, match=r"ddof must be strictly smaller"):
+        with pytest.raises(ValueError, match=r"ddof must be an integer in \[0, 99\]"):
             cov_nw(y, ddof=200)
