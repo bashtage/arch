@@ -312,9 +312,45 @@ to restore the previous results.
   took the square root of ``uint8`` variances in ``float16``. All of these now give the
   same result as the same data stored as ``float64``, which is passed through without a
   copy. The data of the bootstraps are not converted, since they are passed to the
-  function of the user as given (:issue:`948`). The fixes of the covariance estimators
-  and of the ``axis`` of ``cov_nw`` were contributed by antonsoo (:issue:`942`,
-  :issue:`943`).
+  function of the user as given (:issue:`948`).
+
+  The same rules for the data type apply to all of the estimators, the tests, the
+  models, the volatility processes and the distributions. Integer, unsigned integer,
+  Boolean, ``float32`` and ``longdouble`` data are converted to ``float64``, and every
+  calculation is done in ``float64``, so the result for ``float32`` data is the result
+  for the same values stored as ``float64``. ``float32`` is promoted because a
+  calculation in ``float32`` is not accurate enough: when all of the arrays of the unit
+  root tests are ``float32``, the Phillips-Perron statistic of a series with a large
+  level differs from its ``float64`` value by up to 0.04, and the lag search of
+  :class:`~arch.unitroot.ADF` fails with a singular matrix for a series with a large
+  level or a trend and thousands of observations. ``float16`` data are never accepted:
+  they raise a ``TypeError`` that names the argument and the accepted data types, and
+  can be converted using ``astype(np.float32)`` or ``astype(np.float64)``. Complex data
+  also raise a ``TypeError``, except for the functions that estimate a Hermitian
+  covariance (see the entry about complex data). The fixes of the covariance estimators
+  and of the ``axis`` of ``cov_nw``, and the first support of ``float32`` and complex
+  data in the covariance estimators, were contributed by antonsoo (:issue:`942`,
+  :issue:`943`, :issue:`957`).
+- The kernel covariance estimators in :mod:`arch.covariance.kernel` and ``cov_nw``
+  accept complex data, and estimate the Hermitian long-run covariance. The products use
+  the conjugate transpose, so that the lag-j autocovariance is the sum of ``x[t]`` times
+  the conjugate of ``x[t - j]``, the automatic bandwidth uses the real part of the
+  autocovariances of the complex series, and the estimates are Hermitian ``complex128``
+  matrices with a real diagonal. For ``z = a + ib`` the long-run covariance is the
+  covariance of ``a`` plus the covariance of ``b`` plus ``i`` times the cross-covariance
+  of ``b`` and ``a`` less that of ``a`` and ``b``, computed from the real data of ``a``
+  and ``b`` with the same kernel and bandwidth. The pseudo-covariance, which has no
+  conjugate, is not estimated. ``cov_nw`` returns a real float for a 1-d complex series.
+  In 8.0 the kernel estimators failed for complex data, and ``cov_nw`` had no conjugate,
+  so that its result was not Hermitian. ``add_trend`` also accepts complex data, and
+  adds real trend columns to them. The ``apply``, ``cov`` and ``var`` of the bootstraps
+  accept a statistic that returns complex values: ``cov`` is the Hermitian covariance
+  and ``var`` is real, where the imaginary part used to be discarded with a
+  ``ComplexWarning``. ``conf_int`` raises a ``TypeError`` for a complex statistic, which
+  has no interval. :class:`~arch.covariance.var.PreWhitenedRecolored`, the tests and the
+  models do not accept complex data, since there is no single model of complex data for
+  the VAR that prewhitens the data. Thanks to antonsoo for the support of complex data
+  in the covariance estimators that this builds on (:issue:`942`, :issue:`957`).
 
 - ``fit`` ignores ``starting_values`` that violate the bounds or constraints of the
   model, with the ``StartingValueWarning`` that was always issued. In previous versions
@@ -640,9 +676,19 @@ Backward-incompatible changes
 - ``arch.utility.array.ensure1d`` and ``ensure2d`` convert every input to ``float64``,
   including integer, Boolean, ``float32`` and object data, and raise a ``TypeError``
   that names the argument if the data cannot be converted, for example for strings,
-  where they returned an array of strings. Code outside of arch that calls them and
-  needs the original data type should not use them. They no longer rename the Series
-  that they are given (:issue:`948`).
+  where they returned an array of strings, and for ``float16`` data. Complex data
+  raise a ``TypeError`` unless ``allow_complex=True``, which converts them to
+  ``complex128``. Code outside of arch that calls them and needs the original data
+  type should not use them. They no longer rename the Series that they are given
+  (:issue:`948`, :issue:`957`).
+- ``float16`` data now raise a ``TypeError`` in the estimators, the tests, the models,
+  the volatility processes and the distributions. Earlier versions converted them to
+  ``float64`` in some places and failed with an error from NumPy in others. The 11 bits
+  of ``float16`` are about 3 decimal digits, which is not enough for these estimators,
+  and the message names the accepted data types. Convert the data with
+  ``astype(np.float32)`` or ``astype(np.float64)`` if that is intended. Complex data
+  raise a ``TypeError`` too, except in the kernel covariance estimators, ``cov_nw``,
+  ``add_trend`` and the ``apply``, ``cov`` and ``var`` of the bootstraps (:issue:`957`).
 
 Bug fixes
 ~~~~~~~~~

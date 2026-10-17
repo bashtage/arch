@@ -63,9 +63,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
-        Must have at least 2 rows and 1 column, and must not contain NaN or
-        infinite values.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64. float16 and complex data are not accepted. Must have at least 2
+        rows and 1 column, and must not contain NaN or infinite values.
     lags : int, optional
         The number of lags to include in the VAR. If None, a specification
         search is used to select the order. Must be non-negative and small
@@ -119,7 +119,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if lags, max_lag or
+        If x or weights cannot be converted to float64 (x is float16 or complex, or
+        contains strings or objects that are not numbers), if lags, max_lag or
         df_adjust is not an integer (a float, including 5.0, or a Boolean is
         not accepted), if bandwidth is not a real number, if diagonal,
         sample_autocov, center or force_int is not a bool, or if method or
@@ -226,6 +227,17 @@ class PreWhitenedRecolored(CovarianceEstimator):
     that is when ``sample_autocov`` is False and ``kernel`` is None or the
     bandwidth is 0. Otherwise ``long_run`` differs from this sum.
 
+    **Complex data are not supported.** The kernel estimators in
+    :mod:`arch.covariance.kernel` accept complex data, but this estimator raises a
+    ``TypeError``. Prewhitening fits a model, and there is no single VAR for complex
+    data. A VAR with complex coefficients cannot represent real and imaginary parts
+    that depend on each other in a way that is not a complex multiplication, and the
+    VAR of the stacked real and imaginary parts is a different model with more
+    parameters. The order that the information criteria above select depends on
+    which of them is used. To prewhiten complex data, use this estimator with
+    ``np.column_stack([x.real, x.imag])``, or use a kernel estimator, which needs no
+    model.
+
     **Inspecting the VAR.** The prewhitening step determines the estimate, so
     its results are available. :attr:`order` is the order of the VAR, which is
     the only way to learn which order was chosen when ``lags`` is None.
@@ -270,6 +282,9 @@ class PreWhitenedRecolored(CovarianceEstimator):
     >>> var_hac = PreWhitenedRecolored(x, kernel=None, method="bic")
     >>> lrcov = var_hac.cov.long_run
     """
+
+    # The VAR for prewhitening is a model of real data, see Notes
+    _allow_complex = False
 
     def __init__(
         self,

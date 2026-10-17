@@ -109,7 +109,12 @@ def _kernel_rows(cls: type[CovarianceEstimator]) -> list[Row]:
 
 
 def _array_rows(
-    target: str, func: Any, base: dict[str, Any], name: str, nvar: int = 2
+    target: str,
+    func: Any,
+    base: dict[str, Any],
+    name: str,
+    nvar: int = 2,
+    complex_ok: bool = False,
 ) -> list[Row]:
     """Rows for the data argument and the weights of a kernel estimator"""
     short = X[:1]
@@ -130,8 +135,11 @@ def _array_rows(
         (np.array([["a", "b"]] * NOBS), TypeError, "strings"),
         (None, TypeError, "none"),
         ("abc", TypeError, "str"),
-        (np.ones((NOBS, 2), dtype=complex), TypeError, "complex"),
+        (X.astype(np.float16), TypeError, "float16"),
     ]
+    if not complex_ok:
+        bad_x.append((X + 1j * X[::-1], TypeError, "complex"))
+        bad_x.append((X.astype(np.complex64), TypeError, "complex64"))
     for value, exc, label in bad_x:
         rows.append(
             Row(
@@ -154,6 +162,8 @@ def _array_rows(
         (X > 0, "bool"),
         (X.astype(np.float32), "float32"),
     ]
+    if complex_ok:
+        good_x += [(X + 1j * X[::-1], "complex"), (X.astype(np.complex64), "complex64")]
     for value, label in good_x:
         rows.append(
             Row(
@@ -223,7 +233,7 @@ for _cls in KERNELS:
 # The data and the weights are checked once by the base class, so the table uses
 # a few classes
 for _cls in (Bartlett, QuadraticSpectral, ZeroLag):
-    KERNEL_ROWS += _array_rows(_cls.__name__, _kernel(_cls), {}, "x")
+    KERNEL_ROWS += _array_rows(_cls.__name__, _kernel(_cls), {}, "x", complex_ok=True)
     KERNEL_ROWS += _weights_rows(_cls)
 
 

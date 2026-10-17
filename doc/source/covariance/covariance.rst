@@ -37,6 +37,16 @@ only used by
    TukeyParzen
    ZeroLag
 
+The data are converted to ``float64``: integer, Boolean and ``float32`` data are
+accepted and the calculation is done in ``float64``, and ``float16`` data raise a
+``TypeError``. Complex data are also accepted, and are converted to ``complex128``. The
+estimators are then Hermitian: the lag-:math:`j` autocovariance is
+:math:`T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the conjugate transpose, and the
+long-run covariance is a complex Hermitian matrix. For :math:`x_t=a_t+ib_t` it is
+:math:`\Omega_{aa}+\Omega_{bb}+i(\Omega_{ba}-\Omega_{ab})`, where :math:`\Omega_{uv}` is
+the long-run covariance of the real data :math:`u` and :math:`v` estimated with the same
+kernel and bandwidth. :func:`~arch.utility.cov.cov_nw` follows the same rule.
+
 
 Vector AR-based Estimators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,7 +67,9 @@ of den Haan and Levin (2000). Kernel estimators can be poorly behaved when the d
 are highly persistent, since the bandwidth required to capture the dependence is large
 relative to the sample size. These estimators first remove most of the serial
 dependence using a vector autoregression, estimate the long-run covariance of the
-residuals, and then restore the dependence. They are computed in three steps.
+residuals, and then restore the dependence. They accept real data only, since there is
+no single VAR for complex data (see the Notes of the class); use a kernel estimator, or
+the VAR of the stacked real and imaginary parts. They are computed in three steps.
 
 1. **Prewhitening.** A VAR is estimated by least squares,
 

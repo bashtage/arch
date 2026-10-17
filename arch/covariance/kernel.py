@@ -114,13 +114,16 @@ class CovarianceEstimate:
 
     .. math::
 
-        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^\prime
+        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^H
 
     and the one-sided covariance is
 
     .. math::
 
         \Lambda_0 = \Gamma_0 + \Lambda_1.
+
+    :math:`^H` is the conjugate transpose, which is the transpose for real
+    estimates. The estimates of complex data are complex Hermitian matrices.
     """
 
     def __init__(
@@ -149,6 +152,9 @@ class CovarianceEstimate:
         """
         if self._long_run is not None:
             long_run = self._long_run
+        elif np.iscomplexobj(self._oss):
+            # Added in this order the result is exactly Hermitian
+            long_run = self._sr + (self._oss + self._oss.conj().T)
         else:
             long_run = self._sr + self._oss + self._oss.T
         return self._wrap(long_run)
@@ -188,10 +194,23 @@ def _cov_kernel(
     return oss
 
 
+def _cov_kernel_complex(
+    df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray
+) -> np.ndarray:
+    # sum_t x_t x_{t-i}^H, so that the lag-i autocovariance is Hermitian
+    oss = np.zeros((k, k), dtype=x.dtype)
+    x_conj = np.conj(x)
+    for i in range(1, num_weights):
+        oss += w[i] * (x[i:].T @ x_conj[:-i]) / df
+    return oss
+
+
 if HAS_NUMBA and not DISABLE_NUMBA:
     _cov_jit = jit(_cov_kernel, nopython=True)
+    _cov_jit_complex = jit(_cov_kernel_complex, nopython=True)
 else:
     _cov_jit = _cov_kernel
+    _cov_jit_complex = _cov_kernel_complex
 
 
 def _kernel_covariance_template() -> None:
@@ -206,7 +225,8 @@ def _kernel_covariance_template() -> None:
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
     bandwidth : float, optional
@@ -230,9 +250,11 @@ def _kernel_covariance_template() -> None:
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if bandwidth is not a
-        real number, if df_adjust is not an integer (a float, including 5.0, or
-        a Boolean is not accepted), or if center or force_int is not a bool.
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
@@ -253,6 +275,22 @@ def _kernel_covariance_template() -> None:
     If the bandwidth is not provided, it is estimated using the constants of
     [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
     details.
+
+    **Complex data.** The estimators accept complex data, for which they are
+    Hermitian. The lag-:math:`j` autocovariance is
+    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the
+    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the
+    long-run covariance
+    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+
+    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,
+    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+
+    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is
+    the long-run covariance of the real data :math:`u` and :math:`v` with the same
+    kernel and bandwidth. The automatic bandwidth combines the columns of x
+    using ``weights`` and uses the real part of the autocovariances of this
+    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not
+    estimated, and the estimates are complex128 arrays. Real data give float64
+    estimates.
 
     References
     ----------
@@ -288,7 +326,8 @@ class CovarianceEstimator(ABC):
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
     bandwidth : float, optional
@@ -312,9 +351,11 @@ class CovarianceEstimator(ABC):
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if bandwidth is not a
-        real number, if df_adjust is not an integer (a float, including 5.0, or
-        a Boolean is not accepted), or if center or force_int is not a bool.
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
@@ -332,6 +373,22 @@ class CovarianceEstimator(ABC):
     [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
     details.
 
+    **Complex data.** The estimators accept complex data, for which they are
+    Hermitian. The lag-:math:`j` autocovariance is
+    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the
+    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the
+    long-run covariance
+    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+
+    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,
+    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+
+    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is
+    the long-run covariance of the real data :math:`u` and :math:`v` with the same
+    kernel and bandwidth. The automatic bandwidth combines the columns of x
+    using ``weights`` and uses the real part of the autocovariances of this
+    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not
+    estimated, and the estimates are complex128 arrays. Real data give float64
+    estimates.
+
     References
     ----------
     .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
@@ -341,6 +398,9 @@ class CovarianceEstimator(ABC):
     """
 
     _name = ""
+    # Whether complex data are accepted. The estimators that cannot be Hermitian, such
+    # as the VAR prewhitening, set this to False
+    _allow_complex = True
 
     def __init__(
         self,
@@ -351,7 +411,9 @@ class CovarianceEstimator(ABC):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
-        x_checked = check_array("x", x, ndim=2, min_length=2)
+        x_checked = check_array(
+            "x", x, ndim=2, min_length=2, allow_complex=self._allow_complex
+        )
         nobs, nvar = x_checked.shape
         if nvar < 1:
             _fail(
@@ -378,7 +440,7 @@ class CovarianceEstimator(ABC):
             )
         force_int = check_bool("force_int", force_int)
 
-        self._x_orig = ensure2d(x, "x")
+        self._x_orig = ensure2d(x, "x", allow_complex=self._allow_complex)
         self._x = np.asarray(self._x_orig)
         self._center = center
         if self._center:
@@ -497,8 +559,12 @@ class CovarianceEstimator(ABC):
         n = int(np.ceil(4 * ((nobs / 100) ** self.rate)))
         f_0s = 0.0
         f_qs = 0.0
+        # The autocovariance of a complex series is v_t times the conjugate of v_{t-j},
+        # which is complex. The sums over -n, ..., n add j and -j, which are conjugates
+        # (Hermitian), so only the real part of sigma_j is used.
+        lagged = v.conj() if np.iscomplexobj(v) else v
         for j in range(n + 1):
-            sig_j = float(np.squeeze(v[j:].T @ v[: (nobs - j)])) / nobs
+            sig_j = float(np.real(np.squeeze(v[j:].T @ lagged[: (nobs - j)]))) / nobs
             scale = 1 + (j != 0)
             f_0s += scale * sig_j
             f_qs += scale * j**q * sig_j
@@ -539,7 +605,9 @@ class CovarianceEstimator(ABC):
            {\sum_{j=-n}^{n} \hat{\sigma}_j} \right)^2
 
         where :math:`\hat{\sigma}_j` is the lag-j autocovariance of the data
-        combined using ``weights``, and
+        combined using ``weights``, which is the real part of the autocovariance
+        :math:`T^{-1}\sum_t v_t\bar{v}_{t-j}` of the combined series :math:`v_t`
+        if x is complex, and
         :math:`n = \lceil 4 \left(T / 100\right)^{r} \rceil`. The rate r is
         2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
         the quadratic-spectral kernel, as in [2]_.
@@ -598,15 +666,22 @@ class CovarianceEstimator(ABC):
         --------
         CovarianceEstimate : The container of the covariance estimates.
         """
-        dtype = None if not np.issubdtype(self._x.dtype, np.inexact) else float
-        x = np.ascontiguousarray(self._x, dtype=dtype)
+        x = np.ascontiguousarray(self._x)
         k = x.shape[1]
         df = self._df
-        sr = x.T @ x / df
         w = self.kernel_weights
         num_weights = w.shape[0]
 
-        oss = _cov_jit(df, k, num_weights, w, x)
+        if np.iscomplexobj(x):
+            # Hermitian estimates: sum_t x_t x_{t-j}^H. The short-run covariance is
+            # made exactly Hermitian, since the matrix product rounds each element
+            # on its own.
+            sr = x.T @ x.conj() / df
+            sr = (sr + sr.conj().T) / 2
+            oss = _cov_jit_complex(df, k, num_weights, w, x)
+        else:
+            sr = x.T @ x / df
+            oss = _cov_jit(df, k, num_weights, w, x)
 
         labels = self._x_orig.columns if isinstance(self._x_orig, DataFrame) else None
         return CovarianceEstimate(sr, oss, labels)
@@ -891,7 +966,8 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
     bandwidth : float, optional
@@ -915,9 +991,11 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if bandwidth is not a
-        real number, if df_adjust is not an integer (a float, including 5.0, or
-        a Boolean is not accepted), or if center or force_int is not a bool.
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
@@ -939,7 +1017,8 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
     bandwidth : float, optional
@@ -963,9 +1042,11 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if bandwidth is not a
-        real number, if df_adjust is not an integer (a float, including 5.0, or
-        a Boolean is not accepted), or if center or force_int is not a bool.
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
@@ -988,7 +1069,8 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
     ----------
     x : array_like
         The data to use in covariance estimation. Observations are in rows and
-        variables in columns. Integer and Boolean data are converted to float64.
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
         Must have at least 2 rows and 1 column, and must not contain NaN or
         infinite values.
     bandwidth : float, optional
@@ -1012,9 +1094,11 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
     Raises
     ------
     TypeError
-        If x or weights cannot be converted to float64, if bandwidth is not a
-        real number, if df_adjust is not an integer (a float, including 5.0, or
-        a Boolean is not accepted), or if center or force_int is not a bool.
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust

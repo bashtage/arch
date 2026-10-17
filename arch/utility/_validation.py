@@ -38,7 +38,12 @@ import numpy as np
 from numpy.random import Generator, RandomState
 import pandas as pd
 
-from arch.utility.array import as_float64, cutoff_to_index
+from arch.utility.array import (
+    _numbers_rule,
+    _rejected_dtype,
+    as_float64,
+    cutoff_to_index,
+)
 
 __all__ = [
     "check_array",
@@ -603,14 +608,17 @@ def _array_rule(
     allow_nan: bool,
     allow_inf: bool,
     allow_none: bool,
+    numbers: str = "numbers",
 ) -> str:
     rule = "an array" if ndim is None else f"a {ndim}-d array"
     if allow_nan and not allow_inf:
-        rule += " of numbers without inf"
+        rule += f" of {numbers} without inf"
     elif allow_inf and not allow_nan:
-        rule += " of numbers without NaN"
+        rule += f" of {numbers} without NaN"
     elif not allow_nan and not allow_inf:
-        rule += " of finite numbers"
+        rule += f" of finite {numbers}"
+    elif numbers != "numbers":
+        rule += f" of {numbers}"
     if shape is not None:
         rule += f" with shape {_shape_text(shape)}"
     if min_length is not None:
@@ -629,22 +637,55 @@ def _nonfinite_description(arr: np.ndarray, allow_nan: bool, allow_inf: bool) ->
     return " and ".join(parts)
 
 
-def _to_float64(name: str, value: Any, rule: str) -> np.ndarray:
+def _to_float64(
+    name: str,
+    value: Any,
+    make_rule: Callable[[str], str],
+    allow_complex: bool,
+) -> np.ndarray:
     """
-    Convert to a float64 ndarray, raising a TypeError in the house form.
+    Convert to a float64 ndarray (complex128 if allowed), raising a TypeError.
 
     ``as_float64`` converts None, as an element of an object array or as the value,
     to NaN. Missing values are NaN in a float array, and None is not a number.
+    Data of a data type that is not accepted (float16, and complex unless allowed)
+    are reported with their data type and the data types that are accepted.
+    ``make_rule`` returns the rule of the argument for the given words for the
+    numbers, which are "numbers" in a message that is not about the data type.
     """
+    if (
+        isinstance(value, np.ndarray)
+        and value.dtype == np.float64
+        and value.dtype.char == "d"
+    ):
+        return value
+    # The columns of a DataFrame can have different data types, which to_numpy merges
+    if isinstance(value, pd.DataFrame):
+        dtypes: list[Any] = list(value.dtypes)
+    elif isinstance(value, pd.Series):
+        dtypes = [value.dtype]
+    else:
+        dtypes = []
     data = value.to_numpy() if isinstance(value, (pd.Series, pd.DataFrame)) else value
+    rejected = None
+    arr = np.empty(0)
     if data is not None:
         try:
             arr = np.asarray(data)
-            if arr.dtype != object or not any(item is None for item in arr.flat):
-                return as_float64(arr, name)
+            for dtype in dtypes or [arr.dtype]:
+                if _rejected_dtype(dtype, allow_complex):
+                    rejected = getattr(dtype, "numpy_dtype", dtype)
+                    break
+            else:
+                if arr.dtype != object or not any(item is None for item in arr.flat):
+                    return as_float64(arr, name, allow_complex=allow_complex)
         except TypeError:
             pass
-    raise TypeError(f"{name} must be {rule}; got {_describe(value)}")
+    if rejected is not None:
+        rule = make_rule(_numbers_rule(allow_complex))
+        received = f"{rejected} data with shape {arr.shape} ({type(value).__name__})"
+        raise TypeError(f"{name} must be {rule}; got {received}")
+    raise TypeError(f"{name} must be {make_rule('numbers')}; got {_describe(value)}")
 
 
 def _reshape(arr: np.ndarray, ndim: int, squeeze: bool) -> np.ndarray | None:
@@ -669,6 +710,7 @@ def check_array(
     allow_nan: bool = False,
     allow_inf: bool = False,
     allow_none: bool = False,
+    allow_complex: bool = False,
 ) -> Any:
     """
     Convert array_like data to float64 and check its dimensions and values.
@@ -683,7 +725,8 @@ def check_array(
     name : str
         The name of the argument, which is used in the error message.
     value : array_like, Series or DataFrame
-        The data. Integer, unsigned integer and Boolean data are converted to float64.
+        The data. Integer, unsigned integer, Boolean and float32 data are converted
+        to float64. float16 data are not accepted.
     ndim : int, optional
         The number of dimensions of the result, 1 or 2. If ``squeeze`` is True, 1-d
         data can have any shape with a single dimension longer than 1 (a column, a row
@@ -703,18 +746,25 @@ def check_array(
         If True, inf and -inf are accepted.
     allow_none : bool, optional
         If True, None is accepted and returned unchanged.
+    allow_complex : bool, optional
+        If True, complex data are converted to complex128, and real data to float64.
+        If False, complex data are not accepted. NaN and inf are checked in the real
+        and the imaginary part.
 
     Returns
     -------
     ndarray or None
-        The float64 data. This is ``value`` itself if it is a float64 ndarray with the
-        required number of dimensions. None if ``allow_none`` and ``value`` is None.
+        The float64 data, or the complex128 data if ``allow_complex`` and the data are
+        complex. This is ``value`` itself if it is a float64 ndarray (or complex128 if
+        ``allow_complex``) with the required number of dimensions. None if
+        ``allow_none`` and ``value`` is None.
 
     Raises
     ------
     TypeError
-        If the data cannot be converted to float64 (strings, dates, complex numbers,
-        objects that are not numbers, None).
+        If the data cannot be converted to float64 (strings, dates, objects that are
+        not numbers, None), are float16, or are complex numbers and ``allow_complex``
+        is False.
     ValueError
         If the data do not have the required number of dimensions, shape or length, or
         contain NaN or inf where that is not allowed.
@@ -723,25 +773,35 @@ def check_array(
         return None
     if shape is not None:
         ndim = len(shape)
-    rule = _array_rule(ndim, shape, min_length, allow_nan, allow_inf, allow_none)
-    arr = _to_float64(name, value, rule)
+
+    def make_rule(numbers: str) -> str:
+        return _array_rule(
+            ndim, shape, min_length, allow_nan, allow_inf, allow_none, numbers
+        )
+
+    arr = _to_float64(name, value, make_rule, allow_complex)
     if ndim is not None and arr.ndim != ndim:
         reshaped = _reshape(arr, ndim, squeeze)
         if reshaped is None:
-            _fail(ValueError, name, rule, _describe_array(arr, value))
+            _fail(ValueError, name, make_rule("numbers"), _describe_array(arr, value))
         arr = reshaped
     if shape is not None and any(
         size is not None and size != actual
         for size, actual in zip(shape, arr.shape, strict=False)
     ):
-        _fail(ValueError, name, rule, _describe_array(arr, value))
+        _fail(ValueError, name, make_rule("numbers"), _describe_array(arr, value))
     if min_length is not None and (arr.ndim == 0 or arr.shape[0] < min_length):
-        _fail(ValueError, name, rule, _describe_array(arr, value))
+        _fail(ValueError, name, make_rule("numbers"), _describe_array(arr, value))
     if arr.size and not (allow_nan and allow_inf):
         if allow_nan or allow_inf or not np.isfinite(arr).all():
             detail = _nonfinite_description(arr, allow_nan, allow_inf)
             if detail:
-                _fail(ValueError, name, rule, f"{detail} ({type(value).__name__})")
+                _fail(
+                    ValueError,
+                    name,
+                    make_rule("numbers"),
+                    f"{detail} ({type(value).__name__})",
+                )
     return arr
 
 
