@@ -115,6 +115,10 @@ The rules are configured in the ``[tool.numpydoc_validation]`` table of
    python -m numpydoc lint $(git ls-files "arch/*.py")
    python -m pytest arch/tests/test_docstrings.py
 
+Both need numpydoc 1.10 or later, which ``requirements-dev.txt`` and the ``dev`` extra
+install. The Lint workflow runs the first command, and the second is skipped when
+numpydoc is not installed.
+
 ``numpydoc lint`` reads the source files. It cannot see a docstring that a class
 inherits when it is created or the docstring of a compiled object, so it does not check
 for a missing docstring (GL08) or a missing Returns section (RT01).
