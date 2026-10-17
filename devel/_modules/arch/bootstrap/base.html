@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch v8.0.1 (+355)</title>
+        <title>arch.bootstrap.base - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -555,6 +555,7 @@
     <span class="n">NDArray</span><span class="p">,</span>
     <span class="n">RandomStateState</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">StudentizationError</span><span class="p">,</span>
@@ -576,6 +577,20 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap._samplers</span><span class="w"> </span><span class="kn">import</span> <span class="n">stationary_bootstrap_sample</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap._samplers_python</span><span class="w"> </span><span class="kn">import</span> <span class="n">stationary_bootstrap_sample</span>
+
+<span class="c1"># Lower case names of the confidence interval methods, including the aliases</span>
+<span class="n">_CONF_INT_METHODS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"basic"</span><span class="p">:</span> <span class="s2">"basic"</span><span class="p">,</span>
+    <span class="s2">"percentile"</span><span class="p">:</span> <span class="s2">"percentile"</span><span class="p">,</span>
+    <span class="s2">"studentized"</span><span class="p">:</span> <span class="s2">"studentized"</span><span class="p">,</span>
+    <span class="s2">"norm"</span><span class="p">:</span> <span class="s2">"norm"</span><span class="p">,</span>
+    <span class="s2">"var"</span><span class="p">:</span> <span class="s2">"norm"</span><span class="p">,</span>
+    <span class="s2">"cov"</span><span class="p">:</span> <span class="s2">"norm"</span><span class="p">,</span>
+    <span class="s2">"bc"</span><span class="p">:</span> <span class="s2">"bc"</span><span class="p">,</span>
+    <span class="s2">"debiased"</span><span class="p">:</span> <span class="s2">"bc"</span><span class="p">,</span>
+    <span class="s2">"bias-corrected"</span><span class="p">:</span> <span class="s2">"bc"</span><span class="p">,</span>
+    <span class="s2">"bca"</span><span class="p">:</span> <span class="s2">"bca"</span><span class="p">,</span>
+<span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_prng_state</span><span class="p">(</span>
@@ -655,13 +670,13 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.optimal_block_length.html#arch.bootstrap.optimal_block_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">optimal_block_length</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">ArrayLike2D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Estimate optimal window length for time-series bootstraps</span>
+<span class="sd">    Estimate optimal window length for time-series bootstraps.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    x : array_like</span>
-<span class="sd">        A one-dimensional or two-dimensional array-like.  Operates columns by</span>
-<span class="sd">        column if 2-dimensional.</span>
+<span class="sd">        The data, which can be one-dimensional or two-dimensional.  Operates</span>
+<span class="sd">        column by column if 2-dimensional.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -675,9 +690,9 @@
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    arch.bootstrap.StationaryBootstrap</span>
-<span class="sd">       Politis and Romano's bootstrap with exp. distributed block lengths</span>
+<span class="sd">        Politis and Romano's bootstrap with exp. distributed block lengths.</span>
 <span class="sd">    arch.bootstrap.CircularBlockBootstrap</span>
-<span class="sd">       Circular (wrap-around) bootstrap</span>
+<span class="sd">        Circular (wrap-around) bootstrap.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -916,35 +931,40 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.IIDBootstrap.html#arch.bootstrap.IIDBootstrap">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IIDBootstrap</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">DocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Bootstrap using uniform resampling</span>
+<span class="sd">    Bootstrap using uniform resampling.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    args</span>
-<span class="sd">        Positional arguments to bootstrap</span>
-<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">    *args : ndarray, Series or DataFrame</span>
+<span class="sd">        Positional arguments to bootstrap.</span>
+<span class="sd">    seed : int, Generator or RandomState, optional</span>
 <span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
 <span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
-<span class="sd">    kwargs</span>
-<span class="sd">        Keyword arguments to bootstrap</span>
+<span class="sd">    **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">        Keyword arguments to bootstrap.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : tuple</span>
 <span class="sd">        Two-element tuple with the pos_data in the first position and kw_data</span>
-<span class="sd">        in the second (pos_data, kw_data)</span>
+<span class="sd">        in the second (pos_data, kw_data).</span>
 <span class="sd">    pos_data : tuple</span>
-<span class="sd">        Tuple containing the positional arguments (in the order entered)</span>
+<span class="sd">        Tuple containing the positional arguments (in the order entered).</span>
 <span class="sd">    kw_data : dict</span>
-<span class="sd">        Dictionary containing the keyword arguments</span>
+<span class="sd">        Dictionary containing the keyword arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    arch.bootstrap.IndependentSamplesBootstrap</span>
+<span class="sd">        Bootstrap where each input is independently resampled.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Supports numpy arrays and pandas Series and DataFrames.  Data returned has</span>
-<span class="sd">    the same type as the input date.</span>
+<span class="sd">    the same type as the input data.</span>
 
-<span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
+<span class="sd">    Data entered using keyword arguments is directly accessible as an</span>
 <span class="sd">    attribute.</span>
 
 <span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
@@ -980,10 +1000,6 @@
 <span class="sd">    This is equivalent to</span>
 
 <span class="sd">    &gt;&gt;&gt; bs = IIDBootstrap(x, y=y, z=z, seed=1234)</span>
-
-<span class="sd">    See also</span>
-<span class="sd">    --------</span>
-<span class="sd">    arch.bootstrap.IndependentSamplesBootstrap</span>
 <span class="sd">    """</span>
 
     <span class="n">_name</span> <span class="o">=</span> <span class="s2">"IID Bootstrap"</span>
@@ -1068,13 +1084,13 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">RandomState</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Set or get the instance PRNG</span>
+<span class="sd">        Set or get the instance PRNG.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        {Generator, RandomState}</span>
+<span class="sd">        Generator or RandomState</span>
 <span class="sd">            The instance of the Generator or RandomState instance used</span>
-<span class="sd">            by bootstrap</span>
+<span class="sd">            by bootstrap.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span>
 
@@ -1087,18 +1103,18 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BootstrapIndexT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        The current index of the bootstrap</span>
+<span class="sd">        The current index of the bootstrap.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomStateState</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Set or get the generator's state</span>
+<span class="sd">        Set or get the generator's state.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        {tuple, dict}</span>
+<span class="sd">        tuple or dict</span>
 <span class="sd">            A tuple or dictionary containing the generator's state.</span>
 <span class="sd">            If using a ``RandomState``, the value returned is a tuple.</span>
 <span class="sd">            Otherwise it is a dictionary.</span>
@@ -1122,7 +1138,7 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.reset.html#arch.bootstrap.IIDBootstrap.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Resets the bootstrap to its initial state.</span>
+<span class="sd">        Reset the bootstrap to its initial state.</span>
 
 <span class="sd">        The generator is reset to the state it had when the bootstrap was</span>
 <span class="sd">        created, which is the state determined by the seed if one was provided,</span>
@@ -1130,7 +1146,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        use_seed : bool, default True</span>
+<span class="sd">        use_seed : bool, optional</span>
 <span class="sd">            This argument is not used. The generator is always reset to the</span>
 <span class="sd">            state it had when the bootstrap was created.</span>
 <span class="sd">        """</span>
@@ -1145,17 +1161,25 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyGenerator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Iterator for use when bootstrapping</span>
+<span class="sd">        Iterate over the bootstrap replications.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        reps : int</span>
-<span class="sd">            Number of bootstrap replications</span>
+<span class="sd">            Number of bootstrap replications.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        generator</span>
-<span class="sd">            Generator to iterate over in bootstrap calculations</span>
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            The data of one bootstrap replication. The first element is a tuple</span>
+<span class="sd">            containing the data entered in positional arguments and the second</span>
+<span class="sd">            element is a dict containing the data entered using keywords.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The iterator returns a tuple containing the data entered in positional</span>
+<span class="sd">        arguments as a tuple and the data entered using keywords as a</span>
+<span class="sd">        dictionary.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1172,13 +1196,7 @@
 <span class="sd">        .. note::</span>
 
 <span class="sd">            Note this is a generic example and so the class used should be the</span>
-<span class="sd">            name of the required bootstrap</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        The iterator returns a tuple containing the data entered in positional</span>
-<span class="sd">        arguments as a tuple and the data entered using keywords as a</span>
-<span class="sd">        dictionary</span>
+<span class="sd">            name of the required bootstrap.</span>
 <span class="sd">        """</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_indices</span><span class="p">()</span>
@@ -1205,44 +1223,48 @@
         <span class="n">studentize_reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute confidence intervals using the bootstrap.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        func : callable</span>
-<span class="sd">            Function the computes parameter values.  See Notes for requirements</span>
-<span class="sd">        reps : int, default 1000</span>
-<span class="sd">            Number of bootstrap replications</span>
-<span class="sd">        method : str, default "basic"</span>
-<span class="sd">            One of 'basic', 'percentile', 'studentized', 'norm' (identical to</span>
-<span class="sd">            'var', 'cov'), 'bc' (identical to 'debiased', 'bias-corrected'), or</span>
-<span class="sd">            'bca'</span>
-<span class="sd">        size : float, default 0.95</span>
-<span class="sd">            Coverage of confidence interval</span>
-<span class="sd">        tail : str, default "two"</span>
-<span class="sd">            One of 'two', 'upper' or 'lower'.</span>
-<span class="sd">        reuse : bool, default False</span>
+<span class="sd">            Function that computes parameter values.  See Notes for</span>
+<span class="sd">            requirements.</span>
+<span class="sd">        reps : int, optional</span>
+<span class="sd">            Number of bootstrap replications.</span>
+<span class="sd">        method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional</span>
+<span class="sd">            The method used to construct the interval.  "norm" is identical to</span>
+<span class="sd">            "var" and "cov", and "bc" is identical to "debiased" and</span>
+<span class="sd">            "bias-corrected".  See Notes for a description of each method.</span>
+<span class="sd">        size : float, optional</span>
+<span class="sd">            Coverage of confidence interval.</span>
+<span class="sd">        tail : {"two", "upper", "lower"}, optional</span>
+<span class="sd">            The tail of the interval.  When tail is "lower", all upper bounds</span>
+<span class="sd">            are inf.  Similarly, "upper" sets all lower bounds to -inf.</span>
+<span class="sd">        extra_kwargs : dict, optional</span>
+<span class="sd">            Extra keyword arguments to use when calling func and std_err_func,</span>
+<span class="sd">            when appropriate.</span>
+<span class="sd">        reuse : bool, optional</span>
 <span class="sd">            Flag indicating whether to reuse previously computed bootstrap</span>
 <span class="sd">            results.  This allows alternative methods to be compared without</span>
 <span class="sd">            rerunning the bootstrap simulation.  Reuse is ignored if reps is</span>
 <span class="sd">            not the same across multiple runs, func changes across calls, or</span>
-<span class="sd">            method is 'studentized'.  Otherwise the previous results are</span>
+<span class="sd">            method is "studentized".  Otherwise the previous results are</span>
 <span class="sd">            reused even if extra_kwargs or sampling have changed, so use a new</span>
 <span class="sd">            call without reuse (or ``reset``) after changing them.</span>
-<span class="sd">        sampling : str, default "nonparametric"</span>
-<span class="sd">            Type of sampling to use: 'nonparametric', 'semi-parametric' (or</span>
-<span class="sd">            'semi') or 'parametric'.  The default is 'nonparametric'.  See</span>
+<span class="sd">        sampling : {"nonparametric", "semi-parametric", "parametric"}, optional</span>
+<span class="sd">            Type of sampling to use.  "semi" and "semiparametric" are</span>
+<span class="sd">            identical to "semi-parametric".  See</span>
 <span class="sd">            :ref:`semiparametric-bootstraps` and :ref:`parametric-bootstraps`</span>
-<span class="sd">            for the changes to func required when using 'semi' or</span>
-<span class="sd">            'parametric'.</span>
-<span class="sd">        extra_kwargs : dict, default None</span>
-<span class="sd">            Extra keyword arguments to use when calling func and std_err_func,</span>
-<span class="sd">            when appropriate</span>
-<span class="sd">        std_err_func : callable, default None</span>
+<span class="sd">            for the changes to func required when using "semi-parametric" or</span>
+<span class="sd">            "parametric".</span>
+<span class="sd">        std_err_func : callable, optional</span>
 <span class="sd">            Function to use when standardizing estimated parameters when using</span>
 <span class="sd">            the studentized bootstrap.  Providing an analytical function</span>
-<span class="sd">            eliminates the need for a nested bootstrap</span>
-<span class="sd">        studentize_reps : int, default 1000</span>
+<span class="sd">            eliminates the need for a nested bootstrap.</span>
+<span class="sd">        studentize_reps : int, optional</span>
 <span class="sd">            Number of bootstraps to use in the inner bootstrap when using the</span>
-<span class="sd">            studentized bootstrap.  Ignored when ``std_err_func`` is provided</span>
+<span class="sd">            studentized bootstrap.  Ignored when ``std_err_func`` is provided.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1251,16 +1273,6 @@
 <span class="sd">            row 1 contains the upper bounds.  Each column corresponds to a</span>
 <span class="sd">            parameter. When tail is 'lower', all upper bounds are inf.</span>
 <span class="sd">            Similarly, 'upper' sets all lower bounds to -inf.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">        &gt;&gt;&gt; def func(x):</span>
-<span class="sd">        ...     return x.mean(0)</span>
-<span class="sd">        &gt;&gt;&gt; y = np.random.randn(1000, 2)</span>
-<span class="sd">        &gt;&gt;&gt; from arch.bootstrap import IIDBootstrap</span>
-<span class="sd">        &gt;&gt;&gt; bs = IIDBootstrap(y)</span>
-<span class="sd">        &gt;&gt;&gt; ci = bs.conf_int(func, 1000)</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1318,26 +1330,38 @@
 <span class="sd">        bootstrap. Provide ``std_err_func`` to use a different method, for</span>
 <span class="sd">        example, a nested block bootstrap with a different block size.</span>
 
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; def func(x):</span>
+<span class="sd">        ...     return x.mean(0)</span>
+<span class="sd">        &gt;&gt;&gt; y = np.random.randn(1000, 2)</span>
+<span class="sd">        &gt;&gt;&gt; from arch.bootstrap import IIDBootstrap</span>
+<span class="sd">        &gt;&gt;&gt; bs = IIDBootstrap(y)</span>
+<span class="sd">        &gt;&gt;&gt; ci = bs.conf_int(func, 1000)</span>
 <span class="sd">        """</span>
         <span class="n">studentized</span> <span class="o">=</span> <span class="s2">"studentized"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"size must be strictly between 0 and 1"</span><span class="p">)</span>
-        <span class="n">tail_name</span> <span class="o">=</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">tail_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"tail must be one of two-sided, lower or upper"</span><span class="p">)</span>
+        <span class="n">tail_name</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"tail"</span><span class="p">,</span> <span class="n">tail</span><span class="p">,</span> <span class="p">(</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">))</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">_CONF_INT_METHODS</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span> <span class="ow">and</span> <span class="n">std_err_func</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">studentize_reps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">"studentize_reps must be at least 1 when std_err_func is not "</span>
                 <span class="s2">"provided and method is 'studentized'."</span>
             <span class="p">)</span>
         <span class="n">studentize_reps</span> <span class="o">=</span> <span class="n">studentize_reps</span> <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span> <span class="k">else</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">sampling</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"semi"</span><span class="p">,</span> <span class="s2">"semi-parametric"</span><span class="p">,</span> <span class="s2">"semiparametric"</span><span class="p">):</span>
-            <span class="n">sampling</span> <span class="o">=</span> <span class="s2">"semiparametric"</span>
-        <span class="k">elif</span> <span class="n">sampling</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"nonparametric"</span><span class="p">,</span> <span class="s2">"parametric"</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">'sampling must be one of "nonparametric", "parametric", "semi", '</span>
-                <span class="s1">'"semi-parametric", or "semiparametric"'</span>
-            <span class="p">)</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+            <span class="s2">"sampling"</span><span class="p">,</span>
+            <span class="n">sampling</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">"nonparametric"</span><span class="p">:</span> <span class="s2">"nonparametric"</span><span class="p">,</span>
+                <span class="s2">"parametric"</span><span class="p">:</span> <span class="s2">"parametric"</span><span class="p">,</span>
+                <span class="s2">"semi"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+                <span class="s2">"semi-parametric"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+                <span class="s2">"semiparametric"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
         <span class="n">_reuse</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">reuse</span><span class="p">:</span>
             <span class="c1"># check conditions for reuse</span>
@@ -1370,7 +1394,7 @@
         <span class="n">studentized_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_results</span>
 
         <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">,</span> <span class="s2">"cov"</span><span class="p">,</span> <span class="n">studentized</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="n">studentized</span><span class="p">):</span>
             <span class="n">errors</span> <span class="o">=</span> <span class="n">results</span> <span class="o">-</span> <span class="n">results</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span><span class="p">)))</span>
 
@@ -1382,25 +1406,17 @@
         <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">]]</span> <span class="o">*</span> <span class="n">nreps</span><span class="p">)</span>
         <span class="n">norm_quantiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">percentiles</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">,</span> <span class="s2">"cov"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"norm"</span><span class="p">:</span>
             <span class="n">lower</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span>
             <span class="n">upper</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span>
 
-        <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="s2">"percentile"</span><span class="p">,</span>
-            <span class="s2">"basic"</span><span class="p">,</span>
-            <span class="n">studentized</span><span class="p">,</span>
-            <span class="s2">"debiased"</span><span class="p">,</span>
-            <span class="s2">"bc"</span><span class="p">,</span>
-            <span class="s2">"bias-corrected"</span><span class="p">,</span>
-            <span class="s2">"bca"</span><span class="p">,</span>
-        <span class="p">):</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">results</span>
             <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span><span class="p">:</span>
                 <span class="c1"># studentized uses studentized parameter estimates</span>
                 <span class="n">values</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array"</span><span class="p">,</span> <span class="n">studentized_results</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"debiased"</span><span class="p">,</span> <span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bias-corrected"</span><span class="p">,</span> <span class="s2">"bca"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bca"</span><span class="p">):</span>
                 <span class="c1"># bias corrected uses modified percentiles, but is</span>
                 <span class="c1"># otherwise identical to the percentile method</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bca_bias</span><span class="p">()</span>
@@ -1440,9 +1456,6 @@
                 <span class="n">lower_copy</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">+</span> <span class="mf">0.0</span>
                 <span class="n">lower</span> <span class="o">=</span> <span class="n">base</span> <span class="o">-</span> <span class="n">upper</span> <span class="o">*</span> <span class="n">std_err</span>
                 <span class="n">upper</span> <span class="o">=</span> <span class="n">base</span> <span class="o">-</span> <span class="n">lower_copy</span> <span class="o">*</span> <span class="n">std_err</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown method"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"lower"</span><span class="p">:</span>
             <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
@@ -1493,21 +1506,21 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"IIDBootstrap"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Clones the bootstrap using different data with a fresh prng.</span>
+<span class="sd">        Clone the bootstrap using different data with a fresh prng.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        args</span>
-<span class="sd">            Positional arguments to bootstrap</span>
-<span class="sd">        seed</span>
-<span class="sd">            The seed value to pass to the closed generator</span>
-<span class="sd">        kwargs</span>
-<span class="sd">            Keyword arguments to bootstrap</span>
+<span class="sd">        *args : ndarray, Series or DataFrame</span>
+<span class="sd">            Positional arguments to bootstrap.</span>
+<span class="sd">        seed : int, Generator or RandomState, optional</span>
+<span class="sd">            The seed value to pass to the cloned generator.</span>
+<span class="sd">        **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">            Keyword arguments to bootstrap.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        type[self]</span>
-<span class="sd">            Bootstrap instance</span>
+<span class="sd">        IIDBootstrap</span>
+<span class="sd">            A new bootstrap instance of the same type as this instance.</span>
 <span class="sd">        """</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">bs</span></div>
@@ -1522,23 +1535,24 @@
         <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Applies a function to bootstrap replicated data</span>
+<span class="sd">        Apply a function to bootstrap replicated data.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        func : callable</span>
-<span class="sd">            Function the computes parameter values.  See Notes for requirements</span>
-<span class="sd">        reps : int, default 1000</span>
-<span class="sd">            Number of bootstrap replications</span>
-<span class="sd">        extra_kwargs : dict, default None</span>
+<span class="sd">            Function that computes parameter values.  See Notes for</span>
+<span class="sd">            requirements.</span>
+<span class="sd">        reps : int, optional</span>
+<span class="sd">            Number of bootstrap replications.</span>
+<span class="sd">        extra_kwargs : dict, optional</span>
 <span class="sd">            Extra keyword arguments to use when calling func.  Must not</span>
-<span class="sd">            conflict with keyword arguments used to initialize bootstrap</span>
+<span class="sd">            conflict with keyword arguments used to initialize bootstrap.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
-<span class="sd">            reps by nparam array of computed function values where each row</span>
-<span class="sd">            corresponds to a bootstrap iteration</span>
+<span class="sd">            The reps by nparam array of computed function values where each row</span>
+<span class="sd">            corresponds to a bootstrap iteration.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1651,26 +1665,26 @@
         <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute parameter covariance using bootstrap</span>
+<span class="sd">        Compute parameter covariance using bootstrap.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        func : callable</span>
 <span class="sd">            Callable function that returns the statistic of interest as a</span>
-<span class="sd">            1-d array</span>
-<span class="sd">        reps : int, default 1000</span>
-<span class="sd">            Number of bootstrap replications</span>
-<span class="sd">        recenter : bool, default True</span>
+<span class="sd">            1-d array.</span>
+<span class="sd">        reps : int, optional</span>
+<span class="sd">            Number of bootstrap replications.</span>
+<span class="sd">        recenter : bool, optional</span>
 <span class="sd">            Whether to center the bootstrap variance estimator on the average</span>
 <span class="sd">            of the bootstrap samples (True) or to center on the original sample</span>
-<span class="sd">            estimate (False).  Default is True.</span>
-<span class="sd">        extra_kwargs : dict, default None</span>
-<span class="sd">            Dictionary of extra keyword arguments to pass to func</span>
+<span class="sd">            estimate (False).</span>
+<span class="sd">        extra_kwargs : dict, optional</span>
+<span class="sd">            Dictionary of extra keyword arguments to pass to func.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
-<span class="sd">            Bootstrap covariance estimator</span>
+<span class="sd">            Bootstrap covariance estimator.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1710,8 +1724,7 @@
 <span class="sd">        .. note::</span>
 
 <span class="sd">            Note this is a generic example and so the class used should be the</span>
-<span class="sd">            name of the required bootstrap</span>
-
+<span class="sd">            name of the required bootstrap.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_cov</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">recenter</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span></div>
 
@@ -1747,26 +1760,26 @@
         <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute parameter variance using bootstrap</span>
+<span class="sd">        Compute parameter variance using bootstrap.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        func : callable</span>
 <span class="sd">            Callable function that returns the statistic of interest as a</span>
-<span class="sd">            1-d array</span>
-<span class="sd">        reps : int, default 1000</span>
-<span class="sd">            Number of bootstrap replications</span>
-<span class="sd">        recenter : bool, default True</span>
+<span class="sd">            1-d array.</span>
+<span class="sd">        reps : int, optional</span>
+<span class="sd">            Number of bootstrap replications.</span>
+<span class="sd">        recenter : bool, optional</span>
 <span class="sd">            Whether to center the bootstrap variance estimator on the average</span>
 <span class="sd">            of the bootstrap samples (True) or to center on the original sample</span>
-<span class="sd">            estimate (False).  Default is True.</span>
-<span class="sd">        extra_kwargs: dict, default None</span>
-<span class="sd">            Dictionary of extra keyword arguments to pass to func</span>
+<span class="sd">            estimate (False).</span>
+<span class="sd">        extra_kwargs : dict, optional</span>
+<span class="sd">            Dictionary of extra keyword arguments to pass to func.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
-<span class="sd">            Bootstrap variance estimator</span>
+<span class="sd">            Bootstrap variance estimator.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1806,8 +1819,7 @@
 <span class="sd">        .. note::</span>
 
 <span class="sd">            Note this is a generic example and so the class used should be the</span>
-<span class="sd">            name of the required bootstrap</span>
-
+<span class="sd">            name of the required bootstrap.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_construct_bootstrap_estimates</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
         <span class="n">base</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
@@ -1825,8 +1837,14 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.update_indices.html#arch.bootstrap.IIDBootstrap.update_indices">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BootstrapIndexT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Update indices for the next iteration of the bootstrap.  This must</span>
-<span class="sd">        be overridden when creating new bootstraps.</span>
+<span class="sd">        Update indices for the next iteration of the bootstrap.</span>
+
+<span class="sd">        This must be overridden when creating new bootstraps.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            The indices of the observations in the next bootstrap sample.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">_get_random_integers</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_items</span>
@@ -1867,28 +1885,33 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.IndependentSamplesBootstrap.html#arch.bootstrap.IndependentSamplesBootstrap">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IndependentSamplesBootstrap</span><span class="p">(</span><span class="n">IIDBootstrap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Bootstrap where each input is independently resampled</span>
+<span class="sd">    Bootstrap where each input is independently resampled.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    args</span>
-<span class="sd">        Positional arguments to bootstrap</span>
-<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">    *args : ndarray, Series or DataFrame</span>
+<span class="sd">        Positional arguments to bootstrap.</span>
+<span class="sd">    seed : int, Generator or RandomState, optional</span>
 <span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
 <span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
-<span class="sd">    kwargs</span>
-<span class="sd">        Keyword arguments to bootstrap</span>
+<span class="sd">    **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">        Keyword arguments to bootstrap.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : tuple</span>
 <span class="sd">        Two-element tuple with the pos_data in the first position and kw_data</span>
-<span class="sd">        in the second (pos_data, kw_data)</span>
+<span class="sd">        in the second (pos_data, kw_data).</span>
 <span class="sd">    pos_data : tuple</span>
-<span class="sd">        Tuple containing the positional arguments (in the order entered)</span>
+<span class="sd">        Tuple containing the positional arguments (in the order entered).</span>
 <span class="sd">    kw_data : dict</span>
-<span class="sd">        Dictionary containing the keyword arguments</span>
+<span class="sd">        Dictionary containing the keyword arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    arch.bootstrap.IIDBootstrap</span>
+<span class="sd">        Bootstrap using uniform resampling.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1900,9 +1923,9 @@
 <span class="sd">    inappropriate.</span>
 
 <span class="sd">    Supports numpy arrays and pandas Series and DataFrames.  Data returned has</span>
-<span class="sd">    the same type as the input date.</span>
+<span class="sd">    the same type as the input data.</span>
 
-<span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
+<span class="sd">    Data entered using keyword arguments is directly accessible as an</span>
 <span class="sd">    attribute.</span>
 
 <span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
@@ -1934,10 +1957,6 @@
 <span class="sd">    &gt;&gt;&gt; from numpy.random import default_rng</span>
 <span class="sd">    &gt;&gt;&gt; gen = default_rng(1234)</span>
 <span class="sd">    &gt;&gt;&gt; bs = IndependentSamplesBootstrap(x, y=y, z=z, seed=gen)</span>
-
-<span class="sd">    See also</span>
-<span class="sd">    --------</span>
-<span class="sd">    arch.bootstrap.IIDBootstrap</span>
 <span class="sd">    """</span>
 
     <span class="n">_common_size_required</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1961,8 +1980,16 @@
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Int64Array1D</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Int64Array1D</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Update indices for the next iteration of the bootstrap.  This must</span>
-<span class="sd">        be overridden when creating new bootstraps.</span>
+<span class="sd">        Update indices for the next iteration of the bootstrap.</span>
+
+<span class="sd">        This must be overridden when creating new bootstraps.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A two-element tuple. The first element is a list that contains the</span>
+<span class="sd">            indices for each of the positional arguments. The second element</span>
+<span class="sd">            is a dict that contains the indices of the keyword arguments.</span>
 <span class="sd">        """</span>
         <span class="n">pos_indices</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">_get_random_integers</span><span class="p">(</span>
@@ -1982,12 +2009,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BootstrapIndexT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns the current index of the bootstrap</span>
+<span class="sd">        The current index of the bootstrap.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        tuple[list[ndarray], dict[str, ndarray]]</span>
-<span class="sd">            2-element tuple containing a list and a dictionary. The list</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A two-element tuple containing a list and a dictionary. The list</span>
 <span class="sd">            contains indices for each of the positional arguments.  The</span>
 <span class="sd">            dictionary contains the indices of keyword arguments.</span>
 <span class="sd">        """</span>
@@ -1997,7 +2024,7 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IndependentSamplesBootstrap.reset.html#arch.bootstrap.IndependentSamplesBootstrap.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Resets the bootstrap to its initial state.</span>
+<span class="sd">        Reset the bootstrap to its initial state.</span>
 
 <span class="sd">        The generator is reset to the state it had when the bootstrap was</span>
 <span class="sd">        created, which is the state determined by the seed if one was provided,</span>
@@ -2005,7 +2032,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        use_seed : bool, default True</span>
+<span class="sd">        use_seed : bool, optional</span>
 <span class="sd">            This argument is not used. The generator is always reset to the</span>
 <span class="sd">            state it had when the bootstrap was created.</span>
 <span class="sd">        """</span>
@@ -2057,37 +2084,44 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.CircularBlockBootstrap.html#arch.bootstrap.CircularBlockBootstrap">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CircularBlockBootstrap</span><span class="p">(</span><span class="n">IIDBootstrap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Bootstrap using blocks of the same length with end-to-start wrap around</span>
+<span class="sd">    Bootstrap using blocks of the same length with end-to-start wrap around.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    block_size : int</span>
 <span class="sd">        Size of block to use. Must be an integer that is at least 1.</span>
-<span class="sd">    args</span>
-<span class="sd">        Positional arguments to bootstrap</span>
-<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">    *args : ndarray, Series or DataFrame</span>
+<span class="sd">        Positional arguments to bootstrap.</span>
+<span class="sd">    seed : int, Generator or RandomState, optional</span>
 <span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
 <span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
-<span class="sd">    kwargs</span>
-<span class="sd">        Keyword arguments to bootstrap</span>
+<span class="sd">    **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">        Keyword arguments to bootstrap.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : tuple</span>
 <span class="sd">        Two-element tuple with the pos_data in the first position and kw_data</span>
-<span class="sd">        in the second (pos_data, kw_data)</span>
+<span class="sd">        in the second (pos_data, kw_data).</span>
 <span class="sd">    pos_data : tuple</span>
-<span class="sd">        Tuple containing the positional arguments (in the order entered)</span>
+<span class="sd">        Tuple containing the positional arguments (in the order entered).</span>
 <span class="sd">    kw_data : dict</span>
-<span class="sd">        Dictionary containing the keyword arguments</span>
+<span class="sd">        Dictionary containing the keyword arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    arch.bootstrap.optimal_block_length</span>
+<span class="sd">        Optimal block length estimation.</span>
+<span class="sd">    arch.bootstrap.StationaryBootstrap</span>
+<span class="sd">        Politis and Romano's bootstrap with exp. distributed block lengths.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Supports numpy arrays and pandas Series and DataFrames.  Data returned has</span>
-<span class="sd">    the same type as the input date.</span>
+<span class="sd">    the same type as the input data.</span>
 
-<span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
+<span class="sd">    Data entered using keyword arguments is directly accessible as an</span>
 <span class="sd">    attribute.</span>
 
 <span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
@@ -2095,13 +2129,6 @@
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    arch.bootstrap.optimal_block_length</span>
-<span class="sd">       Optimal block length estimation</span>
-<span class="sd">    arch.bootstrap.StationaryBootstrap</span>
-<span class="sd">       Politis and Romano's bootstrap with exp. distributed block lengths</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2140,8 +2167,30 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_check_block_size</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integer_block_size</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">block_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">block_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">block_size</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The block size of the bootstrap.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The block size, which is the size of each block, or the average</span>
+<span class="sd">            size of the blocks in the stationary bootstrap. It cannot be</span>
+<span class="sd">            changed after the bootstrap has been created.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_size</span>
+
+    <span class="nd">@block_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">"block_size cannot be changed after the bootstrap has been created. "</span>
+            <span class="s2">"Create a new bootstrap with the required block size, for example "</span>
+            <span class="s2">"using clone."</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="CircularBlockBootstrap.clone">
 <a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.clone.html#arch.bootstrap.CircularBlockBootstrap.clone">[docs]</a>
@@ -2152,24 +2201,25 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"CircularBlockBootstrap"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Clones the bootstrap using different data with a fresh prng.</span>
+<span class="sd">        Clone the bootstrap using different data with a fresh prng.</span>
+
+<span class="sd">        The block size is the block size of this bootstrap.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        args</span>
-<span class="sd">            Positional arguments to bootstrap</span>
-<span class="sd">        seed</span>
-<span class="sd">            The seed value to pass to the closed generator</span>
-<span class="sd">        kwargs</span>
-<span class="sd">            Keyword arguments to bootstrap</span>
+<span class="sd">        *args : ndarray, Series or DataFrame</span>
+<span class="sd">            Positional arguments to bootstrap.</span>
+<span class="sd">        seed : int, Generator or RandomState, optional</span>
+<span class="sd">            The seed value to pass to the cloned generator.</span>
+<span class="sd">        **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">            Keyword arguments to bootstrap.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        bs</span>
-<span class="sd">            Bootstrap instance</span>
+<span class="sd">        CircularBlockBootstrap</span>
+<span class="sd">            A new bootstrap instance of the same type as this instance.</span>
 <span class="sd">        """</span>
-        <span class="n">block_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -2212,38 +2262,45 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StationaryBootstrap</span><span class="p">(</span><span class="n">CircularBlockBootstrap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Politis and Romano (1994) bootstrap with expon distributed block sizes</span>
+<span class="sd">    Politis and Romano (1994) bootstrap with expon distributed block sizes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    block_size : {int, float}</span>
+<span class="sd">    block_size : int or float</span>
 <span class="sd">        Average size of block to use. Can be any number that is at least 1,</span>
 <span class="sd">        for example, the value estimated by ``optimal_block_length``.</span>
-<span class="sd">    args</span>
-<span class="sd">        Positional arguments to bootstrap</span>
-<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">    *args : ndarray, Series or DataFrame</span>
+<span class="sd">        Positional arguments to bootstrap.</span>
+<span class="sd">    seed : int, Generator or RandomState, optional</span>
 <span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
 <span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
-<span class="sd">    kwargs</span>
-<span class="sd">        Keyword arguments to bootstrap</span>
+<span class="sd">    **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">        Keyword arguments to bootstrap.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : tuple</span>
 <span class="sd">        Two-element tuple with the pos_data in the first position and kw_data</span>
-<span class="sd">        in the second (pos_data, kw_data)</span>
+<span class="sd">        in the second (pos_data, kw_data).</span>
 <span class="sd">    pos_data : tuple</span>
-<span class="sd">        Tuple containing the positional arguments (in the order entered)</span>
+<span class="sd">        Tuple containing the positional arguments (in the order entered).</span>
 <span class="sd">    kw_data : dict</span>
-<span class="sd">        Dictionary containing the keyword arguments</span>
+<span class="sd">        Dictionary containing the keyword arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    arch.bootstrap.optimal_block_length</span>
+<span class="sd">        Optimal block length estimation.</span>
+<span class="sd">    arch.bootstrap.CircularBlockBootstrap</span>
+<span class="sd">        Circular (wrap-around) bootstrap.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Supports numpy arrays and pandas Series and DataFrames.  Data returned has</span>
-<span class="sd">    the same type as the input date.</span>
+<span class="sd">    the same type as the input data.</span>
 
-<span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
+<span class="sd">    Data entered using keyword arguments is directly accessible as an</span>
 <span class="sd">    attribute.</span>
 
 <span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
@@ -2251,13 +2308,6 @@
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    arch.bootstrap.optimal_block_length</span>
-<span class="sd">       Optimal block length estimation</span>
-<span class="sd">    arch.bootstrap.CircularBlockBootstrap</span>
-<span class="sd">       Circular (wrap-around) bootstrap</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2319,37 +2369,46 @@
 <a class="viewcode-back" href="../../../bootstrap/generated/arch.bootstrap.MovingBlockBootstrap.html#arch.bootstrap.MovingBlockBootstrap">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MovingBlockBootstrap</span><span class="p">(</span><span class="n">CircularBlockBootstrap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Bootstrap using blocks of the same length without wrap around</span>
+<span class="sd">    Bootstrap using blocks of the same length without wrap around.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    block_size : int</span>
 <span class="sd">        Size of block to use. Must be an integer that is at least 1.</span>
-<span class="sd">    args</span>
-<span class="sd">        Positional arguments to bootstrap</span>
-<span class="sd">    seed : {Generator, RandomState, int}, optional</span>
+<span class="sd">    *args : ndarray, Series or DataFrame</span>
+<span class="sd">        Positional arguments to bootstrap.</span>
+<span class="sd">    seed : int, Generator or RandomState, optional</span>
 <span class="sd">        Seed to use to ensure reproducible results. If an int, passes the</span>
 <span class="sd">        value to ``np.random.default_rng``. If None, a fresh</span>
 <span class="sd">        Generator is constructed with system-provided entropy.</span>
-<span class="sd">    kwargs</span>
-<span class="sd">        Keyword arguments to bootstrap</span>
+<span class="sd">    **kwargs : ndarray, Series or DataFrame</span>
+<span class="sd">        Keyword arguments to bootstrap.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : tuple</span>
 <span class="sd">        Two-element tuple with the pos_data in the first position and kw_data</span>
-<span class="sd">        in the second (pos_data, kw_data)</span>
+<span class="sd">        in the second (pos_data, kw_data).</span>
 <span class="sd">    pos_data : tuple</span>
-<span class="sd">        Tuple containing the positional arguments (in the order entered)</span>
+<span class="sd">        Tuple containing the positional arguments (in the order entered).</span>
 <span class="sd">    kw_data : dict</span>
-<span class="sd">        Dictionary containing the keyword arguments</span>
+<span class="sd">        Dictionary containing the keyword arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    arch.bootstrap.optimal_block_length</span>
+<span class="sd">        Optimal block length estimation.</span>
+<span class="sd">    arch.bootstrap.StationaryBootstrap</span>
+<span class="sd">        Politis and Romano's bootstrap with exp. distributed block lengths.</span>
+<span class="sd">    arch.bootstrap.CircularBlockBootstrap</span>
+<span class="sd">        Circular (wrap-around) bootstrap.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Supports numpy arrays and pandas Series and DataFrames.  Data returned has</span>
-<span class="sd">    the same type as the input date.</span>
+<span class="sd">    the same type as the input data.</span>
 
-<span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
+<span class="sd">    Data entered using keyword arguments is directly accessible as an</span>
 <span class="sd">    attribute.</span>
 
 <span class="sd">    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword</span>
@@ -2357,15 +2416,6 @@
 <span class="sd">    Note that ``seed`` is a reserved keyword and any variable</span>
 <span class="sd">    passed using this keyword must be an integer, a ``Generator`` or a</span>
 <span class="sd">    ``RandomState``.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    arch.bootstrap.optimal_block_length</span>
-<span class="sd">       Optimal block length estimation</span>
-<span class="sd">    arch.bootstrap.StationaryBootstrap</span>
-<span class="sd">       Politis and Romano's bootstrap with exp. distributed block lengths</span>
-<span class="sd">    arch.bootstrap.CircularBlockBootstrap</span>
-<span class="sd">       Circular (wrap-around) bootstrap</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

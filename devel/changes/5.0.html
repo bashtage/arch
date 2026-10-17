@@ -23,7 +23,7 @@
     
   
       
-        <title>Version 5 - arch v8.0.1 (+355)</title>
+        <title>Version 5 - arch v8.0.1 (+398)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -1120,24 +1120,24 @@
 </ul>
 <h2 id="release-5-3">Release 5.3<a class="headerlink" href="#release-5-3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Fixed a bug in <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> where <code class="docutils literal notranslate"><span class="pre">power</span></code> was
-not passed to the <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> constructor (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/572">GH572</a>).</p></li>
+<li><p>Fixed a bug in <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> where <code class="docutils literal notranslate"><span class="pre">power</span></code> was
+not passed to the <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model."><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> constructor (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/572">GH572</a>).</p></li>
 <li><p>Fixed a bug that affected downstream projects due to an overly specific assert
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/569">GH569</a>).</p></li>
 </ul>
 <h2 id="release-5-2">Release 5.2<a class="headerlink" href="#release-5-2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Fixed a bug in in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_resid.html#arch.univariate.base.ARCHModelResult.std_resid" title="arch.univariate.base.ARCHModelResult.std_resid (Python property) — Residuals standardized by conditional volatility"><code class="xref py py-func docutils literal notranslate"><span class="pre">std_resid()</span></code></a> that
+<li><p>Fixed a bug in in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_resid.html#arch.univariate.base.ARCHModelResult.std_resid" title="arch.univariate.base.ARCHModelResult.std_resid (Python property) — Standardized residuals, the residuals divided by the conditional volatility."><code class="xref py py-func docutils literal notranslate"><span class="pre">std_resid()</span></code></a> that
 would raise an exception when the data used to construct the model with a NumPy
 array (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/565">GH565</a>).</p></li>
-<li><p>Fixed a bug in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a> and related
+<li><p>Fixed a bug in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a> and related
 <code class="docutils literal notranslate"><span class="pre">forecast</span></code> methods when producing multi-step forecasts usign simulation with
 exogenous variables (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/551">GH551</a>).</p></li>
 </ul>
 <h2 id="release-5-1">Release 5.1<a class="headerlink" href="#release-5-1" title="Link to this heading">¶</a></h2>
 <h3 id="unit-root">Unit Root<a class="headerlink" href="#unit-root" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Improved automatic lag length selection in <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a>
+<li><p>Improved automatic lag length selection in <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a>
 by using OLS rather than GLS detrended data when selecting the lag length.
 This problem was studied by Perron, P., &amp; Qu, Z. (2007).</p></li>
 </ul>
@@ -1149,16 +1149,16 @@ be set after the test is created.</p></li>
 </ul>
 <h3 id="bootstrap">Bootstrap<a class="headerlink" href="#bootstrap" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument to all bootstraps (e.g., <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.IIDBootstrap.html#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap (Python class) — Bootstrap using uniform resampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIDBootstrap</span></code></a>
-and <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap" title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes"><code class="xref py py-class docutils literal notranslate"><span class="pre">StationaryBootstrap</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument to all bootstraps (e.g., <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.IIDBootstrap.html#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap (Python class) — Bootstrap using uniform resampling."><code class="xref py py-class docutils literal notranslate"><span class="pre">IIDBootstrap</span></code></a>
+and <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap" title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes."><code class="xref py py-class docutils literal notranslate"><span class="pre">StationaryBootstrap</span></code></a>) that allows a NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
 to be used. The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument also accepts legacy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
 instances and integers.  If an integer is passed, the random number generator is constructed by
 calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
 <code class="docutils literal notranslate"><span class="pre">random_state</span></code> keyword argument.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">IIDBootstrap.random_state</span></code> property has also been deprecated in favor
-of <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.generator.html#arch.bootstrap.IIDBootstrap.generator" title="arch.bootstrap.IIDBootstrap.generator (Python property) — Set or get the instance PRNG"><code class="xref py py-func docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
+of <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.generator.html#arch.bootstrap.IIDBootstrap.generator" title="arch.bootstrap.IIDBootstrap.generator (Python property) — Set or get the instance PRNG."><code class="xref py py-func docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">IIDBootstrap.get_state</span></code> and <code class="docutils literal notranslate"><span class="pre">IIDBootstrap.set_state</span></code>
-methods have been replaced by the <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.state.html#arch.bootstrap.IIDBootstrap.state" title="arch.bootstrap.IIDBootstrap.state (Python property) — Set or get the generator's state"><code class="xref py py-func docutils literal notranslate"><span class="pre">state()</span></code></a> property.</p></li>
+methods have been replaced by the <a class="reference internal" href="../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.state.html#arch.bootstrap.IIDBootstrap.state" title="arch.bootstrap.IIDBootstrap.state (Python property) — Set or get the generator's state."><code class="xref py py-func docutils literal notranslate"><span class="pre">state()</span></code></a> property.</p></li>
 </ul>
 <h3 id="volatility-modeling">Volatility Modeling<a class="headerlink" href="#volatility-modeling" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1169,12 +1169,12 @@ instances and integers.  If an integer is passed, the random number generator is
 calling <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="(in NumPy v2.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></a> The <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword argument replaces the
 <code class="docutils literal notranslate"><span class="pre">random_state</span></code> keyword argument.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Normal.random_state</span></code> property has also been deprecated in favor
-of <a class="reference internal" href="../univariate/generated/generated/arch.univariate.Normal.generator.html#arch.univariate.Normal.generator" title="arch.univariate.Normal.generator (Python property) — The NumPy Generator or RandomState attached to the distribution"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
-<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> mean process supporting (G)ARCH-in-mean models.</p></li>
-<li><p>Extended <a class="reference internal" href="../univariate/generated/arch.univariate.volatility.VolatilityProcess.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess (Python class) — Abstract base class for ARCH models.  Allows the conditional mean model to be specified separately from the conditional variance, even though parameters are estimated jointly."><code class="xref py py-class docutils literal notranslate"><span class="pre">VolatilityProcess</span></code></a> with
-<a class="reference internal" href="../univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.volatility_updater.html#arch.univariate.volatility.VolatilityProcess.volatility_updater" title="arch.univariate.volatility.VolatilityProcess.volatility_updater (Python property) — Get the volatility updater associated with the volatility process"><code class="xref py py-func docutils literal notranslate"><span class="pre">volatility_updater()</span></code></a> that contains a
+of <a class="reference internal" href="../univariate/generated/generated/arch.univariate.Normal.generator.html#arch.univariate.Normal.generator" title="arch.univariate.Normal.generator (Python property) — The NumPy Generator or RandomState attached to the distribution."><code class="xref py py-meth docutils literal notranslate"><span class="pre">generator()</span></code></a>.</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> mean process supporting (G)ARCH-in-mean models.</p></li>
+<li><p>Extended <a class="reference internal" href="../univariate/generated/arch.univariate.volatility.VolatilityProcess.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess (Python class) — Abstract base class for ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">VolatilityProcess</span></code></a> with
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.volatility_updater.html#arch.univariate.volatility.VolatilityProcess.volatility_updater" title="arch.univariate.volatility.VolatilityProcess.volatility_updater (Python property) — Get the volatility updater associated with the volatility process."><code class="xref py py-func docutils literal notranslate"><span class="pre">volatility_updater()</span></code></a> that contains a
 <a class="reference internal" href="../univariate/generated/arch.univariate.recursions.VolatilityUpdater.html#arch.univariate.recursions.VolatilityUpdater" title="arch.univariate.recursions.VolatilityUpdater (Python class) — Base class that all volatility updaters must inherit from."><code class="xref py py-class docutils literal notranslate"><span class="pre">VolatilityUpdater</span></code></a> to allow
-<a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> to be created from different volatility processes.</p></li>
+<a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> to be created from different volatility processes.</p></li>
 </ul>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h3>
 <ul class="simple">

@@ -1,0 +1,6 @@
+arch.bootstrap.StationaryBootstrap.block\_size
+==============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StationaryBootstrap.block_size

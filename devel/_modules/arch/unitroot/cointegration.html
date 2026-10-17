@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+355)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -552,6 +552,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot._shared</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_cointegrating_regression</span><span class="p">,</span> <span class="n">_cross_section</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">SHORT_TREND_DESCRIPTION</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">pval_format</span><span class="p">,</span> <span class="n">str_format</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_trend</span>
@@ -598,13 +599,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The estimated parameters of the cointegrating vector"""</span>
+<span class="w">        </span><span class="sd">"""The estimated parameters of the cointegrating vector."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">]</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">std_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Standard errors  of the parameters in the cointegrating vector</span>
+<span class="sd">        Standard errors of the parameters in the cointegrating vector.</span>
 <span class="sd">        """</span>
         <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"std_errors"</span><span class="p">)</span>
@@ -612,45 +613,45 @@
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        T-statistics of the parameters in the cointegrating vector</span>
+<span class="sd">        T-statistics of the parameters in the cointegrating vector.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_errors</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"tvalues"</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        P-value of the parameters in the cointegrating vector</span>
+<span class="sd">        P-values of the parameters in the cointegrating vector.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"pvalues"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The estimated parameter covariance of the cointegrating vector"""</span>
+<span class="w">        </span><span class="sd">"""The estimated parameter covariance of the cointegrating vector."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ci_size</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The model residuals"""</span>
+<span class="w">        </span><span class="sd">"""The model residuals."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The kernel used to estimate the covariance"""</span>
+<span class="w">        </span><span class="sd">"""The kernel used to estimate the covariance."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The bandwidth used in the parameter covariance estimation"""</span>
+<span class="w">        </span><span class="sd">"""The bandwidth used in the parameter covariance estimation."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The model R²"""</span>
+<span class="w">        </span><span class="sd">"""The model R²."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rsquared</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rsquared_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The degree-of-freedom adjusted R²"""</span>
+<span class="w">        </span><span class="sd">"""The degree-of-freedom adjusted R²."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rsquared_adj</span>
 
     <span class="nd">@cached_property</span>
@@ -782,12 +783,12 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Summary of the model, containing estimated parameters and std. errors</span>
+<span class="sd">        Summary of the model, containing estimated parameters and std. errors.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Summary</span>
-<span class="sd">            A summary instance with method that support export to text, csv</span>
+<span class="sd">        statsmodels.iolib.summary.Summary</span>
+<span class="sd">            A summary instance with methods that support export to text, csv</span>
 <span class="sd">            or latex.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">):</span>
@@ -828,7 +829,7 @@
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.DynamicOLSResults.html#arch.unitroot.cointegration.DynamicOLSResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicOLSResults</span><span class="p">(</span><span class="n">_CommonCointegrationResults</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Estimation results for Dynamic OLS models</span>
+<span class="sd">    Estimation results for Dynamic OLS models.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -847,6 +848,10 @@
 <span class="sd">    kernel_est : CovarianceEstimator</span>
 <span class="sd">        The covariance estimator instance used to estimate the parameter</span>
 <span class="sd">        covariance.</span>
+<span class="sd">    num_x : int</span>
+<span class="sd">        The number of right-hand-side variables in the cointegrating regression.</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
+<span class="sd">        The trend included in the cointegrating regression.</span>
 <span class="sd">    reg_results : RegressionResults</span>
 <span class="sd">        Regression results from fitting statsmodels OLS.</span>
 <span class="sd">    df_adjust : bool</span>
@@ -886,29 +891,29 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The complete set of parameters, including leads and lags"""</span>
+<span class="w">        </span><span class="sd">"""The complete set of parameters, including leads and lags."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Parameter covariance of the all model parameters, incl. leads and lags</span>
+<span class="sd">        Parameter covariance of all the model parameters, incl. leads and lags.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The number of lags included in the model"""</span>
+<span class="w">        </span><span class="sd">"""The number of lags included in the model."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">leads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The number of leads included in the model"""</span>
+<span class="w">        </span><span class="sd">"""The number of leads included in the model."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The type of parameter covariance estimator used"""</span>
+<span class="w">        </span><span class="sd">"""The type of parameter covariance estimator used."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_type</span>
 
     <span class="nd">@property</span>
@@ -923,18 +928,18 @@
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.summary.html#arch.unitroot.cointegration.DynamicOLSResults.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Summary of the model, containing estimated parameters and std. errors</span>
+<span class="sd">        Summary of the model, containing estimated parameters and std. errors.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        full : bool, default False</span>
+<span class="sd">        full : bool, optional</span>
 <span class="sd">            Flag indicating whether to include all estimated parameters</span>
-<span class="sd">            (True) or only the parameters of the cointegrating vector</span>
+<span class="sd">            (True) or only the parameters of the cointegrating vector.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Summary</span>
-<span class="sd">            A summary instance with method that support export to text, csv</span>
+<span class="sd">        statsmodels.iolib.summary.Summary</span>
+<span class="sd">            A summary instance with methods that support export to text, csv</span>
 <span class="sd">            or latex.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">):</span>
@@ -986,36 +991,37 @@
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicOLS</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Dynamic OLS (DOLS) cointegrating vector estimation</span>
+<span class="sd">    Dynamic OLS (DOLS) cointegrating vector estimation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    y : array_like</span>
 <span class="sd">        The left-hand-side variable in the cointegrating regression.</span>
-<span class="sd">    x : array_like</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
 <span class="sd">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="sd">    trend : {"n","c","ct","ctt"}, default "c"</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}, optional</span>
 <span class="sd">        Trend to include in the cointegrating regression. Trends are:</span>
 
 <span class="sd">        * "n": No deterministic terms</span>
 <span class="sd">        * "c": Constant</span>
 <span class="sd">        * "ct": Constant and linear trend</span>
 <span class="sd">        * "ctt": Constant, linear and quadratic trends</span>
-<span class="sd">    lags : int, default None</span>
+
+<span class="sd">    lags : int, optional</span>
 <span class="sd">        The number of lags to include in the model.  If None, the optimal</span>
 <span class="sd">        number of lags is chosen using method.</span>
-<span class="sd">    leads : int, default None</span>
+<span class="sd">    leads : int, optional</span>
 <span class="sd">        The number of leads to include in the model.  If None, the optimal</span>
 <span class="sd">        number of leads is chosen using method.</span>
-<span class="sd">    common : bool, default False</span>
+<span class="sd">    common : bool, optional</span>
 <span class="sd">        Flag indicating that lags and leads should be restricted to the same</span>
-<span class="sd">        value. When common is None, lags must equal leads and max_lag must</span>
+<span class="sd">        value. When common is True, lags must equal leads and max_lag must</span>
 <span class="sd">        equal max_lead.</span>
-<span class="sd">    max_lag : int, default None</span>
+<span class="sd">    max_lag : int, optional</span>
 <span class="sd">        The maximum lag to consider. See Notes for value used when None.</span>
-<span class="sd">    max_lead : int, default None</span>
+<span class="sd">    max_lead : int, optional</span>
 <span class="sd">        The maximum lead to consider. See Notes for value used when None.</span>
-<span class="sd">    method : {"aic","bic","hqic"}, default "bic"</span>
+<span class="sd">    method : {"aic", "bic", "hqic"}, optional</span>
 <span class="sd">        The method used to select lag length when lags or leads is None.</span>
 
 <span class="sd">        * "aic" - Akaike Information Criterion</span>
@@ -1078,19 +1084,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_leads</span> <span class="o">=</span> <span class="n">leads</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="n">max_lag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span> <span class="o">=</span> <span class="n">max_lead</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"hqic"</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_common</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">common</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate the inputs"""</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="s2">"aic"</span><span class="p">,</span>
-            <span class="s2">"bic"</span><span class="p">,</span>
-            <span class="s2">"hqic"</span><span class="p">,</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'method must be one of "aic", "bic", or "hqic"'</span><span class="p">)</span>
         <span class="n">max_lag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_lag</span>
         <span class="n">max_lead</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lead</span>
@@ -1225,28 +1225,28 @@
         <span class="n">df_adjust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicOLSResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Estimate the Dynamic OLS regression</span>
+<span class="sd">        Estimate the Dynamic OLS regression.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        cov_type : str, default "unadjusted"</span>
-<span class="sd">            Either "unadjusted" (or is equivalent "homoskedastic") or "robust"</span>
+<span class="sd">        cov_type : {"unadjusted", "homoskedastic", "robust", "kernel"}, optional</span>
+<span class="sd">            Either "unadjusted" (or its equivalent "homoskedastic") or "robust"</span>
 <span class="sd">            (or its equivalent "kernel").</span>
-<span class="sd">        kernel : str, default "bartlett"</span>
-<span class="sd">            The string name of any of any known kernel-based long-run</span>
-<span class="sd">            covariance estimators. Common choices are "bartlett" for the</span>
+<span class="sd">        kernel : str, optional</span>
+<span class="sd">            The string name of any known kernel-based long-run</span>
+<span class="sd">            covariance estimator. Common choices are "bartlett" for the</span>
 <span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
 <span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
-<span class="sd">        bandwidth : int, default None</span>
+<span class="sd">        bandwidth : int, optional</span>
 <span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
 <span class="sd">            estimated from the data. Setting the bandwidth to 0 and using</span>
 <span class="sd">            "unadjusted" produces the classic OLS covariance estimator.</span>
 <span class="sd">            Setting the bandwidth to 0 and using "robust" produces White's</span>
 <span class="sd">            covariance estimator.</span>
-<span class="sd">        force_int : bool, default False</span>
-<span class="sd">            Whether the force the estimated optimal bandwidth to be an integer.</span>
-<span class="sd">        df_adjust : bool, default False</span>
-<span class="sd">            Whether the adjust the parameter covariance to account for the</span>
+<span class="sd">        force_int : bool, optional</span>
+<span class="sd">            Whether to force the estimated optimal bandwidth to be an integer.</span>
+<span class="sd">        df_adjust : bool, optional</span>
+<span class="sd">            Whether to adjust the parameter covariance to account for the</span>
 <span class="sd">            number of parameters estimated in the regression. If true, the</span>
 <span class="sd">            parameter covariance estimator is multiplied by T/(T-k) where</span>
 <span class="sd">            k is the number of regressors in the model.</span>
@@ -1259,9 +1259,9 @@
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        arch.unitroot.cointegration.engle_granger</span>
-<span class="sd">            Cointegration testing using the Engle-Granger methodology</span>
+<span class="sd">            Cointegration testing using the Engle-Granger methodology.</span>
 <span class="sd">        statsmodels.regression.linear_model.OLS</span>
-<span class="sd">            Ordinal Least Squares regression.</span>
+<span class="sd">            Ordinary Least Squares regression.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1287,6 +1287,14 @@
 <span class="sd">        Consistent estimator of the covariance of the regression scores</span>
 <span class="sd">        :math:`Z_t\epsilon_t`.</span>
 <span class="sd">        """</span>
+        <span class="n">cov_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"Literal['unadjusted', 'homoskedastic', 'robust', 'kernel']"</span><span class="p">,</span>
+            <span class="n">check_option</span><span class="p">(</span>
+                <span class="s2">"cov_type"</span><span class="p">,</span>
+                <span class="n">cov_type</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">"unadjusted"</span><span class="p">,</span> <span class="s2">"homoskedastic"</span><span class="p">,</span> <span class="s2">"robust"</span><span class="p">,</span> <span class="s2">"kernel"</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
         <span class="n">leads</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leads_and_lags</span><span class="p">()</span>
         <span class="c1"># TODO: Rank check and drop??</span>
         <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_variables</span><span class="p">(</span><span class="n">leads</span><span class="p">,</span> <span class="n">lags</span><span class="p">)</span>
@@ -1344,7 +1352,7 @@
             <span class="n">s</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">sigma_xx_inv</span> <span class="o">@</span> <span class="n">s</span> <span class="o">@</span> <span class="n">sigma_xx_inv</span> <span class="o">/</span> <span class="n">nobs</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown cov_type"</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown cov_type: </span><span class="si">{</span><span class="n">cov_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">cov_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">rhs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cov_df</span><span class="p">,</span> <span class="n">est</span></div>
 
@@ -1416,7 +1424,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Long-run variance estimate used in the parameter covariance estimator</span>
+<span class="sd">        Long-run variance estimate used in the parameter covariance estimator.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_omega_112</span></div>
 
@@ -1429,20 +1437,21 @@
 <span class="s2">    ----------</span>
 <span class="s2">    y : array_like</span>
 <span class="s2">        The left-hand-side variable in the cointegrating regression.</span>
-<span class="s2">    x : array_like</span>
+<span class="s2">    x : ndarray, Series or DataFrame</span>
 <span class="s2">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="s2">    trend : {"n","c","ct","ctt"}, default "c"</span>
+<span class="s2">    trend : {"n", "c", "ct", "ctt"}, optional</span>
 <span class="s2">        Trend to include in the cointegrating regression. Trends are:</span>
 
 <span class="s2">        * "n": No deterministic terms</span>
 <span class="s2">        * "c": Constant</span>
 <span class="s2">        * "ct": Constant and linear trend</span>
 <span class="s2">        * "ctt": Constant, linear and quadratic trends</span>
-<span class="s2">    x_trend : {None,"c","ct","ctt"}, default None</span>
-<span class="s2">        Trends that affects affect the x-data but do not appear in the</span>
+
+<span class="s2">    x_trend : {"c", "ct", "ctt"}, optional</span>
+<span class="s2">        Trends that affect the x-data but do not appear in the</span>
 <span class="s2">        cointegrating regression. x_trend must be at least as large as</span>
 <span class="s2">        trend, so that if trend is "ct", x_trend must be either "ct" or</span>
-<span class="s2">        "ctt".</span>
+<span class="s2">        "ctt". If None, x_trend is the same as trend.</span>
 
 <span class="s2">    Notes</span>
 <span class="s2">    -----</span>
@@ -1626,23 +1635,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        diff : bool, default False</span>
-<span class="sd">            Use differenced data to estimate the residuals.</span>
-<span class="sd">        kernel : str, default "bartlett"</span>
-<span class="sd">            The string name of any of any known kernel-based long-run</span>
-<span class="sd">            covariance estimators. Common choices are "bartlett" for the</span>
+<span class="sd">        kernel : str, optional</span>
+<span class="sd">            The string name of any known kernel-based long-run</span>
+<span class="sd">            covariance estimator. Common choices are "bartlett" for the</span>
 <span class="sd">            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
 <span class="sd">            and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
-<span class="sd">        bandwidth : int, default None</span>
+<span class="sd">        bandwidth : float, optional</span>
 <span class="sd">            The bandwidth to use. If not provided, the optimal bandwidth is</span>
-<span class="sd">            estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">            "unadjusted" produces the classic OLS covariance estimator.</span>
-<span class="sd">            Setting the bandwidth to 0 and using "robust" produces White's</span>
-<span class="sd">            covariance estimator.</span>
-<span class="sd">        force_int : bool, default True</span>
-<span class="sd">            Whether the force the estimated optimal bandwidth to be an integer.</span>
-<span class="sd">        df_adjust : bool, default False</span>
-<span class="sd">            Whether the adjust the parameter covariance to account for the</span>
+<span class="sd">            estimated from the data.</span>
+<span class="sd">        force_int : bool, optional</span>
+<span class="sd">            Whether to force the estimated optimal bandwidth to be an integer.</span>
+<span class="sd">        diff : bool, optional</span>
+<span class="sd">            Use differenced data to estimate the residuals.</span>
+<span class="sd">        df_adjust : bool, optional</span>
+<span class="sd">            Whether to adjust the parameter covariance to account for the</span>
 <span class="sd">            number of parameters estimated in the regression. If true, the</span>
 <span class="sd">            parameter covariance estimator is multiplied by T/(T-k) where</span>
 <span class="sd">            k is the number of regressors in the model.</span>

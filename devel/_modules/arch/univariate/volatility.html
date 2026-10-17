@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v8.0.1 (+355)</title>
+        <title>arch.univariate.volatility - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -527,9 +527,10 @@
 
 <h1>Source code for arch.univariate.volatility</h1><div class="highlight"><pre>
 <span></span><code><span class="sd">"""</span>
-<span class="sd">Volatility processes for ARCH model estimation.  All volatility processes must</span>
-<span class="sd">inherit from :class:`VolatilityProcess` and provide the same methods with the</span>
-<span class="sd">same inputs.</span>
+<span class="sd">Volatility processes for ARCH model estimation.</span>
+
+<span class="sd">All volatility processes must inherit from :class:`VolatilityProcess` and provide</span>
+<span class="sd">the same methods with the same inputs.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -553,6 +554,7 @@
     <span class="n">RNGType</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Normal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InitialValueWarning</span><span class="p">,</span>
@@ -595,17 +597,19 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BootstrapRng</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Simple fake RNG used to transform bootstrap-based forecasting into a standard</span>
-<span class="sd">    simulation forecasting problem</span>
+<span class="sd">    Simple fake RNG for bootstrap-based forecasting.</span>
+
+<span class="sd">    It is used to transform bootstrap-based forecasting into a standard</span>
+<span class="sd">    simulation forecasting problem.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    std_resid : ndarray</span>
-<span class="sd">        Array containing standardized residuals</span>
+<span class="sd">        Array containing standardized residuals.</span>
 <span class="sd">    start : int</span>
-<span class="sd">        Location of first forecast</span>
+<span class="sd">        Location of first forecast.</span>
 <span class="sd">    random_state : RandomState, optional</span>
-<span class="sd">        NumPy RandomState instance</span>
+<span class="sd">        NumPy RandomState instance.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -629,9 +633,23 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The NumPy RandomState instance used to draw the bootstrap samples."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RNGType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Construct the random number generator.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        callable</span>
+<span class="sd">            Callable that takes a size and returns random draws of the</span>
+<span class="sd">            standardized residuals. The draws are sampled with replacement from</span>
+<span class="sd">            the residuals up to and including a position that starts at ``start``</span>
+<span class="sd">            and increases by one with each call. An IndexError is raised when</span>
+<span class="sd">            there are no more data points.</span>
+<span class="sd">        """</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">_rng</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_resid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">"not enough data points."</span><span class="p">)</span>
@@ -652,20 +670,25 @@
     <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute variance recursion for EWMA/RiskMetrics Variance</span>
+<span class="sd">    Compute variance recursion for EWMA/RiskMetrics Variance.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    lam : float</span>
-<span class="sd">        Smoothing parameter</span>
+<span class="sd">        Smoothing parameter.</span>
 <span class="sd">    resids : ndarray</span>
-<span class="sd">        Residuals to use in the recursion</span>
+<span class="sd">        Residuals to use in the recursion.</span>
 <span class="sd">    sigma2 : ndarray</span>
-<span class="sd">        Conditional variances with same shape as resids</span>
+<span class="sd">        Conditional variances with same shape as resids.</span>
 <span class="sd">    nobs : int</span>
-<span class="sd">        Length of resids</span>
+<span class="sd">        Length of resids.</span>
 <span class="sd">    backcast : float</span>
-<span class="sd">        Value to use when initializing the recursion</span>
+<span class="sd">        Value to use when initializing the recursion.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The conditional variances, sigma2, which are also modified in place.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># Throw away bounds</span>
@@ -689,17 +712,17 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.volatility.VarianceForecast.html#arch.univariate.VarianceForecast">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VarianceForecast</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Container for variance forecasts</span>
+<span class="sd">    Container for variance forecasts.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    forecasts : ndarray</span>
-<span class="sd">        Array containing the forecasts</span>
+<span class="sd">        Array containing the forecasts.</span>
 <span class="sd">    forecast_paths : ndarray, optional</span>
-<span class="sd">        Array containing the forecast paths if using simulation or bootstrap</span>
+<span class="sd">        Array containing the forecast paths if using simulation or bootstrap.</span>
 <span class="sd">    shocks : ndarray, optional</span>
 <span class="sd">        Array containing the shocks used to generate the forecast paths if</span>
-<span class="sd">        using simulation or bootstrap</span>
+<span class="sd">        using simulation or bootstrap.</span>
 <span class="sd">    """</span>
 
     <span class="n">_forecasts</span> <span class="o">=</span> <span class="kc">None</span>
@@ -717,17 +740,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forecasts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The variance forecasts"""</span>
+<span class="w">        </span><span class="sd">"""The variance forecasts."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forecasts</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forecast_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The variance forecast paths"""</span>
+<span class="w">        </span><span class="sd">"""The variance forecast paths."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forecast_paths</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">shocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The shocks used to construct the variance forecast paths"""</span>
+<span class="w">        </span><span class="sd">"""The shocks used to construct the variance forecast paths."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shocks</span></div>
 
 
@@ -736,9 +759,10 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.volatility.VolatilityProcess.html#arch.univariate.VolatilityProcess">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VolatilityProcess</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Abstract base class for ARCH models.  Allows the conditional mean model to be</span>
-<span class="sd">    specified separately from the conditional variance, even though parameters</span>
-<span class="sd">    are estimated jointly.</span>
+<span class="sd">    Abstract base class for ARCH models.</span>
+
+<span class="sd">    Allows the conditional mean model to be specified separately from the</span>
+<span class="sd">    conditional variance, even though parameters are estimated jointly.</span>
 <span class="sd">    """</span>
 
     <span class="n">_updatable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -761,12 +785,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The name of the volatility process"""</span>
+<span class="w">        </span><span class="sd">"""The name of the volatility process."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Index to use to start variance subarray selection"""</span>
+<span class="w">        </span><span class="sd">"""Index to use to start variance subarray selection."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
 
     <span class="nd">@start</span><span class="o">.</span><span class="n">setter</span>
@@ -775,7 +799,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Index to use to stop variance subarray selection"""</span>
+<span class="w">        </span><span class="sd">"""Index to use to stop variance subarray selection."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
 
     <span class="nd">@stop</span><span class="o">.</span><span class="n">setter</span>
@@ -784,23 +808,23 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The number of parameters in the model"""</span>
+<span class="w">        </span><span class="sd">"""The number of parameters in the model."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_params</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">updateable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flag indicating that the volatility process supports update"""</span>
+<span class="w">        </span><span class="sd">"""Flag indicating that the volatility process supports update."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updatable</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">volatility_updater</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">rec</span><span class="o">.</span><span class="n">VolatilityUpdater</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Get the volatility updater associated with the volatility process</span>
+<span class="sd">        Get the volatility updater associated with the volatility process.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        VolatilityUpdater</span>
-<span class="sd">            The updater class</span>
+<span class="sd">            The updater class.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -824,30 +848,30 @@
         <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute the variance for a single observation</span>
+<span class="sd">        Compute the variance for a single observation.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        index : int</span>
-<span class="sd">            The numerical index of the variance to compute</span>
+<span class="sd">            The numerical index of the variance to compute.</span>
 <span class="sd">        parameters : ndarray</span>
-<span class="sd">            The variance model parameters</span>
-<span class="sd">        resids :</span>
+<span class="sd">            The variance model parameters.</span>
+<span class="sd">        resids : ndarray</span>
 <span class="sd">            The residual array. Only uses ``resids[:index]`` when computing</span>
-<span class="sd">            ``sigma2[index]``</span>
+<span class="sd">            ``sigma2[index]``.</span>
 <span class="sd">        sigma2 : ndarray</span>
 <span class="sd">            The array containing the variances. Only uses ``sigma2[:index]``</span>
 <span class="sd">            when computing ``sigma2[index]``. The computed value is stored</span>
 <span class="sd">            in ``sigma2[index]``.</span>
-<span class="sd">        backcast : {float, ndarray}</span>
-<span class="sd">            Value to use when initializing the recursion</span>
+<span class="sd">        backcast : float or ndarray</span>
+<span class="sd">            Value to use when initializing the recursion.</span>
 <span class="sd">        var_bounds : ndarray</span>
-<span class="sd">            Array containing columns of lower and upper bounds</span>
+<span class="sd">            Array containing columns of lower and upper bounds.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">            The variance computed for location ``index``</span>
+<span class="sd">            The variance computed for location ``index``.</span>
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Subclasses may optionally implement"</span><span class="p">)</span></div>
 
@@ -1075,7 +1099,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        resids : ndarray</span>
 <span class="sd">            Approximate residuals to use to compute the lower and upper bounds</span>
-<span class="sd">            on the conditional variance</span>
+<span class="sd">            on the conditional variance.</span>
 <span class="sd">        power : float, optional</span>
 <span class="sd">            Power used in the model. 2.0, the default corresponds to standard</span>
 <span class="sd">            ARCH models that evolve in squares.</span>
@@ -1084,7 +1108,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        var_bounds : ndarray</span>
 <span class="sd">            Array containing columns of lower and upper bounds with the same</span>
-<span class="sd">            number of elements as resids</span>
+<span class="sd">            number of elements as resids.</span>
 <span class="sd">        """</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -1116,18 +1140,18 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns starting values for the ARCH model</span>
+<span class="sd">        Return starting values for the ARCH model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        resids : ndarray</span>
 <span class="sd">            Array of (approximate) residuals to use when computing starting</span>
-<span class="sd">            values</span>
+<span class="sd">            values.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        sv : ndarray</span>
-<span class="sd">            Array of starting values</span>
+<span class="sd">            Array of starting values.</span>
 <span class="sd">        """</span></div>
 
 
@@ -1135,17 +1159,17 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.backcast.html#arch.univariate.VolatilityProcess.backcast">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Construct values for backcasting to start the recursion</span>
+<span class="sd">        Construct values for backcasting to start the recursion.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            Vector of (approximate) residuals</span>
+<span class="sd">            Vector of (approximate) residuals.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        backcast : float</span>
-<span class="sd">            Value to use in backcasting in the volatility recursion</span>
+<span class="sd">        backcast : float or ndarray</span>
+<span class="sd">            Value to use in backcasting in the volatility recursion.</span>
 <span class="sd">        """</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">0.94</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
@@ -1160,17 +1184,17 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Transformation to apply to user-provided backcast values</span>
+<span class="sd">        Transform user-provided backcast values.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        backcast : {float, ndarray}</span>
+<span class="sd">        backcast : float or ndarray</span>
 <span class="sd">            User-provided ``backcast`` that approximates sigma2[0].</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        backcast : {float, ndarray}</span>
-<span class="sd">            Backcast transformed to the model-appropriate scale</span>
+<span class="sd">        backcast : float or ndarray</span>
+<span class="sd">            Backcast transformed to the model-appropriate scale.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">backcast</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"User backcast value must be strictly positive."</span><span class="p">)</span>
@@ -1182,16 +1206,16 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns bounds for parameters</span>
+<span class="sd">        Return bounds for parameters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            Vector of (approximate) residuals</span>
+<span class="sd">            Vector of (approximate) residuals.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        bounds : list[tuple[float,float]]</span>
+<span class="sd">        bounds : list of tuple of float</span>
 <span class="sd">            List of bounds where each element is (lower, upper).</span>
 <span class="sd">        """</span></div>
 
@@ -1208,21 +1232,26 @@
         <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute the variance for the ARCH model</span>
+<span class="sd">        Compute the variance for the ARCH model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        parameters : ndarray</span>
-<span class="sd">            Model parameters</span>
+<span class="sd">            Model parameters.</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            Vector of mean zero residuals</span>
+<span class="sd">            Vector of mean zero residuals.</span>
 <span class="sd">        sigma2 : ndarray</span>
-<span class="sd">            Array with same size as resids to store the conditional variance</span>
-<span class="sd">        backcast : {float, ndarray}</span>
+<span class="sd">            Array with same size as resids to store the conditional variance.</span>
+<span class="sd">        backcast : float or ndarray</span>
 <span class="sd">            Value to use when initializing ARCH recursion. Can be an ndarray</span>
 <span class="sd">            when the model contains multiple components.</span>
 <span class="sd">        var_bounds : ndarray</span>
-<span class="sd">            Array containing columns of lower and upper bounds</span>
+<span class="sd">            Array containing columns of lower and upper bounds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sigma2 : ndarray</span>
+<span class="sd">            The array of conditional variances, which is also modified in place.</span>
 <span class="sd">        """</span></div>
 
 
@@ -1231,15 +1260,15 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Construct parameter constraints arrays for parameter estimation</span>
+<span class="sd">        Construct parameter constraints arrays for parameter estimation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        A : ndarray</span>
 <span class="sd">            Parameters loadings in constraint. Shape is number of constraints</span>
-<span class="sd">            by number of parameters</span>
+<span class="sd">            by number of parameters.</span>
 <span class="sd">        b : ndarray</span>
-<span class="sd">            Constraint values, one for each constraint</span>
+<span class="sd">            Constraint values, one for each constraint.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1266,35 +1295,35 @@
         <span class="n">asym_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarianceForecast</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Forecast volatility from the model</span>
+<span class="sd">        Forecast volatility from the model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        parameters : {ndarray, Series}</span>
-<span class="sd">            Parameters required to forecast the volatility model</span>
+<span class="sd">        parameters : ndarray or Series</span>
+<span class="sd">            Parameters required to forecast the volatility model.</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            Residuals to use in the recursion</span>
-<span class="sd">        backcast : float</span>
-<span class="sd">            Value to use when initializing the recursion</span>
-<span class="sd">        var_bounds : ndarray, 2-d</span>
-<span class="sd">            Array containing columns of lower and upper bounds</span>
-<span class="sd">        start : {None, int}</span>
+<span class="sd">            Residuals to use in the recursion.</span>
+<span class="sd">        backcast : float or ndarray</span>
+<span class="sd">            Value to use when initializing the recursion.</span>
+<span class="sd">        var_bounds : ndarray</span>
+<span class="sd">            2-d array containing columns of lower and upper bounds.</span>
+<span class="sd">        start : int, optional</span>
 <span class="sd">            Index of the first observation to use as the starting point for</span>
 <span class="sd">            the forecast.  Default is len(resids).</span>
-<span class="sd">        horizon : int</span>
+<span class="sd">        horizon : int, optional</span>
 <span class="sd">            Forecast horizon.  Must be 1 or larger.  Forecasts are produced</span>
 <span class="sd">            for horizons in [1, horizon].</span>
-<span class="sd">        method : {'analytic', 'simulation', 'bootstrap'}</span>
+<span class="sd">        method : {"analytic", "simulation", "bootstrap"}, optional</span>
 <span class="sd">            Method to use when producing the forecast. The default is analytic.</span>
-<span class="sd">        simulations : int</span>
+<span class="sd">        simulations : int, optional</span>
 <span class="sd">            Number of simulations to run when computing the forecast using</span>
 <span class="sd">            either simulation or bootstrap.</span>
-<span class="sd">        rng : callable</span>
+<span class="sd">        rng : callable, optional</span>
 <span class="sd">            Callable random number generator required if method is</span>
 <span class="sd">            'simulation'. Must take a single shape input and return random</span>
 <span class="sd">            samples numbers with that shape.</span>
 <span class="sd">        random_state : RandomState, optional</span>
-<span class="sd">            NumPy RandomState instance to use when method is 'bootstrap'</span>
+<span class="sd">            NumPy RandomState instance to use when method is 'bootstrap'.</span>
 <span class="sd">        asym_weight : float, optional</span>
 <span class="sd">            Expected value of z**2 when z &lt; 0, E[z**2 1(z &lt; 0)], for the</span>
 <span class="sd">            standardized distribution, which weights the variance in the expected</span>
@@ -1321,14 +1350,9 @@
 <span class="sd">        to use this method when not available will raise a ValueError.</span>
 <span class="sd">        """</span>
         <span class="n">_parameters</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">valid_methods</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"analytic"</span><span class="p">,</span> <span class="s2">"simulation"</span><span class="p">,</span> <span class="s2">"bootstrap"</span><span class="p">)</span>
-        <span class="n">method_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">method</span>
-        <span class="k">if</span> <span class="n">method_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_methods</span><span class="p">:</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">'"</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">valid_methods</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> is not a known forecasting method. The method must be "</span>
-                <span class="sa">f</span><span class="s2">"one of </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2"> (in any case)."</span>
-            <span class="p">)</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+            <span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="s2">"analytic"</span><span class="p">,</span> <span class="s2">"simulation"</span><span class="p">,</span> <span class="s2">"bootstrap"</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">horizon</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="n">horizon</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"horizon must be an integer &gt;= 1."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_forecasting_method</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"ForecastingMethod"</span><span class="p">,</span> <span class="n">method_name</span><span class="p">),</span> <span class="n">horizon</span><span class="p">)</span>
@@ -1393,30 +1417,30 @@
         <span class="n">initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">        Simulate data from the model</span>
+<span class="sd">        Simulate data from the model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        parameters : {ndarray, Series}</span>
-<span class="sd">            Parameters required to simulate the volatility model</span>
+<span class="sd">        parameters : array_like</span>
+<span class="sd">            Parameters required to simulate the volatility model.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Number of data points to simulate</span>
+<span class="sd">            Number of data points to simulate.</span>
 <span class="sd">        rng : callable</span>
 <span class="sd">            Callable function that takes a single integer input and returns</span>
-<span class="sd">            a vector of random numbers</span>
+<span class="sd">            a vector of random numbers.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of additional observations to generate when initializing</span>
-<span class="sd">            the simulation</span>
-<span class="sd">        initial_value : {float, ndarray}, optional</span>
+<span class="sd">            the simulation.</span>
+<span class="sd">        initial_value : float or ndarray, optional</span>
 <span class="sd">            Scalar or array of initial values to use when initializing the</span>
 <span class="sd">            simulation. The units depend on the process, see Notes.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            The simulated residuals</span>
+<span class="sd">            The simulated residuals.</span>
 <span class="sd">        variance : ndarray</span>
-<span class="sd">            The simulated variance</span>
+<span class="sd">            The simulated variance.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1457,12 +1481,12 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Names of model parameters</span>
+<span class="sd">        Return the names of the model parameters.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        names : list (str)</span>
-<span class="sd">            Variables names</span>
+<span class="sd">        names : list of str</span>
+<span class="sd">            Variables names.</span>
 <span class="sd">        """</span></div>
 </div>
 
@@ -1472,7 +1496,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ConstantVariance.html#arch.univariate.ConstantVariance">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConstantVariance</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Constant volatility process</span>
+<span class="sd">    Constant volatility process.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1606,7 +1630,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    GARCH and related model estimation</span>
+<span class="sd">    GARCH and related model estimation.</span>
 
 <span class="sd">    The following models can be specified using GARCH:</span>
 <span class="sd">        * ARCH(p)</span>
@@ -1619,17 +1643,30 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : int</span>
-<span class="sd">        Order of the symmetric innovation</span>
-<span class="sd">    o : int</span>
-<span class="sd">        Order of the asymmetric innovation</span>
-<span class="sd">    q : int</span>
-<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    p : int, optional</span>
+<span class="sd">        Order of the symmetric innovation.</span>
+<span class="sd">    o : int, optional</span>
+<span class="sd">        Order of the asymmetric innovation.</span>
+<span class="sd">    q : int, optional</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance.</span>
 <span class="sd">    power : float, optional</span>
 <span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which</span>
 <span class="sd">        produces ARCH and related models. Using 1.0 produces AVARCH and related</span>
 <span class="sd">        models.  Other powers can be specified, although these should be strictly</span>
 <span class="sd">        positive, and usually larger than 0.25.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In this class of processes, the variance dynamics are</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_{t}^{\lambda}=\omega</span>
+<span class="sd">        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}</span>
+<span class="sd">        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}</span>
+<span class="sd">        I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}</span>
+
+<span class="sd">    where :math:`\lambda` is the ``power``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1646,19 +1683,6 @@
 <span class="sd">    Asymmetric TARCH process</span>
 
 <span class="sd">    &gt;&gt;&gt; tarch = GARCH(p=1, o=1, q=1, power=1.0)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    In this class of processes, the variance dynamics are</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \sigma_{t}^{\lambda}=\omega</span>
-<span class="sd">        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}</span>
-<span class="sd">        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}</span>
-<span class="sd">        I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}</span>
-
-<span class="sd">    where :math:`\lambda` is the ``power``.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2119,25 +2143,13 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.HARCH.html#arch.univariate.HARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Heterogeneous ARCH process</span>
+<span class="sd">    Heterogeneous ARCH process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    lags : {list, array, int}</span>
-<span class="sd">        List of lags to include in the model, or if scalar, includes all lags up the</span>
-<span class="sd">        value</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import HARCH</span>
-
-<span class="sd">    Lag-1 HARCH, which is identical to an ARCH(1)</span>
-
-<span class="sd">    &gt;&gt;&gt; harch = HARCH()</span>
-
-<span class="sd">    More useful and realistic lag lengths</span>
-
-<span class="sd">    &gt;&gt;&gt; harch = HARCH(lags=[1, 5, 22])</span>
+<span class="sd">    lags : int or array_like, optional</span>
+<span class="sd">        List of lags to include in the model, or if scalar, includes all lags up to</span>
+<span class="sd">        the value.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2158,6 +2170,18 @@
 
 <span class="sd">    A HARCH process is a special case of an ARCH process where parameters in the</span>
 <span class="sd">    more general ARCH process have been restricted.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import HARCH</span>
+
+<span class="sd">    Lag-1 HARCH, which is identical to an ARCH(1)</span>
+
+<span class="sd">    &gt;&gt;&gt; harch = HARCH()</span>
+
+<span class="sd">    More useful and realistic lag lengths</span>
+
+<span class="sd">    &gt;&gt;&gt; harch = HARCH(lags=[1, 5, 22])</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2390,30 +2414,14 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MIDASHyperbolic</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    MIDAS Hyperbolic ARCH process</span>
+<span class="sd">    MIDAS Hyperbolic ARCH process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    m : int</span>
-<span class="sd">        Length of maximum lag to include in the model</span>
-<span class="sd">    asym : bool</span>
-<span class="sd">        Flag indicating whether to include an asymmetric term</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import MIDASHyperbolic</span>
-
-<span class="sd">    22-lag MIDAS Hyperbolic process</span>
-
-<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic()</span>
-
-<span class="sd">    Longer 66-period lag</span>
-
-<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic(m=66)</span>
-
-<span class="sd">    Asymmetric MIDAS Hyperbolic process</span>
-
-<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic(asym=True)</span>
+<span class="sd">    m : int, optional</span>
+<span class="sd">        Length of maximum lag to include in the model.</span>
+<span class="sd">    asym : bool, optional</span>
+<span class="sd">        Flag indicating whether to include an asymmetric term.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2440,6 +2448,22 @@
 <span class="sd">    .. [1] Foroni, Claudia, and Massimiliano Marcellino. "A survey of</span>
 <span class="sd">       Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).</span>
 <span class="sd">    .. [2] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import MIDASHyperbolic</span>
+
+<span class="sd">    22-lag MIDAS Hyperbolic process</span>
+
+<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic()</span>
+
+<span class="sd">    Longer 66-period lag</span>
+
+<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic(m=66)</span>
+
+<span class="sd">    Asymmetric MIDAS Hyperbolic process</span>
+
+<span class="sd">    &gt;&gt;&gt; harch = MIDASHyperbolic(asym=True)</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">22</span><span class="p">,</span> <span class="n">asym</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2472,7 +2496,15 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MIDASHyperbolic.constraints.html#arch.univariate.MIDASHyperbolic.constraints">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Constraints</span>
+<span class="sd">        Construct parameter constraints arrays for parameter estimation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A : ndarray</span>
+<span class="sd">            Parameters loadings in constraint. Shape is number of constraints</span>
+<span class="sd">            by number of parameters.</span>
+<span class="sd">        b : ndarray</span>
+<span class="sd">            Constraint values, one for each constraint.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -2758,12 +2790,20 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ARCH.html#arch.univariate.ARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ARCH</span><span class="p">(</span><span class="n">GARCH</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    ARCH process</span>
+<span class="sd">    ARCH process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : int</span>
-<span class="sd">        Order of the symmetric innovation</span>
+<span class="sd">    p : int, optional</span>
+<span class="sd">        Order of the symmetric innovation.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The variance dynamics of the model estimated</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2774,15 +2814,6 @@
 <span class="sd">    ARCH(5) process</span>
 
 <span class="sd">    &gt;&gt;&gt; arch = ARCH(p=5)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The variance dynamics of the model estimated</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}</span>
-
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2816,20 +2847,13 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.EWMAVariance.html#arch.univariate.EWMAVariance">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EWMAVariance</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Exponentially Weighted Moving-Average (RiskMetrics) Variance process</span>
+<span class="sd">    Exponentially Weighted Moving-Average (RiskMetrics) Variance process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    lam : {float, None}, optional</span>
+<span class="sd">    lam : float or None, optional</span>
 <span class="sd">        Smoothing parameter. Default is 0.94. Set to None to estimate lam</span>
-<span class="sd">        jointly with other model parameters</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    Daily RiskMetrics EWMA process</span>
-
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import EWMAVariance</span>
-<span class="sd">    &gt;&gt;&gt; rm = EWMAVariance(0.94)</span>
+<span class="sd">        jointly with other model parameters.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2842,6 +2866,13 @@
 <span class="sd">    When lam is provided, this model has no parameters since the smoothing</span>
 <span class="sd">    parameter is treated as fixed. Set lam to ``None`` to jointly estimate this</span>
 <span class="sd">    parameter when fitting the model.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Daily RiskMetrics EWMA process</span>
+
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import EWMAVariance</span>
+<span class="sd">    &gt;&gt;&gt; rm = EWMAVariance(0.94)</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">0.94</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3018,25 +3049,18 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RiskMetrics2006</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    RiskMetrics 2006 Variance process</span>
+<span class="sd">    RiskMetrics 2006 Variance process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    tau0 : {int, float}, optional</span>
+<span class="sd">    tau0 : int or float, optional</span>
 <span class="sd">        Length of long cycle. Default is 1560.</span>
-<span class="sd">    tau1 : {int, float}, optional</span>
+<span class="sd">    tau1 : int or float, optional</span>
 <span class="sd">        Length of short cycle. Default is 4.</span>
 <span class="sd">    kmax : int, optional</span>
 <span class="sd">        Number of components. Default is 14.</span>
 <span class="sd">    rho : float, optional</span>
-<span class="sd">        Relative scale of adjacent cycles. Default is sqrt(2)</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    Daily RiskMetrics 2006 process</span>
-
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import RiskMetrics2006</span>
-<span class="sd">    &gt;&gt;&gt; rm = RiskMetrics2006()</span>
+<span class="sd">        Relative scale of adjacent cycles. Default is sqrt(2).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -3045,6 +3069,13 @@
 <span class="sd">    tau0, tau1 and rho.</span>
 
 <span class="sd">    This model has no parameters since the smoothing parameter is fixed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Daily RiskMetrics 2006 process</span>
+
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import RiskMetrics2006</span>
+<span class="sd">    &gt;&gt;&gt; rm = RiskMetrics2006()</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -3109,17 +3140,17 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.RiskMetrics2006.backcast.html#arch.univariate.RiskMetrics2006.backcast">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Construct values for backcasting to start the recursion</span>
+<span class="sd">        Construct values for backcasting to start the recursion.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        resids : ndarray</span>
-<span class="sd">            Vector of (approximate) residuals</span>
+<span class="sd">            Vector of (approximate) residuals.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        backcast : ndarray</span>
-<span class="sd">            Backcast values for each EWMA component</span>
+<span class="sd">            Backcast values for each EWMA component.</span>
 <span class="sd">        """</span>
 
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -3363,16 +3394,30 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.EGARCH.html#arch.univariate.EGARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EGARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    EGARCH model estimation</span>
+<span class="sd">    EGARCH model estimation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : int</span>
-<span class="sd">        Order of the symmetric innovation</span>
-<span class="sd">    o : int</span>
-<span class="sd">        Order of the asymmetric innovation</span>
-<span class="sd">    q : int</span>
-<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    p : int, optional</span>
+<span class="sd">        Order of the symmetric innovation.</span>
+<span class="sd">    o : int, optional</span>
+<span class="sd">        Order of the asymmetric innovation.</span>
+<span class="sd">    q : int, optional</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In this class of processes, the variance dynamics are</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \ln\sigma_{t}^{2}=\omega</span>
+<span class="sd">        +\sum_{i=1}^{p}\alpha_{i}</span>
+<span class="sd">        \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)</span>
+<span class="sd">        +\sum_{j=1}^{o}\gamma_{j} e_{t-j}</span>
+<span class="sd">        +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}</span>
+
+<span class="sd">    where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -3389,20 +3434,6 @@
 <span class="sd">    Exponential ARCH process</span>
 
 <span class="sd">    &gt;&gt;&gt; earch = EGARCH(p=5)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    In this class of processes, the variance dynamics are</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \ln\sigma_{t}^{2}=\omega</span>
-<span class="sd">        +\sum_{i=1}^{p}\alpha_{i}</span>
-<span class="sd">        \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)</span>
-<span class="sd">        +\sum_{j=1}^{o}\gamma_{j} e_{t-j}</span>
-<span class="sd">        +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}</span>
-
-<span class="sd">    where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3702,18 +3733,18 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FixedVariance</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Fixed volatility process</span>
+<span class="sd">    Fixed volatility process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    variance : {array, Series}</span>
+<span class="sd">    variance : ndarray or Series</span>
 <span class="sd">        Array containing the variances to use.  Should have the same shape as the</span>
 <span class="sd">        data used in the model. This is not checked since the model is not</span>
 <span class="sd">        available when the FixedVariance process is created.</span>
 <span class="sd">    unit_scale : bool, optional</span>
 <span class="sd">        Flag whether to enforce a unit scale.  If False, a scale parameter will be</span>
 <span class="sd">        estimated so that the model variance will be proportional to ``variance``.</span>
-<span class="sd">        If True, the model variance is set of ``variance``</span>
+<span class="sd">        If True, the model variance is set to ``variance``.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -3888,14 +3919,14 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FIGARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    FIGARCH model</span>
+<span class="sd">    FIGARCH model.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : {0, 1}</span>
-<span class="sd">        Order of the symmetric innovation</span>
-<span class="sd">    q : {0, 1}</span>
-<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    p : {0, 1}, optional</span>
+<span class="sd">        Order of the symmetric innovation.</span>
+<span class="sd">    q : {0, 1}, optional</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance.</span>
 <span class="sd">    power : float, optional</span>
 <span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0,</span>
 <span class="sd">        which produces FIGARCH and related models. Using 1.0 produces</span>
@@ -3904,22 +3935,6 @@
 <span class="sd">    truncation : int, optional</span>
 <span class="sd">        Truncation point to use in ARCH(:math:`\infty`) representation.</span>
 <span class="sd">        Default is 1000.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIGARCH</span>
-
-<span class="sd">    Standard FIGARCH</span>
-
-<span class="sd">    &gt;&gt;&gt; figarch = FIGARCH()</span>
-
-<span class="sd">    FIARCH</span>
-
-<span class="sd">    &gt;&gt;&gt; fiarch = FIGARCH(p=0)</span>
-
-<span class="sd">    FIAVGARCH process</span>
-
-<span class="sd">    &gt;&gt;&gt; fiavarch = FIGARCH(power=1.0)</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -3954,6 +3969,22 @@
 <span class="sd">    When `power` is not 2, the ARCH(:math:`\infty`) representation is still used</span>
 <span class="sd">    where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and</span>
 <span class="sd">    ``p`` is the power.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIGARCH</span>
+
+<span class="sd">    Standard FIGARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; figarch = FIGARCH()</span>
+
+<span class="sd">    FIARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; fiarch = FIGARCH(p=0)</span>
+
+<span class="sd">    FIAVGARCH process</span>
+
+<span class="sd">    &gt;&gt;&gt; fiavarch = FIGARCH(power=1.0)</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -3978,7 +4009,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">truncation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Truncation lag for the ARCH-infinity approximation"""</span>
+<span class="w">        </span><span class="sd">"""Truncation lag for the ARCH-infinity approximation."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4345,16 +4376,16 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FIAPARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process</span>
+<span class="sd">    Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : {0, 1}</span>
-<span class="sd">        Order of the symmetric innovation</span>
-<span class="sd">    o : {0, 1}</span>
-<span class="sd">        Order of the asymmetric innovation</span>
-<span class="sd">    q : {0, 1}</span>
-<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    p : {0, 1}, optional</span>
+<span class="sd">        Order of the symmetric innovation.</span>
+<span class="sd">    o : {0, 1}, optional</span>
+<span class="sd">        Order of the asymmetric innovation.</span>
+<span class="sd">    q : {0, 1}, optional</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance.</span>
 <span class="sd">    delta : float, optional</span>
 <span class="sd">        Value to use for a fixed delta in the model. If not provided,</span>
 <span class="sd">        the value of delta is jointly estimated with other model parameters.</span>
@@ -4362,22 +4393,6 @@
 <span class="sd">    truncation : int, optional</span>
 <span class="sd">        Truncation point to use in ARCH(:math:`\infty`) representation.</span>
 <span class="sd">        Default is 1000.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIAPARCH</span>
-
-<span class="sd">    Standard FIAPARCH</span>
-
-<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH()</span>
-
-<span class="sd">    Without asymmetry (reduces to FIGARCH-like)</span>
-
-<span class="sd">    &gt;&gt;&gt; fi = FIAPARCH(o=0)</span>
-
-<span class="sd">    Fixed power parameter</span>
-
-<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH(delta=1.0)</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -4401,6 +4416,22 @@
 <span class="sd">        (|\epsilon_{t-i}| - \gamma \epsilon_{t-i})^{\delta}</span>
 
 <span class="sd">    The weights :math:`\lambda_i` are identical to those used in FIGARCH.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIAPARCH</span>
+
+<span class="sd">    Standard FIAPARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH()</span>
+
+<span class="sd">    Without asymmetry (reduces to FIGARCH-like)</span>
+
+<span class="sd">    &gt;&gt;&gt; fi = FIAPARCH(o=0)</span>
+
+<span class="sd">    Fixed power parameter</span>
+
+<span class="sd">    &gt;&gt;&gt; fiaparch = FIAPARCH(delta=1.0)</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -4442,7 +4473,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">truncation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Truncation lag for the ARCH-infinity approximation"""</span>
+<span class="w">        </span><span class="sd">"""Truncation lag for the ARCH-infinity approximation."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span>
 
     <span class="nd">@property</span>
@@ -4853,16 +4884,16 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.APARCH.html#arch.univariate.APARCH">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">APARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Asymmetric Power ARCH (APARCH) volatility process</span>
+<span class="sd">    Asymmetric Power ARCH (APARCH) volatility process.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    p : int</span>
+<span class="sd">    p : int, optional</span>
 <span class="sd">        Order of the symmetric innovation. Must satisfy p&gt;=o.</span>
-<span class="sd">    o : int</span>
+<span class="sd">    o : int, optional</span>
 <span class="sd">        Order of the asymmetric innovation. Must satisfy o&lt;=p.</span>
-<span class="sd">    q : int</span>
-<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    q : int, optional</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance.</span>
 <span class="sd">    delta : float, optional</span>
 <span class="sd">        Value to use for a fixed delta in the APARCH model. If</span>
 <span class="sd">        not provided, the value of delta is jointly estimated</span>
@@ -4872,6 +4903,21 @@
 <span class="sd">        Restrict all asymmetry terms to share the same asymmetry</span>
 <span class="sd">        parameter. If False (default), then there are no restrictions</span>
 <span class="sd">        on the ``o`` asymmetry parameters.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In this class of processes, the variance dynamics are</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_{t}^{\delta}=\omega</span>
+<span class="sd">        +\sum_{i=1}^{p}\alpha_{i}</span>
+<span class="sd">        \left(\left|\epsilon_{t-i}\right|</span>
+<span class="sd">        -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}</span>
+<span class="sd">        +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}</span>
+
+<span class="sd">    If ``common_asym`` is ``True``, then all of :math:`\gamma_i`</span>
+<span class="sd">    are restricted to have a common value.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -4888,21 +4934,6 @@
 <span class="sd">    Fixed power parameters</span>
 
 <span class="sd">    &gt;&gt;&gt; aparch = APARCH(p=1, o=1, q=1, delta=1.3)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    In this class of processes, the variance dynamics are</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \sigma_{t}^{\delta}=\omega</span>
-<span class="sd">        +\sum_{i=1}^{p}\alpha_{i}</span>
-<span class="sd">        \left(\left|\epsilon_{t-i}\right|</span>
-<span class="sd">        -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}</span>
-<span class="sd">        +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}</span>
-
-<span class="sd">    If ``common_asym`` is ``True``, then all of :math:`\gamma_i`</span>
-<span class="sd">    are restricted to have a common value.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>

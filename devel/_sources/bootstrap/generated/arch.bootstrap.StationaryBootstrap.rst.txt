@@ -31,6 +31,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~StationaryBootstrap.block_size
       ~StationaryBootstrap.generator
       ~StationaryBootstrap.index
       ~StationaryBootstrap.state

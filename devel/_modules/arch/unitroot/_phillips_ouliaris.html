@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+355)</title>
+        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -549,6 +549,7 @@
     <span class="n">PVAL_TAU_STAR</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">TREND_DESCRIPTION</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_format</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_trend</span>
@@ -559,6 +560,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">CriticalValueWarning</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
+
+
+<span class="c1"># Lower case names of the tests, which map to the canonical names</span>
+<span class="n">_TEST_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"za"</span><span class="p">:</span> <span class="s2">"Za"</span><span class="p">,</span> <span class="s2">"zt"</span><span class="p">:</span> <span class="s2">"Zt"</span><span class="p">,</span> <span class="s2">"pu"</span><span class="p">:</span> <span class="s2">"Pu"</span><span class="p">,</span> <span class="s2">"pz"</span><span class="p">:</span> <span class="s2">"Pz"</span><span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_po_ptests</span><span class="p">(</span>
@@ -672,38 +677,39 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : array_like</span>
+<span class="sd">    y : ndarray, Series or DataFrame</span>
 <span class="sd">        The left-hand-side variable in the cointegrating regression.</span>
-<span class="sd">    x : array_like</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
 <span class="sd">        The right-hand-side variables in the cointegrating regression.</span>
-<span class="sd">    trend : {"n","c","ct","ctt"}, default "c"</span>
+<span class="sd">    trend : {"n", "c", "ct", "ctt"}, optional</span>
 <span class="sd">        Trend to include in the cointegrating regression. Trends are:</span>
 
 <span class="sd">        * "n": No deterministic terms</span>
 <span class="sd">        * "c": Constant</span>
 <span class="sd">        * "ct": Constant and linear trend</span>
 <span class="sd">        * "ctt": Constant, linear and quadratic trends</span>
-<span class="sd">    test_type : {"Za", "Zt", "Pu", "Pz"}, default "Zt"</span>
+
+<span class="sd">    test_type : {"Za", "Zt", "Pu", "Pz"}, optional</span>
 <span class="sd">        The test statistic to compute. Supported options are:</span>
 
-<span class="sd">        * "Za": The Zα test based on the the debiased AR(1) coefficient.</span>
+<span class="sd">        * "Za": The Zα test based on the debiased AR(1) coefficient.</span>
 <span class="sd">        * "Zt": The Zt test based on the t-statistic from an AR(1).</span>
 <span class="sd">        * "Pu": The Pᵤ variance-ratio test.</span>
 <span class="sd">        * "Pz": The Pz test of the trace of the product of an estimate of the</span>
 <span class="sd">          long-run residual variance and the inner-product of the data.</span>
 
 <span class="sd">        See the notes for details on the test.</span>
-<span class="sd">    kernel : str, default "bartlett"</span>
-<span class="sd">        The string name of any of any known kernel-based long-run</span>
-<span class="sd">        covariance estimators. Common choices are "bartlett" for the</span>
+<span class="sd">    kernel : str, optional</span>
+<span class="sd">        The string name of any known kernel-based long-run</span>
+<span class="sd">        covariance estimator. Common choices are "bartlett" for the</span>
 <span class="sd">        Bartlett kernel (Newey-West), "parzen" for the Parzen kernel</span>
 <span class="sd">        and "quadratic-spectral" for the Quadratic Spectral kernel.</span>
-<span class="sd">    bandwidth : int, default None</span>
+<span class="sd">    bandwidth : int, optional</span>
 <span class="sd">        The bandwidth to use. If not provided, the optimal bandwidth is</span>
 <span class="sd">        estimated from the data. Setting the bandwidth to 0 produces White's</span>
 <span class="sd">        covariance estimator.</span>
-<span class="sd">    force_int : bool, default False</span>
-<span class="sd">        Whether the force the estimated optimal bandwidth to be an integer.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Whether to force the estimated optimal bandwidth to be an integer.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -801,11 +807,11 @@
 <span class="sd">       residual based tests for cointegration. Econometrica: Journal of the</span>
 <span class="sd">       Econometric Society, 165-193.</span>
 <span class="sd">    """</span>
-    <span class="n">test_type_key</span> <span class="o">=</span> <span class="n">test_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">test_type_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"za"</span><span class="p">,</span> <span class="s2">"zt"</span><span class="p">,</span> <span class="s2">"pu"</span><span class="p">,</span> <span class="s2">"pz"</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Unknown test_type: </span><span class="si">{</span><span class="n">test_type</span><span class="si">}</span><span class="s2">. Only Za, Zt, Pu and Pz are supported."</span>
-        <span class="p">)</span>
+    <span class="n">test_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="s2">"Literal['Za', 'Zt', 'Pu', 'Pz']"</span><span class="p">,</span>
+        <span class="n">check_option</span><span class="p">(</span><span class="s2">"test_type"</span><span class="p">,</span> <span class="n">test_type</span><span class="p">,</span> <span class="n">_TEST_TYPES</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">_TEST_TYPES</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+    <span class="p">)</span>
+    <span class="n">trend</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"UnitRootTrend"</span><span class="p">,</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"trend"</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)))</span>
     <span class="n">kernel_est</span> <span class="o">=</span> <span class="n">get_kernel_estimator</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
     <span class="n">y_2d</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span>
@@ -813,7 +819,7 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">xsection</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data</span>
     <span class="n">x_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">orig_exog</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="o">.</span><span class="n">orig_endog</span><span class="p">,</span> <span class="n">x_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">test_type_key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"pu"</span><span class="p">,</span> <span class="s2">"pz"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">test_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Pu"</span><span class="p">,</span> <span class="s2">"Pz"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_po_ptests</span><span class="p">(</span>
             <span class="n">z</span><span class="p">,</span>
             <span class="n">xsection</span><span class="p">,</span>
@@ -850,21 +856,23 @@
 <span class="sd">    crit_vals : Series</span>
 <span class="sd">        The critical values of the Phillips-Ouliaris test specific to the sample</span>
 <span class="sd">        size and model dimension.</span>
-<span class="sd">    null : str, default "No Cointegration"</span>
+<span class="sd">    null : str, optional</span>
 <span class="sd">        The null hypothesis.</span>
-<span class="sd">    alternative : str, default "Cointegration"</span>
+<span class="sd">    alternative : str, optional</span>
 <span class="sd">        The alternative hypothesis.</span>
-<span class="sd">    trend : str, default "c"</span>
+<span class="sd">    trend : str, optional</span>
 <span class="sd">        The model's trend description.</span>
-<span class="sd">    order : int, default 2</span>
+<span class="sd">    order : int, optional</span>
 <span class="sd">        The number of stochastic trends in the null distribution.</span>
-<span class="sd">    xsection : RegressionResults</span>
-<span class="sd">        The OLS results used in the cross-sectional regression.</span>
-<span class="sd">    test_type : str, default "Za"</span>
+<span class="sd">    xsection : RegressionResults, optional</span>
+<span class="sd">        The OLS results used in the cross-sectional regression. They must be</span>
+<span class="sd">        provided.</span>
+<span class="sd">    test_type : str, optional</span>
 <span class="sd">        The type of the test, one of "Za", "Zt", "Pu" and "Pz".</span>
-<span class="sd">    kernel_est : CovarianceEstimator</span>
+<span class="sd">    kernel_est : CovarianceEstimator, optional</span>
 <span class="sd">        The long-run covariance estimator used to compute the test statistic.</span>
-<span class="sd">    rho : float, default 0.0</span>
+<span class="sd">        It must be provided.</span>
+<span class="sd">    rho : float, optional</span>
 <span class="sd">        Not used.</span>
 <span class="sd">    """</span>
 
@@ -901,18 +909,26 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Name of the long-run covariance estimator"""</span>
+<span class="w">        </span><span class="sd">"""Name of the long-run covariance estimator."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_est</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Bandwidth used by the long-run covariance estimator"""</span>
+<span class="w">        </span><span class="sd">"""Bandwidth used by the long-run covariance estimator."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_est</span><span class="o">.</span><span class="n">bandwidth</span>
 
 <div class="viewcode-block" id="PhillipsOuliarisTestResults.summary">
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.PhillipsOuliarisTestResults.summary.html#arch.unitroot.cointegration.PhillipsOuliarisTestResults.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Summary of test, containing statistic, p-value and critical values"""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Summary of test, containing statistic, p-value and critical values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        statsmodels.iolib.summary.Summary</span>
+<span class="sd">            A summary instance with methods that support export to text, csv</span>
+<span class="sd">            or latex.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">):</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -967,14 +983,14 @@
     <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Critical Values for Phillips-Ouliaris tests</span>
+<span class="sd">    Critical values for Phillips-Ouliaris tests.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    test_type : {"Za", "Zt", "Pu", "Pz"}</span>
-<span class="sd">        The test type</span>
+<span class="sd">        The test type.</span>
 <span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
-<span class="sd">        The trend included in the model</span>
+<span class="sd">        The trend included in the model.</span>
 <span class="sd">    num : int</span>
 <span class="sd">        Number of assumed stochastic trends in the model under the null. Must</span>
 <span class="sd">        be between 2 and 13.</span>
@@ -984,16 +1000,12 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    Series</span>
-<span class="sd">        The critical values for 1, 5 and 10%</span>
+<span class="sd">        The critical values for 1, 5 and 10%.</span>
 <span class="sd">    """</span>
-    <span class="n">test_types</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Za"</span><span class="p">,</span> <span class="s2">"Zt"</span><span class="p">,</span> <span class="s2">"Pu"</span><span class="p">,</span> <span class="s2">"Pz"</span><span class="p">)</span>
-    <span class="n">test_type_key</span> <span class="o">=</span> <span class="n">test_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">test_type_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test_types</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"test_type must be one of: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_types</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trends</span><span class="p">:</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">test_type_key</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"test_type"</span><span class="p">,</span> <span class="n">test_type</span><span class="p">,</span> <span class="n">_TEST_TYPES</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">_TEST_TYPES</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">trend</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"UnitRootTrend"</span><span class="p">,</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"trend"</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="mi">13</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">"The number of stochastic trends must be between 2 and 12 (inclusive)"</span>
@@ -1026,16 +1038,16 @@
     <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Asymptotic P-values for Phillips-Ouliaris t-tests</span>
+<span class="sd">    Asymptotic P-values for Phillips-Ouliaris t-tests.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    stat : float</span>
-<span class="sd">        The test statistic</span>
+<span class="sd">        The test statistic.</span>
 <span class="sd">    test_type : {"Za", "Zt", "Pu", "Pz"}</span>
-<span class="sd">        The test type</span>
+<span class="sd">        The test type.</span>
 <span class="sd">    trend : {"n", "c", "ct", "ctt"}</span>
-<span class="sd">        The trend included in the model</span>
+<span class="sd">        The trend included in the model.</span>
 <span class="sd">    num : int</span>
 <span class="sd">        Number of assumed stochastic trends in the model under the null. Must</span>
 <span class="sd">        be between 2 and 13.</span>
@@ -1043,16 +1055,12 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        The asymptotic p-value</span>
+<span class="sd">        The asymptotic p-value.</span>
 <span class="sd">    """</span>
-    <span class="n">test_types</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Za"</span><span class="p">,</span> <span class="s2">"Zt"</span><span class="p">,</span> <span class="s2">"Pu"</span><span class="p">,</span> <span class="s2">"Pz"</span><span class="p">)</span>
-    <span class="n">test_type_key</span> <span class="o">=</span> <span class="n">test_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">test_type_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test_types</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"test_type must be one of: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_types</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="n">trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trends</span><span class="p">:</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trends</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"trend must by one of: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">test_type_key</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"test_type"</span><span class="p">,</span> <span class="n">test_type</span><span class="p">,</span> <span class="n">_TEST_TYPES</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">_TEST_TYPES</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">trend</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"UnitRootTrend"</span><span class="p">,</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"trend"</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"ct"</span><span class="p">,</span> <span class="s2">"ctt"</span><span class="p">)))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="mi">13</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">"The number of stochastic trends must be between 2 and 12 (inclusive)"</span>

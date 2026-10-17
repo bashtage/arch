@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility - arch v8.0.1 (+355)</title>
+        <title>arch.utility - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -541,16 +541,39 @@
     <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Test runner that allows testing of installed package.</span>
+<span class="sd">    Run the tests of the installed package.</span>
 
-<span class="sd">    Exists with test status code upon completion.</span>
+<span class="sd">    Exit with the status code of the test run upon completion if ``exit`` is</span>
+<span class="sd">    True.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    extra_args : {str, list[str]}, default None</span>
-<span class="sd">        Extra arguments to pass to pytest. Default options are --tb=short</span>
-<span class="sd">        and --disable-pytest-warnings. Providing extra_args overwrites the</span>
-<span class="sd">        defaults with the user-provided arguments.</span>
+<span class="sd">    extra_args : str or list of str, optional</span>
+<span class="sd">        Extra arguments to pass to pytest. The default options are --tb=auto</span>
+<span class="sd">        and --disable-pytest-warnings. The extra arguments are added to the</span>
+<span class="sd">        default options if ``append`` is True and replace them otherwise.</span>
+<span class="sd">    exit : bool, optional</span>
+<span class="sd">        If True, exit the Python interpreter with the status code of the test</span>
+<span class="sd">        run. If False, return the status code.</span>
+<span class="sd">    append : bool, optional</span>
+<span class="sd">        If True, add ``extra_args`` to the default options. If False, use only</span>
+<span class="sd">        ``extra_args``.</span>
+<span class="sd">    location : str, optional</span>
+<span class="sd">        The location of the tests to run, as a path relative to the directory</span>
+<span class="sd">        of the installed ``arch`` package. The default runs all of the tests of</span>
+<span class="sd">        the package.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The pytest exit status. Only returned if ``exit`` is False.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ImportError</span>
+<span class="sd">        If pytest is not installed.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the location of the tests does not exist.</span>
 <span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>

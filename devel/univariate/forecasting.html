@@ -23,7 +23,7 @@
     
   
       
-        <title>Forecasting - arch v8.0.1 (+355)</title>
+        <title>Forecasting - arch v8.0.1 (+398)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -1395,7 +1395,7 @@ the simulated shocks are drawn (i.i.d., with replacement) from
 <span class="math notranslate nohighlight">\(\hat{e}_{1}, \hat{e}_{2},\ldots, \hat{e}_{t}\)</span>.  so that only
 data available at time <span class="math notranslate nohighlight">\(t\)</span> are used to simulate the paths.</p>
 <h2 id="forecasting-options">Forecasting Options<a class="headerlink" href="#forecasting-options" title="Link to this heading">¶</a></h2>
-<p>The <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>  method
+<p>The <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>  method
 is attached to a model fit result.`</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
@@ -1419,8 +1419,8 @@ available for all horizons.</p></li>
 simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</p></li>
 </ul>
 <h2 id="understanding-forecast-output">Understanding Forecast Output<a class="headerlink" href="#understanding-forecast-output" title="Link to this heading">¶</a></h2>
-<p>Any call to <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a> returns a
-<a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast (Python class) — Container for forecasts from an ARCH Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code></a> object with has 3 core
+<p>Any call to <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModelResult.forecast.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a> returns a
+<a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast (Python class) — Container for forecasts from an ARCH Model."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code></a> object with has 3 core
 attributes and 1 which may be useful when using simulation- or bootstrap-based
 forecasts.</p>
 <p>The three core attributes are</p>
@@ -1472,7 +1472,7 @@ observation used to estimate the model.</p>
 that are not forecast are <code class="docutils literal notranslate"><span class="pre">nan</span></code> filled.</p>
 <h2 id="forecasting-after-new-data-arrive"><span id="forecasting-append"></span>Forecasting After New Data Arrive<a class="headerlink" href="#forecasting-after-new-data-arrive" title="Link to this heading">¶</a></h2>
 <p>Models do not need to be re-estimated each time new data are available.
-<a class="reference internal" href="generated/generated/arch.univariate.HARX.append.html#arch.univariate.HARX.append" title="arch.univariate.HARX.append (Python method) — Append observations to the model in-place"><code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code></a> adds observations to a model
+<a class="reference internal" href="generated/generated/arch.univariate.HARX.append.html#arch.univariate.HARX.append" title="arch.univariate.HARX.append (Python method) — Append observations to the model in-place."><code class="xref py py-meth docutils literal notranslate"><span class="pre">append()</span></code></a> adds observations to a model
 in-place without changing any parameters, so that forecasts can be produced
 from the latest observation using parameters estimated previously.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="n">split_date</span><span class="p">],</span> <span class="n">vol</span><span class="o">=</span><span class="s1">'Garch'</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">)</span>
@@ -1497,24 +1497,24 @@ the keyword argument <code class="docutils literal notranslate"><span class="pre
 </code></pre></div>
 </div>
 <p>Calling <code class="docutils literal notranslate"><span class="pre">fit</span></code> after <code class="docutils literal notranslate"><span class="pre">append</span></code> re-estimates the model using the extended
-sample. <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix" title="arch.univariate.base.ARCHModel.fix (Python method) — Allows an ARCHModelFixedResult to be constructed from fixed parameters."><code class="xref py py-meth docutils literal notranslate"><span class="pre">fix()</span></code></a> can be used to construct a
+sample. <a class="reference internal" href="generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix" title="arch.univariate.base.ARCHModel.fix (Python method) — Construct an ARCHModelFixedResult from fixed parameters."><code class="xref py py-meth docutils literal notranslate"><span class="pre">fix()</span></code></a> can be used to construct a
 results object that uses the extended sample and parameters estimated
 previously. Results objects produced before calling <code class="docutils literal notranslate"><span class="pre">append</span></code> are not changed.</p>
 <h2 id="output-classes">Output Classes<a class="headerlink" href="#output-classes" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast (Python class) — Container for forecasts from an ARCH Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code></a>(index, start_index, mean, ...)</p></td>
-<td><p>Container for forecasts from an ARCH Model</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast (Python class) — Container for forecasts from an ARCH Model."><code class="xref py py-obj docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code></a>(index, start_index, mean, ...)</p></td>
+<td><p>Container for forecasts from an ARCH Model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecastSimulation.html#arch.univariate.base.ARCHModelForecastSimulation" title="arch.univariate.base.ARCHModelForecastSimulation (Python class) — Container for a simulation or bootstrap-based forecasts from an ARCH Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code></a>(index, values, ...)</p></td>
-<td><p>Container for a simulation or bootstrap-based forecasts from an ARCH Model</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.base.ARCHModelForecastSimulation.html#arch.univariate.base.ARCHModelForecastSimulation" title="arch.univariate.base.ARCHModelForecastSimulation (Python class) — Container for a simulation or bootstrap-based forecasts from an ARCH Model."><code class="xref py py-obj docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code></a>(index, values, ...)</p></td>
+<td><p>Container for a simulation or bootstrap-based forecasts from an ARCH Model.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.volatility.VarianceForecast.html#arch.univariate.volatility.VarianceForecast" title="arch.univariate.volatility.VarianceForecast (Python class) — Container for variance forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VarianceForecast</span></code></a>(forecasts[, ...])</p></td>
-<td><p>Container for variance forecasts</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.volatility.VarianceForecast.html#arch.univariate.volatility.VarianceForecast" title="arch.univariate.volatility.VarianceForecast (Python class) — Container for variance forecasts."><code class="xref py py-obj docutils literal notranslate"><span class="pre">VarianceForecast</span></code></a>(forecasts[, ...])</p></td>
+<td><p>Container for variance forecasts.</p></td>
 </tr>
 </tbody>
 </table>

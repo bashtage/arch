@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v8.0.1 (+355)</title>
+        <title>arch.univariate.mean - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -527,8 +527,10 @@
 
 <h1>Source code for arch.univariate.mean</h1><div class="highlight"><pre>
 <span></span><code><span class="sd">"""</span>
-<span class="sd">Mean models to use with ARCH processes.  All mean models must inherit from</span>
-<span class="sd">:class:`ARCHModel` and provide the same methods with the same inputs.</span>
+<span class="sd">Mean models to use with ARCH processes.</span>
+
+<span class="sd">All mean models must inherit from :class:`ARCHModel` and provide the same methods</span>
+<span class="sd">with the same inputs.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
@@ -573,6 +575,7 @@
     <span class="n">SkewStudent</span><span class="p">,</span>
     <span class="n">StudentsT</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">append_same_type</span><span class="p">,</span> <span class="n">to_array_1d</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -715,16 +718,17 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.HARX.html#arch.univariate.HARX">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HARX</span><span class="p">(</span><span class="n">ARCHModel</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Heterogeneous Autoregression (HAR), with optional exogenous regressors,</span>
-<span class="sd">    model estimation and simulation</span>
+<span class="sd">    Heterogeneous Autoregression (HAR) model with optional exogenous regressors.</span>
+
+<span class="sd">    Provides model estimation and simulation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    x : {ndarray, DataFrame}, optional</span>
-<span class="sd">        nobs by k element array containing exogenous regressors</span>
-<span class="sd">    lags : {scalar, ndarray}, optional</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    x : ndarray or DataFrame, optional</span>
+<span class="sd">        Array with nobs rows and k columns containing exogenous regressors.</span>
+<span class="sd">    lags : int or array_like, optional</span>
 <span class="sd">        Description of lag structure of the HAR.</span>
 
 <span class="sd">        * Scalar included all lags between 1 and the value.</span>
@@ -734,23 +738,35 @@
 <span class="sd">          lags[0,j]:lags[1,j]+1 for all columns of lags.</span>
 
 <span class="sd">    constant : bool, optional</span>
-<span class="sd">        Flag whether the model should include a constant</span>
+<span class="sd">        Flag whether the model should include a constant.</span>
 <span class="sd">    use_rotated : bool, optional</span>
 <span class="sd">        Flag indicating to use the alternative rotated form of the HAR where</span>
-<span class="sd">        HAR lags do not overlap</span>
-<span class="sd">    hold_back : int</span>
+<span class="sd">        HAR lags do not overlap.</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The HAR-X model is described by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}</span>
+<span class="sd">        + \gamma' x_t + \epsilon_t</span>
+
+<span class="sd">    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of</span>
+<span class="sd">    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -761,7 +777,6 @@
 <span class="sd">    &gt;&gt;&gt; y = np.random.RandomState(1234).randn(100)</span>
 <span class="sd">    &gt;&gt;&gt; harx = HARX(y, lags=[1, 5, 22])</span>
 <span class="sd">    &gt;&gt;&gt; res = harx.fit()</span>
-
 
 <span class="sd">    A standard HAR with average lags 1 and 6 but holding back 10 observations</span>
 
@@ -792,18 +807,6 @@
 <span class="sd">    &gt;&gt;&gt; models = [harx_1, harx_2, harx_3, harx_4]</span>
 <span class="sd">    &gt;&gt;&gt; print([round(mod.fit().rsquared, 3) for mod in models])</span>
 <span class="sd">    [0.085, 0.085, 0.085, 0.085]</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The HAR-X model is described by</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}</span>
-<span class="sd">        + \gamma' x_t + \epsilon_t</span>
-
-<span class="sd">    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of</span>
-<span class="sd">    :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># To allow for addition mean parameters in simulation</span>
@@ -937,11 +940,11 @@
         <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Append observations to the model in-place</span>
+<span class="sd">        Append observations to the model in-place.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        y : {ndarray, Series, DataFrame, list, float}</span>
+<span class="sd">        y : ndarray, Series, DataFrame, list or float</span>
 <span class="sd">            The observations to append. Must have the same type as the data</span>
 <span class="sd">            used to construct the model. If the model was constructed using a</span>
 <span class="sd">            pandas object, then the index of the new data must be unique and</span>
@@ -950,7 +953,7 @@
 <span class="sd">            must follow the existing observations. When the model was</span>
 <span class="sd">            constructed using an ndarray or a list, a scalar can be appended</span>
 <span class="sd">            to add a single observation.</span>
-<span class="sd">        x : {ndarray, Series, DataFrame}, optional</span>
+<span class="sd">        x : ndarray, Series or DataFrame, optional</span>
 <span class="sd">            The values of the exogenous regressors for the new observations.</span>
 <span class="sd">            Must be provided if, and only if, the model includes exogenous</span>
 <span class="sd">            regressors, must have the same type and number of columns as the</span>
@@ -1029,7 +1032,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Gets the value of the exogenous regressors in the model"""</span>
+<span class="w">        </span><span class="sd">"""The exogenous regressors in the model."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
 
 <div class="viewcode-block" id="HARX.parameter_names">
@@ -1100,7 +1103,7 @@
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns the number of parameters</span>
+<span class="sd">        Number of parameters in the model.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
@@ -1157,7 +1160,7 @@
         <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Simulates data from a linear regression, AR or HAR models</span>
+<span class="sd">        Simulate data from a linear regression, AR or HAR models.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1169,17 +1172,17 @@
 <span class="sd">            the model and ex[j] is the coefficient on the jth exogenous</span>
 <span class="sd">            variable.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Length of series to simulate</span>
+<span class="sd">            Length of series to simulate.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of values to simulate to initialize the model and remove</span>
 <span class="sd">            dependence on initial values.</span>
-<span class="sd">        initial_value : {ndarray, float}, optional</span>
+<span class="sd">        initial_value : float or array_like, optional</span>
 <span class="sd">            Either a scalar value or `max(lags)` array set of initial values to</span>
 <span class="sd">            use when initializing the model.  If omitted, 0.0 is used.</span>
-<span class="sd">        x : {ndarray, DataFrame}, optional</span>
-<span class="sd">            nobs + burn by k array of exogenous variables to include in the</span>
-<span class="sd">            simulation.</span>
-<span class="sd">        initial_value_vol : {ndarray, float}, optional</span>
+<span class="sd">        x : array_like, optional</span>
+<span class="sd">            Array of exogenous variables to include in the simulation, with nobs +</span>
+<span class="sd">            burn rows and k columns.</span>
+<span class="sd">        initial_value_vol : float or ndarray, optional</span>
 <span class="sd">            An array or scalar to use when initializing the volatility process.</span>
 <span class="sd">            It is not always a variance. The units depend on the volatility</span>
 <span class="sd">            process, see</span>
@@ -1190,7 +1193,7 @@
 <span class="sd">        simulated_data : DataFrame</span>
 <span class="sd">            DataFrame with columns data containing the simulated values,</span>
 <span class="sd">            volatility, containing the conditional volatility and errors</span>
-<span class="sd">            containing the errors used in the simulation</span>
+<span class="sd">            containing the errors used in the simulation.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1828,29 +1831,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    hold_back : int</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import ConstantMean</span>
-<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
-<span class="sd">    &gt;&gt;&gt; cm = ConstantMean(y)</span>
-<span class="sd">    &gt;&gt;&gt; res = cm.fit()</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1859,6 +1854,14 @@
 <span class="sd">    .. math::</span>
 
 <span class="sd">        y_t = \mu + \epsilon_t</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import ConstantMean</span>
+<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
+<span class="sd">    &gt;&gt;&gt; cm = ConstantMean(y)</span>
+<span class="sd">    &gt;&gt;&gt; res = cm.fit()</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -1906,7 +1909,7 @@
         <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Simulated data from a constant mean model</span>
+<span class="sd">        Simulate data from a constant mean model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1915,17 +1918,17 @@
 <span class="sd">            [mean volatility distribution]. There is one parameter in the mean</span>
 <span class="sd">            model, mu.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Length of series to simulate</span>
+<span class="sd">            Length of series to simulate.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of values to simulate to initialize the model and remove</span>
 <span class="sd">            dependence on initial values.</span>
-<span class="sd">        initial_value : None</span>
+<span class="sd">        initial_value : None, optional</span>
 <span class="sd">            Must be None, since there are no mean dynamics. A ValueError is</span>
 <span class="sd">            raised if it is not None.</span>
-<span class="sd">        x : None</span>
+<span class="sd">        x : None, optional</span>
 <span class="sd">            Must be None, since there are no exogenous variables. A ValueError</span>
 <span class="sd">            is raised if it is not None.</span>
-<span class="sd">        initial_value_vol : {ndarray, float}, optional</span>
+<span class="sd">        initial_value_vol : float or ndarray, optional</span>
 <span class="sd">            An array or scalar to use when initializing the volatility process.</span>
 <span class="sd">            It is not always a variance. The units depend on the volatility</span>
 <span class="sd">            process, see</span>
@@ -1936,7 +1939,7 @@
 <span class="sd">        simulated_data : DataFrame</span>
 <span class="sd">            DataFrame with columns data containing the simulated values,</span>
 <span class="sd">            volatility, containing the conditional volatility and errors</span>
-<span class="sd">            containing the errors used in the simulation</span>
+<span class="sd">            containing the errors used in the simulation.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1989,33 +1992,25 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ZeroMean.html#arch.univariate.ZeroMean">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ZeroMean</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Model with zero conditional mean estimation and simulation</span>
+<span class="sd">    Model with zero conditional mean estimation and simulation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    hold_back : int</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import ZeroMean</span>
-<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
-<span class="sd">    &gt;&gt;&gt; zm = ZeroMean(y)</span>
-<span class="sd">    &gt;&gt;&gt; res = zm.fit()</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2025,6 +2020,13 @@
 
 <span class="sd">        y_t = \epsilon_t</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import ZeroMean</span>
+<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
+<span class="sd">    &gt;&gt;&gt; zm = ZeroMean(y)</span>
+<span class="sd">    &gt;&gt;&gt; res = zm.fit()</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2074,25 +2076,25 @@
         <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Simulated data from a zero mean model</span>
+<span class="sd">        Simulate data from a zero mean model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        params : {ndarray, DataFrame}</span>
+<span class="sd">        params : array_like</span>
 <span class="sd">            Parameters to use when simulating the model.  Parameter order is</span>
 <span class="sd">            [volatility distribution]. There are no mean parameters.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Length of series to simulate</span>
+<span class="sd">            Length of series to simulate.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of values to simulate to initialize the model and remove</span>
 <span class="sd">            dependence on initial values.</span>
-<span class="sd">        initial_value : None</span>
+<span class="sd">        initial_value : None, optional</span>
 <span class="sd">            Must be None, since there are no mean dynamics. A ValueError is</span>
 <span class="sd">            raised if it is not None.</span>
-<span class="sd">        x : None</span>
+<span class="sd">        x : None, optional</span>
 <span class="sd">            Must be None, since there are no exogenous variables. A ValueError</span>
 <span class="sd">            is raised if it is not None.</span>
-<span class="sd">        initial_value_vol : {ndarray, float}, optional</span>
+<span class="sd">        initial_value_vol : float or ndarray, optional</span>
 <span class="sd">            An array or scalar to use when initializing the volatility process.</span>
 <span class="sd">            It is not always a variance. The units depend on the volatility</span>
 <span class="sd">            process, see</span>
@@ -2103,7 +2105,7 @@
 <span class="sd">        simulated_data : DataFrame</span>
 <span class="sd">            DataFrame with columns data containing the simulated values,</span>
 <span class="sd">            volatility, containing the conditional volatility and errors</span>
-<span class="sd">            containing the errors used in the simulation</span>
+<span class="sd">            containing the errors used in the simulation.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2162,34 +2164,44 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ARX.html#arch.univariate.ARX">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ARX</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Autoregressive model with optional exogenous regressors estimation and</span>
-<span class="sd">    simulation</span>
+<span class="sd">    Autoregressive model with optional exogenous regressors.</span>
+
+<span class="sd">    Provides model estimation and simulation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    x : {ndarray, DataFrame}, optional</span>
-<span class="sd">        nobs by k element array containing exogenous regressors</span>
-<span class="sd">    lags : scalar, 1-d array, optional</span>
-<span class="sd">        Description of lag structure of the HAR.  Scalar included all lags</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    x : ndarray or DataFrame, optional</span>
+<span class="sd">        Array with nobs rows and k columns containing exogenous regressors.</span>
+<span class="sd">    lags : int or array_like, optional</span>
+<span class="sd">        Description of lag structure of the AR.  Scalar included all lags</span>
 <span class="sd">        between 1 and the value.  A 1-d array includes the AR lags lags[0],</span>
 <span class="sd">        lags[1], ...</span>
 <span class="sd">    constant : bool, optional</span>
-<span class="sd">        Flag whether the model should include a constant</span>
-<span class="sd">    hold_back : int</span>
+<span class="sd">        Flag whether the model should include a constant.</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The AR-X model is described by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t</span>
+<span class="sd">        + \epsilon_t</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2204,16 +2216,6 @@
 <span class="sd">    &gt;&gt;&gt; from arch.univariate import GARCH</span>
 <span class="sd">    &gt;&gt;&gt; arx.volatility = GARCH()</span>
 <span class="sd">    &gt;&gt;&gt; res = arx.fit(update_freq=0, disp='off')</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The AR-X model is described by</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t</span>
-<span class="sd">        + \epsilon_t</span>
-
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2295,38 +2297,29 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.LS.html#arch.univariate.LS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LS</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Least squares model estimation and simulation</span>
+<span class="sd">    Least squares model estimation and simulation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    x : {ndarray, DataFrame}, optional</span>
-<span class="sd">        nobs by k element array containing exogenous regressors</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    x : ndarray or DataFrame, optional</span>
+<span class="sd">        Array with nobs rows and k columns containing exogenous regressors.</span>
 <span class="sd">    constant : bool, optional</span>
-<span class="sd">        Flag whether the model should include a constant</span>
-<span class="sd">    hold_back : int</span>
+<span class="sd">        Flag whether the model should include a constant.</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import LS</span>
-<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
-<span class="sd">    &gt;&gt;&gt; x = np.random.randn(100,2)</span>
-<span class="sd">    &gt;&gt;&gt; ls = LS(y, x)</span>
-<span class="sd">    &gt;&gt;&gt; res = ls.fit()</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2336,6 +2329,14 @@
 
 <span class="sd">        y_t = \mu + \gamma' x_t + \epsilon_t</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import LS</span>
+<span class="sd">    &gt;&gt;&gt; y = np.random.randn(100)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.randn(100,2)</span>
+<span class="sd">    &gt;&gt;&gt; ls = LS(y, x)</span>
+<span class="sd">    &gt;&gt;&gt; res = ls.fit()</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2368,20 +2369,20 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ARCHInMean</span><span class="p">(</span><span class="n">ARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    (G)ARCH-in-mean model and simulation</span>
+<span class="sd">    (G)ARCH-in-mean model and simulation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
-<span class="sd">    x : {ndarray, DataFrame}, optional</span>
-<span class="sd">        nobs by k element array containing exogenous regressors</span>
-<span class="sd">    lags : {scalar, 1-d array}, optional</span>
-<span class="sd">        Description of lag structure of the HAR.  Scalar included all lags</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
+<span class="sd">    x : ndarray or DataFrame, optional</span>
+<span class="sd">        Array with nobs rows and k columns containing exogenous regressors.</span>
+<span class="sd">    lags : int or array_like, optional</span>
+<span class="sd">        Description of lag structure of the AR.  Scalar included all lags</span>
 <span class="sd">        between 1 and the value.  A 1-d array includes the AR lags lags[0],</span>
 <span class="sd">        lags[1], ...</span>
 <span class="sd">    constant : bool, optional</span>
-<span class="sd">        Flag whether the model should include a constant</span>
+<span class="sd">        Flag whether the model should include a constant.</span>
 <span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
@@ -2390,29 +2391,19 @@
 <span class="sd">        Volatility process to use in the model. ``volatility.updateable`` must</span>
 <span class="sd">        return ``True``.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
 <span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
 <span class="sd">        then y is rescaled and the new scale is reported in the estimation results.</span>
-<span class="sd">    form : {"log", "vol", "var", int, float}</span>
+<span class="sd">    form : {"log", "vol", "var"}, int or float, optional</span>
 <span class="sd">        The form of the conditional variance that appears in the mean equation. The</span>
 <span class="sd">        string names use the log of the conditional variance ("log"), the square-root</span>
 <span class="sd">        of the conditional variance ("vol") or the conditional variance. When</span>
 <span class="sd">        specified using a float, interpreted as :math:`\sigma_t^{form}` so that</span>
 <span class="sd">        1 is equivalent to "vol" and 2 is equivalent to "var". When using a number,</span>
 <span class="sd">        must be different from 0.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from arch.univariate import ARCHInMean, GARCH</span>
-<span class="sd">    &gt;&gt;&gt; from arch.data.sp500 import load</span>
-<span class="sd">    &gt;&gt;&gt; sp500 = load()</span>
-<span class="sd">    &gt;&gt;&gt; rets = 100 * sp500["Adj Close"].pct_change().dropna()</span>
-<span class="sd">    &gt;&gt;&gt; gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())</span>
-<span class="sd">    &gt;&gt;&gt; res = gim.fit(disp="off")</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -2424,6 +2415,16 @@
 <span class="sd">              + \gamma' x_t +  \epsilon_t</span>
 
 <span class="sd">    where :math:`f(\cdot)` is the function specified by ``form``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import ARCHInMean, GARCH</span>
+<span class="sd">    &gt;&gt;&gt; from arch.data.sp500 import load</span>
+<span class="sd">    &gt;&gt;&gt; sp500 = load()</span>
+<span class="sd">    &gt;&gt;&gt; rets = 100 * sp500["Adj Close"].pct_change().dropna()</span>
+<span class="sd">    &gt;&gt;&gt; gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())</span>
+<span class="sd">    &gt;&gt;&gt; res = gim.fit(disp="off")</span>
 <span class="sd">    """</span>
 
     <span class="c1"># To account for GIM param</span>
@@ -2465,7 +2466,7 @@
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_form_id</span> <span class="o">=</span> <span class="mi">3</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_form_power</span> <span class="o">=</span> <span class="n">float_form</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_form</span> <span class="o">=</span> <span class="n">form</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_form</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">form</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">updateable</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -2479,7 +2480,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">form</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"log"</span><span class="p">,</span> <span class="s2">"vol"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""The form of the conditional variance in the mean"""</span>
+<span class="w">        </span><span class="sd">"""The form of the conditional variance in the mean."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_form</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -2796,24 +2797,25 @@
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MAMean</span><span class="p">(</span><span class="n">ARCHModel</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Moving average (MA) mean model, with optional constant, model estimation,</span>
-<span class="sd">    simulation and forecasting</span>
+<span class="sd">    Moving average (MA) mean model, with optional constant.</span>
+
+<span class="sd">    Provides model estimation, simulation and forecasting.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : {ndarray, Series}, optional</span>
-<span class="sd">        nobs element vector containing the dependent variable</span>
+<span class="sd">    y : ndarray or Series, optional</span>
+<span class="sd">        Vector of nobs elements containing the dependent variable.</span>
 <span class="sd">    lags : int, optional</span>
 <span class="sd">        The order of the moving average, q. Must be at least 1.</span>
 <span class="sd">    constant : bool, optional</span>
-<span class="sd">        Flag whether the model should include a constant</span>
+<span class="sd">        Flag whether the model should include a constant.</span>
 <span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.</span>
 <span class="sd">    volatility : VolatilityProcess, optional</span>
-<span class="sd">        Volatility process to use in the model</span>
+<span class="sd">        Volatility process to use in the model.</span>
 <span class="sd">    distribution : Distribution, optional</span>
-<span class="sd">        Error distribution to use in the model</span>
+<span class="sd">        Error distribution to use in the model.</span>
 <span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
 <span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
@@ -2957,7 +2959,7 @@
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns the number of parameters</span>
+<span class="sd">        Number of parameters in the model.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lags</span></div>
 
@@ -2966,11 +2968,11 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.bounds.html#arch.univariate.MAMean.bounds">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Construct bounds for parameters to use in non-linear optimization</span>
+<span class="sd">        Construct bounds for parameters to use in non-linear optimization.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        bounds : list (2-tuple of float)</span>
+<span class="sd">        bounds : list of tuple of float</span>
 <span class="sd">            Bounds for parameters to use in estimation. The coefficient of</span>
 <span class="sd">            an MA(1) is restricted to [-1, 1], which makes it invertible.</span>
 <span class="sd">        """</span>
@@ -2984,14 +2986,14 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.MAMean.constraints.html#arch.univariate.MAMean.constraints">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Construct linear constraint arrays for use in non-linear optimization</span>
+<span class="sd">        Construct linear constraint arrays for use in non-linear optimization.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        a : ndarray</span>
-<span class="sd">            Number of constraints by number of parameters loading array</span>
+<span class="sd">            Number of constraints by number of parameters loading array.</span>
 <span class="sd">        b : ndarray</span>
-<span class="sd">            Number of constraints array of lower bounds</span>
+<span class="sd">            Number of constraints array of lower bounds.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -3118,7 +3120,7 @@
         <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Simulates data from a moving average model</span>
+<span class="sd">        Simulate data from a moving average model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3128,17 +3130,17 @@
 <span class="sd">            model are ordered [mu theta[1] ... theta[q]], and mu is not</span>
 <span class="sd">            included when the model does not have a constant.</span>
 <span class="sd">        nobs : int</span>
-<span class="sd">            Length of series to simulate</span>
+<span class="sd">            Length of series to simulate.</span>
 <span class="sd">        burn : int, optional</span>
 <span class="sd">            Number of values to simulate to initialize the model and remove</span>
 <span class="sd">            dependence on initial values.</span>
-<span class="sd">        initial_value : None</span>
+<span class="sd">        initial_value : None, optional</span>
 <span class="sd">            Must be None. A ValueError is raised if it is not None. The</span>
 <span class="sd">            innovations before the first observation are 0.</span>
-<span class="sd">        x : None</span>
+<span class="sd">        x : None, optional</span>
 <span class="sd">            Must be None, since there are no exogenous variables. A ValueError</span>
 <span class="sd">            is raised if it is not None.</span>
-<span class="sd">        initial_value_vol : {ndarray, float}, optional</span>
+<span class="sd">        initial_value_vol : float or ndarray, optional</span>
 <span class="sd">            An array or scalar to use when initializing the volatility process.</span>
 <span class="sd">            It is not always a variance. The units depend on the volatility</span>
 <span class="sd">            process, see</span>
@@ -3149,7 +3151,7 @@
 <span class="sd">        simulated_data : DataFrame</span>
 <span class="sd">            DataFrame with columns data containing the simulated values,</span>
 <span class="sd">            volatility, containing the conditional volatility and errors</span>
-<span class="sd">            containing the errors used in the simulation</span>
+<span class="sd">            containing the errors used in the simulation.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -3386,46 +3388,47 @@
     <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HARX</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Initialization of common ARCH model specifications</span>
+<span class="sd">    Initialize common ARCH model specifications.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : ndarray, Series, None</span>
-<span class="sd">        The dependent variable</span>
-<span class="sd">    x : ndarray, DataFrame, optional</span>
+<span class="sd">    y : ndarray, Series or None</span>
+<span class="sd">        The dependent variable.</span>
+<span class="sd">    x : ndarray or DataFrame, optional</span>
 <span class="sd">        Exogenous regressors.  Ignored if model does not permit exogenous</span>
 <span class="sd">        regressors.</span>
 <span class="sd">    mean : str, optional</span>
 <span class="sd">        Name of the mean model.  Currently supported options are: 'Constant',</span>
-<span class="sd">        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'</span>
-<span class="sd">    lags : int or list[int], optional</span>
+<span class="sd">        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'.</span>
+<span class="sd">    lags : int or list of int, optional</span>
 <span class="sd">        Either a scalar integer value indicating lag length or a list of</span>
 <span class="sd">        integers specifying lag locations.</span>
 <span class="sd">    vol : str, optional</span>
 <span class="sd">        Name of the volatility model.  Currently supported options are:</span>
 <span class="sd">        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'FIAPARCH', 'APARCH'</span>
-<span class="sd">        and 'HARCH'</span>
-<span class="sd">    p : int, optional</span>
-<span class="sd">        Lag order of the symmetric innovation</span>
+<span class="sd">        and 'HARCH'.</span>
+<span class="sd">    p : int or list of int, optional</span>
+<span class="sd">        Lag order of the symmetric innovation.  A list of lags can only be used</span>
+<span class="sd">        with the 'HARCH' volatility model.</span>
 <span class="sd">    o : int, optional</span>
-<span class="sd">        Lag order of the asymmetric innovation</span>
+<span class="sd">        Lag order of the asymmetric innovation.</span>
 <span class="sd">    q : int, optional</span>
-<span class="sd">        Lag order of lagged volatility or equivalent</span>
+<span class="sd">        Lag order of lagged volatility or equivalent.</span>
 <span class="sd">    power : float, optional</span>
-<span class="sd">        Power to use with GARCH and related models</span>
-<span class="sd">    dist : int, optional</span>
+<span class="sd">        Power to use with GARCH and related models.</span>
+<span class="sd">    dist : str, optional</span>
 <span class="sd">        Name of the error distribution.  Currently supported options are:</span>
 
 <span class="sd">            * Normal: 'normal', 'gaussian' (default)</span>
-<span class="sd">            * Students's t: 't', 'studentst'</span>
+<span class="sd">            * Student's t: 't', 'studentst'</span>
 <span class="sd">            * Skewed Student's t: 'skewstudent', 'skewt'</span>
-<span class="sd">            * Generalized Error Distribution: 'ged', 'generalized error"</span>
+<span class="sd">            * Generalized Error Distribution: 'ged', 'generalized error'</span>
 
-<span class="sd">    hold_back : int</span>
+<span class="sd">    hold_back : int, optional</span>
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
-<span class="sd">    rescale : bool</span>
+<span class="sd">    rescale : bool, optional</span>
 <span class="sd">        Flag indicating whether to automatically rescale data if the scale</span>
 <span class="sd">        of the data is likely to produce convergence issues when estimating</span>
 <span class="sd">        model parameters. If False, the model is estimated on the data without</span>
@@ -3435,7 +3438,12 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    model : ARCHModel</span>
-<span class="sd">        Configured ARCH model</span>
+<span class="sd">        Configured ARCH model.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Input that are not relevant for a particular specification, such as `lags`</span>
+<span class="sd">    when `mean='zero'`, are silently ignored.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -3458,11 +3466,6 @@
 
 <span class="sd">    &gt;&gt;&gt; am = arch_model(returns, mean='zero', p=1, o=1, q=1,</span>
 <span class="sd">    ...                 power=1.0, dist='StudentsT')</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Input that are not relevant for a particular specification, such as `lags`</span>
-<span class="sd">    when `mean='zero'`, are silently ignored.</span>
 <span class="sd">    """</span>
     <span class="n">am</span><span class="p">:</span> <span class="n">ARCHModel</span>
 
@@ -3487,15 +3490,9 @@
         <span class="s2">"ged"</span><span class="p">,</span>
         <span class="s2">"generalized error"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">mean_model</span> <span class="o">=</span> <span class="n">mean</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">vol_model</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">dist_name</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">mean_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_mean</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown model type in mean"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">vol_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_vol</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown model type in vol"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">dist_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_dist</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown model type in dist"</span><span class="p">)</span>
+    <span class="n">mean_model</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">known_mean</span><span class="p">)</span>
+    <span class="n">vol_model</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"vol"</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">known_vol</span><span class="p">)</span>
+    <span class="n">dist_name</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"dist"</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">known_dist</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mean_model</span> <span class="o">==</span> <span class="s2">"harx"</span><span class="p">:</span>
         <span class="n">am</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>

@@ -23,7 +23,7 @@
     
   
       
-        <title>Version 4 - arch v8.0.1 (+355)</title>
+        <title>Version 4 - arch v8.0.1 (+398)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -1218,7 +1218,7 @@
 <h1 id="version-4">Version 4<a class="headerlink" href="#version-4" title="Link to this heading">¶</a></h1>
 <h2 id="release-4-19">Release 4.19<a class="headerlink" href="#release-4-19" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Added the keyword argument <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
+<li><p>Added the keyword argument <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
 that allows the returned forecasts to have minimal size when <code class="docutils literal notranslate"><span class="pre">reindex=False</span></code>.
 The default is <code class="docutils literal notranslate"><span class="pre">reindex=True</span></code> which preserved the current behavior.  This will
 change in a future release. Using <code class="docutils literal notranslate"><span class="pre">reindex=True</span></code> often requires substantially
@@ -1230,12 +1230,12 @@ simulation or bootstrap-based forecasting.</p></li>
 </code></pre></div>
 </div>
 <ul class="simple">
-<li><p>Fixed handling of exogenous regressors in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>.
+<li><p>Fixed handling of exogenous regressors in <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>.
 It is now possible to pass values for <span class="math notranslate nohighlight">\(E_t[X_{t+h}]\)</span> using the <code class="docutils literal notranslate"><span class="pre">x</span></code> argument.</p></li>
 </ul>
 <h2 id="release-4-18">Release 4.18<a class="headerlink" href="#release-4-18" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Improved <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.fit.html#arch.univariate.HARX.fit" title="arch.univariate.HARX.fit (Python method) — Estimate model parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a> performance of ARCH models.</p></li>
+<li><p>Improved <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.fit.html#arch.univariate.HARX.fit" title="arch.univariate.HARX.fit (Python method) — Estimate model parameters."><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a> performance of ARCH models.</p></li>
 <li><p>Fixed a bug where <code class="docutils literal notranslate"><span class="pre">`typing_extensions</span></code> was subtly introduced as a run-time dependency.</p></li>
 </ul>
 <h2 id="release-4-17">Release 4.17<a class="headerlink" href="#release-4-17" title="Link to this heading">¶</a></h2>
@@ -1244,7 +1244,7 @@ It is now possible to pass values for <span class="math notranslate nohighlight"
 </ul>
 <h2 id="release-4-16">Release 4.16<a class="headerlink" href="#release-4-16" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.APARCH.html#arch.univariate.APARCH" title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">APARCH</span></code></a> volatility process (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/443">GH443</a>).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.APARCH.html#arch.univariate.APARCH" title="arch.univariate.APARCH (Python class) — Asymmetric Power ARCH (APARCH) volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">APARCH</span></code></a> volatility process (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/443">GH443</a>).</p></li>
 <li><p>Added support for Python 3.9 in pyproject.toml (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/438">GH438</a>).</p></li>
 <li><p>Fixed a bug in model degree-of-freedom calculation (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/437">GH437</a>).</p></li>
 <li><p>Improved HARX initialization (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/417">GH417</a>).</p></li>
@@ -1252,7 +1252,7 @@ It is now possible to pass values for <span class="math notranslate nohighlight"
 <h2 id="release-4-15">Release 4.15<a class="headerlink" href="#release-4-15" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>This is a minor release with doc fixes and other small updates. The only notable
-feature is <a class="reference internal" href="../unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.html#arch.unitroot.PhillipsPerron.regression" title="arch.unitroot.PhillipsPerron.regression (Python property) — Returns OLS regression results for the specification used in the test"><code class="xref py py-meth docutils literal notranslate"><span class="pre">regression()</span></code></a> which returns
+feature is <a class="reference internal" href="../unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.html#arch.unitroot.PhillipsPerron.regression" title="arch.unitroot.PhillipsPerron.regression (Python property) — The OLS regression results for the specification used in the test."><code class="xref py py-meth docutils literal notranslate"><span class="pre">regression()</span></code></a> which returns
 regression results from the model estimated as part of the test (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/395">GH395</a>).</p></li>
 </ul>
 <h2 id="release-4-14">Release 4.14<a class="headerlink" href="#release-4-14" title="Link to this heading">¶</a></h2>
@@ -1261,9 +1261,9 @@ regression results from the model estimated as part of the test (<a class="extli
 Examples include the <a class="reference internal" href="../covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett" title="arch.covariance.kernel.Bartlett (Python class) — Bartlett's (Newey-West) kernel covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">Bartlett</span></code></a> and the
 <a class="reference internal" href="../covariance/generated/arch.covariance.kernel.Parzen.html#arch.covariance.kernel.Parzen" title="arch.covariance.kernel.Parzen (Python class) — Parzen's kernel covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">Parzen</span></code></a> kernels.  All estimators suppose automatic
 bandwidth selection.</p></li>
-<li><p>Improved exceptions in <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,  <a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test"><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>,
-<a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a>, <a class="reference internal" href="../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a>,
-and <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> when test specification is infeasible to
+<li><p>Improved exceptions in <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,  <a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a>, <a class="reference internal" href="../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a>,
+and <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> when test specification is infeasible to
 the time series being too short or the required regression model having reduced
 rank (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/364">GH364</a>).</p></li>
 <li><p>Fixed a bug when using “bca” confidence intervals with <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/366">GH366</a>).</p></li>
@@ -1271,14 +1271,14 @@ rank (<a class="extlink-issue reference external" href="https://github.com/basht
 cointegration tests (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/360">GH360</a>).</p></li>
 <li><p>Added three methods to estimate cointegrating vectors:
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a>,
-<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>, and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>, and
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a>
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/356">GH356</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/359">GH359</a>).</p></li>
 <li><p>Added the Engle-Granger (<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>)
 cointegration test (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/354">GH354</a>).</p></li>
 <li><p>Issue warnings when unit root tests are mutated. Will raise after 5.0
 is released.</p></li>
-<li><p>Fixed a bug in <a class="reference internal" href="../univariate/generated/arch.univariate.SkewStudent.html#arch.univariate.SkewStudent" title="arch.univariate.SkewStudent (Python class) — Standardized Skewed Student's distribution for use with ARCH models"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.SkewStudent</span></code></a> which did not use the
+<li><p>Fixed a bug in <a class="reference internal" href="../univariate/generated/arch.univariate.SkewStudent.html#arch.univariate.SkewStudent" title="arch.univariate.SkewStudent (Python class) — Standardized Skewed Student's distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.SkewStudent</span></code></a> which did not use the
 user-provided <cite>RandomState</cite> when one was provided. This prevented
 reproducing simulated values (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/353">GH353</a>).</p></li>
 </ul>
@@ -1293,14 +1293,14 @@ reproducing simulated values (<a class="extlink-issue reference external" href="
 <li><p>Fixed an issue that caused tests to fail on SciPy 1.4+ (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/339">GH339</a>).</p></li>
 <li><p>Dropped support for Python 3.5 inline with NEP 29 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/334">GH334</a>).</p></li>
 <li><p>Added methods to compute moment and lower partial moments for standardized
-residuals. See, for example, <a class="reference internal" href="../univariate/generated/generated/arch.univariate.SkewStudent.moment.html#arch.univariate.SkewStudent.moment" title="arch.univariate.SkewStudent.moment (Python method) — Moment of order n"><code class="xref py py-func docutils literal notranslate"><span class="pre">moment()</span></code></a> and
-<a class="reference internal" href="../univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html#arch.univariate.SkewStudent.partial_moment" title="arch.univariate.SkewStudent.partial_moment (Python method) — Order n lower partial moment from -inf to z"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial_moment()</span></code></a> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/329">GH329</a>).</p></li>
+residuals. See, for example, <a class="reference internal" href="../univariate/generated/generated/arch.univariate.SkewStudent.moment.html#arch.univariate.SkewStudent.moment" title="arch.univariate.SkewStudent.moment (Python method) — Compute the moment of order n."><code class="xref py py-func docutils literal notranslate"><span class="pre">moment()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html#arch.univariate.SkewStudent.partial_moment" title="arch.univariate.SkewStudent.partial_moment (Python method) — Compute the order n lower partial moment from -inf to z."><code class="xref py py-func docutils literal notranslate"><span class="pre">partial_moment()</span></code></a> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/329">GH329</a>).</p></li>
 <li><p>Fixed a bug that produced an OverflowError when a time series has no
 variance (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/331">GH331</a>).</p></li>
 </ul>
 <h2 id="release-4-11">Release 4.11<a class="headerlink" href="#release-4-11" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_resid.html#arch.univariate.base.ARCHModelResult.std_resid" title="arch.univariate.base.ARCHModelResult.std_resid (Python property) — Residuals standardized by conditional volatility"><code class="xref py py-func docutils literal notranslate"><span class="pre">std_resid()</span></code></a> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/326">GH326</a>).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_resid.html#arch.univariate.base.ARCHModelResult.std_resid" title="arch.univariate.base.ARCHModelResult.std_resid (Python property) — Standardized residuals, the residuals divided by the conditional volatility."><code class="xref py py-func docutils literal notranslate"><span class="pre">std_resid()</span></code></a> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/326">GH326</a>).</p></li>
 <li><p>Error if inputs are not ndarrays, DataFrames or Series (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/315">GH315</a>).</p></li>
 <li><p>Added a check that the covariance is non-zero when using “studentized” confidence intervals.
 If the function bootstrapped produces statistics with 0 variance, it is not possible to
@@ -1319,7 +1319,7 @@ a pandas Series. (<a class="extlink-issue reference external" href="https://gith
 <li><p>Added <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> to compute optimized bandwidth
 for a number of common kernel covariance estimators (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/303">GH303</a>). This code
 was written by Michael Rabba.</p></li>
-<li><p>Added a parameter <cite>rescale</cite> to <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>
+<li><p>Added a parameter <cite>rescale</cite> to <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>
 that allows the estimator to rescale data if it may help parameter
 estimation. If <cite>rescale=True</cite>, then the data will be rescaled by a power
 of 10 (e.g., 10, 100, or 1000) to produce a series with a residual
@@ -1330,9 +1330,9 @@ scaled, but no change of scale is applied. If <cite>rescale=False</cite>, no sca
 change is applied and no warning is issued.</p></li>
 <li><p>Fixed a bug when using the BCA bootstrap method where the leave-one-out
 jackknife used the wrong centering variable (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/288">GH288</a>).</p></li>
-<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.optimization_result.html#arch.univariate.base.ARCHModelResult.optimization_result" title="arch.univariate.base.ARCHModelResult.optimization_result (Python property) — Information about the convergence of the loglikelihood optimization"><code class="xref py py-func docutils literal notranslate"><span class="pre">optimization_result()</span></code></a> to
+<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.optimization_result.html#arch.univariate.base.ARCHModelResult.optimization_result" title="arch.univariate.base.ARCHModelResult.optimization_result (Python property) — Information about the convergence of the loglikelihood optimization."><code class="xref py py-func docutils literal notranslate"><span class="pre">optimization_result()</span></code></a> to
 simplify checking for convergence of the numerical optimizer (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/292">GH292</a>).</p></li>
-<li><p>Added <cite>random_state</cite> argument to <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
+<li><p>Added <cite>random_state</cite> argument to <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model."><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
 to allow a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object to be passed in when
 forecasting when <cite>method=’bootstrap’</cite>. This allows the repeatable forecast to
 be produced (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/290">GH290</a>).</p></li>
@@ -1345,18 +1345,18 @@ variance in nonrobust inference with overlapping samples (<a class="extlink-issu
 </ul>
 <h2 id="release-4-8">Release 4.8<a class="headerlink" href="#release-4-8" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Added Zivot-Andrews unit root test <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a>.
+<li><p>Added Zivot-Andrews unit root test <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a>.
 This code was originally written by Jim Varanelli.</p></li>
 <li><p>Added data dependent lag length selection to the KPSS test,
-<a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test"><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>. This code was originally written by
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>. This code was originally written by
 Jim Varanelli.</p></li>
-<li><p>Added <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.IndependentSamplesBootstrap.html#arch.bootstrap.IndependentSamplesBootstrap" title="arch.bootstrap.IndependentSamplesBootstrap (Python class) — Bootstrap where each input is independently resampled"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndependentSamplesBootstrap</span></code></a> to
+<li><p>Added <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.IndependentSamplesBootstrap.html#arch.bootstrap.IndependentSamplesBootstrap" title="arch.bootstrap.IndependentSamplesBootstrap (Python class) — Bootstrap where each input is independently resampled."><code class="xref py py-class docutils literal notranslate"><span class="pre">IndependentSamplesBootstrap</span></code></a> to
 perform bootstrap inference on statistics from independent samples that may
 have uneven length (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/260">GH260</a>).</p></li>
-<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.arch_lm_test.html#arch.univariate.base.ARCHModelResult.arch_lm_test" title="arch.univariate.base.ARCHModelResult.arch_lm_test (Python method) — ARCH LM test for conditional heteroskedasticity"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_lm_test()</span></code></a> to
+<li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.arch_lm_test.html#arch.univariate.base.ARCHModelResult.arch_lm_test" title="arch.univariate.base.ARCHModelResult.arch_lm_test (Python method) — Perform an ARCH LM test for conditional heteroskedasticity."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_lm_test()</span></code></a> to
 perform ARCH-LM tests on model residuals or standardized residuals
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/261">GH261</a>).</p></li>
-<li><p>Fixed a bug in <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> when applying to very short time series
+<li><p>Fixed a bug in <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> when applying to very short time series
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/262">GH262</a>).</p></li>
 <li><p>Added ability to set the <code class="docutils literal notranslate"><span class="pre">random_state</span></code> when initializing a bootstrap
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/259">GH259</a>).</p></li>
@@ -1364,7 +1364,7 @@ perform ARCH-LM tests on model residuals or standardized residuals
 <h2 id="release-4-7">Release 4.7<a class="headerlink" href="#release-4-7" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added support for Fractionally Integrated GARCH (FIGARCH) in
-<a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a>.</p></li>
+<a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model."><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a>.</p></li>
 <li><p>Enable user to specify a specific value of the <cite>backcast</cite> in place of
 the automatically generated value.</p></li>
 <li><p>Fixed a big where parameter-less models where incorrectly reported as
@@ -1373,7 +1373,7 @@ having constant variance (<a class="extlink-issue reference external" href="http
 <h2 id="release-4-6">Release 4.6<a class="headerlink" href="#release-4-6" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added support for MIDAS volatility processes using Hyperbolic
-weighting in <a class="reference internal" href="../univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process"><code class="xref py py-class docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a>
+weighting in <a class="reference internal" href="../univariate/generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process."><code class="xref py py-class docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a>
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/233">GH233</a>).</p></li>
 </ul>
 <h2 id="release-4-5">Release 4.5<a class="headerlink" href="#release-4-5" title="Link to this heading">¶</a></h2>
@@ -1396,7 +1396,7 @@ models from being listed.</p></li>
 </ul>
 <h2 id="release-4-3">Release 4.3<a class="headerlink" href="#release-4-3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedVariance</span></code></a> volatility process which
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedVariance</span></code></a> volatility process which
 allows pre-specified variances to be used with a mean model.  This has been
 added to allow so-called zig-zag estimation where a mean model is estimated
 with a fixed variance, and then a variance model is estimated on the residuals

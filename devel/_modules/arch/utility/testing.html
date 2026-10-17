@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility.testing - arch v8.0.1 (+355)</title>
+        <title>arch.utility.testing - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -537,20 +537,20 @@
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">WaldTestStatistic</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Test statistic holder for Wald-type tests</span>
+<span class="sd">    Test statistic holder for Wald-type tests.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    stat : float</span>
-<span class="sd">        The test statistic</span>
+<span class="sd">        The test statistic.</span>
 <span class="sd">    df : int</span>
 <span class="sd">        Degree of freedom.</span>
 <span class="sd">    null : str</span>
-<span class="sd">        A statement of the test's null hypothesis</span>
+<span class="sd">        A statement of the test's null hypothesis.</span>
 <span class="sd">    alternative : str</span>
-<span class="sd">        A statement of the test's alternative hypothesis</span>
-<span class="sd">    name : str, default "" (empty)</span>
-<span class="sd">        Name of test</span>
+<span class="sd">        A statement of the test's alternative hypothesis.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of test.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -571,14 +571,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Test statistic"""</span>
+<span class="w">        </span><span class="sd">"""Test statistic."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span>
 
 <div class="viewcode-block" id="WaldTestStatistic.pval">
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic.pval">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""P-value of test statistic"""</span>
+<span class="w">        </span><span class="sd">"""P-value of test statistic."""</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">)</span></div>
 
 
@@ -586,7 +586,7 @@
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic.critical_values">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Critical values test for common test sizes"""</span>
+<span class="w">        </span><span class="sd">"""Critical values of the test for common test sizes."""</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">([</span><span class="s2">"10%"</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">,</span> <span class="s2">"1%"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -594,11 +594,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Null hypothesis"""</span>
+<span class="w">        </span><span class="sd">"""Null hypothesis."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">alternative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Alternative hypothesis."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

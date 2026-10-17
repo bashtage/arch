@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+355)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+398)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+355)
+            arch v8.0.1 (+398)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+355)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+355)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+398)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+398)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+355)
+    arch v8.0.1 (+398)
   </label>
   
     <div class="md-nav__source">
@@ -537,6 +537,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Index</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_option</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Substitution</span>
 
@@ -604,7 +605,7 @@
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimate.html#arch.covariance.kernel.CovarianceEstimate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimate</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
-<span class="sd">    Covariance estimate using a long-run covariance estimator</span>
+<span class="sd">    Covariance estimate using a long-run covariance estimator.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -612,14 +613,14 @@
 <span class="sd">        The short-run covariance estimate.</span>
 <span class="sd">    one_sided_strict : ndarray</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
-<span class="sd">    columns : {None, list[str]}</span>
+<span class="sd">    columns : Index or list of str, optional</span>
 <span class="sd">        Column labels to use if covariance estimates are returned as</span>
 <span class="sd">        DataFrames.</span>
-<span class="sd">    long_run : ndarray, default None</span>
+<span class="sd">    long_run : ndarray, optional</span>
 <span class="sd">        The long-run covariance estimate. If not provided, computed from</span>
 <span class="sd">        short_run and one_sided_strict.</span>
-<span class="sd">    one_sided : ndarray, default None</span>
-<span class="sd">        The one-sided-strict covariance estimate. If not provided, computed</span>
+<span class="sd">    one_sided : ndarray, optional</span>
+<span class="sd">        The one-sided covariance estimate. If not provided, computed</span>
 <span class="sd">        from short_run and one_sided_strict.</span>
 
 <span class="sd">    Notes</span>
@@ -732,21 +733,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : array_like</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
 <span class="sd">        The data to use in covariance estimation.</span>
-<span class="sd">    bandwidth : float, default None</span>
+<span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
-<span class="sd">    df_adjust : int, default 0</span>
+<span class="sd">    df_adjust : int, optional</span>
 <span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
 <span class="sd">        number of observations in x minus df_adjust when dividing</span>
 <span class="sd">        inner-products.</span>
-<span class="sd">    center : bool, default True</span>
+<span class="sd">    center : bool, optional</span>
 <span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
 <span class="sd">        covariance.</span>
-<span class="sd">    weights : array_like, default None</span>
+<span class="sd">    weights : array_like, optional</span>
 <span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
 <span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
-<span class="sd">    force_int : bool, default False</span>
+<span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
 
 <span class="sd">    Notes</span>
@@ -797,21 +798,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : array_like</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
 <span class="sd">        The data to use in covariance estimation.</span>
-<span class="sd">    bandwidth : float, default None</span>
+<span class="sd">    bandwidth : float, optional</span>
 <span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
-<span class="sd">    df_adjust : int, default 0</span>
+<span class="sd">    df_adjust : int, optional</span>
 <span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
 <span class="sd">        number of observations in x minus df_adjust when dividing</span>
 <span class="sd">        inner-products.</span>
-<span class="sd">    center : bool, default True</span>
+<span class="sd">    center : bool, optional</span>
 <span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
 <span class="sd">        covariance.</span>
-<span class="sd">    weights : array_like, default None</span>
+<span class="sd">    weights : array_like, optional</span>
 <span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
 <span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
-<span class="sd">    force_int : bool, default False</span>
+<span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
 
 <span class="sd">    Notes</span>
@@ -929,7 +930,6 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Flag indicating whether the data are centered (demeaned).</span>
-
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1062,7 +1062,7 @@
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Weights used in covariance calculation.</span>
+<span class="sd">        The weights used in covariance calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1091,7 +1091,7 @@
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        CovarianceEstimate</span>
+<span class="sd">        CovarianceEstimate : The container of the covariance estimates.</span>
 <span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1408,39 +1408,97 @@
 
 <div class="viewcode-block" id="Gallant">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Gallant.html#arch.covariance.kernel.Gallant">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Parzen covariance estimator.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
+<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    Parzen</span>
+<span class="sd">    Parzen : Kernel covariance estimator using the Parzen kernel.</span>
 <span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="Andrews">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Andrews.html#arch.covariance.kernel.Andrews">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name of the QuadraticSpectral covariance estimator.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
+<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    QuadraticSpectral</span>
+<span class="sd">    QuadraticSpectral : Kernel covariance estimator using the quadratic spectral</span>
+<span class="sd">        kernel.</span>
 <span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="NeweyWest">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.NeweyWest.html#arch.covariance.kernel.NeweyWest">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Bartlett covariance estimator.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : ndarray, Series or DataFrame</span>
+<span class="sd">        The data to use in covariance estimation.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    Bartlett</span>
+<span class="sd">    Bartlett : Kernel covariance estimator using the Bartlett kernel.</span>
 <span class="sd">    """</span></div>
 
 
@@ -1510,20 +1568,21 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    type[CovarianceEstimator]</span>
-<span class="sd">        The kernel estimator class.</span>
+<span class="sd">    type</span>
+<span class="sd">        The kernel estimator class, a subclass of CovarianceEstimator.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If the name is not one of the names in ``KERNELS``.</span>
 <span class="sd">    """</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="n">normalize_kernel_name</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span>
-        <span class="n">known</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2"> "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">KERNELS</span><span class="p">))</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"kernel is not a known kernel estimator. Must be one of:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">known</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"kernel"</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="n">KERNEL_ESTIMATORS</span><span class="p">),</span>
+        <span class="n">display</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">KERNELS</span><span class="p">),</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize_kernel_name</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div>
 
