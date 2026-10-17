@@ -219,7 +219,8 @@ def build_rows(cls: type, shape: tuple[float, ...]) -> list[Row]:
 
     # simulate and the simulator
     sim = make(cls, shape, "simulate")
-    for i, (value, exc) in enumerate(bad_parameters(shape)):
+    for i, (value, expected) in enumerate(bad_parameters(shape)):
+        exc = expected
         if value is None:
             # None is not converted to NaN: a TypeError, unless there are no
             # shape parameters and nothing is read
