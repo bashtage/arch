@@ -1205,16 +1205,20 @@ class VolatilityProcess(metaclass=ABCMeta):
         parameters : array_like
             Parameters required to simulate the volatility model.
         nobs : int
-            Number of data points to simulate.
+            Number of data points to simulate. Must be 1 or larger.
         rng : callable
             Callable function that takes a single integer input and returns
             a vector of random numbers.
         burn : int, optional
             Number of additional observations to generate when initializing
-            the simulation.
+            the simulation. Must be 0 or larger.
         initial_value : float or ndarray, optional
             Scalar or array of initial values to use when initializing the
-            simulation. The units depend on the process, see Notes.
+            simulation. The units depend on the process, see Notes. The values
+            must be finite, and not negative except for EGARCH. An array has
+            one element or as many as the process has initial values (the
+            largest lag for most processes). EWMAVariance and RiskMetrics2006
+            accept a scalar only.
 
         Returns
         -------
@@ -1222,6 +1226,16 @@ class VolatilityProcess(metaclass=ABCMeta):
             The simulated residuals.
         variance : ndarray
             The simulated variance.
+
+        Raises
+        ------
+        TypeError
+            If ``nobs`` or ``burn`` is not an integer, ``rng`` is not callable,
+            or ``initial_value`` is not a number or an array of numbers.
+        ValueError
+            If ``parameters`` has the wrong length, ``nobs`` is smaller than 1,
+            ``burn`` is negative or ``initial_value`` is NaN, inf, out of range
+            or has the wrong length.
 
         Notes
         -----
