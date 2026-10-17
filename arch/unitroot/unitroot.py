@@ -1071,6 +1071,21 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         to be used in very long time series. If None, the low memory algorithm
         is used when the series has at least 100,000 observations.
 
+    Raises
+    ------
+    TypeError
+        If `y` cannot be converted to numbers, `lags` or `max_lags` is not an
+        integer, `low_memory` is not a bool or None, or `trend` or `method` is not
+        a str.
+    ValueError
+        If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
+        negative, or `trend` or `method` is not one of the options.
+    InfeasibleTestException
+        If `y` has too few observations for `trend`, or `lags` or `max_lags`
+        is larger than the observations can support. A regression with `lags`
+        lags needs at least 3 + 2 * `lags` observations. This is also a
+        ``ValueError``.
+
     Notes
     -----
     The null hypothesis of the Dickey-Fuller GLS is that there is a unit
@@ -1127,27 +1142,28 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
-        self._max_lags = max_lags
+        self._max_lags = check_int("max_lags", max_lags, lower=0, allow_none=True)
         self._method = self._clean_method(method)
         self._regression = None
-        self._low_memory = low_memory
-        if low_memory is None:
-            self._low_memory = True if self.y.shape[0] >= 1e5 else False
+        low_memory = check_bool("low_memory", low_memory, allow_none=True)
+        self._low_memory: bool = self._nobs >= 1e5 if low_memory is None else low_memory
         self._test_name = "Dickey-Fuller GLS"
         if self._trend == "c":
             self._c = -7.0
         else:
             self._c = -13.5
+        self._check_specification()
 
     def _check_specification(self) -> None:
+        # The regression of the detrended data has nobs - 1 - lags rows and 1 + lags
+        # columns, and it needs at least one degree of freedom for the t-statistic
         trend_order = len(self._trend)
-        lag_len = 0 if self._lags is None else self._lags
-        required = 3 + trend_order + lag_len
-        if self._y.shape[0] < required:
-            raise InfeasibleTestException(
-                f"A minimum of {required} observations are needed to run an ADF with "
-                f"trend {self.trend} and the user-specified number of lags."
-            )
+
+        def limit(nobs: int) -> int:
+            return min(nobs - 3 - trend_order, (nobs - 3) // 2)
+
+        self._check_nobs("DFGLS", limit)
+        _check_max_lags(self._max_lags, self._lags, self._nobs, (self._nobs - 3) // 2)
 
     def _compute_statistic(self) -> None:
         """Core routine to estimate DF-GLS test statistic"""
@@ -1169,7 +1185,6 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         # 2. determine lag length, if needed
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
-            assert self._low_memory is not None
             ols_detrend_coef = lstsq(z, y, rcond=None)[0]
             y_ols_detrend = y - z @ ols_detrend_coef
             _, bestlag = _df_select_lags(
@@ -1185,8 +1200,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._nobs = int(resols.nobs)
         self._stat, *_ = resols.tvalues
         assert self._stat is not None
-        self._pvalue = mackinnonp(
-            self._stat, regression=cast("Literal['c', 'ct']", trend), dist_type="dfgls"
+        self._pvalue = _mackinnonp(
+            self._stat,
+            regression=cast("Literal['c', 'ct']", trend),
+            num_unit_roots=1,
+            dist_type="dfgls",
         )
         critical_values = mackinnoncrit(
             regression=cast("Literal['c', 'ct']", trend),
