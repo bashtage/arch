@@ -156,10 +156,16 @@ def phillips_ouliaris(
 
     Parameters
     ----------
-    y : ndarray, Series or DataFrame
-        The left-hand-side variable in the cointegrating regression.
-    x : ndarray, Series or DataFrame
-        The right-hand-side variables in the cointegrating regression.
+    y : array_like
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, between 1 and 12 columns,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
     trend : {"n", "c", "ct", "ctt"}, optional
         Trend to include in the cointegrating regression. Trends are:
 
@@ -183,10 +189,10 @@ def phillips_ouliaris(
         covariance estimator. Common choices are "bartlett" for the
         Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
         and "quadratic-spectral" for the Quadratic Spectral kernel.
-    bandwidth : int, optional
-        The bandwidth to use. If not provided, the optimal bandwidth is
-        estimated from the data. Setting the bandwidth to 0 produces White's
-        covariance estimator.
+    bandwidth : float, optional
+        The bandwidth to use. It must be a finite non-negative number. If not
+        provided, the optimal bandwidth is estimated from the data. Setting the
+        bandwidth to 0 produces White's covariance estimator.
     force_int : bool, optional
         Whether to force the estimated optimal bandwidth to be an integer.
 
@@ -194,6 +200,18 @@ def phillips_ouliaris(
     -------
     PhillipsOuliarisTestResults
         Results of the Phillips-Ouliaris test.
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, bandwidth is not a real number
+        or None, force_int is not a bool, or trend, test_type or kernel is not a
+        string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if x has
+        more than 12 columns, bandwidth is negative, NaN or inf, or trend,
+        test_type or kernel is not one of the options.
 
     See Also
     --------
