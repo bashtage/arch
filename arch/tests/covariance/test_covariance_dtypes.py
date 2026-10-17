@@ -80,7 +80,7 @@ def test_floating_kernel_dtype_is_float64(dtype):
         assert getattr(result, name).dtype == np.float64
     assert_allclose(result.short_run, expected, rtol=1e-14)
     float64_result = Bartlett(data64, bandwidth=2, center=False).cov
-    assert_array_equal(result.long_run, float64_result.long_run)
+    assert_allclose(result.long_run, float64_result.long_run, rtol=1e-12)
 
 
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])

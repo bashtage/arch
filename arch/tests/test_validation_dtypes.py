@@ -171,12 +171,22 @@ def _ccr(**kw: Any) -> Any:
     return CanonicalCointegratingReg(**kw).fit().params
 
 
+def _fixed_garch(mod: Any) -> Any:
+    # Evaluate the model at fixed parameters instead of fitting it. Results are not
+    # bit-identical between calls on every platform (macOS on x86-64), and the
+    # optimizer amplifies a difference in the last bits, especially at an estimate on
+    # the boundary such as the GARCH(1,1) of these i.i.d. data
+    params = np.r_[np.full(mod.num_params, 0.01), 0.1, 0.1, 0.8]
+    res = mod.fix(params)
+    return np.r_[res.loglikelihood, np.asarray(res.conditional_volatility)]
+
+
 def _garch_model(**kw: Any) -> Any:
-    return arch_model(**kw).fit(disp="off").params
+    return _fixed_garch(arch_model(**kw))
 
 
 def _arx(**kw: Any) -> Any:
-    return arch_model(mean="ARX", lags=1, **kw).fit(disp="off").params
+    return _fixed_garch(arch_model(mean="ARX", lags=1, **kw))
 
 
 def _constant_mean(**kw: Any) -> Any:
