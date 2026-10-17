@@ -2578,6 +2578,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         distribution: Distribution | None = None,
         rescale: bool | None = None,
     ) -> None:
+        lags = check_int("lags", lags, lower=1)
+        constant, hold_back, rescale = _check_model_arguments(
+            constant, hold_back, volatility, distribution, rescale
+        )
         super().__init__(
             y,
             hold_back=hold_back,
@@ -2585,14 +2589,8 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
-        if (
-            isinstance(lags, (bool, np.bool_))
-            or not isinstance(lags, (int, np.integer))
-            or lags < 1
-        ):
-            raise ValueError("lags must be a positive integer.")
-        self.lags: int = int(lags)
-        self.constant: bool = bool(constant)
+        self.lags: int = lags
+        self.constant: bool = constant
         self._name = "MA"
 
     def _model_description(self, include_lags: bool = True) -> dict[str, str]:

@@ -84,9 +84,15 @@ def ma2_constant_variance():
 
 
 # Construction and attributes
-@pytest.mark.parametrize("lags", [0, -1, 1.5, True, False, "2", None, [1, 2], np.nan])
+@pytest.mark.parametrize("lags", [0, -1])
 def test_invalid_lags(lags):
-    with pytest.raises(ValueError, match="lags must be a positive integer"):
+    with pytest.raises(ValueError, match="lags must be an integer >= 1"):
+        MAMean(lags=lags)
+
+
+@pytest.mark.parametrize("lags", [1.5, True, False, "2", None, [1, 2], np.nan])
+def test_invalid_lags_type(lags):
+    with pytest.raises(TypeError, match="lags must be an integer >= 1"):
         MAMean(lags=lags)
 
 
