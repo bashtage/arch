@@ -545,7 +545,7 @@ Backward-incompatible changes
   callable, a ``random_state`` that is not a ``RandomState`` and a ``reindex`` that is
   not ``bool`` raise errors that name the argument. ``plot`` raises a ``ValueError`` for
   a ``scale`` that is not positive and finite and for an ``annualize`` that is not
-  ``"D"``, ``"W"`` or ``"M"``, and ``arch_lm_test`` requires ``standardized`` to be a
+  ``"d"``, ``"w"`` or ``"m"``, and ``arch_lm_test`` requires ``standardized`` to be a
   ``bool``. ``var_ratio`` raises for a ``level`` that is not a number and for
   ``parameters`` that do not have one finite element for each parameter of the
   distribution, and ``hill_estimator`` for a ``k`` that is not an integer or is outside
@@ -622,7 +622,7 @@ Backward-incompatible changes
   :class:`~arch.unitroot.PhillipsPerron` (any value other than ``"rho"`` was ``"tau"``),
   the ``has_constant`` of ``add_trend`` (any value other than ``"raise"`` and ``"skip"``
   was ``"add"``) and the ``method`` of :class:`~arch.bootstrap.MCS` (any value other
-  than ``"R"`` was ``"max"``) (:issue:`947`).
+  than ``"r"`` was ``"max"``) (:issue:`947`).
 
 - The documented spelling of every string option is now lower case, even though the
   options are not case sensitive, and so is every option value that arch shows or that
@@ -792,7 +792,7 @@ Bug fixes
   (for example, the value estimated by :func:`~arch.bootstrap.optimal_block_length`).
   Previously 0, negative and non-integer values raised unrelated errors or, for the
   stationary bootstrap, were silently used. :class:`~arch.bootstrap.MCS` raises a
-  ``ValueError`` if ``method`` is not ``"R"`` or ``"max"`` (in any case); previously any
+  ``ValueError`` if ``method`` is not ``"r"`` or ``"max"`` (in any case); previously any
   other value was treated as ``"max"`` (:issue:`917`).
 - ``conf_int``, ``cov`` and ``var`` in the bootstrap classes now accept a statistic that
   returns a list, a tuple or a 0-dimensional array, as ``apply`` already did. ``apply``
