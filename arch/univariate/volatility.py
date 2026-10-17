@@ -1454,16 +1454,26 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     p : int, optional
-        Order of the symmetric innovation.
+        Order of the symmetric innovation. Must be non-negative.
     o : int, optional
-        Order of the asymmetric innovation.
+        Order of the asymmetric innovation. Must be non-negative.
     q : int, optional
-        Order of the lagged (transformed) conditional variance.
+        Order of the lagged (transformed) conditional variance. Must be
+        non-negative.
     power : float, optional
         Power to use with the innovations, abs(e) ** power.  Default is 2.0, which
         produces ARCH and related models. Using 1.0 produces AVARCH and related
         models.  Other powers can be specified, although these should be strictly
         positive, and usually larger than 0.25.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer, or ``power`` is not a real
+        number.
+    ValueError
+        If ``p``, ``o`` or ``q`` is negative, ``p`` and ``o`` are both 0, or
+        ``power`` is not finite and strictly positive.
 
     Notes
     -----
