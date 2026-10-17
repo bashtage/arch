@@ -441,13 +441,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     Parameters
     ----------
     *args : ndarray, Series or DataFrame
-        Positional arguments to bootstrap.
+        Positional arguments to bootstrap. Each must have at least one row.
     seed : int, Generator or RandomState, optional
-        Seed to use to ensure reproducible results. If an int, passes the
-        value to ``np.random.default_rng``. If None, a fresh
-        Generator is constructed with system-provided entropy.
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
     **kwargs : ndarray, Series or DataFrame
-        Keyword arguments to bootstrap.
+        Keyword arguments to bootstrap. Each must have at least one row.
 
     Attributes
     ----------
@@ -459,6 +459,17 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     kw_data : dict
         Dictionary containing the keyword arguments.
 
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, or ``seed`` is not
+        None, a non-negative int, a Generator or a RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, the inputs
+        do not have the same number of rows, ``seed`` is a negative
+        int, or a keyword argument has the name of an attribute or method of
+        the bootstrap.
+
     See Also
     --------
     arch.bootstrap.IndependentSamplesBootstrap
@@ -468,6 +479,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
 
     Data entered using keyword arguments is directly accessible as an
     attribute.
@@ -662,14 +677,23 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Parameters
         ----------
         reps : int
-            Number of bootstrap replications.
+            Number of bootstrap replications. Must be at least 1.
 
-        Yields
-        ------
-        tuple
-            The data of one bootstrap replication. The first element is a tuple
+        Returns
+        -------
+        generator
+            An iterator over the replications. It yields a tuple with the data
+            of one bootstrap replication. The first element is a tuple
             containing the data entered in positional arguments and the second
             element is a dict containing the data entered using keywords.
+
+        Raises
+        ------
+        TypeError
+            If ``reps`` is not an int.
+        ValueError
+            If ``reps`` is less than 1. A moving block bootstrap also raises if
+            its block size is larger than the number of observations.
 
         Notes
         -----
@@ -740,13 +764,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Function that computes parameter values.  See Notes for
             requirements.
         reps : int, optional
-            Number of bootstrap replications.
+            Number of bootstrap replications. Must be at least 1.
         method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional
             The method used to construct the interval.  "norm" is identical to
             "var" and "cov", and "bc" is identical to "debiased" and
             "bias-corrected".  See Notes for a description of each method.
         size : float, optional
-            Coverage of confidence interval.
+            Coverage of confidence interval. Must be strictly between 0 and 1.
         tail : {"two", "upper", "lower"}, optional
             The tail of the interval.  When tail is "lower", all upper bounds
             are inf.  Similarly, "upper" sets all lower bounds to -inf.
@@ -773,7 +797,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             eliminates the need for a nested bootstrap.
         studentize_reps : int, optional
             Number of bootstraps to use in the inner bootstrap when using the
-            studentized bootstrap.  Ignored when ``std_err_func`` is provided.
+            studentized bootstrap.  Its value is ignored, but it must be an int,
+            when ``std_err_func`` is provided or ``method`` is not
+            "studentized". Otherwise it must be at least 1.
 
         Returns
         -------
@@ -782,6 +808,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             row 1 contains the upper bounds.  Each column corresponds to a
             parameter. When tail is 'lower', all upper bounds are inf.
             Similarly, 'upper' sets all lower bounds to -inf.
+
+        Raises
+        ------
+        TypeError
+            If ``func`` or ``std_err_func`` is not callable, ``reps`` or
+            ``studentize_reps`` is not an int, ``size`` is not a number,
+            ``reuse`` is not a bool, ``method``, ``tail`` or ``sampling`` is not
+            a str, or ``extra_kwargs`` is not a dict.
+        ValueError
+            If ``reps`` is less than 1, ``size`` is not in (0, 1),
+            ``studentize_reps`` is less than 1 when it is used, ``method``,
+            ``tail`` or ``sampling`` is not one of the options, or
+            ``extra_kwargs`` has a key that is the name of bootstrapped data.
 
         Notes
         -----
@@ -1074,7 +1113,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Function that computes parameter values.  See Notes for
             requirements.
         reps : int, optional
-            Number of bootstrap replications.
+            Number of bootstrap replications. Must be at least 1.
         extra_kwargs : dict, optional
             Extra keyword arguments to use when calling func.  Must not
             conflict with keyword arguments used to initialize bootstrap.
@@ -1084,6 +1123,15 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         ndarray
             The reps by nparam array of computed function values where each row
             corresponds to a bootstrap iteration.
+
+        Raises
+        ------
+        TypeError
+            If ``func`` is not callable, ``reps`` is not an int, or
+            ``extra_kwargs`` is not a dict.
+        ValueError
+            If ``reps`` is less than 1, or ``extra_kwargs`` has a key that is
+            the name of bootstrapped data.
 
         Notes
         -----
@@ -1202,7 +1250,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Callable function that returns the statistic of interest as a
             1-d array.
         reps : int, optional
-            Number of bootstrap replications.
+            Number of bootstrap replications. Must be at least 1.
         recenter : bool, optional
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
@@ -1214,6 +1262,15 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         -------
         ndarray
             Bootstrap covariance estimator.
+
+        Raises
+        ------
+        TypeError
+            If ``func`` is not callable, ``reps`` is not an int, ``recenter``
+            is not a bool, or ``extra_kwargs`` is not a dict.
+        ValueError
+            If ``reps`` is less than 1, or ``extra_kwargs`` has a key that is
+            the name of bootstrapped data.
 
         Notes
         -----
@@ -1298,7 +1355,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Callable function that returns the statistic of interest as a
             1-d array.
         reps : int, optional
-            Number of bootstrap replications.
+            Number of bootstrap replications. Must be at least 1.
         recenter : bool, optional
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
@@ -1310,6 +1367,15 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         -------
         ndarray
             Bootstrap variance estimator.
+
+        Raises
+        ------
+        TypeError
+            If ``func`` is not callable, ``reps`` is not an int, ``recenter``
+            is not a bool, or ``extra_kwargs`` is not a dict.
+        ValueError
+            If ``reps`` is less than 1, or ``extra_kwargs`` has a key that is
+            the name of bootstrapped data.
 
         Notes
         -----
@@ -1417,13 +1483,13 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     Parameters
     ----------
     *args : ndarray, Series or DataFrame
-        Positional arguments to bootstrap.
+        Positional arguments to bootstrap. Each must have at least one row.
     seed : int, Generator or RandomState, optional
-        Seed to use to ensure reproducible results. If an int, passes the
-        value to ``np.random.default_rng``. If None, a fresh
-        Generator is constructed with system-provided entropy.
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
     **kwargs : ndarray, Series or DataFrame
-        Keyword arguments to bootstrap.
+        Keyword arguments to bootstrap. Each must have at least one row.
 
     Attributes
     ----------
@@ -1434,6 +1500,16 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         Tuple containing the positional arguments (in the order entered).
     kw_data : dict
         Dictionary containing the keyword arguments.
+
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, or ``seed`` is not
+        None, a non-negative int, a Generator or a RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, ``seed`` is a negative
+        int, or a keyword argument has the name of an attribute or method of
+        the bootstrap.
 
     See Also
     --------
@@ -1451,6 +1527,10 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
 
     Data entered using keyword arguments is directly accessible as an
     attribute.
@@ -1615,13 +1695,13 @@ class CircularBlockBootstrap(IIDBootstrap):
     block_size : int
         Size of block to use. Must be an integer that is at least 1.
     *args : ndarray, Series or DataFrame
-        Positional arguments to bootstrap.
+        Positional arguments to bootstrap. Each must have at least one row.
     seed : int, Generator or RandomState, optional
-        Seed to use to ensure reproducible results. If an int, passes the
-        value to ``np.random.default_rng``. If None, a fresh
-        Generator is constructed with system-provided entropy.
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
     **kwargs : ndarray, Series or DataFrame
-        Keyword arguments to bootstrap.
+        Keyword arguments to bootstrap. Each must have at least one row.
 
     Attributes
     ----------
@@ -1632,6 +1712,18 @@ class CircularBlockBootstrap(IIDBootstrap):
         Tuple containing the positional arguments (in the order entered).
     kw_data : dict
         Dictionary containing the keyword arguments.
+
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, ``block_size`` is
+        not an int, or ``seed`` is not None, a non-negative int, a Generator or a
+        RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, the inputs do not have
+        the same number of rows, ``block_size`` is less than 1, ``seed`` is a
+        negative int, or a keyword argument has the name of an attribute or
+        method of the bootstrap.
 
     See Also
     --------
@@ -1644,6 +1736,10 @@ class CircularBlockBootstrap(IIDBootstrap):
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
 
     Data entered using keyword arguments is directly accessible as an
     attribute.
@@ -1785,13 +1881,13 @@ class StationaryBootstrap(CircularBlockBootstrap):
         Average size of block to use. Can be any number that is at least 1,
         for example, the value estimated by ``optimal_block_length``.
     *args : ndarray, Series or DataFrame
-        Positional arguments to bootstrap.
+        Positional arguments to bootstrap. Each must have at least one row.
     seed : int, Generator or RandomState, optional
-        Seed to use to ensure reproducible results. If an int, passes the
-        value to ``np.random.default_rng``. If None, a fresh
-        Generator is constructed with system-provided entropy.
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
     **kwargs : ndarray, Series or DataFrame
-        Keyword arguments to bootstrap.
+        Keyword arguments to bootstrap. Each must have at least one row.
 
     Attributes
     ----------
@@ -1802,6 +1898,18 @@ class StationaryBootstrap(CircularBlockBootstrap):
         Tuple containing the positional arguments (in the order entered).
     kw_data : dict
         Dictionary containing the keyword arguments.
+
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, ``block_size`` is
+        not an int or a float, or ``seed`` is not None, a non-negative int, a Generator or a
+        RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, the inputs do not have
+        the same number of rows, ``block_size`` is less than 1 or not finite, ``seed`` is a
+        negative int, or a keyword argument has the name of an attribute or
+        method of the bootstrap.
 
     See Also
     --------
@@ -1814,6 +1922,10 @@ class StationaryBootstrap(CircularBlockBootstrap):
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
 
     Data entered using keyword arguments is directly accessible as an
     attribute.
@@ -1883,15 +1995,17 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Parameters
     ----------
     block_size : int
-        Size of block to use. Must be an integer that is at least 1.
+        Size of block to use. Must be an integer that is at least 1. Blocks do
+        not wrap around, so the block size cannot be larger than the number of
+        observations, which is checked when the iteration starts.
     *args : ndarray, Series or DataFrame
-        Positional arguments to bootstrap.
+        Positional arguments to bootstrap. Each must have at least one row.
     seed : int, Generator or RandomState, optional
-        Seed to use to ensure reproducible results. If an int, passes the
-        value to ``np.random.default_rng``. If None, a fresh
-        Generator is constructed with system-provided entropy.
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
     **kwargs : ndarray, Series or DataFrame
-        Keyword arguments to bootstrap.
+        Keyword arguments to bootstrap. Each must have at least one row.
 
     Attributes
     ----------
@@ -1902,6 +2016,19 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         Tuple containing the positional arguments (in the order entered).
     kw_data : dict
         Dictionary containing the keyword arguments.
+
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, ``block_size`` is
+        not an int, or ``seed`` is not None, a non-negative int, a Generator or a
+        RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, the inputs do not have
+        the same number of rows, ``block_size`` is less than 1 (or, when the
+        iteration starts, larger than the number of observations), ``seed`` is a
+        negative int, or a keyword argument has the name of an attribute or
+        method of the bootstrap.
 
     See Also
     --------
@@ -1916,6 +2043,10 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     -----
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
 
     Data entered using keyword arguments is directly accessible as an
     attribute.
