@@ -965,7 +965,8 @@ class VolatilityProcess(metaclass=ABCMeta):
             2-d array containing columns of lower and upper bounds.
         start : int, optional
             Index of the first observation to use as the starting point for
-            the forecast.  Default is len(resids).
+            the forecast, between 0 and ``len(resids)``.  Default is
+            ``len(resids) - 1``.
         horizon : int, optional
             Forecast horizon.  Must be 1 or larger.  Forecasts are produced
             for horizons in [1, horizon].
@@ -973,7 +974,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             Method to use when producing the forecast. The default is analytic.
         simulations : int, optional
             Number of simulations to run when computing the forecast using
-            either simulation or bootstrap.
+            either simulation or bootstrap. Must be 1 or larger.
         rng : callable, optional
             Callable random number generator required if method is
             'simulation'. Must take a single shape input and return random
@@ -985,7 +986,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             standardized distribution, which weights the variance in the expected
             value of the asymmetric terms of analytic forecasts. The default, 0.5,
             is exact for symmetric distributions. Only used by processes with an
-            asymmetric term when method is 'analytic'.
+            asymmetric term when method is 'analytic'. Must be in [0, 1].
 
         Returns
         -------
@@ -997,8 +998,18 @@ class VolatilityProcess(metaclass=ABCMeta):
         ------
         NotImplementedError
             * If method is not supported
+        TypeError
+            * If ``start``, ``horizon`` or ``simulations`` is not an integer
+            * If ``method`` is not a string
+            * If ``rng`` is not callable, or is missing when the method is
+              'simulation'
+            * If ``random_state`` is not a RandomState or None
+            * If ``asym_weight`` is not a real number
         ValueError
             * If the method is not known
+            * If ``start`` is not in [0, len(resids)], ``horizon`` or
+              ``simulations`` is smaller than 1, or ``asym_weight`` is not in
+              [0, 1]
 
         Notes
         -----
