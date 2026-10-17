@@ -204,7 +204,7 @@ class TestUnitRoot:
 
     def test_dfgls_bad_trend(self):
         dfgls = DFGLS(self.inflation, trend="ct", method="bic", max_lags=3)
-        with pytest.raises(ValueError, match=r"trend not understood"):
+        with pytest.raises(ValueError, match=r"trend must be one of "):
             DFGLS(self.inflation, method="bic", max_lags=3, trend="n")
 
         assert dfgls != 0.0
@@ -239,7 +239,7 @@ class TestUnitRoot:
             ADF(self.inflation, lags=-1)
 
     def test_invalid_determinstic(self):
-        with pytest.raises(ValueError, match=r"trend not understood"):
+        with pytest.raises(ValueError, match=r"trend must be one of "):
             ADF(self.inflation, trend="bad-value")
 
     def test_variance_ratio(self):
@@ -454,7 +454,9 @@ def test_unknown_method():
     y = np.cumsum(rnd.standard_normal(250))
     with pytest.raises(ValueError, match=r"method must be one"):
         assert np.isfinite(ADF(y, method="unknown").stat)
-    with pytest.raises(TypeError, match=r"method must be a string"):
+    with pytest.raises(
+        TypeError, match=r"method must be one of 'aic', 'bic', 't-stat' or 'maic'"
+    ):
         assert np.isfinite(ADF(y, method=1).stat)
 
 
@@ -485,7 +487,7 @@ def test_mackinnonp_errors():
         ValueError, match=r"Cointegration results \(num_unit_roots > 1\)"
     ):
         mackinnonp(-1.0, regression="c", num_unit_roots=2, dist_type="ADF-z")
-    with pytest.raises(ValueError, match=r"Unknown test type unknown"):
+    with pytest.raises(ValueError, match=r"dist_type must be one of "):
         mackinnonp(-1.0, dist_type="unknown")
 
 
@@ -501,9 +503,9 @@ def test_mackinnonp_large():
 
 
 def test_mackinnoncrit_errors():
-    with pytest.raises(ValueError, match=r"regression keyword ttc not understood"):
+    with pytest.raises(ValueError, match=r"regression must be one of "):
         mackinnoncrit(regression="ttc")
-    with pytest.raises(ValueError, match=r"Unknown test type unknown"):
+    with pytest.raises(ValueError, match=r"dist_type must be one of "):
         mackinnoncrit(dist_type="unknown")
     cv_50 = mackinnoncrit(nobs=50)
     cv_inf = mackinnoncrit()
@@ -684,7 +686,7 @@ def test_bw_selection():
     bw_qs = round(auto_bandwidth(REAL_TIME_SERIES, kernel="qs"), 6)
     assert_allclose(bw_qs, TRUE_BW_FROM_R_QS)
 
-    with pytest.raises(ValueError, match=r"Unknown kernel"):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(
@@ -709,7 +711,7 @@ def test_bw_selection_scale_invariant(kernel, expected):
 
 
 def test_invalid_trend():
-    with pytest.raises(ValueError, match=r"trend not understood"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         ADF(np.random.default_rng(1234).standard_normal(100), trend="unknown")
 
 

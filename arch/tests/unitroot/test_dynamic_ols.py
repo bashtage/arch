@@ -54,15 +54,17 @@ def test_invalid_input(data):
     y, x = data
     with pytest.raises(ValueError, match=r"method must be one of"):
         DynamicOLS(y, x, method="unknown")
-    with pytest.raises(ValueError, match=r"Unknown trend. Must be one"):
+    with pytest.raises(
+        ValueError, match=r"trend must be one of 'n', 'c', 'ct' or 'ctt'"
+    ):
         DynamicOLS(y, x, trend="cttt")
 
 
 def test_invalid_fit_options(data):
     y, x = data
-    with pytest.raises(ValueError, match=r"kernel is not a "):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         DynamicOLS(y, x).fit(kernel="unknown")
-    with pytest.raises(ValueError, match=r"Unknown cov_type"):
+    with pytest.raises(ValueError, match=r"cov_type must be one of "):
         DynamicOLS(y, x).fit(cov_type="unknown")
 
 

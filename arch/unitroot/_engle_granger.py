@@ -20,6 +20,7 @@ from arch.unitroot.critical_values.engle_granger import (
     TAU_STAR,
 )
 from arch.unitroot.unitroot import ADF, TREND_DESCRIPTION
+from arch.utility._validation import check_option
 
 
 def engle_granger(
@@ -29,7 +30,7 @@ def engle_granger(
     *,
     lags: int | None = None,
     max_lags: int | None = None,
-    method: Literal["aic", "bic", "t-stat"] = "bic",
+    method: Literal["aic", "bic", "t-stat", "maic"] = "bic",
     low_memory: bool | None = None,
 ) -> "EngleGrangerTestResults":
     r"""
@@ -111,10 +112,10 @@ def engle_granger(
     stat = adf.stat
     nobs = resid.shape[0] - adf.lags - 1
     num_x = setup.x.shape[1]
-    cv = engle_granger_cv(trend, num_x, nobs)
-    pv = engle_granger_pval(stat, trend, num_x)
+    cv = engle_granger_cv(setup.trend, num_x, nobs)
+    pv = engle_granger_pval(stat, setup.trend, num_x)
     return EngleGrangerTestResults(
-        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=trend
+        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=setup.trend
     )
 
 
@@ -267,10 +268,7 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     Series
         The critical values for 1, 5 and 10%
     """
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"Trend must by one of: {valid}")
+    trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
     if not 1 <= num_x <= 12:
         raise ValueError(
             "The number of cross-sectional variables must be between 1 and "
@@ -304,10 +302,7 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     Series
         The critical values for 1, 5 and 10%
     """
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"Trend must by one of: {valid}")
+    trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
     if not 1 <= num_x <= 12:
         raise ValueError(
             "The number of cross-sectional variables must be between 1 and "

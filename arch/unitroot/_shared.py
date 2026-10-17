@@ -5,6 +5,7 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
+from arch.utility._validation import check_option
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -40,18 +41,14 @@ def _check_cointegrating_regression(
         x_df = pd.DataFrame(x, columns=cols, index=y.index)
     else:
         x_df = x
-    trend_name = trend.lower()
-    if trend_name.lower() not in supported_trends:
-        trends = ",".join([f'"{st}"' for st in supported_trends])
-        raise ValueError(f"Unknown trend. Must be one of {{{trends}}}")
+    trend_name = check_option("trend", trend, supported_trends)
     return CointegrationSetup(y, x_df, cast("UnitRootTrend", trend_name))
 
 
 def _cross_section(
     y: ArrayLike1D | ArrayLike2D, x: ArrayLike2D, trend: UnitRootTrend
 ) -> RegressionResults:
-    if trend not in ("n", "c", "ct", "ctt"):
-        raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')
+    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     y = ensure1d(y, "y", True)
     x = ensure2d(x, "x")
 

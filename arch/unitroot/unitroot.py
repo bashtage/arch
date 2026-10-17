@@ -77,6 +77,7 @@ from arch.unitroot.critical_values.dickey_fuller import (
 )
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
+from arch.utility._validation import check_option
 from arch.utility.array import (
     AbstractDocStringInheritor,
     ensure1d,
@@ -544,9 +545,7 @@ class UnitRootTest(metaclass=ABCMeta):
         if self._lags is not None and self._lags < 0:
             raise ValueError("lags must be non-negative.")
         self._valid_trends = list(valid_trends)
-        if trend not in self.valid_trends:
-            raise ValueError("trend not understood")
-        self._trend = trend
+        self._trend = check_option("trend", trend, self._valid_trends)
         self._stat: float | None = None
         self._critical_values: dict[str, float] = {}
         self._pvalue: float | None = None
@@ -587,13 +586,19 @@ class UnitRootTest(metaclass=ABCMeta):
             self._compute_statistic()
 
     def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat", "maic"]:
-        if not isinstance(method, str):
-            raise TypeError("method must be a string")
-        method = method.lower()
-        if method in ("t", "tstat", "t-stat"):
-            return "t-stat"
-        elif method not in ("aic", "bic", "maic"):
-            raise ValueError("method must be one of 'aic', 'bic', 't-stat' or 'maic'")
+        method = check_option(
+            "method",
+            method,
+            {
+                "aic": "aic",
+                "bic": "bic",
+                "t-stat": "t-stat",
+                "maic": "maic",
+                "t": "t-stat",
+                "tstat": "t-stat",
+            },
+            display=("aic", "bic", "t-stat", "maic"),
+        )
         return cast("Literal['aic', 'bic', 't-stat', 'maic']", method)
 
     @property
@@ -974,7 +979,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if low_memory is None:
             self._low_memory = True if self.y.shape[0] >= 1e5 else False
         self._test_name = "Dickey-Fuller GLS"
-        if trend == "c":
+        if self._trend == "c":
             self._c = -7.0
         else:
             self._c = -13.5
@@ -1156,7 +1161,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     ) -> None:
         valid_trends = ("n", "c", "ct")
         super().__init__(y, lags, trend, valid_trends)
-        self._test_type = test_type
+        self._test_type = check_option("test_type", test_type, ("tau", "rho"))
         self._stat_rho = None
         self._stat_tau = None
         self._test_name = "Phillips-Perron Test"
@@ -1866,8 +1871,16 @@ def mackinnonp(
     and the "n" version of the ADF z test statistic were computed following
     the methodology of MacKinnon (1994).
     """
-    dist_type = cast("Literal['adf-t', 'adf-z', 'dfgls']", dist_type.lower())
-    if num_unit_roots > 1 and dist_type.lower() != "adf-t":
+    dist_type = cast(
+        "Literal['adf-t', 'adf-z', 'dfgls']",
+        check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls")),
+    )
+    valid_regression = ("c", "ct") if dist_type == "dfgls" else ("c", "n", "ct", "ctt")
+    regression = cast(
+        "Literal['c', 'n', 'ct', 'ctt']",
+        check_option("regression", regression, valid_regression),
+    )
+    if num_unit_roots > 1 and dist_type != "adf-t":
         raise ValueError(
             "Cointegration results (num_unit_roots > 1) are"
             "only available for ADF-t values"
@@ -1884,14 +1897,12 @@ def mackinnonp(
         starstat = adf_z_star[regression]
         small_p = adf_z_small_p[regression]
         large_p = adf_z_large_p[regression]
-    elif dist_type == "dfgls":
+    else:  # dist_type == "dfgls"
         maxstat = dfgls_tau_max[regression]
         minstat = dfgls_tau_min[regression]
         starstat = dfgls_tau_star[regression]
         small_p = dfgls_small_p[regression]
         large_p = dfgls_large_p[regression]
-    else:
-        raise ValueError(f"Unknown test type {dist_type}")
 
     if stat > maxstat:
         return 1.0
@@ -1958,12 +1969,14 @@ def mackinnoncrit(
         Queen's University, Dept of Economics Working Papers 1227.
         https://ideas.repec.org/p/qed/wpaper/1227.html
     """
-    lower_dist_type = dist_type.lower()
-    valid_regression = ["c", "ct", "n", "ctt"]
+    lower_dist_type = check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls"))
+    valid_regression = ("c", "ct", "n", "ctt")
     if lower_dist_type == "dfgls":
-        valid_regression = ["c", "ct"]
-    if regression not in valid_regression:
-        raise ValueError(f"regression keyword {regression} not understood")
+        valid_regression = ("c", "ct")
+    regression = cast(
+        "Literal['c', 'n', 'ct', 'ctt']",
+        check_option("regression", regression, valid_regression),
+    )
 
     if lower_dist_type == "adf-t":
         asymptotic_cv = tau_2010[regression][num_unit_roots - 1, :, 0]
@@ -1971,11 +1984,9 @@ def mackinnoncrit(
     elif lower_dist_type == "adf-z":
         poly_coef = array(adf_z_cv_approx[regression]).T
         asymptotic_cv = array(adf_z_cv_approx[regression])[:, 0]
-    elif lower_dist_type == "dfgls":
+    else:  # lower_dist_type == "dfgls"
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
-    else:
-        raise ValueError(f"Unknown test type {dist_type}")
 
     if nobs is inf:
         return asymptotic_cv
@@ -2011,6 +2022,7 @@ def kpss_crit(
     KPSS test statistic distribution using 100,000,000 replications and 2000
     data points.
     """
+    trend = cast("Literal['c', 'ct']", check_option("trend", trend, ("c", "ct")))
     table = kpss_critical_values[trend]
     y = table[:, 0]
     x = table[:, 1]
@@ -2051,18 +2063,21 @@ def auto_bandwidth(
     if y_arr.shape[0] < 2:
         raise ValueError("Data must contain more than one observation")
 
-    lower_kernel = kernel.lower()
-    if lower_kernel in ("ba", "bartlett", "nw"):
-        kernel = "ba"
-        n_power = 2 / 9
-    elif lower_kernel in ("pa", "parzen", "gallant"):
-        kernel = "pa"
-        n_power = 4 / 25
-    elif lower_kernel in ("qs", "andrews"):
-        kernel = "qs"
-        n_power = 2 / 25
-    else:
-        raise ValueError("Unknown kernel")
+    kernel = check_option(
+        "kernel",
+        kernel,
+        {
+            "ba": "ba",
+            "bartlett": "ba",
+            "nw": "ba",
+            "pa": "pa",
+            "parzen": "pa",
+            "gallant": "pa",
+            "qs": "qs",
+            "andrews": "qs",
+        },
+    )
+    n_power = {"ba": 2 / 9, "pa": 4 / 25, "qs": 2 / 25}[kernel]
 
     n = int(4 * ((len(y_arr) / 100) ** n_power))
     sig = [float(y_arr[i:] @ y_arr[: len(y_arr) - i]) for i in range(n + 1)]
