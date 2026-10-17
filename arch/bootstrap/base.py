@@ -381,16 +381,28 @@ def _check_extra_kwargs(
     extra_kwargs : dict, default None
         Extra keyword arguments
 
+    Returns
+    -------
+    dict or None
+        extra_kwargs, unchanged
+
     Raises
     ------
+    TypeError
+        If extra_kwargs is not a mapping or None, or has keys that are not str
     ValueError
         If extra_kwargs contains a key used for the data in kwargs
     """
-    if extra_kwargs is not None:
-        if any(k in kwargs for k in extra_kwargs):
-            raise ValueError(
-                "extra_kwargs contains keys used for variable names in the bootstrap"
-            )
+    extra = check_instance("extra_kwargs", extra_kwargs, Mapping, allow_none=True)
+    if extra is None:
+        return None
+    rule = "a dict with str keys that are not names of the bootstrapped data"
+    for key in extra:
+        if not isinstance(key, str):
+            _fail(TypeError, "extra_kwargs", rule, f"the key {key!r} (dict)")
+        if key in kwargs:
+            _fail(ValueError, "extra_kwargs", rule, f"the key {key!r} (dict)")
+    return extra
 
 
 def _add_extra_kwargs(
@@ -631,7 +643,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         use_seed : bool, optional
             This argument is not used. The generator is always reset to the
             state it had when the bootstrap was created.
+
+        Raises
+        ------
+        TypeError
+            If ``use_seed`` is not a bool.
         """
+        check_bool("use_seed", use_seed)
         self._index = np.arange(self._num_items, dtype=np.int64)
         self._resample()
         self.state = self._initial_state
@@ -677,6 +695,22 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Note this is a generic example and so the class used should be the
             name of the required bootstrap.
         """
+        reps = check_int("reps", reps, lower=1)
+        self._check_sampling()
+        return self._iterate(reps)
+
+    def _check_sampling(self) -> None:
+        """
+        Check that the bootstrap can draw samples from its data
+
+        This is called when the iteration starts, once for all replications,
+        and is overridden by bootstraps with a condition on the data and the
+        parameters that is not a condition of creating the bootstrap.
+        """
+
+    def _iterate(
+        self, reps: int
+    ) -> PyGenerator[tuple[tuple[ArrayLike, ...], dict[str, ArrayLike]], None, None]:
         for _ in range(reps):
             self._index = self.update_indices()
             yield self._resample()
@@ -817,15 +851,19 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         >>> ci = bs.conf_int(func, 1000)
         """
         studentized = "studentized"
-        if not 0.0 < size < 1.0:
-            raise ValueError("size must be strictly between 0 and 1")
-        tail_name = check_option("tail", tail, ("two", "lower", "upper"))
+        check_callable("func", func)
+        reps = check_int("reps", reps, lower=1)
         method = check_option("method", method, _CONF_INT_METHODS)
-        if method == studentized and std_err_func is None and studentize_reps < 1:
-            raise ValueError(
-                "studentize_reps must be at least 1 when std_err_func is not "
-                "provided and method is 'studentized'."
-            )
+        size = check_float("size", size, lower=0.0, upper=1.0, inclusive="neither")
+        tail_name = check_option("tail", tail, ("two", "lower", "upper"))
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
+        reuse = check_bool("reuse", reuse)
+        std_err_func = check_callable("std_err_func", std_err_func, allow_none=True)
+        # The value is ignored, and so can be anything, unless it is used
+        used = method == studentized and std_err_func is None
+        studentize_reps = check_int(
+            "studentize_reps", studentize_reps, lower=1 if used else None
+        )
         studentize_reps = studentize_reps if method == studentized else 0
         sampling = check_option(
             "sampling",
@@ -1071,6 +1109,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         ...     return y.mean(0)
         >>> results = bs.apply(func, 100)
         """
+        check_callable("func", func)
+        reps = check_int("reps", reps, lower=1)
         _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         base = np.asarray(func(*self._args, **kwargs))
@@ -1103,7 +1143,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         elif sampling == "semiparametric":
             semi = True
 
-        _check_extra_kwargs(self._kwargs, extra_kwargs)
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         # Allows lists, tuples, scalars and 0-d arrays
         base = np.asarray(func(*self._args, **kwargs))
@@ -1217,6 +1256,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Note this is a generic example and so the class used should be the
             name of the required bootstrap.
         """
+        check_callable("func", func)
+        reps = check_int("reps", reps, lower=1)
+        recenter = check_bool("recenter", recenter)
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         return self._bootstrap_cov(func, reps, recenter, extra_kwargs)
 
     def _bootstrap_cov(
@@ -1309,6 +1352,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Note this is a generic example and so the class used should be the
             name of the required bootstrap.
         """
+        check_callable("func", func)
+        reps = check_int("reps", reps, lower=1)
+        recenter = check_bool("recenter", recenter)
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
         self._construct_bootstrap_estimates(func, reps, extra_kwargs)
         base, results = self._base, self._results
         assert results is not None
@@ -1511,7 +1558,13 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         use_seed : bool, optional
             This argument is not used. The generator is always reset to the
             state it had when the bootstrap was created.
+
+        Raises
+        ------
+        TypeError
+            If ``use_seed`` is not a bool.
         """
+        check_bool("use_seed", use_seed)
         pos_indices: list[Int64Array1D] = [
             np.arange(self._num_arg_items[i], dtype=np.int64)
             for i in range(self._num_args)
