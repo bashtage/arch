@@ -1080,6 +1080,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = cast("float", backcast)
         if self.sigma_power.shape[0] < nobs:
             self.sigma_power = np.empty(nobs)
@@ -1137,6 +1138,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + len(self.lags))
         self.backcast = cast("float", backcast)
 
     def update(
@@ -1232,6 +1234,8 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        # omega, alpha, gamma (if asym) and theta
+        _check_vector("parameters", parameters, 3 + int(self.asym))
         self.update_weights(parameters[2 + self.asym])
         alpha = parameters[1]
         if self.asym:
@@ -1376,6 +1380,10 @@ class FIAPARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        # omega, phi (if p), d, beta (if q), gamma (if o) and delta (if estimated)
+        _check_vector(
+            "parameters", parameters, 2 + self.p + self.q + self.o + int(self.est_delta)
+        )
         self.lam = figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         # The backcast is a variance, so convert it to sigma ** delta. It is
         # stored on this scale
@@ -1481,6 +1489,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array1D,
         nobs: int,
     ) -> None:
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = cast("float", backcast)
         self._resize(nobs)
 

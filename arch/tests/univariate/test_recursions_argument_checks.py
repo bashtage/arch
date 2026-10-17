@@ -221,3 +221,85 @@ def test_figarch_initialize_update_valid(rec):
     bounds = np.ones((NOBS, 2)) * np.array([1e-8, 1e8])
     updater._update_tester(0, params, np.zeros(NOBS), sigma2, bounds)
     assert_allclose(sigma2[0], omega + sum(delta) * backcast, rtol=1e-12)
+
+
+def _garch(rec):
+    return rec.GARCHUpdater(1, 0, 1, 2.0)
+
+
+def _harch(rec):
+    return rec.HARCHUpdater(np.array([1, 5], dtype=np.int32))
+
+
+def _midas(rec):
+    return rec.MIDASUpdater(5, False)
+
+
+def _midas_asym(rec):
+    return rec.MIDASUpdater(5, True)
+
+
+def _egarch(rec):
+    return rec.EGARCHUpdater(1, 1, 1)
+
+
+def _fiaparch(rec):
+    return rec.FIAPARCHUpdater(1, 1, 1, 10, True, 1.5)
+
+
+def _fiaparch_fixed_delta(rec):
+    return rec.FIAPARCHUpdater(1, 0, 0, 10, False, 1.5)
+
+
+PARAMETER_UPDATERS = [
+    pytest.param(_garch, 3, id="GARCH"),
+    pytest.param(_harch, 3, id="HARCH"),
+    pytest.param(_midas, 3, id="MIDAS"),
+    pytest.param(_midas_asym, 4, id="MIDAS-asym"),
+    pytest.param(_egarch, 4, id="EGARCH"),
+    pytest.param(_fiaparch, 6, id="FIAPARCH"),
+    pytest.param(_fiaparch_fixed_delta, 3, id="FIAPARCH-fixed-delta"),
+]
+
+
+@pytest.mark.parametrize(("make", "size"), PARAMETER_UPDATERS)
+def test_initialize_update_parameters(rec, make, size):
+    # The parameters are the view of a longer buffer, so that an unchecked read past
+    # the end would not fail
+    updater = make(rec)
+    rule = f"{VECTOR} with at least {size} elements"
+    with pytest.raises(TypeError, match=_message("parameters", rule, "None")):
+        updater.initialize_update(None, 0.5, NOBS)
+    buffer = np.full(size + 3, 0.1)
+    for length in (0, size - 1):
+        received = f"shape ({length},) (ndarray)"
+        with pytest.raises(ValueError, match=_message("parameters", rule, received)):
+            updater.initialize_update(buffer[:length], 0.5, NOBS)
+    # The exact length and a longer vector are accepted
+    updater.initialize_update(buffer[:size], 0.5, NOBS)
+    updater.initialize_update(buffer, 0.5, NOBS)
+
+
+def _t0(updater, params, backcast):
+    updater.initialize_update(params, backcast, NOBS)
+    sigma2 = np.zeros(NOBS)
+    bounds = np.ones((NOBS, 2)) * np.array([1e-8, 1e8])
+    updater._update_tester(0, params, np.zeros(NOBS), sigma2, bounds)
+    return sigma2[0]
+
+
+def test_valid_parameters_first_variance(rec):
+    # At t = 0 every lag is before the sample and takes the value of the backcast
+    bc = 0.7
+    # GARCH(1, 0, 1): omega + (alpha + beta) * backcast
+    value = _t0(_garch(rec), np.array([0.1, 0.2, 0.3]), bc)
+    assert_allclose(value, 0.1 + 0.5 * bc, rtol=1e-12)
+    # HARCH([1, 5]): the weights divided by the lags are applied to lags times
+    value = _t0(_harch(rec), np.array([0.1, 0.2, 0.3]), bc)
+    assert_allclose(value, 0.1 + 0.5 * bc, rtol=1e-12)
+    # MIDAS: the weights sum to 1
+    value = _t0(_midas(rec), np.array([0.1, 0.4, 0.5]), bc)
+    assert_allclose(value, 0.1 + 0.4 * bc, rtol=1e-12)
+    # EGARCH(1, 1, 1): only the beta term is available, it multiplies the backcast
+    value = _t0(_egarch(rec), np.array([0.1, 0.2, 0.3, 0.4]), np.log(bc))
+    assert_allclose(value, np.exp(0.1 + 0.4 * np.log(bc)), rtol=1e-12)

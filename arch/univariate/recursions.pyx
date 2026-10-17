@@ -980,6 +980,7 @@ cdef class GARCHUpdater(VolatilityUpdater):
             object backcast,
             Py_ssize_t nobs
     ):
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = backcast
         if self.sigma_power.shape[0] < nobs:
             self.sigma_power = np.empty(nobs)
@@ -1049,6 +1050,7 @@ cdef class HARCHUpdater(VolatilityUpdater):
             object backcast,
             Py_ssize_t nobs
     ):
+        _check_vector("parameters", parameters, 1 + self.lags.shape[0])
         self.backcast = backcast
 
     cdef void update(self,
@@ -1194,6 +1196,8 @@ cdef class MIDASUpdater(VolatilityUpdater):
     ):
         cdef double alpha, gamma
 
+        # omega, alpha, gamma (if asym) and theta
+        _check_vector("parameters", parameters, 3 + <int>self.asym)
         self.update_weights(parameters[2 + <int>self.asym])
         alpha = parameters[1]
         if self.asym:
@@ -1389,6 +1393,10 @@ cdef class FIAPARCHUpdater(VolatilityUpdater):
             Py_ssize_t nobs
     ):
         cdef double delta
+        # omega, phi (if p), d, beta (if q), gamma (if o) and delta (if estimated)
+        _check_vector(
+            "parameters", parameters, 2 + self.p + self.q + self.o + self.est_delta
+        )
         self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         # The backcast is a variance, so convert it to sigma ** delta. It is
         # stored on this scale
@@ -1561,6 +1569,7 @@ cdef class EGARCHUpdater(VolatilityUpdater):
             object backcast,
             Py_ssize_t nobs
     ):
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
         self.backcast = backcast
         self._resize(nobs)
 
