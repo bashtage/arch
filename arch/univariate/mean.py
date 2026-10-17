@@ -859,6 +859,20 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         assert self.regressors is not None
         return int(self.regressors.shape[1])
 
+    def _check_initial_value(
+        self, initial_value: float | Float64Array | None
+    ) -> float | Float64Array | None:
+        """Check the initial value of the mean, a scalar or one value for each lag"""
+        if initial_value is None:
+            return None
+        if np.ndim(initial_value) == 0:
+            return check_float("initial_value", initial_value)
+        max_lag = 0 if not self._lags.size else int(np.max(self._lags))
+        return cast(
+            "Float64Array",
+            check_array("initial_value", initial_value, ndim=1, shape=(max_lag,)),
+        )
+
     def _simulate_mean(
         self,
         parameters: Float64Array,
@@ -872,14 +886,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         y = np.zeros(nobs_and_burn)
         if initial_value is None:
             initial_value = 0.0
-        elif not np.isscalar(initial_value):
-            initial_value = np.asarray(
-                ensure1d(initial_value, "initial_value"), dtype=float
-            )
-            if initial_value.shape[0] != max_lag:
-                raise ValueError(
-                    f"initial_value has the wrong shape. Expected {max_lag} values"
-                )
         y[:max_lag] = initial_value
         k_x = x.shape[1]
 
@@ -965,14 +971,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> sim_data = harx.simulate(params, nobs=nobs, burn=burn, x=x)
         """
 
+        nobs = check_int("nobs", nobs, lower=1)
+        burn = check_int("burn", burn, lower=0)
         if x is None:
             x_arr: Float64Array2D = np.empty((nobs + burn, 0))
         else:
-            _x = np.asarray(x, dtype=float)
-            x_arr = _x.reshape((_x.shape[0], -1))
+            # The shape in the message has nobs + burn rows
+            x_arr = check_array("x", x, shape=(nobs + burn, None))
         k_x = x_arr.shape[1]
-        if x_arr.shape[0] != nobs + burn:
-            raise ValueError("x must have nobs + burn rows")
         assert self._lags is not None
         mc = (
             int(self.constant)
@@ -983,12 +989,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
-        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
-        if params.shape[0] != num_params:
-            raise ValueError(
-                "params has the wrong number of elements. "
-                "Expected " + str(num_params) + ", got " + str(params.shape[0])
-            )
+        params = cast(
+            "Float64Array1D", check_array("params", params, ndim=1, shape=(num_params,))
+        )
+        initial_value = self._check_initial_value(initial_value)
+        initial_value_vol = _check_initial_value_vol(initial_value_vol)
 
         dist_params = np.empty(0) if dc == 0 else params[-dc:]
         vol_params = cast("Float64Array1D", params[mc : mc + vc])
@@ -1677,11 +1682,9 @@ class ConstantMean(HARX):
         >>> params = np.concatenate((cm_params, garch_params))
         >>> sim_data = cm.simulate(params, 1000)
         """
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when "
-                "simulating a constant mean process."
-            )
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "constant mean model", nobs, burn, initial_value, x, initial_value_vol
+        )
 
         mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
@@ -1832,12 +1835,10 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "zero mean model", nobs, burn, initial_value, x, initial_value_vol
+        )
         _params = _check_simulation_params(self, params)
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when "
-                "simulating a zero mean process."
-            )
 
         _, vp, dp = self._parse_parameters(_params)
 
@@ -2351,14 +2352,6 @@ class ARCHInMean(ARX):
         y = np.zeros(nobs_and_burn)
         if initial_value is None:
             initial_value = 0.0
-        elif not np.isscalar(initial_value):
-            initial_value = np.asarray(
-                ensure1d(initial_value, "initial_value"), dtype=float
-            )
-            if initial_value.shape[0] != max_lag:
-                raise ValueError(
-                    f"initial_value has the wrong shape. Expected {max_lag} values"
-                )
         y[:max_lag] = initial_value
         k_x = x.shape[1]
 
@@ -2820,21 +2813,10 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> params = np.concatenate((ma_params, garch_params))
         >>> sim_data = ma.simulate(params, 1000)
         """
-        if initial_value is not None or x is not None:
-            raise ValueError(
-                "Both initial value and x must be none when simulating a "
-                "moving average process."
-            )
-        mc = self.num_params
-        vc = self.volatility.num_params
-        dc = self.distribution.num_params
-        params = cast("Float64Array1D", ensure1d(params, "params", series=False))
-        if params.shape[0] != mc + vc + dc:
-            raise ValueError(
-                "params has the wrong number of elements. "
-                f"Expected {mc + vc + dc}, got {params.shape[0]}"
-            )
-        mp, vp, dp = self._parse_parameters(params)
+        nobs, burn, initial_value_vol = _check_simulation_no_dynamics(
+            "moving average model", nobs, burn, initial_value, x, initial_value_vol
+        )
+        mp, vp, dp = self._parse_parameters(_check_simulation_params(self, params))
 
         sim_values = self.volatility.simulate(
             vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol

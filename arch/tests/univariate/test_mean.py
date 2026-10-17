@@ -193,7 +193,7 @@ class TestMeanModel:
         random_state = np.random.RandomState(seed)
         zm.distribution = Normal(seed=random_state)
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"initial_value must be None"):
             zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)
         date_index = pd.date_range("2000-12-31", periods=1000, freq="W")
         cls.y = sim_data.data.values
@@ -216,7 +216,7 @@ class TestMeanModel:
         parameters = np.array([5.0, 1.0])
         cm.simulate(parameters, self.T)
         assert_equal(cm.num_params, 1)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"x must be None"):
             cm.simulate(parameters, self.T, x=np.array(10))
         bounds = cm.bounds()
         assert_equal(bounds, [(-np.inf, np.inf)])
@@ -781,13 +781,11 @@ class TestMeanModel:
         with pytest.raises(ValueError, match=r"Must subclass Distribution"):
             ar.distribution = v
         x = self.rng.randn(1000, 1)
-        with pytest.raises(ValueError, match=r"x must have nobs \+ burn rows"):
+        with pytest.raises(ValueError, match=r"x must be a 2-d array .* \(600, n\)"):
             ar.simulate(np.ones(5), 100, x=x)
-        with pytest.raises(
-            ValueError, match=r"params has the wrong number of elements"
-        ):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(3,\)"):
             ar.simulate(np.ones(5), 100)
-        with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
+        with pytest.raises(ValueError, match=r"initial_value must be a 1-d array"):
             ar.simulate(np.ones(3), 100, initial_value=self.rng.standard_normal(10))
 
         ar.volatility = ConstantVariance()

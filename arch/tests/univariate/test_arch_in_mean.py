@@ -130,7 +130,7 @@ def test_simulate():
     kappa = res.params.iloc[1]
     rescaled_vol = vol / kappa
     np.testing.assert_allclose(rescaled_vol, sim.volatility)
-    with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
+    with pytest.raises(ValueError, match=r"initial_value must be a 1-d array"):
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
 
 

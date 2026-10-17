@@ -269,9 +269,9 @@ def test_simulate_reproducible():
 def test_simulate_errors():
     model = MAMean(lags=2)
     params = np.r_[MA2_PARAMS, 1.0]
-    with pytest.raises(ValueError, match="Both initial value and x must be none"):
+    with pytest.raises(ValueError, match="initial_value must be None"):
         model.simulate(params, 10, initial_value=1.0)
-    with pytest.raises(ValueError, match="Both initial value and x must be none"):
+    with pytest.raises(ValueError, match="x must be None"):
         model.simulate(params, 10, x=np.zeros((510, 1)))
     with pytest.raises(ValueError, match="params has the wrong number of elements"):
         model.simulate(params[:-1], 10)
