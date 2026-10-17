@@ -4,6 +4,7 @@ Table-driven tests of the input validation of the covariance estimators and cov_
 Each row is a call and the error that it must raise, or None for a valid call.
 """
 
+import re
 from typing import Any
 
 import numpy as np
@@ -342,7 +343,8 @@ PW_ROWS: list[Row] = [
         _pwrc,
         {"x": X_LONG, "lags": 1, "center": np.bool_},
         TypeError,
-        r"^center must be True or False; got <class 'numpy.bool'> \(type\)$",
+        # numpy.bool_ is numpy.bool in NumPy 2
+        rf"^center must be True or False; got {re.escape(str(np.bool_))} \(type\)$",
         id="PWRC-center-bool-class",
         name="center",
     ),

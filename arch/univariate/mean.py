@@ -239,8 +239,11 @@ def _check_lags(lags: Any, name: str = "lags", *, allow_2d: bool = True) -> None
             ", or a (2, n) array_like of integers with 1 <= lags[0, j] <= lags[1, j]"
         )
     try:
-        arr = np.asarray(lags)
-    except ValueError:  # Ragged sequences
+        with warnings.catch_warnings():
+            # NumPy < 1.24 warns and returns an object array for a ragged sequence
+            warnings.simplefilter("error")
+            arr = np.asarray(lags)
+    except (ValueError, Warning):  # Ragged sequences
         _fail(ValueError, name, rule, _describe(lags))
     if arr.ndim == 0:
         check_int(name, lags, lower=0)
