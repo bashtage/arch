@@ -2037,9 +2037,9 @@ def mackinnoncrit(
     ----------
     num_unit_roots : int, optional
         The number of series of I(1) series for which the null of
-        non-cointegration is being tested.  For N > 12, the critical values
-        are linearly interpolated (not yet implemented).  For the ADF test,
-        N = 1.
+        non-cointegration is being tested, from 1 to 12.  For the ADF test,
+        N = 1. Values larger than 1 are only available when `dist_type` is
+        "adf-t" and `regression` is not "n".
     regression : {"c", "ct", "ctt", "n"}, optional
         Following MacKinnon (1996), these stand for the type of regression run.
         "c" for constant and no trend, "ct" for constant with a linear trend,
@@ -2048,8 +2048,8 @@ def mackinnoncrit(
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
     nobs : int or float, optional
-        This is the sample size.  If the sample size is numpy.inf, then the
-        asymptotic critical values are returned.
+        This is the sample size, which must be positive.  If the sample size is
+        numpy.inf, then the asymptotic critical values are returned.
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         Type of test statistic.
 
@@ -2057,6 +2057,17 @@ def mackinnoncrit(
     -------
     crit_vals : ndarray
         Three critical values corresponding to 1%, 5% and 10% cut-offs.
+
+    Raises
+    ------
+    TypeError
+        If `num_unit_roots` is not an integer, `nobs` is not a real number or
+        `regression` or `dist_type` is not a str.
+    ValueError
+        If `num_unit_roots` is not between 1 and 12 (1 if `regression` is "n"),
+        `nobs` is not positive or is NaN, `regression` or `dist_type` is not one of
+        the options, or `num_unit_roots` is larger than 1 when `dist_type` is not
+        "adf-t".
 
     Notes
     -----
@@ -2072,13 +2083,11 @@ def mackinnoncrit(
         Queen's University, Dept of Economics Working Papers 1227.
         https://ideas.repec.org/p/qed/wpaper/1227.html
     """
-    lower_dist_type = check_option("dist_type", dist_type, ("adf-t", "adf-z", "dfgls"))
-    valid_regression = ("c", "ct", "n", "ctt")
-    if lower_dist_type == "dfgls":
-        valid_regression = ("c", "ct")
-    regression = cast(
-        "Literal['c', 'n', 'ct', 'ctt']",
-        check_option("regression", regression, valid_regression),
+    lower_dist_type, regression, num_unit_roots = _check_critical_value_options(
+        regression, num_unit_roots, dist_type, 12
+    )
+    nobs = cast(
+        "float", check_float("nobs", nobs, lower=0, inclusive="right", allow_inf=True)
     )
 
     if lower_dist_type == "adf-t":
@@ -2091,8 +2100,9 @@ def mackinnoncrit(
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
 
-    if nobs is inf:
-        return asymptotic_cv
+    if nobs == inf:
+        # Copy so that changing the result does not change the table
+        return asymptotic_cv.copy()
     else:
         # Flip so that highest power to lowest power
         return polyval(poly_coef[::-1], 1.0 / nobs).astype(float)
