@@ -1935,6 +1935,53 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return VarianceForecast(forecasts, paths, shocks)
 
 
+def _check_harch_lags(lags: Any) -> Int32Array:
+    """
+    Check the lags of a HARCH process.
+
+    Parameters
+    ----------
+    lags : int or array_like
+        A positive integer, which selects all lags up to this value, or a non-empty
+        1-d array of positive integers.
+
+    Returns
+    -------
+    ndarray
+        The lags, as an int32 vector.
+
+    Raises
+    ------
+    TypeError
+        If ``lags`` is not an integer or an array of integers.
+    ValueError
+        If ``lags`` is empty, is not 1-d or contains an integer smaller than 1 or
+        larger than the largest int32.
+    """
+    rule = "a positive integer or a non-empty 1-d array of positive integers"
+    try:
+        is_scalar = np.ndim(lags) == 0
+    except ValueError:  # A ragged list
+        _fail(ValueError, "lags", rule, _describe(lags))
+    if is_scalar:
+        failure = None
+        try:
+            count = _check_count("lags", lags, 1)
+        except (TypeError, ValueError) as err:
+            failure = type(err)
+        if failure is not None:
+            _fail(failure, "lags", rule, _describe(lags))
+        return np.arange(1, count + 1, dtype=np.int32)
+    lags_arr = np.asarray(lags)
+    if lags_arr.size == 0:  # An empty list is a float array
+        _fail(ValueError, "lags", rule, _describe(lags))
+    if lags_arr.dtype.kind not in "iu":
+        _fail(TypeError, "lags", rule, _describe(lags))
+    if lags_arr.ndim != 1 or lags_arr.min() < 1 or lags_arr.max() > _INT_MAX:
+        _fail(ValueError, "lags", rule, _describe(lags))
+    return lags_arr.astype(np.int32)
+
+
 class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Heterogeneous ARCH process.
@@ -1980,15 +2027,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
         super().__init__()
-        lags_arr = np.asarray(lags)
-        if lags_arr.ndim == 0:
-            lags_arr = np.arange(1, int(lags_arr) + 1)
-        if lags_arr.ndim != 1 or lags_arr.shape[0] == 0 or np.any(lags_arr < 1):
-            raise ValueError(
-                "lags must be a positive integer or a non-empty 1-d array-like of "
-                "positive integers."
-            )
-        self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
+        lags_arr = _check_harch_lags(lags)
+        self.lags: Int32Array = lags_arr
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
         self._name = "HARCH"
