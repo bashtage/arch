@@ -2246,9 +2246,16 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     m : int, optional
-        Length of maximum lag to include in the model.
+        Length of maximum lag to include in the model. Must be positive.
     asym : bool, optional
         Flag indicating whether to include an asymmetric term.
+
+    Raises
+    ------
+    TypeError
+        If ``m`` is not an integer or ``asym`` is not a bool.
+    ValueError
+        If ``m`` is smaller than 1.
 
     Notes
     -----
