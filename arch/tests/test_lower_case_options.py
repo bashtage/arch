@@ -8,6 +8,8 @@ are all lower case.
 
 from __future__ import annotations
 
+from arch.compat.matplotlib import HAVE_MATPLOTLIB
+
 import importlib
 import inspect
 import re
@@ -212,6 +214,7 @@ def option_calls(data):
     }
 
 
+@pytest.mark.skipif(not HAVE_MATPLOTLIB, reason="Some calls depend on matplotlib")
 def test_listed_options_are_lower_case(data):
     # The values in the message of an invalid option are all lower case
     calls = option_calls(data)
