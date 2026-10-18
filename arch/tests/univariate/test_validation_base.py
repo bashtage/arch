@@ -7,12 +7,13 @@ The rows cover the arguments of ``ARCHModel`` (the constructor, ``fit``, ``fix``
 functions in ``arch.univariate.base`` and of ``arch.univariate.diagnostics``.
 """
 
+from arch.compat.matplotlib import HAS_MATPLOTLIB
+
 from collections.abc import Callable
 from fractions import Fraction
 from types import MappingProxyType
 from typing import Any
 
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
@@ -42,6 +43,9 @@ from arch.univariate import (
 from arch.univariate.base import constraint, format_float_fixed, implicit_constant
 from arch.univariate.diagnostics import excess_kurtosis, hill_estimator, var_ratio
 from arch.utility.exceptions import StartingValueWarning
+
+if HAS_MATPLOTLIB:
+    import matplotlib.pyplot as plt
 
 NOBS = 250
 INDEX = pd.date_range("2000-01-03", periods=NOBS, freq="B")
@@ -414,7 +418,8 @@ def result_method(name: str) -> Callable[..., Any]:
         try:
             return getattr(fitted(), name)(**kwargs)
         finally:
-            plt.close("all")
+            if HAS_MATPLOTLIB:
+                plt.close("all")
 
     return call
 
@@ -950,6 +955,8 @@ DIAGNOSTIC_ROWS = [
     ),
 )
 def test_validation(row):
+    if not HAS_MATPLOTLIB and row.target in ("plot", "hedgehog"):
+        pytest.skip("matplotlib not installed")
     run_row(row)
 
 
@@ -1002,6 +1009,7 @@ def test_forecast_of_fixed_result_checks_arguments():
     assert fixed.forecast(horizon=np.int64(2)).mean.shape[1] == 2
 
 
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_plot_error_does_not_leave_a_figure():
     plt.close("all")
     with pytest.raises(ValueError, match=r"^annualize must be"):

@@ -6,7 +6,8 @@ code path that was always there, and with the same selection made by slicing the
 in Python.
 """
 
-import matplotlib.pyplot as plt
+from arch.compat.matplotlib import HAS_MATPLOTLIB
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
@@ -28,6 +29,9 @@ from arch.univariate.base import (
     _align_forecast,
 )
 from arch.utility.array import cutoff_to_index, find_index
+
+if HAS_MATPLOTLIB:
+    import matplotlib.pyplot as plt
 
 NOBS = 300
 DATES = pd.date_range("2000-01-03", periods=NOBS, freq="B")
@@ -183,6 +187,7 @@ def test_forecast_start_below_minus_nobs(result, model):
             model.forecast(result.params, horizon=2, start=start)
 
 
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_hedgehog_plot_negative_start(result):
     kwargs = {"horizon": 3, "step": 50}
     fig_neg = result.hedgehog_plot(start=-100, **kwargs)

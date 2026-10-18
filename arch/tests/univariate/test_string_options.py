@@ -1,8 +1,9 @@
 """String options of the univariate models are not case sensitive"""
 
+from arch.compat.matplotlib import HAS_MATPLOTLIB
+
 from functools import partial
 
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
@@ -29,6 +30,9 @@ from arch.univariate import (
     arch_model,
 )
 from arch.univariate.base import ARCHModelForecast, _align_forecast
+
+if HAS_MATPLOTLIB:
+    import matplotlib.pyplot as plt
 
 # A string that is not an option is a ValueError and anything else a TypeError
 BAD_VALUES = [
@@ -242,6 +246,7 @@ def test_forecast_method_invalid(returns, result, bad, exc, use_result):
 
 
 @pytest.mark.parametrize("annualize", ["d", "w", "m"])
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_plot_annualize_case(result, annualize):
     scale = {"d": 252, "w": 52, "m": 12}[annualize]
     expected = result.conditional_volatility * np.sqrt(scale)
@@ -258,6 +263,7 @@ def test_plot_annualize_case(result, annualize):
 @pytest.mark.parametrize(
     ("bad", "exc"), [("bogus", ValueError), ("Q", ValueError), (1, TypeError)]
 )
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_plot_annualize_invalid(result, bad, exc):
     with pytest.raises(exc, match=r"annualize must be one of 'd', 'w' or 'm'; got "):
         result.plot(annualize=bad)
@@ -265,6 +271,7 @@ def test_plot_annualize_invalid(result, bad, exc):
 
 
 @pytest.mark.parametrize("plot_type", ["volatility", "mean"])
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_hedgehog_plot_type_case(result, plot_type, returns):
     try:
         for spelling in (plot_type, plot_type.upper(), plot_type.title()):
@@ -281,6 +288,7 @@ def test_hedgehog_plot_type_case(result, plot_type, returns):
 
 
 @pytest.mark.parametrize(("bad", "exc"), BAD_VALUES)
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_hedgehog_plot_invalid(result, bad, exc):
     with pytest.raises(exc, match=r"plot_type must be one of 'volatility' or"):
         result.hedgehog_plot(plot_type=bad)
