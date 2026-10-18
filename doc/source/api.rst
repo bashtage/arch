@@ -127,6 +127,7 @@ Bootstraps
    ~arch.bootstrap.StationaryBootstrap
    ~arch.bootstrap.CircularBlockBootstrap
    ~arch.bootstrap.MovingBlockBootstrap
+   ~arch.bootstrap.LocalBlockBootstrap
 
 Block-length Selection
 ~~~~~~~~~~~~~~~~~~~~~~
