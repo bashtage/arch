@@ -19,6 +19,7 @@ from arch.univariate import (
     HARCH,
     HARX,
     LS,
+    NGARCH,
     ARCHInMean,
     ConstantMean,
     ConstantVariance,
@@ -97,6 +98,7 @@ VOL_CLASSES = {
     "figarch": FIGARCH,
     "fiaparch": FIAPARCH,
     "aparch": APARCH,
+    "ngarch": NGARCH,
     "harch": HARCH,
     "constant": ConstantVariance,
 }

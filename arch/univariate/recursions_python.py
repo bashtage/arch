@@ -25,6 +25,7 @@ __all__ = [
     "GARCHUpdater",
     "HARCHUpdater",
     "MIDASUpdater",
+    "NGARCHUpdater",
     "VolatilityUpdater",
     "aparch_recursion",
     "arch_recursion",
@@ -35,6 +36,7 @@ __all__ = [
     "garch_recursion",
     "harch_recursion",
     "midas_recursion",
+    "ngarch_recursion",
 ]
 
 LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
@@ -480,6 +482,67 @@ def egarch_recursion_python(
 
 
 egarch_recursion = jit(egarch_recursion_python, nopython=True)
+
+
+def ngarch_recursion_python(
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
+    p: int,
+    o: int,
+    q: int,
+    nobs: int,
+    backcast: float,
+    var_bounds: Float64Array2D,
+) -> Float64Array:
+    """
+    Compute variance recursion for NGARCH (NAGARCH) models
+
+    Parameters
+    ----------
+    parameters : ndarray
+        Model parameters, ordered omega, alpha (p), theta (o) and beta (q)
+    resids : ndarray
+        Residuals to use in the recursion
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric shifts in model, which cannot exceed p. The first
+        o innovations are shifted by theta times the lagged volatility.
+    q : int
+        Number of lags of the conditional variance in the model
+    nobs : int
+        Length of resids
+    backcast : float
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    """
+
+    for t in range(nobs):
+        sigma2[t] = parameters[0]
+        for j in range(p):
+            theta = parameters[1 + p + j] if j < o else 0.0
+            if (t - 1 - j) < 0:
+                # E[(z - theta) ** 2] = 1 + theta ** 2 when sigma2 = backcast
+                sigma2[t] += parameters[1 + j] * (1.0 + theta * theta) * backcast
+            else:
+                shock = resids[t - 1 - j] - theta * np.sqrt(sigma2[t - 1 - j])
+                sigma2[t] += parameters[1 + j] * shock * shock
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + p + o + j] * backcast
+            else:
+                sigma2[t] += parameters[1 + p + o + j] * sigma2[t - 1 - j]
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+    return sigma2
+
+
+ngarch_recursion = jit(ngarch_recursion_python, nopython=True)
 
 
 def midas_step_python(
@@ -1537,6 +1600,49 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         elif sigma2[t] > var_bounds[t, 1]:
             sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t]) - np.log(var_bounds[t, 1])
             self.lnsigma2[t] = np.log(sigma2[t])
+
+
+class NGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
+    def __init__(self, p: int, o: int, q: int) -> None:
+        self.p = p
+        self.o = o
+        self.q = q
+        self.backcast = 9999.99
+
+    def initialize_update(
+        self,
+        parameters: Float64Array1D,
+        backcast: float | Float64Array1D,
+        nobs: int,
+    ) -> None:
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
+        self.backcast = cast("float", backcast)
+
+    def update(
+        self,
+        t: int,
+        parameters: Float64Array1D,
+        resids: Float64Array1D,
+        sigma2: Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> None:
+        p, o, q = self.p, self.o, self.q
+        # The lagged resids and sigma2 are final: sigma2 is stored after the
+        # variance bounds are applied
+        sigma2[t] = parameters[0]
+        for j in range(p):
+            theta = parameters[1 + p + j] if j < o else 0.0
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + j] * (1.0 + theta * theta) * self.backcast
+            else:
+                shock = resids[t - 1 - j] - theta * np.sqrt(sigma2[t - 1 - j])
+                sigma2[t] += parameters[1 + j] * shock * shock
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + p + o + j] * self.backcast
+            else:
+                sigma2[t] += parameters[1 + p + o + j] * sigma2[t - 1 - j]
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
 class ARCHInMeanRecursion:
