@@ -29,9 +29,13 @@ CMD="$CMD pandas"
 if [[ -n ${PANDAS} ]]; then CMD="$CMD==${PANDAS}"; fi;
 CMD="$CMD statsmodels"
 if [[ -n ${STATSMODELS} ]]; then CMD="$CMD==${STATSMODELS}"; fi
-CMD="$CMD matplotlib"
-if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD==${MATPLOTLIB}"; fi
-CMD="$CMD seaborn"
+# NO_MATPLOTLIB leaves out matplotlib and seaborn, which needs it, as the tests of the
+# arch-wheels builds do
+if [[ ${NO_MATPLOTLIB,,} != true ]]; then
+  CMD="$CMD matplotlib"
+  if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD==${MATPLOTLIB}"; fi
+  CMD="$CMD seaborn"
+fi
 if [[ ${USE_NUMBA} = true ]]; then
   CMD="${CMD} numba";
   if [[ -n ${NUMBA} ]]; then
@@ -41,6 +45,14 @@ fi;
 CMD="$CMD $EXTRA"
 echo $CMD
 eval $CMD || exit 1
+
+if [[ ${NO_MATPLOTLIB,,} == true ]]; then
+  # Fail if another package installed matplotlib, so that the job really tests without it
+  if python -c "import importlib.util, sys; sys.exit(importlib.util.find_spec('matplotlib') is None)"; then
+    echo "##vso[task.logissue type=error]matplotlib is installed although NO_MATPLOTLIB is true"
+    exit 1
+  fi
+fi
 
 if [ "${NIGHTLY}" = true ]; then
   # Install over the released versions, rather than uninstalling them first, so that

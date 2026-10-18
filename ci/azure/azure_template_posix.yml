@@ -41,6 +41,8 @@ jobs:
     #   cython.coverage  Create the C files that coverage uses to report on the Cython
     #                    code and run a few tests. This only works up to Python 3.12
     #                    and with COVERAGE_CORE=ctrace.
+    #   NO_MATPLOTLIB    Do not install matplotlib or seaborn, and fail if they are
+    #                    installed anyway
     #   STATSMODELS_MAIN Install statsmodels from its main branch
     #   nightly          Install nightly builds of numpy, scipy, pandas, ...
     #   experimental     Do not fail when the tests fail and do not collect coverage
@@ -66,6 +68,13 @@ jobs:
         PANDAS: 2.3.3
         STATSMODELS: 0.14.5
         ARCH_TEST_COPY_ON_WRITE: 1
+        test.wheel: true
+      # Without matplotlib and seaborn, testing the installed wheel from outside of the
+      # source tree, as the arch-wheels builds do. The tests that need matplotlib must
+      # skip without it; a test module that imports it unconditionally fails to collect.
+      python_313_no_matplotlib_wheel:
+        python.version: '3.13'
+        NO_MATPLOTLIB: 'true'
         test.wheel: true
       # Coverage of the Cython code, from the tests of the extensions. Coverage only
       # reports Cython lines with its ctrace core, which does not work after Python
