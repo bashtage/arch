@@ -10,10 +10,11 @@ from numpy.testing import (
     assert_array_equal,
     assert_equal,
 )
+import pandas as pd
 import pytest
-from scipy.special import gamma, gammaln
+from scipy.special import binom, gamma, gammaln
 
-from arch.univariate import ZeroMean
+from arch.univariate import ConstantMean, ZeroMean
 from arch.univariate.distribution import Normal, SkewStudent, StudentsT
 import arch.univariate.recursions_python as recpy
 from arch.univariate.volatility import (
@@ -278,7 +279,7 @@ def test_arch_harch(setup):
     parameters = np.array([0.5, 0.5])
 
     backcast = arch.backcast(setup.resids)
-    assert_equal(backcast, harch.backcast(setup.resids))
+    assert_allclose(backcast, harch.backcast(setup.resids), rtol=1e-12)
     sigma2_arch = np.zeros_like(setup.sigma2)
     sigma2_harch = np.zeros_like(setup.sigma2)
     var_bounds = arch.variance_bounds(setup.resids)
@@ -333,49 +334,29 @@ def test_harch(setup, initial_value):
     b_target = np.array([0.0, 0.0, 0.0, 0.0, -1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
-    state = setup.rng.get_state()
-    rng = Normal(seed=RandomState())
-    rng.generator.set_state(state)
+    # Own generator so the test does not depend on the state of the shared setup.rng
+    seed = 20260923
+    rng = Normal(seed=RandomState(seed))
     sim_data = harch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
-    setup.rng.set_state(state)
-    e = setup.rng.standard_normal(setup.t + 500)
-    sigma2 = np.zeros(setup.t + 500)
-    data = np.zeros(setup.t + 500)
-    lagged = np.zeros(22)
-    for t in range(setup.t + 500):
-        sigma2[t] = parameters[0]
-        lagged[:] = backcast
-        if t > 0:
-            if t == 1:
-                lagged[0] = data[0] ** 2.0
-            elif t < 22:
-                lagged[:t] = data[t - 1 :: -1] ** 2.0
-            else:
-                lagged = data[t - 1 : t - 22 : -1] ** 2.0
-
-        shock1 = data[t - 1] ** 2.0 if t > 0 else backcast
-        if t >= 5:
-            shock5 = np.mean(data[t - 5 : t] ** 2.0)
-        else:
-            shock5 = 0.0
-            for i in range(5):
-                shock5 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock5 = shock5 / 5.0
-
-        if t >= 22:
-            shock22 = np.mean(data[t - 22 : t] ** 2.0)
-        else:
-            shock22 = 0.0
-            for i in range(22):
-                shock22 += data[t - i - 1] if t - i - 1 >= 0 else backcast
-            shock22 = shock22 / 22.0
-
-        sigma2[t] += (
-            parameters[1] * shock1 + parameters[2] * shock5 + parameters[3] * shock22
+    e = RandomState(seed).standard_normal(setup.t + 500)
+    if initial_value is None:
+        initial_value = parameters[0] / (1.0 - parameters[1:].sum())
+    # HARCH.simulate sets the first 22 observations to the initial value
+    max_lag = 22
+    sigma2 = np.full(setup.t + 500, initial_value)
+    data = np.full(setup.t + 500, np.sqrt(initial_value))
+    for t in range(max_lag, setup.t + 500):
+        shock1 = data[t - 1] ** 2.0
+        shock5 = np.mean(data[t - 5 : t] ** 2.0)
+        shock22 = np.mean(data[t - 22 : t] ** 2.0)
+        sigma2[t] = (
+            parameters[0]
+            + parameters[1] * shock1
+            + parameters[2] * shock5
+            + parameters[3] * shock22
         )
-
         data[t] = e[t] * np.sqrt(sigma2[t])
     data = data[500:]
     sigma2 = sigma2[500:]
@@ -661,47 +642,38 @@ def test_garch_many_lags(setup):
 
 
 def test_errors(setup):
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 0; got -1"):
         GARCH(p=-1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"o must be an integer >= 0; got -1"):
         GARCH(o=-1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"q must be an integer >= 0; got -1"):
         GARCH(q=-1)
-    with pytest.raises(ValueError, match=r"One of p or o must be strictly positive"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1 when o is 0"):
         GARCH(p=0, q=0)
-    with pytest.raises(
-        ValueError, match=r"power must be strictly positive, usually larger than 0.25"
-    ):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0; got -0.5"):
         GARCH(power=-0.5)
-    with pytest.raises(ValueError, match=r"lam must be strictly between 0 and 1"):
+    with pytest.raises(ValueError, match=r"lam must be a finite float in \(0, 1\) or"):
         EWMAVariance(lam=-0.5)
     with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
+        ValueError, match=r"tau0 must be a finite float greater than tau1 \(10\)"
     ):
         RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
-    ):
-        RiskMetrics2006(tau0=1, tau1=10)
-    with pytest.raises(
-        ValueError, match=r"tau0 must be greater than tau1 and tau1 > 0"
-    ):
+    with pytest.raises(ValueError, match=r"tau1 must be a finite float > 0; got -10"):
         RiskMetrics2006(tau1=-10)
     with pytest.raises(
-        ValueError, match=r"tau1 \* rho \*\* \(kmax-1\) smaller than tau0"
+        ValueError,
+        match=r"kmax must be such that tau1 \* rho \*\* \(kmax - 1\) <= tau0",
     ):
         RiskMetrics2006(tau0=10, tau1=8, rho=1.5)
-    with pytest.raises(ValueError, match=r"kmax must be a positive integer"):
+    with pytest.raises(ValueError, match=r"kmax must be an integer >= 1; got 0"):
         RiskMetrics2006(kmax=0)
-    with pytest.raises(
-        ValueError, match=r"rho must be a positive number larger than 1"
-    ):
+    with pytest.raises(ValueError, match=r"rho must be a finite float > 1; got 0.5"):
         RiskMetrics2006(rho=0.5)
 
 
 def test_warnings_nonstationary(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0])
+    parameters = np.array([0.1, 0.2, 0.8])
     studt = StudentsT()
     warnings.simplefilter("always", UserWarning)
     with pytest.warns(
@@ -713,7 +685,7 @@ def test_warnings_nonstationary(setup):
 
 def test_warnings_nonstationary_garch(setup):
     garch = GARCH()
-    parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
+    parameters = np.array([0.1, 0.2, 0.8])
     skewstud = SkewStudent()
     with pytest.warns(
         InitialValueWarning,
@@ -797,7 +769,7 @@ def test_ewma(setup):
     state = setup.rng.get_state()
     rng = Normal(seed=RandomState())
     rng.generator.set_state(state)
-    sim_data = ewma.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = ewma.simulate(np.array([]), setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -958,7 +930,7 @@ def test_egarch(setup, initial_value):
     assert_equal(len(bounds), egarch.num_params)
     const = np.log(10000.0)
     lnv = np.log(np.mean(setup.resids**2.0))
-    assert_equal(bounds[0], (lnv - const, lnv + const))
+    assert_allclose(bounds[0], (lnv - const, lnv + const), rtol=1e-12)
     assert_equal(bounds[1], (-np.inf, np.inf))
     assert_equal(bounds[2], (-np.inf, np.inf))
     assert_equal(bounds[3], (0.0, 1.0))
@@ -1043,12 +1015,16 @@ def test_egarch(setup, initial_value):
     txt = egarch.__repr__()
     assert str(hex(id(egarch))) in txt
 
-    with pytest.raises(ValueError, match=r"One of p or o must"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1 when o is 0"):
         EGARCH(p=0, o=0, q=1)
-    with pytest.raises(ValueError, match=r"All lags lengths must be non-negative"):
+    with pytest.raises(ValueError, match=r"q must be an integer >= 0; got -1"):
         EGARCH(p=1, o=1, q=-1)
+    # beta > 1 is explosive, so the exponential of the log-variance overflows
     parameters = np.array([0.1, 0.1, -0.1, 1.05])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"):
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent with"),
+        np.errstate(over="ignore"),
+    ):
         egarch.simulate(parameters, setup.t, rng.simulate([]))
 
 
@@ -1523,7 +1499,9 @@ def test_figarch_no_phi_beta(setup):
     assert_allclose(np.sqrt(backcast) ** 0.7, figarch.backcast_transform(backcast))
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)))
+    assert_allclose(
+        bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)), rtol=1e-12
+    )
     assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
@@ -1538,19 +1516,17 @@ def test_figarch_no_phi_beta(setup):
 
 
 def test_figarch_errors(setup):
-    with pytest.raises(ValueError, match=r"truncation must be a positive integer"):
+    with pytest.raises(ValueError, match=r"truncation must be an integer >= 1"):
         FIGARCH(truncation=-1)
-    with pytest.raises(
-        ValueError, match=r"invalid literal for int\(\) with base 10: 'apple'"
-    ):
+    with pytest.raises(TypeError, match=r"truncation must be an integer >= 1; got 'a"):
         FIGARCH(truncation="apple")
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"p must be an integer in \[0, 1\]"):
         FIGARCH(p=2)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"q must be an integer in \[0, 1\]"):
         FIGARCH(q=-1)
-    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0"):
         FIGARCH(power=0)
-    with pytest.raises(ValueError, match=r"power must be strictly positive, usually"):
+    with pytest.raises(ValueError, match=r"power must be a finite float > 0"):
         FIGARCH(power=-0.25)
 
 
@@ -1787,15 +1763,16 @@ def test_aparch_against_garch(setup):
 
 
 def test_aparch_exceptions(setup):
-    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
+    delta_rule = r"delta must be a finite float in \(0.05, 4\)"
+    with pytest.raises(ValueError, match=delta_rule):
         APARCH(delta=0.0)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05"):
+    with pytest.raises(ValueError, match=delta_rule):
         APARCH(delta=4.1)
-    with pytest.raises(TypeError, match=r"delta must be convertible"):
+    with pytest.raises(TypeError, match=delta_rule):
         APARCH(delta="a")
-    with pytest.raises(ValueError, match=r"All lags lengths must be"):
+    with pytest.raises(ValueError, match=r"p must be an integer >= 1"):
         APARCH(p=0)
-    with pytest.raises(ValueError, match=r"o must be <= p"):
+    with pytest.raises(ValueError, match=r"o must be an integer <= p \(1\)"):
         APARCH(p=1, o=2)
 
 
@@ -1929,8 +1906,8 @@ def test_fiaparch(setup):
         sigma_delta_sim[t] = omega_tilde + lam_rev.dot(fshocks[::-1])
         sigma2[t] = sigma_delta_sim[t] ** (2.0 / delta)
         data[t] = e[t] * np.sqrt(sigma2[t])
-    data = data[trunc_lag + 500:]
-    sigma2 = sigma2[trunc_lag + 500:]
+    data = data[trunc_lag + 500 :]
+    sigma2 = sigma2[trunc_lag + 500 :]
     assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
     assert_almost_equal(data / sim_data[0], np.ones_like(data))
 
@@ -2166,7 +2143,7 @@ def test_fiaparch_simulate_initial_value(setup):
 
 def test_fiaparch_simulate_high_persistence(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
         fiaparch.simulate(parameters, 20, rng.simulate([]))
@@ -2174,16 +2151,21 @@ def test_fiaparch_simulate_high_persistence(setup):
 
 def test_fiaparch_simulate_high_beta(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     parameters = np.array([0.1, 0.0, 0.4, 1.005, -0.3, 1.5])
-    with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
-        with pytest.warns(ValueWarning, match=r"beta >= 1"):
-            fiaparch.simulate(parameters, 20, rng.simulate([]))
+    # The variance process is explosive, which eventually makes the base of the
+    # power transformation negative
+    with (
+        pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"),
+        pytest.warns(ValueWarning, match=r"beta >= 1"),
+        pytest.warns(RuntimeWarning, match=r"invalid value encountered"),
+    ):
+        fiaparch.simulate(parameters, 20, rng.simulate([]))
 
 
 def test_fiaparch_simulate_persistence_ge_1(setup):
     fiaparch = FIAPARCH(truncation=100)
-    rng = Normal(seed=RandomState())
+    rng = Normal(seed=RandomState(0))
     # d > 1 pushes persistence >= 1
     parameters = np.array([0.1, 0.2, 1.01, 0.2, -0.3, 1.5])
     fig_params = parameters[:4]
@@ -2197,7 +2179,7 @@ def test_fiaparch_simulate_persistence_ge_1(setup):
 
 
 @pytest.mark.parametrize(
-    "p,o,q",
+    ("p", "o", "q"),
     [(0, 1, 1), (1, 0, 1), (1, 1, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 0, 0)],
 )
 def test_fiaparch_simulate_reduced(setup, p, o, q):
@@ -2220,31 +2202,155 @@ def test_fiaparch_simulate_reduced(setup, p, o, q):
     assert np.all(np.isfinite(sim_data[1]))
 
 
-def test_fiaparch_backcast_transform(setup):
-    fiaparch = FIAPARCH()
-    backcast = fiaparch.backcast(setup.resids)
-    result = fiaparch.backcast_transform(backcast)
-    assert np.isscalar(result)
-    delta = 2.0
-    expected = float(np.sqrt(backcast) ** delta)
-    assert_allclose(result, expected)
+def test_fiaparch_backcast_scale(setup):
+    # The backcast is a variance for both estimated and fixed delta, and a user
+    # provided value is not transformed
+    expected = APARCH().backcast(setup.resids)
+    for fiaparch in (FIAPARCH(), FIAPARCH(delta=1.5), FIAPARCH(delta=0.7)):
+        backcast = fiaparch.backcast(setup.resids)
+        assert_allclose(backcast, expected)
+        assert_allclose(fiaparch.backcast_transform(backcast), backcast)
+        users = np.array([backcast, 2 * backcast])
+        assert_allclose(fiaparch.backcast_transform(users), users)
+        with pytest.raises(ValueError, match=r"User backcast value must be strictly"):
+            fiaparch.backcast_transform(-1.0)
 
-    result_arr = fiaparch.backcast_transform(np.array([backcast, backcast]))
-    assert result_arr.shape == (2,)
-    assert_allclose(result_arr, np.array([expected, expected]))
 
-    fiaparch_fd = FIAPARCH(delta=1.5)
-    backcast_fd = fiaparch_fd.backcast(setup.resids)
-    result_fd = fiaparch_fd.backcast_transform(backcast_fd)
-    assert np.isscalar(result_fd)
-    expected_fd = float(np.sqrt(backcast_fd) ** 1.5)
-    assert_allclose(result_fd, expected_fd)
+def _hand_fiaparch_lambda(phi, d, beta, truncation):
+    # ARCH(infinity) weights of 1 - (1 - phi L) (1 - L)**d / (1 - beta L) for lags
+    # 1, ..., truncation, using the binomial series and polynomial division
+    lags = np.arange(truncation + 1)
+    num = np.convolve(binom(d, lags) * (-1.0) ** lags, [1.0, -phi])[: truncation + 1]
+    quot = np.empty(truncation + 1)
+    quot[0] = num[0]
+    for k in range(1, truncation + 1):
+        quot[k] = num[k] + beta * quot[k - 1]
+    return -quot[1:]
 
-    result_fd_arr = fiaparch_fd.backcast_transform(
-        np.array([backcast_fd, backcast_fd])
+
+def _hand_variance_backcast(resids):
+    tau = min(75, resids.shape[0])
+    w = 0.94 ** np.arange(tau)
+    w = w / w.sum()
+    return float(np.sum(w * resids[:tau] ** 2))
+
+
+def _hand_fiaparch_sigma2(resids, params, delta, truncation, backcast):
+    """
+    FIAPARCH(1,d,1) with the ARCH(truncation) recursion written out term by term.
+    ``backcast`` is a variance, so the pre-sample value of the asymmetric power
+    shock is ``backcast ** (delta / 2)``
+    """
+    omega, phi, d, beta, gamma = params
+    lam = _hand_fiaparch_lambda(phi, d, beta, truncation)
+    nobs = resids.shape[0]
+    sigma2 = np.empty(nobs)
+    for t in range(nobs):
+        sigma_delta = omega / (1.0 - beta)
+        for i in range(1, truncation + 1):
+            if t - i >= 0:
+                shock = abs(resids[t - i]) - gamma * resids[t - i]
+                sigma_delta += lam[i - 1] * shock**delta
+            else:
+                sigma_delta += lam[i - 1] * backcast ** (delta / 2.0)
+        sigma2[t] = sigma_delta ** (2.0 / delta)
+    return sigma2
+
+
+FIAPARCH_DELTAS = [0.7, 1.0, 1.5, 2.0]
+FIAPARCH_PARAMS = [0.2, 0.15, 0.4, 0.3, -0.3]
+
+
+@pytest.mark.parametrize("delta", FIAPARCH_DELTAS)
+@pytest.mark.parametrize("est_delta", [True, False], ids=["estimated", "fixed"])
+def test_fiaparch_matches_hand_recursion(delta, est_delta):
+    # Estimated and fixed delta must agree: the pre-sample term is the variance
+    # backcast converted using the current delta
+    truncation = 25
+    resids = RandomState(2024).standard_t(8, 200) * 1.2
+    backcast = _hand_variance_backcast(resids)
+    expected = _hand_fiaparch_sigma2(
+        resids, FIAPARCH_PARAMS, delta, truncation, backcast
     )
-    assert result_fd_arr.shape == (2,)
-    assert_allclose(result_fd_arr, np.array([expected_fd, expected_fd]))
+
+    fiaparch = FIAPARCH(truncation=truncation, delta=None if est_delta else delta)
+    assert_allclose(fiaparch.backcast(resids), backcast, rtol=1e-12)
+    params = np.array(FIAPARCH_PARAMS + ([delta] if est_delta else []))
+    var_bounds = fiaparch.variance_bounds(resids)
+    sigma2 = np.zeros(resids.shape[0])
+    fiaparch.compute_variance(params, resids, sigma2, backcast, var_bounds)
+    assert_allclose(sigma2, expected, rtol=1e-10)
+
+    modules = [recpy] if rec is recpy else [recpy, rec]
+    for module in modules:
+        updater = module.FIAPARCHUpdater(
+            1, 1, 1, truncation, est_delta, np.nan if est_delta else delta
+        )
+        updater.initialize_update(params, backcast, resids.shape[0])
+        sigma2_updater = np.zeros(resids.shape[0])
+        for t in range(resids.shape[0]):
+            updater._update_tester(t, params, resids, sigma2_updater, var_bounds)
+        assert_allclose(sigma2_updater, expected, rtol=1e-10)
+
+
+@pytest.mark.parametrize("delta", FIAPARCH_DELTAS)
+def test_fiaparch_model_loglikelihood_estimated_vs_fixed(delta):
+    truncation = 25
+    y = pd.Series(RandomState(2024).standard_t(8, 200) * 1.2 + 0.1)
+    params = np.array([0.1] + FIAPARCH_PARAMS)
+    mod_fixed = ConstantMean(
+        y, volatility=FIAPARCH(truncation=truncation, delta=delta), rescale=False
+    )
+    llf_fixed = mod_fixed.fix(params).loglikelihood
+    mod_est = ConstantMean(y, volatility=FIAPARCH(truncation=truncation), rescale=False)
+    llf_est = mod_est.fix(np.r_[params, delta]).loglikelihood
+
+    resids = y.to_numpy() - y.mean()
+    backcast = _hand_variance_backcast(resids)
+    sigma2 = _hand_fiaparch_sigma2(
+        y.to_numpy() - 0.1, FIAPARCH_PARAMS, delta, truncation, backcast
+    )
+    e = y.to_numpy() - 0.1
+    llf = np.sum(-0.5 * (np.log(2 * np.pi) + np.log(sigma2) + e**2 / sigma2))
+    assert_allclose(llf_fixed, llf, rtol=1e-10)
+    assert_allclose(llf_est, llf, rtol=1e-10)
+
+
+@pytest.mark.parametrize("est_delta", [True, False], ids=["estimated", "fixed"])
+def test_fiaparch_simulation_one_step_first_origins(est_delta):
+    # The first origins use the backcast to pad the history in simulations
+    delta = 1.3
+    truncation = 20
+    resids = RandomState(5).standard_normal(60)
+    fiaparch = FIAPARCH(truncation=truncation, delta=None if est_delta else delta)
+    params = np.array(FIAPARCH_PARAMS + ([delta] if est_delta else []))
+    backcast = fiaparch.backcast(resids)
+    var_bounds = fiaparch.variance_bounds(resids)
+    analytic = fiaparch.forecast(
+        params, resids, backcast, var_bounds, horizon=1, start=0
+    )
+    rng = Normal(seed=RandomState(0)).simulate([])
+    sim = fiaparch.forecast(
+        params,
+        resids,
+        backcast,
+        var_bounds,
+        horizon=2,
+        start=0,
+        method="simulation",
+        simulations=5,
+        rng=rng,
+    )
+    assert sim.forecast_paths is not None
+    assert_allclose(
+        sim.forecast_paths[:, :, 0],
+        np.tile(analytic.forecasts[:, :1], (1, 5)),
+        rtol=1e-10,
+    )
+    expected = _hand_fiaparch_sigma2(
+        resids, FIAPARCH_PARAMS, delta, truncation, backcast
+    )
+    assert_allclose(analytic.forecasts[:-1, 0], expected[1:], rtol=1e-10)
 
 
 def test_fiaparch_minimal(setup):
@@ -2299,19 +2405,20 @@ def test_fiaparch_minimal(setup):
 
 
 def test_fiaparch_errors(setup):
-    with pytest.raises(ValueError, match=r"truncation must be a positive integer"):
+    delta_rule = r"delta must be a finite float in \(0.05, 4\)"
+    with pytest.raises(ValueError, match=r"truncation must be an integer >= 1"):
         FIAPARCH(truncation=-1)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"p must be an integer in \[0, 1\]"):
         FIAPARCH(p=2)
-    with pytest.raises(ValueError, match=r"p and q must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"q must be an integer in \[0, 1\]"):
         FIAPARCH(q=-1)
-    with pytest.raises(ValueError, match=r"o must be either 0 or 1"):
+    with pytest.raises(ValueError, match=r"o must be an integer in \[0, 1\]"):
         FIAPARCH(o=2)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05 and 4"):
+    with pytest.raises(ValueError, match=delta_rule):
         FIAPARCH(delta=0.0)
-    with pytest.raises(ValueError, match=r"delta must be between 0.05 and 4"):
+    with pytest.raises(ValueError, match=delta_rule):
         FIAPARCH(delta=4.1)
-    with pytest.raises(TypeError, match=r"delta must be convertible"):
+    with pytest.raises(TypeError, match=delta_rule):
         FIAPARCH(delta="a")
 
 

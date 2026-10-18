@@ -141,16 +141,24 @@ def fit(mod, **kwargs):
     return mod.fit(disp="off", show_warning=False, **kwargs)
 
 
-def assert_results_equal(res, direct):
-    assert_allclose(res.params, direct.params, rtol=1e-7, atol=1e-9)
-    assert_allclose(res.loglikelihood, direct.loglikelihood, rtol=1e-8)
-    assert_allclose(res.resid, direct.resid, equal_nan=True, rtol=1e-7, atol=1e-9)
+def assert_results_equal(res, direct, **fix_kwargs):
+    # res and direct come from two separate optimizations, which can stop at
+    # slightly different points depending on the platform's floating point. On
+    # Intel macOS the largest differences seen were 5.3e-4 relative, 3.4e-3 in
+    # a Student's t degree of freedom near 16.5, and 8e-5 in parameters close
+    # to 0, so they are compared loosely
+    assert_allclose(res.params, direct.params, rtol=2e-3, atol=5e-4)
+    assert_allclose(res.loglikelihood, direct.loglikelihood, rtol=1e-6)
+    # At the same parameters, the appended and the direct model must agree
+    fixed = res.model.fix(direct.params, **fix_kwargs)
+    assert_allclose(fixed.loglikelihood, direct.loglikelihood, rtol=1e-10)
+    assert_allclose(fixed.resid, direct.resid, equal_nan=True, rtol=1e-10, atol=1e-12)
     assert_allclose(
-        res.conditional_volatility,
+        fixed.conditional_volatility,
         direct.conditional_volatility,
         equal_nan=True,
-        rtol=1e-7,
-        atol=1e-9,
+        rtol=1e-10,
+        atol=1e-12,
     )
     assert res.nobs == direct.nobs
     if isinstance(res.resid, pd.Series):
@@ -414,7 +422,7 @@ def test_append_non_finite(kind, bad):
         new = as_type(new, kind)
     mod = ARXWrapper(as_type(SMALL_initial, mod_kind), volatility=GARCH())
     snap = snapshot(mod)
-    with pytest.raises(ValueError, match="NaN or inf values found in y"):
+    with pytest.raises(ValueError, match="y must be a 1-d array of finite numbers"):
         mod.append(new)
     assert_snapshot_unchanged(mod, snap)
 
@@ -812,7 +820,7 @@ def test_append_exog_non_numeric(mean, kind):
     mod = mean(SMALL_initial, x=x_orig, volatility=GARCH())
     fit(mod)
     snap = snapshot(mod)
-    with pytest.raises(ValueError, match="converted to float"):
+    with pytest.raises(TypeError, match="x must be an array of finite numbers"):
         mod.append(SMALL_append, x=bad_x)
     assert_snapshot_unchanged(mod, snap)
     # The model can still be appended to
@@ -952,7 +960,7 @@ def test_failed_append_is_atomic(kind):
     snap = snapshot(mod)
     bad = SMALL_append.copy()
     bad.iloc[3] = np.inf
-    with pytest.raises(ValueError, match="NaN or inf"):
+    with pytest.raises(ValueError, match="y must be a 1-d array of finite numbers"):
         mod.append(as_type(bad, kind))
     assert_snapshot_unchanged(mod, snap)
     other = "array" if kind == "series" else "series"
@@ -1037,7 +1045,8 @@ def test_arch_in_mean(vol, form):
 
 def test_hold_back():
     mod = HARXWrapper(SMALL_initial, volatility=GARCH(), hold_back=20)
-    assert mod._fit_indices == [0, 500]
+    # The default sample is set when the model is created
+    assert mod._fit_indices == [20, 500]
     mod.append(SMALL_append)
     assert mod._fit_indices == [20, 700]
     assert mod._fit_y.shape[0] == 680
@@ -1056,7 +1065,7 @@ def test_append_short_sample():
     assert mod._fit_indices == [0, 15]
     mod.append(SMALL.iloc[15:20])
     assert mod._fit_indices == [0, 20]
-    with pytest.raises(ValueError, match="empty array"):
+    with pytest.raises(ValueError, match="hold_back must be smaller than"):
         mod.fit(disp="off")
     mod.append(SMALL.iloc[20:25])
     assert mod._fit_indices == [20, 25]
@@ -1089,7 +1098,9 @@ def test_append_then_fit_subsample():
     res = fit(mod, first_obs=SMALL.index[100], last_obs=SMALL.index[650])
     direct = ARXWrapper(SMALL, volatility=GARCH())
     res_direct = fit(direct, first_obs=SMALL.index[100], last_obs=SMALL.index[650])
-    assert_results_equal(res, res_direct)
+    assert_results_equal(
+        res, res_direct, first_obs=SMALL.index[100], last_obs=SMALL.index[650]
+    )
 
 
 def test_cached_values_reset():

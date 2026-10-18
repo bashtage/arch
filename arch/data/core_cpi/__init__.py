@@ -1,3 +1,5 @@
+"""Core CPI data used in the examples."""
+
 from pandas import DataFrame
 
 from arch.data.utility import load_file
@@ -5,15 +7,15 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the Core CPI data used in the examples
+    Load the Core CPI data used in the examples.
 
     Returns
     -------
     data : DataFrame
-        Data set containing the CPI less Food and Energy
+        Data set containing the CPI less Food and Energy.
 
     Notes
     -----
-    From the FRED database
+    From the FRED database.
     """
     return load_file(__file__, "core-cpi.csv.gz")

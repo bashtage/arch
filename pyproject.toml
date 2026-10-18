@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 requires = [
   'meson-python',
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy>=2.0.0,<3",
   "setuptools_scm>=9.2.0,<10",
 ]
@@ -14,7 +14,7 @@ dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
   "scipy>=1.8",
-  "statsmodels>=0.13.0",
+  "statsmodels>=0.13.1",
   "packaging",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
@@ -27,6 +27,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",
@@ -68,7 +70,7 @@ requires-python = ">=3.10"
 [project.optional-dependencies]
 test = [
   # test
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
@@ -81,7 +83,7 @@ doc = [
   "setuptools>=61",
   "wheel",
   "setuptools_scm[toml]>=9.2.0,<10",
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
   "numpy >=2.3.4",
   "scipy >=1.16.0",
   "ipython >=8.0.1",
@@ -111,16 +113,18 @@ dev = [
   "setuptools_scm[toml]>=9.2.0,<10",
   "packaging",
   # Performance
-  "cython>=3.0.10",
+  "cython>=3.1.0",
   "numba>=0.55",
   # Graphics
   "matplotlib>=3",
   "seaborn",
   # Tests
-  "pytest>=8.4.1,<9",
+  "pytest>=9,<10",
   "pytest-randomly",
   "pytest-xdist",
   "pytest-cov",
+  # docstrings: the numpydoc linter and arch/tests/test_docstrings.py
+  "numpydoc>=1.10",
   # formatting
   "black[jupyter]~=25.9.0",
   "isort~=6.0",
@@ -158,10 +162,10 @@ exclude = '''
   | \.git
   | \.mypy_cache
   | \.oytest_cache
-  | _build
   | buck-out
-  | build
-  | dist
+  | ^/build/
+  | ^/dist/
+  | ^/arch/_version\.py$
 )
 '''
 
@@ -177,6 +181,8 @@ target-version = "py310"
 
 [tool.ruff.lint]
 typing-modules = ["arch._typing"]
+# flake8-bugbear codes that are used in noqa comments
+external = ["B042"]
 
 select = [
   "ALL",
@@ -306,38 +312,30 @@ ignore = [
 "arch/unitroot/_engle_granger.py" = ["RUF001"]
 
 [tool.pytest]
-strict_parametrization_ids = true
-minversion = "8.4.1"
+minversion = "9.0"
 testpaths = ["arch"]
-xfail_strict = true
-addopts = ["--strict"]
+# strict_config, strict_markers, strict_xfail and strict_parametrization_ids
+strict = true
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
   "ignore:`formatargspec`:DeprecationWarning:statsmodels",
   "ignore:Using or importing:DeprecationWarning",
   "ignore:Session._key_changed is deprecated:DeprecationWarning",
   "error:Support for multi-dimensional:DeprecationWarning",
-  "error:Mutating unit root tests is deprecated:FutureWarning",
   "error:invalid value encountered in cos:RuntimeWarning",
   "error:invalid value encountered in log:RuntimeWarning",
   "error:divide by zero encountered in double_scalars:RuntimeWarning",
-  "error:Lag selection has changed:DeprecationWarning",
   "error:More than 20 figures have been opened:RuntimeWarning:",
   "error:invalid value encountered in sqrt:RuntimeWarning:",
   "error:Inequality constraints incompatible::",
   "error:Parameters are not consistent with a::",
   "error:overflow encountered in double_scalars:RuntimeWarning:",
   "error:overflow encountered in multiply:RuntimeWarning:",
-  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
-  "error:The default for reindex:FutureWarning:",
   "error:overflow encountered in square:RuntimeWarning",
   "error:Values in x were outside bounds:RuntimeWarning:",
-  "error:The random_state property is deprecated:FutureWarning",
-  "error:random_state is deprecated:FutureWarning",
-  "error:seed is deprecated:FutureWarning",
-  "error:get_state is deprecated:FutureWarning",
   "error:Conversion of an array with ndim:DeprecationWarning:arch",
-  "error:invalid value encountered in divide:RuntimeWarning"
+  "error:invalid value encountered in divide:RuntimeWarning",
+  # "error:DatetimeIndex.values returning an ndarray::",
 ]
 junit_family = "xunit2"
 markers = [
@@ -351,6 +349,21 @@ src_paths = ["arch"]
 sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 known_first_party = ["arch"]
 known_compat = ["arch.compat.*"]
+# The default skip list without _build, which holds arch/_build/git_version.py
+skip = [
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".nox",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0
@@ -420,7 +433,6 @@ omit = [
 directory = "coverage_html_report"
 
 [tool.mypy]
-plugins="numpy.typing.mypy_plugin"
 exclude = [
   "tests",
   "unitroot/critical_values/simulation",
@@ -465,3 +477,45 @@ module = [
 check_untyped_defs=false
 disallow_untyped_defs=false
 disallow_incomplete_defs=false
+
+[tool.numpydoc_validation]
+# Run with ``python -m numpydoc lint $(git ls-files "arch/*.py")``.  "all" with other
+# codes listed is "everything except those codes".
+checks = [
+  "all",
+  # Not required: extended summary, See Also section, Examples section
+  "ES01",
+  "SA01",
+  "EX01",
+  # Not required: a Returns entry may be named (``names : list of str``)
+  "RT02",
+  # The linter reads the source, so it cannot see the docstrings that DocStringInheritor
+  # copies from the base class when a class is created, and it reports every one of
+  # those methods.  arch/tests/test_docstrings.py checks it on the live objects.
+  "GL08",
+  # The linter treats a property like a method and wants a Returns section for it.
+  # arch/tests/test_docstrings.py checks it on the live objects, which can tell them
+  # apart.
+  "RT01",
+]
+# Matched against the dotted name ``module.Class.method`` (``module`` is the file stem):
+# private objects and special methods, which the documentation does not show.
+exclude = [
+  '\._',
+  '\.__\w+__$',
+]
+# Matched against the start of the file path, which uses forward slashes.
+exclude_files = [
+  # Tests and test configuration
+  '(.*/)?tests/',
+  '(.*/)?conftest\.py',
+  # Generated critical value tables and the scripts that produce them
+  '(.*/)?critical_values/',
+  # Implementations that are only used through documented objects
+  '(.*/)?_samplers_python\.py',
+  '(.*/)?recursions_python\.py',
+  # Build helpers, the generated version file and vendored code
+  '(.*/)?_build/',
+  '(.*/)?_version\.py',
+  '(.*/)?vendor/',
+]

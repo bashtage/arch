@@ -4,6 +4,9 @@ from .utility import test
 
 
 def doc() -> None:
+    """
+    Open the online documentation in the default web browser.
+    """
     import webbrowser  # noqa: PLC0415
 
     webbrowser.open("https://bashtage.github.io/arch/")

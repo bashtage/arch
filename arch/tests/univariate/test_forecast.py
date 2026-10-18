@@ -1,4 +1,5 @@
 import datetime as dt
+from functools import partial
 from itertools import product
 
 import numpy as np
@@ -22,6 +23,7 @@ from arch.univariate import (
     ConstantMean,
     ConstantVariance,
     EWMAVariance,
+    MAMean,
     MIDASHyperbolic,
     Normal,
     RiskMetrics2006,
@@ -256,11 +258,11 @@ class TestForecasting:
         assert_frame_equal(fcast.variance, alt_fcast.variance)
         assert_frame_equal(fcast.residual_variance, alt_fcast.residual_variance)
 
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon=3.0)
         with pytest.raises(ValueError, match=r"horizon must"):
             res.forecast(res.params, horizon=-1)
-        with pytest.raises(ValueError, match=r"horizon must"):
+        with pytest.raises(TypeError, match=r"horizon must"):
             res.forecast(res.params, horizon="3")
 
         fcast_reindex = res.forecast(res.params, horizon=3, reindex=True)
@@ -886,9 +888,9 @@ def test_invalid_horizon():
     res = arch_model(SP500).fit(disp="off")
     with pytest.raises(ValueError, match=r"horizon must be"):
         res.forecast(horizon=-1)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon=1.0)
-    with pytest.raises(ValueError, match=r"horizon must be"):
+    with pytest.raises(TypeError, match=r"horizon must be"):
         res.forecast(horizon="5")
 
 
@@ -1031,7 +1033,7 @@ def test_x_exceptions():
     with pytest.raises(TypeError, match=r"x is not None but"):
         res.forecast(x=SP500)
     x = SP500.copy()
-    x[:] = np.random.standard_normal(SP500.shape)
+    x[:] = np.random.default_rng(1234).standard_normal(SP500.shape)
     x.name = "Exog"
     res = ARX(SP500, lags=1, x=x).fit(disp="off")
     with pytest.raises(TypeError, match=r"x is None but the model"):
@@ -1044,11 +1046,11 @@ def test_x_exceptions():
     with pytest.raises(KeyError, match=r"The keys of x must exactly"):
         res.forecast(x={"z": x})
     _x = np.asarray(x).reshape((1, x.shape[0], 1))
-    with pytest.raises(ValueError, match=r"The arrays contained in the dictionary"):
+    with pytest.raises(ValueError, match=r"x must be a dict of 1-d or 2-d array_like"):
         res.forecast(x={"Exog": _x})
     x2 = pd.concat([x, x], axis=1)
     x2.columns = ["x0", "x1"]
-    x2.iloc[:, 1] = np.random.standard_normal(SP500.shape)
+    x2.iloc[:, 1] = np.random.default_rng(5678).standard_normal(SP500.shape)
     res = ARX(SP500, lags=1, x=x2).fit(disp="off")
     with pytest.raises(ValueError, match=r"The shapes of the arrays contained"):
         res.forecast(x={"x0": x2.iloc[:, 0], "x1": x2.iloc[10:, 1:]})
@@ -1439,7 +1441,7 @@ def test_forecast_start():
     y = rg.standard_normal(10)
     x = pd.DataFrame(rg.standard_normal((10, 1)), columns=["x"])
     mod = ARX(y, x=x, lags=3)
-    res = mod.fit(first_obs=0, last_obs=98)
+    res = mod.fit(first_obs=0, last_obs=10)
     fcast = res.forecast(start=2, x=x.shift(-1))
     fcast2 = res.forecast(start=2, method="simulation", simulations=1, x=x.shift(-1))
     assert_allclose(fcast.mean, fcast2.mean)
@@ -1451,3 +1453,120 @@ def test_forecast_start():
             c + p1 * y[i] + p2 * y[i - 1] + p3 * y[i - 2] + b * x.iloc[i + 1, 0]
         )
     assert_allclose(fcast.mean, oos)
+
+
+class _CountingRng:
+    """Fixed seed standard normal generator that records how often it is used"""
+
+    def __init__(self, seed=1):
+        self.generator = np.random.default_rng(seed)
+        self.calls = 0
+
+    def __call__(self, size):
+        self.calls += 1
+        return self.generator.standard_normal(size)
+
+
+def _forecast_method_models():
+    rg = np.random.default_rng(20240103)
+    y = pd.Series(rg.standard_t(8, 600))
+    models = {
+        "constant": ConstantMean(y, volatility=GARCH(1, 0, 1), rescale=False),
+        "ar": ARX(y, lags=1, volatility=GARCH(1, 0, 1), rescale=False),
+        "ma": MAMean(y, lags=1, volatility=GARCH(1, 0, 1), rescale=False),
+        "harx": HARX(y, lags=[1, 5], volatility=GARCH(1, 0, 1), rescale=False),
+    }
+    return models
+
+
+@pytest.mark.parametrize("model_name", ["constant", "ar", "ma", "harx"])
+@pytest.mark.parametrize("method", ["analytic", "simulation", "bootstrap"])
+@pytest.mark.parametrize("case", ["upper", "title", "swapcase"])
+@pytest.mark.parametrize("use_result", [True, False], ids=["result", "model"])
+def test_forecast_method_case_insensitive(model_name, method, case, use_result):
+    model = _forecast_method_models()[model_name]
+    res = model.fit(disp="off")
+    spelled = getattr(method, case)()
+    assert spelled != method
+    results = []
+    counters = []
+    for name in (method, spelled):
+        counter = _CountingRng()
+        kwargs = {
+            "horizon": 3,
+            "start": 500,
+            "method": name,
+            "simulations": 20,
+            "rng": counter,
+            "random_state": RandomState(0),
+        }
+        if use_result:
+            fcast = res.forecast(reindex=False, **kwargs)
+        else:
+            fcast = model.forecast(res.params, reindex=False, **kwargs)
+        results.append(fcast)
+        counters.append(counter.calls)
+    # The user supplied generator is only used by the simulation method
+    expected_calls = 0 if method != "simulation" else 100
+    assert counters == [expected_calls, expected_calls]
+    assert_allclose(results[0].variance, results[1].variance, rtol=1e-12)
+    assert_allclose(results[0].mean, results[1].mean, rtol=1e-12)
+    if method != "analytic":
+        assert_allclose(
+            results[0].simulations.variances,
+            results[1].simulations.variances,
+            rtol=1e-12,
+        )
+        assert_allclose(
+            results[0].simulations.residuals,
+            results[1].simulations.residuals,
+            rtol=1e-12,
+        )
+
+
+@pytest.mark.parametrize("method", ["Simulation", "SIMULATION", "simulation"])
+def test_volatility_forecast_method_case(method):
+    rg = np.random.default_rng(20240104)
+    resids = rg.standard_normal(300)
+    vol = GARCH(1, 0, 1)
+    params = np.array([0.1, 0.1, 0.8])
+    backcast = vol.backcast(resids)
+    var_bounds = vol.variance_bounds(resids)
+    counter = _CountingRng()
+    fcast = vol.forecast(
+        params,
+        resids,
+        backcast,
+        var_bounds,
+        horizon=3,
+        start=250,
+        method=method,
+        simulations=10,
+        rng=counter,
+    )
+    assert counter.calls == 50
+    assert fcast.forecast_paths is not None
+    # The one-step variance is known at the origin
+    analytic = vol.forecast(params, resids, backcast, var_bounds, start=250)
+    assert_allclose(
+        fcast.forecast_paths[:, :, 0],
+        np.tile(analytic.forecasts, (1, 10)),
+        rtol=1e-12,
+    )
+
+
+@pytest.mark.parametrize("model_name", ["constant", "ar", "ma", "harx"])
+@pytest.mark.parametrize(
+    "method",
+    ["quantum", "", "Sim", None, 1],
+    ids=["unknown", "empty", "partial", "none", "int"],
+)
+@pytest.mark.parametrize("use_result", [True, False], ids=["result", "model"])
+def test_forecast_unknown_method(model_name, method, use_result):
+    model = _forecast_method_models()[model_name]
+    res = model.fit(disp="off")
+    match = r"method must be one of 'analytic', 'simulation' or 'bootstrap'; got "
+    forecast = res.forecast if use_result else partial(model.forecast, res.params)
+    exc = TypeError if method is None or method == 1 else ValueError
+    with pytest.raises(exc, match=match):
+        forecast(method=method)

@@ -5,7 +5,12 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
-import arch.covariance.kernel as lrcov
+from arch.utility._validation import (
+    check_array,
+    check_instance,
+    check_option,
+    check_str,
+)
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -15,13 +20,6 @@ try:
 except ImportError:
     pass
 
-KERNEL_ESTIMATORS: dict[str, type[lrcov.CovarianceEstimator]] = {
-    kernel.lower(): getattr(lrcov, kernel) for kernel in lrcov.KERNELS
-}
-KERNEL_ESTIMATORS.update({kernel: getattr(lrcov, kernel) for kernel in lrcov.KERNELS})
-KNOWN_KERNELS = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
-KERNEL_ERR = f"kernel is not a known estimator. Must be one of:\n {KNOWN_KERNELS}"
-
 
 class CointegrationSetup(NamedTuple):
     y: pd.Series
@@ -29,14 +27,8 @@ class CointegrationSetup(NamedTuple):
     trend: UnitRootTrend
 
 
-def _check_kernel(kernel: str) -> str:
-    kernel = kernel.replace("-", "").replace("_", "").lower()
-    if kernel not in KERNEL_ESTIMATORS:
-        est = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
-        raise ValueError(
-            f"kernel is not a known kernel estimator. Must be one of:\n {est}"
-        )
-    return kernel
+# The number of deterministic terms in the cointegrating regression
+_TREND_TERMS = {"n": 0, "c": 1, "ct": 2, "ctt": 3, "t": 1}
 
 
 def _check_cointegrating_regression(
@@ -45,31 +37,45 @@ def _check_cointegrating_regression(
     trend: UnitRootTrend,
     supported_trends: tuple[str, ...] = ("n", "c", "ct", "ctt"),
 ) -> CointegrationSetup:
-    y = ensure1d(y, "y", True)
-    x = ensure2d(x, "x")
-    if y.shape[0] != x.shape[0]:
+    trend_name = check_option("trend", trend, supported_trends)
+    # Checks only, the conversion below keeps the index of a pandas object
+    y_values = check_array("y", y, ndim=1)
+    x_values = check_array("x", x, ndim=2)
+    if y_values.shape[0] != x_values.shape[0]:
         raise ValueError(
             f"The number of observations in y and x differ. y has "
-            f"{y.shape[0]} observtations, and x has {x.shape[0]}."
+            f"{y_values.shape[0]} observations, and x has {x_values.shape[0]}."
         )
+    num_x = x_values.shape[1]
+    if num_x < 1:
+        raise ValueError(
+            f"x must be a 2-d array with at least 1 column; got shape "
+            f"{x_values.shape} ({type(x).__name__})"
+        )
+    # One more row than the regression has parameters is needed to estimate it, and
+    # all estimators use the first difference of the data
+    num_params = num_x + _TREND_TERMS[trend_name]
+    check_array("x", x_values, ndim=2, min_length=num_params + 2)
+    y = ensure1d(y, "y", True)
+    x = ensure2d(x, "x")
     if not isinstance(x, pd.DataFrame):
         cols = [f"x{i}" for i in range(1, x.shape[1] + 1)]
         assert isinstance(y, pd.Series)
         x_df = pd.DataFrame(x, columns=cols, index=y.index)
     else:
         x_df = x
-    trend_name = trend.lower()
-    if trend_name.lower() not in supported_trends:
-        trends = ",".join([f'"{st}"' for st in supported_trends])
-        raise ValueError(f"Unknown trend. Must be one of {{{trends}}}")
+    if not y.index.equals(x_df.index):
+        raise ValueError(
+            f"x must be array_like with the same index as y; got a different index "
+            f"({type(x_df.index).__name__})"
+        )
     return CointegrationSetup(y, x_df, cast("UnitRootTrend", trend_name))
 
 
 def _cross_section(
     y: ArrayLike1D | ArrayLike2D, x: ArrayLike2D, trend: UnitRootTrend
 ) -> RegressionResults:
-    if trend not in ("n", "c", "ct", "ctt"):
-        raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')
+    trend = cast("UnitRootTrend", check_option("trend", trend, ("n", "c", "ct", "ctt")))
     y = ensure1d(y, "y", True)
     x = ensure2d(x, "x")
 
@@ -95,9 +101,9 @@ class CointegrationTestResult:
     crit_vals : Series
         The critical values of the Engle-Granger specific to the sample size
         and model dimension.
-    null : str, default "No Cointegration"
+    null : str, optional
         The null hypothesis.
-    alternative : str, default "Cointegration"
+    alternative : str, optional
         The alternative hypothesis.
     """
 
@@ -119,7 +125,7 @@ class CointegrationTestResult:
 
     @property
     def name(self) -> str:
-        """Sets or gets the name of the cointegration test"""
+        """Set or get the name of the cointegration test."""
         return self._name
 
     @name.setter
@@ -139,7 +145,7 @@ class CointegrationTestResult:
     @property
     def critical_values(self) -> pd.Series:
         """
-        Critical Values
+        The critical values of the test.
 
         Returns
         -------
@@ -151,12 +157,12 @@ class CointegrationTestResult:
 
     @property
     def null_hypothesis(self) -> str:
-        """The null hypothesis"""
+        """The null hypothesis."""
         return self._null
 
     @property
     def alternative_hypothesis(self) -> str:
-        """The alternative hypothesis"""
+        """The alternative hypothesis."""
         return self._alternative
 
     def __str__(self) -> str:
@@ -195,7 +201,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
 
     @property
     def trend(self) -> str:
-        """The trend used in the cointegrating regression"""
+        """The trend used in the cointegrating regression."""
         return self._trend
 
     @property
@@ -227,16 +233,26 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
 
         Parameters
         ----------
-        axes : Axes, default None
-            matplotlib axes instance to hold the figure.
-        title : str, default None
+        axes : Axes, optional
+            Matplotlib axes instance to hold the figure.
+        title : str, optional
             Title for the figure.
 
         Returns
         -------
         Figure
             The matplotlib Figure instance.
+
+        Raises
+        ------
+        TypeError
+            If axes is not a matplotlib Axes or None, or title is not a string or
+            None.
         """
+        from matplotlib.axes import Axes  # noqa: PLC0415
+
+        axes = check_instance("axes", axes, Axes, allow_none=True)
+        title = check_str("title", title, allow_none=True)
         resid = self.resid
         df = pd.DataFrame(resid)
         title = "Cointegrating Residual" if title is None else title

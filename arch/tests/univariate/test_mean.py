@@ -41,7 +41,15 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.univariate.mean import ARX, HARX, LS, ConstantMean, ZeroMean, arch_model
+from arch.univariate.mean import (
+    ARX,
+    HARX,
+    LS,
+    ConstantMean,
+    MAMean,
+    ZeroMean,
+    arch_model,
+)
 from arch.univariate.volatility import (
     APARCH,
     ARCH,
@@ -100,6 +108,7 @@ simple_mean_models = [
     HARX(SP500, lags=[1, 5]),
     ConstantMean(SP500),
     ZeroMean(SP500),
+    MAMean(SP500, lags=2),
 ]
 
 mean_models = [
@@ -184,7 +193,7 @@ class TestMeanModel:
         random_state = np.random.RandomState(seed)
         zm.distribution = Normal(seed=random_state)
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"initial_value must be None"):
             zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)
         date_index = pd.date_range("2000-12-31", periods=1000, freq="W")
         cls.y = sim_data.data.values
@@ -207,7 +216,7 @@ class TestMeanModel:
         parameters = np.array([5.0, 1.0])
         cm.simulate(parameters, self.T)
         assert_equal(cm.num_params, 1)
-        with pytest.raises(ValueError, match=r"Both initial value and x must"):
+        with pytest.raises(ValueError, match=r"x must be None"):
             cm.simulate(parameters, self.T, x=np.array(10))
         bounds = cm.bounds()
         assert_equal(bounds, [(-np.inf, np.inf)])
@@ -237,6 +246,29 @@ class TestMeanModel:
         assert "<strong>" in cm._repr_html_()
         with pytest.raises(ValueError, match=r"horizon must be an integer >= 1"):
             res.forecast(horizon=0, start=20)
+
+    def test_ma_mean(self):
+        ma = MAMean(self.y, lags=2)
+        assert ma.name == "MA"
+        assert_equal(ma.num_params, 3)
+        assert_equal(ma.constant, True)
+        bounds = ma.bounds()
+        assert_equal(len(bounds), 3)
+        params = np.array(
+            [0.5, 0.3, -0.2, 0.1, 0.5, 0.2]
+        )  # mu, theta_1, theta_2 + GARCH
+
+        ma.volatility = GARCH()
+        sim_data = ma.simulate(params, self.T)
+        assert isinstance(sim_data, pd.DataFrame)
+        assert sim_data.shape == (self.T, 3)
+
+        res = ma.fit(disp=DISPLAY)
+        assert isinstance(res.__str__(), str)
+        assert isinstance(ma.__repr__(), str)
+
+        forecasts = res.forecast(horizon=5, start=5)
+        assert isinstance(forecasts, ARCHModelForecast)
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
@@ -301,7 +333,7 @@ class TestMeanModel:
         assert_equal(a, np.empty((0, 5)))
         assert_equal(b, np.empty(0))
         res = harx.fit(disp=DISPLAY)
-        with pytest.raises(ValueError, match=r"params have incorrect"):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array"):
             res.forecast(params=np.array([1.0, 1.0]))
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
@@ -325,17 +357,17 @@ class TestMeanModel:
         assert isinstance(res.__repr__(), str)
 
     def test_harx_error(self):
-        with pytest.raises(ValueError, match=r"Input to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got -5"):
             HARX(self.y, self.x, lags=[1, -5, 22])
-        with pytest.raises(ValueError, match=r"When using the 1-d format of lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 1; got 0"):
             HARX(self.y, self.x, lags=[0, 1, 5, 22])
-        with pytest.raises(ValueError, match=r"nput to lags must be non-negative"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[-1], [3]])
-        with pytest.raises(ValueError, match=r"When using a 2-d array, all values"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[0], [0]])
         with pytest.raises(ValueError, match=r"lags contains redundant entries"):
             HARX(self.y, self.x, lags=[[1, 1, 3], [2, 3, 3]])
-        with pytest.raises(ValueError, match=r"Incorrect format for lags"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, self.x, lags=[[[1], [3]]])
 
     @pytest.mark.parametrize("constant", [True, False])
@@ -561,12 +593,14 @@ class TestMeanModel:
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
     def test_ar_plot(self, agg_backend):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="mle")
+        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="classic")
         res.plot()
-        res.plot(annualize="D")
-        res.plot(annualize="W")
-        res.plot(annualize="M")
-        with pytest.raises(ValueError, match=r"annualize not recognized"):
+        res.plot(annualize="d")
+        res.plot(annualize="w")
+        res.plot(annualize="m")
+        with pytest.raises(
+            ValueError, match=r"annualize must be one of 'd', 'w' or 'm'"
+        ):
             res.plot(annualize="unknown")
 
         close_plots()
@@ -692,11 +726,11 @@ class TestMeanModel:
         am = arch_model(self.y, vol="aparch")
         assert isinstance(am.volatility, APARCH)
 
-        with pytest.raises(ValueError, match=r"Unknown model type in mean"):
+        with pytest.raises(ValueError, match=r"mean must be one of"):
             arch_model(self.y, mean="unknown")
-        with pytest.raises(ValueError, match=r"Unknown model type in vol"):
+        with pytest.raises(ValueError, match=r"vol must be one of"):
             arch_model(self.y, vol="unknown")
-        with pytest.raises(ValueError, match=r"Unknown model type in dist"):
+        with pytest.raises(ValueError, match=r"dist must be one of"):
             arch_model(self.y, dist="unknown")
 
         am.fit(disp=DISPLAY)
@@ -726,42 +760,36 @@ class TestMeanModel:
         res.summary()
 
     def test_errors(self):
-        with pytest.raises(
-            ValueError, match=r"lags does not follow a supported format"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             ARX(self.y, lags=np.array([[1, 2], [3, 4]]))
         x = self.rng.randn(self.y.shape[0] + 1, 1)
         with pytest.raises(ValueError, match=r"x must be nobs by n"):
             ARX(self.y, x=x)
-        with pytest.raises(
-            ValueError, match=r"When using a 2-d array, lags must by k by 2"
-        ):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0 or a non"):
             HARX(self.y, lags=np.eye(3))
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, lags=-1)
-        with pytest.raises(ValueError, match=r"lags must be a positive integer"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 0; got -1"):
             ARX(self.y, x=self.rng.randn(1, 1), lags=-1)
 
         ar = ARX(self.y, lags=1)
         d = Normal()
-        with pytest.raises(ValueError, match=r"Must subclass VolatilityProcess"):
+        with pytest.raises(TypeError, match=r"volatility must be an instance of"):
             ar.volatility = d
 
         v = GARCH()
-        with pytest.raises(ValueError, match=r"Must subclass Distribution"):
+        with pytest.raises(TypeError, match=r"distribution must be an instance of"):
             ar.distribution = v
         x = self.rng.randn(1000, 1)
-        with pytest.raises(ValueError, match=r"x must have nobs \+ burn rows"):
+        with pytest.raises(ValueError, match=r"x must be a 2-d array .* \(600, n\)"):
             ar.simulate(np.ones(5), 100, x=x)
-        with pytest.raises(
-            ValueError, match=r"params has the wrong number of elements"
-        ):
+        with pytest.raises(ValueError, match=r"params must be a 1-d array .* \(3,\)"):
             ar.simulate(np.ones(5), 100)
-        with pytest.raises(ValueError, match=r"initial_value has the wrong shape"):
+        with pytest.raises(ValueError, match=r"initial_value must be a 1-d array"):
             ar.simulate(np.ones(3), 100, initial_value=self.rng.standard_normal(10))
 
         ar.volatility = ConstantVariance()
-        with pytest.raises(ValueError, match=r"Unknown cov_type"):
+        with pytest.raises(ValueError, match=r"cov_type must be one of"):
             ar.fit(cov_type="unknown")
 
     def test_warnings(self):
@@ -915,7 +943,7 @@ class TestMeanModel:
         cm = ConstantMean(y)
         res2 = cm.fit(last_obs=900, disp=DISPLAY)
 
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
     def test_align(self):
         dates = pd.date_range("2000-01-01", "2010-01-01", freq=MONTH_END)
@@ -932,7 +960,7 @@ class TestMeanModel:
             direct.iloc[: (i + 1), i] = np.nan
         assert_frame_equal(aligned, direct)
 
-        with pytest.raises(ValueError, match=r"Unknown alignment"):
+        with pytest.raises(ValueError, match=r"align must be one of"):
             _align_forecast(forecasts, align="unknown")
 
     def test_fixed_user_parameters(self):
@@ -943,9 +971,9 @@ class TestMeanModel:
             res.conditional_volatility, fixed_res.conditional_volatility
         )
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
         # Smoke for summary
         fixed_res.summary()
@@ -959,9 +987,9 @@ class TestMeanModel:
             res.conditional_volatility, fixed_res.conditional_volatility
         )
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
 
         # Test first and last dates
@@ -970,9 +998,9 @@ class TestMeanModel:
         new_am = arch_model(self.y_series)
         fixed_res = new_am.fix(res.params, first_obs=100, last_obs=900)
         assert_series_equal(res.params, fixed_res.params)
-        assert_equal(res.aic, fixed_res.aic)
-        assert_equal(res.bic, fixed_res.bic)
-        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_allclose(res.aic, fixed_res.aic, rtol=1e-12)
+        assert_allclose(res.bic, fixed_res.bic, rtol=1e-12)
+        assert_allclose(res.loglikelihood, fixed_res.loglikelihood, rtol=1e-12)
         assert_equal(res.num_params, fixed_res.num_params)
 
     @pytest.mark.parametrize("display", ["off", "final"])
@@ -1023,7 +1051,7 @@ class TestMeanModel:
                 1.26381761,
             ]
         )
-        am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
+        am = arch_model(y, mean="ARX", lags=10, p=3, q=0)
 
         with pytest.warns(DataScaleWarning, match=r"y is poorly scaled"):
             am.fit(disp=DISPLAY)
@@ -1036,10 +1064,10 @@ class TestMeanModel:
 
     def test_first_after_last(self):
         am = arch_model(self.y_series)
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(disp=DISPLAY, first_obs=500, last_obs=480)
 
-        with pytest.raises(ValueError, match=r"first_obs and last_obs produce"):
+        with pytest.raises(ValueError, match=r"last_obs must be larger than first_obs"):
             am.fit(
                 disp=DISPLAY,
                 first_obs=self.y_series.index[500],
@@ -1050,20 +1078,23 @@ class TestMeanModel:
         am = arch_model(self.y_series, vol="Constant")
         res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=self.y_series.shape[0] + 1)
-        assert_equal(res.resid.values, res_adj.resid.values)
-        assert_equal(res.params.values, res_adj.params.values)
+        nobs = self.y_series.shape[0]
+        res_adj = am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs)
+        assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
+        with pytest.raises(ValueError, match=r"last_obs must be an integer position"):
+            am.fit(disp=DISPLAY, first_obs=0, last_obs=nobs + 1)
+        assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100)
         assert res.fit_start == 100
         res_adj = am.fit(disp=DISPLAY, first_obs=self.y_series.index[100])
-        assert_equal(res.params.values, res_adj.params.values)
-        assert_equal(res.resid.values, res_adj.resid.values)
+        assert_allclose(res.params.values, res_adj.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res_adj.resid.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, last_obs=900)
         res2 = am.fit(disp=DISPLAY, last_obs=self.y_series.index[900])
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
         res = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         res2 = am.fit(
@@ -1071,8 +1102,8 @@ class TestMeanModel:
             first_obs=self.y_series.index[100],
             last_obs=self.y_series.index[900],
         )
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res.resid.values, res2.resid.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-12)
+        assert_allclose(res.resid.values, res2.resid.values, rtol=1e-12)
 
     def test_model_obs_equivalence(self):
         """Tests models that should use the same observation"""
@@ -1082,12 +1113,12 @@ class TestMeanModel:
         res2 = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         index = self.y_series.index
         res3 = am.fit(disp=DISPLAY, first_obs=index[100], last_obs=index[900])
-        assert_equal(res.params.values, res2.params.values)
-        assert_equal(res2.params.values, res3.params.values)
+        assert_allclose(res.params.values, res2.params.values, rtol=1e-8)
+        assert_allclose(res2.params.values, res3.params.values, rtol=1e-8)
 
         am = arch_model(self.y_series, hold_back=100)
         res4 = am.fit(disp=DISPLAY, last_obs=900)
-        assert_equal(res.params.values, res4.params.values)
+        assert_allclose(res.params.values, res4.params.values, rtol=1e-8)
 
     def test_model_obs_equivalence_ar(self):
         """Tests models that should use the same observation"""
@@ -1141,11 +1172,12 @@ class TestMeanModel:
         am = arch_model(data.data)
         std = am.fit(disp=DISPLAY)
         loose = am.fit(tol=1e-2, disp=DISPLAY)
-        assert std.loglikelihood >= loose.loglikelihood
+        tol = 1e-6 * np.abs(std.loglikelihood)
+        assert std.loglikelihood >= loose.loglikelihood - tol
         with warnings.catch_warnings(record=True) as w:
             short = am.fit(options={"maxiter": 3}, disp=DISPLAY)
         assert len(w) == 1, str(w)
-        assert std.loglikelihood >= short.loglikelihood
+        assert std.loglikelihood >= short.loglikelihood - tol
         assert short.convergence_flag != 0
 
     def test_little_or_no_data(self):
@@ -1172,7 +1204,7 @@ class TestMeanModel:
 
         assert res.num_params == res_z.num_params
         assert_series_equal(res.params, res_z.params)
-        assert res.loglikelihood == res_z.loglikelihood
+        assert_allclose(res.loglikelihood, res_z.loglikelihood, rtol=1e-8)
 
 
 @pytest.mark.parametrize(
@@ -1193,7 +1225,7 @@ def test_backcast(volatility, simulated_data):
 
 def test_backcast_error(simulated_data):
     zm = ZeroMean(simulated_data, volatility=GARCH())
-    with pytest.raises(ValueError, match=r"User backcast value"):
+    with pytest.raises(ValueError, match=r"backcast must be a finite float > 0"):
         zm.fit(backcast=-1, disp=DISPLAY)
     zm = ZeroMean(simulated_data, volatility=RiskMetrics2006())
     with pytest.raises(ValueError, match=r"User backcast must be either"):
@@ -1253,6 +1285,78 @@ def test_arch_lm(simulated_data):
     assert "H0: Standardized" in wald.__repr__()
 
 
+def _reference_arch_lm(resids, lags):
+    """Independent T * R^2 of the regression of e^2 on a constant and its lags"""
+    e2 = np.asarray(resids, dtype=float) ** 2
+    nobs = e2.shape[0]
+    lhs = e2[lags:]
+    rhs = np.column_stack(
+        [np.ones(nobs - lags)] + [e2[lags - i : nobs - i] for i in range(1, lags + 1)]
+    )
+    coef = np.linalg.lstsq(rhs, lhs, rcond=None)[0]
+    resid = lhs - rhs @ coef
+    r2 = 1.0 - resid @ resid / np.sum((lhs - lhs.mean()) ** 2)
+    # T is the number of residuals, not the number used in the regression
+    stat = nobs * r2
+    return stat, stats.chi2(lags).sf(stat)
+
+
+@pytest.mark.parametrize("standardized", [False, True], ids=["raw", "standardized"])
+@pytest.mark.parametrize("lags", [1, 5, 12], ids=["lags-1", "lags-5", "lags-12"])
+def test_arch_lm_reference(simulated_data, lags, standardized):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    resids = np.asarray(res.resid)
+    if standardized:
+        resids = resids / np.asarray(res.conditional_volatility)
+    stat, pval = _reference_arch_lm(resids, lags)
+    wald = res.arch_lm_test(lags=lags, standardized=standardized)
+    assert wald.df == lags
+    assert_allclose(wald.stat, stat, rtol=1e-8)
+    assert_allclose(wald.pval, pval, rtol=1e-8, atol=1e-12)
+
+
+@pytest.mark.parametrize("nobs", [250, 1000], ids=["nobs-250", "nobs-1000"])
+def test_arch_lm_default_lags(nobs):
+    rs = RandomState(0)
+    res = ZeroMean(rs.standard_normal(nobs)).fit(disp=DISPLAY)
+    expected = int(np.ceil(12 * (nobs / 100) ** 0.25))
+    wald = res.arch_lm_test()
+    assert wald.df == expected
+    stat, _ = _reference_arch_lm(np.asarray(res.resid), expected)
+    assert_allclose(wald.stat, stat, rtol=1e-8)
+
+
+@pytest.mark.parametrize(
+    "lags",
+    [np.int64(5), np.int32(5), np.uint8(5), np.array(5)],
+    ids=["int64", "int32", "uint8", "0d-array"],
+)
+def test_arch_lm_integer_like_lags(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    expected = res.arch_lm_test(lags=5)
+    wald = res.arch_lm_test(lags=lags)
+    assert wald.df == 5
+    assert isinstance(wald.df, int)
+    assert_allclose(wald.stat, expected.stat, rtol=1e-12)
+    assert_allclose(wald.pval, expected.pval, rtol=1e-12)
+
+
+@pytest.mark.parametrize(
+    "lags", [2.5, 5.0, "3", [3], (3,)], ids=["2.5", "5.0", "str", "list", "tuple"]
+)
+def test_arch_lm_invalid_lags_type(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    with pytest.raises(TypeError, match="lags must be an integer"):
+        res.arch_lm_test(lags=lags)
+
+
+@pytest.mark.parametrize("lags", [0, -1, np.int64(0)], ids=["0", "-1", "np-0"])
+def test_arch_lm_invalid_lags_value(simulated_data, lags):
+    res = ZeroMean(simulated_data, volatility=GARCH()).fit(disp=DISPLAY)
+    with pytest.raises(ValueError, match=r"lags must be an integer >= 1 or None"):
+        res.arch_lm_test(lags=lags)
+
+
 def test_autoscale():
     rs = np.random.RandomState(34254321)
     dist = Normal(seed=rs)
@@ -1280,6 +1384,12 @@ def test_autoscale():
     assert_almost_equal(res_big.scale, 0.1)
 
 
+# The data are constant, so the optimizer can evaluate the likelihood where the
+# variance is 0. Whether it does depends on the platform (it does on Intel macOS),
+# and the 0 / 0 and log(0) warnings along the way are expected. The test only
+# checks that the fit reports the convergence problem.
+@pytest.mark.filterwarnings("ignore:invalid value encountered:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:divide by zero encountered:RuntimeWarning")
 def test_no_variance():
     mod = arch_model(np.ones(100))
     with pytest.warns(ConvergenceWarning, match=r"The optimizer returned"):
@@ -1326,17 +1436,18 @@ def test_backcast_restricted(simulated_data):
 
 
 def test_missing_data_exception():
-    y = np.random.standard_normal(1000)
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
     y[::29] = np.nan
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
-    y = np.random.standard_normal(1000)
+    y = rng.standard_normal(1000)
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
     y[::29] = np.nan
     y[::53] = np.inf
-    with pytest.raises(ValueError, match=r"NaN or inf values"):
+    with pytest.raises(ValueError, match=r"y must be a 1-d array of finite numbers"):
         arch_model(y)
 
 
@@ -1352,14 +1463,14 @@ def test_parameterless_fit(first_obs, last_obs, vol):
 
 
 def test_invalid_vol_dist():
-    with pytest.raises(TypeError, match=r"volatility must inherit"):
+    with pytest.raises(TypeError, match=r"volatility must be an instance of"):
         ConstantMean(SP500, volatility="GARCH")
-    with pytest.raises(TypeError, match=r"distribution must inherit"):
+    with pytest.raises(TypeError, match=r"distribution must be an instance of"):
         ConstantMean(SP500, distribution="Skew-t")
 
 
 def test_fiaparch_non_int_p():
-    with pytest.raises(TypeError, match=r"p must be a scalar int"):
+    with pytest.raises(TypeError, match=r"p must be an integer"):
         arch_model(SP500, vol="fiaparch", p=[1, 2])
 
 

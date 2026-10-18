@@ -44,13 +44,12 @@ In code this model can be constructed using data from the S&P 500 using
 .. code-block:: python
 
     from arch import arch_model
+    import arch.data.sp500
     import datetime as dt
-    import pandas_datareader.data as web
-    start = dt.datetime(2000,1,1)
-    end = dt.datetime(2014,1,1)
-    sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
+    sp500 = arch.data.sp500.load()
+    sp500 = sp500.loc['2000-01-01':'2014-01-01']
     returns = 100 * sp500['Adj Close'].pct_change().dropna()
-    am = arch_model(returns, vol='Garch', p=1, o=0, q=1, dist='Normal')
+    am = arch_model(returns, vol='garch', p=1, o=0, q=1, dist='normal')
 
 The model will be estimated using the first 10 years to estimate parameters
 and then forecasts will be produced for the final 5.
@@ -198,11 +197,11 @@ which returns
 
                     h.1       h.2       h.3       h.4       h.5
    Date
-   2013-12-24  0.489534  0.495875  0.501122  0.509194  0.518614
-   2013-12-26  0.474691  0.480416  0.483664  0.491932  0.502419
-   2013-12-27  0.447054  0.454875  0.462167  0.467515  0.475632
-   2013-12-30  0.421528  0.430024  0.439856  0.448282  0.457368
-   2013-12-31  0.407544  0.415616  0.422848  0.430246  0.439451
+   2013-12-24  0.489534  0.496998  0.504412  0.511775  0.519089
+   2013-12-26  0.474691  0.482255  0.489768  0.497231  0.504643
+   2013-12-27  0.447054  0.454805  0.462503  0.470150  0.477744
+   2013-12-30  0.421528  0.429451  0.437320  0.445137  0.452900
+   2013-12-31  0.407544  0.415561  0.423525  0.431434  0.439290
 
 The values in the columns ``h.1`` are one-step ahead forecast, while values in
 ``h.2``, ..., ``h.5`` are 2, ..., 5-observation ahead forecasts.  The output
@@ -228,24 +227,26 @@ which produces
    2009-12-29       NaN       NaN       NaN       NaN       NaN
    2009-12-30       NaN       NaN       NaN       NaN       NaN
    2009-12-31       NaN       NaN       NaN       NaN       NaN
-   2010-01-04  0.739303  0.741100  0.744529  0.746940  0.752688
-   2010-01-05  0.695349  0.702488  0.706812  0.713342  0.721629
-   2010-01-06  0.649343  0.654048  0.664055  0.672742  0.681263
+   2010-01-04  0.739303  0.745081  0.750819  0.756519  0.762181
+   2010-01-05  0.695349  0.701424  0.707457  0.713450  0.719402
+   2010-01-06  0.649343  0.655728  0.662070  0.668369  0.674625
 
 The output will always have as many rows as the data input.  Values
 that are not forecast are ``nan`` filled.
+
+.. _forecasting-append:
 
 Forecasting After New Data Arrive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Models do not need to be re-estimated each time new data are available.
-:meth:`~arch.univariate.mean.HARX.append` adds observations to a model
+:meth:`~arch.univariate.HARX.append` adds observations to a model
 in-place without changing any parameters, so that forecasts can be produced
 from the latest observation using parameters estimated previously.
 
 .. code-block:: python
 
-   am = arch_model(returns[:split_date], vol='Garch', p=1, o=0, q=1, dist='Normal')
+   am = arch_model(returns[:split_date], vol='garch', p=1, o=0, q=1, dist='normal')
    res = am.fit(disp='off')
    # Observations arrive, and are added to the model
    am.append(returns[split_date + dt.timedelta(1):])
@@ -257,7 +258,8 @@ model. If the model was constructed using a pandas ``Series``, the index of
 the new data must follow the index of the existing data. Individual
 observations can be appended to models that were constructed using an
 ``ndarray`` or a list. Models that include exogenous variables require the
-values of the exogenous variables for the new observations.
+values of the exogenous variables for the new observations, which are passed using
+the keyword argument ``x``, for example ``am.append(y_new, x=x_new)``.
 
 .. code-block:: python
 

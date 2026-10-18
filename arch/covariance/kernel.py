@@ -1,14 +1,25 @@
 from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from functools import cached_property
-from typing import SupportsInt, cast
+import re
+from typing import TypeVar, cast
 
 import numpy as np
 from pandas import DataFrame, Index
 
 from arch._typing import ArrayLike, Float64Array, Float64Array2D
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
+from arch.utility._validation import (
+    _describe,
+    _fail,
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+)
+from arch.utility.array import AbstractDocStringInheritor, ensure2d
 from arch.vendor._decorators import Substitution
 
 __all__ = [
@@ -26,8 +37,16 @@ __all__ = [
     "TukeyHamming",
     "TukeyHanning",
     "TukeyParzen",
+    "ZeroLag",
 ]
 
+# The canonical names of the kernels that are available by name to the
+# long-run covariance consumers, which are the names of the classes. This is the
+# only list of kernel names: KERNEL_ESTIMATORS is built from it, and the
+# estimators in arch.unitroot and arch.covariance.var look up kernels using
+# get_kernel_estimator. ZeroLag is deliberately excluded since it is only a
+# building block for arch.covariance.var.PreWhitenedRecolored when kernel=None
+# (VAR-HAC).
 KERNELS = [
     "Bartlett",
     "Parzen",
@@ -44,9 +63,33 @@ KERNELS = [
 ]
 
 
+def normalize_kernel_name(kernel: str) -> str:
+    """
+    Normalize the name of a kernel.
+
+    Parameters
+    ----------
+    kernel : str
+        The name of a kernel.
+
+    Returns
+    -------
+    str
+        The name in lower case without hyphens or underscores, so that
+        "quadratic-spectral" and "quadratic_spectral" are both
+        "quadraticspectral".
+    """
+    return kernel.replace("-", "").replace("_", "").lower()
+
+
+def _kernel_display_name(name: str) -> str:
+    """The lower case name of a kernel with hyphens between the words"""
+    return re.sub(r"(?<!^)(?=[A-Z])", "-", name).lower()
+
+
 class CovarianceEstimate:
     r"""
-    Covariance estimate using a long-run covariance estimator
+    Covariance estimate using a long-run covariance estimator.
 
     Parameters
     ----------
@@ -54,14 +97,14 @@ class CovarianceEstimate:
         The short-run covariance estimate.
     one_sided_strict : ndarray
         The one-sided strict covariance estimate.
-    columns : {None, list[str]}
+    columns : Index or list of str, optional
         Column labels to use if covariance estimates are returned as
         DataFrames.
-    long_run : ndarray, default None
+    long_run : ndarray, optional
         The long-run covariance estimate. If not provided, computed from
         short_run and one_sided_strict.
-    one_sided : ndarray, default None
-        The one-sided-strict covariance estimate. If not provided, computed
+    one_sided : ndarray, optional
+        The one-sided covariance estimate. If not provided, computed
         from short_run and one_sided_strict.
 
     Notes
@@ -71,13 +114,16 @@ class CovarianceEstimate:
 
     .. math::
 
-        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^\prime
+        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^H
 
     and the one-sided covariance is
 
     .. math::
 
         \Lambda_0 = \Gamma_0 + \Lambda_1.
+
+    :math:`^H` is the conjugate transpose, which is the transpose for real
+    estimates. The estimates of complex data are complex Hermitian matrices.
     """
 
     def __init__(
@@ -106,6 +152,9 @@ class CovarianceEstimate:
         """
         if self._long_run is not None:
             long_run = self._long_run
+        elif np.iscomplexobj(self._oss):
+            # Added in this order the result is exactly Hermitian
+            long_run = self._sr + (self._oss + self._oss.conj().T)
         else:
             long_run = self._sr + self._oss + self._oss.T
         return self._wrap(long_run)
@@ -145,34 +194,73 @@ def _cov_kernel(
     return oss
 
 
+def _cov_kernel_complex(
+    df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray
+) -> np.ndarray:
+    # sum_t x_t x_{t-i}^H, so that the lag-i autocovariance is Hermitian
+    oss = np.zeros((k, k), dtype=x.dtype)
+    x_conj = np.conj(x)
+    for i in range(1, num_weights):
+        oss += w[i] * (x[i:].T @ x_conj[:-i]) / df
+    return oss
+
+
 if HAS_NUMBA and not DISABLE_NUMBA:
     _cov_jit = jit(_cov_kernel, nopython=True)
+    _cov_jit_complex = jit(_cov_kernel_complex, nopython=True)
 else:
     _cov_jit = _cov_kernel
+    _cov_jit_complex = _cov_kernel_complex
 
 
-class CovarianceEstimator(ABC):
+def _kernel_covariance_template() -> None:
+    # The docstring is the template of the docstrings of the kernel estimators, which
+    # is filled using the name of the kernel and the formula of its weights. It is
+    # written as a docstring so that it is processed in the same way as the
+    # docstring of a class.
     r"""
     %(kernel_name)s kernel covariance estimation.
 
     Parameters
     ----------
     x : array_like
-        The data to use in covariance estimation.
-    bandwidth : float, default None
-        The kernel's bandwidth.  If None, optimal bandwidth is estimated.
-    df_adjust : int, default 0
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
+    df_adjust : int, optional
         Degrees of freedom to remove when adjusting the covariance. Uses the
         number of observations in x minus df_adjust when dividing
-        inner-products.
-    center : bool, default True
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
+    center : bool, optional
         A flag indicating whether x should be demeaned before estimating the
         covariance.
-    weights : array_like, default None
+    weights : array_like, optional
         An array of weights used to combine when estimating optimal bandwidth.
-        If not provided, a vector of 1s is used. Must have nvar elements.
-    force_int : bool, default False
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
         Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
 
     Notes
     -----
@@ -183,9 +271,136 @@ class CovarianceEstimator(ABC):
        %(formula)s
 
     where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
+
+    If the bandwidth is not provided, it is estimated using the constants of
+    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
+    details.
+
+    **Complex data.** The estimators accept complex data, for which they are
+    Hermitian. The lag-:math:`j` autocovariance is
+    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the
+    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the
+    long-run covariance
+    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+
+    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,
+    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+
+    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is
+    the long-run covariance of the real data :math:`u` and :math:`v` with the same
+    kernel and bandwidth. The automatic bandwidth combines the columns of x
+    using ``weights`` and uses the real part of the autocovariances of this
+    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not
+    estimated, and the estimates are complex128 arrays. Real data give float64
+    estimates.
+
+    References
+    ----------
+    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+    .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.
+    """
+
+
+_KERNEL_COVARIANCE_DOC = _kernel_covariance_template.__doc__
+_KernelT = TypeVar("_KernelT", bound=type)
+
+
+def _kernel_substitution(
+    kernel_name: str, formula: str
+) -> Callable[[_KernelT], _KernelT]:
+    """Set the docstring of a kernel estimator using its name and weight formula"""
+    substitution = Substitution(kernel_name=kernel_name, formula=formula)
+
+    def decorator(cls: _KernelT) -> _KernelT:
+        cls.__doc__ = _KERNEL_COVARIANCE_DOC
+        return substitution(cls)
+
+    return decorator
+
+
+class CovarianceEstimator(ABC):
+    r"""
+    Base class of the kernel-based long-run covariance estimators.
+
+    Parameters
+    ----------
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
+
+    Notes
+    -----
+    The kernel weights are defined by the concrete estimators that inherit from
+    this class. They are computed using :math:`z=\frac{h}{H}, h=0, 1, \ldots, H`
+    where H is the bandwidth.
+
+    If the bandwidth is not provided, it is estimated using the constants of
+    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
+    details.
+
+    **Complex data.** The estimators accept complex data, for which they are
+    Hermitian. The lag-:math:`j` autocovariance is
+    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the
+    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the
+    long-run covariance
+    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+
+    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,
+    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+
+    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is
+    the long-run covariance of the real data :math:`u` and :math:`v` with the same
+    kernel and bandwidth. The automatic bandwidth combines the columns of x
+    using ``weights`` and uses the real part of the autocovariances of this
+    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not
+    estimated, and the estimates are complex128 arrays. Real data give float64
+    estimates.
+
+    References
+    ----------
+    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+    .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.
     """
 
     _name = ""
+    # Whether complex data are accepted. The estimators that cannot be Hermitian, such
+    # as the VAR prewhitening, set this to False
+    _allow_complex = True
 
     def __init__(
         self,
@@ -196,43 +411,51 @@ class CovarianceEstimator(ABC):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
-        self._x_orig = ensure2d(x, "x")
+        x_checked = check_array(
+            "x", x, ndim=2, min_length=2, allow_complex=self._allow_complex
+        )
+        nobs, nvar = x_checked.shape
+        if nvar < 1:
+            _fail(
+                ValueError,
+                "x",
+                "a 2-d array of finite numbers with at least 2 rows and 1 column",
+                _describe(x),
+            )
+        bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
+        df_adjust = check_int("df_adjust", df_adjust, lower=0, upper=nobs - 1)
+        center = check_bool("center", center)
+        weights_checked = check_array(
+            "weights", weights, shape=(nvar,), allow_none=True
+        )
+        if weights_checked is not None and (
+            np.any(weights_checked < 0) or np.all(weights_checked == 0)
+        ):
+            _fail(
+                ValueError,
+                "weights",
+                "non-negative with at least one value that is strictly greater "
+                "than 0",
+                _describe(weights),
+            )
+        force_int = check_bool("force_int", force_int)
+
+        self._x_orig = ensure2d(x, "x", allow_complex=self._allow_complex)
         self._x = np.asarray(self._x_orig)
         self._center = center
         if self._center:
             self._x = self._x - self._x.mean(0)
-        if bandwidth is not None:
-            _bandwidth = bandwidth
-            if not np.isscalar(_bandwidth) or (cast("float", _bandwidth) < 0.0):
-                raise ValueError("bandwidth must be a non-negative scalar.")
         self._bandwidth: float | None = bandwidth
         self._auto_bandwidth = bandwidth is None
-        if not np.isscalar(df_adjust) or (cast("int", df_adjust) < 0):
-            raise ValueError("df_adjust must be a non-negative integer.")
-        self._df_adjust = int(cast("SupportsInt", df_adjust))
-        self._df = self._x.shape[0] - self._df_adjust
-        if self._df <= 0:
-            raise ValueError(
-                "Degrees of freedom is <= 0 after adjusting the sample "
-                "size of x using df_adjust. df_adjust must be less than"
-                f" {self._x.shape[0]}"
-            )
-        xw: Float64Array2D
-        if weights is None:
-            xw = self._x_weights = np.ones((self._x.shape[1], 1))
+        self._df_adjust = df_adjust
+        self._df = nobs - self._df_adjust
+        self._x_weights: Float64Array2D
+        if weights_checked is None:
+            self._x_weights = np.ones((nvar, 1))
         else:
-            _xw = ensure1d(np.asarray(weights), "weights", series=False).astype(float)
-            xw = self._x_weights = cast("Float64Array2D", _xw[:, None])
-        if (
-            xw.shape[0] != self._x.shape[1]
-            or xw.shape[1] != 1
-            or np.any(xw < 0)
-            or np.all(xw == 0)
-        ):
-            raise ValueError(
-                f"weights must be a 1 by {self._x.shape[1]} (x.shape[1]) "
-                f"array with non-negative values where at least one value is "
-                "strictly greater than 0."
+            self._x_weights = cast(
+                "Float64Array2D",
+                np.array(weights_checked, dtype=float).ravel()[:, None],
             )
         self._force_int = force_int
 
@@ -282,7 +505,6 @@ class CovarianceEstimator(ABC):
     def centered(self) -> bool:
         """
         Flag indicating whether the data are centered (demeaned).
-
 
         Returns
         -------
@@ -337,8 +559,12 @@ class CovarianceEstimator(ABC):
         n = int(np.ceil(4 * ((nobs / 100) ** self.rate)))
         f_0s = 0.0
         f_qs = 0.0
+        # The autocovariance of a complex series is v_t times the conjugate of v_{t-j},
+        # which is complex. The sums over -n, ..., n add j and -j, which are conjugates
+        # (Hermitian), so only the real part of sigma_j is used.
+        lagged = v.conj() if np.iscomplexobj(v) else v
         for j in range(n + 1):
-            sig_j = float(np.squeeze(v[j:].T @ v[: (nobs - j)])) / nobs
+            sig_j = float(np.real(np.squeeze(v[j:].T @ lagged[: (nobs - j)]))) / nobs
             scale = 1 + (j != 0)
             f_0s += scale * sig_j
             f_qs += scale * j**q * sig_j
@@ -364,6 +590,35 @@ class CovarianceEstimator(ABC):
 
         where :math:`c_k` is a kernel-dependent constant, T is the sample size,
         q determines the optimal bandwidth rate for the kernel.
+
+        The constants and the values of q are from [1]_. For example,
+        :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2
+        for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral
+        kernel. :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))
+        estimate that is suggested in [1]_. It is the nonparametric estimate
+        of [2]_,
+
+        .. math::
+
+           \hat{\alpha}\left(q\right) = \left(
+           \frac{\sum_{j=-n}^{n} \left|j\right|^q \hat{\sigma}_j}
+           {\sum_{j=-n}^{n} \hat{\sigma}_j} \right)^2
+
+        where :math:`\hat{\sigma}_j` is the lag-j autocovariance of the data
+        combined using ``weights``, which is the real part of the autocovariance
+        :math:`T^{-1}\sum_t v_t\bar{v}_{t-j}` of the combined series :math:`v_t`
+        if x is complex, and
+        :math:`n = \lceil 4 \left(T / 100\right)^{r} \rceil`. The rate r is
+        2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
+        the quadratic-spectral kernel, as in [2]_.
+
+        References
+        ----------
+        .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
+           consistent covariance matrix estimation. Econometrica, 59(3), 817-858.
+        .. [2] Newey, W. K., & West, K. D. (1994). Automatic lag selection in
+           covariance matrix estimation. Review of Economic Studies, 61(4),
+           631-653.
         """
         c = self.kernel_const
         q = self.bandwidth_scale
@@ -383,7 +638,7 @@ class CovarianceEstimator(ABC):
     @cached_property
     def kernel_weights(self) -> Float64Array:
         """
-        Weights used in covariance calculation.
+        The weights used in covariance calculation.
 
         Returns
         -------
@@ -409,16 +664,24 @@ class CovarianceEstimator(ABC):
 
         See Also
         --------
-        CovarianceEstimate
+        CovarianceEstimate : The container of the covariance estimates.
         """
         x = np.ascontiguousarray(self._x)
         k = x.shape[1]
         df = self._df
-        sr = x.T @ x / df
         w = self.kernel_weights
         num_weights = w.shape[0]
 
-        oss = _cov_jit(df, k, num_weights, w, x)
+        if np.iscomplexobj(x):
+            # Hermitian estimates: sum_t x_t x_{t-j}^H. The short-run covariance is
+            # made exactly Hermitian, since the matrix product rounds each element
+            # on its own.
+            sr = x.T @ x.conj() / df
+            sr = (sr + sr.conj().T) / 2
+            oss = _cov_jit_complex(df, k, num_weights, w, x)
+        else:
+            sr = x.T @ x / df
+            oss = _cov_jit(df, k, num_weights, w, x)
 
         labels = self._x_orig.columns if isinstance(self._x_orig, DataFrame) else None
         return CovarianceEstimate(sr, oss, labels)
@@ -436,7 +699,7 @@ w=\\begin{cases} 1-\\left|z\\right| & z\\leq1 \\\\ 0 & z>1 \\end{cases}
 """
 
 
-@Substitution(kernel_name="Bartlett's (Newey-West)", formula=_bartlett_formula)
+@_kernel_substitution(kernel_name="Bartlett's (Newey-West)", formula=_bartlett_formula)
 class Bartlett(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -466,7 +729,7 @@ w=\\begin{cases}\
 """
 
 
-@Substitution(kernel_name="Parzen's", formula=_parzen_formula)
+@_kernel_substitution(kernel_name="Parzen's", formula=_parzen_formula)
 class Parzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -498,7 +761,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen-Reisz", formula=_parzen_reisz_formula)
+@_kernel_substitution(kernel_name="Parzen-Reisz", formula=_parzen_reisz_formula)
 class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -526,7 +789,9 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen's Geometric", formula=_parzen_geometric_formula)
+@_kernel_substitution(
+    kernel_name="Parzen's Geometric", formula=_parzen_geometric_formula
+)
 class ParzenGeometric(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -554,7 +819,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Parzen's Cauchy", formula=_parzen_cauchy_formula)
+@_kernel_substitution(kernel_name="Parzen's Cauchy", formula=_parzen_cauchy_formula)
 class ParzenCauchy(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -582,7 +847,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Hamming", formula=_tukey_hamming_formula)
+@_kernel_substitution(kernel_name="Tukey-Hamming", formula=_tukey_hamming_formula)
 class TukeyHamming(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -610,7 +875,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Hanning", formula=_tukey_hanning_formula)
+@_kernel_substitution(kernel_name="Tukey-Hanning", formula=_tukey_hanning_formula)
 class TukeyHanning(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -638,7 +903,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="Tukey-Parzen", formula=_tukey_parzen_formula)
+@_kernel_substitution(kernel_name="Tukey-Parzen", formula=_tukey_parzen_formula)
 class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -667,7 +932,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name=_qs_name, formula=_qs_formula)
+@_kernel_substitution(kernel_name=_qs_name, formula=_qs_formula)
 class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -693,31 +958,234 @@ class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInherito
         return w
 
 
-class Gallant(Parzen):
+class Gallant(Parzen):  # numpydoc ignore=PR02
     """
     Alternative name for Parzen covariance estimator.
 
+    Parameters
+    ----------
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
+
     See Also
     --------
-    Parzen
+    Parzen : Kernel covariance estimator using the Parzen kernel.
     """
 
 
-class Andrews(QuadraticSpectral):
+class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
     """
     Alternative name of the QuadraticSpectral covariance estimator.
 
+    Parameters
+    ----------
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
+
     See Also
     --------
-    QuadraticSpectral
+    QuadraticSpectral : Kernel covariance estimator using the quadratic spectral
+        kernel.
     """
 
 
-class NeweyWest(Bartlett):
+class NeweyWest(Bartlett):  # numpydoc ignore=PR02
     """
     Alternative name for Bartlett covariance estimator.
 
+    Parameters
+    ----------
+    x : array_like
+        The data to use in covariance estimation. Observations are in rows and
+        variables in columns. Integer, Boolean and float32 data are converted to
+        float64, and complex data to complex128. float16 data are not accepted.
+        Must have at least 2 rows and 1 column, and must not contain NaN or
+        infinite values.
+    bandwidth : float, optional
+        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must
+        be finite and non-negative.
+    df_adjust : int, optional
+        Degrees of freedom to remove when adjusting the covariance. Uses the
+        number of observations in x minus df_adjust when dividing
+        inner-products. Must be at least 0 and smaller than the number of
+        observations in x.
+    center : bool, optional
+        A flag indicating whether x should be demeaned before estimating the
+        covariance.
+    weights : array_like, optional
+        An array of weights used to combine when estimating optimal bandwidth.
+        If not provided, a vector of 1s is used. Must have nvar elements, be
+        finite and non-negative, and at least one must be strictly positive.
+    force_int : bool, optional
+        Force bandwidth to be an integer.
+
+    Raises
+    ------
+    TypeError
+        If x cannot be converted to float64 or complex128 (it is float16, or
+        contains strings or objects that are not numbers), if weights cannot be
+        converted to float64, if bandwidth is not a real number, if df_adjust is
+        not an integer (a float, including 5.0, or a Boolean is not accepted), or
+        if center or force_int is not a bool.
+    ValueError
+        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
+        infinite values; if bandwidth is negative or not finite; if df_adjust
+        is negative or not smaller than the number of observations; or if
+        weights does not have nvar finite elements, has a negative element or
+        has only zeros.
+
     See Also
     --------
-    Bartlett
+    Bartlett : Kernel covariance estimator using the Bartlett kernel.
     """
+
+
+_zero_lag_name = "Zero-lag (No autocorrelation)"
+_zero_lag_formula = """\
+w=\\begin{cases} \
+1 & z=0\\\\ \
+0 & z>0 \
+\\end{cases} \
+"""
+
+
+@_kernel_substitution(kernel_name=_zero_lag_name, formula=_zero_lag_formula)
+class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
+    @property
+    def kernel_const(self) -> float:
+        return 1.0
+
+    @property
+    def bandwidth_scale(self) -> float:
+        return 0.0
+
+    @property
+    def rate(self) -> float:
+        return 0.0
+
+    @cached_property
+    def opt_bandwidth(self) -> float:
+        """
+        The optimal bandwidth, which is always 0 since no lags are used.
+
+        Returns
+        -------
+        float
+            The bandwidth, always 0.
+        """
+        return 0.0
+
+    def _weights(self) -> Float64Array:
+        return np.ones(1)
+
+
+KERNEL_ESTIMATORS: dict[str, type[CovarianceEstimator]] = {
+    normalize_kernel_name(name): globals()[name] for name in KERNELS
+}
+"""The kernel estimators in KERNELS, keyed by their normalized names."""
+
+
+def get_kernel_estimator(kernel: str) -> type[CovarianceEstimator]:
+    """
+    Find a kernel estimator using its name.
+
+    Parameters
+    ----------
+    kernel : str
+        The name of a kernel estimator, such as "bartlett" or
+        "quadratic-spectral". The names are those of the classes in ``KERNELS``
+        in lower case with hyphens between the words. The name is not case
+        sensitive and hyphens and underscores are ignored, so that
+        "quadratic-spectral", "quadratic_spectral" and "quadraticspectral" are
+        all the same.
+
+    Returns
+    -------
+    type
+        The kernel estimator class, a subclass of CovarianceEstimator.
+
+    Raises
+    ------
+    ValueError
+        If the name is not one of the names in ``KERNELS``.
+    """
+    key = check_option(
+        "kernel",
+        kernel,
+        tuple(KERNEL_ESTIMATORS),
+        display=sorted(_kernel_display_name(name) for name in KERNELS),
+        normalize=normalize_kernel_name,
+    )
+    return KERNEL_ESTIMATORS[key]

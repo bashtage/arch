@@ -27,6 +27,7 @@ from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import (
     _autolag_ols,
     _autolag_ols_low_memory,
+    _df_select_lags,
     _is_reduced_rank,
     auto_bandwidth,
     mackinnoncrit,
@@ -203,10 +204,29 @@ class TestUnitRoot:
 
     def test_dfgls_bad_trend(self):
         dfgls = DFGLS(self.inflation, trend="ct", method="bic", max_lags=3)
-        with pytest.raises(ValueError, match=r"trend not understood"):
+        with pytest.raises(ValueError, match=r"trend must be one of "):
             DFGLS(self.inflation, method="bic", max_lags=3, trend="n")
 
         assert dfgls != 0.0
+
+    @pytest.mark.parametrize("low_memory", [False, True])
+    @pytest.mark.parametrize(
+        ("max_lags", "lag", "criterion"),
+        [(14, 13, -10.1539438645049476), (4, 2, -10.1896734885054840)],
+    )
+    def test_dfgls_auto_maic(self, low_memory, max_lags, lag, criterion):
+        # select_lag_maic of R's boundedur 1.0.3 on the same series, which
+        # demeans by OLS and selects on the common sample as DFGLS does
+        demeaned = self.inflation - self.inflation.mean()
+        selected = _df_select_lags(
+            demeaned, "n", max_lags, "maic", low_memory=low_memory
+        )
+        assert_allclose(selected[0], criterion)
+        assert_equal(selected[1], lag)
+        dfgls = DFGLS(
+            self.inflation, max_lags=max_lags, method="MAIC", low_memory=low_memory
+        )
+        assert_equal(dfgls.lags, lag)
 
     def test_dfgls_auto_low_memory(self):
         y = np.cumsum(self.rng.standard_normal(200000))
@@ -215,11 +235,13 @@ class TestUnitRoot:
         assert dfgls._low_memory
 
     def test_negative_lag(self):
-        with pytest.raises(ValueError, match=r"lags must be non-negative"):
+        with pytest.raises(
+            ValueError, match=r"lags must be an integer >= 0 or None; got -1 \(int\)"
+        ):
             ADF(self.inflation, lags=-1)
 
     def test_invalid_determinstic(self):
-        with pytest.raises(ValueError, match=r"trend not understood"):
+        with pytest.raises(ValueError, match=r"trend must be one of "):
             ADF(self.inflation, trend="bad-value")
 
     def test_variance_ratio(self):
@@ -295,7 +317,7 @@ class TestUnitRoot:
 
     def test_variance_ratio_invalid_lags(self):
         y = self.inflation
-        with pytest.raises(ValueError, match=r"lags must be an integer larger than 2"):
+        with pytest.raises(ValueError, match=r"lags must be an integer >= 2; got 1"):
             VarianceRatio(y, lags=1)
 
     def test_variance_ratio_generic(self):
@@ -434,7 +456,9 @@ def test_unknown_method():
     y = np.cumsum(rnd.standard_normal(250))
     with pytest.raises(ValueError, match=r"method must be one"):
         assert np.isfinite(ADF(y, method="unknown").stat)
-    with pytest.raises(TypeError, match=r"method must be a string"):
+    with pytest.raises(
+        TypeError, match=r"method must be one of 'aic', 'bic', 't-stat' or 'maic'"
+    ):
         assert np.isfinite(ADF(y, method=1).stat)
 
 
@@ -462,10 +486,10 @@ def test_auto_low_memory():
 
 def test_mackinnonp_errors():
     with pytest.raises(
-        ValueError, match=r"Cointegration results \(num_unit_roots > 1\)"
+        ValueError, match=r"num_unit_roots must be 1 for dist_type='adf-z'"
     ):
         mackinnonp(-1.0, regression="c", num_unit_roots=2, dist_type="ADF-z")
-    with pytest.raises(ValueError, match=r"Unknown test type unknown"):
+    with pytest.raises(ValueError, match=r"dist_type must be one of "):
         mackinnonp(-1.0, dist_type="unknown")
 
 
@@ -481,9 +505,9 @@ def test_mackinnonp_large():
 
 
 def test_mackinnoncrit_errors():
-    with pytest.raises(ValueError, match=r"regression keyword ttc not understood"):
+    with pytest.raises(ValueError, match=r"regression must be one of "):
         mackinnoncrit(regression="ttc")
-    with pytest.raises(ValueError, match=r"Unknown test type unknown"):
+    with pytest.raises(ValueError, match=r"dist_type must be one of "):
         mackinnoncrit(dist_type="unknown")
     cv_50 = mackinnoncrit(nobs=50)
     cv_inf = mackinnoncrit()
@@ -492,20 +516,18 @@ def test_mackinnoncrit_errors():
 
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
-    adf = ADF(x)
     # ValueError: maxlag should be < nobs
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries2():
     x = np.asarray([0, 0])
-    adf = ADF(x)
     # IndexError: index 0 is out of bounds for axis 0 with size 0
-    msg = "A minimum of 4 observations are needed"
+    msg = "y must be at least 4 observations long"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
+        ADF(x)
 
 
 def test_adf_buggy_timeseries3():
@@ -519,10 +541,11 @@ def test_adf_buggy_timeseries3():
 
 def test_kpss_buggy_timeseries1():
     x = np.asarray([0])
-    adf = KPSS(x, lags=0)
     # ValueError: cannot convert float NaN to integer
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 2 observations"):
-        assert np.isfinite(adf.stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 2 observations long"
+    ):
+        KPSS(x, lags=0)
 
 
 kpss_autolag_data = (
@@ -534,12 +557,27 @@ kpss_autolag_data = (
 )
 
 
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 @pytest.mark.parametrize(("data", "trend", "lags"), kpss_autolag_data)
 def test_kpss_data_dependent_lags(data, trend, lags):
     # real GDP from macrodata data set
     kpss = KPSS(data, trend=trend)
     assert_equal(kpss.lags, lags)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct"])
+def test_kpss_default_lags_no_warning(trend):
+    y = np.random.default_rng(20240).standard_normal(250).cumsum() * 0.05
+    y += np.random.default_rng(20241).standard_normal(250)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        default = KPSS(y, trend=trend)
+        stat = default.stat
+        lags = default.lags
+    # The default is the data-dependent rule, and lags=-1 keeps the legacy rule
+    explicit = KPSS(y, trend=trend, lags=lags)
+    assert_allclose(stat, explicit.stat, rtol=1e-12)
+    legacy = KPSS(y, trend=trend, lags=-1)
+    assert_equal(legacy.lags, int(np.ceil(12.0 * (250 / 100) ** 0.25)))
 
 
 class ZATestResult(NamedTuple):
@@ -624,7 +662,7 @@ def test_zivot_andrews(series_name):
 def test_zivot_andrews_error():
     series_name = "REAL_GNP"
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
-    with pytest.raises(ValueError, match=r"trim must be a float in range \[0, 1/3\]"):
+    with pytest.raises(ValueError, match=r"trim must be a finite float in \[0, 0.33"):
         ZivotAndrews(y, trim=0.5)
 
 
@@ -648,7 +686,7 @@ def test_dfgls_integer_data(trend):
 
 
 def test_zivot_andrews_reduced_rank():
-    y = np.random.standard_normal(1000)
+    y = np.random.default_rng(1234).standard_normal(1000)
     y[1:] = 3.0
     with pytest.raises(InfeasibleTestException, match=r"The regressor matrix is"):
         assert np.isfinite(ZivotAndrews(y, lags=1).stat)
@@ -664,21 +702,35 @@ def test_bw_selection():
     bw_qs = round(auto_bandwidth(REAL_TIME_SERIES, kernel="qs"), 6)
     assert_allclose(bw_qs, TRUE_BW_FROM_R_QS)
 
-    with pytest.raises(ValueError, match=r"Unknown kernel"):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(
-        ValueError, match=r"Data must contain more than one observation"
+        ValueError, match=r"y must be a 1-d array .* at least 2 elements"
     ):
         auto_bandwidth([1])
 
 
+@pytest.mark.parametrize("kernel", ["ba", "pa", "qs"])
+def test_bw_selection_non_integer(kernel):
+    auto_bandwidth(np.array([0.5, 0.0]), kernel=kernel)
+
+
+@pytest.mark.parametrize(
+    ("kernel", "expected"),
+    [("ba", TRUE_BW_FROM_R_BA), ("pa", TRUE_BW_FROM_R_PA), ("qs", TRUE_BW_FROM_R_QS)],
+)
+def test_bw_selection_scale_invariant(kernel, expected):
+    # cointReg::getBandwidthNW gives the same bandwidths for the series over 10
+    scaled = np.asarray(REAL_TIME_SERIES) / 10
+    assert_allclose(auto_bandwidth(scaled, kernel=kernel), expected, rtol=1e-6)
+
+
 def test_invalid_trend():
-    with pytest.raises(ValueError, match=r"trend not understood"):
-        ADF(np.random.standard_normal(100), trend="unknown")
+    with pytest.raises(ValueError, match=r"trend must be one of "):
+        ADF(np.random.default_rng(1234).standard_normal(100), trend="unknown")
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -687,14 +739,13 @@ def test_wrong_exceptions(stat, nobs, trend):
     skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
-    y = np.random.standard_normal((nobs,))
+    y = np.random.default_rng(nobs).standard_normal((nobs,))
     try:
         assert np.isfinite(stat(y, trend=trend).stat)
     except InfeasibleTestException:
         pass
 
 
-@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", [2, 10, 100])
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -703,7 +754,8 @@ def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
     skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
-    y = np.zeros((nobs,))
+    rs = np.random.RandomState(328823)
+    y = rs.standard_normal((nobs,))
     y[-1] = 1.0
     try:
         assert np.isfinite(stat(y, trend=trend).stat)
@@ -713,14 +765,18 @@ def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
 
 def test_phillips_perron_specifed_lag():
     y = np.zeros((10,))
-    with pytest.raises(InfeasibleTestException, match=r"A minimum of 12 observations"):
-        assert np.isfinite(PhillipsPerron(y, lags=12).stat)
+    with pytest.raises(
+        InfeasibleTestException, match=r"lags must be at most 9 for the 10 observations"
+    ):
+        PhillipsPerron(y, lags=12)
 
 
 def test_kpss_legacy():
-    y = np.random.standard_normal(4)
-    with pytest.raises(InfeasibleTestException, match=r"The number of observations 4"):
-        assert np.isfinite(KPSS(y, lags=-1).stat)
+    y = np.random.default_rng(1234).standard_normal(4)
+    with pytest.raises(
+        InfeasibleTestException, match=r"y must be at least 6 observations long"
+    ):
+        KPSS(y, lags=-1)
 
 
 @pytest.mark.parametrize(
@@ -733,7 +789,8 @@ def test_rank_checker(x):
 @pytest.mark.parametrize("nobs", list(range(1, 11)))
 @pytest.mark.parametrize("trend", ["c", "ct", "t"])
 def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
-    y = np.zeros((nobs,))
+    rs = np.random.RandomState(328823)
+    y = rs.standard_normal((nobs,))
     y[-1] = 1.0
     try:
         assert np.isfinite(ZivotAndrews(y, lags=2, trend=trend).stat)
@@ -747,7 +804,7 @@ def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
 @pytest.mark.parametrize("overlap", [True, False])
 @pytest.mark.parametrize("debiased", [True, False])
 def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
-    y = np.random.standard_normal((nobs,))
+    y = np.random.default_rng(nobs).standard_normal((nobs,))
     try:
         vr = VarianceRatio(y, trend=trend, lags=4, overlap=overlap, debiased=debiased)
         assert np.isfinite(vr.stat)
@@ -757,14 +814,15 @@ def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
 
 def test_low_memory_singular():
     x = np.zeros(1000)
-    x[:3] = np.random.standard_normal()
-    x[-3:] = np.random.standard_normal()
+    rng = np.random.default_rng(1234)
+    x[:3] = rng.standard_normal()
+    x[-3:] = rng.standard_normal()
     match = "The maximum lag you are"
     with pytest.raises(InfeasibleTestException, match=match):
         _ = ADF(x, max_lags=10, low_memory=True).stat
 
 
-@pytest.mark.parametrize("method", ["aic", "bic", "t-stat"])
+@pytest.mark.parametrize("method", ["aic", "bic", "t-stat", "maic"])
 @pytest.mark.parametrize("trend", ["c", "t", "ct", "ctt"])
 def test_autolag_ols_low_memory_smoke(trend, method):
     data = dataset_loader(macrodata)
@@ -773,6 +831,36 @@ def test_autolag_ols_low_memory_smoke(trend, method):
 
 
 def test_autolag_warning():
-    y = np.random.standard_normal(1000000)
+    y = np.random.default_rng(1234).standard_normal(1000000)
     with pytest.warns(PerformanceWarning, match=r""):
         assert isinstance(ADF(y).stat, float)
+
+
+@pytest.mark.parametrize("trend", ["n", "c", "ct"])
+@pytest.mark.parametrize("seed", [0, 3, 8])
+def test_t_stat_lag_selection_low_memory(seed, trend):
+    # Lag 0 is always eligible, so no significant lag selects 0 lags
+    y = np.random.default_rng(seed).standard_normal(100)
+    max_lags = 6
+    # Reference: t-statistic of the last lag in each model on the common sample
+    delta_y = np.diff(y)
+    lhs = delta_y[max_lags:]
+    level = y[max_lags:-1]
+    lags = np.column_stack(
+        [delta_y[max_lags - j : delta_y.shape[0] - j] for j in range(1, max_lags + 1)]
+    )
+    nobs = lhs.shape[0]
+    trends = {
+        "n": np.empty((nobs, 0)),
+        "c": np.ones((nobs, 1)),
+        "ct": np.column_stack([np.ones(nobs), np.arange(1.0, nobs + 1)]),
+    }
+    expected = 0
+    for lag in range(1, max_lags + 1):
+        rhs = np.column_stack([level, trends[trend], lags[:, :lag]])
+        tstat = OLS(lhs, rhs).fit().tvalues[-1]
+        if abs(tstat) >= 1.6448536269514722:
+            expected = lag
+    kwargs = {"trend": trend, "max_lags": max_lags, "method": "t-stat"}
+    assert ADF(y, low_memory=False, **kwargs).lags == expected
+    assert ADF(y, low_memory=True, **kwargs).lags == expected

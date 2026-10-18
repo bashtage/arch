@@ -10,7 +10,7 @@ import pytest
 from scipy.special import gamma
 
 import arch.univariate.recursions_python as recpy
-from arch.univariate.volatility import RiskMetrics2006
+from arch.univariate.volatility import FIAPARCH, RiskMetrics2006
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "") in ("true", "1", "True")
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", "") in ("1", "true", "True")
@@ -35,6 +35,11 @@ except ImportError:
     MISSING_NUMBA = True
 
 pytestmark = pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
+
+
+def _update_function(module, updater):
+    # Compiled updaters only expose update through a testing shim
+    return updater.update if module is recpy else updater._update_tester
 
 
 class Timer:
@@ -101,7 +106,7 @@ import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
 
 nobs = 10000
-resids = np.random.standard_normal(nobs)
+resids = np.random.default_rng(1234).standard_normal(nobs)
 sigma2 = np.zeros_like(resids)
 var = resids.var()
 backcast = 1.0
@@ -646,7 +651,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         rec.harch_recursion(
             parameters, resids, sigma2, lags, nobs, backcast, self.var_bounds
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 
@@ -690,7 +695,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             backcast,
             self.var_bounds,
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 
@@ -731,7 +736,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         rec.arch_recursion(
             parameters, resids, sigma2, 3, nobs, backcast, self.var_bounds
         )
-        assert_almost_equal(sigma2_python, sigma2)
+        assert_allclose(sigma2_python, sigma2, rtol=1e-10)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 1.1 * self.var_bounds[:, 1])
 
@@ -1460,6 +1465,112 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q,
         fu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
+    @pytest.mark.parametrize("module", [recpy, rec], ids=["python", "default"])
+    @pytest.mark.parametrize("power", [0.5, 1.0, 1.5, 2.0])
+    @pytest.mark.parametrize("tight", [False, True], ids=["wide", "tight"])
+    def test_garch_updater_power(self, module, power, tight):
+        # The updaters must return the variance when power != 2, not sigma ** power
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2.copy(), self.backcast
+        var_bounds = self.var_bounds.copy()
+        if tight:
+            # Binding bounds on the scale of the recursion, sigma ** power
+            var_bounds[:, 0] = 0.8
+            var_bounds[:, 1] = 1.6
+        p, o, q = 1, 1, 2
+        parameters = np.array([0.1, 0.1, 0.05, 0.5, 0.3])
+        sigma2_ref = np.empty(nobs)
+        recpy.garch_recursion_python(
+            parameters,
+            np.abs(resids) ** power,
+            np.sign(resids),
+            sigma2_ref,
+            p,
+            o,
+            q,
+            nobs,
+            backcast,
+            var_bounds,
+        )
+        sigma2_ref = sigma2_ref ** (2.0 / power)
+        if tight:
+            # The lower bound binds
+            assert_allclose(sigma2_ref.min(), 0.8 ** (2.0 / power), rtol=1e-12)
+
+        sigma2[:] = np.nan
+        gu = module.GARCHUpdater(p, o, q, power)
+        gu.initialize_update(parameters, backcast, nobs)
+        update = _update_function(module, gu)
+        for t in range(nobs):
+            update(t, parameters, resids, sigma2, var_bounds)
+            if t == nobs // 2:
+                # State needed by later lags must survive pickling
+                gu = pickle.loads(pickle.dumps(gu))
+                update = _update_function(module, gu)
+        assert_allclose(sigma2, sigma2_ref, rtol=1e-12)
+
+    @pytest.mark.parametrize("module", [recpy, rec], ids=["python", "default"])
+    @pytest.mark.parametrize("power", [0.5, 1.0, 1.5, 2.0])
+    @pytest.mark.parametrize("tight", [False, True], ids=["wide", "tight"])
+    def test_figarch_updater_power(self, module, power, tight):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2.copy(), self.backcast
+        var_bounds = self.var_bounds.copy()
+        if tight:
+            var_bounds[:, 0] = 0.8
+            var_bounds[:, 1] = 1.6
+        parameters = np.array([0.1, 0.2, 0.4, 0.3])
+        p = q = 1
+        trunc_lag = 100
+        sigma2_ref = np.empty(nobs)
+        recpy.figarch_recursion_python(
+            parameters,
+            np.abs(resids) ** power,
+            sigma2_ref,
+            p,
+            q,
+            nobs,
+            trunc_lag,
+            backcast,
+            var_bounds,
+        )
+        sigma2_ref = sigma2_ref ** (2.0 / power)
+        if tight:
+            # The lower bound binds
+            assert_allclose(sigma2_ref.min(), 0.8 ** (2.0 / power), rtol=1e-12)
+
+        sigma2[:] = np.nan
+        fu = module.FIGARCHUpdater(p, q, power, trunc_lag)
+        fu.initialize_update(parameters, backcast, nobs)
+        update = _update_function(module, fu)
+        for t in range(nobs):
+            update(t, parameters, resids, sigma2, var_bounds)
+            if t == nobs // 2:
+                fu = pickle.loads(pickle.dumps(fu))
+                update = _update_function(module, fu)
+        assert_allclose(sigma2, sigma2_ref, rtol=1e-12)
+
+    @pytest.mark.parametrize("module", [recpy, rec], ids=["python", "default"])
+    def test_garch_updater_pickle_new(self, module):
+        # Round trip before initialize_update, as when ARCHModel.fit copies a model
+        gu = pickle.loads(pickle.dumps(module.GARCHUpdater(1, 1, 1, 1.5)))
+        assert isinstance(gu, module.GARCHUpdater)
+        parameters = np.array([0.1, 0.1, 0.05, 0.5])
+        sigma2 = np.empty(self.nobs)
+        gu.initialize_update(parameters, self.backcast, self.nobs)
+        update = _update_function(module, gu)
+        update(0, parameters, self.resids, sigma2, self.var_bounds)
+        assert np.isfinite(sigma2[0])
+
+    def test_fiaparch_updater_pickle(self):
+        # A newly constructed updater must round trip before
+        # initialize_update has been called, as happens when
+        # ARCHModel.fit copies the model
+        for module in (recpy, rec):
+            fu = module.FIAPARCHUpdater(1, 1, 1, 1000, True, 1.5)
+            fu = pickle.loads(pickle.dumps(fu))
+            assert isinstance(fu, module.FIAPARCHUpdater)
+
     def test_rm_2006(self):
         rm2006 = RiskMetrics2006()
         params = np.empty(0)
@@ -1502,3 +1613,76 @@ def test_bounds_check():
         recpy.bounds_check_python(20.0, var_bounds), 10 + np.log(20.0 / 10.0)
     )
     assert_almost_equal(recpy.bounds_check_python(np.inf, var_bounds), 1010.0)
+
+
+def test_fiaparch():
+    rng = RandomState(1234)
+    t = 1000
+    resids = rng.standard_normal(t)
+
+    trunc_lag = 750
+    fiaparch = FIAPARCH(truncation=trunc_lag)
+    abs_resids = np.abs(resids)
+    sigma2 = np.ones_like(resids)
+    sigma_delta = np.ones_like(resids)
+    p = 1
+    q = 1
+    nobs = t
+    backcast = fiaparch.backcast(resids)
+    var_bounds = fiaparch.variance_bounds(resids)
+    parameters = np.array([1.0, 0.2, 0.4, 0.2, -0.3, 1.5])
+    gamma = parameters[4]
+    delta = parameters[5]
+
+    recpy.fiaparch_recursion_python(
+        parameters,
+        resids,
+        abs_resids,
+        sigma2,
+        sigma_delta,
+        p,
+        q,
+        nobs,
+        trunc_lag,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    python_sigma2 = sigma2.copy()
+    recpy.fiaparch_recursion(
+        parameters,
+        resids,
+        abs_resids,
+        sigma2,
+        sigma_delta,
+        p,
+        q,
+        nobs,
+        trunc_lag,
+        backcast,
+        var_bounds,
+        gamma,
+        delta,
+    )
+    numba_sigma2 = sigma2.copy()
+    assert_allclose(python_sigma2, numba_sigma2)
+
+    if not MISSING_EXTENSION:
+        rec_cython.fiaparch_recursion(
+            parameters,
+            resids,
+            abs_resids,
+            sigma2,
+            sigma_delta,
+            p,
+            q,
+            nobs,
+            trunc_lag,
+            backcast,
+            var_bounds,
+            gamma,
+            delta,
+        )
+        cython_sigma2 = sigma2.copy()
+        assert_allclose(python_sigma2, cython_sigma2)

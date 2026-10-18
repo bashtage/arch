@@ -106,7 +106,7 @@ def test_skip_constant():
 
 def test_errors():
     n = 100
-    with pytest.raises(ValueError, match=r"trend unknown not understood"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         add_trend(x=None, trend="unknown", nobs=n)
     with pytest.raises(
         ValueError, match=r"One and only one of x or nobs must be provided"

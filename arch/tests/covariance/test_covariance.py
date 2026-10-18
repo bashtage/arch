@@ -1,4 +1,5 @@
 from itertools import product
+import re
 
 import numpy as np
 from numpy.testing import assert_allclose
@@ -6,7 +7,10 @@ import pandas as pd
 import pytest
 
 from arch._typing import ArrayLike
+from arch.covariance import kernel as kernel_module
 from arch.covariance.kernel import (
+    KERNEL_ESTIMATORS,
+    KERNELS,
     Andrews,
     Bartlett,
     CovarianceEstimate,
@@ -21,6 +25,9 @@ from arch.covariance.kernel import (
     TukeyHamming,
     TukeyHanning,
     TukeyParzen,
+    ZeroLag,
+    get_kernel_estimator,
+    normalize_kernel_name,
 )
 
 ESTIMATORS = [
@@ -103,11 +110,11 @@ def test_covariance_smoke(data: ArrayLike, estimator: type[CovarianceEstimator])
 
 
 def test_covariance_errors(data: ArrayLike, estimator: type[CovarianceEstimator]):
-    with pytest.raises(ValueError, match=r"Degrees of freedom is <= 0"):
+    with pytest.raises(ValueError, match=r"df_adjust must be an integer in \[0, "):
         estimator(data, df_adjust=data.shape[0] + 1)
-    with pytest.raises(ValueError, match=r"df_adjust must be a non-negative"):
+    with pytest.raises(ValueError, match=r"df_adjust must be an integer in "):
         estimator(data, df_adjust=-2)
-    with pytest.raises(ValueError, match=r"df_adjust must be a non-negative"):
+    with pytest.raises(TypeError, match=r"df_adjust must be an integer"):
         # Type ignored due to invalid type used in test
         estimator(data, df_adjust=np.ones(2))  # type: ignore[arg-type]
     with pytest.raises(ValueError, match=r"bandwidth must be"):
@@ -283,3 +290,93 @@ def test_center(data: ArrayLike, estimator: type[CovarianceEstimator]):
     centered_cov = estimator(data, center=False, force_int=False)
     cov = estimator(data, force_int=False)
     assert centered_cov.bandwidth != cov.bandwidth
+
+
+def test_kernel_names():
+    # The canonical list is the estimators tested here, each of which is a
+    # public class, and excludes ZeroLag which is only used when kernel=None
+    assert sorted(KERNELS) == sorted(est.__name__ for est in ESTIMATORS)
+    assert len(set(KERNELS)) == len(KERNELS) == 12
+    assert "ZeroLag" not in KERNELS
+    assert ZeroLag.__name__ in kernel_module.__all__
+    for name in KERNELS:
+        assert name in kernel_module.__all__
+        assert issubclass(getattr(kernel_module, name), CovarianceEstimator)
+
+
+def test_kernel_estimators():
+    # One entry for each canonical name, with distinct normalized names
+    assert len(KERNEL_ESTIMATORS) == len(KERNELS)
+    assert set(KERNEL_ESTIMATORS) == {name.lower() for name in KERNELS}
+    for name in KERNELS:
+        assert KERNEL_ESTIMATORS[name.lower()] is getattr(kernel_module, name)
+    assert ZeroLag not in KERNEL_ESTIMATORS.values()
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("Bartlett", "bartlett"),
+        ("quadratic-spectral", "quadraticspectral"),
+        ("Quadratic_Spectral", "quadraticspectral"),
+        ("TUKEY-hanning", "tukeyhanning"),
+        ("parzen_cauchy", "parzencauchy"),
+    ],
+)
+def test_normalize_kernel_name(name, expected):
+    assert normalize_kernel_name(name) == expected
+
+
+@pytest.mark.parametrize("name", KERNELS)
+def test_get_kernel_estimator(name):
+    estimator = getattr(kernel_module, name)
+    # Class names, lower case, upper case, hyphenated and underscored
+    words = re.sub(r"(?<!^)(?=[A-Z])", "-", name)
+    for variant in (name, name.lower(), name.upper(), words, words.replace("-", "_")):
+        assert get_kernel_estimator(variant) is estimator
+        assert get_kernel_estimator(variant.lower()) is estimator
+
+
+@pytest.mark.parametrize(
+    ("name", "error"),
+    [("unknown", ValueError), ("", ValueError), ("zerolag", ValueError)]
+    + [("ZeroLag", ValueError), ("zero-lag", ValueError), (1, TypeError)],
+)
+def test_get_kernel_estimator_errors(name, error):
+    with pytest.raises(error, match="kernel must be one of") as e:
+        get_kernel_estimator(name)
+    # The message lists every available kernel using lower case names
+    listed = str(e.value).split("; got")[0]
+    for known in KERNELS:
+        assert repr(re.sub(r"(?<!^)(?=[A-Z])", "-", known).lower()) in listed
+    assert listed == listed.lower()
+    # Excluding the value that was received
+    assert "zero" not in listed
+
+
+@pytest.mark.parametrize(
+    ("estimator", "const", "q", "rate"),
+    [
+        (Bartlett, 1.1447, 1, 2 / 9),
+        (Parzen, 2.6614, 2, 4 / 25),
+        (QuadraticSpectral, 1.3221, 2, 2 / 25),
+    ],
+    ids=["Bartlett", "Parzen", "QuadraticSpectral"],
+)
+def test_opt_bandwidth_documented_formula(estimator, const, q, rate):
+    # The constants of Andrews (1991) and the nonparametric estimate of the
+    # scale from Newey and West (1994), as in the docstring of opt_bandwidth
+    rng = np.random.default_rng(0)
+    nobs = 500
+    shocks = rng.standard_normal(nobs)
+    x = np.zeros(nobs)
+    for i in range(1, nobs):
+        x[i] = 0.5 * x[i - 1] + shocks[i]
+    z = x - x.mean()
+    n = int(np.ceil(4 * (nobs / 100) ** rate))
+    sigma = np.array([z[j:] @ z[: nobs - j] / nobs for j in range(n + 1)])
+    lags = np.arange(n + 1)
+    s_0 = sigma[0] + 2 * sigma[1:].sum()
+    s_q = 2 * (lags[1:] ** q * sigma[1:]).sum()
+    expected = const * ((s_q / s_0) ** 2 * nobs) ** (1 / (2 * q + 1))
+    assert_allclose(estimator(x).opt_bandwidth, expected, rtol=1e-10)

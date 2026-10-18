@@ -15,7 +15,8 @@ variables:
   MPLBACKEND: agg
   PYTEST_PATTERN: "(not slow)"
   test.install: false
-  pip.pre: false
+  nightly: false
+  experimental: false
 
 jobs:
 - template: ci/azure/azure_template_posix.yml

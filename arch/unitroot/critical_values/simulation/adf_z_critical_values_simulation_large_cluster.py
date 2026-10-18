@@ -11,7 +11,7 @@ This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
 
-import datetime
+import datetime as dt
 import time
 from typing import cast
 
@@ -130,7 +130,7 @@ for tr in trends:
 
     for i, t in enumerate(T):
         print(f"Time series length {t} for Trend {tr}")
-        now = datetime.datetime.now()
+        now = dt.datetime.now()
         # Serial version
         # args = ([t] * EX_NUM, [tr] * EX_NUM, [EX_SIZE] * EX_NUM, seeds)
         # out = [ wrapper(a, b, c, d) for a, b, c, d in zip(*args)]
@@ -142,7 +142,7 @@ for tr in trends:
         sleep_count = 0
         while not res.ready():
             sleep_count += 1
-            elapsed = datetime.datetime.now() - now
+            elapsed = dt.datetime.now() - now
             if sleep_count % 10:
                 print(f"Elapsed time {elapsed}, waiting for results")
             time.sleep(SLEEP)
@@ -151,7 +151,7 @@ for tr in trends:
         # Prevent unnecessary results from accumulating
         clear_cache(rc, lview)
 
-        elapsed = datetime.datetime.now() - now
+        elapsed = dt.datetime.now() - now
         print(f"Total time {elapsed} for T={t}")
         quantiles = [percentile(x, percentiles) for x in out]
         results[:, i, :] = cast("ndarray", array(quantiles).T)

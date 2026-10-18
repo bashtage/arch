@@ -174,14 +174,14 @@ def test_trivariate(data, trend, method, lhs, agg_backend):
 
 
 def test_exceptions_pvals():
-    with pytest.raises(ValueError, match=r"Trend must by one"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         engle_granger_cv("unknown", 2, 500)
     with pytest.raises(ValueError, match=r"The number of cross-sectional"):
         engle_granger_cv("n", 25, 500)
 
 
 def test_exceptions_critvals():
-    with pytest.raises(ValueError, match=r"Trend must by one"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         engle_granger_pval(-3.0, "unknown", 500)
     with pytest.raises(ValueError, match=r"The number of cross-sectional"):
         engle_granger_pval(-3.0, "n", 500)
@@ -197,7 +197,7 @@ def test_exceptions(data):
         y, x = data.y, data.x
     else:
         y, x = data[:, :2].T
-    with pytest.raises(ValueError, match=r"Unknown trend. Must be one of"):
+    with pytest.raises(ValueError, match=r"trend must be one of "):
         engle_granger(y, x, trend="nc")
 
 
@@ -229,16 +229,18 @@ def test_plot(data, agg_backend):
 
 
 def test_cross_section_exceptions():
-    y = np.random.standard_normal(1000)
-    x = np.random.standard_normal((1000, 2))
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
+    x = rng.standard_normal((1000, 2))
     with pytest.raises(ValueError, match=r"trend must be one of "):
         _cross_section(y, x, "unknown")
 
 
 def test_base_summary():
     cv = pd.Series([1.0, 2, 3], index=[1, 5, 10])
-    y = np.random.standard_normal(1000)
-    x = np.random.standard_normal((1000, 2))
+    rng = np.random.default_rng(1234)
+    y = rng.standard_normal(1000)
+    x = rng.standard_normal((1000, 2))
     xsection = _cross_section(y, x, "ct")
     res = ResidualCointegrationTestResult(1.0, 0.05, cv, xsection=xsection)
     assert isinstance(res.summary(), Summary)

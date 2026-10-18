@@ -3,6 +3,7 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
+from arch.covariance.kernel import KERNELS as ALL_KERNELS
 from arch.unitroot.cointegration import DynamicOLS
 
 
@@ -53,15 +54,17 @@ def test_invalid_input(data):
     y, x = data
     with pytest.raises(ValueError, match=r"method must be one of"):
         DynamicOLS(y, x, method="unknown")
-    with pytest.raises(ValueError, match=r"Unknown trend. Must be one"):
+    with pytest.raises(
+        ValueError, match=r"trend must be one of 'n', 'c', 'ct' or 'ctt'"
+    ):
         DynamicOLS(y, x, trend="cttt")
 
 
 def test_invalid_fit_options(data):
     y, x = data
-    with pytest.raises(ValueError, match=r"kernel is not a "):
+    with pytest.raises(ValueError, match=r"kernel must be one of "):
         DynamicOLS(y, x).fit(kernel="unknown")
-    with pytest.raises(ValueError, match=r"Unknown cov_type"):
+    with pytest.raises(ValueError, match=r"cov_type must be one of "):
         DynamicOLS(y, x).fit(cov_type="unknown")
 
 
@@ -206,3 +209,11 @@ def test_error(trivariate_data):
         x = x[:20]
     with pytest.raises(ValueError, match=r"max_lag and max_lead are too large"):
         DynamicOLS(y, x, max_lag=10, max_lead=10)
+
+
+@pytest.mark.parametrize("kernel", ALL_KERNELS)
+def test_all_kernels(data, kernel):
+    y, x = data
+    res = DynamicOLS(y, x).fit(cov_type="robust", kernel=kernel)
+    # The names of the kernels are the names of the classes
+    assert res.kernel == kernel

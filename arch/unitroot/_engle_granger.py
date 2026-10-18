@@ -20,6 +20,15 @@ from arch.unitroot.critical_values.engle_granger import (
     TAU_STAR,
 )
 from arch.unitroot.unitroot import ADF, TREND_DESCRIPTION
+from arch.utility._validation import check_bool, check_int, check_option
+
+
+def _check_num_x(num_x: int) -> None:
+    if not 1 <= num_x <= 12:
+        raise ValueError(
+            "The number of cross-sectional variables must be between 1 and "
+            "12 (inclusive)"
+        )
 
 
 def engle_granger(
@@ -29,7 +38,7 @@ def engle_granger(
     *,
     lags: int | None = None,
     max_lags: int | None = None,
-    method: Literal["aic", "bic", "t-stat"] = "bic",
+    method: Literal["aic", "bic", "t-stat", "maic"] = "bic",
     low_memory: bool | None = None,
 ) -> "EngleGrangerTestResults":
     r"""
@@ -38,26 +47,45 @@ def engle_granger(
     Parameters
     ----------
     y : array_like
-        The left-hand-side variable in the cointegrating regression.
+        The left-hand-side variable in the cointegrating regression. It must be
+        1-d and contain only finite values.
     x : array_like
-        The right-hand-side variables in the cointegrating regression.
-    trend : {"n","c","ct","ctt"}, default "c"
-        Trend to include in the cointegrating regression. Trends are:
+        The right-hand-side variables in the cointegrating regression. It must
+        be 1-d or 2-d with the same number of rows as y, between 1 and 12 columns,
+        the same index as y if both are pandas objects, and contain only finite
+        values. The number of rows must be at least two more than the number of
+        parameters in the cointegrating regression (the number of columns of x
+        and the number of terms in trend).
+    trend : {"n", "c", "ct", "ctt"}, optional
+        Trend to include in the cointegrating regression. Not case sensitive.
+        Trends are:
 
         * "n": No deterministic terms
         * "c": Constant
         * "ct": Constant and linear trend
         * "ctt": Constant, linear and quadratic trends
-    lags : int, default None
+
+    lags : int, optional
         The number of lagged differences to include in the Augmented
-        Dickey-Fuller test used on the residuals of the
-    max_lags : int, default None
+        Dickey-Fuller test used on the residuals of the cointegrating
+        regression. It must be a non-negative integer. If None, the number of
+        lags is selected using ``method``.
+    max_lags : int, optional
         The maximum number of lags to consider when using automatic
-        lag-length in the Augmented Dickey-Fuller regression.
-    method: {"aic", "bic", "tstat"}, default "bic"
+        lag-length in the Augmented Dickey-Fuller regression. It must be an
+        integer between 0 and nobs - 2.
+    method : {"aic", "bic", "t-stat", "maic"}, optional
         The method used to select the number of lags included in the
-        Augmented Dickey-Fuller regression.
-    low_memory : bool, default None
+        Augmented Dickey-Fuller regression. Not case sensitive.
+
+        * "aic": Select the minimum of the Akaike IC
+        * "bic": Select the minimum of the Schwarz/Bayesian IC
+        * "t-stat": Select the largest lag length for which the t-statistic
+          of the last lag is significant, using a cut-off of 1.645 for the
+          absolute value of the t-statistic
+        * "maic": Select the minimum of Ng and Perron's modified Akaike IC
+
+    low_memory : bool, optional
         Flag indicating whether to use the low memory implementation of the
         lag selection algorithm in the Augmented Dickey-Fuller regression.
         If None, the algorithm is selected automatically. See
@@ -67,6 +95,21 @@ def engle_granger(
     -------
     EngleGrangerTestResults
         Results of the Engle-Granger test.
+
+    Raises
+    ------
+    TypeError
+        If y or x cannot be converted to float64, lags or max_lags is not an
+        integer or None, low_memory is not a bool or None, or trend or method is
+        not a string.
+    ValueError
+        If y or x contains NaN or inf, does not have the required dimensions, the
+        same number of rows or the same index, or has too few rows. Also if x has
+        more than 12 columns, lags is negative, max_lags is not between 0 and
+        nobs - 2, or trend or method is not one of the options.
+    InfeasibleTestException
+        If the Augmented Dickey-Fuller regression of the residual cannot be
+        estimated with the lags requested. This is also a ValueError.
 
     See Also
     --------
@@ -97,6 +140,12 @@ def engle_granger(
     hypothesis is true.
     """
     setup = _check_cointegrating_regression(y, x, trend)
+    nobs = setup.y.shape[0]
+    # The ADF regression of the residual cannot use more than nobs - 2 lags
+    lags = check_int("lags", lags, lower=0, allow_none=True)
+    max_lags = check_int("max_lags", max_lags, lower=0, upper=nobs - 2, allow_none=True)
+    low_memory = check_bool("low_memory", low_memory, allow_none=True)
+    _check_num_x(setup.x.shape[1])
     xsection = _cross_section(setup.y, setup.x, setup.trend)
     resid = xsection.resid
     # Never pass in the trend here since only used in x-section
@@ -111,10 +160,10 @@ def engle_granger(
     stat = adf.stat
     nobs = resid.shape[0] - adf.lags - 1
     num_x = setup.x.shape[1]
-    cv = engle_granger_cv(trend, num_x, nobs)
-    pv = engle_granger_pval(stat, trend, num_x)
+    cv = engle_granger_cv(setup.trend, num_x, nobs)
+    pv = engle_granger_pval(stat, setup.trend, num_x)
     return EngleGrangerTestResults(
-        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=trend
+        stat, pv, cv, order=num_x, adf=adf, xsection=xsection, trend=setup.trend
     )
 
 
@@ -131,18 +180,20 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
     crit_vals : Series
         The critical values of the Engle-Granger specific to the sample size
         and model dimension.
-    null : str
+    null : str, optional
         The null hypothesis.
-    alternative : str
+    alternative : str, optional
         The alternative hypothesis.
-    trend : str
+    trend : str, optional
         The model's trend description.
-    order : int
+    order : int, optional
         The number of stochastic trends in the null distribution.
-    adf : ADF
-        The ADF instance used to perform the test and lag selection.
-    xsection : RegressionResults
-        The OLS results used in the cross-sectional regression.
+    adf : ADF, optional
+        The ADF instance used to perform the test and lag selection. It must
+        be provided.
+    xsection : RegressionResults, optional
+        The OLS results used in the cross-sectional regression. They must be
+        provided.
     """
 
     def __init__(
@@ -185,7 +236,7 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
     @property
     def rho(self) -> float:
         r"""
-        The estimated coefficient in the Dickey-Fuller Test
+        The estimated coefficient in the Dickey-Fuller Test.
 
         Returns
         -------
@@ -207,7 +258,15 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
         return 1 + param0
 
     def summary(self) -> Summary:
-        """Summary of test, containing statistic, p-value and critical values"""
+        """
+        Summary of test, containing statistic, p-value and critical values.
+
+        Returns
+        -------
+        statsmodels.iolib.summary.Summary
+            A summary instance with methods that support export to text, csv
+            or latex.
+        """
         table_data = [
             ("Test Statistic", f"{self.stat:0.3f}"),
             ("P-value", f"{self.pvalue:0.3f}"),
@@ -251,13 +310,14 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
 
 def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     """
-    Critical Values for Engle-Granger t-tests
+    Critical values for Engle-Granger t-tests.
 
     Parameters
     ----------
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
-    num_x : The number of cross-sectional regressors in the model.
+        The trend included in the model. Not case sensitive.
+    num_x : int
+        The number of cross-sectional regressors in the model.
         Must be between 1 and 12.
     nobs : int
         The number of observations in the time series.
@@ -265,17 +325,10 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
     Returns
     -------
     Series
-        The critical values for 1, 5 and 10%
+        The critical values for 1, 5 and 10%.
     """
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"Trend must by one of: {valid}")
-    if not 1 <= num_x <= 12:
-        raise ValueError(
-            "The number of cross-sectional variables must be between 1 and "
-            "12 (inclusive)"
-        )
+    trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
+    _check_num_x(num_x)
     tbl = CV_PARAMETERS[trend]
 
     crit_vals = {}
@@ -288,31 +341,25 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
 
 def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     """
-    Asymptotic P-values for Engle-Granger t-tests
+    Asymptotic P-values for Engle-Granger t-tests.
 
     Parameters
     ----------
     stat : float
-        The test statistic
+        The test statistic.
     trend : {"n", "c", "ct", "ctt"}
-        The trend included in the model
-    num_x : The number of cross-sectional regressors in the model.
+        The trend included in the model. Not case sensitive.
+    num_x : int
+        The number of cross-sectional regressors in the model.
         Must be between 1 and 12.
 
     Returns
     -------
-    Series
-        The critical values for 1, 5 and 10%
+    float
+        The asymptotic p-value.
     """
-    trends = ("n", "c", "ct", "ctt")
-    if trend not in trends:
-        valid = ",".join(trends)
-        raise ValueError(f"Trend must by one of: {valid}")
-    if not 1 <= num_x <= 12:
-        raise ValueError(
-            "The number of cross-sectional variables must be between 1 and "
-            "12 (inclusive)"
-        )
+    trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
+    _check_num_x(num_x)
     key = (trend, num_x)
     if stat > TAU_MAX[key]:
         return 1.0
