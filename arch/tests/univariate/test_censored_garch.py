@@ -1,11 +1,21 @@
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose, assert_equal
+import pandas as pd
 import pytest
 from scipy.stats import norm
 
 from arch.univariate import ConstantMean
-from arch.univariate.censored_garch import CensoredGARCH
+from arch.univariate.censored_garch import (
+    CensoredGARCH,
+    _norm_pdf,
+    _norm_pdf_python,
+    _norm_sf,
+    _norm_sf_python,
+    censored_garch_recursion,
+    censored_garch_recursion_python,
+)
+from arch.univariate.volatility import GARCH
 
 
 @pytest.fixture(scope="module")
@@ -73,7 +83,6 @@ def test_mismatched_threshold_length():
 def test_no_censoring_matches_plain_garch(setup):
     """With censored all-False, the recursion must reduce exactly to a plain
     GARCH(1, 1) recursion, since the correction term is never applied."""
-    from arch.univariate.volatility import GARCH
 
     resids = setup["resids"]
     t = setup["t"]
@@ -136,11 +145,6 @@ def test_recursion_deep_tail_underflow_branch():
     underflows to 0 in floating point before a itself does. The recursion
     should fall back to the asymptotic correction 1 + a^2 rather than
     dividing by (effectively) zero."""
-    from arch.univariate.censored_garch import (
-        censored_garch_recursion,
-        censored_garch_recursion_python,
-    )
-    from scipy.stats import norm
 
     a = 40.0  # norm.sf(40) underflows to exactly 0.0 in float64
     assert norm.sf(a) == 0.0
@@ -170,10 +174,6 @@ def test_recursion_zero_threshold_branch():
     case not reachable through the public API, which requires threshold >
     0 wherever censored is True) should fall back to the uncorrected
     (corr=1.0) branch rather than raising or dividing by zero."""
-    from arch.univariate.censored_garch import (
-        censored_garch_recursion,
-        censored_garch_recursion_python,
-    )
 
     # omega=0, alpha=1, backcast=1.0 => sigma2[0] = 1.0 exactly (isolates the
     # step cleanly, same trick as the deep-tail test above).
@@ -200,7 +200,6 @@ def test_recursion_zero_variance_branch():
     (zero) lower bound at a censored step, sigma_t is 0 and a would
     otherwise be a division by zero; the recursion should fall back to
     a = 0 (corr = 1.0) instead."""
-    from arch.univariate.censored_garch import censored_garch_recursion
 
     parameters = np.array([0.0, 0.0, 0.0])  # omega=0 -> sigma2[0] forced to 0
     resids = np.array([1.5])
@@ -221,12 +220,6 @@ def test_norm_helpers_match_scipy():
     inlined into the jitted recursion) must agree with scipy across a
     wide range of inputs, including the deep tail where naive 1 - Phi(x)
     would underflow long before erfc-based _norm_sf does."""
-    from arch.univariate.censored_garch import (
-        _norm_pdf,
-        _norm_pdf_python,
-        _norm_sf,
-        _norm_sf_python,
-    )
 
     xs = np.array([0.0, 0.1, 0.5, 1.0, 1.96, 3.0, 5.0, 8.0, 15.0, 30.0])
     for x in xs:
@@ -246,10 +239,6 @@ def test_jitted_recursion_matches_pure_python():
     must produce bit-identical output to the pure-Python source it's
     compiled from, censored_garch_recursion_python, across a realistic
     GARCH(1,1)-then-censored path."""
-    from arch.univariate.censored_garch import (
-        censored_garch_recursion,
-        censored_garch_recursion_python,
-    )
 
     rng = RandomState(7)
     nobs = 2000
@@ -264,7 +253,16 @@ def test_jitted_recursion_matches_pure_python():
     sigma2_jit = np.zeros(nobs)
     sigma2_py = np.zeros(nobs)
     censored_garch_recursion(
-        parameters, resids, censored, thresh_arr, sigma2_jit, 1, 1, nobs, 1.0, var_bounds
+        parameters,
+        resids,
+        censored,
+        thresh_arr,
+        sigma2_jit,
+        1,
+        1,
+        nobs,
+        1.0,
+        var_bounds,
     )
     censored_garch_recursion_python(
         parameters, resids, censored, thresh_arr, sigma2_py, 1, 1, nobs, 1.0, var_bounds
@@ -277,7 +275,6 @@ def test_correction_matches_truncated_normal_identity():
     truncated-normal second-moment identity
     E[Z^2 | |Z| >= a] = 1 + a * phi(a) / (1 - Phi(a))
     for a single censored step with a known sigma2 carried in from omega."""
-    from arch.univariate.censored_garch import censored_garch_recursion
 
     omega = 1.0
     threshold = 1.2
@@ -315,7 +312,6 @@ def test_correction_matches_truncated_normal_identity():
 def test_fit_and_forecast_end_to_end():
     """Smoke test the full estimation pipeline: ConstantMean + CensoredGARCH
     should fit without error and produce a finite one-step forecast."""
-    import pandas as pd
 
     rng = RandomState(42)
     nobs = 500
@@ -382,7 +378,7 @@ def test_compute_variance_length_mismatch():
         )
 
 
-@pytest.mark.parametrize("p, q", [(1, 0), (0, 1), (2, 2)])
+@pytest.mark.parametrize(("p", "q"), [(1, 0), (0, 1), (2, 2)])
 def test_starting_values_orders(setup, p, q):
     """starting_values must handle models with no ARCH term (p=0) or no
     GARCH term (q=0), as well as higher orders."""

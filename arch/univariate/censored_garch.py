@@ -62,8 +62,11 @@ from arch.univariate.recursions_python import bounds_check
 from arch.univariate.volatility import VarianceForecast, VolatilityProcess
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 
-
-__all__ = ["CensoredGARCH", "censored_garch_recursion", "censored_garch_recursion_python"]
+__all__ = [
+    "CensoredGARCH",
+    "censored_garch_recursion",
+    "censored_garch_recursion_python",
+]
 
 _INV_SQRT_2PI = 1.0 / math.sqrt(2.0 * math.pi)
 _SQRT2 = math.sqrt(2.0)
@@ -118,7 +121,7 @@ def censored_garch_recursion_python(
     Parameters
     ----------
     parameters : ndarray
-        [omega, alpha_1..alpha_p, beta_1..beta_q]
+        Model parameters, ordered [omega, alpha_1..alpha_p, beta_1..beta_q].
     resids : ndarray
         Mean-equation residuals. For a censored observation, this is the
         *observed* (truncated) residual, i.e. it equals +/- the threshold
@@ -196,8 +199,10 @@ censored_garch_recursion = jit(censored_garch_recursion_python, nopython=True)
 
 class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
-    Censored/latent-variance GARCH(p, q) for return series subject to a
-    known, time-varying censoring rule (e.g. an exchange price-limit band).
+    Latent-variance GARCH(p, q) for censored return series.
+
+    Models return series subject to a known, time-varying censoring rule
+    (e.g. an exchange price-limit band).
 
     Parameters
     ----------
@@ -214,12 +219,6 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Order of the symmetric innovation. Default is 1.
     q : int, optional
         Order of the lagged conditional variance. Default is 1.
-
-    Examples
-    --------
-    >>> from arch.univariate import CensoredGARCH
-    >>> cens = (returns.abs() >= 0.0995)  # e.g. a +/-10% price-limit band
-    >>> vol = CensoredGARCH(censored=cens, threshold=0.0995)
 
     Notes
     -----
@@ -263,6 +262,12 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     recursion, not the raw truncated residual) through the lag lookback for
     any censored observation within the forecast origin's lag window, which
     the recursion does not currently expose.
+
+    Examples
+    --------
+    >>> from arch.univariate import CensoredGARCH
+    >>> cens = (returns.abs() >= 0.0995)  # e.g. a +/-10% price-limit band
+    >>> vol = CensoredGARCH(censored=cens, threshold=0.0995)
     """
 
     def __init__(
@@ -402,14 +407,11 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: float | Float64Array | None = None,
     ) -> tuple[Float64Array, Float64Array]:
-        """
-        Simulate from the model, assuming NO censoring in the simulated
-        path (future censoring status is not known ex ante -- this
-        simulates the *unconditional* process the model implies, which is
-        only exactly correct when the true return process is never
-        censored; it is an approximation whenever a future censoring rule
-        would actually bind). See class Notes.
-        """
+        # Simulates from the model assuming NO censoring in the simulated path
+        # (future censoring status is not known ex ante). This is the
+        # *unconditional* process the model implies: exact only when the true
+        # return process is never censored, and an approximation whenever a
+        # future censoring rule would actually bind. See the class Notes.
         parameters = ensure1d(parameters, "parameters", False)
         p, q = self.p, self.q
         errors = rng(nobs + burn)
@@ -451,8 +453,7 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             )
         if method != "analytic":
             raise NotImplementedError(
-                "Only method='analytic' is currently supported for "
-                "CensoredGARCH."
+                "Only method='analytic' is currently supported for CensoredGARCH."
             )
 
     def _analytic_forecast(
@@ -464,7 +465,7 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         start: int,
         horizon: int,
     ) -> VarianceForecast:
-        sigma2, forecasts = self._one_step_forecast(
+        _, forecasts = self._one_step_forecast(
             parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
         )
         return VarianceForecast(forecasts)
@@ -481,6 +482,5 @@ class CensoredGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rng: RNGType,
     ) -> VarianceForecast:
         raise NotImplementedError(
-            "Simulation-based forecasts are not yet implemented for "
-            "CensoredGARCH."
+            "Simulation-based forecasts are not yet implemented for CensoredGARCH."
         )
