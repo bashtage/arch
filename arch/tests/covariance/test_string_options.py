@@ -45,3 +45,24 @@ def test_var_method_invalid(data, bad, exc):
     match = r"method must be one of 'aic', 'hqc' or 'bic'; got "
     with pytest.raises(exc, match=match):
         PreWhitenedRecolored(data, method=bad)
+
+
+@pytest.mark.parametrize("method", ["newey-west", "andrews"])
+def test_bandwidth_method_case(data, method):
+    expected = get_kernel_estimator("bartlett")(data, bandwidth_method=method)
+    for spelling in (method.upper(), method.title()):
+        est = get_kernel_estimator("bartlett")(data, bandwidth_method=spelling)
+        assert est.bandwidth_method == method
+        assert_allclose(est.opt_bandwidth, expected.opt_bandwidth)
+        est = PreWhitenedRecolored(data, lags=1, bandwidth_method=spelling)
+        assert est.bandwidth_method == method
+
+
+@pytest.mark.parametrize(
+    ("bad", "exc"),
+    [("bogus", ValueError), ("", ValueError), (None, TypeError), (1, TypeError)],
+)
+def test_bandwidth_method_invalid(data, bad, exc):
+    match = r"bandwidth_method must be one of 'newey-west' or 'andrews'; got "
+    with pytest.raises(exc, match=match):
+        PreWhitenedRecolored(data, bandwidth_method=bad)
