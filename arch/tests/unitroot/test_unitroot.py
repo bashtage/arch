@@ -864,3 +864,15 @@ def test_t_stat_lag_selection_low_memory(seed, trend):
     kwargs = {"trend": trend, "max_lags": max_lags, "method": "t-stat"}
     assert ADF(y, low_memory=False, **kwargs).lags == expected
     assert ADF(y, low_memory=True, **kwargs).lags == expected
+
+
+def test_adf_z_no_trend_critical_values():
+    # Fuller (1996), Table 10.A.1; Hamilton (1994), Table B.5, Case 1
+    fuller = {
+        100: [-13.3, -7.9, -5.6],
+        250: [-13.6, -8.0, -5.7],
+        500: [-13.7, -8.0, -5.7],
+    }
+    for nobs, expected in fuller.items():
+        cv = mackinnoncrit(regression="n", nobs=nobs, dist_type="adf-z")
+        assert_allclose(cv, expected, atol=0.3)
