@@ -74,3 +74,16 @@ def test_moment(dist, params):
 
             m_method = dist.partial_moment(n, z, params)
             assert_almost_equal(m_quad, m_method)
+
+
+@pytest.mark.parametrize("nu", [342.0, 400.0, 500.0])
+def test_students_t_odd_partial_moment_large_nu(nu):
+    dist = StudentsT()
+
+    def f(x, n):
+        return (x**n) * exp(dist.loglikelihood([nu], x, ones_like(x), True))
+
+    for n in (1, 3):
+        for z in (-2.0, 0.0, 1.5):
+            m_quad = quad(f, -inf, z, args=(n,))[0]
+            assert_almost_equal(dist.partial_moment(n, z, [nu]), m_quad)
