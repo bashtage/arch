@@ -3,7 +3,7 @@ Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 """
 
 import argparse
-import os
+import pathlib
 import random
 from typing import cast
 
@@ -28,11 +28,11 @@ RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 
 # Number of repetitions
-EX_NUM = 500
+EX_NUM = 2000
 # Number of simulations per exercise
-EX_SIZE = 250000
+EX_SIZE = 250_000
 # Approximately controls memory use, in MiB
-MAX_MEMORY_SIZE = 100
+MAX_MEMORY_SIZE = 250
 
 
 # raw entropy (16 bits each) from random.org
@@ -61,7 +61,7 @@ RAW = [
 ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
-def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
+def single_experiment(trend: str, gen: Generator, file_name: pathlib.Path) -> None:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
@@ -123,10 +123,10 @@ if __name__ == "__main__":
     count = 0
     for tr in TRENDS:
         for i in range(EX_NUM):
-            file_name = os.path.join(OUTPUT_PATH, f"adf_z_{tr}-{i:04d}.npz")
+            file_name = OUTPUT_PATH / f"adf_z_{tr}-{i:04d}.npz"
             jobs.append((tr, generators[count], file_name))
             count += 1
-    jobs = [job for job in jobs if not os.path.exists(job[-1])]
+    jobs = [job for job in jobs if not job[-1].exists()]
     random.shuffle(jobs)
     nremconfig = len(jobs)
     nconfig = len(children)

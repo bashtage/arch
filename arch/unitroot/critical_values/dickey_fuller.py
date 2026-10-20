@@ -5,6 +5,12 @@ p-value from statistics that follow the Dickey-Fuller distribution.
 Most values are from MacKinnon (1994) or (2010).  A small number of these
 did not appear in the original paper and have been computed using an identical
 simulation.
+
+The "n" case was computes from 2000 blocked simulations each with 250,000 draws
+for a total of 500,000,000 samples. The "c", "ct", and "ctt" cases were computed
+from 500 blocked simulations each with 250,000 draws.  The "n" case was computed
+with a different random number generator than the other three cases, so the results
+are not directly comparable.
 """
 
 from numpy import array, asarray, inf
@@ -369,20 +375,20 @@ tau_max = {
 # Z values from new simulations, 500 exercises, 250,000 per ex.
 adf_z_min = {"n": -inf, "c": -inf, "ct": -inf, "ctt": -inf}
 
-adf_z_star = {"n": -1.79146, "c": -5.04709, "ct": -9.22766, "ctt": -12.88512}
+adf_z_star = {"n": -1.83512, "c": -5.04709, "ct": -9.22766, "ctt": -12.88512}
 
 adf_z_max = {"n": inf, "c": inf, "ct": inf, "ctt": inf}
 
 # The small p parameters are for np.log(np.abs(stat))
 adf_z_small_p = {
-    "n": [0.05872, -0.69633, 0.02471, -0.04283],
+    "n": [0.08451, -0.7122, 0.03555, -0.0443],
     "c": [1.94205, -1.47677, 0.21163, -0.06288],
     "ct": [4.05596, -2.34128, 0.41403, -0.08312],
     "ctt": [5.68974, -2.98948, 0.55752, -0.09629],
 }
 
 adf_z_large_p = {
-    "n": [0.56681, 0.67544, 0.06881, 0.00235],
+    "n": [0.56814, 0.66006, 0.0658, 0.0022],
     "c": [1.70059, 0.49465, 0.02636, 0.00055],
     "ct": [2.60323, 0.39217, 0.01321, 0.00019],
     "ctt": [3.2269, 0.34323, 0.00887, 0.0001],
@@ -390,9 +396,9 @@ adf_z_large_p = {
 
 adf_z_cv_approx = {
     "n": [
-        [-13.69555, 63.69082, -199.57565, 0.0],
-        [-8.03946, 26.23476, -59.59191, 0.0],
-        [-5.71379, 15.42569, -25.92685, 0.0],
+        [-13.69464, 63.39558, -188.65735, 286.67928],
+        [-8.03941, 26.16037, -55.17125, 0.0],
+        [-5.71384, 15.38915, -23.26257, 0.0],
     ],
     "c": [
         [-20.6258, 119.28619, -442.99517, 1082.9222],
