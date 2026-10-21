@@ -84,9 +84,8 @@ def adf_simulation(
         tau = arange(1, nobs + 1)
         z = vstack((ones(nobs), tau, tau**2.0)).T
 
-    y = standard_normal((n + 50, b))
+    y = standard_normal((n, b))
     y = cumsum(y, axis=0)
-    y = y[50:, :]
     lhs = y[1:, :]
     rhs = y[:-1, :]
     if z is not None:
