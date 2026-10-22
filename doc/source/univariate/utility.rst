@@ -86,3 +86,74 @@ The corresponding members of the results classes are
 :attr:`~arch.univariate.base.ARCHModelFixedResult.excess_kurtosis`,
 :meth:`~arch.univariate.base.ARCHModelFixedResult.hill_estimator` and
 :meth:`~arch.univariate.base.ARCHModelFixedResult.var_ratio`.
+
+Backtesting Value-at-Risk
+-------------------------
+
+.. module:: arch.univariate
+   :noindex:
+.. currentmodule:: arch.univariate
+
+The functions below compare a series of Value-at-Risk (VaR) forecasts with the returns
+that were realized. VaR is reported as a **positive loss** (a 1% VaR of 2.5 is the loss
+that is exceeded with probability 1%), and an observation is an *exception* if the loss
+exceeds the VaR, :math:`-r_t > \mathrm{VaR}_t`. A quantile of the returns, which is
+negative in the lower tail, must be negated first. The returns and the VaR must be finite.
+If both are Series they are aligned on the index, and the observations that they have in
+common are used. Otherwise they must have the same length.
+
+* :func:`~arch.univariate.var_exceptions` is the bool array of exceptions.
+* :func:`~arch.univariate.kupiec_pof` is the proportion-of-failures likelihood-ratio test
+  of Kupiec (1995) that the probability of an exception is ``p``. It is
+  :math:`\chi^2_1`, and it is two-sided, so that too few exceptions also reject.
+* :func:`~arch.univariate.christoffersen_independence` is the likelihood-ratio test of
+  Christoffersen (1998) that the exceptions are independent, against a first-order Markov
+  chain. It is :math:`\chi^2_1`.
+* :func:`~arch.univariate.christoffersen_conditional_coverage` is the sum of the two
+  statistics, which tests the coverage and the independence jointly. It is
+  :math:`\chi^2_2`.
+* :func:`~arch.univariate.traffic_light` is the zone of the framework of the Basel
+  Committee on Banking Supervision (1996) for the exceptions in the last ``window``
+  observations (250 by default). The zone is green if the cumulative binomial probability
+  of the number of exceptions is below 95%, yellow if it is at least 95% and below
+  99.99%, and red otherwise. For 250 observations and ``p=0.01`` green is 0 to 4
+  exceptions, yellow is 5 to 9 and red is 10 or more, as in Table 2 of the framework. It
+  returns a :class:`~arch.univariate.TrafficLightResult` with the zone, the number of
+  exceptions and the cumulative probability. A series that is shorter than ``window``
+  raises an error.
+
+The three tests return a :class:`~arch.utility.testing.WaldTestStatistic`. The
+likelihood-ratio statistics are computed with :math:`0\ln 0=0`, so that a series with no
+exception, or with only exceptions, has a statistic.
+
+.. ipython:: python
+
+    from arch.univariate import (
+        christoffersen_conditional_coverage,
+        christoffersen_independence,
+        kupiec_pof,
+        traffic_light,
+        var_exceptions,
+    )
+
+    # A 1% VaR from the model with Student's t errors, as a positive loss
+    nu = res.params[["nu"]].to_numpy()
+    quantile = float(res.model.distribution.ppf(0.01, nu))
+    var = -(res.params["mu"] + res.conditional_volatility * quantile)
+    exceptions = var_exceptions(returns, var)
+    exceptions.sum()
+    kupiec_pof(returns, var, 0.01)
+    christoffersen_independence(returns, var).pval
+    christoffersen_conditional_coverage(returns, var, 0.01).pval
+    traffic_light(returns, var, p=0.01)
+
+.. autosummary::
+   :toctree: generated/
+
+   var_exceptions
+   kupiec_pof
+   christoffersen_independence
+   christoffersen_conditional_coverage
+   traffic_light
+
+.. autoclass:: TrafficLightResult
