@@ -37,6 +37,40 @@ only used by
    TukeyParzen
    ZeroLag
 
+When ``bandwidth`` is ``None`` the bandwidth :math:`\hat{b}_T=c_k[\hat{\alpha}(q)T]^{1/(2q+1)}`
+of Andrews (1991) is estimated, where :math:`c_k` and :math:`q` depend on the kernel
+and :math:`\hat{\alpha}(q)` measures the persistence of the data. ``bandwidth_method``
+chooses how :math:`\hat{\alpha}(q)` is estimated. An explicit ``bandwidth`` overrides it,
+and ``ZeroLag`` has no bandwidth.
+
+* ``"newey-west"`` (the default) uses the nonparametric estimate of Newey and West
+  (1994), which depends on the number of autocovariances used in the pilot estimate
+  (:math:`n=\lceil 4(T/100)^r\rceil`).
+* ``"andrews"`` uses the AR(1) plug-in estimate of Andrews (1991, Section 6), which has
+  no pilot lag. An AR(1) with a constant is fitted to each column of the data, and the
+  persistence and innovation variance of the columns are combined using ``weights``. The
+  bandwidths agree with ``sandwich::bwAndrews`` in R for the Bartlett, Parzen,
+  Tukey-Hanning and quadratic-spectral kernels. The formula is applied to all other
+  kernels using their own :math:`q` and :math:`c_k`. For complex data, the real and
+  imaginary parts are two columns with the same weight.
+
+.. ipython:: python
+
+    import numpy as np
+
+    from arch.covariance.kernel import Bartlett, QuadraticSpectral
+
+    rng = np.random.default_rng(0)
+    x = np.zeros((500, 2))
+    for t in range(1, 500):
+        x[t] = np.array([0.8, 0.2]) * x[t - 1] + rng.standard_normal(2)
+    for method in ("newey-west", "andrews"):
+        print(method, Bartlett(x, bandwidth_method=method).bandwidth)
+    QuadraticSpectral(x, bandwidth_method="andrews", force_int=True).bandwidth
+
+:class:`~arch.covariance.var.PreWhitenedRecolored` has the same option, which is used
+to choose the bandwidth of its kernel for the VAR residuals.
+
 The data are converted to ``float64``: integer, Boolean and ``float32`` data are
 accepted and the calculation is done in ``float64``, and ``float16`` data raise a
 ``TypeError``. Complex data are also accepted, and are converted to ``complex128``. The

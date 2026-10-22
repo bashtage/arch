@@ -246,6 +246,12 @@ def _kernel_covariance_template() -> None:
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
+        and by ZeroLag.
 
     Raises
     ------
@@ -254,13 +260,16 @@ def _kernel_covariance_template() -> None:
         contains strings or objects that are not numbers), if weights cannot be
         converted to float64, if bandwidth is not a real number, if df_adjust is
         not an integer (a float, including 5.0, or a Boolean is not accepted), or
-        if center or force_int is not a bool.
+        if center or force_int is not a bool, or if bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
         is negative or not smaller than the number of observations; or if
         weights does not have nvar finite elements, has a negative element or
-        has only zeros.
+        has only zeros; if bandwidth_method is not one of the available names; or
+        if bandwidth_method is "andrews" and the bandwidth must be estimated but
+        the AR(1) cannot be fitted to the columns of x with positive weight, for
+        example because they are all constant.
 
     Notes
     -----
@@ -273,8 +282,9 @@ def _kernel_covariance_template() -> None:
     where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
 
     If the bandwidth is not provided, it is estimated using the constants of
-    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
-    details.
+    [1]_ and either the automatic lag selection of [2]_, the default, or the
+    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See
+    ``opt_bandwidth`` for details.
 
     **Complex data.** The estimators accept complex data, for which they are
     Hermitian. The lag-:math:`j` autocovariance is
@@ -318,6 +328,10 @@ def _kernel_substitution(
     return decorator
 
 
+_BANDWIDTH_METHODS = ("newey-west", "andrews")
+"""The methods that select the bandwidth when it is not provided."""
+
+
 class CovarianceEstimator(ABC):
     r"""
     Base class of the kernel-based long-run covariance estimators.
@@ -347,6 +361,12 @@ class CovarianceEstimator(ABC):
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
+        and by ZeroLag.
 
     Raises
     ------
@@ -355,13 +375,16 @@ class CovarianceEstimator(ABC):
         contains strings or objects that are not numbers), if weights cannot be
         converted to float64, if bandwidth is not a real number, if df_adjust is
         not an integer (a float, including 5.0, or a Boolean is not accepted), or
-        if center or force_int is not a bool.
+        if center or force_int is not a bool, or if bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
         is negative or not smaller than the number of observations; or if
         weights does not have nvar finite elements, has a negative element or
-        has only zeros.
+        has only zeros; if bandwidth_method is not one of the available names; or
+        if bandwidth_method is "andrews" and the bandwidth must be estimated but
+        the AR(1) cannot be fitted to the columns of x with positive weight, for
+        example because they are all constant.
 
     Notes
     -----
@@ -370,8 +393,9 @@ class CovarianceEstimator(ABC):
     where H is the bandwidth.
 
     If the bandwidth is not provided, it is estimated using the constants of
-    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for
-    details.
+    [1]_ and either the automatic lag selection of [2]_, the default, or the
+    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See
+    ``opt_bandwidth`` for details.
 
     **Complex data.** The estimators accept complex data, for which they are
     Hermitian. The lag-:math:`j` autocovariance is
@@ -410,6 +434,7 @@ class CovarianceEstimator(ABC):
         center: bool = True,
         weights: ArrayLike | None = None,
         force_int: bool = False,
+        bandwidth_method: str = "newey-west",
     ):
         x_checked = check_array(
             "x", x, ndim=2, min_length=2, allow_complex=self._allow_complex
@@ -439,6 +464,9 @@ class CovarianceEstimator(ABC):
                 _describe(weights),
             )
         force_int = check_bool("force_int", force_int)
+        bandwidth_method = check_option(
+            "bandwidth_method", bandwidth_method, _BANDWIDTH_METHODS
+        )
 
         self._x_orig = ensure2d(x, "x", allow_complex=self._allow_complex)
         self._x = np.asarray(self._x_orig)
@@ -458,6 +486,7 @@ class CovarianceEstimator(ABC):
                 np.array(weights_checked, dtype=float).ravel()[:, None],
             )
         self._force_int = force_int
+        self._bandwidth_method = bandwidth_method
 
     def __str__(self) -> str:
         out = (
@@ -500,6 +529,19 @@ class CovarianceEstimator(ABC):
             return float(int(np.ceil(self._bandwidth)))
         assert self._bandwidth is not None
         return self._bandwidth
+
+    @property
+    def bandwidth_method(self) -> str:
+        """
+        The method used to estimate the bandwidth.
+
+        Returns
+        -------
+        str
+            Either "newey-west" or "andrews". The method is only used if the
+            bandwidth is not provided by the user, and ZeroLag ignores it.
+        """
+        return self._bandwidth_method
 
     @property
     def centered(self) -> bool:
@@ -570,6 +612,57 @@ class CovarianceEstimator(ABC):
             f_qs += scale * j**q * sig_j
         return (f_qs / f_0s) ** 2
 
+    def _andrews_alpha_q(self) -> float:
+        """
+        The AR(1) plug-in estimate of alpha(q) of Andrews (1991), eq. (6.4).
+        """
+        q = self.bandwidth_scale
+        if q not in (1, 2):
+            raise ValueError(
+                'bandwidth_method="andrews" requires a kernel with a characteristic '
+                f"exponent of 1 or 2; the exponent of {self.name} is {q}"
+            )
+        x = self._x
+        weights = self._x_weights.ravel()
+        if np.iscomplexobj(x):
+            # Real and imaginary parts are separate series with the same weight
+            x = np.concatenate([x.real, x.imag], axis=1)
+            weights = np.concatenate([weights, weights])
+        # Columns without weight need not have a usable AR(1), and constant columns
+        # have no variance and do not change the weighted sums
+        used = (weights > 0) & (np.ptp(x, axis=0) > 0)
+        if not np.any(used):
+            raise ValueError(
+                'bandwidth_method="andrews" cannot estimate the bandwidth since '
+                "every column of x with a positive weight is constant"
+            )
+        x, weights = x[:, used], weights[used]
+        if np.any(np.ptp(x[:-1], axis=0) == 0):
+            raise ValueError(
+                'bandwidth_method="andrews" cannot fit an AR(1) to a column of x that '
+                "is constant except for its final value"
+            )
+        lag = x[:-1] - x[:-1].mean(0)
+        lead = x[1:] - x[1:].mean(0)
+        lag_ss = (lag**2).sum(0)
+        # OLS of x_t on a constant and x_{t-1}, as in R's ar.ols
+        rho = (lag * lead).sum(0) / lag_ss
+        resid = lead - rho * lag
+        sigma4 = ((resid**2).sum(0) / lag.shape[0]) ** 2
+        with np.errstate(divide="ignore", invalid="ignore"):
+            denom = np.sum(weights * sigma4 / (1 - rho) ** 4)
+            if q == 1:
+                numer = 4 * rho**2 * sigma4 / ((1 - rho) ** 6 * (1 + rho) ** 2)
+            else:
+                numer = 4 * rho**2 * sigma4 / (1 - rho) ** 8
+            alpha_q = float(np.sum(weights * numer) / denom)
+        if np.isnan(alpha_q):
+            raise ValueError(
+                'bandwidth_method="andrews" cannot estimate the bandwidth since an '
+                "AR(1) coefficient of x is -1 or 1"
+            )
+        return alpha_q
+
     @cached_property
     def opt_bandwidth(self) -> float:
         r"""
@@ -579,6 +672,13 @@ class CovarianceEstimator(ABC):
         -------
         float
             The estimated optimal bandwidth.
+
+        Raises
+        ------
+        ValueError
+            If ``bandwidth_method`` is "andrews" and the AR(1) cannot be fitted
+            to the columns of x with positive weight, for example because they
+            are all constant.
 
         Notes
         -----
@@ -594,7 +694,8 @@ class CovarianceEstimator(ABC):
         The constants and the values of q are from [1]_. For example,
         :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2
         for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral
-        kernel. :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))
+        kernel. When ``bandwidth_method`` is "newey-west", the default,
+        :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))
         estimate that is suggested in [1]_. It is the nonparametric estimate
         of [2]_,
 
@@ -612,6 +713,41 @@ class CovarianceEstimator(ABC):
         2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
         the quadratic-spectral kernel, as in [2]_.
 
+        When ``bandwidth_method`` is "andrews",
+        :math:`\hat{\alpha}\left(q\right)` is the AR(1) plug-in estimate of
+        [1]_, equations (6.3) and (6.4), which has no pilot lag. An AR(1),
+        :math:`u_{a,t}=\mu_a+\rho_a u_{a,t-1}+\epsilon_{a,t}`, is fitted to each
+        column :math:`a` of x by OLS, and :math:`\hat{\sigma}_a^2` is the sum of
+        the squared residuals divided by :math:`T-1`. Then
+
+        .. math::
+
+           \hat{\alpha}\left(1\right) =
+           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4
+           / \left[\left(1-\hat{\rho}_a\right)^6
+           \left(1+\hat{\rho}_a\right)^2\right]}
+           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4},
+           \quad
+           \hat{\alpha}\left(2\right) =
+           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4
+           / \left(1-\hat{\rho}_a\right)^8}
+           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4}
+
+        where :math:`w_a` are the ``weights`` and the sums are over the columns
+        with a positive weight. The constant :math:`\mu_a` makes the estimate
+        the same whether or not x is centered, as in ``sandwich::bwAndrews`` in
+        R. The constants :math:`c_k` are the values of ``kernel_const`` for all
+        kernels. They are :math:`\left(q k_q^2 / \int k^2\right)^{1/(2q+1)}` in
+        the notation of [1]_, rounded to 4 decimals. The formula is applied to
+        every kernel using its own :math:`q`, which is 1 or 2. Constant columns
+        do not change the sums and are ignored. The real and imaginary parts of
+        complex data are separate columns that both have the weight of the
+        column.
+
+        In both cases the bandwidth is at most the number of observations less
+        1, and is rounded up if ``force_int`` is True. ZeroLag ignores
+        ``bandwidth_method``, and its bandwidth is 0.
+
         References
         ----------
         .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
@@ -623,7 +759,10 @@ class CovarianceEstimator(ABC):
         c = self.kernel_const
         q = self.bandwidth_scale
         nobs = self._x.shape[0]
-        alpha_q = self._alpha_q()
+        if self._bandwidth_method == "andrews":
+            alpha_q = self._andrews_alpha_q()
+        else:
+            alpha_q = self._alpha_q()
         bw = c * (alpha_q * nobs) ** (1 / (2 * q + 1))
         if self._force_int:
             bw = np.ceil(bw)
@@ -987,6 +1126,12 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
+        and by ZeroLag.
 
     Raises
     ------
@@ -995,13 +1140,16 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
         contains strings or objects that are not numbers), if weights cannot be
         converted to float64, if bandwidth is not a real number, if df_adjust is
         not an integer (a float, including 5.0, or a Boolean is not accepted), or
-        if center or force_int is not a bool.
+        if center or force_int is not a bool, or if bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
         is negative or not smaller than the number of observations; or if
         weights does not have nvar finite elements, has a negative element or
-        has only zeros.
+        has only zeros; if bandwidth_method is not one of the available names; or
+        if bandwidth_method is "andrews" and the bandwidth must be estimated but
+        the AR(1) cannot be fitted to the columns of x with positive weight, for
+        example because they are all constant.
 
     See Also
     --------
@@ -1038,6 +1186,12 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
+        and by ZeroLag.
 
     Raises
     ------
@@ -1046,13 +1200,16 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
         contains strings or objects that are not numbers), if weights cannot be
         converted to float64, if bandwidth is not a real number, if df_adjust is
         not an integer (a float, including 5.0, or a Boolean is not accepted), or
-        if center or force_int is not a bool.
+        if center or force_int is not a bool, or if bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
         is negative or not smaller than the number of observations; or if
         weights does not have nvar finite elements, has a negative element or
-        has only zeros.
+        has only zeros; if bandwidth_method is not one of the available names; or
+        if bandwidth_method is "andrews" and the bandwidth must be estimated but
+        the AR(1) cannot be fitted to the columns of x with positive weight, for
+        example because they are all constant.
 
     See Also
     --------
@@ -1090,6 +1247,12 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
+        and by ZeroLag.
 
     Raises
     ------
@@ -1098,13 +1261,16 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
         contains strings or objects that are not numbers), if weights cannot be
         converted to float64, if bandwidth is not a real number, if df_adjust is
         not an integer (a float, including 5.0, or a Boolean is not accepted), or
-        if center or force_int is not a bool.
+        if center or force_int is not a bool, or if bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if bandwidth is negative or not finite; if df_adjust
         is negative or not smaller than the number of observations; or if
         weights does not have nvar finite elements, has a negative element or
-        has only zeros.
+        has only zeros; if bandwidth_method is not one of the available names; or
+        if bandwidth_method is "andrews" and the bandwidth must be estimated but
+        the AR(1) cannot be fitted to the columns of x with positive weight, for
+        example because they are all constant.
 
     See Also
     --------
