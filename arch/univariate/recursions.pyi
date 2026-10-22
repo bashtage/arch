@@ -46,6 +46,17 @@ def egarch_recursion(
     std_resids: Float64Array1D,
     abs_std_resids: Float64Array1D,
 ) -> Float64Array: ...
+def ngarch_recursion(
+    parameters: Float64Array1D,
+    resids: Float64Array1D,
+    sigma2: Float64Array1D,
+    p: int,
+    o: int,
+    q: int,
+    nobs: int,
+    backcast: float,
+    var_bounds: Float64Array2D,
+) -> Float64Array: ...
 def midas_recursion(
     parameters: Float64Array1D,
     weights: Float64Array1D,
@@ -160,6 +171,9 @@ class HARCHUpdater(VolatilityUpdater):
 
 class MIDASUpdater(VolatilityUpdater):
     def __init__(self, m: int, asym: bool) -> None: ...
+
+class NGARCHUpdater(VolatilityUpdater):
+    def __init__(self, p: int, o: int, q: int) -> None: ...
 
 class RiskMetrics2006Updater(VolatilityUpdater):
     def __init__(

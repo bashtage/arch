@@ -35,6 +35,7 @@ from arch.univariate import (
     FIGARCH,
     GARCH,
     HARCH,
+    NGARCH,
     ConstantVariance,
     EWMAVariance,
     FixedVariance,
@@ -251,6 +252,25 @@ add_good(APARCH, "delta", DELTA_GOOD)
 add_bad(APARCH, "common_asym", BOOL_BAD)
 add_good(APARCH, "common_asym", BOOL_GOOD)
 
+# NGARCH
+add_bad(NGARCH, "p", [*INT_BAD, *COUNT_BAD_1])
+add_good(NGARCH, "p", INT_GOOD)
+add_bad(NGARCH, "o", [*INT_BAD, *COUNT_BAD_0, (2, ValueError)], {"p": 1})
+add_good(NGARCH, "o", [0, 1, np.int8(1), np.int64(0)], {"p": 1})
+add_bad(NGARCH, "q", [*INT_BAD, *COUNT_BAD_0])
+add_good(NGARCH, "q", [*INT_GOOD, 0])
+CONSTRUCTOR_ROWS.append(
+    Row(
+        "NGARCH",
+        make(NGARCH),
+        {"p": 2, "o": 3},
+        ValueError,
+        r"^o must be an integer <= p \(2\); got 3 \(int\)$",
+        id="NGARCH-o-larger-than-p",
+        name="o",
+    )
+)
+
 # BootstrapRng
 STD_RESID = RESIDS[:200]
 BOOTSTRAP_BASE = {"std_resid": STD_RESID, "start": 100}
@@ -342,6 +362,8 @@ PROCESSES = {
     "figarch": (lambda: FIGARCH(truncation=30), 30),
     "fiaparch": (lambda: FIAPARCH(truncation=30), 30),
     "aparch": (lambda: APARCH(1, 1, 1), 1),
+    "ngarch": (lambda: NGARCH(1, 1, 1), 1),
+    "ngarch-p3q2": (lambda: NGARCH(3, 2, 2), 3),
 }
 
 
@@ -569,6 +591,9 @@ def test_numpy_scalars_become_python_numbers():
     aparch = APARCH(np.int64(2), np.int64(1), np.int64(1), np.float32(1.5), np.True_)
     assert type(aparch.delta) is float
     assert aparch.common_asym is True
+    ngarch = NGARCH(np.int64(2), np.int8(1), np.uint16(1))
+    assert [type(v) for v in (ngarch.p, ngarch.o, ngarch.q)] == [int, int, int]
+    assert ngarch.num_params == 1 + 2 + 1 + 1
 
 
 def test_harch_lags_are_int32():

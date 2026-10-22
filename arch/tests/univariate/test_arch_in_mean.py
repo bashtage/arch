@@ -14,6 +14,7 @@ from arch.univariate.volatility import (
     FIGARCH,
     GARCH,
     HARCH,
+    NGARCH,
     EWMAVariance,
     MIDASHyperbolic,
     RiskMetrics2006,
@@ -36,6 +37,7 @@ SUPPORTED = [
     FIGARCH,
     RiskMetrics2006,
     EGARCH,
+    NGARCH,
 ]
 
 
