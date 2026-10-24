@@ -2068,7 +2068,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat = sqrt(nq) * (self._vr - 1) / sqrt(self._stat_variance)
         assert self._stat is not None
         abs_stat = float(abs(self._stat))
-        self._pvalue = 2 - 2 * norm.cdf(abs(abs_stat))
+        self._pvalue = 2 * norm.sf(abs_stat)
 
 
 def mackinnonp(
