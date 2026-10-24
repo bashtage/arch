@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.cointegration - arch v8.0.1 (+617)</title>
+        <title>arch.unitroot.cointegration - arch v8.0.1 (+619)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+617)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+617)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+619)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+619)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+617)
+            arch v8.0.1 (+619)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+617)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+617)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+619)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+619)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+617)
+    arch v8.0.1 (+619)
   </label>
   
     <div class="md-nav__source">
@@ -631,7 +631,7 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        P-values of the parameters in the cointegrating vector.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"pvalues"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">)),</span> <span class="n">name</span><span class="o">=</span><span class="s2">"pvalues"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -984,7 +984,7 @@
             <span class="n">stubs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_cov</span><span class="p">))</span>
             <span class="n">tstats</span> <span class="o">=</span> <span class="n">params</span> <span class="o">/</span> <span class="n">se</span>
-            <span class="n">pvalues</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tstats</span><span class="p">)))</span>
+            <span class="n">pvalues</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tstats</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
             <span class="n">stubs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
