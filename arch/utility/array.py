@@ -233,6 +233,10 @@ def _object_as_float64(arr: np.ndarray, x: Any, name: str, allow_complex: bool) 
             f"({type(x).__name__})"
         )
     try:
+        if any(isinstance(item, (complex, np.complexfloating)) for item in arr.flat):
+            if not allow_complex:
+                raise TypeError("complex data are not allowed")
+            return arr.astype(np.complex128)
         return arr.astype(np.float64)
     except (TypeError, ValueError) as exc:
         if allow_complex:
@@ -274,6 +278,15 @@ def _astype_pandas(
     type that it was converted to.
     """
     try:
+        dtypes = list(x.dtypes) if isinstance(x, DataFrame) else [x.dtype]
+        if target is np.float64 and any(dtype.kind == "O" for dtype in dtypes):
+            if any(
+                isinstance(item, (complex, np.complexfloating))
+                for item in x.to_numpy().flat
+            ):
+                if not allow_complex:
+                    raise TypeError("complex data are not allowed")
+                target = np.complex128
         return x.astype(target), target
     except (TypeError, ValueError) as exc:
         if allow_complex and target is np.float64:

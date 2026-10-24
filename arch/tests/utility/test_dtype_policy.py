@@ -177,6 +177,18 @@ OBJECTS: list[tuple[str, Any, bool, type | None]] = [
     ("floats-complex-ok", np.array([1, 2.5], dtype=object), True, np.float64),
     ("complex", np.array([1, 2.5j], dtype=object), True, np.complex128),
     ("complex-rejected", np.array([1, 2.5j], dtype=object), False, None),
+    (
+        "numpy-complex",
+        np.array([np.complex128(1 + 2j)], dtype=object),
+        True,
+        np.complex128,
+    ),
+    (
+        "numpy-complex-rejected",
+        np.array([np.complex128(1 + 2j)], dtype=object),
+        False,
+        None,
+    ),
     ("strings", np.array(["a", "b"], dtype=object), True, None),
     ("none", np.array([1.0, None], dtype=object), True, None),
 ]
@@ -194,6 +206,23 @@ def test_object_data(data, allow_complex, dtype):
     else:
         result = as_float64(data, "my_data", allow_complex=allow_complex)
         assert result.dtype == dtype
+        assert_array_equal(result, data.astype(dtype))
+
+
+@pytest.mark.parametrize("allow_complex", [False, True])
+@pytest.mark.parametrize("container", [c for _, c in CONTAINERS], ids=CONTAINER_IDS)
+@pytest.mark.parametrize("helper", [h for _, h in HELPERS], ids=HELPER_IDS)
+def test_numpy_complex_objects(helper, container, allow_complex):
+    data = np.array([np.complex128(1 + 2j), 3.0], dtype=object)
+    original = data.copy()
+    if allow_complex:
+        result = helper(container(data), True)
+        assert np.asarray(result).dtype == np.complex128
+        assert_array_equal(_values(result), data.astype(np.complex128))
+    else:
+        with pytest.raises(TypeError, match=r"^my_data must "):
+            helper(container(data), False)
+    assert_array_equal(data, original)
 
 
 @pytest.mark.parametrize(
