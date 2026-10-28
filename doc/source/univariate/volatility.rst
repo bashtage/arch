@@ -22,6 +22,7 @@ volatility.
    ARCH
    APARCH
    FIAPARCH
+   CensoredGARCH
 
 Fractionally Integrated Asymmetric Power ARCH
 ---------------------------------------------
