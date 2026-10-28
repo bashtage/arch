@@ -32,7 +32,8 @@ jobs:
     #                    work with them.
     #   USE_NUMBA        Install numba, which runs the recursions when the Cython
     #                    extensions are not built
-    #   use.conda        Install with conda instead of pip
+    #   use.conda        Install Miniforge and use mamba and conda-forge instead of
+    #                    pip
     #   PYTEST_PATTERN   (slow or not slow) also runs the slow tests, which include
     #                    the example notebooks
     #   test.sdist, test.wheel
@@ -86,7 +87,7 @@ jobs:
         BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
         cython.coverage: true
         COVERAGE_CORE: ctrace
-      # numpy 2.0, the first 2.x, with numba from conda
+      # numpy 2.0, the first 2.x, with numba from conda-forge
       python_312_conda_numba:
         python.version: '3.12'
         use.conda: 'true'
@@ -133,11 +134,16 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - bash: |
-      echo "##vso[task.prependpath]$CONDA/bin"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test/condabin"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test/bin"
-    displayName: 'Add conda and env to PATH'
+      # Use Miniforge, which only uses conda-forge, rather than the Miniconda on the
+      # hosted image, which newer images (Ubuntu 26.04) no longer provide
+      curl -fsSL -o miniforge.sh \
+        "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+      bash miniforge.sh -b -p "${HOME}/miniforge3"
+      rm miniforge.sh
+      "${HOME}/miniforge3/bin/mamba" --version
+      echo "##vso[task.prependpath]${HOME}/miniforge3/bin"
+      echo "##vso[task.prependpath]${HOME}/miniforge3/envs/arch-test/bin"
+    displayName: 'Install Miniforge and add it and the env to PATH'
     condition: eq(variables['use.conda'], 'true')
 
   - script: |
@@ -145,7 +151,6 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      source ci/azure/update_path.sh
       if [[ ${STATSMODELS_MAIN} == "true" ]]; then
         echo "Installing statsmodels main"
         source ci/install-statsmodels-main.sh
@@ -191,9 +196,7 @@ jobs:
     displayName: 'List Configuration (PyPI)'
     condition: ne(variables['use.conda'], 'true')
 
-  - script: |
-     source ci/azure/update_path.sh
-     conda list
+  - script: mamba list -n arch-test
     displayName: 'List Configuration (conda)'
     condition: eq(variables['use.conda'], 'true')
 
