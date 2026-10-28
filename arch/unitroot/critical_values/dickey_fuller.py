@@ -6,11 +6,8 @@ Most values are from MacKinnon (1994) or (2010).  A small number of these
 did not appear in the original paper and have been computed using an identical
 simulation.
 
-The "n" case was computes from 2000 blocked simulations each with 250,000 draws
-for a total of 500,000,000 samples. The "c", "ct", and "ctt" cases were computed
-from 500 blocked simulations each with 250,000 draws.  The "n" case was computed
-with a different random number generator than the other three cases, so the results
-are not directly comparable.
+All values are from 2000 blocked simulations each with 250,000 draws
+for a total of 500,000,000 samples.
 """
 
 from numpy import array, asarray, inf
@@ -372,26 +369,26 @@ tau_max = {
 }
 
 
-# Z values from new simulations, 500 exercises, 250,000 per ex.
+# Z values from new simulations, 2,000 exercises, 250,000 per ex.
 adf_z_min = {"n": -inf, "c": -inf, "ct": -inf, "ctt": -inf}
 
-adf_z_star = {"n": -1.83512, "c": -5.04709, "ct": -9.22766, "ctt": -12.88512}
+adf_z_star = {"n": -1.83512, "c": -5.15265, "ct": -9.09009, "ctt": -12.88549}
 
 adf_z_max = {"n": inf, "c": inf, "ct": inf, "ctt": inf}
 
 # The small p parameters are for np.log(np.abs(stat))
 adf_z_small_p = {
     "n": [0.08451, -0.7122, 0.03555, -0.0443],
-    "c": [1.94205, -1.47677, 0.21163, -0.06288],
-    "ct": [4.05596, -2.34128, 0.41403, -0.08312],
-    "ctt": [5.68974, -2.98948, 0.55752, -0.09629],
+    "c": [2.00521, -1.54627, 0.23676, -0.06586],
+    "ct": [3.9501, -2.23742, 0.38012, -0.07943],
+    "ctt": [5.69256, -2.98939, 0.55647, -0.09606],
 }
 
 adf_z_large_p = {
     "n": [0.56814, 0.66006, 0.0658, 0.0022],
-    "c": [1.70059, 0.49465, 0.02636, 0.00055],
-    "ct": [2.60323, 0.39217, 0.01321, 0.00019],
-    "ctt": [3.2269, 0.34323, 0.00887, 0.0001],
+    "c": [1.69949, 0.49426, 0.02633, 0.00055],
+    "ct": [2.60405, 0.39239, 0.01323, 0.00019],
+    "ctt": [3.22811, 0.34354, 0.00888, 0.0001],
 }
 
 adf_z_cv_approx = {
@@ -401,18 +398,18 @@ adf_z_cv_approx = {
         [-5.71384, 15.38915, -23.26257, 0.0],
     ],
     "c": [
-        [-20.6258, 119.28619, -442.99517, 1082.9222],
-        [-14.09457, 58.46106, -164.08684, 479.02908],
-        [-11.25118, 38.48786, -87.62853, 246.93531],
+        [-20.6251, 119.00752, -422.57873, 743.47694],
+        [-14.0929, 57.98623, -137.0056, 0.0],
+        [-11.25026, 38.2072, -70.72371, 0.0],
     ],
     "ct": [
-        [-29.3568, 232.33249, -1171.21447, 3166.83631],
-        [-21.71085, 130.15894, -504.95264, 1170.38109],
-        [-18.24475, 93.25896, -305.14509, 581.02963],
+        [-29.35612, 232.23486, -1170.13934, 3209.13496],
+        [-21.71065, 130.0962, -500.98106, 1113.20613],
+        [-18.24497, 93.26993, -305.55437, 585.03699],
     ],
     "ctt": [
-        [-36.5955, 354.30552, -2214.58403, 7401.70512],
-        [-28.11176, 212.46258, -1067.94737, 3169.14023],
-        [-24.18572, 158.63387, -695.72916, 1833.08527],
+        [-36.59763, 354.7435, -2242.38386, 7798.9413],
+        [-28.11149, 212.35851, -1062.25936, 3096.6951],
+        [-24.1856, 158.61472, -696.85452, 1863.55439],
     ],
 }

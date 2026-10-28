@@ -61,7 +61,9 @@ RAW = [
 ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
-def single_experiment(trend: str, gen: Generator, file_name: pathlib.Path) -> None:
+def single_experiment(
+    trend: str, gen: Generator, file_name: pathlib.Path, max_memory_size: int
+) -> None:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
@@ -74,7 +76,7 @@ def single_experiment(trend: str, gen: Generator, file_name: pathlib.Path) -> No
     for col, nobs in enumerate(TIME_SERIES_LENGTHS):
         remaining = EX_SIZE
         finished = 0
-        block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * nobs))
+        block_size = int(2**20.0 * max_memory_size / (8.0 * nobs))
         for _ in range(0, EX_SIZE, block_size):
             if block_size < remaining:
                 count = block_size
@@ -111,10 +113,19 @@ if __name__ == "__main__":
         action="store_true",
         help="Only execute Z-type tests",
     )
+    parser.add_argument(
+        "--max-memory-size",
+        type=int,
+        action="store",
+        help="Maximum memory size to use in each thread. Default is 250",
+    )
+
     args = parser.parse_args()
     njobs = getattr(args, "ncpu", None)
     njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
     njobs = max(njobs, 1)
+
+    max_memory_size = getattr(args, "max_memory_size", MAX_MEMORY_SIZE)
 
     ss = SeedSequence(ENTROPY)
     children = ss.spawn(len(TRENDS) * EX_NUM)
@@ -137,7 +148,7 @@ if __name__ == "__main__":
     print(f"Running on {BLUE}{njobs}{RESET} CPUs")
     if njobs > 1:
         Parallel(verbose=50, n_jobs=njobs)(
-            delayed(single_experiment)(t, g, f) for t, g, f in jobs
+            delayed(single_experiment)(t, g, f, max_memory_size) for t, g, f in jobs
         )
     else:
         for job in jobs:
