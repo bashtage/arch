@@ -5,6 +5,7 @@ Tests of the Andrews (1991) AR(1) plug-in bandwidth, ``bandwidth_method="andrews
 from collections.abc import Callable
 import re
 from typing import Any
+import warnings
 
 import numpy as np
 from numpy.testing import assert_allclose
@@ -243,17 +244,16 @@ KERNEL_THEORY: dict[str, tuple[Callable[[float], float], int, float]] = {
 @pytest.mark.parametrize("name", list(KERNEL_THEORY))
 def test_kernel_constants(name: str) -> None:
     # c_k = (q k_q^2 / int k^2)^(1/(2q+1)), where the integral is over the real line,
-    # is the constant of Andrews (1991, Table 1, eqs. (5.3) and (6.2)). It is the
-    # constant of arch up to the 4 decimals, except for the Tukey-Parzen kernel.
+    # is the constant of Andrews (1991, Table 1, eqs. (5.3) and (6.2)). The constant
+    # of arch is the formula rounded to 4 decimals for every kernel.
     func, q, kq = KERNEL_THEORY[name]
     upper = np.inf if name == "QuadraticSpectral" else 1.0
     integral = 2 * quad(lambda u: func(u) ** 2, 0, upper, limit=500)[0]
     const = (q * kq**2 / integral) ** (1 / (2 * q + 1))
     est = get_kernel_estimator(name)(_short_series())
     assert est.bandwidth_scale == q
-    # arch has 1.8576 for Tukey-Parzen, which is 0.06% away from the formula
-    rtol = 1e-3 if name == "TukeyParzen" else 1e-4
-    assert_allclose(est.kernel_const, const, rtol=rtol)
+    assert_allclose(est.kernel_const, const, rtol=0, atol=5e-5)
+    assert_allclose(est.kernel_const, round(const, 4), rtol=0, atol=1e-12)
 
 
 @pytest.mark.parametrize(
@@ -396,7 +396,8 @@ def _baseline_data(nobs: int, nvar: int, seed: int) -> np.ndarray:
 
 # The bandwidth and the sum of the long-run covariance of every kernel with the default
 # method, from the code before bandwidth_method was added (origin/main, d2c90b43c9).
-# A has 200 rows and 3 columns, and B has 40 rows and 2 columns.
+# A has 200 rows and 3 columns, and B has 40 rows and 2 columns. The Tukey-Parzen
+# constant was 1.8576 then and is now 1.8587, so its bandwidth is scaled by the ratio.
 BASELINE: dict[tuple[str, str], tuple[float, float]] = {
     ("A", "Bartlett"): (11.272999809578199, 67.79495170599591),
     ("A", "Parzen"): (16.951578711405514, 73.56762377158034),
@@ -431,6 +432,9 @@ def test_default_method_is_unchanged(key: tuple[str, str]) -> None:
     x = _baseline_data(200, 3, 2025) if which == "A" else _baseline_data(40, 2, 2026)
     bandwidth, total = BASELINE[key]
     cls = get_kernel_estimator(name)
+    if name == "TukeyParzen":
+        bandwidth *= 1.8587 / 1.8576
+        total = float(cls(x, bandwidth=bandwidth).cov.long_run.sum())
     for est in (cls(x), cls(x, bandwidth_method="newey-west")):
         assert est.bandwidth_method == "newey-west"
         assert_allclose(est.opt_bandwidth, bandwidth, rtol=1e-12)
@@ -478,7 +482,63 @@ def test_prewhitened_recolored() -> None:
     assert none.bandwidth == 0.0
 
 
-@pytest.mark.parametrize("bad", ["bogus", "", "newey_west", "neweywest", "andrew"])
+@pytest.mark.parametrize(
+    ("spelling", "canonical"),
+    [
+        ("newey-west", "newey-west"),
+        ("Newey-West", "newey-west"),
+        ("newey_west", "newey-west"),
+        ("Newey_West", "newey-west"),
+        ("neweywest", "newey-west"),
+        ("NeweyWest", "newey-west"),
+        ("NEWEYWEST", "newey-west"),
+        ("andrews", "andrews"),
+        ("Andrews", "andrews"),
+        ("ANDREWS", "andrews"),
+    ],
+)
+def test_method_spellings(spelling: str, canonical: str) -> None:
+    # The spellings of kernel names are accepted: case, hyphens and underscores
+    # are ignored
+    x, _ = _case("multi_short")
+    expected = Parzen(x, bandwidth_method=canonical)
+    est = Parzen(x, bandwidth_method=spelling)
+    assert est.bandwidth_method == canonical
+    assert_allclose(est.opt_bandwidth, expected.opt_bandwidth, rtol=1e-14)
+    pw = PreWhitenedRecolored(x, lags=1, bandwidth_method=spelling)
+    assert pw.bandwidth_method == canonical
+    expected_pw = PreWhitenedRecolored(x, lags=1, bandwidth_method=canonical)
+    assert_allclose(pw.opt_bandwidth, expected_pw.opt_bandwidth, rtol=1e-14)
+
+
+def _scale_cases() -> list[tuple[str, np.ndarray, list[float] | None]]:
+    uni, _ = _case("uni_short")
+    multi, weights = _case("multi_long")
+    cplx = multi[:, :2] + 1j * multi[:, -2:]
+    return [("uni", uni, None), ("multi", multi, weights), ("complex", cplx, None)]
+
+
+@pytest.mark.parametrize("method", ["newey-west", "andrews"])
+@pytest.mark.parametrize("cls", [Bartlett, Parzen, QuadraticSpectral])
+@pytest.mark.parametrize("case", ["uni", "multi", "complex"])
+def test_extreme_scale(method: str, cls: type[CovarianceEstimator], case: str) -> None:
+    # The estimates of alpha(q) do not depend on the scale of the data, and the data
+    # are scaled by a power of 2 before they are computed, so that a very large or
+    # very small scale neither overflows nor underflows
+    x, weights = {name: (x, w) for name, x, w in _scale_cases()}[case]
+    expected = cls(x, weights=weights, bandwidth_method=method).opt_bandwidth
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        for scale in (1e-200, 1e-150, 1e-100, 1e100, 1e150, 1e200):
+            est = cls(scale * x, weights=weights, bandwidth_method=method)
+            assert_allclose(est.opt_bandwidth, expected, rtol=1e-12)
+        # A power of 2 is exact, and so is the bandwidth
+        for power in (-600, -300, 300, 600):
+            est = cls(x * 2.0**power, weights=weights, bandwidth_method=method)
+            assert est.opt_bandwidth == expected
+
+
+@pytest.mark.parametrize("bad", ["bogus", "", "newey west", "newey", "andrew"])
 def test_invalid_method_value(bad: str) -> None:
     x, _ = _case("uni_short")
     match = (

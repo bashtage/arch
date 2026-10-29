@@ -85,7 +85,7 @@ def _pwrc_resid(**kwargs: Any) -> Any:
 METHOD_BAD: list[tuple[Any, type[Exception]]] = [
     ("bogus", ValueError),
     ("", ValueError),
-    ("newey_west", ValueError),
+    ("newey west", ValueError),
     ("andrew", ValueError),
     (None, TypeError),
     (1, TypeError),
@@ -99,6 +99,8 @@ METHOD_GOOD = [
     "ANDREWS",
     "Andrews",
     "Newey-West",
+    "newey_west",
+    "NeweyWest",
     np.str_("andrews"),
 ]
 METHOD_RULE = r"one of 'newey-west' or 'andrews'"

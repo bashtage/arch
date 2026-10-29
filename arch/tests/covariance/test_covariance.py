@@ -57,7 +57,7 @@ KERNEL_PARAMS = {
     "QuadraticSpectral": (1.3221, 2, 2 / 25),
     "TukeyHamming": (1.6694, 2, 4 / 25),
     "TukeyHanning": (1.7462, 2, 4 / 25),
-    "TukeyParzen": (1.8576, 2, 4 / 25),
+    "TukeyParzen": (1.8587, 2, 4 / 25),
 }
 
 
