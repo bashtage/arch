@@ -194,10 +194,6 @@ def _is_exact_fit(lhs: np.ndarray, rhs: np.ndarray, scale: float) -> bool:
     return bool(np.max(np.abs(resid)) <= _EXACT_FIT_TOLERANCE * _EPS * bound)
 
 
-_UNIT_ROOT_SINGULAR = (
-    "This happens when y is exactly a deterministic trend, alternates between "
-    "values, or has differences that are exactly a deterministic trend."
-)
 _COINTEGRATION_SINGULAR = (
     "This happens when y is an exact linear combination of x and the deterministic "
     "terms, or when the columns of x and the deterministic terms are collinear."

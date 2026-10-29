@@ -54,7 +54,6 @@ from arch._typing import (
     UnitRootTrend,
 )
 from arch.unitroot._shared import (
-    _UNIT_ROOT_SINGULAR,
     _check_finite_statistic,
     _check_not_constant,
     _check_not_deterministic,
@@ -134,6 +133,12 @@ SHORT_TREND_DESCRIPTION = {
     "ctt": "Const., Lin. and Quad. Trends",
     "t": "Linear Time Trend (No Const.)",
 }
+
+# Why the regression of a unit root test is singular, for its error message
+_UNIT_ROOT_SINGULAR = (
+    "This happens when y is exactly a deterministic trend, alternates between "
+    "values, or has differences that are exactly a deterministic trend."
+)
 
 
 def _is_reduced_rank(
