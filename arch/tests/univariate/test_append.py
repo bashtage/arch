@@ -15,6 +15,7 @@ from arch.univariate import (
     HARCH,
     HARX,
     LS,
+    NGARCH,
     ARCHInMean,
     ConstantMean,
     ConstantVariance,
@@ -86,6 +87,7 @@ VOLATILITIES = [
     RiskMetrics2006(),
     APARCH(),
     EGARCH(),
+    NGARCH(2, 1, 2),
 ]
 
 X_MEAN_MODELS = [HARXWrapper, ARXWrapper, LS]
@@ -1137,7 +1139,8 @@ def test_backcast_short_initial_sample():
 
 @pytest.mark.parametrize("mean", MEAN_MODELS)
 @pytest.mark.parametrize(
-    "vol", [GARCH(), EGARCH(), FIGARCH(), HARCH(lags=[1, 5]), APARCH()]
+    "vol",
+    [GARCH(), EGARCH(), FIGARCH(), HARCH(lags=[1, 5]), APARCH(), NGARCH(2, 1, 2)],
 )
 def test_fix_after_append(mean, vol):
     mod = mean(SMALL_initial, volatility=vol)

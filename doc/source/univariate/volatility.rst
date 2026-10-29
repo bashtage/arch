@@ -126,8 +126,8 @@ The process is covariance stationary when the persistence
 :math:`\phi=\sum_i\alpha_i(1+\theta_i^2)+\sum_j\beta_j` is smaller than 1. Estimation
 imposes the linear constraints :math:`\sum_i\alpha_i+\sum_j\beta_j<1` and
 non-negativity, as for :class:`~arch.univariate.APARCH`, and not
-:math:`\phi<1`, which is not linear in the parameters. The persistence of the
-estimated model should be checked.
+:math:`\phi<1`, which is not linear in the parameters. ``fit`` issues a
+``ValueWarning`` when the persistence of the estimated model is 1 or more.
 
 .. ipython:: python
 
@@ -143,7 +143,9 @@ estimated model should be checked.
     params["alpha[1]"] * (1 + params["theta[1]"] ** 2) + params["beta[1]"]
 
 The process can also be selected using ``vol="ngarch"`` in
-:func:`~arch.univariate.arch_model`, where ``o=1`` adds the shift. Analytic forecasts
+:func:`~arch.univariate.arch_model`, where ``o=1`` adds the shift. Without a shift
+(``o=0``, the default of ``arch_model``) the model is a GARCH, so ``arch_model`` uses
+:class:`~arch.univariate.GARCH` and issues a ``ValueWarning``. Analytic forecasts
 are exact at all horizons. For ``p=q=1`` they satisfy
 :math:`f_h=\omega+\phi f_{h-1}`.
 

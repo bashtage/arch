@@ -106,8 +106,10 @@ VOL_CLASSES = {
 
 @pytest.mark.parametrize("vol", list(VOL_CLASSES))
 def test_arch_model_vol_case(returns, vol):
+    # NGARCH needs a shift, since o=0 gives a GARCH
+    kwargs = {"o": 1} if vol == "ngarch" else {}
     for spelling in [vol, *variants(vol)]:
-        model = arch_model(returns, vol=spelling)
+        model = arch_model(returns, vol=spelling, **kwargs)
         assert type(model.volatility) is VOL_CLASSES[vol]
 
 

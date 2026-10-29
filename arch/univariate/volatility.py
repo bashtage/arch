@@ -715,6 +715,23 @@ class VolatilityProcess(metaclass=ABCMeta):
             * If method is not known or not supported
         """
 
+    def _fit_warning(self, parameters: Float64Array1D) -> str | None:
+        """
+        Check the estimated parameters of the volatility process
+
+        Parameters
+        ----------
+        parameters : ndarray
+            Estimated parameters of the volatility process.
+
+        Returns
+        -------
+        str or None
+            The text of a warning about the estimated parameters, or None if
+            there is nothing to report. ``ARCHModel.fit`` issues the warning.
+        """
+        return None
+
     def _one_step_forecast(
         self,
         parameters: Float64Array1D,
@@ -5167,7 +5184,11 @@ class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     and bounds of -5 and 5 for :math:`\theta`. The stationarity condition
     :math:`\phi<1` is not imposed during estimation, since it is not linear in the
     parameters, and a model with :math:`\theta\neq 0` can be estimated with a
-    persistence of 1 or more. Check the persistence of the estimated parameters.
+    persistence of 1 or more. ``fit`` then issues a ``ValueWarning``.
+
+    With ``o=0`` there is no shift and the process is a GARCH process, so
+    :class:`~arch.univariate.GARCH` should be used instead. A ``ValueWarning`` is
+    issued in this case.
 
     Before the start of the sample, the variance and the squared residual are both
     replaced by the backcast of the variance, so that each shock term is
@@ -5188,9 +5209,9 @@ class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     >>> ngarch = NGARCH(p=1, o=1, q=1)
 
-    Symmetric model, which is a GARCH(1,1)
+    Two lags of the shock, with a shift on the first lag only
 
-    >>> garch = NGARCH(p=1, o=0, q=1)
+    >>> ngarch = NGARCH(p=2, o=1, q=1)
     """
 
     def __init__(self, p: int = 1, o: int = 1, q: int = 1) -> None:
@@ -5203,6 +5224,13 @@ class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._num_params = 1 + self.p + self.o + self.q
         self._name = "NGARCH"
         self._volatility_updater = rec.NGARCHUpdater(self.p, self.o, self.q)
+        if self.o == 0:
+            warn(
+                "NGARCH with o=0 has no shift, and so is the same model as GARCH. "
+                "Use GARCH for a symmetric model, or set o > 0.",
+                ValueWarning,
+                stacklevel=2,
+            )
 
     def __str__(self) -> str:
         descr = self.name + "("
@@ -5342,9 +5370,8 @@ class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         for alpha, theta, total in grid:
             # The first o lags have the same theta
             alpha_part = alpha * (1.0 + theta**2 * o / p)
+            # alpha_part is at most 0.3, so alpha_part + beta_part is at most 0.99
             beta_part = max(total - alpha_part, 0.0) if q > 0 else 0.0
-            if alpha_part + beta_part >= 1.0:
-                continue
             sv = np.empty(1 + p + o + q)
             sv[0] = (1.0 - alpha_part - beta_part) * target
             sv[1 : 1 + p] = alpha / p
@@ -5373,6 +5400,20 @@ class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> None:
         # Analytic forecasts are available at all horizons
         return
+
+    def _fit_warning(self, parameters: Float64Array1D) -> str | None:
+        _, alpha, theta, beta = self._unpack(parameters)
+        persistence = float(np.sum(alpha * (1.0 + theta**2)) + np.sum(beta))
+        if persistence < 1.0:
+            return None
+        return (
+            "The persistence of the estimated NGARCH process, "
+            f"sum(alpha * (1 + theta ** 2)) + sum(beta) = {persistence:0.4f}, is 1 or "
+            "more, and so the process is not covariance stationary and the variance "
+            "forecasts do not revert to a long-run level. The constraint used in "
+            "estimation, sum(alpha) + sum(beta) < 1, does not ensure that the "
+            "persistence is less than 1."
+        )
 
     def _analytic_forecast(
         self,

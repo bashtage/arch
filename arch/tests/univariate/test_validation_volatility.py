@@ -43,6 +43,7 @@ from arch.univariate import (
     RiskMetrics2006,
 )
 from arch.univariate.volatility import BootstrapRng
+from arch.utility.exceptions import ValueWarning
 
 INT_MAX = 2**31 - 1
 RESIDS = np.random.default_rng(20241017).standard_normal(300)
@@ -256,7 +257,8 @@ add_good(APARCH, "common_asym", BOOL_GOOD)
 add_bad(NGARCH, "p", [*INT_BAD, *COUNT_BAD_1])
 add_good(NGARCH, "p", INT_GOOD)
 add_bad(NGARCH, "o", [*INT_BAD, *COUNT_BAD_0, (2, ValueError)], {"p": 1})
-add_good(NGARCH, "o", [0, 1, np.int8(1), np.int64(0)], {"p": 1})
+# o = 0 is accepted with a warning, see test_ngarch_without_a_shift_warns
+add_good(NGARCH, "o", [1, np.int8(1), np.int64(1)], {"p": 1})
 add_bad(NGARCH, "q", [*INT_BAD, *COUNT_BAD_0])
 add_good(NGARCH, "q", [*INT_GOOD, 0])
 CONSTRUCTOR_ROWS.append(
@@ -334,6 +336,14 @@ def test_constructor(row):
 @pytest.mark.parametrize("row", to_params(SIZE_ROWS))
 def test_constructor_size(row):
     run_row(row)
+
+
+@pytest.mark.parametrize("o", [0, np.int64(0)], ids=["int", "np.int64"])
+def test_ngarch_without_a_shift_warns(o):
+    with pytest.warns(ValueWarning, match="NGARCH with o=0 has no shift"):
+        process = NGARCH(p=1, o=o)
+    assert type(process.o) is int
+    assert process.o == 0
 
 
 def test_large_order_is_not_rejected():

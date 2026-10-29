@@ -94,6 +94,7 @@ from arch.utility.array import (
     as_float64,
     parse_dataframe,
 )
+from arch.utility.exceptions import ValueWarning
 
 __all__ = [
     "ARX",
@@ -3302,7 +3303,9 @@ def arch_model(
 
     The default ``o=0`` has no asymmetric term in any volatility model. With
     ``vol='ngarch'``, ``o`` is the number of shifted innovations, and must not exceed
-    ``p``. Use ``o=1`` for the NGARCH(1,1) of Engle and Ng.
+    ``p``. Use ``o=1`` for the NGARCH(1,1) of Engle and Ng. An NGARCH model without
+    a shift is a GARCH model, and so ``vol='ngarch'`` with ``o=0`` returns a
+    ``GARCH`` volatility process and issues a ``ValueWarning``.
 
     Examples
     --------
@@ -3394,6 +3397,16 @@ def arch_model(
             v = EGARCH(p=p, o=o, q=q)
         elif vol_model == "fiaparch":
             v = FIAPARCH(p=p, o=o, q=q)
+        elif vol_model == "ngarch" and o == 0:
+            # Without a shift the model is a GARCH
+            v = GARCH(p=p, o=0, q=q)
+            warnings.warn(
+                "vol='ngarch' with o=0 has no shift, and so is the same model as "
+                "vol='garch'. A GARCH volatility process is used. Use vol='garch' "
+                "for a symmetric model, or set o > 0 to estimate an NGARCH model.",
+                ValueWarning,
+                stacklevel=2,
+            )
         elif vol_model == "ngarch":
             v = NGARCH(p=p, o=o, q=q)
         else:  # vol == 'aparch'

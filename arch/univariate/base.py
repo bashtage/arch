@@ -56,6 +56,7 @@ from arch.utility.exceptions import (
     ConvergenceWarning,
     DataScaleWarning,
     StartingValueWarning,
+    ValueWarning,
     convergence_warning,
     data_scale_warning,
     starting_value_warning,
@@ -1021,7 +1022,8 @@ class ARCHModel(metaclass=ABCMeta):
             corresponds to Bollerslev-Wooldridge covariance estimator. Not case
             sensitive. Any other value raises a ValueError.
         show_warning : bool, optional
-            Flag indicating whether convergence warnings should be shown.
+            Flag indicating whether convergence warnings and warnings about the
+            estimated parameters should be shown.
         first_obs : int, str, date, datetime, Timestamp or Period, optional
             First observation to use when estimating model. Dates, strings and
             periods can only be used with pandas inputs that have a
@@ -1070,7 +1072,9 @@ class ARCHModel(metaclass=ABCMeta):
         Notes
         -----
         A ConvergenceWarning is raised if SciPy's optimizer indicates
-        difficulty finding the optimum.
+        difficulty finding the optimum. A ValueWarning is raised if the
+        estimated parameters of the volatility process are problematic, for
+        example an NGARCH process with a persistence of 1 or more.
 
         Parameters are optimized using SLSQP.
         """
@@ -1257,7 +1261,10 @@ class ARCHModel(metaclass=ABCMeta):
         params = opt.x
         loglikelihood = -1.0 * opt.fun
 
-        mp, _, _ = self._parse_parameters(params)
+        mp, vp, _ = self._parse_parameters(params)
+        fit_warning = v._fit_warning(vp)
+        if fit_warning is not None and show_warning:
+            warnings.warn(fit_warning, ValueWarning, stacklevel=2)
 
         resids, vol = self._fitted_resids_variance(params, backcast, var_bounds)
         vol = cast("Float64Array1D", np.sqrt(vol))

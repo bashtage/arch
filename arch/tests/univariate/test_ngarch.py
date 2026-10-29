@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import pickle
 import types
+import warnings
 
 import numpy as np
 from numpy.random import RandomState
@@ -27,10 +28,11 @@ from arch.univariate import (
     Normal,
     SkewStudent,
     StudentsT,
+    ZeroMean,
     arch_model,
 )
 import arch.univariate.recursions_python as recpy
-from arch.utility.exceptions import InitialValueWarning
+from arch.utility.exceptions import InitialValueWarning, ValueWarning
 
 try:
     import arch.univariate.recursions as rec_cython
@@ -269,6 +271,17 @@ RUGARCH_CASES = {
 # fmt: on
 
 
+NO_SHIFT = "NGARCH with o=0 has no shift, and so is the same model as GARCH"
+
+
+def make_ngarch(p, o, q):
+    """NGARCH(p, o, q), checking the warning that a model with o = 0 is a GARCH."""
+    if o == 0:
+        with pytest.warns(ValueWarning, match=NO_SHIFT):
+            return NGARCH(p, o, q)
+    return NGARCH(p, o, q)
+
+
 def make_parameters(order, seed=0, theta_scale=0.6):
     """Parameters with a persistence of about 0.8, omega, alpha, theta and beta."""
     p, o, q = order
@@ -312,7 +325,7 @@ def reference_variance(params, order, resids, backcast):
 
 
 def simulate_data(order, params, nobs, seed, rng=None, burn=500):
-    process = NGARCH(*order)
+    process = make_ngarch(*order)
     if rng is None:
         rng = RandomState(seed).standard_normal
     return process.simulate(params, nobs, rng, burn=burn)
@@ -333,7 +346,7 @@ class TestRecursion:
         p, o, q = order
         params = make_parameters(order, seed=sum(order))
         resids = np.random.default_rng(1).standard_normal(120) * 1.3
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         sigma2 = np.empty_like(resids)
         out = rec.ngarch_recursion(
@@ -348,7 +361,7 @@ class TestRecursion:
         p, o, q = order
         params = make_parameters(order, seed=7 + sum(order))
         resids = np.random.default_rng(2).standard_normal(150)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         args = (p, o, q, resids.shape[0], backcast, var_bounds)
         python = np.empty_like(resids)
@@ -459,7 +472,7 @@ class TestUpdater:
         p, o, q = order
         params = make_parameters(order, seed=3 + sum(order))
         resids = np.random.default_rng(5).standard_normal(80)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         expected = np.empty_like(resids)
         recpy.ngarch_recursion_python(
@@ -478,7 +491,7 @@ class TestUpdater:
         p, o, q = order
         params = make_parameters(order, seed=11)
         resids = np.random.default_rng(6).standard_normal(60)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         expected = reference_variance(params, order, resids, backcast)
         updater = rec.NGARCHUpdater(p, o, q)
@@ -514,7 +527,7 @@ class TestProcess:
     def test_compute_variance_matches_reference(self, order):
         params = make_parameters(order, seed=2 * sum(order))
         resids = np.random.default_rng(8).standard_normal(100)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         sigma2 = np.empty_like(resids)
         out = process.compute_variance(params, resids, sigma2, backcast, var_bounds)
@@ -529,7 +542,7 @@ class TestProcess:
         p, _, q = order
         params = make_parameters(order, seed=5)
         resids = np.random.default_rng(9).standard_normal(200) * 2
-        ngarch, garch = NGARCH(*order), GARCH(p, 0, q)
+        ngarch, garch = make_ngarch(*order), GARCH(p, 0, q)
         backcast, var_bounds = var_inputs(ngarch, resids)
         assert_allclose(garch.backcast(resids), backcast, rtol=1e-14)
         assert_allclose(garch.variance_bounds(resids), var_bounds, rtol=1e-14)
@@ -545,7 +558,7 @@ class TestProcess:
         params = make_parameters(order, seed=6)
         params[1 + p : 1 + p + o] = 0.0
         resids = np.random.default_rng(10).standard_normal(200) * 2
-        ngarch, garch = NGARCH(*order), GARCH(p, 0, q)
+        ngarch, garch = make_ngarch(*order), GARCH(p, 0, q)
         backcast, var_bounds = var_inputs(ngarch, resids)
         expected = np.empty_like(resids)
         garch.compute_variance(
@@ -562,7 +575,7 @@ class TestProcess:
     def test_fit_no_shift_is_garch(self):
         y, _ = simulate_data((1, 0, 1), [0.1, 0.08, 0.88], 2000, 12)
         garch = ConstantMean(y, volatility=GARCH(1, 0, 1)).fit(disp="off")
-        ngarch = ConstantMean(y, volatility=NGARCH(1, 0, 1)).fit(disp="off")
+        ngarch = ConstantMean(y, volatility=make_ngarch(1, 0, 1)).fit(disp="off")
         assert_allclose(ngarch.loglikelihood, garch.loglikelihood, rtol=1e-8)
         assert_allclose(ngarch.params.to_numpy(), garch.params.to_numpy(), rtol=1e-3)
         assert list(ngarch.params.index) == list(garch.params.index)
@@ -588,7 +601,7 @@ class TestProcess:
         ],
     )
     def test_names_and_counts(self, order, names):
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         assert process.parameter_names() == names
         assert process.num_params == len(names)
         assert process.name == "NGARCH"
@@ -599,8 +612,8 @@ class TestProcess:
         process = NGARCH()
         assert (process.p, process.o, process.q) == (1, 1, 1)
         assert str(process) == "NGARCH(p: 1, o: 1, q: 1)"
-        assert str(NGARCH(2, 0, 0)) == "NGARCH(p: 2)"
-        assert str(NGARCH(1, 0, 1)) == "NGARCH(p: 1, q: 1)"
+        assert str(make_ngarch(2, 0, 0)) == "NGARCH(p: 2)"
+        assert str(make_ngarch(1, 0, 1)) == "NGARCH(p: 1, q: 1)"
         assert str(NGARCH(3, 2, 1)) == "NGARCH(p: 3, o: 2, q: 1)"
         assert repr(process).startswith("NGARCH(p: 1, o: 1, q: 1), id: 0x")
 
@@ -608,7 +621,7 @@ class TestProcess:
     def test_bounds(self, order):
         p, o, q = order
         resids = np.random.default_rng(13).standard_normal(300) * 3
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         bounds = process.bounds(resids)
         assert len(bounds) == process.num_params
         v = float(np.mean(resids**2))
@@ -620,7 +633,7 @@ class TestProcess:
     @pytest.mark.parametrize("order", ORDERS)
     def test_constraints(self, order):
         p, o, q = order
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         a, b = process.constraints()
         assert a.shape[1] == process.num_params
         assert a.shape[0] == b.shape[0]
@@ -655,7 +668,7 @@ class TestProcess:
         p, o, q = order
         true = make_parameters(order, seed=15, theta_scale=0.9)
         resids, _ = simulate_data(order, true, 1500, 16)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         sv = process.starting_values(resids)
         assert sv.shape == (process.num_params,)
         assert np.all(np.isfinite(sv))
@@ -680,6 +693,28 @@ class TestProcess:
             symmetric, resids, backcast, var_bounds
         )
         assert ll_sv >= ll_sym - 1e-8
+
+    @pytest.mark.parametrize(
+        "order",
+        [(1, 1, 1), (2, 1, 1), (3, 1, 2), (3, 2, 1), (2, 1, 0)],
+        ids=["111", "211", "312", "321", "210"],
+    )
+    @pytest.mark.parametrize("seed", [16, 26])
+    def test_starting_values_persistence(self, order, seed):
+        # The starting values are chosen from a grid of persistences, computed with
+        # the shift on the first o of the p lags only
+        p, o, q = order
+        true = make_parameters(order, seed=15, theta_scale=0.9)
+        resids, _ = simulate_data(order, true, 1500, seed)
+        sv = make_ngarch(*order).starting_values(resids)
+        alpha = sv[1 : 1 + p]
+        theta = np.r_[sv[1 + p : 1 + p + o], np.zeros(p - o)]
+        beta = sv[1 + p + o :]
+        persistence = np.sum(alpha * (1 + theta**2)) + np.sum(beta)
+        if q > 0:
+            grid = np.array([0.8, 0.9, 0.95, 0.975, 0.99])
+            assert np.min(np.abs(grid - persistence)) < 1e-12
+        assert_allclose(sv[0], (1 - persistence) * np.mean(resids**2), rtol=1e-12)
 
     def test_variance_bounds_and_backcast_use_the_variance(self):
         resids = np.random.default_rng(17).standard_t(5, size=400)
@@ -707,7 +742,7 @@ class TestSimulate:
     def test_follows_the_recursion(self, order):
         p, o, q = order
         params = make_parameters(order, seed=21)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         data, sigma2 = process.simulate(
             params, 300, RandomState(0).standard_normal, burn=0, initial_value=1.5
         )
@@ -785,7 +820,7 @@ class TestForecast:
     def setup_forecast(order, nobs=60, seed=31, theta_scale=0.7):
         params = make_parameters(order, seed=seed, theta_scale=theta_scale)
         resids, _ = simulate_data(order, params, nobs, seed)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         return process, params, resids, backcast, var_bounds
 
@@ -879,6 +914,15 @@ class TestForecast:
         )
         fcast = process.forecast(params, resids, backcast, var_bounds, horizon=3)
         assert_allclose(fcast.forecasts[0, 0], sigma2[-1], rtol=1e-12)
+        # A horizon of 1 from every origin, including the first observations
+        one = process.forecast(params, resids, backcast, var_bounds, start=0, horizon=1)
+        assert one.forecasts.shape == (resids.shape[0], 1)
+        assert_allclose(one.forecasts[-1, 0], sigma2[-1], rtol=1e-12)
+        for origin in (0, 1, 2, 30):
+            expected = self.analytic_reference(
+                params, order, resids, backcast, origin, 1
+            )
+            assert_allclose(one.forecasts[origin], expected, rtol=1e-10)
 
     @pytest.mark.parametrize("dist", ["normal", "skew-t"])
     @pytest.mark.parametrize(
@@ -995,7 +1039,7 @@ class TestForecast:
         order = (2, 1, 1)
         params = make_parameters(order, seed=35)
         resids, _ = simulate_data(order, params, 300, 35)
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         backcast, var_bounds = var_inputs(process, resids)
         analytic = process.forecast(
             params, resids, backcast, var_bounds, start=250, horizon=5
@@ -1044,7 +1088,7 @@ class TestRugarch:
         order = case.order
         params = np.array(case.params)
         resids = RUGARCH_Y - case.mu
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         var_bounds = process.variance_bounds(resids)
         return case, order, params, resids, process, var_bounds
 
@@ -1121,12 +1165,26 @@ class TestArchModel:
         assert (am.volatility.p, am.volatility.o, am.volatility.q) == (1, 1, 1)
         am = arch_model(y, vol="NGARCH", p=2, o=1, q=2)
         assert (am.volatility.p, am.volatility.o, am.volatility.q) == (2, 1, 2)
-        # The default o is 0
-        assert arch_model(y, vol="ngarch").volatility.o == 0
         with pytest.raises(ValueError, match=r"o must be an integer <= p \(1\)"):
             arch_model(y, vol="ngarch", p=1, o=2)
         with pytest.raises(ValueError, match="p must be an integer >= 1"):
             arch_model(y, vol="ngarch", p=0, o=0)
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [{}, {"o": 0}, {"p": 2, "o": 0, "q": 1}, {"p": 1, "o": 0, "q": 0}],
+        ids=["default", "o0", "p2-o0-q1", "p1-o0-q0"],
+    )
+    def test_arch_model_without_a_shift_is_garch(self, kwargs):
+        y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 600, 41)
+        with pytest.warns(ValueWarning, match="vol='ngarch' with o=0 has no shift"):
+            am = arch_model(y, vol="ngarch", **kwargs)
+        assert type(am.volatility) is GARCH
+        ref = arch_model(y, vol="garch", **kwargs)
+        assert str(am.volatility) == str(ref.volatility)
+        assert_allclose(
+            am.fit(disp="off").params.to_numpy(), ref.fit(disp="off").params.to_numpy()
+        )
 
     def test_fit_results(self):
         y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 1500, 42)
@@ -1212,6 +1270,84 @@ def estimate_within(res, truth, nse=4.0):
     )
 
 
+def value_warnings(record):
+    return [w for w in record if issubclass(w.category, ValueWarning)]
+
+
+class TestWarnings:
+    def test_arch_model_without_a_shift_points_at_the_caller(self):
+        y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 200, 41)
+        with pytest.warns(ValueWarning, match="vol='ngarch' with o=0") as record:
+            arch_model(y, vol="ngarch")
+        assert [w.filename for w in value_warnings(record)] == [__file__]
+
+    def test_no_shift_points_at_the_caller(self):
+        with pytest.warns(ValueWarning, match=NO_SHIFT) as record:
+            process = NGARCH(1, 0, 1)
+        assert [w.filename for w in value_warnings(record)] == [__file__]
+        assert process.num_params == 3
+
+    def test_shift_does_not_warn(self):
+        y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 200, 41)
+        with warnings.catch_warnings(record=True) as record:
+            warnings.simplefilter("always")
+            NGARCH()
+            NGARCH(2, 1, 1)
+            arch_model(y, vol="ngarch", o=1)
+        assert value_warnings(record) == []
+
+    @staticmethod
+    def boundary_data(seed):
+        # A persistence of exactly 1, so that some fits are not stationary
+        params = np.array([0.02, 0.1, 1.0, 0.8])
+        rng = RandomState(seed).standard_normal
+        y, _ = NGARCH().simulate(params, 1500, rng, burn=500, initial_value=1.0)
+        return y
+
+    @staticmethod
+    def persistence(res):
+        _, alpha, theta, beta = res.params.to_numpy()
+        return alpha * (1 + theta**2) + beta
+
+    def test_persistence_of_one_or_more_warns(self):
+        mod = ZeroMean(self.boundary_data(9), volatility=NGARCH())
+        with pytest.warns(ValueWarning, match="persistence of the estimated") as record:
+            res = mod.fit(disp="off")
+        warned = value_warnings(record)
+        assert [w.filename for w in warned] == [__file__]
+        persistence = self.persistence(res)
+        assert persistence >= 1
+        assert f"= {persistence:0.4f}, is 1 or more" in str(warned[0].message)
+
+    def test_persistence_warning_follows_show_warning(self):
+        mod = ZeroMean(self.boundary_data(9), volatility=NGARCH())
+        with warnings.catch_warnings(record=True) as record:
+            warnings.simplefilter("always")
+            res = mod.fit(disp="off", show_warning=False)
+        assert value_warnings(record) == []
+        assert self.persistence(res) >= 1
+
+    def test_stationary_fit_does_not_warn(self):
+        mod = ZeroMean(self.boundary_data(6), volatility=NGARCH())
+        with warnings.catch_warnings(record=True) as record:
+            warnings.simplefilter("always")
+            res = mod.fit(disp="off")
+        assert value_warnings(record) == []
+        assert self.persistence(res) < 1
+
+    def test_fit_warning(self):
+        # phi = 0.1 * 1.25 + 0.05 + 0.3 and 0.2 * 5 + 0.05
+        process = NGARCH(2, 1, 1)
+        assert process._fit_warning(np.array([0.1, 0.1, 0.05, 0.5, 0.3])) is None
+        message = process._fit_warning(np.array([0.1, 0.2, 0.05, 2.0, 0.0]))
+        assert message is not None
+        assert "sum(alpha * (1 + theta ** 2)) + sum(beta) = 1.0500" in message
+        # A persistence of exactly 1 is not stationary
+        assert NGARCH()._fit_warning(np.array([0.1, 0.25, 1.0, 0.5])) is not None
+        # Other processes do not check their estimates
+        assert GARCH()._fit_warning(np.array([0.1, 0.1, 0.9])) is None
+
+
 class TestRecovery:
     def test_normal(self):
         truth = [0.1, 0.1, 0.5, 0.75]
@@ -1262,7 +1398,7 @@ class TestArchInMean:
         order = (2, 1, 1)
         y, _ = simulate_data(order, [0.1, 0.07, 0.04, 0.6, 0.7], 300, 61)
         y = y + 0.05
-        process = NGARCH(*order)
+        process = make_ngarch(*order)
         model = ARCHInMean(y, volatility=process, form=form)
         # Const, kappa, then the parameters of the volatility process
         params = np.array([0.05, 0.1, 0.1, 0.07, 0.04, 0.6, 0.7])
