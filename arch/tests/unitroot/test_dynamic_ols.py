@@ -3,7 +3,7 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
-from arch.covariance.kernel import KERNELS as ALL_KERNELS
+from arch.covariance.kernel import KERNELS as ALL_KERNELS, get_kernel_estimator
 from arch.unitroot.cointegration import DynamicOLS
 
 
@@ -217,3 +217,52 @@ def test_all_kernels(data, kernel):
     res = DynamicOLS(y, x).fit(cov_type="robust", kernel=kernel)
     # The names of the kernels are the names of the classes
     assert res.kernel == kernel
+
+
+@pytest.mark.parametrize("kernel", ["bartlett", "parzen", "quadratic-spectral"])
+@pytest.mark.parametrize("cov_type", ["unadjusted", "robust"])
+def test_bandwidth_method(trivariate_data, kernel, cov_type):
+    y, x = trivariate_data
+    mod = DynamicOLS(y, x, lags=2, leads=2)
+    default = mod.fit(cov_type=cov_type, kernel=kernel)
+    newey_west = mod.fit(
+        cov_type=cov_type, kernel=kernel, bandwidth_method="newey-west"
+    )
+    assert_allclose(default.bandwidth, newey_west.bandwidth, rtol=1e-13)
+    assert_allclose(default.cov, newey_west.cov, rtol=1e-12)
+    res = mod.fit(cov_type=cov_type, kernel=kernel, bandwidth_method="andrews")
+    assert_allclose(res.params, default.params, rtol=1e-14)
+    # The bandwidth of the kernel estimator built on the residuals (unadjusted) or
+    # the scores (robust)
+    _, rhs = mod._format_variables(res.leads, res.lags)
+    eps = np.asarray(res.resid)[:, None]
+    data = eps if cov_type == "unadjusted" else np.asarray(rhs) * eps
+    kernel_est = get_kernel_estimator(kernel)
+    expected = kernel_est(data, center=False, bandwidth_method="andrews")
+    assert_allclose(res.bandwidth, expected.bandwidth, rtol=1e-12)
+    assert abs(res.bandwidth - default.bandwidth) > 0.01
+    # An explicit bandwidth is used whatever the method
+    fixed = mod.fit(cov_type=cov_type, kernel=kernel, bandwidth=4.0)
+    fixed_andrews = mod.fit(
+        cov_type=cov_type, kernel=kernel, bandwidth=4.0, bandwidth_method="andrews"
+    )
+    assert fixed_andrews.bandwidth == 4.0
+    assert_allclose(fixed_andrews.cov, fixed.cov, rtol=1e-12)
+
+
+@pytest.mark.parametrize(
+    ("spelling", "canonical"),
+    [
+        ("Newey-West", "newey-west"),
+        ("newey_west", "newey-west"),
+        ("NEWEYWEST", "newey-west"),
+        ("Andrews", "andrews"),
+    ],
+)
+def test_bandwidth_method_spellings(trivariate_data, spelling, canonical):
+    y, x = trivariate_data
+    mod = DynamicOLS(y, x, lags=2, leads=2)
+    res = mod.fit(bandwidth_method=spelling)
+    expected = mod.fit(bandwidth_method=canonical)
+    assert_allclose(res.bandwidth, expected.bandwidth, rtol=1e-13)
+    assert_allclose(res.cov, expected.cov, rtol=1e-14)

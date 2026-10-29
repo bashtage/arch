@@ -115,6 +115,13 @@ class PreWhitenedRecolored(CovarianceEstimator):
         finite and non-negative, and at least one must be strictly positive.
     force_int : bool, optional
         Force bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth of the VAR residuals when
+        bandwidth is None. "newey-west" uses the nonparametric estimate of
+        Newey & West (1994) and "andrews" uses the AR(1) plug-in estimate of
+        Andrews (1991), see ``opt_bandwidth`` of the kernel estimators. Not case
+        sensitive, and hyphens and underscores are ignored as in the names of
+        kernels. Ignored if bandwidth is provided or kernel is None.
 
     Raises
     ------
@@ -123,16 +130,19 @@ class PreWhitenedRecolored(CovarianceEstimator):
         contains strings or objects that are not numbers), if lags, max_lag or
         df_adjust is not an integer (a float, including 5.0, or a Boolean is
         not accepted), if bandwidth is not a real number, if diagonal,
-        sample_autocov, center or force_int is not a bool, or if method or
-        kernel is not a str.
+        sample_autocov, center or force_int is not a bool, or if method, kernel
+        or bandwidth_method is not a str.
     ValueError
         If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or
         infinite values; if lags or max_lag is negative or lags is larger than
         the largest order that can be estimated; if bandwidth is negative, not
         finite or not None or 0 when kernel is None; if df_adjust is negative
         or not smaller than the number of observations; if weights does not
-        have nvar finite non-negative elements, or has only zeros; or if
-        method or kernel is not one of the available names.
+        have nvar finite non-negative elements, or has only zeros; if method,
+        kernel or bandwidth_method is not one of the available names; or if
+        bandwidth_method is "andrews" and the AR(1) cannot be fitted to the
+        columns of the VAR residuals with positive weight, for example because
+        they are all constant.
 
     See Also
     --------
@@ -175,7 +185,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
 
     **Kernel estimation.** The long-run covariance of the VAR residuals,
     :math:`\hat{\Omega}_\epsilon`, is estimated using the selected kernel
-    applied to the residuals without centering. When ``kernel`` is None, a
+    applied to the residuals without centering. The automatic bandwidth is
+    estimated from the residuals using ``bandwidth_method``. When ``kernel`` is None, a
     zero-lag kernel is used so that
     :math:`\hat{\Omega}_\epsilon=\hat{\Sigma}`, which is the VAR-HAC
     estimator of den Haan & Levin. This is also the case when the bandwidth is
@@ -301,6 +312,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
         center: bool = True,
         weights: ArrayLike | None = None,
         force_int: bool = False,
+        bandwidth_method: str = "newey-west",
     ) -> None:
         super().__init__(
             x,
@@ -309,6 +321,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
             center=center,
             weights=weights,
             force_int=force_int,
+            bandwidth_method=bandwidth_method,
         )
         self._lags = 0
         self._diagonal_lags = 0
@@ -596,6 +609,7 @@ class PreWhitenedRecolored(CovarianceEstimator):
                 center=False,
                 weights=self._x_weights,
                 force_int=self._force_int,
+                bandwidth_method=self._bandwidth_method,
             )
         return self._var_model, self._kernel_instance
 
@@ -667,10 +681,12 @@ VAR(1) coefficient matrix is {max_eig}.""")
         Returns
         -------
         float
-            The user-provided bandwidth or the estimated optimal bandwidth.
-            The kernel is applied to the residuals of the VAR, and so the
-            estimated bandwidth is the optimal bandwidth for the residuals
-            and not for x. It is 0 when kernel is None.
+            The user-provided bandwidth or the bandwidth of the estimated
+            optimal bandwidth, which is ``opt_bandwidth`` less 1 (at least 0)
+            for a kernel that is 0 beyond 1, see ``bandwidth`` of the kernel
+            estimators. The kernel is applied to the residuals of the VAR, and
+            so the estimated bandwidth is the optimal bandwidth for the
+            residuals and not for x. It is 0 when kernel is None.
         """
         return self._setup()[1].bandwidth
 
@@ -682,8 +698,8 @@ VAR(1) coefficient matrix is {max_eig}.""")
         Returns
         -------
         float
-            The estimated optimal bandwidth of the residuals of the VAR.
-            This is the bandwidth used when bandwidth is not provided.
+            The estimated optimal bandwidth of the residuals of the VAR, from
+            which the bandwidth is computed when bandwidth is not provided.
         """
         return self._setup()[1].opt_bandwidth
 

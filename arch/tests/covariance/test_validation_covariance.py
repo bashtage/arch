@@ -82,6 +82,30 @@ def _pwrc_resid(**kwargs: Any) -> Any:
     return PreWhitenedRecolored(**kwargs).resid
 
 
+METHOD_BAD: list[tuple[Any, type[Exception]]] = [
+    ("bogus", ValueError),
+    ("", ValueError),
+    ("newey west", ValueError),
+    ("andrew", ValueError),
+    (None, TypeError),
+    (1, TypeError),
+    (True, TypeError),
+    (b"andrews", TypeError),
+    (["andrews"], TypeError),
+]
+METHOD_GOOD = [
+    "newey-west",
+    "andrews",
+    "ANDREWS",
+    "Andrews",
+    "Newey-West",
+    "newey_west",
+    "NeweyWest",
+    np.str_("andrews"),
+]
+METHOD_RULE = r"one of 'newey-west' or 'andrews'"
+
+
 def _without_none(bad: list[tuple[Any, type[Exception]]]):
     return [item for item in bad if item[0] is not None]
 
@@ -97,9 +121,13 @@ def _kernel_rows(cls: type[CovarianceEstimator]) -> list[Row]:
         *bad_value_rows(target, func, base, "df_adjust", df_bad),
         *bad_value_rows(target, func, base, "center", BOOL_BAD),
         *bad_value_rows(target, func, base, "force_int", BOOL_BAD),
+        *bad_value_rows(
+            target, func, base, "bandwidth_method", METHOD_BAD, rule=METHOD_RULE
+        ),
         *good_value_rows(
             target, func, base, "bandwidth", [None, 0, 0.0, 4, *FLOAT_GOOD]
         ),
+        *good_value_rows(target, func, base, "bandwidth_method", METHOD_GOOD),
         *good_value_rows(target, func, base, "df_adjust", [0, NOBS - 1, *INT_GOOD]),
         *good_value_rows(target, func, base, "center", BOOL_GOOD),
         *good_value_rows(target, func, base, "force_int", BOOL_GOOD),
@@ -251,6 +279,9 @@ PW_ROWS: list[Row] = [
     *bad_value_rows("PWRC", _pwrc, PW_BASE, "center", BOOL_BAD),
     *bad_value_rows("PWRC", _pwrc, PW_BASE, "force_int", BOOL_BAD),
     *bad_value_rows(
+        "PWRC", _pwrc, PW_BASE, "bandwidth_method", METHOD_BAD, rule=METHOD_RULE
+    ),
+    *bad_value_rows(
         "PWRC",
         _pwrc,
         PW_BASE,
@@ -272,6 +303,9 @@ PW_ROWS: list[Row] = [
     ),
     *good_value_rows("PWRC", _pwrc, {**PW_BASE, "lags": 1}, "center", BOOL_GOOD),
     *good_value_rows("PWRC", _pwrc, {**PW_BASE, "lags": 1}, "force_int", BOOL_GOOD),
+    *good_value_rows(
+        "PWRC", _pwrc, {**PW_BASE, "lags": 1}, "bandwidth_method", METHOD_GOOD
+    ),
     *good_value_rows(
         "PWRC", _pwrc, PW_BASE, "bandwidth", [None, 0, 0.0, 3, *FLOAT_GOOD]
     ),
