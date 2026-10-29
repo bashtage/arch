@@ -469,7 +469,9 @@ def test_bandwidth_is_residual_bandwidth(var_data, kernel, center, force_int):
     )
     assert_allclose(pwrc.bandwidth, expected.bandwidth)
     assert_allclose(pwrc.opt_bandwidth, expected.opt_bandwidth)
-    assert_allclose(pwrc.kernel_weights, expected.kernel_weights)
+    # The residuals of the two VARs differ in the last bits, and a weight of the
+    # quadratic-spectral kernel near one of its zeros differed by 4.4e-13 on Linux
+    assert_allclose(pwrc.kernel_weights, expected.kernel_weights, atol=1e-11)
     assert f"Bandwidth: {pwrc.bandwidth}\n" in str(pwrc)
     assert "Automatic Bandwidth: True" in str(pwrc)
     if force_int:
