@@ -556,7 +556,8 @@ class CovarianceEstimator(ABC):
         q = self.bandwidth_scale
         v = self._x @ self._x_weights
         nobs = v.shape[0]
-        n = int(np.ceil(4 * ((nobs / 100) ** self.rate)))
+        # The integer part, as in Newey and West (1994, eq. 2-2) and auto_bandwidth
+        n = int(4 * ((nobs / 100) ** self.rate))
         f_0s = 0.0
         f_qs = 0.0
         # The autocovariance of a complex series is v_t times the conjugate of v_{t-j},
@@ -608,7 +609,7 @@ class CovarianceEstimator(ABC):
         combined using ``weights``, which is the real part of the autocovariance
         :math:`T^{-1}\sum_t v_t\bar{v}_{t-j}` of the combined series :math:`v_t`
         if x is complex, and
-        :math:`n = \lceil 4 \left(T / 100\right)^{r} \rceil`. The rate r is
+        :math:`n = \lfloor 4 \left(T / 100\right)^{r} \rfloor`. The rate r is
         2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for
         the quadratic-spectral kernel, as in [2]_.
 
