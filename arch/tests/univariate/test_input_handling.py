@@ -13,6 +13,7 @@ from arch.univariate import (
     HARCH,
     HARX,
     LS,
+    NGARCH,
     ConstantMean,
     EWMAVariance,
     MIDASHyperbolic,
@@ -249,7 +250,7 @@ def test_unfitted_resids_with_hold_back():
     assert mod.fit(disp="off").nobs == 22
 
 
-VOLS = ["ARCH", "GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"]
+VOLS = ["ARCH", "GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH", "NGARCH"]
 
 
 @pytest.mark.parametrize("vol", VOLS)
@@ -260,7 +261,7 @@ def test_arch_model_numpy_integers(vol, dtype):
     np_kwargs = {"vol": vol, "p": dtype(order)}
     if vol != "ARCH":
         np_kwargs["q"] = dtype(1)
-    if vol in ("GARCH", "EGARCH", "APARCH", "FIAPARCH"):
+    if vol in ("GARCH", "EGARCH", "APARCH", "FIAPARCH", "NGARCH"):
         np_kwargs["o"] = dtype(1)
     mod = arch_model(y, **np_kwargs)
     ref = arch_model(
@@ -296,14 +297,16 @@ def test_arch_model_invalid_p(vol, p):
         arch_model(y, vol=vol, p=p)
 
 
-@pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "APARCH", "FIAPARCH"])
+@pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "APARCH", "FIAPARCH", "NGARCH"])
 def test_arch_model_invalid_o(vol):
     y = np.random.default_rng(10).standard_normal(100)
     with pytest.raises(TypeError, match="o must be an integer"):
         arch_model(y, vol=vol, o=1.0)
 
 
-@pytest.mark.parametrize("vol", ["GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH"])
+@pytest.mark.parametrize(
+    "vol", ["GARCH", "EGARCH", "FIGARCH", "APARCH", "FIAPARCH", "NGARCH"]
+)
 def test_arch_model_invalid_q(vol):
     y = np.random.default_rng(10).standard_normal(100)
     with pytest.raises(TypeError, match="q must be an integer"):
@@ -359,6 +362,7 @@ def test_fit_options_disp_in_options_respected(capsys):
             APARCH(), [0.1, 0.1, 0.1, 0.8, 1.5], lambda v: v ** (2 / 1.5), id="aparch"
         ),
         pytest.param(EGARCH(), [0.1, 0.1, 0.8], np.exp, id="egarch"),
+        pytest.param(NGARCH(), [0.1, 0.1, 0.5, 0.8], lambda v: v, id="ngarch"),
     ],
 )
 def test_simulate_initial_value_units(process, params, expected):

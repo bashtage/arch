@@ -243,6 +243,14 @@ def _egarch(rec):
     return rec.EGARCHUpdater(1, 1, 1)
 
 
+def _ngarch(rec):
+    return rec.NGARCHUpdater(1, 1, 1)
+
+
+def _ngarch_p2(rec):
+    return rec.NGARCHUpdater(2, 1, 2)
+
+
 def _fiaparch(rec):
     return rec.FIAPARCHUpdater(1, 1, 1, 10, True, 1.5)
 
@@ -257,6 +265,8 @@ PARAMETER_UPDATERS = [
     pytest.param(_midas, 3, id="MIDAS"),
     pytest.param(_midas_asym, 4, id="MIDAS-asym"),
     pytest.param(_egarch, 4, id="EGARCH"),
+    pytest.param(_ngarch, 4, id="NGARCH"),
+    pytest.param(_ngarch_p2, 6, id="NGARCH-p2-o1-q2"),
     pytest.param(_fiaparch, 6, id="FIAPARCH"),
     pytest.param(_fiaparch_fixed_delta, 3, id="FIAPARCH-fixed-delta"),
 ]
@@ -303,6 +313,9 @@ def test_valid_parameters_first_variance(rec):
     # EGARCH(1, 1, 1): only the beta term is available, it multiplies the backcast
     value = _t0(_egarch(rec), np.array([0.1, 0.2, 0.3, 0.4]), np.log(bc))
     assert_allclose(value, np.exp(0.1 + 0.4 * np.log(bc)), rtol=1e-12)
+    # NGARCH(1, 1, 1): omega + (alpha * (1 + theta ** 2) + beta) * backcast
+    value = _t0(_ngarch(rec), np.array([0.1, 0.2, 0.5, 0.4]), bc)
+    assert_allclose(value, 0.1 + (0.2 * 1.25 + 0.4) * bc, rtol=1e-12)
 
 
 @pytest.mark.parametrize("cls", ["FIGARCHUpdater", "FIAPARCHUpdater"])

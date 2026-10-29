@@ -17,6 +17,7 @@ __all__ = [
     "arch_recursion",
     "garch_recursion",
     "egarch_recursion",
+    "ngarch_recursion",
     "midas_recursion",
     "figarch_recursion",
     "figarch_weights",
@@ -26,6 +27,7 @@ __all__ = [
     "GARCHUpdater",
     "HARCHUpdater",
     "EGARCHUpdater",
+    "NGARCHUpdater",
     "EWMAUpdater",
     "ARCHInMeanRecursion",
     "VolatilityUpdater",
@@ -502,6 +504,66 @@ def egarch_recursion(const double[::1] parameters,
             lnsigma2[t] = log(sigma2[t])
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
+
+    return np.asarray(sigma2)
+
+
+def ngarch_recursion(const double[::1] parameters,
+                     const double[::1] resids,
+                     double[::1] sigma2,
+                     int p,
+                     int o,
+                     int q,
+                     int nobs,
+                     double backcast,
+                     const double[:, ::1] var_bounds):
+    """
+    Compute variance recursion for NGARCH (NAGARCH) models
+
+    Parameters
+    ----------
+    parameters : 1-d array, double
+        Model parameters, ordered omega, alpha (p), theta (o) and beta (q)
+    resids : 1-d array, double
+        Residuals to use in the recursion
+    sigma2 : 1-d array, double
+        Conditional variances with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric shifts in model, which cannot exceed p. The first
+        o innovations are shifted by theta times the lagged volatility.
+    q : int
+        Number of lags of the conditional variance in the model
+    nobs : int
+        Length of resids
+    backcast : double
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    """
+
+    cdef Py_ssize_t t
+    cdef int j
+    cdef double theta, shock
+
+    for t in range(nobs):
+        sigma2[t] = parameters[0]
+        for j in range(p):
+            theta = parameters[1 + p + j] if j < o else 0.0
+            if (t - 1 - j) < 0:
+                # E[(z - theta) ** 2] = 1 + theta ** 2 when sigma2 = backcast
+                sigma2[t] += parameters[1 + j] * (1.0 + theta * theta) * backcast
+            else:
+                shock = resids[t - 1 - j] - theta * sqrt(sigma2[t - 1 - j])
+                sigma2[t] += parameters[1 + j] * shock * shock
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + p + o + j] * backcast
+            else:
+                sigma2[t] += parameters[1 + p + o + j] * sigma2[t - 1 - j]
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
 
@@ -1619,6 +1681,67 @@ cdef class EGARCHUpdater(VolatilityUpdater):
         elif sigma2[t] > var_bounds[t, 1]:
             sigma2[t] = var_bounds[t, 1] + log(sigma2[t]) - log(var_bounds[t, 1])
             self.lnsigma2[t] = log(sigma2[t])
+
+
+cdef class NGARCHUpdater(VolatilityUpdater):
+    cdef:
+        double backcast
+        int p, o, q
+
+    def __init__(self, int p, int o, int q):
+        super().__init__()
+        self.p = p
+        self.o = o
+        self.q = q
+        self.backcast = 9999.99
+
+    def __setstate__(self, state):
+        self.backcast = state[0]
+
+    def __reduce__(self):
+        return (
+            NGARCHUpdater,
+            (self.p, self.o, self.q),
+            (self.backcast,)
+        )
+
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
+        _check_vector("parameters", parameters, 1 + self.p + self.o + self.q)
+        self.backcast = backcast
+
+    cdef void update(self,
+                     Py_ssize_t t,
+                     const double[::1] parameters,
+                     const double[::1] resids,
+                     double[::1] sigma2,
+                     const double[:, ::1] var_bounds
+                     ):
+        cdef:
+            int p = self.p, o = self.o, q = self.q
+            Py_ssize_t j
+            double theta, shock
+
+        # The lagged resids and sigma2 are final: sigma2 is stored after the
+        # variance bounds are applied
+        sigma2[t] = parameters[0]
+        for j in range(p):
+            theta = parameters[1 + p + j] if j < o else 0.0
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + j] * (1.0 + theta * theta) * self.backcast
+            else:
+                shock = resids[t - 1 - j] - theta * sqrt(sigma2[t - 1 - j])
+                sigma2[t] += parameters[1 + j] * shock * shock
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma2[t] += parameters[1 + p + o + j] * self.backcast
+            else:
+                sigma2[t] += parameters[1 + p + o + j] * sigma2[t - 1 - j]
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
 
 cdef class ARCHInMeanRecursion:

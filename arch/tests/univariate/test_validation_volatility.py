@@ -35,6 +35,7 @@ from arch.univariate import (
     FIGARCH,
     GARCH,
     HARCH,
+    NGARCH,
     ConstantVariance,
     EWMAVariance,
     FixedVariance,
@@ -42,6 +43,7 @@ from arch.univariate import (
     RiskMetrics2006,
 )
 from arch.univariate.volatility import BootstrapRng
+from arch.utility.exceptions import ValueWarning
 
 INT_MAX = 2**31 - 1
 RESIDS = np.random.default_rng(20241017).standard_normal(300)
@@ -251,6 +253,26 @@ add_good(APARCH, "delta", DELTA_GOOD)
 add_bad(APARCH, "common_asym", BOOL_BAD)
 add_good(APARCH, "common_asym", BOOL_GOOD)
 
+# NGARCH
+add_bad(NGARCH, "p", [*INT_BAD, *COUNT_BAD_1])
+add_good(NGARCH, "p", INT_GOOD)
+add_bad(NGARCH, "o", [*INT_BAD, *COUNT_BAD_0, (2, ValueError)], {"p": 1})
+# o = 0 is accepted with a warning, see test_ngarch_without_a_shift_warns
+add_good(NGARCH, "o", [1, np.int8(1), np.int64(1)], {"p": 1})
+add_bad(NGARCH, "q", [*INT_BAD, *COUNT_BAD_0])
+add_good(NGARCH, "q", [*INT_GOOD, 0])
+CONSTRUCTOR_ROWS.append(
+    Row(
+        "NGARCH",
+        make(NGARCH),
+        {"p": 2, "o": 3},
+        ValueError,
+        r"^o must be an integer <= p \(2\); got 3 \(int\)$",
+        id="NGARCH-o-larger-than-p",
+        name="o",
+    )
+)
+
 # BootstrapRng
 STD_RESID = RESIDS[:200]
 BOOTSTRAP_BASE = {"std_resid": STD_RESID, "start": 100}
@@ -316,6 +338,14 @@ def test_constructor_size(row):
     run_row(row)
 
 
+@pytest.mark.parametrize("o", [0, np.int64(0)], ids=["int", "np.int64"])
+def test_ngarch_without_a_shift_warns(o):
+    with pytest.warns(ValueWarning, match="NGARCH with o=0 has no shift"):
+        process = NGARCH(p=1, o=o)
+    assert type(process.o) is int
+    assert process.o == 0
+
+
 def test_large_order_is_not_rejected():
     # Orders larger than the sample are rejected by fit (decision 73), not here
     assert GARCH(p=300, q=300).num_params == 601
@@ -342,6 +372,8 @@ PROCESSES = {
     "figarch": (lambda: FIGARCH(truncation=30), 30),
     "fiaparch": (lambda: FIAPARCH(truncation=30), 30),
     "aparch": (lambda: APARCH(1, 1, 1), 1),
+    "ngarch": (lambda: NGARCH(1, 1, 1), 1),
+    "ngarch-p3q2": (lambda: NGARCH(3, 2, 2), 3),
 }
 
 
@@ -569,6 +601,9 @@ def test_numpy_scalars_become_python_numbers():
     aparch = APARCH(np.int64(2), np.int64(1), np.int64(1), np.float32(1.5), np.True_)
     assert type(aparch.delta) is float
     assert aparch.common_asym is True
+    ngarch = NGARCH(np.int64(2), np.int8(1), np.uint16(1))
+    assert [type(v) for v in (ngarch.p, ngarch.o, ngarch.q)] == [int, int, int]
+    assert ngarch.num_params == 1 + 2 + 1 + 1
 
 
 def test_harch_lags_are_int32():

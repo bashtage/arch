@@ -91,9 +91,17 @@ def test_hedgehog_horizon_1_analytic(data, spec, monkeypatch, agg_backend):
     assert len(fig.axes[0].get_lines()) > 1
 
 
-def test_hedgehog_figarch_analytic(data, monkeypatch, agg_backend):
-    # FIGARCH has analytic multi-step forecasts, so the defaults work
-    res = arch_model(data, vol="FIGARCH").fit(disp="off", show_warning=False)
+ANALYTIC_MULTISTEP = [
+    pytest.param({"vol": "FIGARCH"}, id="figarch"),
+    pytest.param({"vol": "NGARCH", "o": 1}, id="ngarch"),
+    pytest.param({"vol": "NGARCH", "p": 2, "o": 1, "q": 2}, id="ngarch-212"),
+]
+
+
+@pytest.mark.parametrize("spec", ANALYTIC_MULTISTEP)
+def test_hedgehog_analytic_multistep(data, spec, monkeypatch, agg_backend):
+    # These processes have analytic multi-step forecasts, so the defaults work
+    res = arch_model(data, **spec).fit(disp="off", show_warning=False)
     guard_forecast_calls(res, monkeypatch)
     fig = res.hedgehog_plot(step=50)
     assert len(fig.axes[0].get_lines()) > 1
