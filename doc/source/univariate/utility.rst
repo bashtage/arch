@@ -95,9 +95,11 @@ Backtesting Value-at-Risk
 .. currentmodule:: arch.univariate
 
 The functions below compare a series of Value-at-Risk (VaR) forecasts with the returns
-that were realized. VaR is reported as a **positive loss** (a 1% VaR of 2.5 is the loss
+that were realized. VaR is reported as a **positive loss** (a 99% VaR of 2.5 is the loss
 that is exceeded with probability 1%), and an observation is an *exception* if the loss
-exceeds the VaR, :math:`-r_t > \mathrm{VaR}_t`. A quantile of the returns, which is
+exceeds the VaR, :math:`-r_t > \mathrm{VaR}_t`. VaR is named by its confidence level, and
+``p`` is always the probability of an exception, the size of the tail: ``p=0.05`` for a
+95% VaR and ``p=0.01`` for a 99% VaR. A quantile of the returns, which is
 negative in the lower tail, must be negated first. The returns and the VaR must be finite.
 If both are Series they are aligned on the index, and the observations that they have in
 common are used. Otherwise they must have the same length.
@@ -136,7 +138,7 @@ exception, or with only exceptions, has a statistic.
         var_exceptions,
     )
 
-    # A 1% VaR from the model with Student's t errors, as a positive loss
+    # A 99% VaR (p=0.01) from the model with Student's t errors, as a positive loss
     nu = res.params[["nu"]].to_numpy()
     quantile = float(res.model.distribution.ppf(0.01, nu))
     var = -(res.params["mu"] + res.conditional_volatility * quantile)

@@ -3,7 +3,9 @@ Backtests of Value-at-Risk (VaR) forecasts.
 
 The tests compare a series of VaR forecasts with the returns that were realized.
 VaR is reported as a positive loss, and an observation is an exception if the loss
-exceeds the VaR, ``-returns > var``.
+exceeds the VaR, ``-returns > var``. VaR is named by its confidence level, and ``p``
+is always the probability of an exception, the size of the tail: ``p=0.05`` for a
+95% VaR and ``p=0.01`` for a 99% VaR.
 """
 
 from __future__ import annotations
@@ -159,8 +161,8 @@ def var_exceptions(
     Notes
     -----
     The sign convention is the same for all the functions of this module. VaR is
-    reported as a positive loss, so that a 1% VaR of 2.5 is the loss that is
-    exceeded with probability 1%, and an observation is an exception if
+    reported as a positive loss, so that a 99% VaR of 2.5 is the loss that is
+    exceeded with probability ``p=0.01``, and an observation is an exception if
     :math:`-r_t > \mathrm{VaR}_t`. A quantile of the distribution of returns,
     which is negative for the lower tail, must be negated first. A loss that
     equals the VaR is not an exception.
@@ -185,8 +187,9 @@ def kupiec_pof(
         `var_exceptions` for the sign convention and for how the inputs are
         aligned.
     p : float
-        The probability of an exception that the VaR is designed for, in the open
-        interval (0, 1). It is 0.01 for a 99% VaR.
+        The probability of an exception that the VaR is designed for, which is
+        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        and 0.01 for a 99% VaR.
 
     Returns
     -------
@@ -335,8 +338,9 @@ def christoffersen_conditional_coverage(
         `var_exceptions` for the sign convention and for how the inputs are
         aligned.
     p : float
-        The probability of an exception that the VaR is designed for, in the open
-        interval (0, 1). It is 0.01 for a 99% VaR.
+        The probability of an exception that the VaR is designed for, which is
+        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        and 0.01 for a 99% VaR.
 
     Returns
     -------
@@ -405,7 +409,8 @@ class TrafficLightResult:  # numpydoc ignore=PR02
     nobs : int
         The number of observations in the window.
     p : float
-        The probability of an exception that the VaR is designed for.
+        The probability of an exception that the VaR is designed for, 0.01 for a
+        99% VaR.
 
     Attributes
     ----------
@@ -419,7 +424,8 @@ class TrafficLightResult:  # numpydoc ignore=PR02
     nobs : int
         The number of observations in the window.
     p : float
-        The probability of an exception that the VaR is designed for.
+        The probability of an exception that the VaR is designed for, 0.01 for a
+        99% VaR.
     """
 
     zone: str
@@ -448,8 +454,10 @@ def traffic_light(
         `var_exceptions` for the sign convention and for how the inputs are
         aligned.
     p : float, optional
-        The probability of an exception that the VaR is designed for, in the open
-        interval (0, 1). The default is 0.01, which is a 99% VaR.
+        The probability of an exception that the VaR is designed for, which is
+        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        and 0.01 for a 99% VaR. The default is 0.01, the 99% VaR of the Basel
+        framework.
     window : int, optional
         The number of the most recent observations that are counted. It must be
         positive and no larger than the number of observations. The default is
