@@ -32,5 +32,9 @@ Articles used in the creation of this module include
 .. [DiCiccioEfron] DiCiccio, T. J., & Efron, B. (1996). "Bootstrap confidence
    intervals." *Statistical Science*, 189-212.
 
+.. [PaparoditisPolitis] Paparoditis, E., & Politis, D. N. (2002). "Local block
+   bootstrap." *Comptes Rendus Mathematique*, Academie des Sciences, Paris,
+   Ser. I, 335(11), 959-962.
+
 .. [Efron] Efron, B. (1987). "Better bootstrap confidence intervals."
    *Journal of the American statistical Association*, 82(397), 171-185.
