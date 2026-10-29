@@ -23,7 +23,7 @@
     
   
       
-        <title>Long-run Covariance Estimation - arch v8.0.1 (+645)</title>
+        <title>Long-run Covariance Estimation - arch v8.0.1 (+648)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+645)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+645)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+645)
+            arch v8.0.1 (+648)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+645)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+645)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+645)
+    arch v8.0.1 (+648)
   </label>
   
     <div class="md-nav__source">
@@ -1703,8 +1703,8 @@ NASDAQ, which are highly persistent.</p>
 <span class="gp">In [9]: </span><span class="n">Bartlett</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
 <span class="gh">Out[9]: </span>
 <span class="go">            SP500     NASDAQ</span>
-<span class="go">SP500   11.774173  13.277697</span>
-<span class="go">NASDAQ  13.277697  22.214460</span>
+<span class="go">SP500   11.149080  12.552035</span>
+<span class="go">NASDAQ  12.552035  20.935195</span>
 
 <span class="gp">In [10]: </span><span class="n">pwrc</span> <span class="o">=</span> <span class="n">PreWhitenedRecolored</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 
@@ -1714,8 +1714,8 @@ NASDAQ, which are highly persistent.</p>
 <span class="gp">In [12]: </span><span class="n">pwrc</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
 <span class="gh">Out[12]: </span>
 <span class="go">            SP500     NASDAQ</span>
-<span class="go">SP500   20.406166  23.413635</span>
-<span class="go">NASDAQ  23.413635  41.281932</span>
+<span class="go">SP500   21.413037  24.862941</span>
+<span class="go">NASDAQ  24.862941  44.283212</span>
 </code></pre></div>
 </div>
 <p>The VAR-HAC estimator is computed by setting <code class="docutils literal notranslate"><span class="pre">kernel</span></code> to <code class="docutils literal notranslate"><span class="pre">None</span></code>, and here the order

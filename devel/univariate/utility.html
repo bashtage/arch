@@ -23,7 +23,7 @@
     
   
       
-        <title>Utilities - arch v8.0.1 (+645)</title>
+        <title>Utilities - arch v8.0.1 (+648)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+645)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+645)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+645)
+            arch v8.0.1 (+648)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+645)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+645)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+645)
+    arch v8.0.1 (+648)
   </label>
   
     <div class="md-nav__source">
@@ -2436,13 +2436,13 @@ parameters.</p>
 <span class="gp">In [5]: </span><span class="n">res</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">"t"</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
 
 <span class="gp">In [6]: </span><span class="n">res</span><span class="o">.</span><span class="n">excess_kurtosis</span>
-<span class="gh">Out[6]: </span><span class="go">2.0564913941546124</span>
+<span class="gh">Out[6]: </span><span class="go">2.0564958812639436</span>
 
 <span class="gp">In [7]: </span><span class="n">res</span><span class="o">.</span><span class="n">hill_estimator</span><span class="p">()</span>
-<span class="gh">Out[7]: </span><span class="go">5.044411684796036</span>
+<span class="gh">Out[7]: </span><span class="go">5.044399457880951</span>
 
 <span class="gp">In [8]: </span><span class="n">res</span><span class="o">.</span><span class="n">var_ratio</span><span class="p">()</span>
-<span class="gh">Out[8]: </span><span class="go">0.7506389630178181</span>
+<span class="gh">Out[8]: </span><span class="go">0.7506415839753905</span>
 </code></pre></div>
 </div>
 <p>The functions can also be used with any standardized residuals, and with a
@@ -2456,10 +2456,10 @@ distribution that is not estimated.</p>
 <span class="gp">   ...: </span>
 
 <span class="gp">In [10]: </span><span class="n">excess_kurtosis</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">std_resid</span><span class="p">)</span>
-<span class="gh">Out[10]: </span><span class="go">2.0564913941546124</span>
+<span class="gh">Out[10]: </span><span class="go">2.0564958812639436</span>
 
 <span class="gp">In [11]: </span><span class="n">hill_estimator</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-<span class="gh">Out[11]: </span><span class="go">4.637108487052144</span>
+<span class="gh">Out[11]: </span><span class="go">4.637081386972821</span>
 
 <span class="go"># The 99% VaR, p=0.01</span>
 <span class="gp">In [12]: </span><span class="n">var_ratio</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">StudentsT</span><span class="p">(),</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">])</span>
@@ -2554,8 +2554,8 @@ exception, or with only exceptions, has a statistic.</p>
 <span class="go">H1: The probability of an exception is not 0.01.</span>
 <span class="go">Statistic: 5.0722</span>
 <span class="go">P-value: 0.0243</span>
-<span class="go">Distributed: &lt;scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x7c73043d2d70&gt;</span>
-<span class="go">WaldTestStatistic, id: 0x7c7305b7d7f0</span>
+<span class="go">Distributed: &lt;scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x7511b01e6780&gt;</span>
+<span class="go">WaldTestStatistic, id: 0x7511b29c5550</span>
 
 <span class="gp">In [20]: </span><span class="n">christoffersen_independence</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">pval</span>
 <span class="gh">Out[20]: </span><span class="go">np.float64(0.07385551771640182)</span>
