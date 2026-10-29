@@ -952,7 +952,8 @@ Bug fixes
   p-value from the rounding errors of removing the mean. For example
   :class:`~arch.unitroot.KPSS` rejected stationarity with a p-value of 0.0001, and
   :func:`~arch.unitroot.cointegration.engle_granger` and
-  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics.
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics
+  (:issue:`987`).
 
 - Fixed ``SkewStudent.ppf`` for a 0-d array such as ``np.array(0.4)``, which failed an
   ``assert`` (it returns a float, as for a Python float), and ``add_trend`` with a
