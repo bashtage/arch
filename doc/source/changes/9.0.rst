@@ -937,6 +937,23 @@ Bug fixes
   with ``dist_type="dfgls"`` raises a ``ValueError`` for the ``"n"`` and ``"ctt"``
   regressions, which are not available, where it raised a ``KeyError`` (:issue:`949`).
 
+- The unit root tests (:class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS`,
+  :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.KPSS`,
+  :class:`~arch.unitroot.ZivotAndrews` and :class:`~arch.unitroot.VarianceRatio`), the
+  cointegration tests :func:`~arch.unitroot.cointegration.engle_granger` and
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris`, and
+  :class:`~arch.unitroot.cointegration.DynamicOLS`,
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` raise an
+  :class:`~arch.utility.exceptions.InfeasibleTestException`, which is also a
+  ``ValueError``, when ``y`` is constant. The unit root tests raise it when they are
+  created. Previously they returned NaN, raised a ``ZeroDivisionError`` or a
+  ``LinAlgError``, or, for a constant that is not 0, computed the statistic and the
+  p-value from the rounding errors of removing the mean. For example
+  :class:`~arch.unitroot.KPSS` rejected stationarity with a p-value of 0.0001, and
+  :func:`~arch.unitroot.cointegration.engle_granger` and
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics.
+
 - Fixed ``SkewStudent.ppf`` for a 0-d array such as ``np.array(0.4)``, which failed an
   ``assert`` (it returns a float, as for a Python float), and ``add_trend`` with a
   ``DataFrame`` that already has a constant and ``has_constant="skip"`` (the default)
