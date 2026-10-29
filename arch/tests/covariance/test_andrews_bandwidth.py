@@ -651,6 +651,19 @@ def test_all_constant_raises() -> None:
         _opt(Bartlett(x, weights=[1.0, 0.0], bandwidth_method="andrews"))
 
 
+def test_all_constant_newey_west_raises() -> None:
+    # The default method raised a ZeroDivisionError for constant data
+    match = r'bandwidth_method="newey-west" cannot estimate the bandwidth'
+    with pytest.raises(ValueError, match=match):
+        _opt(Bartlett(np.ones((50, 1))))
+    with pytest.raises(ValueError, match=match):
+        _opt(Bartlett(np.ones((50, 2)), bandwidth_method="newey-west"))
+    with pytest.raises(ValueError, match=match):
+        PreWhitenedRecolored(np.ones((30, 1))).bandwidth
+    # An explicit bandwidth does not need the estimate
+    assert_allclose(Bartlett(np.ones((50, 1)), bandwidth=3).cov.long_run, 0.0)
+
+
 def test_constant_except_final_value_raises() -> None:
     x = np.zeros((20, 1))
     x[-1] = 1.0
