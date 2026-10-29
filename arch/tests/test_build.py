@@ -1,5 +1,3 @@
-import tempfile
-
 import pytest
 
 from arch import __version__, version_tuple
@@ -25,12 +23,13 @@ def test_get_version():
 
 
 @pytest.mark.skipif(not HAS_SETUPTOOLS_SCM, reason="setuptools_scm is not installed")
-def test_write_version_file():
-    with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
+def test_write_version_file(tmp_path):
+    # The file is not open when it is written, since Windows cannot replace a file
+    # that is open
+    filename = str(tmp_path / "_version.py")
+    write_version_file(filename, __version__, version_tuple)
+    with open(filename) as f:
+        content = f.read()
 
-        write_version_file(tmpfile.name, __version__, version_tuple)
-        with open(tmpfile.name, "r") as f:
-            content = f.read()
-
-            assert f"__version__ = version = '{__version__}'" in content
-            assert f"__version_tuple__ = version_tuple = {version_tuple}" in content
+    assert f"__version__ = version = '{__version__}'" in content
+    assert f"__version_tuple__ = version_tuple = {version_tuple}" in content
