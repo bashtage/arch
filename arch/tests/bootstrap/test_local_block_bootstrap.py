@@ -445,7 +445,9 @@ def test_blocks_are_independent(kind):
     for i in range(4):
         for j in range(4):
             table[i, j] = np.sum((qa == i) & (qc == j))
-    assert stats.chi2_contingency(table).pvalue > 0.001
+    # Index 1 is the p-value; older SciPy, such as 1.8, returns a plain tuple
+    pvalue = stats.chi2_contingency(table)[1]
+    assert pvalue > 0.001
 
 
 # ---- a statistical check: the mean of a trend plus noise
