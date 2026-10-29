@@ -250,8 +250,10 @@ def _kernel_covariance_template() -> None:
         The method used to estimate the bandwidth when bandwidth is None.
         "newey-west" uses the nonparametric estimate of Newey and West (1994)
         and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
-        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
-        and by ZeroLag.
+        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are
+        ignored as in the names of kernels, so that "newey_west" and
+        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by
+        ZeroLag.
 
     Raises
     ------
@@ -328,8 +330,53 @@ def _kernel_substitution(
     return decorator
 
 
-_BANDWIDTH_METHODS = ("newey-west", "andrews")
-"""The methods that select the bandwidth when it is not provided."""
+_BANDWIDTH_METHODS = {"neweywest": "newey-west", "andrews": "andrews"}
+"""The methods that select the bandwidth when it is not provided, keyed by their
+normalized names."""
+
+
+def _check_bandwidth_method(bandwidth_method: str) -> str:
+    """
+    Validate a bandwidth method, which is normalized like the name of a kernel.
+
+    Parameters
+    ----------
+    bandwidth_method : str
+        The name of the method, such as "newey-west", "Newey_West" or "andrews".
+
+    Returns
+    -------
+    str
+        The canonical name, "newey-west" or "andrews".
+    """
+    return check_option(
+        "bandwidth_method",
+        bandwidth_method,
+        _BANDWIDTH_METHODS,
+        display=("newey-west", "andrews"),
+        normalize=normalize_kernel_name,
+    )
+
+
+def _power_of_two_scaled(x: np.ndarray) -> np.ndarray:
+    """
+    Divide x by the power of 2 nearest its largest absolute value.
+
+    The bandwidth estimators are ratios of sums of products of the data that
+    do not depend on a common scale. Scaling by a power of 2 is exact, so the
+    estimates do not change, but data that are very large or very small do not
+    overflow or underflow when squared.
+    """
+    largest = float(np.max(np.abs(x))) if x.size else 0.0
+    if not np.isfinite(largest) or largest == 0.0:
+        return x
+    exponent = -int(np.frexp(largest)[1])
+    if np.iscomplexobj(x):
+        scaled = np.empty_like(x)
+        scaled.real = np.ldexp(x.real, exponent)
+        scaled.imag = np.ldexp(x.imag, exponent)
+        return scaled
+    return np.ldexp(x, exponent)
 
 
 class CovarianceEstimator(ABC):
@@ -365,8 +412,10 @@ class CovarianceEstimator(ABC):
         The method used to estimate the bandwidth when bandwidth is None.
         "newey-west" uses the nonparametric estimate of Newey and West (1994)
         and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
-        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
-        and by ZeroLag.
+        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are
+        ignored as in the names of kernels, so that "newey_west" and
+        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by
+        ZeroLag.
 
     Raises
     ------
@@ -464,9 +513,7 @@ class CovarianceEstimator(ABC):
                 _describe(weights),
             )
         force_int = check_bool("force_int", force_int)
-        bandwidth_method = check_option(
-            "bandwidth_method", bandwidth_method, _BANDWIDTH_METHODS
-        )
+        bandwidth_method = _check_bandwidth_method(bandwidth_method)
 
         self._x_orig = ensure2d(x, "x", allow_complex=self._allow_complex)
         self._x = np.asarray(self._x_orig)
@@ -596,7 +643,7 @@ class CovarianceEstimator(ABC):
 
     def _alpha_q(self) -> float:
         q = self.bandwidth_scale
-        v = self._x @ self._x_weights
+        v = _power_of_two_scaled(self._x @ self._x_weights)
         nobs = v.shape[0]
         n = int(np.ceil(4 * ((nobs / 100) ** self.rate)))
         f_0s = 0.0
@@ -636,7 +683,9 @@ class CovarianceEstimator(ABC):
                 'bandwidth_method="andrews" cannot estimate the bandwidth since '
                 "every column of x with a positive weight is constant"
             )
-        x, weights = x[:, used], weights[used]
+        # One scale for all columns, since a separate scale for each column would
+        # change their relative weights in the sums
+        x, weights = _power_of_two_scaled(x[:, used]), weights[used]
         if np.any(np.ptp(x[:-1], axis=0) == 0):
             raise ValueError(
                 'bandwidth_method="andrews" cannot fit an AR(1) to a column of x that '
@@ -743,6 +792,14 @@ class CovarianceEstimator(ABC):
         do not change the sums and are ignored. The real and imaginary parts of
         complex data are separate columns that both have the weight of the
         column.
+
+        Both estimates of :math:`\hat{\alpha}\left(q\right)` are ratios that do
+        not change if the data are multiplied by a constant. Before they are
+        computed, the data are divided by the power of 2 nearest their largest
+        absolute value, which is exact, so that data with a very large or very
+        small scale do not overflow or underflow. All columns are divided by the
+        same value, since a different value for each column would change the
+        weights of the columns in the "andrews" estimate.
 
         In both cases the bandwidth is at most the number of observations less
         1, and is rounded up if ``force_int`` is True. ZeroLag ignores
@@ -1046,7 +1103,7 @@ w=\\begin{cases} \
 class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
-        return 1.8576
+        return 1.8587
 
     @property
     def bandwidth_scale(self) -> float:
@@ -1130,8 +1187,10 @@ class Gallant(Parzen):  # numpydoc ignore=PR02
         The method used to estimate the bandwidth when bandwidth is None.
         "newey-west" uses the nonparametric estimate of Newey and West (1994)
         and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
-        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
-        and by ZeroLag.
+        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are
+        ignored as in the names of kernels, so that "newey_west" and
+        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by
+        ZeroLag.
 
     Raises
     ------
@@ -1190,8 +1249,10 @@ class Andrews(QuadraticSpectral):  # numpydoc ignore=PR02
         The method used to estimate the bandwidth when bandwidth is None.
         "newey-west" uses the nonparametric estimate of Newey and West (1994)
         and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
-        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
-        and by ZeroLag.
+        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are
+        ignored as in the names of kernels, so that "newey_west" and
+        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by
+        ZeroLag.
 
     Raises
     ------
@@ -1251,8 +1312,10 @@ class NeweyWest(Bartlett):  # numpydoc ignore=PR02
         The method used to estimate the bandwidth when bandwidth is None.
         "newey-west" uses the nonparametric estimate of Newey and West (1994)
         and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
-        ``opt_bandwidth``. Not case sensitive. Ignored if bandwidth is provided,
-        and by ZeroLag.
+        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are
+        ignored as in the names of kernels, so that "newey_west" and
+        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by
+        ZeroLag.
 
     Raises
     ------

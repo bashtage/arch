@@ -120,7 +120,8 @@ class PreWhitenedRecolored(CovarianceEstimator):
         bandwidth is None. "newey-west" uses the nonparametric estimate of
         Newey & West (1994) and "andrews" uses the AR(1) plug-in estimate of
         Andrews (1991), see ``opt_bandwidth`` of the kernel estimators. Not case
-        sensitive. Ignored if bandwidth is provided or kernel is None.
+        sensitive, and hyphens and underscores are ignored as in the names of
+        kernels. Ignored if bandwidth is provided or kernel is None.
 
     Raises
     ------
