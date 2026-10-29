@@ -113,6 +113,221 @@ R_PARAMS = [
 ]
 
 
+# R 4.6.1, sandwich 3.1.3: the diagonal and the sum of the long-run covariance
+#   nobs * kernHAC(lm(x ~ 1), bw=bw, kernel=<name>, prewhite=FALSE, adjust=FALSE)
+# with bw from R_BANDWIDTHS, the covariance of the Andrews (1991) estimator.
+R_ANDREWS_LONG_RUN: dict[str, dict[str, tuple[list[float], float]]] = {
+    "uni_short": {
+        "Bartlett": ([2.6950887103082284], 2.6950887103082284),
+        "Parzen": ([1.927801221779428], 1.927801221779428),
+        "Quadratic Spectral": ([2.206398258492332], 2.206398258492332),
+        "Tukey-Hanning": ([2.2974635965820576], 2.2974635965820576),
+    },
+    "uni_long": {
+        "Bartlett": ([16.504064337618196], 16.504064337618196),
+        "Parzen": ([18.115528554593638], 18.115528554593638),
+        "Quadratic Spectral": ([17.65047557413648], 17.65047557413648),
+        "Tukey-Hanning": ([17.92820969313286], 17.92820969313286),
+    },
+    "uni_mean": {
+        "Bartlett": ([1.3627574146805939], 1.3627574146805939),
+        "Parzen": ([1.4240600851216039], 1.4240600851216039),
+        "Quadratic Spectral": ([1.4527735533509207], 1.4527735533509207),
+        "Tukey-Hanning": ([1.435123422415427], 1.435123422415427),
+    },
+    "multi_short": {
+        "Bartlett": (
+            [1.1327545703278654, 18.22365065924197, 4.733268156452423],
+            25.76576937369616,
+        ),
+        "Parzen": (
+            [0.7557788667918434, 20.633989003651408, 2.888901042499894],
+            27.78304052864491,
+        ),
+        "Quadratic Spectral": (
+            [0.9664786935159582, 19.88363435452576, 3.1009193574072493],
+            26.857907525889644,
+        ),
+        "Tukey-Hanning": (
+            [0.9619239803731144, 20.253872392057996, 3.379993761002658],
+            27.5458560262804,
+        ),
+    },
+    "multi_long": {
+        "Bartlett": (
+            [
+                6.676433679548986,
+                2.5645079165835893,
+                872.8784616009508,
+                11.693051330496703,
+            ],
+            711.5105903463049,
+        ),
+        "Parzen": (
+            [
+                5.8998602175418755,
+                1.5825689897477098,
+                956.9894612594361,
+                11.571982155951371,
+            ],
+            773.6832571372834,
+        ),
+        "Quadratic Spectral": (
+            [
+                7.05773864574444,
+                1.3393398179413185,
+                1027.0517006575913,
+                11.716468721489935,
+            ],
+            816.5715188748555,
+        ),
+        "Tukey-Hanning": (
+            [
+                6.447865541731161,
+                1.6839113575399551,
+                979.3421648399217,
+                11.536674670937069,
+            ],
+            783.8118849372423,
+        ),
+    },
+    "multi_zero_weight": {
+        "Bartlett": ([3.250622006727823, 95.19136944807488], 87.64006240258722),
+        "Parzen": ([3.518138733278852, 114.70026037174542], 104.8765004656144),
+        "Quadratic Spectral": (
+            [3.5185186137498374, 104.66368039348463],
+            96.70104233813232,
+        ),
+        "Tukey-Hanning": ([3.545362498970807, 106.29207514959447], 97.7832838759039),
+    },
+}
+
+# R 4.6.1, sandwich 3.1.3: bw = bwNeweyWest(xc, kernel=<name>, weights=w,
+# prewhite=FALSE), where xc is the data minus its mean and w the weights in CASES
+# (1s if None), and the diagonal and the sum of
+#   nobs * kernHAC(lm(x ~ 1), bw=bw, kernel=<name>, prewhite=FALSE, adjust=FALSE)
+R_NEWEY_WEST: dict[str, dict[str, tuple[float, list[float], float]]] = {
+    "uni_short": {
+        "Bartlett": (2.390258945185522, [3.238241429125315], 3.238241429125315),
+        "Parzen": (3.4259799723855435, [3.3500520639358933], 3.3500520639358933),
+        "Quadratic Spectral": (
+            1.701919336248188,
+            [3.159268940461116],
+            3.159268940461116,
+        ),
+    },
+    "uni_long": {
+        "Bartlett": (14.622218886182115, [15.069663309872407], 15.069663309872407),
+        "Parzen": (19.53402804450467, [15.770538184098939], 15.770538184098939),
+        "Quadratic Spectral": (
+            8.55039379321342,
+            [14.480455952681691],
+            14.480455952681691,
+        ),
+    },
+    "uni_mean": {
+        "Bartlett": (2.1225090945099767, [1.2124700432270492], 1.2124700432270492),
+        "Parzen": (5.760818135062306, [1.4082841797991594], 1.4082841797991594),
+        "Quadratic Spectral": (
+            2.8617936636228585,
+            [1.4172649358554488],
+            1.4172649358554488,
+        ),
+    },
+    "multi_short": {
+        "Bartlett": (
+            4.6406724808262005,
+            [1.241696360889315, 16.258418642253638, 5.661411058734253],
+            23.415267478242068,
+        ),
+        "Parzen": (
+            9.070180548822714,
+            [1.2930539944035742, 18.94939874830143, 4.722285262819893],
+            25.811812531615832,
+        ),
+        "Quadratic Spectral": (
+            4.505781056435903,
+            [1.3803645270343394, 19.031259183738403, 5.07279016948057],
+            25.713186037845755,
+        ),
+    },
+    "multi_long": {
+        "Bartlett": (
+            6.8136567530857155,
+            [
+                5.983181431431297,
+                6.661834178251041,
+                324.4355785216234,
+                14.24473483186312,
+            ],
+            337.68768330943936,
+        ),
+        "Parzen": (
+            11.38641125519595,
+            [
+                6.77384495214792,
+                6.995616253080248,
+                392.13535447505797,
+                13.448582494615174,
+            ],
+            398.2564068243523,
+        ),
+        "Quadratic Spectral": (
+            5.656411783457791,
+            [
+                6.470501820708087,
+                7.21846922650694,
+                344.68237268337634,
+                14.49557285409189,
+            ],
+            361.4288815224729,
+        ),
+    },
+    "multi_zero_weight": {
+        "Bartlett": (
+            7.034096694193144,
+            [3.240416536783542, 92.42322737965894],
+            85.23473548524504,
+        ),
+        "Parzen": (
+            11.058025518808522,
+            [3.4750481152844825, 105.58736392554779],
+            97.02125334439084,
+        ),
+        "Quadratic Spectral": (
+            5.493280055014935,
+            [3.539991249885647, 95.14786161203646],
+            88.27943243821,
+        ),
+    },
+}
+
+# R 4.6.1, sandwich 3.1.3: lag = floor(bw) for the Bartlett bw in R_NEWEY_WEST, and
+# the diagonal and the sum of
+#   nobs * NeweyWest(lm(x ~ 1), lag=lag, prewhite=FALSE, adjust=FALSE)
+# which is the estimator of Newey and West (1994, eq. 2-2) with m = lag.
+R_NEWEY_WEST_LAG: dict[str, tuple[int, list[float], float]] = {
+    "uni_short": (2, [3.5354757660896334], 3.5354757660896334),
+    "uni_long": (14, [15.179731255578883], 15.179731255578883),
+    "uni_mean": (2, [1.318445379967149], 1.318445379967149),
+    "multi_short": (
+        4,
+        [1.2659691907274546, 16.680874019399916, 5.6130253545876645],
+        23.82843360268973,
+    ),
+    "multi_long": (
+        6,
+        [6.036805072951339, 6.672202250294113, 330.89147121276596, 14.104265609518741],
+        343.3206046123978,
+    ),
+    "multi_zero_weight": (
+        7,
+        [3.2722841304947967, 101.06702597520932],
+        92.74560772955134,
+    ),
+}
+
+
 def _case(case: str) -> tuple[np.ndarray, list[float] | None]:
     nobs, rhos, seed, means, weights = CASES[case]
     return make_data(nobs, rhos, seed, means), weights
@@ -131,9 +346,77 @@ def _short_series() -> np.ndarray:
 def test_andrews_matches_r(case: str, kern: str, center: bool) -> None:
     x, weights = _case(case)
     est = R_KERNELS[kern](x, weights=weights, center=center, bandwidth_method="andrews")
-    assert_allclose(est.opt_bandwidth, R_BANDWIDTHS[case][kern], rtol=1e-10)
-    # No bandwidth was provided, so this is the bandwidth that is used
-    assert_allclose(est.bandwidth, R_BANDWIDTHS[case][kern], rtol=1e-10)
+    optimal = R_BANDWIDTHS[case][kern]
+    assert_allclose(est.opt_bandwidth, optimal, rtol=1e-10)
+    # A kernel that is 0 beyond 1 weights lag h by k(h / (H + 1)), so the bandwidth H
+    # that gives the weights k(h / S) of the optimal bandwidth S is S - 1
+    bounded = kern != "Quadratic Spectral"
+    assert_allclose(est.bandwidth, optimal - 1.0 if bounded else optimal, rtol=1e-10)
+    if center:
+        # The long-run covariance is that of the Andrews (1991) estimator in R
+        diag, total = R_ANDREWS_LONG_RUN[case][kern]
+        long_run = np.asarray(est.cov.long_run)
+        assert_allclose(np.diag(long_run), diag, rtol=1e-10)
+        assert_allclose(long_run.sum(), total, rtol=1e-10)
+
+
+@pytest.mark.parametrize("case", list(R_NEWEY_WEST))
+@pytest.mark.parametrize("kern", ["Bartlett", "Parzen", "Quadratic Spectral"])
+def test_newey_west_matches_r(case: str, kern: str) -> None:
+    x, weights = _case(case)
+    est = R_KERNELS[kern](x, weights=weights)
+    bandwidth, diag, total = R_NEWEY_WEST[case][kern]
+    assert_allclose(est.opt_bandwidth, bandwidth, rtol=1e-10)
+    long_run = np.asarray(est.cov.long_run)
+    assert_allclose(np.diag(long_run), diag, rtol=1e-10)
+    assert_allclose(long_run.sum(), total, rtol=1e-10)
+
+
+@pytest.mark.parametrize("case", list(R_NEWEY_WEST_LAG))
+def test_newey_west_integer_lag_matches_r(case: str) -> None:
+    # With force_int, the number of lags is the integer part of the optimal bandwidth,
+    # m = [gamma T^(1/3)] in Newey and West (1994, eq. 2-2), with weights 1 - h/(m+1)
+    x, weights = _case(case)
+    est = Bartlett(x, weights=weights, force_int=True)
+    lags, diag, total = R_NEWEY_WEST_LAG[case]
+    assert est.bandwidth == lags
+    assert est.kernel_weights.shape[0] == lags + 1
+    long_run = np.asarray(est.cov.long_run)
+    assert_allclose(np.diag(long_run), diag, rtol=1e-10)
+    assert_allclose(long_run.sum(), total, rtol=1e-10)
+
+
+@pytest.mark.parametrize("name", KERNELS)
+def test_fractional_bandwidth_uses_every_positive_lag(name: str) -> None:
+    # A fractional bandwidth H uses every lag smaller than H + 1
+    x, _ = _case("uni_long")
+    est = get_kernel_estimator(name)(x, bandwidth=5.4)
+    weights = est.kernel_weights
+    if name in ("QuadraticSpectral", "Andrews"):
+        assert weights.shape[0] == x.shape[0]
+        expected = np.array([_qs(h / 5.4) for h in range(weights.shape[0])])
+    elif name == "ZeroLag":
+        assert_allclose(weights, [1.0])
+        return
+    else:
+        assert weights.shape[0] == 7
+        func = KERNEL_THEORY[_BASE_KERNEL.get(name, name)][0]
+        expected = np.array([func(h / 6.4) for h in range(7)])
+    assert_allclose(weights, expected, rtol=1e-12, atol=1e-15)
+    # An integer bandwidth uses the lags 0, ..., H
+    if name not in ("QuadraticSpectral", "Andrews"):
+        assert get_kernel_estimator(name)(x, bandwidth=5.0).kernel_weights.shape[0] == 6
+
+
+def test_fractional_bandwidth_matches_r() -> None:
+    # R 4.6.1, sandwich 3.1.3, for the data of "uni_long":
+    #   nobs * NeweyWest(lm(x ~ 1), lag=5.4, prewhite=FALSE, adjust=FALSE)
+    #   nobs * kernHAC(lm(x ~ 1), bw=6.4, kernel="Parzen", prewhite=FALSE, adjust=FALSE)
+    x, _ = _case("uni_long")
+    bartlett = Bartlett(x, bandwidth=5.4).cov.long_run.item()
+    assert_allclose(bartlett, 10.350529373033602, rtol=1e-10)
+    parzen = Parzen(x, bandwidth=5.4).cov.long_run.item()
+    assert_allclose(parzen, 8.8512947144139691, rtol=1e-10)
 
 
 def andrews_alpha(x: np.ndarray, weights: list[float] | None, q: float) -> float:
@@ -239,6 +522,12 @@ KERNEL_THEORY: dict[str, tuple[Callable[[float], float], int, float]] = {
     "TukeyParzen": (lambda u: 0.436 + 0.564 * np.cos(PI * u), 2, 0.282 * PI**2),
     "QuadraticSpectral": (_qs, 2, (6 * PI / 5) ** 2 / 10),
 }
+# The kernels that the aliases of KERNELS use
+_BASE_KERNEL = {
+    "Andrews": "QuadraticSpectral",
+    "Gallant": "Parzen",
+    "NeweyWest": "Bartlett",
+}
 
 
 @pytest.mark.parametrize("name", list(KERNEL_THEORY))
@@ -302,8 +591,11 @@ def test_bandwidth_limited_to_nobs() -> None:
     x = np.cumsum(np.random.default_rng(7).standard_normal((30, 1)), axis=0)
     unrestricted = 1.1447 * (andrews_alpha(x, None, 1) * 30) ** (1 / 3)
     assert unrestricted > 29
-    assert Bartlett(x, bandwidth_method="andrews").opt_bandwidth == 29.0
-    assert Bartlett(x, bandwidth_method="andrews", force_int=True).bandwidth == 29.0
+    est = Bartlett(x, bandwidth_method="andrews")
+    assert est.opt_bandwidth == 29.0
+    # The weights of the bandwidth 28 are k(h / 29)
+    assert est.bandwidth == 28.0
+    assert Bartlett(x, bandwidth_method="andrews", force_int=True).bandwidth == 28.0
 
 
 def test_constant_column_is_ignored() -> None:
@@ -394,51 +686,41 @@ def _baseline_data(nobs: int, nvar: int, seed: int) -> np.ndarray:
     )
 
 
-# The bandwidth and the sum of the long-run covariance of every kernel with the default
-# method, from the code before bandwidth_method was added (origin/main, d2c90b43c9).
-# A has 200 rows and 3 columns, and B has 40 rows and 2 columns. The Tukey-Parzen
-# constant was 1.8576 then and is now 1.8587, so its bandwidth is scaled by the ratio.
-BASELINE: dict[tuple[str, str], tuple[float, float]] = {
-    ("A", "Bartlett"): (11.272999809578199, 67.79495170599591),
-    ("A", "Parzen"): (16.951578711405514, 73.56762377158034),
-    ("A", "ParzenCauchy"): (6.957956182587879, 66.92788827410591),
-    ("A", "ParzenGeometric"): (9.847994941537694, 72.97698452862986),
-    ("A", "ParzenRiesz"): (7.222924122166472, 66.56590007494339),
-    ("A", "TukeyHamming"): (10.63311245991597, 70.81081202535776),
-    ("A", "TukeyHanning"): (11.122284040676451, 70.07504762843789),
-    ("A", "TukeyParzen"): (11.831837609644127, 68.4912499330181),
-    ("A", "QuadraticSpectral"): (8.421012329732182, 65.15275977553551),
-    ("A", "Andrews"): (8.421012329732182, 65.15275977553551),
-    ("A", "Gallant"): (16.951578711405514, 73.56762377158034),
-    ("A", "NeweyWest"): (11.272999809578199, 67.79495170599591),
-    ("B", "Bartlett"): (5.022996879508972, 9.404459858424694),
-    ("B", "Parzen"): (9.372543954848854, 10.187548531018887),
-    ("B", "ParzenCauchy"): (3.8470605757409215, 10.43437204791627),
-    ("B", "ParzenGeometric"): (4.388046544517317, 10.130793300951574),
-    ("B", "ParzenRiesz"): (3.9935616009613732, 10.25138679669899),
-    ("B", "TukeyHamming"): (5.8790579688226785, 10.536883438965251),
-    ("B", "TukeyHanning"): (6.149521399998898, 10.40382167954531),
-    ("B", "TukeyParzen"): (6.541834241574821, 10.495206711730397),
-    ("B", "QuadraticSpectral"): (4.655985707787506, 10.295574535000805),
-    ("B", "Andrews"): (4.655985707787506, 10.295574535000805),
-    ("B", "Gallant"): (9.372543954848854, 10.187548531018887),
-    ("B", "NeweyWest"): (5.022996879508972, 9.404459858424694),
-}
+def _kernel_long_run(
+    x: np.ndarray, func: Callable[[float], float], bandwidth: float, bounded: bool
+) -> np.ndarray:
+    """
+    Gamma_0 + sum_h k(h / S) (Gamma_h + Gamma_h'), over h / S < 1 if k is 0 beyond 1
+    """
+    u = x - x.mean(0)
+    nobs = u.shape[0]
+    total = u.T @ u / nobs
+    for h in range(1, nobs):
+        z = h / bandwidth
+        if bounded and z >= 1:
+            break
+        gamma = u[h:].T @ u[:-h] / nobs
+        total += func(z) * (gamma + gamma.T)
+    return total
 
 
-@pytest.mark.parametrize("key", list(BASELINE), ids=["-".join(k) for k in BASELINE])
-def test_default_method_is_unchanged(key: tuple[str, str]) -> None:
-    which, name = key
+@pytest.mark.parametrize("method", ["newey-west", "andrews"])
+@pytest.mark.parametrize("which", ["A", "B"])
+@pytest.mark.parametrize("name", [name for name in KERNELS if name != "ZeroLag"])
+def test_automatic_weights_are_those_of_opt_bandwidth(
+    name: str, which: str, method: str
+) -> None:
+    # The automatic estimate is the estimator of Andrews (1991) and Newey and West
+    # (1994) with the weights k(h / S) of the optimal bandwidth S. The kernels that are
+    # 0 beyond 1 use the bandwidth S - 1, since they weight lag h by k(h / (H + 1))
     x = _baseline_data(200, 3, 2025) if which == "A" else _baseline_data(40, 2, 2026)
-    bandwidth, total = BASELINE[key]
-    cls = get_kernel_estimator(name)
-    if name == "TukeyParzen":
-        bandwidth *= 1.8587 / 1.8576
-        total = float(cls(x, bandwidth=bandwidth).cov.long_run.sum())
-    for est in (cls(x), cls(x, bandwidth_method="newey-west")):
-        assert est.bandwidth_method == "newey-west"
-        assert_allclose(est.opt_bandwidth, bandwidth, rtol=1e-12)
-        assert_allclose(est.cov.long_run.sum(), total, rtol=1e-12)
+    est = get_kernel_estimator(name)(x, bandwidth_method=method)
+    base = _BASE_KERNEL.get(name, name)
+    bounded = base != "QuadraticSpectral"
+    optimal = est.opt_bandwidth
+    assert_allclose(est.bandwidth, max(optimal - 1.0, 0.0) if bounded else optimal)
+    expected = _kernel_long_run(x, KERNEL_THEORY[base][0], optimal, bounded)
+    assert_allclose(est.cov.long_run, expected, rtol=1e-10, atol=1e-12)
 
 
 def test_methods_differ() -> None:
@@ -472,7 +754,7 @@ def test_prewhitened_recolored() -> None:
     assert_allclose(
         default.opt_bandwidth, Bartlett(resid, center=False).opt_bandwidth, rtol=1e-12
     )
-    assert abs(default.opt_bandwidth - pw.opt_bandwidth) > 0.1
+    assert abs(default.opt_bandwidth - pw.opt_bandwidth) > 0.05
     # A provided bandwidth is used, and kernel=None has no bandwidth
     provided = PreWhitenedRecolored(
         x, lags=1, bandwidth=2.0, bandwidth_method="andrews"

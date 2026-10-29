@@ -681,10 +681,12 @@ VAR(1) coefficient matrix is {max_eig}.""")
         Returns
         -------
         float
-            The user-provided bandwidth or the estimated optimal bandwidth.
-            The kernel is applied to the residuals of the VAR, and so the
-            estimated bandwidth is the optimal bandwidth for the residuals
-            and not for x. It is 0 when kernel is None.
+            The user-provided bandwidth or the bandwidth of the estimated
+            optimal bandwidth, which is ``opt_bandwidth`` less 1 (at least 0)
+            for a kernel that is 0 beyond 1, see ``bandwidth`` of the kernel
+            estimators. The kernel is applied to the residuals of the VAR, and
+            so the estimated bandwidth is the optimal bandwidth for the
+            residuals and not for x. It is 0 when kernel is None.
         """
         return self._setup()[1].bandwidth
 
@@ -696,8 +698,8 @@ VAR(1) coefficient matrix is {max_eig}.""")
         Returns
         -------
         float
-            The estimated optimal bandwidth of the residuals of the VAR.
-            This is the bandwidth used when bandwidth is not provided.
+            The estimated optimal bandwidth of the residuals of the VAR, from
+            which the bandwidth is computed when bandwidth is not provided.
         """
         return self._setup()[1].opt_bandwidth
 

@@ -37,19 +37,35 @@ only used by
    TukeyParzen
    ZeroLag
 
-When ``bandwidth`` is ``None`` the bandwidth :math:`\hat{b}_T=c_k[\hat{\alpha}(q)T]^{1/(2q+1)}`
-of Andrews (1991) is estimated, where :math:`c_k` and :math:`q` depend on the kernel
-and :math:`\hat{\alpha}(q)` measures the persistence of the data. ``bandwidth_method``
-chooses how :math:`\hat{\alpha}(q)` is estimated. An explicit ``bandwidth`` overrides it,
-and ``ZeroLag`` has no bandwidth.
+The kernels that are 0 beyond 1, all except the quadratic-spectral, weight lag
+:math:`h` by :math:`k(h/(H+1))` for a ``bandwidth`` :math:`H`, so that :math:`H` is the
+number of lags with a positive weight, as in the estimator of Newey and West (1987).
+``Bartlett(x, bandwidth=L)`` is the estimator with :math:`L` lags. The quadratic-spectral
+kernel weights every lag by :math:`k(h/H)`.
+
+When ``bandwidth`` is ``None`` the optimal bandwidth
+:math:`\hat{b}_T=c_k[\hat{\alpha}(q)T]^{1/(2q+1)}` of Andrews (1991) is estimated, where
+:math:`c_k` and :math:`q` depend on the kernel and :math:`\hat{\alpha}(q)` measures the
+persistence of the data. It is ``opt_bandwidth``, the bandwidth :math:`S` of the kernel
+:math:`k(h/S)` in Andrews (1991) and Newey and West (1994), so the kernels that are 0
+beyond 1 use ``bandwidth`` :math:`H=\max(\hat{b}_T-1,0)`, whose weights are those of
+:math:`\hat{b}_T`, and the quadratic-spectral kernel uses :math:`H=\hat{b}_T`. With
+``force_int=True``, :math:`H` is rounded up, which is the integer part of
+:math:`\hat{b}_T` for the kernels that are 0 beyond 1, as in Newey and West (1994).
+``bandwidth_method`` chooses how :math:`\hat{\alpha}(q)` is estimated. An explicit
+``bandwidth`` overrides it, and ``ZeroLag`` has no bandwidth.
 
 * ``"newey-west"`` (the default) uses the nonparametric estimate of Newey and West
   (1994), which depends on the number of autocovariances used in the pilot estimate
-  (:math:`n=\lceil 4(T/100)^r\rceil`).
+  (:math:`n=\lfloor 4(T/100)^r\rfloor`). ``opt_bandwidth`` agrees with
+  ``sandwich::bwNeweyWest`` in R, the long-run covariance with ``sandwich::kernHAC``
+  using that bandwidth, and the Bartlett estimate with ``force_int=True`` with
+  ``sandwich::NeweyWest``.
 * ``"andrews"`` uses the AR(1) plug-in estimate of Andrews (1991, Section 6), which has
   no pilot lag. An AR(1) with a constant is fitted to each column of the data, and the
-  persistence and innovation variance of the columns are combined using ``weights``. The
-  bandwidths agree with ``sandwich::bwAndrews`` in R for the Bartlett, Parzen,
+  persistence and innovation variance of the columns are combined using ``weights``.
+  ``opt_bandwidth`` agrees with ``sandwich::bwAndrews`` in R, and the long-run covariance
+  with ``sandwich::kernHAC`` using that bandwidth, for the Bartlett, Parzen,
   Tukey-Hanning and quadratic-spectral kernels. The formula is applied to all other
   kernels using their own :math:`q` and :math:`c_k`. For complex data, the real and
   imaginary parts are two columns with the same weight.
@@ -65,7 +81,8 @@ and ``ZeroLag`` has no bandwidth.
     for t in range(1, 500):
         x[t] = np.array([0.8, 0.2]) * x[t - 1] + rng.standard_normal(2)
     for method in ("newey-west", "andrews"):
-        print(method, Bartlett(x, bandwidth_method=method).bandwidth)
+        est = Bartlett(x, bandwidth_method=method)
+        print(method, est.opt_bandwidth, est.bandwidth)
     QuadraticSpectral(x, bandwidth_method="andrews", force_int=True).bandwidth
 
 :class:`~arch.covariance.var.PreWhitenedRecolored` has the same option, which is used

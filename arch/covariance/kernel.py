@@ -281,12 +281,12 @@ def _kernel_covariance_template() -> None:
 
        %(formula)s
 
-    where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
+    %(lags)s
 
     If the bandwidth is not provided, it is estimated using the constants of
     [1]_ and either the automatic lag selection of [2]_, the default, or the
     AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See
-    ``opt_bandwidth`` for details.
+    ``opt_bandwidth`` and ``bandwidth`` for details.
 
     **Complex data.** The estimators accept complex data, for which they are
     Hermitian. The lag-:math:`j` autocovariance is
@@ -317,11 +317,34 @@ _KERNEL_COVARIANCE_DOC = _kernel_covariance_template.__doc__
 _KernelT = TypeVar("_KernelT", bound=type)
 
 
+_BOUNDED_LAGS = r"""where :math:`z=\frac{h}{H+1}` for the lags :math:`h=0, 1, \ldots` that
+    are smaller than :math:`H+1`, and H is the bandwidth. The weights of the
+    lags :math:`h\geq H+1` are 0, so that H is the number of lags with a
+    positive weight, as in the estimator of Newey and West (1987), and a
+    bandwidth of 0 uses only lag 0. The weights of a bandwidth H are those of
+    the kernel :math:`k\left(h/S\right)` of [1]_ and [2]_ with
+    :math:`S=H+1`."""
+
+_QS_LAGS = r"""where :math:`z=\frac{h}{H}` for the lags :math:`h=0, 1, \ldots, T-1` and
+    H is the bandwidth, as in [1]_. Every lag has a weight, and a bandwidth of
+    0 uses only lag 0."""
+
+
+def _bounded_lags(bandwidth: float) -> Float64Array:
+    """
+    The lags h = 0, 1, ... with a positive weight in a kernel that is 0 beyond 1.
+
+    These are the lags smaller than bandwidth + 1, since the weight of lag h is
+    k(h / (bandwidth + 1)). A fractional bandwidth uses the lag floor(bandwidth) + 1.
+    """
+    return np.arange(np.ceil(bandwidth + 1.0), dtype="double")
+
+
 def _kernel_substitution(
-    kernel_name: str, formula: str
+    kernel_name: str, formula: str, lags: str = _BOUNDED_LAGS
 ) -> Callable[[_KernelT], _KernelT]:
     """Set the docstring of a kernel estimator using its name and weight formula"""
-    substitution = Substitution(kernel_name=kernel_name, formula=formula)
+    substitution = Substitution(kernel_name=kernel_name, formula=formula, lags=lags)
 
     def decorator(cls: _KernelT) -> _KernelT:
         cls.__doc__ = _KERNEL_COVARIANCE_DOC
@@ -438,8 +461,10 @@ class CovarianceEstimator(ABC):
     Notes
     -----
     The kernel weights are defined by the concrete estimators that inherit from
-    this class. They are computed using :math:`z=\frac{h}{H}, h=0, 1, \ldots, H`
-    where H is the bandwidth.
+    this class. A kernel that is 0 beyond 1 uses :math:`z=\frac{h}{H+1}` for the
+    lags h that are smaller than :math:`H+1`, where H is the bandwidth, so that
+    H is the number of lags with a positive weight. The quadratic-spectral
+    kernel uses :math:`z=\frac{h}{H}` for every lag.
 
     If the bandwidth is not provided, it is estimated using the constants of
     [1]_ and either the automatic lag selection of [2]_, the default, or the
@@ -474,6 +499,9 @@ class CovarianceEstimator(ABC):
     # Whether complex data are accepted. The estimators that cannot be Hermitian, such
     # as the VAR prewhitening, set this to False
     _allow_complex = True
+    # Whether the kernel is 0 beyond 1. Lag h then has the weight k(h / (H + 1)) for a
+    # bandwidth H, while the quadratic-spectral kernel uses k(h / H)
+    _bounded_support = True
 
     def __init__(
         self,
@@ -562,16 +590,29 @@ class CovarianceEstimator(ABC):
 
     @property
     def bandwidth(self) -> float:
-        """
+        r"""
         The bandwidth used by the covariance estimator.
 
         Returns
         -------
         float
-            The user-provided or estimated optimal bandwidth.
+            The user-provided bandwidth, or the bandwidth of the estimated
+            optimal bandwidth ``opt_bandwidth``.
+
+        Notes
+        -----
+        ``opt_bandwidth`` is the bandwidth S of the kernel :math:`k(h/S)` of
+        Andrews (1991) and Newey and West (1994). A kernel that is 0 beyond 1
+        gives lag h the weight :math:`k(h/(H+1))` for a bandwidth H, so its
+        estimated bandwidth is :math:`H=\max(S-1, 0)`, and the weights are those
+        of S. The quadratic-spectral kernel uses :math:`k(h/H)`, and its estimated
+        bandwidth is S. The bandwidth is rounded up if ``force_int`` is True.
         """
         if self._bandwidth is None:
-            self._bandwidth = self.opt_bandwidth
+            bandwidth = self.opt_bandwidth
+            if self._bounded_support:
+                bandwidth = max(bandwidth - 1.0, 0.0)
+            self._bandwidth = bandwidth
         if self._force_int:
             return float(int(np.ceil(self._bandwidth)))
         assert self._bandwidth is not None
@@ -806,6 +847,13 @@ class CovarianceEstimator(ABC):
         1, and is rounded up if ``force_int`` is True. ZeroLag ignores
         ``bandwidth_method``, and its bandwidth is 0.
 
+        :math:`\hat{b}_T` is the bandwidth S of the kernel :math:`k(h/S)` in [1]_
+        and [2]_. A kernel that is 0 beyond 1 weights lag h by
+        :math:`k(h/(H+1))` for a bandwidth H, so the estimator uses
+        :math:`H=\max(\hat{b}_T-1, 0)`, whose weights are those of
+        :math:`\hat{b}_T`. The quadratic-spectral kernel uses
+        :math:`H=\hat{b}_T`. See ``bandwidth``.
+
         References
         ----------
         .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation
@@ -912,9 +960,7 @@ class Bartlett(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        return ((bw + 1 - np.arange(int(bw + 1), dtype="double")) / (bw + 1)).astype(
-            float
-        )
+        return ((bw + 1 - _bounded_lags(bw)) / (bw + 1)).astype(float)
 
 
 _parzen_formula = """\
@@ -942,7 +988,7 @@ class Parzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         w = np.empty_like(x)
         loc = x <= 0.5
         w[loc] = 1 - 6 * x[loc] ** 2 * (1 - x[loc])
@@ -974,7 +1020,7 @@ class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 1 - x**2
 
 
@@ -1004,7 +1050,7 @@ class ParzenGeometric(CovarianceEstimator, metaclass=AbstractDocStringInheritor)
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 1 / (1 + x)
 
 
@@ -1032,7 +1078,7 @@ class ParzenCauchy(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 1 / (1 + x**2)
 
 
@@ -1060,7 +1106,7 @@ class TukeyHamming(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 0.54 + 0.46 * np.cos(np.pi * x)
 
 
@@ -1088,7 +1134,7 @@ class TukeyHanning(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 0.5 + 0.5 * np.cos(np.pi * x)
 
 
@@ -1116,7 +1162,7 @@ class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
+        x = _bounded_lags(bw) / (bw + 1)
         return 0.436 + 0.564 * np.cos(np.pi * x)
 
 
@@ -1129,8 +1175,10 @@ w=\\begin{cases} \
 """
 
 
-@_kernel_substitution(kernel_name=_qs_name, formula=_qs_formula)
+@_kernel_substitution(kernel_name=_qs_name, formula=_qs_formula, lags=_QS_LAGS)
 class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
+    _bounded_support = False
+
     @property
     def kernel_const(self) -> float:
         return 1.3221

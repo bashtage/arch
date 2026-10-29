@@ -125,10 +125,12 @@ def test_covariance_errors(data: ArrayLike, estimator: type[CovarianceEstimator]
 
 def test_bartlett_auto(data: ArrayLike):
     nw = Bartlett(data, force_int=True)
+    # The integer part of the optimal bandwidths 8.48 and 11.87, as in Newey and West
+    # (1994), see SANDWICH_NW_BANDWIDTHS
     if data.ndim == 1:
-        expected_bw = 9
+        expected_bw = 8
     else:
-        expected_bw = 12
+        expected_bw = 11
     assert int(nw.bandwidth) == expected_bw
     expected = 1.0 - np.arange(nw.bandwidth + 1) / (nw.bandwidth + 1)
     assert_allclose(nw.kernel_weights, expected)
@@ -159,8 +161,30 @@ def test_bartlett_auto(data: ArrayLike):
 def test_parzen_auto(data: ArrayLike):
     pz = Parzen(data, force_int=True)
 
+    # The integer parts of the optimal bandwidths 15.56 and 16.28, with weights
+    # k(h / (H + 1))
     if data.ndim == 1:
-        expected_bw: tuple[int, ...] = (16,)
+        expected_bw: tuple[int, ...] = (15,)
+        expected_weights = [
+            1.00000000e00,
+            9.78027344e-01,
+            9.17968750e-01,
+            8.28613281e-01,
+            7.18750000e-01,
+            5.97167969e-01,
+            4.72656250e-01,
+            3.54003906e-01,
+            2.50000000e-01,
+            1.67480469e-01,
+            1.05468750e-01,
+            6.10351562e-02,
+            3.12500000e-02,
+            1.31835938e-02,
+            3.90625000e-03,
+            4.88281250e-04,
+        ]
+    else:
+        expected_bw = (16,)
         expected_weights = [
             1.00000000e00,
             9.80460004e-01,
@@ -179,28 +203,6 @@ def test_parzen_auto(data: ArrayLike):
             1.09912477e-02,
             3.25666599e-03,
             4.07083249e-04,
-        ]
-    else:
-        expected_bw = (17,)
-        expected_weights = [
-            1.00000000e00,
-            9.82510288e-01,
-            9.34156379e-01,
-            8.61111111e-01,
-            7.69547325e-01,
-            6.65637860e-01,
-            5.55555556e-01,
-            4.45473251e-01,
-            3.41563786e-01,
-            2.50000000e-01,
-            1.75582990e-01,
-            1.17626886e-01,
-            7.40740741e-02,
-            4.28669410e-02,
-            2.19478738e-02,
-            9.25925926e-03,
-            2.74348422e-03,
-            3.42935528e-04,
         ]
     assert int(pz.bandwidth) in expected_bw
     if data.ndim > 1 or (pz.bandwidth + 1) == len(expected_weights):

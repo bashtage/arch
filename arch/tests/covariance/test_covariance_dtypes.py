@@ -212,7 +212,7 @@ def test_hermitian_automatic_bandwidth(kernel, center, weights):
     w = np.ones(NVAR) if weights is None else np.asarray(weights)
     estimator = kernel(z, center=center, weights=weights)
     expected = _automatic_bandwidth(kernel, z, w, center)
-    assert_allclose(estimator.bandwidth, expected, rtol=1e-10)
+    assert_allclose(estimator.opt_bandwidth, expected, rtol=1e-10)
     # With that bandwidth the estimates are those of the real data
     reference = kernel(
         np.column_stack([a, b]), bandwidth=estimator.bandwidth, center=center
