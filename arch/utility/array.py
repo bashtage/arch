@@ -156,13 +156,16 @@ def as_float64(x: Any, name: str, *, allow_complex: bool = False) -> Any:
     x : array_like
         The data. Integer, unsigned integer, Boolean, float32 and other real
         floating point data are converted to float64. Object data are converted
-        if every element is a real number. float16 data are not accepted.
+        if every element is a number, and are real if no element has an
+        imaginary part different from 0, even if the elements are complex
+        numbers. float16 data are not accepted.
     name : str
         The name of the variable. Used in error messages.
     allow_complex : bool, optional
-        If True, complex data (complex64, complex128 or object data with a
-        complex element) are converted to complex128. Real data are still
-        converted to float64. If False, complex data are not accepted.
+        If True, complex data (complex64, complex128 or object data with an
+        element that has an imaginary part different from 0) are converted to
+        complex128. Real data are still converted to float64. If False, complex
+        data are not accepted.
 
     Returns
     -------
@@ -216,7 +219,7 @@ def as_float64(x: Any, name: str, *, allow_complex: bool = False) -> Any:
     if kind in "biu":
         return arr.astype(np.float64)
     if kind == "O":
-        return _object_as_float64(arr, x, name, allow_complex)
+        return _object_values(arr, x, name, allow_complex)
     raise TypeError(
         f"{name} must be array_like with integer, Boolean or floating point "
         f"values that can be converted to float64. Received an array with shape "
@@ -224,31 +227,62 @@ def as_float64(x: Any, name: str, *, allow_complex: bool = False) -> Any:
     )
 
 
-def _object_as_float64(arr: np.ndarray, x: Any, name: str, allow_complex: bool) -> Any:
-    """Convert an object array to float64, or to complex128 if allowed and needed."""
-    if any(item is None for item in arr.flat):
-        raise TypeError(
-            f"{name} must contain real numbers that can be converted to "
-            f"float64; got None in an object array with shape {arr.shape} "
-            f"({type(x).__name__})"
-        )
+def _object_values(
+    values: np.ndarray,
+    x: Any,
+    name: str,
+    allow_complex: bool,
+    none_is_nan: bool = False,
+) -> np.ndarray:
+    """
+    Convert object data to float64, or to complex128 if an element is complex.
+
+    This is the only conversion of object data. It is used for object arrays and for
+    the object columns of a Series or DataFrame (``x`` is used in the messages).
+
+    The values are cast to complex128, which accepts every real and complex number,
+    such as Python, NumPy and Decimal numbers, so that an element that is not a number
+    raises. If no imaginary part is different from 0, the real parts are returned as
+    float64. Otherwise the data are complex, and they are returned as complex128 if
+    ``allow_complex`` and are rejected if not.
+
+    None is rejected, so that a missing argument or value does not become a NaN,
+    unless ``none_is_nan``. pandas data use it, since pandas treats None as missing
+    and converts it to NaN. NumPy casts None to a complex NaN, which would be complex
+    data, so None is found before the cast.
+    """
+    if isinstance(x, (Series, DataFrame)):
+        source = f"a {type(x).__name__} with shape {x.shape}"
+    else:
+        source = f"an object array with shape {values.shape}"
     try:
-        if any(isinstance(item, (complex, np.complexfloating)) for item in arr.flat):
-            if not allow_complex:
-                raise TypeError("complex data are not allowed")
-            return arr.astype(np.complex128)
-        return arr.astype(np.float64)
+        missing = np.equal(values, None).astype(bool)
+    except (TypeError, ValueError):
+        # An element with an unusual comparison is not None, and the cast rejects it
+        missing = np.zeros(values.shape, dtype=bool)
+    if np.any(missing):
+        if not none_is_nan:
+            raise TypeError(
+                f"{name} must contain real numbers that can be converted to "
+                f"float64; got None in {source} ({type(x).__name__})"
+            )
+        values = np.where(missing, np.nan, values)
+    try:
+        as_complex = values.astype(np.complex128)
     except (TypeError, ValueError) as exc:
-        if allow_complex:
-            try:
-                return arr.astype(np.complex128)
-            except (TypeError, ValueError):
-                pass
         raise TypeError(
-            f"{name} must contain real numbers that can be converted to "
-            f"float64. Received an object array with shape {arr.shape} that "
-            f"contains elements that cannot be converted ({exc})."
+            f"{name} must contain real numbers that can be converted to float64. "
+            f"Received {source} that contains elements that cannot be converted "
+            f"({exc})."
         ) from exc
+    if not np.any(as_complex.imag):
+        return np.ascontiguousarray(as_complex.real)
+    if not allow_complex:
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to float64; "
+            f"got complex numbers in {source} ({type(x).__name__})"
+        )
+    return as_complex
 
 
 def _is_exactly(dtype: Any, target: type) -> bool:
@@ -273,27 +307,37 @@ def _astype_pandas(
     """
     Convert a Series or DataFrame using astype.
 
-    If float64 is the target and the data are objects with complex elements, complex128
-    is used when complex data are allowed. Returns the converted object and the data
+    The object columns are converted by ``_object_values``, and the target is
+    complex128 if one of them is complex. Returns the converted object and the data
     type that it was converted to.
     """
+    dtypes = list(x.dtypes) if isinstance(x, DataFrame) else [x.dtype]
+    objects = {
+        i: _object_values(
+            (x if isinstance(x, Series) else x.iloc[:, i]).to_numpy(),
+            x,
+            name,
+            allow_complex,
+            none_is_nan=True,
+        )
+        for i, dtype in enumerate(dtypes)
+        if isinstance(dtype, np.dtype) and dtype.kind == "O"
+    }
+    if any(values.dtype.kind == "c" for values in objects.values()):
+        target = np.complex128
     try:
-        dtypes = list(x.dtypes) if isinstance(x, DataFrame) else [x.dtype]
-        if target is np.float64 and any(dtype.kind == "O" for dtype in dtypes):
-            if any(
-                isinstance(item, (complex, np.complexfloating))
-                for item in x.to_numpy().flat
-            ):
-                if not allow_complex:
-                    raise TypeError("complex data are not allowed")
-                target = np.complex128
-        return x.astype(target), target
+        if not objects:
+            return x.astype(target), target
+        if isinstance(x, Series):
+            return Series(objects[0].astype(target), index=x.index, name=x.name), target
+        # Columns by position, since the labels of the columns can be duplicated
+        columns = [
+            objects[i] if i in objects else x.iloc[:, i].astype(target).to_numpy()
+            for i in range(x.shape[1])
+        ]
+        values: np.ndarray = np.column_stack(columns).astype(target)
+        return DataFrame(values, index=x.index, columns=x.columns), target
     except (TypeError, ValueError) as exc:
-        if allow_complex and target is np.float64:
-            try:
-                return x.astype(np.complex128), np.complex128
-            except (TypeError, ValueError):
-                pass
         raise TypeError(
             f"{name} must contain real numbers that can be converted to float64. "
             f"Received a {type(x).__name__} with shape {x.shape} that contains "
