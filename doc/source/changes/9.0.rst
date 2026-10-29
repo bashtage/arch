@@ -620,7 +620,7 @@ Backward-incompatible changes
   not ``bool`` raise errors that name the argument. ``plot`` raises a ``ValueError`` for
   a ``scale`` that is not positive and finite and for an ``annualize`` that is not
   ``"d"``, ``"w"`` or ``"m"``, and ``arch_lm_test`` requires ``standardized`` to be a
-  ``bool``. ``var_ratio`` raises for a ``level`` that is not a number and for
+  ``bool``. ``var_ratio`` raises for a ``p`` that is not a number and for
   ``parameters`` that do not have one finite element for each parameter of the
   distribution, and ``hill_estimator`` for a ``k`` that is not an integer or is outside
   ``[1, n - 1]`` (:issue:`949`).
