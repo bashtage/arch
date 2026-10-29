@@ -607,6 +607,13 @@ def test_wald_values():
     assert WaldTestStatistic(np.inf, 1, "a", "b").pval == 0.0
 
 
+@pytest.mark.parametrize("stat", [50.0, 100.0, 500.0, 1000.0])
+def test_wald_pvalue_upper_tail(stat):
+    wald = WaldTestStatistic(stat, 2, "a", "b")
+    # For two degrees of freedom the upper tail has this closed form.
+    assert_allclose(wald.pval, np.exp(-stat / 2), rtol=1e-12, atol=0)
+
+
 def test_formats():
     assert str_format(np.nan) == "        "
     assert str_format(np.inf) == "     inf"

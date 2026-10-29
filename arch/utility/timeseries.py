@@ -201,9 +201,9 @@ def add_trend(
         columns = _enforce_unique_col_name([str(col) for col in x.columns], columns)
         trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:
-            x = trend_array_df.join(x)
+            x = pd.concat((trend_array_df, x), axis=1)
         else:
-            x = x.join(trend_array_df)
+            x = pd.concat((x, trend_array_df), axis=1)
     elif prepend:
         x = np.column_stack((trend_array, x))
     else:

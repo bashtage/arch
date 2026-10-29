@@ -103,7 +103,7 @@ class _CommonCointegrationResults:
         """
         P-values of the parameters in the cointegrating vector.
         """
-        return Series(2 * (1 - stats.norm.cdf(np.abs(self.tvalues))), name="pvalues")
+        return Series(2 * stats.norm.sf(np.abs(self.tvalues)), name="pvalues")
 
     @property
     def cov(self) -> pd.DataFrame:
@@ -452,7 +452,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
             stubs = list(self.full_params.index)
             se = np.sqrt(np.diag(self.full_cov))
             tstats = params / se
-            pvalues = 2 * (1 - stats.norm.cdf(np.abs(tstats)))
+            pvalues = 2 * stats.norm.sf(np.abs(tstats))
         else:
             params = np.asarray(self.params)
             stubs = list(self.params.index)
