@@ -1,0 +1,41 @@
+﻿arch.bootstrap.LocalBlockBootstrap
+==================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: LocalBlockBootstrap
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,reset,update_indices,var,
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~LocalBlockBootstrap.apply
+      ~LocalBlockBootstrap.bootstrap
+      ~LocalBlockBootstrap.clone
+      ~LocalBlockBootstrap.conf_int
+      ~LocalBlockBootstrap.cov
+      ~LocalBlockBootstrap.reset
+      ~LocalBlockBootstrap.update_indices
+      ~LocalBlockBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~LocalBlockBootstrap.block_size
+      ~LocalBlockBootstrap.generator
+      ~LocalBlockBootstrap.index
+      ~LocalBlockBootstrap.locality
+      ~LocalBlockBootstrap.state
+   
+   
+   

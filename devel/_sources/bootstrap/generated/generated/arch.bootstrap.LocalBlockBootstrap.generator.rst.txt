@@ -1,0 +1,6 @@
+arch.bootstrap.LocalBlockBootstrap.generator
+============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: LocalBlockBootstrap.generator

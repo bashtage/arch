@@ -1,0 +1,6 @@
+arch.bootstrap.LocalBlockBootstrap.locality
+===========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: LocalBlockBootstrap.locality
