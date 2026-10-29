@@ -235,11 +235,12 @@ def test_validation(row):
     run_row(row)
 
 
-def test_p_must_be_given():
-    with pytest.raises(TypeError, match="p"):
-        kupiec_pof(RETURNS, VAR)  # type: ignore[call-arg]
-    with pytest.raises(TypeError, match="p"):
-        christoffersen_conditional_coverage(RETURNS, VAR)  # type: ignore[call-arg]
+def test_p_default_is_95_percent_var():
+    # p is 0.05, a 95% VaR, by default, except in the Basel traffic light (99%)
+    assert kupiec_pof(RETURNS, VAR).stat == kupiec_pof(RETURNS, VAR, 0.05).stat
+    default = christoffersen_conditional_coverage(RETURNS, VAR)
+    assert default.stat == christoffersen_conditional_coverage(RETURNS, VAR, 0.05).stat
+    assert "0.05" in default.null
 
 
 def test_fraction_p_accepted():

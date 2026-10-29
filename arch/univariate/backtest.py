@@ -38,10 +38,20 @@ _RED_PROBABILITY = 0.9999
 def _aligned(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
-) -> tuple[Float64Array1D, Float64Array1D]:
-    """Validate returns and var, and align them (on the index if both are Series)."""
+) -> tuple[Float64Array1D, Float64Array1D, pd.Index | None]:
+    """
+    Validate returns and var, and align them (on the index if both are Series).
+
+    The index is that of the observations used, which is the index of returns if it
+    is a pandas object, or of var if only var is, and None for arrays.
+    """
     ret = check_array("returns", returns, ndim=1, min_length=1)
     var_arr = check_array("var", var, ndim=1, min_length=1)
+    index: pd.Index | None = None
+    if isinstance(returns, (pd.Series, pd.DataFrame)):
+        index = returns.index
+    elif isinstance(var, (pd.Series, pd.DataFrame)):
+        index = var.index
     if isinstance(returns, pd.Series) and isinstance(var, pd.Series):
         if not returns.index.equals(var.index):
             if not (returns.index.is_unique and var.index.is_unique):
@@ -56,28 +66,29 @@ def _aligned(
             )
             ret = ret[pos]
             var_arr = var_arr[var.index.get_indexer(returns.index[pos])]
+            index = returns.index[pos]
     elif ret.shape[0] != var_arr.shape[0]:
         raise ValueError(
             f"var must be an array with the same length as returns ({ret.shape[0]}) "
             f"or aligned with returns on the index; got length {var_arr.shape[0]} "
             f"({type(var).__name__})"
         )
-    return ret, var_arr
+    return ret, var_arr, index
 
 
 def _exceptions(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
     min_obs: int,
-) -> BoolArray:
-    ret, var_arr = _aligned(returns, var)
+) -> tuple[BoolArray, pd.Index | None]:
+    ret, var_arr, index = _aligned(returns, var)
     nobs = ret.shape[0]
     if nobs < min_obs:
         raise ValueError(
             f"returns must be aligned with var on at least {min_obs} observation"
             f"{'' if min_obs == 1 else 's'}; got {nobs} (int)"
         )
-    return -ret > var_arr
+    return -ret > var_arr, index
 
 
 def _lr_pof(exceptions: int, nobs: int, p: float) -> float:
@@ -126,7 +137,7 @@ def _lr_independence(exceptions: BoolArray) -> float:
 def var_exceptions(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
-) -> BoolArray:
+) -> BoolArray | pd.Series:
     r"""
     Identify the exceptions of a VaR forecast.
 
@@ -144,9 +155,12 @@ def var_exceptions(
 
     Returns
     -------
-    ndarray
+    {ndarray, Series}
         A bool array that is True where the return is an exception, that is
-        where the loss exceeds the VaR, ``-returns > var``.
+        where the loss exceeds the VaR, ``-returns > var``. It is a Series named
+        ``"exception"`` if ``returns`` or ``var`` is a pandas object, with the
+        index of the observations that are used: the index of ``returns`` if it
+        is a pandas object, and otherwise the index of ``var``.
 
     Raises
     ------
@@ -166,14 +180,27 @@ def var_exceptions(
     :math:`-r_t > \mathrm{VaR}_t`. A quantile of the distribution of returns,
     which is negative for the lower tail, must be negated first. A loss that
     equals the VaR is not an exception.
+
+    Only two Series are aligned on the index. A DataFrame, an array, or a Series
+    used with an array, is matched by position, so the VaR forecast for the
+    return in position :math:`t` must be in position :math:`t`. The forecasts
+    of :meth:`~arch.univariate.base.ARCHModelResult.forecast` are indexed by the
+    date of the forecast origin by default, so that the one-step forecast for
+    day :math:`t` has the label of day :math:`t-1`. Use
+    ``forecast(..., align="target")``, or shift the VaR forward by one
+    observation, so that each VaR has the label of the return that it is a
+    forecast of.
     """
-    return _exceptions(returns, var, 1)
+    exceptions, index = _exceptions(returns, var, 1)
+    if index is None:
+        return exceptions
+    return pd.Series(exceptions, index=index, name="exception")
 
 
 def kupiec_pof(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
-    p: float,
+    p: float = 0.05,
 ) -> WaldTestStatistic:
     r"""
     Kupiec proportion-of-failures test of the coverage of VaR.
@@ -186,10 +213,10 @@ def kupiec_pof(
         VaR forecasts as positive losses, a 1-d array of finite numbers. See
         `var_exceptions` for the sign convention and for how the inputs are
         aligned.
-    p : float
+    p : float, optional
         The probability of an exception that the VaR is designed for, which is
         the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
-        and 0.01 for a 99% VaR.
+        and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.
 
     Returns
     -------
@@ -234,7 +261,7 @@ def kupiec_pof(
        measurement models. The Journal of Derivatives, 3(2), 73-84.
     """
     p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
-    exceptions = _exceptions(returns, var, 1)
+    exceptions, _ = _exceptions(returns, var, 1)
     stat = _lr_pof(int(exceptions.sum()), exceptions.shape[0], p)
     return WaldTestStatistic(
         stat,
@@ -310,7 +337,7 @@ def christoffersen_independence(
     .. [1] Christoffersen, P. F. (1998). Evaluating interval forecasts.
        International Economic Review, 39(4), 841-862.
     """
-    exceptions = _exceptions(returns, var, 2)
+    exceptions, _ = _exceptions(returns, var, 2)
     return WaldTestStatistic(
         _lr_independence(exceptions),
         df=1,
@@ -323,7 +350,7 @@ def christoffersen_independence(
 def christoffersen_conditional_coverage(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
-    p: float,
+    p: float = 0.05,
 ) -> WaldTestStatistic:
     r"""
     Christoffersen test of the conditional coverage of VaR.
@@ -337,10 +364,10 @@ def christoffersen_conditional_coverage(
         VaR forecasts as positive losses, a 1-d array of finite numbers. See
         `var_exceptions` for the sign convention and for how the inputs are
         aligned.
-    p : float
+    p : float, optional
         The probability of an exception that the VaR is designed for, which is
         the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
-        and 0.01 for a 99% VaR.
+        and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.
 
     Returns
     -------
@@ -377,7 +404,7 @@ def christoffersen_conditional_coverage(
        International Economic Review, 39(4), 841-862.
     """
     p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
-    exceptions = _exceptions(returns, var, 2)
+    exceptions, _ = _exceptions(returns, var, 2)
     stat = _lr_pof(int(exceptions.sum()), exceptions.shape[0], p)
     stat += _lr_independence(exceptions)
     return WaldTestStatistic(
@@ -406,6 +433,11 @@ class TrafficLightResult:  # numpydoc ignore=PR02
     probability : float
         The cumulative binomial probability of ``exceptions`` or fewer exceptions
         if the probability of an exception is ``p``.
+    type1_error : float
+        The binomial probability of ``exceptions`` or more exceptions if the
+        probability of an exception is ``p``. It is the probability of rejecting
+        an accurate model if a model with this number of exceptions is rejected,
+        the type 1 error of Table 1 of the Basel framework.
     nobs : int
         The number of observations in the window.
     p : float
@@ -421,6 +453,11 @@ class TrafficLightResult:  # numpydoc ignore=PR02
     probability : float
         The cumulative binomial probability of ``exceptions`` or fewer exceptions
         if the probability of an exception is ``p``.
+    type1_error : float
+        The binomial probability of ``exceptions`` or more exceptions if the
+        probability of an exception is ``p``. It is the probability of rejecting
+        an accurate model if a model with this number of exceptions is rejected,
+        the type 1 error of Table 1 of the Basel framework.
     nobs : int
         The number of observations in the window.
     p : float
@@ -431,6 +468,7 @@ class TrafficLightResult:  # numpydoc ignore=PR02
     zone: str
     exceptions: int
     probability: float
+    type1_error: float
     nobs: int
     p: float
 
@@ -467,8 +505,9 @@ def traffic_light(
     -------
     TrafficLightResult
         The zone, the number of exceptions in the window, the cumulative binomial
-        probability of that number of exceptions or fewer, the number of
-        observations in the window and ``p``.
+        probability of that number of exceptions or fewer, the probability of that
+        number or more (the type 1 error), the number of observations in the window
+        and ``p``.
 
     Raises
     ------
@@ -491,11 +530,16 @@ def traffic_light(
     the number of exceptions has a binomial distribution, and the cumulative
     probability :math:`P(X\leq x)` of the observed number :math:`x` sets the zone.
     The zone is green if the probability is below 95%, yellow if it is at least 95%
-    and below 99.99%, and red if it is at least 99.99%. For 250 observations and
-    ``p=0.01``, green is 0 to 4 exceptions, yellow is 5 to 9 and red is 10 or more,
-    which are the boundaries of Table 2 of the framework. The framework
-    deduces the boundaries for other sample sizes from the binomial distribution
-    in the same way, as this function does.
+    and below 99.99%, and red if it is at least 99.99%, since the framework says
+    that the yellow and the red zone begin where the probability equals or exceeds
+    95% and 99.99%. For 250 observations and ``p=0.01``, green is 0 to 4
+    exceptions, yellow is 5 to 9 and red is 10 or more, which are the boundaries of
+    Table 2 of the framework. The framework deduces the boundaries for other sample
+    sizes from the binomial distribution in the same way, as this function does.
+
+    ``type1_error`` is :math:`P(X\geq x)`, the probability that an accurate model
+    has :math:`x` or more exceptions. The two probabilities add up to more than 1
+    by the probability of exactly :math:`x` exceptions.
 
     A series with no exception is always green. Its cumulative probability is the
     probability of the smallest number of exceptions, which is above 95% when
@@ -514,7 +558,7 @@ def traffic_light(
     """
     p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
     window = check_int("window", window, lower=1)
-    exceptions = _exceptions(returns, var, 1)
+    exceptions, _ = _exceptions(returns, var, 1)
     nobs = exceptions.shape[0]
     if window > nobs:
         raise ValueError(
@@ -523,6 +567,7 @@ def traffic_light(
         )
     count = int(exceptions[-window:].sum())
     probability = float(stats.binom.cdf(count, window, p))
+    type1_error = float(stats.binom.sf(count - 1, window, p))
     if count == 0 or probability < _YELLOW_PROBABILITY:
         zone = "green"
     elif probability < _RED_PROBABILITY:
@@ -530,5 +575,10 @@ def traffic_light(
     else:
         zone = "red"
     return TrafficLightResult(
-        zone=zone, exceptions=count, probability=probability, nobs=window, p=p
+        zone=zone,
+        exceptions=count,
+        probability=probability,
+        type1_error=type1_error,
+        nobs=window,
+        p=p,
     )

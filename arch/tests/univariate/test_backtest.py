@@ -349,6 +349,26 @@ BASEL_TABLE2_CDF = [
     0.9999999924748797,
 ]
 
+# R 4.6.1 pbinom(0:15 - 1, 250, 0.01, lower.tail = FALSE): the type 1 error of Table 1
+BASEL_TYPE1 = [
+    1.0,
+    0.9189414838378185,
+    0.7142482612060472,
+    0.45683102668427383,
+    0.24188330223511653,
+    0.10781237309637494,
+    0.04118318406984842,
+    0.013701447855203702,
+    0.0040253387118078235,
+    0.0010565324973568267,
+    0.0002501900687405086,
+    5.389862904704019e-05,
+    1.0638807626992087e-05,
+    1.9358637554504537e-06,
+    3.264615476595364e-07,
+    5.12607372364154e-08,
+]
+
 # (n, p, first yellow count, first red count): R 4.6.1 qbinom(0.95, n, p) and
 # qbinom(0.9999, n, p), the definition of the zones for other sample sizes
 BINOM_ZONES = [
@@ -690,8 +710,32 @@ def _series_pair():
 def test_pandas_same_index():
     returns, var = _series_pair()
     expected = var_exceptions(returns.to_numpy(), var.to_numpy())
-    assert_array_equal(var_exceptions(returns, var), expected)
-    assert isinstance(var_exceptions(returns, var), np.ndarray)
+    assert isinstance(expected, np.ndarray)
+    result = var_exceptions(returns, var)
+    assert isinstance(result, pd.Series)
+    assert result.name == "exception"
+    assert result.dtype == bool
+    assert result.index.equals(returns.index)
+    assert_array_equal(result.to_numpy(), expected)
+
+
+def test_pandas_output_index():
+    returns, var = _series_pair()
+    expected = var_exceptions(returns.to_numpy(), var.to_numpy())
+    # One pandas input is matched by position and gives its index
+    for ret, v, index in (
+        (returns, var.to_numpy(), returns.index),
+        (returns.to_numpy(), var, var.index),
+        (returns.to_frame(), var.to_frame(), returns.index),
+        (returns.to_frame(), var.to_numpy(), returns.index),
+        (returns.to_numpy(), var.to_frame(), var.index),
+    ):
+        result = var_exceptions(ret, v)
+        assert isinstance(result, pd.Series)
+        assert result.index.equals(index)
+        assert_array_equal(result.to_numpy(), expected)
+    # Lists and arrays give an array
+    assert isinstance(var_exceptions(list(returns), list(var)), np.ndarray)
 
 
 def test_pandas_alignment_on_index():
@@ -701,8 +745,13 @@ def test_pandas_alignment_on_index():
     aligned_returns = returns.iloc[20:100].to_numpy()
     aligned_var = var.iloc[20:100].to_numpy()
     expected = var_exceptions(aligned_returns, aligned_var)
-    assert_array_equal(var_exceptions(returns, shifted), expected)
-    assert_array_equal(var_exceptions(shifted, returns), expected[::-1])
+    result = var_exceptions(returns, shifted)
+    assert_array_equal(result, expected)
+    # The index is that of the common observations, in the order of returns
+    assert result.index.equals(returns.index[20:100])
+    reverse = var_exceptions(shifted, returns)
+    assert_array_equal(reverse, expected[::-1])
+    assert reverse.index.equals(shifted.index)
     assert_allclose(
         kupiec_pof(returns, shifted, 0.1).stat,
         kupiec_pof(aligned_returns, aligned_var, 0.1).stat,
@@ -869,12 +918,36 @@ def test_basel_table1():
     previous = 0.0
     for count in range(10):
         returns, var = _window_series(count, 250, history=0)
-        cumulative = traffic_light(returns, var).probability
-        exact = cumulative - previous
-        type1 = 1.0 - previous
+        result = traffic_light(returns, var)
+        exact = result.probability - previous
         assert abs(100.0 * exact - BASEL_TABLE1_EXACT[count]) <= 0.05 + 1e-9
-        assert abs(100.0 * type1 - BASEL_TABLE1_TYPE1[count]) <= 0.05 + 1e-9
-        previous = cumulative
+        assert (
+            abs(100.0 * result.type1_error - BASEL_TABLE1_TYPE1[count]) <= 0.05 + 1e-9
+        )
+        previous = result.probability
+
+
+@pytest.mark.parametrize("count", range(16))
+def test_traffic_light_type1_error(count):
+    returns, var = _window_series(count, 250)
+    result = traffic_light(returns, var)
+    assert_allclose(result.type1_error, BASEL_TYPE1[count], rtol=1e-12)
+    # The two probabilities overlap by the probability of exactly count exceptions
+    exact = BASEL_TABLE2_CDF[count] - (BASEL_TABLE2_CDF[count - 1] if count else 0.0)
+    assert_allclose(result.probability + result.type1_error, 1.0 + exact, rtol=1e-12)
+
+
+def test_traffic_light_type1_error_other_sizes():
+    for count, window, p in (
+        (0, 60, 0.05),
+        (3, 60, 0.05),
+        (12, 500, 0.01),
+        (2, 20, 0.5),
+    ):
+        returns, var = _window_series(count, window)
+        result = traffic_light(returns, var, p=p, window=window)
+        expected = 1.0 - stats.binom.cdf(count - 1, window, p)
+        assert_allclose(result.type1_error, expected, rtol=1e-10)
 
 
 def _expected_zone(count, first_yellow, first_red):
@@ -942,6 +1015,7 @@ def test_traffic_light_result_is_immutable():
         "zone",
         "exceptions",
         "probability",
+        "type1_error",
         "nobs",
         "p",
     ]

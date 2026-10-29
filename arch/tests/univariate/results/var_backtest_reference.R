@@ -137,6 +137,8 @@ cat("}\n\n")
 
 # ---- Kupiec and traffic light: binomial references ---------------------------------
 cat("BASEL_TABLE2_CDF = ", pyvec(sapply(0:15, function(x) fmt(pbinom(x, 250, 0.01)))), "\n", sep = "")
+# The type 1 error of Table 1, P(X >= x)
+cat("BASEL_TYPE1 = ", pyvec(sapply(0:15, function(x) fmt(pbinom(x - 1, 250, 0.01, lower.tail = FALSE)))), "\n", sep = "")
 cat("BINOM_ZONES = [\n")
 for (s in list(c(250, 0.01), c(250, 0.05), c(500, 0.01), c(1000, 0.01), c(100, 0.05),
                c(60, 0.05), c(250, 0.001), c(20, 0.001), c(20, 0.5))) {
