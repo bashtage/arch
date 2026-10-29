@@ -126,7 +126,7 @@ def test_covariance_errors(data: ArrayLike, estimator: type[CovarianceEstimator]
 def test_bartlett_auto(data: ArrayLike):
     nw = Bartlett(data, force_int=True)
     if data.ndim == 1:
-        expected_bw = 11
+        expected_bw = 9
     else:
         expected_bw = 12
     assert int(nw.bandwidth) == expected_bw
@@ -160,29 +160,25 @@ def test_parzen_auto(data: ArrayLike):
     pz = Parzen(data, force_int=True)
 
     if data.ndim == 1:
-        # This test is noisy
-        expected_bw: tuple[int, ...] = (18, 19)
+        expected_bw: tuple[int, ...] = (16,)
         expected_weights = [
-            1.0000e00,
-            9.8575e-01,
-            9.4600e-01,
-            8.8525e-01,
-            8.0800e-01,
-            7.1875e-01,
-            6.2200e-01,
-            5.2225e-01,
-            4.2400e-01,
-            3.3175e-01,
-            2.5000e-01,
-            1.8225e-01,
-            1.2800e-01,
-            8.5750e-02,
-            5.4000e-02,
-            3.1250e-02,
-            1.6000e-02,
-            6.7500e-03,
-            2.0000e-03,
-            2.5000e-04,
+            1.00000000e00,
+            9.80460004e-01,
+            9.26725015e-01,
+            8.46122532e-01,
+            7.45980053e-01,
+            6.33625076e-01,
+            5.16385101e-01,
+            4.01587625e-01,
+            2.96560147e-01,
+            2.08426623e-01,
+            1.39629554e-01,
+            8.79299817e-02,
+            5.08854061e-02,
+            2.60533279e-02,
+            1.09912477e-02,
+            3.25666599e-03,
+            4.07083249e-04,
         ]
     else:
         expected_bw = (17,)
@@ -214,6 +210,20 @@ def test_parzen_auto(data: ArrayLike):
 def test_qs_auto(data: ArrayLike):
     qs = QuadraticSpectral(data, force_int=True)
     if data.ndim == 1:
+        expected_bw = 7
+        expected_weights = [
+            1.0,
+            0.97129429,
+            0.88868708,
+            0.76215336,
+            0.60656912,
+            0.43941928,
+            0.27818444,
+            0.13786058,
+            0.0290259,
+            -0.043247115,
+        ]
+    else:
         expected_bw = 8
         expected_weights = [
             1.0,
@@ -226,20 +236,6 @@ def test_qs_auto(data: ArrayLike):
             0.25923469,
             0.13786058,
             0.04067932,
-        ]
-    else:
-        expected_bw = 9
-        expected_weights = [
-            1.0,
-            0.98256363,
-            0.93155267,
-            0.85073648,
-            0.74599423,
-            0.62475681,
-            0.49531303,
-            0.36605493,
-            0.24474206,
-            0.13786058,
         ]
     assert int(qs.bandwidth) == expected_bw
     assert_allclose(qs.kernel_weights[:10], np.array(expected_weights))
@@ -373,10 +369,29 @@ def test_opt_bandwidth_documented_formula(estimator, const, q, rate):
     for i in range(1, nobs):
         x[i] = 0.5 * x[i - 1] + shocks[i]
     z = x - x.mean()
-    n = int(np.ceil(4 * (nobs / 100) ** rate))
+    n = int(4 * (nobs / 100) ** rate)
     sigma = np.array([z[j:] @ z[: nobs - j] / nobs for j in range(n + 1)])
     lags = np.arange(n + 1)
     s_0 = sigma[0] + 2 * sigma[1:].sum()
     s_q = 2 * (lags[1:] ** q * sigma[1:]).sum()
     expected = const * ((s_q / s_0) ** 2 * nobs) ** (1 / (2 * q + 1))
     assert_allclose(estimator(x).opt_bandwidth, expected, rtol=1e-10)
+
+
+# sandwich::bwNeweyWest(x, kernel=..., prewhite=FALSE) in R 4.6.1 with sandwich 3.1.3,
+# where x is the data of the fixture minus its mean. Its pilot lag is the integer part
+# of 4 (T/100)^r, as in Newey and West (1994, eq. 2-2).
+SANDWICH_NW_BANDWIDTHS = {
+    (1, "Bartlett"): 8.482469062117,
+    (1, "Parzen"): 15.558350760305,
+    (1, "QuadraticSpectral"): 6.292055048942,
+    (2, "Bartlett"): 11.865684348060,
+    (2, "Parzen"): 16.276954502525,
+    (2, "QuadraticSpectral"): 7.397450850350,
+}
+
+
+@pytest.mark.parametrize("kernel", [Bartlett, Parzen, QuadraticSpectral])
+def test_opt_bandwidth_matches_sandwich(data: ArrayLike, kernel):
+    expected = SANDWICH_NW_BANDWIDTHS[(data.ndim, kernel.__name__)]
+    assert_allclose(kernel(data).opt_bandwidth, expected, rtol=1e-11)

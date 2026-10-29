@@ -187,7 +187,7 @@ def _automatic_bandwidth(kernel, z, weights, center):
     x = z - z.mean(0) if center else z
     p, q = x.real @ weights, x.imag @ weights
     nobs = p.shape[0]
-    n = int(np.ceil(4 * ((nobs / 100) ** constants.rate)))
+    n = int(4 * ((nobs / 100) ** constants.rate))
     f_0 = f_q = 0.0
     for j in range(n + 1):
         sigma = (p[j:] @ p[: nobs - j] + q[j:] @ q[: nobs - j]) / nobs

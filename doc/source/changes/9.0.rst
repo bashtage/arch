@@ -312,6 +312,21 @@ to restore the previous results.
   :func:`~arch.unitroot.auto_bandwidth` is affected: the kernel classes,
   :class:`~arch.unitroot.PhillipsPerron` and :class:`~arch.unitroot.KPSS` do not use it.
   Contributed by ZacKienzle2 (:issue:`886`).
+- Fixed the automatic bandwidth of the kernel covariance estimators in
+  :mod:`arch.covariance.kernel` so that the number of autocovariances in the pilot
+  estimate is the integer part of :math:`4(T/100)^{r}`, as in Newey and West (1994) and
+  :func:`~arch.unitroot.auto_bandwidth`. Previously it was rounded up, so that one more
+  autocovariance was used whenever :math:`4(T/100)^{r}` is not an integer. The
+  bandwidths now equal those of ``bwNeweyWest`` in the R package sandwich. Every
+  estimate with an automatic bandwidth changes, including those of
+  :class:`~arch.covariance.var.PreWhitenedRecolored`,
+  :class:`~arch.unitroot.cointegration.DynamicOLS`,
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS`,
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` and
+  :func:`~arch.unitroot.phillips_ouliaris` when ``bandwidth`` is not given. For example,
+  the Bartlett, Parzen and quadratic spectral bandwidths of the daily S&P 500 percent
+  returns in ``arch.data.sp500`` change from 22.88, 31.99 and 13.25 to 31.96, 35.50 and
+  13.61. Pass ``bandwidth`` to use a specific value.
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
