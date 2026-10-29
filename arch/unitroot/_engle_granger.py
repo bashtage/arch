@@ -108,8 +108,9 @@ def engle_granger(
         more than 12 columns, lags is negative, max_lags is not between 0 and
         nobs - 2, or trend or method is not one of the options.
     InfeasibleTestException
-        If the Augmented Dickey-Fuller regression of the residual cannot be
-        estimated with the lags requested. This is also a ValueError.
+        If `y` is constant, or the Augmented Dickey-Fuller regression of the
+        residual cannot be estimated with the lags requested. This is also a
+        ValueError.
 
     See Also
     --------

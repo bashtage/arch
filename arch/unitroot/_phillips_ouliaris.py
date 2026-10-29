@@ -217,6 +217,8 @@ def phillips_ouliaris(
         same number of rows or the same index, or has too few rows. Also if x has
         more than 12 columns, bandwidth is negative, NaN or inf, or trend,
         test_type or kernel is not one of the options.
+    InfeasibleTestException
+        If y is constant. This is also a ``ValueError``.
 
     See Also
     --------

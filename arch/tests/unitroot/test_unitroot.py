@@ -532,11 +532,11 @@ def test_adf_buggy_timeseries2():
 
 def test_adf_buggy_timeseries3():
     x = np.asarray([1] * 1000)
-    adf = ADF(x)
     # AssertionError: Number of manager items must equal union of block items
     # # manager items: 1, # tot_items: 0
-    with pytest.raises(InfeasibleTestException, match=r"The maximum lag you are"):
-        assert np.isfinite(adf.stat)
+    # The constant series is now rejected when the test is created
+    with pytest.raises(InfeasibleTestException, match=r"y is constant"):
+        ADF(x)
 
 
 def test_kpss_buggy_timeseries1():

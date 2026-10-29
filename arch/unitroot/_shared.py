@@ -1,5 +1,6 @@
 from typing import Any, NamedTuple, Optional, cast
 
+import numpy as np
 import pandas as pd
 from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
@@ -12,6 +13,7 @@ from arch.utility._validation import (
     check_str,
 )
 from arch.utility.array import ensure1d, ensure2d
+from arch.utility.exceptions import InfeasibleTestException
 from arch.utility.timeseries import add_trend
 
 try:
@@ -29,6 +31,22 @@ class CointegrationSetup(NamedTuple):
 
 # The number of deterministic terms in the cointegrating regression
 _TREND_TERMS = {"n": 0, "c": 1, "ct": 2, "ctt": 3, "t": 1}
+
+
+def _check_not_constant(y: np.ndarray, name: str = "y") -> None:
+    """
+    Raise InfeasibleTestException if the 1-d data y, which are finite, are constant.
+
+    The statistics of the tests are ratios of quantities that are 0 for constant
+    data. They were nan, raised other errors, or were computed from the rounding
+    errors of removing the mean, which gave arbitrary statistics and p-values.
+    """
+    # A single observation is reported as too few observations by the tests
+    if y.shape[0] > 1 and y.max() == y.min():
+        raise InfeasibleTestException(
+            f"{name} is constant (every value is {float(y[0])!r}), and so the test "
+            "statistic cannot be computed. The test requires a series that varies."
+        )
 
 
 def _check_cointegrating_regression(
@@ -56,6 +74,8 @@ def _check_cointegrating_regression(
     # all estimators use the first difference of the data
     num_params = num_x + _TREND_TERMS[trend_name]
     check_array("x", x_values, ndim=2, min_length=num_params + 2)
+    # After the checks of the shapes, which report a specification that is not possible
+    _check_not_constant(y_values)
     y = ensure1d(y, "y", True)
     x = ensure2d(x, "x")
     if not isinstance(x, pd.DataFrame):

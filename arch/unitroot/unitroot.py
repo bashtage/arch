@@ -53,6 +53,7 @@ from arch._typing import (
     Literal,
     UnitRootTrend,
 )
+from arch.unitroot._shared import _check_not_constant
 from arch.unitroot.critical_values.dfgls import (
     dfgls_cv_approx,
     dfgls_large_p,
@@ -591,8 +592,8 @@ class UnitRootTest(metaclass=ABCMeta):
         If y is not 1-d, contains NaN or inf, lags is negative or trend is not one
         of valid_trends.
     InfeasibleTestException
-        If y has too few observations for the test and lags. This is also a
-        ``ValueError``.
+        If y is constant or has too few observations for the test and lags. This
+        is also a ``ValueError``.
     """
 
     # The smallest number of lags that the test accepts
@@ -637,6 +638,16 @@ class UnitRootTest(metaclass=ABCMeta):
 
         This is called when the test is created.
         """
+
+    def _validate(self) -> None:
+        """
+        Check the specification, and then that y is not constant.
+
+        This is called at the end of the constructor of every test. A specification
+        that is not possible, such as too few observations, is reported first.
+        """
+        self._check_specification()
+        _check_not_constant(self._y)
 
     def _check_nobs(
         self,
@@ -888,9 +899,9 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
         negative, or `trend` or `method` is not one of the options.
     InfeasibleTestException
-        If `y` has too few observations for `trend`, or `lags` or `max_lags`
-        is larger than the observations can support. A regression with `lags`
-        lags needs at least 3 + 2 * `lags` + the number of trend terms
+        If `y` is constant or has too few observations for `trend`, or `lags` or
+        `max_lags` is larger than the observations can support. A regression with
+        `lags` lags needs at least 3 + 2 * `lags` + the number of trend terms
         observations. This is also a ``ValueError``.
 
     Notes
@@ -966,7 +977,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._regression = None
         low_memory = check_bool("low_memory", low_memory, allow_none=True)
         self._low_memory: bool = self._nobs > 1e5 if low_memory is None else low_memory
-        self._check_specification()
+        self._validate()
 
     def _select_lag(self) -> None:
         ic_best, best_lag = _df_select_lags(
@@ -1080,9 +1091,9 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         If `y` is not 1-d or contains NaN or inf, `lags` or `max_lags` is
         negative, or `trend` or `method` is not one of the options.
     InfeasibleTestException
-        If `y` has too few observations for `trend`, or `lags` or `max_lags`
-        is larger than the observations can support. A regression with `lags`
-        lags needs at least 3 + 2 * `lags` observations. This is also a
+        If `y` is constant or has too few observations for `trend`, or `lags` or
+        `max_lags` is larger than the observations can support. A regression with
+        `lags` lags needs at least 3 + 2 * `lags` observations. This is also a
         ``ValueError``.
 
     Notes
@@ -1151,7 +1162,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._c = -7.0
         else:
             self._c = -13.5
-        self._check_specification()
+        self._validate()
 
     def _check_specification(self) -> None:
         # The regression of the detrended data has nobs - 1 - lags rows and 1 + lags
@@ -1265,9 +1276,9 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         If `y` is not 1-d or contains NaN or inf, `lags` is negative, or `trend`
         or `test_type` is not one of the options.
     InfeasibleTestException
-        If `y` has too few observations for `trend`, or `lags` (the default
-        number of lags if it is None) is larger than the number of observations
-        in y minus 1. This is also a ``ValueError``.
+        If `y` is constant or has too few observations for `trend`, or `lags`
+        (the default number of lags if it is None) is larger than the number of
+        observations in y minus 1. This is also a ``ValueError``.
 
     Notes
     -----
@@ -1350,7 +1361,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_tau = None
         self._test_name = "Phillips-Perron Test"
         self._regression = None
-        self._check_specification()
+        self._validate()
 
     def _check_specification(self) -> None:
         # The regression has nobs - 1 residuals, and the long-run covariance
@@ -1475,9 +1486,10 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         If `y` is not 1-d or contains NaN or inf, `lags` is less than -1, or
         `trend` is not one of the options.
     InfeasibleTestException
-        If `y` has too few observations for `trend`, or `lags` (the number from
-        the rule 12 * (nobs/100) ** (1/4) if it is -1) is larger than the number
-        of observations in y. This is also a ``ValueError``.
+        If `y` is constant or has too few observations for `trend`, or `lags`
+        (the number from the rule 12 * (nobs/100) ** (1/4) if it is -1) is
+        larger than the number of observations in y. This is also a
+        ``ValueError``.
 
     Notes
     -----
@@ -1544,7 +1556,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids: ArrayLike1D | None = None
-        self._check_specification()
+        self._validate()
 
     def _check_specification(self) -> None:
         # The long-run covariance estimator can use at most nobs lags. The default
@@ -1676,9 +1688,9 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         negative, `trim` is not in [0, 1/3], or `trend` or `method` is not one of
         the options.
     InfeasibleTestException
-        If `y` has too few observations for `trend`, `lags` or `max_lags`, or
-        int(nobs * trim) is too small for `lags` and `trend`. This is also a
-        ``ValueError``.
+        If `y` is constant or has too few observations for `trend`, `lags` or
+        `max_lags`, or int(nobs * trim) is too small for `lags` and `trend`. This
+        is also a ``ValueError``.
 
     Notes
     -----
@@ -1733,7 +1745,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             "The process contains a unit root with a single structural break."
         )
         self._alternative_hypothesis = "The process is trend and break stationary."
-        self._check_specification()
+        self._validate()
 
     @staticmethod
     def _quick_ols(endog: Float64Array, exog: Float64Array) -> Float64Array:
@@ -1912,9 +1924,9 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         If `y` is not 1-d or contains NaN or inf, `lags` is less than 2, or `trend`
         is not one of the options.
     InfeasibleTestException
-        If `y` has too few observations for `lags`. At least `lags` + 1
-        observations are needed (`lags` + 2 if `debiased`), or 2 * `lags` if
-        `overlap` is False. This is also a ``ValueError``.
+        If `y` is constant or has too few observations for `lags`. At least
+        `lags` + 1 observations are needed (`lags` + 2 if `debiased`), or
+        2 * `lags` if `overlap` is False. This is also a ``ValueError``.
 
     Notes
     -----
@@ -1967,7 +1979,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         for q, cv in zip(quantiles, norm.ppf(quantiles), strict=False):
             self._critical_values[str(int(100 * q)) + "%"] = cv
-        self._check_specification()
+        self._validate()
 
     @property
     def vr(self) -> float:

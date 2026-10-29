@@ -534,6 +534,8 @@ class DynamicOLS:
         that remains after the differences, lags and leads is not larger than
         the number of parameters of the smallest model that is estimated, or if
         trend or method is not one of the options.
+    InfeasibleTestException
+        If y is constant. This is also a ``ValueError``.
 
     Notes
     -----
@@ -1033,6 +1035,8 @@ COMMON_DOCSTRING = r"""
         If y or x contains NaN or inf, does not have the required dimensions, the
         same number of rows or the same index, or has too few rows. Also if trend
         or x_trend is not one of the options.
+    InfeasibleTestException
+        If y is constant. This is also a ``ValueError``.
 
     Notes
     -----
