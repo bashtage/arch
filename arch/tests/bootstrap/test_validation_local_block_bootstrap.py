@@ -112,6 +112,17 @@ for _size in (NOBS + 1, 10**6):
             name="block_size",
         )
     )
+    ROWS.append(
+        Row(
+            "LBB-block_size-too-large-update_indices",
+            lambda block_size: ctor(block_size=block_size, seed=0).update_indices(),
+            {"block_size": _size},
+            ValueError,
+            rf"^block_size must be an integer in \[1, {NOBS}\]; got {_size} \(int\)",
+            id=f"LBB-block_size-gt-n-update_indices-{_size}",
+            name="block_size",
+        )
+    )
 
 # ---- seed: the constructor and clone
 ROWS += bad_value_rows(

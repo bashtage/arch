@@ -2248,7 +2248,7 @@ class LocalBlockBootstrap(CircularBlockBootstrap):
     is the integer number of observations ``K``, and not the fraction ``B``,
     so that ``clone`` can create a bootstrap with the same locality for data of
     any length. A block size of 1 is the local bootstrap for heteroskedastic
-    regression of Shi (1991).
+    regression of Shi [2]_.
 
     The method requires a block size that is large, and a window that is large
     relative to the block size and small relative to the number of
@@ -2286,6 +2286,8 @@ class LocalBlockBootstrap(CircularBlockBootstrap):
     .. [1] Paparoditis, E. and Politis, D. N. (2002). Local block bootstrap.
        Comptes Rendus Mathematique, Academie des Sciences, Paris, Ser. I
        335(11), 959-962.
+    .. [2] Shi, S. G. (1991). Local bootstrap. Annals of the Institute of
+       Statistical Mathematics, 43, 667-676.
 
     Examples
     --------
@@ -2402,6 +2404,9 @@ class LocalBlockBootstrap(CircularBlockBootstrap):
     def update_indices(self) -> Int64Array1D:
         num_items = self._num_items
         block_size = self._block_size
+        if block_size > num_items:
+            # A direct call skips the check made when the iteration starts
+            self._check_sampling()
         num_blocks = -(-num_items // block_size)
         # Zero-based nominal start of each block and the inclusive range of starts
         # A locality of n or more is the whole sample, and the cap avoids overflow
@@ -2413,9 +2418,11 @@ class LocalBlockBootstrap(CircularBlockBootstrap):
             draws = self._generator.random(num_blocks)
         else:
             draws = self._generator.random_sample(num_blocks)
-        # Uniform on lower, ..., upper; the minimum guards against rounding to 1
+        # Uniform on lower, ..., upper. The draws are 53-bit doubles in [0, 1), so
+        # draws * (width + 1) rounds to less than width + 1 and the floor is at
+        # most width
         width = upper - lower
-        offset = np.minimum(np.floor(draws * (width + 1)).astype(np.int64), width)
+        offset = np.floor(draws * (width + 1)).astype(np.int64)
         starts = lower + offset
         indices = (starts[:, None] + np.arange(block_size, dtype=np.int64)).ravel()
         return cast("Int64Array1D", indices[:num_items])

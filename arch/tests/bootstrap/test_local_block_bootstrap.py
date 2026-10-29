@@ -3,9 +3,12 @@ Tests of the local block bootstrap.
 
 There is no other implementation of the local block bootstrap of Paparoditis and
 Politis (2002) in Python, R (CRAN) or any package that is available, so the checks
-are against an independent loop implementation of the algorithm of the paper
+are against an independent loop implementation of the algorithm
 (``reference_indices``) that is driven by the same uniform draws, the exact support
-of the block starts, the distribution of the starts and a simulation.
+of the block starts, the distribution of the starts and a simulation. The loop
+implementation and the R reference use the convention of LocalBlockBootstrap: the
+window of starts is centred on the block's own start, one observation later than
+in the formula of the paper (see the Notes of LocalBlockBootstrap).
 """
 
 from __future__ import annotations
@@ -71,7 +74,9 @@ def reference_indices(n: int, b: int, k: int, u: Any) -> list[int]:
     draw for each block. The indices that are returned are zero-based. The block m
     starts at position m * b + 1 of the data, and its start is drawn uniformly from
     the integers J1, ..., J2 with J1 = max(1, m * b + 1 - K) and
-    J2 = min(n - b + 1, m * b + 1 + K).
+    J2 = min(n - b + 1, m * b + 1 + K). This window is centred on the block's own
+    start, as in LocalBlockBootstrap. The formula of the paper centres it on m * b,
+    one observation earlier.
     """
     out: list[int] = []
     num_blocks = math.ceil(n / b)
@@ -195,10 +200,23 @@ def test_blocks_are_consecutive_and_in_range(n, b, k):
             assert_array_equal(np.diff(block), 1)
 
 
-# Zero-based indices from an independent implementation of the algorithm of the paper
-# in R (R 4.6.1, base R only, function lbb_indices in lbb_ref.R): (n, b, K, draws,
-# indices). No R package implements the local block bootstrap (tseries 0.10-63
-# tsbootstrap has the stationary and the moving block bootstraps only).
+# Zero-based indices from an independent implementation in R (R 4.6.1, base R only)
+# with the window centred on the block's own start, as in reference_indices:
+# (n, b, K, draws, indices). No R package implements the local block bootstrap
+# (tseries 0.10-63 tsbootstrap has the stationary and the moving block bootstraps
+# only). The R function is
+#
+#   lbb_indices <- function(n, b, K, u) {
+#     idx <- integer(0)
+#     for (m in 0:(ceiling(n / b) - 1)) {
+#       j1 <- max(1, m * b + 1 - K)
+#       j2 <- min(n - b + 1, m * b + 1 + K)
+#       j1 <- min(j1, j2)
+#       s <- (j1:j2)[floor(u[m + 1] * (j2 - j1 + 1)) + 1]
+#       idx <- c(idx, s:(s + b - 1) - 1)
+#     }
+#     idx[1:n]
+#   }
 R_CASES = [
     (
         (23, 4, 3),
@@ -570,7 +588,7 @@ def test_properties_and_read_only():
         bs.block_size = 20
     assert bs.block_size == 5
     assert bs.locality == 8
-    assert bs._parameters == [5, 8]
+    assert "block size: 5, locality: 8" in str(bs)
     numpy_int = LocalBlockBootstrap(np.int32(5), np.int16(8), np.arange(20.0))
     assert type(numpy_int.locality) is int
     assert type(numpy_int.block_size) is int
@@ -582,7 +600,7 @@ def test_clone_keeps_block_size_and_locality():
     assert isinstance(clone, LocalBlockBootstrap)
     assert clone.block_size == 7
     assert clone.locality == 11
-    assert clone._parameters == [7, 11]
+    assert "block size: 7, locality: 11" in str(clone)
     assert clone.update_indices().shape == (60,)
     # Data of a different length and a keyword
     clone = bs.clone(np.arange(30.0), z=np.arange(30.0), seed=2)
