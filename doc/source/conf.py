@@ -283,6 +283,8 @@ extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH%s")}
 nitpick_ignore = [
     ("py:class", "numpy.float64"),
     ("py:class", "numpy.int64"),
+    ("py:class", "numpy.int32"),
+    ("py:class", "numpy.uint32"),
 ]
 
 

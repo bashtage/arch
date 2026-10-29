@@ -3,6 +3,7 @@ Biometrika
 Bithell
 Bollerslev
 Chernick
+Christoffersen
 Cushing
 Davison
 Dimitris
@@ -19,6 +20,7 @@ Hannan
 Hanning
 Hobijn
 Khrapov
+Kupiec
 Kwiatkowski
 Lunde
 Marcellino
@@ -28,6 +30,7 @@ Neerlandica
 Newey
 Norges
 Ooms
+Paparoditis
 Parameterless
 Perron
 Politis

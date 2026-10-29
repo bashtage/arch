@@ -96,7 +96,7 @@ estimators are then Hermitian: the lag-:math:`j` autocovariance is
 long-run covariance is a complex Hermitian matrix. For :math:`x_t=a_t+ib_t` it is
 :math:`\Omega_{aa}+\Omega_{bb}+i(\Omega_{ba}-\Omega_{ab})`, where :math:`\Omega_{uv}` is
 the long-run covariance of the real data :math:`u` and :math:`v` estimated with the same
-kernel and bandwidth. :func:`~arch.utility.cov.cov_nw` follows the same rule.
+kernel and bandwidth. ``arch.utility.cov.cov_nw`` follows the same rule.
 
 
 Vector AR-based Estimators
