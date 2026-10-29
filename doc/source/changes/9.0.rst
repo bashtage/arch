@@ -952,8 +952,15 @@ Bug fixes
   p-value from the rounding errors of removing the mean. For example
   :class:`~arch.unitroot.KPSS` rejected stationarity with a p-value of 0.0001, and
   :func:`~arch.unitroot.cointegration.engle_granger` and
-  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics
-  (:issue:`987`).
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics.
+  They also raise it, where they returned NaN or raised ``LinAlgError`` or
+  ``ValueError``, when the statistic or its p-value, or the estimates or their
+  covariance, are not finite or a matrix is singular, which data at an extreme scale
+  such as 1e300 or 1e-300 produce. For example the statistics of
+  :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.PhillipsPerron` and
+  :class:`~arch.unitroot.VarianceRatio` of a random walk multiplied by 1e300 were NaN,
+  and :class:`~arch.unitroot.KPSS` raised
+  ``ValueError: cannot convert float NaN to integer`` (:issue:`987`).
 
 - Fixed ``SkewStudent.ppf`` for a 0-d array such as ``np.array(0.4)``, which failed an
   ``assert`` (it returns a float, as for a Python float), and ``add_trend`` with a

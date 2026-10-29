@@ -1,15 +1,21 @@
 """
-Every unit root and cointegration test with a constant series as y.
+Every unit root and cointegration test with degenerate data.
 
 The statistics are ratios of quantities that are 0 for a constant series, so a
 constant y must raise InfeasibleTestException (a ValueError). Previously the tests
 returned nan, raised ZeroDivisionError or LinAlgError, or computed arbitrary
 statistics and p-values from the rounding errors of removing the mean of a constant
 that is not 0 (KPSS rejected stationarity with a p-value of 0.0001).
+
+NaN and inf in the data raise a ValueError that names the argument. A statistic, a
+p-value or estimates that are not finite, which data at an extreme scale produce,
+and singular matrices raise InfeasibleTestException, where the tests returned nan or
+raised LinAlgError or ValueError.
 """
 
 from collections.abc import Callable
 from typing import Any
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -199,3 +205,117 @@ def test_too_few_observations_is_reported_first():
         ADF(np.zeros(2))
     with pytest.raises(ValueError, match=r"x must be .* with at least 5 rows"):
         engle_granger(np.zeros(2), np.ones((2, 2)))
+
+
+NOT_FINITE = [np.nan, np.inf, -np.inf]
+NOT_FINITE_IDS = ["nan", "inf", "-inf"]
+RANDOM_WALK = np.random.default_rng(3).standard_normal(NOBS).cumsum()
+
+
+@pytest.mark.parametrize("bad", NOT_FINITE, ids=NOT_FINITE_IDS)
+@pytest.mark.parametrize(("test", "kwargs"), UNIT_ROOT_CASES, ids=UNIT_ROOT_IDS)
+def test_unit_root_not_finite_y(test, kwargs, bad):
+    y = RANDOM_WALK.copy()
+    y[NOBS // 2] = bad
+    with pytest.raises(ValueError, match=r"^y must be a 1-d array of finite numbers"):
+        test(y, **kwargs)
+
+
+@pytest.mark.parametrize("bad", NOT_FINITE, ids=NOT_FINITE_IDS)
+@pytest.mark.parametrize("func", COINTEGRATION_CASES)
+def test_cointegration_not_finite_y(func, bad):
+    y = RANDOM_WALK.copy()
+    y[NOBS // 2] = bad
+    with pytest.raises(ValueError, match=r"^y must be a 1-d array of finite numbers"):
+        func(y)
+
+
+@pytest.mark.parametrize("bad", NOT_FINITE, ids=NOT_FINITE_IDS)
+@pytest.mark.parametrize(
+    "func",
+    [
+        engle_granger,
+        phillips_ouliaris,
+        lambda y, x: DynamicOLS(y, x).fit(),
+        lambda y, x: FullyModifiedOLS(y, x).fit(),
+        lambda y, x: CanonicalCointegratingReg(y, x).fit(),
+    ],
+    ids=["engle_granger", "phillips_ouliaris", "DynamicOLS", "FMOLS", "CCR"],
+)
+def test_cointegration_not_finite_x(func, bad):
+    x = X.copy()
+    x.iloc[NOBS // 2, 0] = bad
+    with pytest.raises(ValueError, match=r"^x must be a 2-d array of finite numbers"):
+        func(RANDOM_WALK, x)
+
+
+def _finite_or_infeasible(compute: Callable[[], Any]) -> None:
+    """
+    The result is finite, or InfeasibleTestException is raised, and never nan or inf.
+
+    The data at an extreme scale overflow or underflow, which NumPy warns about.
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            res = compute()
+            # The unit root tests compute the statistic when it is first used
+            if hasattr(res, "stat"):
+                values = [res.stat, res.pvalue]
+            else:
+                values = [*np.asarray(res.params), *np.asarray(res.cov).ravel()]
+        except InfeasibleTestException:
+            return
+    assert np.all(np.isfinite(values))
+
+
+EXTREME_SCALES = {
+    "1e300": 1e300 * RANDOM_WALK,
+    "1e-300": 1e-300 * np.random.default_rng(4).standard_normal(NOBS),
+}
+
+
+@pytest.mark.parametrize("scale", list(EXTREME_SCALES))
+@pytest.mark.parametrize(("test", "kwargs"), UNIT_ROOT_CASES, ids=UNIT_ROOT_IDS)
+def test_unit_root_extreme_scale(test, kwargs, scale):
+    # These gave a statistic and a p-value of nan, and KPSS raised
+    # ValueError: cannot convert float NaN to integer
+    y = EXTREME_SCALES[scale]
+    if test is VarianceRatio and not kwargs["overlap"]:
+        y = y[1:]  # A multiple of lags differences, which avoids a warning
+    _finite_or_infeasible(lambda: test(y, **kwargs))
+
+
+@pytest.mark.parametrize("scale", list(EXTREME_SCALES))
+@pytest.mark.parametrize("func", COINTEGRATION_CASES)
+def test_cointegration_extreme_scale(func, scale):
+    _finite_or_infeasible(lambda: func(EXTREME_SCALES[scale]))
+
+
+@pytest.mark.filterwarnings("ignore::RuntimeWarning")
+def test_not_finite_statistic_raises_every_time():
+    # The variance ratio of a linear trend with a constant was nan. The statistic is
+    # not kept, so that every access raises
+    vr = VarianceRatio(1.0 + 0.5 * np.arange(NOBS), lags=2)
+    for _ in range(2):
+        with pytest.raises(InfeasibleTestException, match="statistic is nan"):
+            _ = vr.stat
+    with pytest.raises(InfeasibleTestException, match="statistic is nan"):
+        _ = vr.pvalue
+
+
+@pytest.mark.filterwarnings("ignore::RuntimeWarning")
+def test_kpss_extreme_scale_automatic_lags():
+    kpss = KPSS(1e300 * RANDOM_WALK)
+    with pytest.raises(
+        InfeasibleTestException, match="autocovariances of the residuals"
+    ):
+        _ = kpss.stat
+
+
+@pytest.mark.filterwarnings("ignore::RuntimeWarning")
+def test_linear_algebra_error_is_infeasible():
+    # ZivotAndrews raised LinAlgError: SVD did not converge
+    za = ZivotAndrews(EXTREME_SCALES["1e-300"], lags=2)
+    with pytest.raises(InfeasibleTestException, match="matrix that it needs"):
+        _ = za.stat

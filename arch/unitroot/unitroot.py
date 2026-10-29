@@ -53,7 +53,11 @@ from arch._typing import (
     Literal,
     UnitRootTrend,
 )
-from arch.unitroot._shared import _check_not_constant
+from arch.unitroot._shared import (
+    _check_finite_statistic,
+    _check_not_constant,
+    _infeasible_from,
+)
 from arch.unitroot.critical_values.dfgls import (
     dfgls_cv_approx,
     dfgls_large_p,
@@ -697,8 +701,20 @@ class UnitRootTest(metaclass=ABCMeta):
         """Checks whether the statistic needs to be computed, and computed if
         needed
         """
-        if self._stat is None:
+        if self._stat is not None:
+            return
+        try:
             self._compute_statistic()
+        except LinAlgError as err:
+            self._stat = self._pvalue = None
+            raise _infeasible_from(err, self._test_name) from err
+        assert self._stat is not None
+        assert self._pvalue is not None
+        if not (np.isfinite(self._stat) and np.isfinite(self._pvalue)):
+            # Cleared so that every access raises, and not only the first one
+            stat, pvalue = self._stat, self._pvalue
+            self._stat = self._pvalue = None
+            _check_finite_statistic(stat, pvalue, self._test_name)
 
     def _clean_method(self, method: str) -> Literal["aic", "bic", "t-stat", "maic"]:
         method = check_option(
@@ -1625,6 +1641,14 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             resids_prod /= nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod
+        if not (np.isfinite(s0) and np.isfinite(s1)):
+            # The squares of very large residuals overflow, and the number of lags
+            # would be int(nan)
+            raise InfeasibleTestException(
+                "The autocovariances of the residuals are not finite, and so "
+                "automatic bandwidth selection cannot be used. This happens when the "
+                "values of y are too large in scale (such as 1e300)."
+            )
         if s0 <= 0:
             raise InfeasibleTestException(
                 "Residuals are all zero and so automatic bandwidth selection cannot "

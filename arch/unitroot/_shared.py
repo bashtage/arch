@@ -1,4 +1,6 @@
-from typing import Any, NamedTuple, Optional, cast
+from collections.abc import Callable
+import functools
+from typing import Any, NamedTuple, Optional, TypeVar, cast
 
 import numpy as np
 import pandas as pd
@@ -47,6 +49,74 @@ def _check_not_constant(y: np.ndarray, name: str = "y") -> None:
             f"{name} is constant (every value is {float(y[0])!r}), and so the test "
             "statistic cannot be computed. The test requires a series that varies."
         )
+
+
+_DEGENERATE = (
+    "This happens when the data are degenerate, for example when their values are "
+    "too small or too large in scale (such as 1e-300 or 1e300)."
+)
+
+
+def _check_finite_statistic(stat: float, pvalue: float, test: str) -> None:
+    """
+    Raise InfeasibleTestException if the statistic or the p-value is nan or inf.
+
+    The data are finite, so a statistic that is not is computed from quantities that
+    overflow or underflow, or that are 0, and is not a result.
+    """
+    if not (np.isfinite(stat) and np.isfinite(pvalue)):
+        raise InfeasibleTestException(
+            f"The {test} statistic is {float(stat)!r} and its p-value is "
+            f"{float(pvalue)!r}, which are not finite, and so the test cannot be "
+            f"computed. {_DEGENERATE}"
+        )
+
+
+def _check_finite_estimates(params: Any, cov: Any, method: str) -> None:
+    """
+    Raise InfeasibleTestException if the estimates or their covariance are not finite.
+    """
+    params = np.asarray(params, dtype=float)
+    cov = np.asarray(cov, dtype=float)
+    if not (np.all(np.isfinite(params)) and np.all(np.isfinite(cov))):
+        raise InfeasibleTestException(
+            f"The {method} estimates or their covariance are not finite, and so the "
+            f"parameters cannot be estimated. {_DEGENERATE}"
+        )
+
+
+def _infeasible_from(
+    err: Exception, test: str, what: str = "statistic"
+) -> InfeasibleTestException:
+    """The InfeasibleTestException of a test or estimator whose linear algebra failed."""
+    return InfeasibleTestException(
+        f"The {test} {what} cannot be computed since a matrix that it needs is "
+        f"singular or not finite ({type(err).__name__}: {err}). {_DEGENERATE}"
+    )
+
+
+_F = TypeVar("_F", bound=Callable[..., Any])
+
+
+def _infeasible_on_error(test: str, what: str = "statistic") -> Callable[[_F], _F]:
+    """
+    Raise InfeasibleTestException for LinAlgError and ZeroDivisionError in func.
+
+    They are raised by degenerate data, such as a singular matrix or a long-run
+    variance of 0, and not by invalid arguments, which are checked first.
+    """
+
+    def decorator(func: _F) -> _F:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except (np.linalg.LinAlgError, ZeroDivisionError) as err:
+                raise _infeasible_from(err, test, what) from err
+
+        return cast("_F", wrapper)
+
+    return decorator
 
 
 def _check_cointegrating_regression(

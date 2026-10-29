@@ -26,7 +26,9 @@ from arch.unitroot._phillips_ouliaris import (
 from arch.unitroot._shared import (
     _TREND_TERMS,
     _check_cointegrating_regression,
+    _check_finite_estimates,
     _cross_section,
+    _infeasible_on_error,
 )
 from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
 from arch.utility._validation import (
@@ -741,6 +743,7 @@ class DynamicOLS:
                     best_leads_and_lags = (lead, lag)
         return best_leads_and_lags
 
+    @_infeasible_on_error("Dynamic OLS", "estimates")
     def fit(
         self,
         cov_type: Literal[
@@ -866,6 +869,7 @@ class DynamicOLS:
             bandwidth_method,
         )
         params = Series(np.squeeze(coeffs), index=rhs.columns, name="params")
+        _check_finite_estimates(params, cov, "Dynamic OLS")
         num_x = self._x.shape[1]
         return DynamicOLSResults(
             params,
@@ -1242,6 +1246,7 @@ class FullyModifiedOLS:
         r2_adj = 1.0 - (ssr / (nobs - nvar)) / (tss / (nobs - tss_df))
         return resid, r2, r2_adj
 
+    @_infeasible_on_error("Fully Modified OLS", "estimates")
     def fit(
         self,
         kernel: str = "bartlett",
@@ -1338,6 +1343,7 @@ class FullyModifiedOLS:
         cols = z_df.columns
         params_s = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
+        _check_finite_estimates(params_s, param_cov, "Fully Modified OLS")
         resid, r2, r2_adj = self._final_statistics(params_s)
         resid_kern = type(cov_est)(
             resid,
@@ -1373,6 +1379,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         super().__init__(y, x, trend, x_trend)
 
     @Appender(FullyModifiedOLS.fit.__doc__)
+    @_infeasible_on_error("Canonical Cointegrating Regression", "estimates")
     def fit(
         self,
         kernel: str = "bartlett",
@@ -1419,6 +1426,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         cols = with_trend.columns
         params = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
+        _check_finite_estimates(params, param_cov, "Canonical Cointegrating Regression")
         resid, r2, r2_adj = self._final_statistics(params)
         resid_kern = type(cov_est)(
             resid,
