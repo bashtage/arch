@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v8.0.1 (+663)</title>
+        <title>arch.unitroot.unitroot - arch v8.0.1 (+681)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -2665,9 +2665,9 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Most values are from MacKinnon (1994).  Values for DFGLS test statistics</span>
-<span class="sd">    and the "n" version of the ADF z test statistic were computed following</span>
-<span class="sd">    the methodology of MacKinnon (1994).</span>
+<span class="sd">    Most values are from MacKinnon (1994). Values for DFGLS test statistics</span>
+<span class="sd">    and the ADF z test statistic were computed following the methodology of</span>
+<span class="sd">    MacKinnon (1994).</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -2746,9 +2746,11 @@
         <span class="n">small_p</span> <span class="o">=</span> <span class="n">dfgls_small_p</span><span class="p">[</span><span class="n">regression</span><span class="p">]</span>
         <span class="n">large_p</span> <span class="o">=</span> <span class="n">dfgls_large_p</span><span class="p">[</span><span class="n">regression</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">maxstat</span><span class="p">:</span>
+    <span class="c1"># The bounds of some tables are infinite, and so -inf and inf would reach the</span>
+    <span class="c1"># polynomials, which are nan there</span>
+    <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">maxstat</span> <span class="ow">or</span> <span class="n">stat</span> <span class="o">==</span> <span class="n">inf</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">1.0</span>
-    <span class="k">elif</span> <span class="n">stat</span> <span class="o">&lt;</span> <span class="n">minstat</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">stat</span> <span class="o">&lt;</span> <span class="n">minstat</span> <span class="ow">or</span> <span class="n">stat</span> <span class="o">==</span> <span class="o">-</span><span class="n">inf</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
     <span class="k">if</span> <span class="n">stat</span> <span class="o">&lt;=</span> <span class="n">starstat</span><span class="p">:</span>
         <span class="n">poly_coef</span> <span class="o">=</span> <span class="n">small_p</span>
@@ -2756,7 +2758,10 @@
             <span class="n">stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">stat</span><span class="p">)))</span>  <span class="c1"># Transform stat for small p ADF-z</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">poly_coef</span> <span class="o">=</span> <span class="n">large_p</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stat</span><span class="p">)))</span>
+    <span class="c1"># The polynomial overflows to -inf or inf for a very large statistic when a</span>
+    <span class="c1"># bound is infinite, and the p-value is then 0 or 1</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stat</span><span class="p">)))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">mackinnoncrit</span><span class="p">(</span>

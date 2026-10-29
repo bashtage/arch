@@ -23,7 +23,7 @@
     
   
       
-        <title>Volatility Processes - arch v8.0.1 (+663)</title>
+        <title>Volatility Processes - arch v8.0.1 (+681)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -1880,9 +1880,9 @@ Longer horizons require <code class="docutils literal notranslate"><span class="
 
 <span class="gp">In [10]: </span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span>
 <span class="gh">Out[10]: </span>
-<span class="go">                h.1       h.2       h.3</span>
-<span class="go">Date                                   </span>
-<span class="go">2018-12-31  3.64695  3.280765  3.020306</span>
+<span class="go">                h.1       h.2      h.3</span>
+<span class="go">Date                                  </span>
+<span class="go">2018-12-31  3.64695  3.328032  3.10916</span>
 </code></pre></div>
 </div>
 <h2 id="nonlinear-asymmetric-garch">Nonlinear Asymmetric GARCH<a class="headerlink" href="#nonlinear-asymmetric-garch" title="Link to this heading">¶</a></h2>
@@ -1945,10 +1945,10 @@ non-negativity, as for <a class="reference internal" href="generated/arch.univar
 </code></pre></div>
 </div>
 <p>The process can also be selected using <code class="docutils literal notranslate"><span class="pre">vol=&quot;ngarch&quot;</span></code> in
-<a class="reference internal" href="introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>, where <code class="docutils literal notranslate"><span class="pre">o=1</span></code> adds the shift. Without a shift
-(<code class="docutils literal notranslate"><span class="pre">o=0</span></code>, the default of <code class="docutils literal notranslate"><span class="pre">arch_model</span></code>) the model is a GARCH, so <code class="docutils literal notranslate"><span class="pre">arch_model</span></code> uses
-<a class="reference internal" href="generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">GARCH</span></code></a> and issues a <code class="docutils literal notranslate"><span class="pre">ValueWarning</span></code>. Analytic forecasts
-are exact at all horizons. For <code class="docutils literal notranslate"><span class="pre">p=q=1</span></code> they satisfy
+<a class="reference internal" href="introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>, where <code class="docutils literal notranslate"><span class="pre">o=1</span></code> adds the shift and is required.
+Without a shift (<code class="docutils literal notranslate"><span class="pre">o=0</span></code>, the default of <code class="docutils literal notranslate"><span class="pre">arch_model</span></code>) the model is a GARCH, so
+<code class="docutils literal notranslate"><span class="pre">arch_model</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Use <code class="docutils literal notranslate"><span class="pre">vol=&quot;garch&quot;</span></code> for that model. Analytic
+forecasts are exact at all horizons. For <code class="docutils literal notranslate"><span class="pre">p=q=1</span></code> they satisfy
 <span class="math notranslate nohighlight">\(f_h=\omega+\phi f_{h-1}\)</span>.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [20]: </span><span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="gh">Out[20]: </span>

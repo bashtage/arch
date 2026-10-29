@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+663)</title>
+        <title>Version 9 - arch v8.0.1 (+681)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -544,6 +544,15 @@ produce forecasts without re-estimating the model.</p></li>
 <li><p>Added <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>, which implements the VAR-HAC
 and pre-whitened recolored long-run covariance estimators (contributed by
 WatchTree-19).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.NGARCH.html#arch.univariate.NGARCH" title="arch.univariate.NGARCH (Python class) — Nonlinear asymmetric GARCH (NGARCH) volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">NGARCH</span></code></a>, the nonlinear asymmetric GARCH of Engle and
+Ng, the VaR backtests of Kupiec and Christoffersen and the Basel traffic light, and
+<a class="reference internal" href="../bootstrap/generated/arch.bootstrap.LocalBlockBootstrap.html#arch.bootstrap.LocalBlockBootstrap" title="arch.bootstrap.LocalBlockBootstrap (Python class) — Bootstrap using blocks that are resampled from near their own position."><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalBlockBootstrap</span></code></a>, the local block bootstrap of
+Paparoditis and Politis.</p></li>
+<li><p>The automatic bandwidth of the kernel covariance estimators can use the AR(1)
+plug-in method of Andrews (1991) with <code class="docutils literal notranslate"><span class="pre">bandwidth_method=&quot;andrews&quot;</span></code>, and the default
+method of Newey and West (1994) now gives the bandwidths and estimates of the R
+package sandwich, which changes every automatic bandwidth. See “Changes that alter
+results”.</p></li>
 <li><p>Added the residual diagnostics <a class="reference internal" href="../univariate/generated/arch.univariate.excess_kurtosis.html#arch.univariate.excess_kurtosis" title="arch.univariate.excess_kurtosis (Python function) — Sample excess kurtosis of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">excess_kurtosis()</span></code></a>,
 <a class="reference internal" href="../univariate/generated/arch.univariate.hill_estimator.html#arch.univariate.hill_estimator" title="arch.univariate.hill_estimator (Python function) — Hill tail-index estimator of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> and <a class="reference internal" href="../univariate/generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>
 (contributed by albystack), and Ng and Perron’s modified AIC, <code class="docutils literal notranslate"><span class="pre">method=&quot;maic&quot;</span></code>, for
@@ -554,8 +563,10 @@ selecting the number of lags in the <a class="reference internal" href="../unitr
 analytic forecasts of <a class="reference internal" href="../univariate/generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process."><code class="xref py py-class docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a>, the analytic
 forecasts of GJR-type models with skewed distributions, BCa confidence intervals of
 functions that return several statistics, <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> models,
-and <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> with
-integer data. See “Changes that alter results”.</p></li>
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a> with integer
+data, and the ADF-Z critical values and p-values without a trend, which
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> uses with <code class="docutils literal notranslate"><span class="pre">test_type=&quot;rho&quot;</span></code>. See “Changes
+that alter results”.</p></li>
 <li><p>The arguments of the public API are validated consistently. An invalid argument raises
 a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> (wrong type) or a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (value that is not allowed) with a
 message that names the argument, shows the value and says what is accepted, the string
@@ -577,6 +588,14 @@ or <code class="docutils literal notranslate"><span class="pre">method=&quot;boo
 volatility processes, and the model with an estimated <code class="docutils literal notranslate"><span class="pre">delta</span></code> and the one with the
 same <code class="docutils literal notranslate"><span class="pre">delta</span></code> fixed have the same log-likelihood. Contributed by gjunjie
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/833">GH833</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/926">GH926</a>).</p></li>
+<li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.NGARCH.html#arch.univariate.NGARCH" title="arch.univariate.NGARCH (Python class) — Nonlinear asymmetric GARCH (NGARCH) volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">NGARCH</span></code></a>, the nonlinear asymmetric GARCH volatility
+process of Engle and Ng (1993), which is called NAGARCH in the R package rugarch.
+<code class="docutils literal notranslate"><span class="pre">o</span></code> is the number of innovations that have a shift. It can be used in
+<a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">vol=&quot;ngarch&quot;</span></code>, which requires <code class="docutils literal notranslate"><span class="pre">o</span></code> to be
+at least 1, since a model without a shift is a GARCH. Analytic forecasts are exact at
+all horizons, and simulation and bootstrap forecasts are available. <code class="docutils literal notranslate"><span class="pre">fit</span></code> issues a
+<code class="docutils literal notranslate"><span class="pre">ValueWarning</span></code> when the estimated persistence is 1 or more, which the estimation
+constraints do not exclude (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/636">GH636</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/966">GH966</a>).</p></li>
 <li><p>Added <a class="reference internal" href="../univariate/generated/arch.univariate.MAMean.html#arch.univariate.MAMean" title="arch.univariate.MAMean (Python class) — Moving average (MA) mean model, with optional constant."><code class="xref py py-class docutils literal notranslate"><span class="pre">MAMean</span></code></a>, a moving average mean model of order q with an
 optional constant that can be used with any volatility process and distribution.
 Analytic, simulation and bootstrap forecasts include the moving average terms for the
@@ -594,6 +613,15 @@ covariance estimators, and the <a class="reference internal" href="../covariance
 uses for VAR-HAC, which is selected with <code class="docutils literal notranslate"><span class="pre">kernel=None</span></code>. The order, residuals and
 residual covariance of the VAR are available as <code class="docutils literal notranslate"><span class="pre">order</span></code>, <code class="docutils literal notranslate"><span class="pre">resid</span></code> and
 <code class="docutils literal notranslate"><span class="pre">resid_cov</span></code>. Contributed by WatchTree-19 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/874">GH874</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/894">GH894</a>).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">bandwidth_method</span></code> to the kernel covariance estimators in
+<a class="reference internal" href="../covariance/covariance.html#module-arch.covariance.kernel" title="arch.covariance.kernel: Kernel-based long-run covariance estimation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code></a>, to <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>,
+to the <code class="docutils literal notranslate"><span class="pre">fit</span></code> methods of <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a>, and to
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris" title="arch.unitroot.cointegration.phillips_ouliaris (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code></a>. The default, <code class="docutils literal notranslate"><span class="pre">&quot;newey-west&quot;</span></code>,
+is the nonparametric method of Newey and West (1994). <code class="docutils literal notranslate"><span class="pre">&quot;andrews&quot;</span></code> is the AR(1)
+plug-in method of Andrews (1991), whose bandwidths equal those of <code class="docutils literal notranslate"><span class="pre">bwAndrews</span></code> in the
+R package sandwich (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/887">GH887</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/964">GH964</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
 <li><p>Added the residual diagnostics <a class="reference internal" href="../univariate/generated/arch.univariate.excess_kurtosis.html#arch.univariate.excess_kurtosis" title="arch.univariate.excess_kurtosis (Python function) — Sample excess kurtosis of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">excess_kurtosis()</span></code></a>,
 <a class="reference internal" href="../univariate/generated/arch.univariate.hill_estimator.html#arch.univariate.hill_estimator" title="arch.univariate.hill_estimator (Python function) — Hill tail-index estimator of standardized residuals."><code class="xref py py-func docutils literal notranslate"><span class="pre">hill_estimator()</span></code></a> and <a class="reference internal" href="../univariate/generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>, which
 use standardized residuals. The results of a model also have
@@ -602,6 +630,22 @@ use standardized residuals. The results of a model also have
 <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.var_ratio.html#arch.univariate.base.ARCHModelResult.var_ratio" title="arch.univariate.base.ARCHModelResult.var_ratio (Python method) — Compute the ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-meth docutils literal notranslate"><span class="pre">var_ratio()</span></code></a>, which use the standardized
 residuals and the estimated distribution of the model. Contributed by albystack
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/845">GH845</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/850">GH850</a>).</p></li>
+<li><p>Added the VaR backtests <a class="reference internal" href="../univariate/generated/arch.univariate.var_exceptions.html#arch.univariate.var_exceptions" title="arch.univariate.var_exceptions (Python function) — Identify the exceptions of a VaR forecast."><code class="xref py py-func docutils literal notranslate"><span class="pre">var_exceptions()</span></code></a>, which finds the
+observations where the loss exceeds the VaR, <a class="reference internal" href="../univariate/generated/arch.univariate.kupiec_pof.html#arch.univariate.kupiec_pof" title="arch.univariate.kupiec_pof (Python function) — Kupiec proportion-of-failures test of the coverage of VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">kupiec_pof()</span></code></a>, the
+proportion of failures test of Kupiec (1995),
+<a class="reference internal" href="../univariate/generated/arch.univariate.christoffersen_independence.html#arch.univariate.christoffersen_independence" title="arch.univariate.christoffersen_independence (Python function) — Christoffersen test of the independence of the exceptions of VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">christoffersen_independence()</span></code></a> and
+<a class="reference internal" href="../univariate/generated/arch.univariate.christoffersen_conditional_coverage.html#arch.univariate.christoffersen_conditional_coverage" title="arch.univariate.christoffersen_conditional_coverage (Python function) — Christoffersen test of the conditional coverage of VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">christoffersen_conditional_coverage()</span></code></a>, the independence and
+conditional coverage tests of Christoffersen (1998), and
+<a class="reference internal" href="../univariate/generated/arch.univariate.traffic_light.html#arch.univariate.traffic_light" title="arch.univariate.traffic_light (Python function) — Basel traffic light zone of the exceptions of VaR."><code class="xref py py-func docutils literal notranslate"><span class="pre">traffic_light()</span></code></a>, the zone of the Basel traffic light, which is
+returned as a <a class="reference internal" href="../univariate/utility.html#arch.univariate.TrafficLightResult" title="arch.univariate.TrafficLightResult (Python class) — Result of the Basel traffic light backtest of VaR."><code class="xref py py-class docutils literal notranslate"><span class="pre">TrafficLightResult</span></code></a>. <code class="docutils literal notranslate"><span class="pre">p</span></code> is always the
+probability of an exception, such as 0.01 for a 99% VaR, and must be in (0, 0.5].
+The unconditional and conditional coverage statistics equal those of <code class="docutils literal notranslate"><span class="pre">VaRTest</span></code> in
+the R package rugarch (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/904">GH904</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/965">GH965</a>).</p></li>
+<li><p>Added <a class="reference internal" href="../bootstrap/generated/arch.bootstrap.LocalBlockBootstrap.html#arch.bootstrap.LocalBlockBootstrap" title="arch.bootstrap.LocalBlockBootstrap (Python class) — Bootstrap using blocks that are resampled from near their own position."><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalBlockBootstrap</span></code></a>, the local block bootstrap of
+Paparoditis and Politis (2002), for series whose properties change slowly over time.
+Each block of the data is replaced by a block that starts at most <code class="docutils literal notranslate"><span class="pre">locality</span></code>
+observations from it, so that a bootstrap sample only mixes nearby blocks
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/617">GH617</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/967">GH967</a>).</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">method=&quot;maic&quot;</span></code> to the automatic lag selection of <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a>. It selects the
 lag that minimizes the modified AIC of Ng and Perron (2001). Contributed by
@@ -832,20 +876,53 @@ the AAA bond yield change from 9.17 and 1.956 to 9.76 and 3.142 (+6.4% and +61%)
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> do not use it.
 Contributed by ZacKienzle2 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/886">GH886</a>).</p></li>
 <li><p>Fixed the automatic bandwidth of the kernel covariance estimators in
-<a class="reference internal" href="../covariance/covariance.html#module-arch.covariance.kernel" title="arch.covariance.kernel: Kernel-based long-run covariance estimation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code></a> so that the number of autocovariances in the pilot
-estimate is the integer part of <span class="math notranslate nohighlight">\(4(T/100)^{r}\)</span>, as in Newey and West (1994) and
-<a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a>. Previously it was rounded up, so that one more
-autocovariance was used whenever <span class="math notranslate nohighlight">\(4(T/100)^{r}\)</span> is not an integer. The
-bandwidths now equal those of <code class="docutils literal notranslate"><span class="pre">bwNeweyWest</span></code> in the R package sandwich. Every
-estimate with an automatic bandwidth changes, including those of
-<a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>,
+<a class="reference internal" href="../covariance/covariance.html#module-arch.covariance.kernel" title="arch.covariance.kernel: Kernel-based long-run covariance estimation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code></a>, so that the bandwidths and the estimates equal those of
+the R package sandwich. Every estimate with an automatic bandwidth changes, including
+those of <a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a>,
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>,
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a>,
 <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> and
-<code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code> when <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> is not given. For example,
-the Bartlett, Parzen and quadratic spectral bandwidths of the daily S&amp;P 500 percent
-returns in <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code> change from 22.88, 31.99 and 13.25 to 31.96, 35.50 and
-13.61. Pass <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> to use a specific value.</p></li>
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris" title="arch.unitroot.cointegration.phillips_ouliaris (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code></a> when <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> is not
+given. There are three changes:</p>
+<ul class="simple">
+<li><p>The number of autocovariances in the pilot estimate of the optimal bandwidth,
+<code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code>, is the integer part of <span class="math notranslate nohighlight">\(4(T/100)^{r}\)</span>, as in Newey and West
+(1994) and <a class="reference internal" href="../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth" title="arch.unitroot.auto_bandwidth (Python function) — Automatic bandwidth selection of Andrews (1991) and Newey &amp; West (1994)."><code class="xref py py-func docutils literal notranslate"><span class="pre">auto_bandwidth()</span></code></a>. Previously it was rounded up, so
+that one more autocovariance was used whenever <span class="math notranslate nohighlight">\(4(T/100)^{r}\)</span> is not an
+integer. <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> now equals <code class="docutils literal notranslate"><span class="pre">bwNeweyWest</span></code> of sandwich.</p></li>
+<li><p>The kernels that are 0 beyond a finite lag, which are all except the quadratic
+spectral kernel, weight lag <span class="math notranslate nohighlight">\(h\)</span> by <span class="math notranslate nohighlight">\(k(h/(H+1))\)</span> for a bandwidth
+<span class="math notranslate nohighlight">\(H\)</span>, while the optimal bandwidth <span class="math notranslate nohighlight">\(S\)</span> of Andrews (1991) and Newey and
+West (1994) is that of <span class="math notranslate nohighlight">\(k(h/S)\)</span>. <span class="math notranslate nohighlight">\(S\)</span> was used as <span class="math notranslate nohighlight">\(H\)</span>, which gave
+the weights of <span class="math notranslate nohighlight">\(S+1\)</span>. The estimated <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> of these kernels is now
+<span class="math notranslate nohighlight">\(\max(S-1, 0)\)</span>, so that the weights are those of <span class="math notranslate nohighlight">\(S\)</span>, as in
+<code class="docutils literal notranslate"><span class="pre">kernHAC</span></code> of sandwich (and <code class="docutils literal notranslate"><span class="pre">NeweyWest</span></code> for the Bartlett kernel with
+<code class="docutils literal notranslate"><span class="pre">force_int=True</span></code>). <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> is still <span class="math notranslate nohighlight">\(S\)</span>, and so
+<code class="docutils literal notranslate"><span class="pre">Bartlett(x,</span> <span class="pre">bandwidth=est.opt_bandwidth)</span></code> is not the same as <code class="docutils literal notranslate"><span class="pre">Bartlett(x)</span></code>.</p></li>
+<li><p>A bandwidth that is not an integer, estimated or given, uses every lag with a
+positive weight. The lag <span class="math notranslate nohighlight">\(\lfloor H \rfloor + 1\)</span> was not used. An integer
+<code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> gives the same estimates as before.</p></li>
+</ul>
+<p>For example, the Bartlett, Parzen and quadratic spectral bandwidths of the daily S&amp;P
+500 percent returns in <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code> change from 22.88, 31.99 and 13.25 to
+30.96, 34.50 and 13.61, and their <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> to 31.96, 35.50 and 13.61. The
+constant of the Tukey-Parzen kernel is also corrected from 1.8576 to 1.8587, which
+changes its automatic bandwidth slightly. Pass <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> to use a specific value
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/964">GH964</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/983">GH983</a>).</p>
+</li>
+<li><p>Fixed the critical values and p-values of the ADF-Z statistic without a trend
+(<code class="docutils literal notranslate"><span class="pre">regression=&quot;n&quot;</span></code>), which <a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> uses with
+<code class="docutils literal notranslate"><span class="pre">test_type=&quot;rho&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">trend=&quot;n&quot;</span></code>, and which <code class="docutils literal notranslate"><span class="pre">mackinnoncrit</span></code> and <code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code>
+return with <code class="docutils literal notranslate"><span class="pre">dist_type=&quot;adf-z&quot;</span></code>. The values are from a new simulation that starts
+the random walk at 0. The 1%, 5% and 10% critical values with 100 observations change
+from -10.78, -6.13 and -4.27 to -13.08, -7.78 and -5.56, and the asymptotic ones from
+-13.30, -7.83 and -5.57 to -13.69, -8.04 and -5.71. In small samples the previous
+critical values were wrong: with 10 observations they were 20.32, 13.84 and 10.54,
+and are now -8.95, -5.98 and -4.41. For example the p-value of a statistic of -8
+changes from 0.0477 to 0.0504. The tables with a constant or a trend are also from the
+new simulation. Their critical values change by less than 0.005 with 25 or more
+observations and their p-values below 0.2 by at most 0.0001. Contributed by mkzung
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/971">GH971</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/972">GH972</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/973">GH973</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/980">GH980</a>).</p></li>
 <li><p>Integer, unsigned integer and Boolean data are now converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code> when they
 are passed to an estimator, so that no calculation is done in integer arithmetic.
 Previously a calculation that used the products or differences of integer data could
@@ -1122,7 +1199,7 @@ callable, a <code class="docutils literal notranslate"><span class="pre">random_
 not <code class="docutils literal notranslate"><span class="pre">bool</span></code> raise errors that name the argument. <code class="docutils literal notranslate"><span class="pre">plot</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for
 a <code class="docutils literal notranslate"><span class="pre">scale</span></code> that is not positive and finite and for an <code class="docutils literal notranslate"><span class="pre">annualize</span></code> that is not
 <code class="docutils literal notranslate"><span class="pre">&quot;d&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;w&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">arch_lm_test</span></code> requires <code class="docutils literal notranslate"><span class="pre">standardized</span></code> to be a
-<code class="docutils literal notranslate"><span class="pre">bool</span></code>. <code class="docutils literal notranslate"><span class="pre">var_ratio</span></code> raises for a <code class="docutils literal notranslate"><span class="pre">level</span></code> that is not a number and for
+<code class="docutils literal notranslate"><span class="pre">bool</span></code>. <code class="docutils literal notranslate"><span class="pre">var_ratio</span></code> raises for a <code class="docutils literal notranslate"><span class="pre">p</span></code> that is not a number and for
 <code class="docutils literal notranslate"><span class="pre">parameters</span></code> that do not have one finite element for each parameter of the
 distribution, and <code class="docutils literal notranslate"><span class="pre">hill_estimator</span></code> for a <code class="docutils literal notranslate"><span class="pre">k</span></code> that is not an integer or is outside
 <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1]</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/949">GH949</a>).</p></li>
@@ -1222,6 +1299,11 @@ and the message names the accepted data types. Convert the data with
 <code class="docutils literal notranslate"><span class="pre">astype(np.float32)</span></code> or <code class="docutils literal notranslate"><span class="pre">astype(np.float64)</span></code> if that is intended. Complex data
 raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> too, except in the kernel covariance estimators, <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code>,
 <code class="docutils literal notranslate"><span class="pre">add_trend</span></code> and the <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> of the bootstraps (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/957">GH957</a>).</p></li>
+<li><p>Strings in object data, including object <code class="docutils literal notranslate"><span class="pre">Series</span></code> and <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> columns, raise
+a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>, as an array of strings does. A string that contains a number, such
+as <code class="docutils literal notranslate"><span class="pre">&quot;1.5&quot;</span></code>, was converted to the number. Convert the data with <code class="docutils literal notranslate"><span class="pre">astype(float)</span></code>
+first if that is intended. An integer that is too large for <code class="docutils literal notranslate"><span class="pre">float64</span></code> raises a
+<code class="docutils literal notranslate"><span class="pre">TypeError</span></code> where it raised an <code class="docutils literal notranslate"><span class="pre">OverflowError</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
 </ul>
 <h3 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1440,6 +1522,43 @@ error for integer arrays, and for lists. <code class="docutils literal notransla
 <code class="docutils literal notranslate"><span class="pre">Series</span></code> without a name that is passed by the user, for example to
 <a class="reference internal" href="../univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialize common ARCH model specifications."><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code></a>, is no longer renamed to the string <code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/948">GH948</a>).</p></li>
+<li><p>Fixed the bootstraps of a statistic that returns the same array in every call, for
+example one that writes its result with NumPy’s <code class="docutils literal notranslate"><span class="pre">out=</span></code> argument. The estimate of the
+original sample and the jackknife estimates were overwritten by later calls, which
+shifted the confidence intervals, changed <code class="docutils literal notranslate"><span class="pre">cov</span></code> and <code class="docutils literal notranslate"><span class="pre">var</span></code> and could make BCa
+raise an error. They are now copied. Contributed by antonsoo (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/954">GH954</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">partial_moment</span></code> of <a class="reference internal" href="../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.StudentsT" title="arch.univariate.StudentsT (Python class) — Standardized Student's distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">StudentsT</span></code></a> for odd orders when
+<code class="docutils literal notranslate"><span class="pre">nu</span></code> is 342 or more, which returned 0. For example the first partial moment at 0
+with <code class="docutils literal notranslate"><span class="pre">nu=342</span></code> is -0.39865. The partial moments of <a class="reference internal" href="../univariate/generated/arch.univariate.Normal.html#arch.univariate.Normal" title="arch.univariate.Normal (Python class) — Standard normal distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">Normal</span></code></a>
+and <a class="reference internal" href="../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.StudentsT" title="arch.univariate.StudentsT (Python class) — Standardized Student's distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">StudentsT</span></code></a> of order 2 or more at <code class="docutils literal notranslate"><span class="pre">-inf</span></code> and <code class="docutils literal notranslate"><span class="pre">inf</span></code>,
+which were NaN, are 0 and the moment of that order. Contributed by mkzung
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/969">GH969</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/970">GH970</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
+<li><p>Small p-values are no longer rounded to 0. The p-value of
+<a class="reference internal" href="../univariate/utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic (Python class) — Test statistic holder for Wald-type tests."><code class="xref py py-class docutils literal notranslate"><span class="pre">WaldTestStatistic</span></code></a>, which the ARCH LM test and other
+tests return, the p-value of <a class="reference internal" href="../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a> and the
+<code class="docutils literal notranslate"><span class="pre">pvalues</span></code> of the results of <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> were computed as 1
+minus a CDF, which is 0 for p-values smaller than about 1e-16. For example the
+p-value of a Wald statistic of 100 with 2 degrees of freedom was 0 and is 1.9e-22.
+Contributed by galafis (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/975">GH975</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/977">GH977</a>).</p></li>
+<li><p><a class="reference internal" href="../multiple-comparison/generated/generated/arch.bootstrap.StepM.superior_models.html#arch.bootstrap.StepM.superior_models" title="arch.bootstrap.StepM.superior_models (Python property) — List of the indices or column names of the superior models."><code class="xref py py-attr docutils literal notranslate"><span class="pre">superior_models</span></code></a> returns Python integers for the models
+that are found after the first step, which were NumPy integers. Contributed by
+wavebyrd (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/974">GH974</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">add_trend</span></code> for a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with a duplicated index, which multiplied the
+rows and mixed the trend values of different observations. The trend columns are now
+added by position. Contributed by jackiectl2 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/978">GH978</a>).</p></li>
+<li><p>Object data, including object <code class="docutils literal notranslate"><span class="pre">Series</span></code> and <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> columns, whose elements are
+complex numbers with imaginary parts that are all 0 are converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code>, as
+for real numbers. They were rejected unless complex data are allowed, and were then
+<code class="docutils literal notranslate"><span class="pre">complex128</span></code>. Contributed by galafis (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/976">GH976</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/982">GH982</a>).</p></li>
+<li><p>The automatic bandwidth of the kernel covariance estimators and of
+<a class="reference internal" href="../covariance/generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for data in
+which every column is constant, as <code class="docutils literal notranslate"><span class="pre">bandwidth_method=&quot;andrews&quot;</span></code> does, where it
+raised a <code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code> returns 0 for a statistic of <code class="docutils literal notranslate"><span class="pre">-inf</span></code> and 1 for <code class="docutils literal notranslate"><span class="pre">inf</span></code>, where it
+returned NaN for the ADF-Z tables and for the ADF test without a trend, and no longer
+warns about an overflow for a very large statistic (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
 </ul>
 <h3 id="performance">Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1516,6 +1635,16 @@ provides. The continuous integration tests Python 3.10 to 3.15 with exact versio
 the dependencies, runs the style checks in their own workflow, and builds and tests
 the wheel on macOS (arm64 and Intel) (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/893">GH893</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/918">GH918</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/920">GH920</a>,
 <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/929">GH929</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/932">GH932</a>).</p></li>
+<li><p>The continuous integration tests the wheel without matplotlib, as the wheels are
+tested when they are built, installs the conda environment with Miniforge from
+conda-forge, and runs the slow tests on the newest Python (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/960">GH960</a>,
+<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/961">GH961</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/981">GH981</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/984">GH984</a>).</p></li>
+<li><p>An editable install no longer rewrites the version file, <code class="docutils literal notranslate"><span class="pre">arch/_version.py</span></code>, when
+it is unchanged, and replaces it in one step when it changes, so that a process that
+imports arch while another one does, such as a worker of a multiprocessing pool,
+cannot read a truncated file. The README lists the current features, and the scripts
+that simulate the ADF-Z critical values run without the optional arguments
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
 </ul>
 <h3 id="deprecations-and-removals">Deprecations and removals<a class="headerlink" href="#deprecations-and-removals" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1556,13 +1685,13 @@ requires pytest 9.</p></li>
 </ul>
 <h3 id="contributors">Contributors<a class="headerlink" href="#contributors" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Thanks to the contributors to this release: aeshef, albystack, antonsoo, gjunjie,
-heykav, pedrosfaria2, premdev1234, raashish1601, shaneraphel, VenishPaneliya,
-WatchTree-19 and ZacKienzle2. Thanks also to lucaluo925 for reporting the BCa issue
-(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/866">GH866</a>), to nicoloangileri for reporting the skewed GJR forecasts
-(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/867">GH867</a>), and to mjwillson and novdanody for the issues that the documentation
-of <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> and of the covariance estimators addresses (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/801">GH801</a>,
-<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/715">GH715</a>).</p></li>
+<li><p>Thanks to the contributors to this release: aeshef, albystack, antonsoo, galafis,
+gjunjie, heykav, jackiectl2, mkzung, pedrosfaria2, premdev1234, raashish1601,
+shaneraphel, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks also to
+lucaluo925 for reporting the BCa issue (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/866">GH866</a>), to nicoloangileri for
+reporting the skewed GJR forecasts (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/867">GH867</a>), and to mjwillson and novdanody for
+the issues that the documentation of <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> and of the covariance estimators
+addresses (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/801">GH801</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/715">GH715</a>).</p></li>
 </ul>
 
 

@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.diagnostics - arch v8.0.1 (+663)</title>
+        <title>arch.univariate.diagnostics - arch v8.0.1 (+681)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -531,7 +531,6 @@
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
@@ -659,25 +658,10 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tail_probability</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tail_probability</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    The probability of an exception from ``p``, or from the deprecated ``level``.</span>
-
-<span class="sd">    The warning is issued for the caller of the public function or method.</span>
+<span class="sd">    The probability of an exception, 0.001 if ``p`` is None.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"p and level cannot both be given; level is deprecated, use p"</span>
-            <span class="p">)</span>
-        <span class="n">level</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"level"</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">level</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">"level is deprecated and will be removed in a future version. Use p, the "</span>
-            <span class="sa">f</span><span class="s2">"probability of an exception, instead: level=</span><span class="si">{</span><span class="n">level</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> is p=</span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
-            <span class="ne">FutureWarning</span><span class="p">,</span>
-            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-        <span class="p">)</span>
     <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.001</span>
     <span class="k">return</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
@@ -689,8 +673,6 @@
     <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Ratio of Gaussian VaR to model-distribution VaR.</span>
@@ -707,12 +689,6 @@
 <span class="sd">    parameters : array_like, optional</span>
 <span class="sd">        Distribution parameters. Must have one finite element for each parameter</span>
 <span class="sd">        of ``distribution``. Use ``None`` for parameterless distributions.</span>
-<span class="sd">    level : float, optional</span>
-<span class="sd">        Deprecated. The confidence level of the VaR, ``1 - p``, in (0.5, 1). Use</span>
-<span class="sd">        ``p`` instead.</span>
-
-<span class="sd">        .. deprecated:: 9.1</span>
-<span class="sd">           Use ``p``, the probability of an exception.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -723,22 +699,21 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    TypeError</span>
-<span class="sd">        If ``p`` or ``level`` is not a real number, ``distribution`` is not a</span>
-<span class="sd">        Distribution or ``parameters`` cannot be converted to numbers.</span>
+<span class="sd">        If ``p`` is not a real number, ``distribution`` is not a Distribution or</span>
+<span class="sd">        ``parameters`` cannot be converted to numbers.</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If ``p`` is not in (0, 0.5), ``level`` is not in (0.5, 1), both ``p`` and</span>
-<span class="sd">        ``level`` are given, ``parameters`` does not have one finite element for</span>
-<span class="sd">        each parameter of the distribution, or the model distribution does not</span>
-<span class="sd">        produce a positive finite VaR.</span>
+<span class="sd">        If ``p`` is not in (0, 0.5), ``parameters`` does not have one finite</span>
+<span class="sd">        element for each parameter of the distribution, or the model distribution</span>
+<span class="sd">        does not produce a positive finite VaR.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    VaR is named by its confidence level, and ``p`` is the probability of an</span>
-<span class="sd">    exception, as in the VaR backtests of :mod:`arch.univariate`. The ratio is</span>
-<span class="sd">    :math:`\Phi^{-1}(p)/F^{-1}(p)` where :math:`F` is the standardized</span>
-<span class="sd">    distribution.</span>
+<span class="sd">    exception, as in the VaR backtests such as :func:`~arch.univariate.kupiec_pof`.</span>
+<span class="sd">    The ratio is :math:`\Phi^{-1}(p)/F^{-1}(p)` where :math:`F` is the</span>
+<span class="sd">    standardized distribution.</span>
 <span class="sd">    """</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">_tail_probability</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_tail_probability</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">distribution</span> <span class="o">=</span> <span class="n">check_instance</span><span class="p">(</span>
         <span class="s2">"distribution"</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>

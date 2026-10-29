@@ -23,7 +23,7 @@
     
   
       
-        <title>API Reference - arch v8.0.1 (+663)</title>
+        <title>API Reference - arch v8.0.1 (+681)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -600,6 +600,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#var-backtests" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/api.rst#var-backtests (reference label)"><span>Va<wbr>R Backtests</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#model-results-and-forecasts" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -946,6 +956,16 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#var-backtests" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/api.rst#var-backtests (reference label)"><span>Va<wbr>R Backtests</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#model-results-and-forecasts" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1192,8 +1212,31 @@ in <a class="reference internal" href="warnings.html"><span class="doc">Warnings
 <tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.hill_estimator.html#arch.univariate.hill_estimator" title="arch.univariate.hill_estimator (Python function) — Hill tail-index estimator of standardized residuals."><code class="xref py py-obj docutils literal notranslate"><span class="pre">hill_estimator</span></code></a>(std_resid[, k])</p></td>
 <td><p>Hill tail-index estimator of standardized residuals.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">var_ratio</span></code></a>([p, distribution, parameters, level])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.var_ratio.html#arch.univariate.var_ratio" title="arch.univariate.var_ratio (Python function) — Ratio of Gaussian VaR to model-distribution VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">var_ratio</span></code></a>([p, distribution, parameters])</p></td>
 <td><p>Ratio of Gaussian VaR to model-distribution VaR.</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="var-backtests">VaR Backtests<a class="headerlink" href="#var-backtests" title="Link to this heading">¶</a></h3>
+<table class="autosummary longtable docutils data align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.var_exceptions.html#arch.univariate.var_exceptions" title="arch.univariate.var_exceptions (Python function) — Identify the exceptions of a VaR forecast."><code class="xref py py-obj docutils literal notranslate"><span class="pre">var_exceptions</span></code></a>(returns, var)</p></td>
+<td><p>Identify the exceptions of a VaR forecast.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.kupiec_pof.html#arch.univariate.kupiec_pof" title="arch.univariate.kupiec_pof (Python function) — Kupiec proportion-of-failures test of the coverage of VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">kupiec_pof</span></code></a>(returns, var[, p])</p></td>
+<td><p>Kupiec proportion-of-failures test of the coverage of VaR.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.christoffersen_independence.html#arch.univariate.christoffersen_independence" title="arch.univariate.christoffersen_independence (Python function) — Christoffersen test of the independence of the exceptions of VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">christoffersen_independence</span></code></a>(returns, var)</p></td>
+<td><p>Christoffersen test of the independence of the exceptions of VaR.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.christoffersen_conditional_coverage.html#arch.univariate.christoffersen_conditional_coverage" title="arch.univariate.christoffersen_conditional_coverage (Python function) — Christoffersen test of the conditional coverage of VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">christoffersen_conditional_coverage</span></code></a>(returns, var)</p></td>
+<td><p>Christoffersen test of the conditional coverage of VaR.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.traffic_light.html#arch.univariate.traffic_light" title="arch.univariate.traffic_light (Python function) — Basel traffic light zone of the exceptions of VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">traffic_light</span></code></a>(returns, var[, p, window])</p></td>
+<td><p>Basel traffic light zone of the exceptions of VaR.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="univariate/utility.html#arch.univariate.TrafficLightResult" title="arch.univariate.TrafficLightResult (Python class) — Result of the Basel traffic light backtest of VaR."><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrafficLightResult</span></code></a>(zone, exceptions, ...)</p></td>
+<td><p>Result of the Basel traffic light backtest of VaR.</p></td>
 </tr>
 </tbody>
 </table>

@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.backtest - arch v8.0.1 (+663)</title>
+        <title>arch.univariate.backtest - arch v8.0.1 (+681)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -748,7 +748,7 @@
 <span class="sd">        aligned.</span>
 <span class="sd">    p : float, optional</span>
 <span class="sd">        The probability of an exception that the VaR is designed for, which is</span>
-<span class="sd">        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR</span>
+<span class="sd">        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR</span>
 <span class="sd">        and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.</span>
 
 <span class="sd">    Returns</span>
@@ -765,7 +765,7 @@
 <span class="sd">        not a real number.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``returns`` or ``var`` is not valid, as in `var_exceptions`, or ``p``</span>
-<span class="sd">        is not in (0, 1).</span>
+<span class="sd">        is not in (0, 0.5].</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -793,7 +793,7 @@
 <span class="sd">    .. [1] Kupiec, P. H. (1995). Techniques for verifying the accuracy of risk</span>
 <span class="sd">       measurement models. The Journal of Derivatives, 3(2), 73-84.</span>
 <span class="sd">    """</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
     <span class="n">exceptions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_exceptions</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">stat</span> <span class="o">=</span> <span class="n">_lr_pof</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">WaldTestStatistic</span><span class="p">(</span>
@@ -905,7 +905,7 @@
 <span class="sd">        aligned.</span>
 <span class="sd">    p : float, optional</span>
 <span class="sd">        The probability of an exception that the VaR is designed for, which is</span>
-<span class="sd">        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR</span>
+<span class="sd">        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR</span>
 <span class="sd">        and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.</span>
 
 <span class="sd">    Returns</span>
@@ -922,7 +922,7 @@
 <span class="sd">        not a real number.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``returns`` or ``var`` is not valid, as in `var_exceptions`, there</span>
-<span class="sd">        are fewer than 2 observations, or ``p`` is not in (0, 1).</span>
+<span class="sd">        are fewer than 2 observations, or ``p`` is not in (0, 0.5].</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -942,7 +942,7 @@
 <span class="sd">    .. [1] Christoffersen, P. F. (1998). Evaluating interval forecasts.</span>
 <span class="sd">       International Economic Review, 39(4), 841-862.</span>
 <span class="sd">    """</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
     <span class="n">exceptions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_exceptions</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">stat</span> <span class="o">=</span> <span class="n">_lr_pof</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span>
     <span class="n">stat</span> <span class="o">+=</span> <span class="n">_lr_independence</span><span class="p">(</span><span class="n">exceptions</span><span class="p">)</span>
@@ -1038,7 +1038,7 @@
 <span class="sd">        aligned.</span>
 <span class="sd">    p : float, optional</span>
 <span class="sd">        The probability of an exception that the VaR is designed for, which is</span>
-<span class="sd">        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR</span>
+<span class="sd">        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR</span>
 <span class="sd">        and 0.01 for a 99% VaR. The default is 0.01, the 99% VaR of the Basel</span>
 <span class="sd">        framework.</span>
 <span class="sd">    window : int, optional</span>
@@ -1061,7 +1061,7 @@
 <span class="sd">        real number or ``window`` is not an integer.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``returns`` or ``var`` is not valid, as in `var_exceptions`, ``p`` is</span>
-<span class="sd">        not in (0, 1), ``window`` is not positive, or there are fewer than</span>
+<span class="sd">        not in (0, 0.5], ``window`` is not positive, or there are fewer than</span>
 <span class="sd">        ``window`` observations.</span>
 
 <span class="sd">    See Also</span>
@@ -1101,7 +1101,7 @@
 <span class="sd">       for the use of "backtesting" in conjunction with the internal models</span>
 <span class="sd">       approach to market risk capital requirements.</span>
 <span class="sd">    """</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"window"</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">exceptions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_exceptions</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

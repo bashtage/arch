@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+663)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+681)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+663)
+            arch v8.0.1 (+681)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+663)
+    arch v8.0.1 (+681)
   </label>
   
     <div class="md-nav__source">
@@ -1244,6 +1244,14 @@
             <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">f_0s</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">sig_j</span>
             <span class="n">f_qs</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">j</span><span class="o">**</span><span class="n">q</span> <span class="o">*</span> <span class="n">sig_j</span>
+        <span class="k">if</span> <span class="n">f_0s</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1"># The weighted sum of the columns is 0, which happens when every</span>
+            <span class="c1"># column of x is constant and x is centered</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="newey-west" cannot estimate the bandwidth since '</span>
+                <span class="s2">"the weighted sum of the columns of x is 0, which happens when every "</span>
+                <span class="s2">"column of x is constant"</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">f_qs</span> <span class="o">/</span> <span class="n">f_0s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_andrews_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
