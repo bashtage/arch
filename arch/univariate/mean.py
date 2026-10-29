@@ -94,7 +94,6 @@ from arch.utility.array import (
     as_float64,
     parse_dataframe,
 )
-from arch.utility.exceptions import ValueWarning
 
 __all__ = [
     "ARX",
@@ -3292,9 +3291,9 @@ def arch_model(
         a real number, or ``x`` cannot be converted to numbers.
     ValueError
         If ``mean``, ``vol`` or ``dist`` is not one of the options, ``lags``, ``p``,
-        ``o``, ``q`` or ``hold_back`` is negative, ``power`` is not finite and
-        positive, or ``x`` contains NaN or inf or does not have a row for each
-        observation of ``y``.
+        ``o``, ``q`` or ``hold_back`` is negative, ``o`` is 0 when
+        ``vol='ngarch'``, ``power`` is not finite and positive, or ``x`` contains
+        NaN or inf or does not have a row for each observation of ``y``.
 
     Notes
     -----
@@ -3304,8 +3303,8 @@ def arch_model(
     The default ``o=0`` has no asymmetric term in any volatility model. With
     ``vol='ngarch'``, ``o`` is the number of shifted innovations, and must not exceed
     ``p``. Use ``o=1`` for the NGARCH(1,1) of Engle and Ng. An NGARCH model without
-    a shift is a GARCH model, and so ``vol='ngarch'`` with ``o=0`` returns a
-    ``GARCH`` volatility process and issues a ``ValueWarning``.
+    a shift is a GARCH model, and so ``vol='ngarch'`` with the default ``o=0``
+    raises a ``ValueError``.
 
     Examples
     --------
@@ -3398,14 +3397,11 @@ def arch_model(
         elif vol_model == "fiaparch":
             v = FIAPARCH(p=p, o=o, q=q)
         elif vol_model == "ngarch" and o == 0:
-            # Without a shift the model is a GARCH
-            v = GARCH(p=p, o=0, q=q)
-            warnings.warn(
-                "vol='ngarch' with o=0 has no shift, and so is the same model as "
-                "vol='garch'. A GARCH volatility process is used. Use vol='garch' "
-                "for a symmetric model, or set o > 0 to estimate an NGARCH model.",
-                ValueWarning,
-                stacklevel=2,
+            # The default o=0 has no shift, which is a GARCH model
+            raise ValueError(
+                "o must be at least 1 when vol='ngarch', since o is the number of "
+                "shifted innovations; got 0. Use o=1 for the NGARCH(1,1) of Engle "
+                "and Ng, or vol='garch' for a model without a shift."
             )
         elif vol_model == "ngarch":
             v = NGARCH(p=p, o=o, q=q)

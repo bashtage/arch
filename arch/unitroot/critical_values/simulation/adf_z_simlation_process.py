@@ -53,7 +53,7 @@ for line in lines:
     if "# Z values from" in line:
         break
     retain.append(line)
-retain.append("\n\n# Z values from new simulations, 500 exercises, 250,000 per ex.\n")
+retain.append("\n\n# Z values from new simulations, 2,000 exercises, 250,000 per ex.\n")
 
 formatted_code = "".join(retain) + formatted_code
 
@@ -67,5 +67,6 @@ targets = {
 fm = FileMode(target_versions=targets)
 formatted_code = format_file_contents(formatted_code, fast=False, mode=fm)
 
-with open("../dickey_fuller.py", "w") as cvs:
+# LF line endings on every platform, as in the repository
+with open("../dickey_fuller.py", "w", newline="\n") as cvs:
     cvs.write(formatted_code)

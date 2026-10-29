@@ -100,8 +100,9 @@ that were realized. VaR is reported as a **positive loss** (a 99% VaR of 2.5 is 
 that is exceeded with probability 1%), and an observation is an *exception* if the loss
 exceeds the VaR, :math:`-r_t > \mathrm{VaR}_t`. VaR is named by its confidence level, and
 ``p`` is always the probability of an exception, the size of the tail: ``p=0.05`` for a
-95% VaR and ``p=0.01`` for a 99% VaR. ``p`` is 0.05 by default, except in the Basel
-traffic light, whose default is the 99% VaR of the framework. A quantile of the returns,
+95% VaR and ``p=0.01`` for a 99% VaR. It must be in (0, 0.5], so that a confidence level
+such as 0.99 raises an error. ``p`` is 0.05 by default, except in the Basel traffic
+light, whose default is the 99% VaR of the framework. A quantile of the returns,
 which is negative in the lower tail, must be negated first. The returns and the VaR must
 be finite.
 

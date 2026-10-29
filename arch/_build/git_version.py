@@ -3,9 +3,13 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import time
 
 from packaging.version import Version
 import setuptools_scm
+
+# Attempts, 0.05 seconds apart, to replace a changed version file before giving up
+_REPLACE_ATTEMPTS = 20
 
 ROOT = Path(__file__).parent.parent.parent.absolute()
 
@@ -57,8 +61,28 @@ __version__ = version = '{version}'
 __version_tuple__ = version_tuple = {version_fields}
     """
 
-    with open(filename, "w") as f:
-        f.write(template)
+    # An editable install runs this script whenever a process imports arch, so
+    # other processes can import the file while it is written. Leave an unchanged
+    # file alone, and replace a changed one in one step so that a reader never
+    # sees a truncated file.
+    path = Path(filename)
+    if path.exists() and path.read_text() == template:
+        return
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    try:
+        tmp.write_text(template)
+        for attempt in range(_REPLACE_ATTEMPTS):
+            try:
+                tmp.replace(path)
+                break
+            except PermissionError:
+                # Windows cannot replace a file that another process has open, and
+                # an import only holds it open while it reads it
+                if attempt == _REPLACE_ATTEMPTS - 1:
+                    raise
+                time.sleep(0.05)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

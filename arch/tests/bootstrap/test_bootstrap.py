@@ -15,6 +15,7 @@ from arch.bootstrap import (
     CircularBlockBootstrap,
     IIDBootstrap,
     IndependentSamplesBootstrap,
+    LocalBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
@@ -1037,22 +1038,34 @@ def test_staionary_seed(bs_setup, seed):
         assert pos[0].shape[0] == bs_setup.y.shape[0]
 
 
-BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBootstrap]
+BLOCK_BOOTSTRAPS = [
+    CircularBlockBootstrap,
+    MovingBlockBootstrap,
+    StationaryBootstrap,
+    LocalBlockBootstrap,
+]
+
+
+def make_block(cls, block_size, *args, **kwargs):
+    """A block bootstrap; the local block bootstrap also takes a locality."""
+    if cls is LocalBlockBootstrap:
+        return cls(block_size, 3, *args, **kwargs)
+    return cls(block_size, *args, **kwargs)
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
 def test_block_size_read_only(cls):
-    bs = cls(5, np.arange(100.0), seed=0)
+    bs = make_block(cls, 5, np.arange(100.0), seed=0)
     assert bs.block_size == 5
     with pytest.raises(AttributeError, match="block_size cannot be changed"):
         bs.block_size = 20
     assert bs.block_size == 5
-    assert cls(5, np.arange(100.0)).clone(np.arange(50.0)).block_size == 5
+    assert make_block(cls, 5, np.arange(100.0)).clone(np.arange(50.0)).block_size == 5
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
 def test_block_size_clone(cls):
-    bs = cls(7, np.arange(100.0), seed=0)
+    bs = make_block(cls, 7, np.arange(100.0), seed=0)
     clone = bs.clone(np.arange(60.0), seed=1)
     assert isinstance(clone, cls)
     assert clone.block_size == 7

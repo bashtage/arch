@@ -7,6 +7,7 @@ from arch.bootstrap import (
     CircularBlockBootstrap,
     IIDBootstrap,
     IndependentSamplesBootstrap,
+    LocalBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
@@ -50,7 +51,19 @@ def test_bca_acceleration_non_finite(bad):
         _get_acceleration(jk)
 
 
-BLOCK_BOOTSTRAPS = [CircularBlockBootstrap, MovingBlockBootstrap, StationaryBootstrap]
+BLOCK_BOOTSTRAPS = [
+    CircularBlockBootstrap,
+    MovingBlockBootstrap,
+    StationaryBootstrap,
+    LocalBlockBootstrap,
+]
+
+
+def make_block(cls, block_size, *args, **kwargs):
+    """A block bootstrap; the local block bootstrap also takes a locality."""
+    if cls is LocalBlockBootstrap:
+        return cls(block_size, 3, *args, **kwargs)
+    return cls(block_size, *args, **kwargs)
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
@@ -59,7 +72,7 @@ def test_block_size_too_small(cls, block_size):
     with pytest.raises(
         ValueError, match=r"block_size must be (an integer|a finite float) >= 1"
     ):
-        cls(block_size, np.arange(20.0))
+        make_block(cls, block_size, np.arange(20.0))
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
@@ -71,14 +84,14 @@ def test_block_size_not_valid_number(cls, block_size):
     else:
         expected_error = TypeError
     with pytest.raises(expected_error, match="block_size must be"):
-        cls(block_size, np.arange(20.0))
+        make_block(cls, block_size, np.arange(20.0))
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
 @pytest.mark.parametrize("block_size", ["5", None, [5]], ids=["str", "None", "list"])
 def test_block_size_wrong_type(cls, block_size):
     with pytest.raises(TypeError, match="block_size must be"):
-        cls(block_size, np.arange(20.0))
+        make_block(cls, block_size, np.arange(20.0))
 
 
 @pytest.mark.parametrize("cls", [CircularBlockBootstrap, MovingBlockBootstrap])
@@ -88,7 +101,7 @@ def test_block_size_wrong_type(cls, block_size):
 def test_block_size_not_integer(cls, block_size):
     # These raised a TypeError from NumPy when sampling
     with pytest.raises(TypeError, match="block_size must be an integer"):
-        cls(block_size, np.arange(20.0))
+        make_block(cls, block_size, np.arange(20.0))
 
 
 @pytest.mark.parametrize("cls", BLOCK_BOOTSTRAPS)
@@ -98,7 +111,7 @@ def test_block_size_not_integer(cls, block_size):
     ids=["1", "4", "np-int64", "np-int32"],
 )
 def test_block_size_valid(cls, block_size):
-    bs = cls(block_size, np.arange(20.0), seed=0)
+    bs = make_block(cls, block_size, np.arange(20.0), seed=0)
     assert bs.update_indices().shape == (20,)
 
 
@@ -233,7 +246,8 @@ def test_repr_html_is_jupyter_hook(cls):
     assert bs._repr_html_().startswith("<strong>")
     assert not hasattr(bs, "_repr_html")
     for block_cls in BLOCK_BOOTSTRAPS:
-        assert block_cls(3, np.arange(10.0))._repr_html_().startswith("<strong>")
+        bs = make_block(block_cls, 3, np.arange(10.0))
+        assert bs._repr_html_().startswith("<strong>")
 
 
 def test_bca_bias_message():

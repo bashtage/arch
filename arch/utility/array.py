@@ -267,9 +267,18 @@ def _object_values(
                 f"float64; got None in {source} ({type(x).__name__})"
             )
         values = np.where(missing, np.nan, values)
+    # NumPy casts a string that contains a number, such as "1.5", to the number, but
+    # strings are not numbers, as they are not in an array of strings
+    is_text = np.frompyfunc(lambda v: isinstance(v, (str, bytes)), 1, 1)(values)
+    if np.any(is_text.astype(bool)):
+        raise TypeError(
+            f"{name} must contain real numbers that can be converted to float64; "
+            f"got strings in {source} ({type(x).__name__})"
+        )
     try:
         as_complex = values.astype(np.complex128)
-    except (TypeError, ValueError) as exc:
+    except (TypeError, ValueError, OverflowError) as exc:
+        # OverflowError is an integer that is too large for float64
         raise TypeError(
             f"{name} must contain real numbers that can be converted to float64. "
             f"Received {source} that contains elements that cannot be converted "

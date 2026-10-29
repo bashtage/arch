@@ -215,7 +215,7 @@ def kupiec_pof(
         aligned.
     p : float, optional
         The probability of an exception that the VaR is designed for, which is
-        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR
         and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.
 
     Returns
@@ -232,7 +232,7 @@ def kupiec_pof(
         not a real number.
     ValueError
         If ``returns`` or ``var`` is not valid, as in `var_exceptions`, or ``p``
-        is not in (0, 1).
+        is not in (0, 0.5].
 
     See Also
     --------
@@ -260,7 +260,7 @@ def kupiec_pof(
     .. [1] Kupiec, P. H. (1995). Techniques for verifying the accuracy of risk
        measurement models. The Journal of Derivatives, 3(2), 73-84.
     """
-    p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
+    p = check_float("p", p, lower=0.0, upper=0.5, inclusive="right")
     exceptions, _ = _exceptions(returns, var, 1)
     stat = _lr_pof(int(exceptions.sum()), exceptions.shape[0], p)
     return WaldTestStatistic(
@@ -366,7 +366,7 @@ def christoffersen_conditional_coverage(
         aligned.
     p : float, optional
         The probability of an exception that the VaR is designed for, which is
-        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR
         and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR.
 
     Returns
@@ -383,7 +383,7 @@ def christoffersen_conditional_coverage(
         not a real number.
     ValueError
         If ``returns`` or ``var`` is not valid, as in `var_exceptions`, there
-        are fewer than 2 observations, or ``p`` is not in (0, 1).
+        are fewer than 2 observations, or ``p`` is not in (0, 0.5].
 
     See Also
     --------
@@ -403,7 +403,7 @@ def christoffersen_conditional_coverage(
     .. [1] Christoffersen, P. F. (1998). Evaluating interval forecasts.
        International Economic Review, 39(4), 841-862.
     """
-    p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
+    p = check_float("p", p, lower=0.0, upper=0.5, inclusive="right")
     exceptions, _ = _exceptions(returns, var, 2)
     stat = _lr_pof(int(exceptions.sum()), exceptions.shape[0], p)
     stat += _lr_independence(exceptions)
@@ -493,7 +493,7 @@ def traffic_light(
         aligned.
     p : float, optional
         The probability of an exception that the VaR is designed for, which is
-        the size of the tail, in the open interval (0, 1). It is 0.05 for a 95% VaR
+        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95% VaR
         and 0.01 for a 99% VaR. The default is 0.01, the 99% VaR of the Basel
         framework.
     window : int, optional
@@ -516,7 +516,7 @@ def traffic_light(
         real number or ``window`` is not an integer.
     ValueError
         If ``returns`` or ``var`` is not valid, as in `var_exceptions`, ``p`` is
-        not in (0, 1), ``window`` is not positive, or there are fewer than
+        not in (0, 0.5], ``window`` is not positive, or there are fewer than
         ``window`` observations.
 
     See Also
@@ -556,7 +556,7 @@ def traffic_light(
        for the use of "backtesting" in conjunction with the internal models
        approach to market risk capital requirements.
     """
-    p = check_float("p", p, lower=0.0, upper=1.0, inclusive="neither")
+    p = check_float("p", p, lower=0.0, upper=0.5, inclusive="right")
     window = check_int("window", window, lower=1)
     exceptions, _ = _exceptions(returns, var, 1)
     nobs = exceptions.shape[0]

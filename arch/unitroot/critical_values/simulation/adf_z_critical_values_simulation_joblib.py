@@ -125,7 +125,10 @@ if __name__ == "__main__":
     njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
     njobs = max(njobs, 1)
 
-    max_memory_size = getattr(args, "max_memory_size", MAX_MEMORY_SIZE)
+    # argparse sets max_memory_size to None when the option is not given
+    max_memory_size = getattr(args, "max_memory_size", None)
+    max_memory_size = MAX_MEMORY_SIZE if max_memory_size is None else max_memory_size
+    OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
 
     ss = SeedSequence(ENTROPY)
     children = ss.spawn(len(TRENDS) * EX_NUM)

@@ -1927,7 +1927,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         return _hill_estimator(self.std_resid, k)
 
-    def var_ratio(self, p: float | None = None, *, level: float | None = None) -> float:
+    def var_ratio(self, p: float | None = None) -> float:
         """
         Compute the ratio of Gaussian VaR to model-distribution VaR.
 
@@ -1938,12 +1938,6 @@ class ARCHModelFixedResult(_SummaryRepr):
             is the size of the tail, in the open interval (0, 0.5). It is 0.05
             for a 95% VaR and 0.01 for a 99% VaR. The default is 0.001, a 99.9%
             VaR.
-        level : float, optional
-            Deprecated. The confidence level of the VaR, ``1 - p``, in
-            (0.5, 1). Use ``p`` instead.
-
-            .. deprecated:: 9.1
-               Use ``p``, the probability of an exception.
 
         Returns
         -------
@@ -1954,12 +1948,11 @@ class ARCHModelFixedResult(_SummaryRepr):
         Raises
         ------
         TypeError
-            If ``p`` or ``level`` is not a real number.
+            If ``p`` is not a real number.
         ValueError
-            If ``p`` is not in (0, 0.5), ``level`` is not in (0.5, 1), or both
-            are given.
+            If ``p`` is not in (0, 0.5).
         """
-        p = _tail_probability(p, level)
+        p = _tail_probability(p)
         _, _, dp = self.model._parse_parameters(self._params)
         return _var_ratio(p, distribution=self.model.distribution, parameters=dp)
 
