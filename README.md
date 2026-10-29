@@ -44,7 +44,7 @@ research available at [Kevin Sheppard's site](https://www.kevinsheppard.com).
 
 Contributions are welcome. There are opportunities at many levels to contribute:
 
-- Implement new volatility process, e.g., FIGARCH
+- Implement new volatility processes, distributions or tests
 - Improve docstrings where unclear or with typos
 - Provide examples, preferably in the form of IPython notebooks
 
@@ -58,18 +58,29 @@ Contributions are welcome. There are opportunities at many levels to contribute:
   - Constant mean
   - Heterogeneous Autoregression (HAR)
   - Autoregression (AR)
+  - Moving Average (MA)
   - Zero mean
+  - ARCH-in-mean
   - Models with and without exogenous regressors
 - Volatility models
   - ARCH
   - GARCH
   - TARCH
   - EGARCH
-  - EWMA/RiskMetrics
+  - APARCH
+  - NGARCH
+  - FIGARCH and FIAPARCH
+  - HARCH
+  - MIDAS Hyperbolic
+  - EWMA/RiskMetrics and RiskMetrics 2006
 - Distributions
   - Normal
   - Student's T
+  - Skewed Student's T
   - Generalized Error Distribution
+- Diagnostics
+  - Residual diagnostics: excess kurtosis, Hill estimator and VaR ratio
+  - VaR backtests: Kupiec, Christoffersen and the Basel traffic light
 
 See the [univariate volatility example notebook](https://bashtage.github.io/arch/univariate/univariate_volatility_modeling.html) for a more complete overview.
 
@@ -97,7 +108,7 @@ res = am.fit()
 See the [unit root testing example notebook](https://bashtage.github.io/arch/unitroot/unitroot_examples.html)
 for examples of testing series for unit roots.
 
-<a id="unit-root"></a>
+<a id="cointegration"></a>
 
 ### Cointegration Testing and Analysis
 
@@ -121,6 +132,7 @@ for examples of testing series for cointegration.
   - Stationary Bootstrap
   - Circular Block Bootstrap
   - Moving Block Bootstrap
+  - Local Block Bootstrap
 - Methods
   - Confidence interval construction
   - Covariance estimation
@@ -171,8 +183,10 @@ for examples of the multiple comparison procedures.
 
 Kernel-based estimators of long-run covariance including the
 Bartlett kernel which is known as Newey-West in econometrics.
-Automatic bandwidth selection is available for all of the
-covariance estimators.
+Automatic bandwidth selection, using the methods of Newey and West
+(1994) or Andrews (1991), is available for all of the covariance
+estimators. VAR-HAC and pre-whitened recolored estimators are also
+available.
 
 ```python
 from arch.covariance.kernel import Bartlett
