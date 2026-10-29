@@ -553,7 +553,7 @@ def test_wald_test_statistic_fields():
 # Edge cases: closed forms of the limits
 
 
-@pytest.mark.parametrize("p", [0.001, 0.01, 0.05, 0.5, 0.9])
+@pytest.mark.parametrize("p", [0.001, 0.01, 0.05, 0.3, 0.5])
 @pytest.mark.parametrize("nobs", [2, 25, 250])
 def test_no_exceptions(p, nobs):
     # 0 log 0 = 0, so LR_uc = -2 T log(1 - p); no exception means n01 = n11 = 0
@@ -567,7 +567,7 @@ def test_no_exceptions(p, nobs):
     assert_allclose(cc.stat, uc.stat, rtol=1e-12)
 
 
-@pytest.mark.parametrize("p", [0.001, 0.01, 0.05, 0.5, 0.9])
+@pytest.mark.parametrize("p", [0.001, 0.01, 0.05, 0.3, 0.5])
 @pytest.mark.parametrize("nobs", [2, 25, 250])
 def test_all_exceptions(p, nobs):
     # LR_uc = -2 T log(p); every transition is 1 -> 1, so n00 = n01 = n10 = 0
@@ -1038,14 +1038,16 @@ def test_traffic_light_pandas_alignment():
     assert result == expected
 
 
-def test_p_boundaries_are_open():
+def test_p_boundaries():
     returns, var = series_with([0, 1, 0, 0])
     for func in (kupiec_pof, christoffersen_conditional_coverage):
-        for p in (0.0, 1.0):
+        # 0 is not a probability of an exception, and a confidence level such as
+        # 0.95 or 0.99 is not one either
+        for p in (0.0, 0.5 + 1e-12, 0.95, 0.99, 1.0):
             with pytest.raises(
-                ValueError, match=r"p must be a finite float in \(0, 1\)"
+                ValueError, match=r"p must be a finite float in \(0, 0.5\]"
             ):
                 func(returns, var, p)
-    # Values that are close to the boundary are valid
+    # Values that are close to the lower boundary and 0.5 are valid
     assert kupiec_pof(returns, var, 1e-12).stat > 0.0
-    assert kupiec_pof(returns, var, 1.0 - 1e-12).stat > 0.0
+    assert kupiec_pof(returns, var, 0.5).stat > 0.0

@@ -9,7 +9,11 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
-from arch.covariance.kernel import CovarianceEstimator, get_kernel_estimator
+from arch.covariance.kernel import (
+    CovarianceEstimator,
+    _check_bandwidth_method,
+    get_kernel_estimator,
+)
 from arch.unitroot._shared import (
     ResidualCointegrationTestResult,
     _check_cointegrating_regression,
@@ -59,6 +63,7 @@ def _po_ptests(
     kernel_est: type[CovarianceEstimator],
     bandwidth: float | None,
     force_int: bool,
+    bandwidth_method: str = "newey-west",
 ) -> "PhillipsOuliarisTestResults":
     nobs = z.shape[0]
     z_lead = z.iloc[1:]
@@ -66,7 +71,13 @@ def _po_ptests(
     phi = np.linalg.lstsq(z_lag, z_lead, rcond=None)[0]
     xi = z_lead - np.asarray(z_lag @ phi)
 
-    cov_est = kernel_est(xi, bandwidth=bandwidth, center=False, force_int=force_int)
+    cov_est = kernel_est(
+        xi,
+        bandwidth=bandwidth,
+        center=False,
+        force_int=force_int,
+        bandwidth_method=bandwidth_method,
+    )
     cov = cov_est.cov
     # Rescale to match definition in PO
     omega = (nobs - 1) / nobs * np.asarray(cov.long_run)
@@ -113,6 +124,7 @@ def _po_ztests(
     kernel_est: type[CovarianceEstimator],
     bandwidth: float | None,
     force_int: bool,
+    bandwidth_method: str = "newey-west",
 ) -> "PhillipsOuliarisTestResults":
     # Za and Zt tests
     u = np.asarray(xsection.resid)[:, None]
@@ -122,7 +134,13 @@ def _po_ztests(
     alpha = np.linalg.lstsq(u[:-1], u[1:, 0], rcond=None)[0]
     k = u[1:] - alpha * u[:-1]
     u2 = np.squeeze(u[:-1].T @ u[:-1])
-    cov_est = kernel_est(k, bandwidth=bandwidth, center=False, force_int=force_int)
+    cov_est = kernel_est(
+        k,
+        bandwidth=bandwidth,
+        center=False,
+        force_int=force_int,
+        bandwidth_method=bandwidth_method,
+    )
     cov = cov_est.cov
     one_sided_strict = k_scale * cov.one_sided_strict
 
@@ -159,6 +177,7 @@ def phillips_ouliaris(
     kernel: str = "bartlett",
     bandwidth: float | None = None,
     force_int: bool = False,
+    bandwidth_method: str = "newey-west",
 ) -> "PhillipsOuliarisTestResults":
     r"""
     Test for cointegration within a set of time series.
@@ -206,6 +225,13 @@ def phillips_ouliaris(
         bandwidth to 0 produces White's covariance estimator.
     force_int : bool, optional
         Whether to force the estimated optimal bandwidth to be an integer.
+    bandwidth_method : {"newey-west", "andrews"}, optional
+        The method used to estimate the bandwidth when bandwidth is None.
+        "newey-west" uses the nonparametric estimate of Newey and West (1994)
+        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+        ``opt_bandwidth`` of the kernel estimators. Not case sensitive, and
+        hyphens and underscores are ignored as in the names of kernels.
+        Ignored if bandwidth is provided.
 
     Returns
     -------
@@ -216,13 +242,15 @@ def phillips_ouliaris(
     ------
     TypeError
         If y or x cannot be converted to float64, bandwidth is not a real number
-        or None, force_int is not a bool, or trend, test_type or kernel is not a
-        string.
+        or None, force_int is not a bool, or trend, test_type, kernel or
+        bandwidth_method is not a string.
     ValueError
         If y or x contains NaN or inf, does not have the required dimensions, the
         same number of rows or the same index, or has too few rows. Also if x has
-        more than 12 columns, bandwidth is negative, NaN or inf, or trend,
-        test_type or kernel is not one of the options.
+        more than 12 columns, bandwidth is negative, NaN or inf, trend,
+        test_type, kernel or bandwidth_method is not one of the options, or
+        bandwidth_method is "andrews" and the AR(1) cannot be fitted to the
+        residuals.
     InfeasibleTestException
         If y is constant. This is also a ``ValueError``.
 
@@ -324,6 +352,7 @@ def phillips_ouliaris(
     kernel_est = get_kernel_estimator(kernel)
     bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
     force_int = check_bool("force_int", force_int)
+    bandwidth_method = _check_bandwidth_method(bandwidth_method)
     setup = _check_cointegrating_regression(y, x, trend)
     _check_num_trends(setup.x.shape[1] + 1)
     trend = setup.trend
@@ -340,6 +369,7 @@ def phillips_ouliaris(
             kernel_est,
             bandwidth,
             force_int,
+            bandwidth_method,
         )
     return _po_ztests(
         z,
@@ -349,6 +379,7 @@ def phillips_ouliaris(
         kernel_est,
         bandwidth,
         force_int,
+        bandwidth_method,
     )
 
 

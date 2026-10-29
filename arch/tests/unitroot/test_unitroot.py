@@ -504,6 +504,18 @@ def test_mackinnonp_large():
     assert val == 1.0
 
 
+@pytest.mark.parametrize("dist_type", ["adf-t", "adf-z", "dfgls"])
+def test_mackinnonp_infinite(dist_type):
+    # Some tables have infinite bounds, and the polynomials gave nan at -inf and
+    # inf, and an overflow warning for a very large statistic
+    regressions = ("c", "ct") if dist_type == "dfgls" else ("n", "c", "ct", "ctt")
+    for regression in regressions:
+        assert mackinnonp(-np.inf, regression, dist_type=dist_type) == 0.0
+        assert mackinnonp(np.inf, regression, dist_type=dist_type) == 1.0
+        assert mackinnonp(-1e300, regression, dist_type=dist_type) == 0.0
+        assert mackinnonp(1e300, regression, dist_type=dist_type) == 1.0
+
+
 def test_mackinnoncrit_errors():
     with pytest.raises(ValueError, match=r"regression must be one of "):
         mackinnoncrit(regression="ttc")

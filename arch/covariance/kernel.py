@@ -699,6 +699,14 @@ class CovarianceEstimator(ABC):
             scale = 1 + (j != 0)
             f_0s += scale * sig_j
             f_qs += scale * j**q * sig_j
+        if f_0s == 0.0:
+            # The weighted sum of the columns is 0, which happens when every
+            # column of x is constant and x is centered
+            raise ValueError(
+                'bandwidth_method="newey-west" cannot estimate the bandwidth since '
+                "the weighted sum of the columns of x is 0, which happens when every "
+                "column of x is constant"
+            )
         return (f_qs / f_0s) ** 2
 
     def _andrews_alpha_q(self) -> float:

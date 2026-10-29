@@ -9,6 +9,7 @@ ARCHModelResult
 Autoregression
 Autoregressions
 Autoregressive
+Basel
 BCa
 CanonicalCointegratingReg
 Centerings
@@ -43,6 +44,7 @@ Loglikelihood
 MCS
 MIDASHyperbolic
 MovingBlockBootstrap
+NAGARCH
 NaN
 NeweyWest
 Nonparametric
@@ -58,6 +60,7 @@ QuadraticSpectral
 Rabba
 Regressors
 RiskMetrics
+rugarch
 Semiparametric
 SkewStudent
 StationaryBootstrap

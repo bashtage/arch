@@ -2,12 +2,12 @@
 Contains values used to approximate the critical value and
 p-value from statistics that follow the Dickey-Fuller distribution.
 
-Most values are from MacKinnon (1994) or (2010).  A small number of these
-did not appear in the original paper and have been computed using an identical
-simulation.
+The values for the ADF t-statistic are from MacKinnon (1994) or (2010). A small
+number of these did not appear in the original paper and have been computed using
+an identical simulation.
 
-All values are from 2000 blocked simulations each with 250,000 draws
-for a total of 500,000,000 samples.
+The values for the ADF z-statistic are from 2,000 blocked simulations each with
+250,000 draws for a total of 500,000,000 samples.
 """
 
 from numpy import array, asarray, inf

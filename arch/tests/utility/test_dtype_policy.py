@@ -324,6 +324,28 @@ def test_numpy_complex_objects(helper, container, allow_complex):
     assert_array_equal(data, original)
 
 
+@pytest.mark.parametrize("allow_complex", [False, True])
+@pytest.mark.parametrize("container", [c for _, c in CONTAINERS], ids=CONTAINER_IDS)
+@pytest.mark.parametrize("helper", [h for _, h in HELPERS], ids=HELPER_IDS)
+@pytest.mark.parametrize("text", ["1.5", b"1.5"], ids=["str", "bytes"])
+def test_strings_in_object_data_are_rejected(helper, container, allow_complex, text):
+    # NumPy casts "1.5" to 1.5, but an array of strings is rejected, and so are
+    # strings in object data
+    data = np.array([text, 2.0], dtype=object)
+    with pytest.raises(TypeError, match=r"^my_data must "):
+        helper(container(data), allow_complex)
+
+
+@pytest.mark.parametrize("allow_complex", [False, True])
+@pytest.mark.parametrize("container", [c for _, c in CONTAINERS], ids=CONTAINER_IDS)
+@pytest.mark.parametrize("helper", [h for _, h in HELPERS], ids=HELPER_IDS)
+def test_integers_too_large_for_float64_are_rejected(helper, container, allow_complex):
+    # An OverflowError, which is not a TypeError, escaped
+    data = np.array([1.5, 2**1100], dtype=object)
+    with pytest.raises(TypeError, match=r"^my_data must "):
+        helper(container(data), allow_complex)
+
+
 @pytest.mark.parametrize(
     "dtype", REAL_DTYPES + [np.float16] + COMPLEX_DTYPES, ids=_label
 )

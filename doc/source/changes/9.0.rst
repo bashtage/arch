@@ -22,6 +22,15 @@ Highlights
 - Added :class:`~arch.covariance.var.PreWhitenedRecolored`, which implements the VAR-HAC
   and pre-whitened recolored long-run covariance estimators (contributed by
   WatchTree-19).
+- Added :class:`~arch.univariate.NGARCH`, the nonlinear asymmetric GARCH of Engle and
+  Ng, the VaR backtests of Kupiec and Christoffersen and the Basel traffic light, and
+  :class:`~arch.bootstrap.LocalBlockBootstrap`, the local block bootstrap of
+  Paparoditis and Politis.
+- The automatic bandwidth of the kernel covariance estimators can use the AR(1)
+  plug-in method of Andrews (1991) with ``bandwidth_method="andrews"``, and the default
+  method of Newey and West (1994) now gives the bandwidths and estimates of the R
+  package sandwich, which changes every automatic bandwidth. See "Changes that alter
+  results".
 - Added the residual diagnostics :func:`~arch.univariate.excess_kurtosis`,
   :func:`~arch.univariate.hill_estimator` and :func:`~arch.univariate.var_ratio`
   (contributed by albystack), and Ng and Perron's modified AIC, ``method="maic"``, for
@@ -32,8 +41,10 @@ Highlights
   analytic forecasts of :class:`~arch.univariate.RiskMetrics2006`, the analytic
   forecasts of GJR-type models with skewed distributions, BCa confidence intervals of
   functions that return several statistics, :class:`~arch.univariate.ARCHInMean` models,
-  and :class:`~arch.unitroot.DFGLS` and :func:`~arch.unitroot.auto_bandwidth` with
-  integer data. See "Changes that alter results".
+  :class:`~arch.unitroot.DFGLS` and :func:`~arch.unitroot.auto_bandwidth` with integer
+  data, and the ADF-Z critical values and p-values without a trend, which
+  :class:`~arch.unitroot.PhillipsPerron` uses with ``test_type="rho"``. See "Changes
+  that alter results".
 - The arguments of the public API are validated consistently. An invalid argument raises
   a ``TypeError`` (wrong type) or a ``ValueError`` (value that is not allowed) with a
   message that names the argument, shows the value and says what is accepted, the string
@@ -55,6 +66,14 @@ New features
   volatility processes, and the model with an estimated ``delta`` and the one with the
   same ``delta`` fixed have the same log-likelihood. Contributed by gjunjie
   (:issue:`833`, :issue:`926`).
+- Added :class:`~arch.univariate.NGARCH`, the nonlinear asymmetric GARCH volatility
+  process of Engle and Ng (1993), which is called NAGARCH in the R package rugarch.
+  ``o`` is the number of innovations that have a shift. It can be used in
+  :func:`~arch.univariate.arch_model` with ``vol="ngarch"``, which requires ``o`` to be
+  at least 1, since a model without a shift is a GARCH. Analytic forecasts are exact at
+  all horizons, and simulation and bootstrap forecasts are available. ``fit`` issues a
+  ``ValueWarning`` when the estimated persistence is 1 or more, which the estimation
+  constraints do not exclude (:issue:`636`, :issue:`966`).
 - Added :class:`~arch.univariate.MAMean`, a moving average mean model of order q with an
   optional constant that can be used with any volatility process and distribution.
   Analytic, simulation and bootstrap forecasts include the moving average terms for the
@@ -72,6 +91,15 @@ New features
   uses for VAR-HAC, which is selected with ``kernel=None``. The order, residuals and
   residual covariance of the VAR are available as ``order``, ``resid`` and
   ``resid_cov``. Contributed by WatchTree-19 (:issue:`874`, :issue:`894`).
+- Added ``bandwidth_method`` to the kernel covariance estimators in
+  :mod:`arch.covariance.kernel`, to :class:`~arch.covariance.var.PreWhitenedRecolored`,
+  to the ``fit`` methods of :class:`~arch.unitroot.cointegration.DynamicOLS`,
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg`, and to
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris`. The default, ``"newey-west"``,
+  is the nonparametric method of Newey and West (1994). ``"andrews"`` is the AR(1)
+  plug-in method of Andrews (1991), whose bandwidths equal those of ``bwAndrews`` in the
+  R package sandwich (:issue:`887`, :issue:`964`, :issue:`985`).
 - Added the residual diagnostics :func:`~arch.univariate.excess_kurtosis`,
   :func:`~arch.univariate.hill_estimator` and :func:`~arch.univariate.var_ratio`, which
   use standardized residuals. The results of a model also have
@@ -80,6 +108,22 @@ New features
   :meth:`~arch.univariate.base.ARCHModelResult.var_ratio`, which use the standardized
   residuals and the estimated distribution of the model. Contributed by albystack
   (:issue:`845`, :issue:`850`).
+- Added the VaR backtests :func:`~arch.univariate.var_exceptions`, which finds the
+  observations where the loss exceeds the VaR, :func:`~arch.univariate.kupiec_pof`, the
+  proportion of failures test of Kupiec (1995),
+  :func:`~arch.univariate.christoffersen_independence` and
+  :func:`~arch.univariate.christoffersen_conditional_coverage`, the independence and
+  conditional coverage tests of Christoffersen (1998), and
+  :func:`~arch.univariate.traffic_light`, the zone of the Basel traffic light, which is
+  returned as a :class:`~arch.univariate.TrafficLightResult`. ``p`` is always the
+  probability of an exception, such as 0.01 for a 99% VaR, and must be in (0, 0.5].
+  The unconditional and conditional coverage statistics equal those of ``VaRTest`` in
+  the R package rugarch (:issue:`904`, :issue:`965`).
+- Added :class:`~arch.bootstrap.LocalBlockBootstrap`, the local block bootstrap of
+  Paparoditis and Politis (2002), for series whose properties change slowly over time.
+  Each block of the data is replaced by a block that starts at most ``locality``
+  observations from it, so that a bootstrap sample only mixes nearby blocks
+  (:issue:`617`, :issue:`967`).
 - Added ``method="maic"`` to the automatic lag selection of :class:`~arch.unitroot.ADF`,
   :class:`~arch.unitroot.DFGLS` and :class:`~arch.unitroot.ZivotAndrews`. It selects the
   lag that minimizes the modified AIC of Ng and Perron (2001). Contributed by
@@ -313,20 +357,52 @@ to restore the previous results.
   :class:`~arch.unitroot.PhillipsPerron` and :class:`~arch.unitroot.KPSS` do not use it.
   Contributed by ZacKienzle2 (:issue:`886`).
 - Fixed the automatic bandwidth of the kernel covariance estimators in
-  :mod:`arch.covariance.kernel` so that the number of autocovariances in the pilot
-  estimate is the integer part of :math:`4(T/100)^{r}`, as in Newey and West (1994) and
-  :func:`~arch.unitroot.auto_bandwidth`. Previously it was rounded up, so that one more
-  autocovariance was used whenever :math:`4(T/100)^{r}` is not an integer. The
-  bandwidths now equal those of ``bwNeweyWest`` in the R package sandwich. Every
-  estimate with an automatic bandwidth changes, including those of
-  :class:`~arch.covariance.var.PreWhitenedRecolored`,
+  :mod:`arch.covariance.kernel`, so that the bandwidths and the estimates equal those of
+  the R package sandwich. Every estimate with an automatic bandwidth changes, including
+  those of :class:`~arch.covariance.var.PreWhitenedRecolored`,
   :class:`~arch.unitroot.cointegration.DynamicOLS`,
   :class:`~arch.unitroot.cointegration.FullyModifiedOLS`,
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` and
-  :func:`~arch.unitroot.phillips_ouliaris` when ``bandwidth`` is not given. For example,
-  the Bartlett, Parzen and quadratic spectral bandwidths of the daily S&P 500 percent
-  returns in ``arch.data.sp500`` change from 22.88, 31.99 and 13.25 to 31.96, 35.50 and
-  13.61. Pass ``bandwidth`` to use a specific value.
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris` when ``bandwidth`` is not
+  given. There are three changes:
+
+  * The number of autocovariances in the pilot estimate of the optimal bandwidth,
+    ``opt_bandwidth``, is the integer part of :math:`4(T/100)^{r}`, as in Newey and West
+    (1994) and :func:`~arch.unitroot.auto_bandwidth`. Previously it was rounded up, so
+    that one more autocovariance was used whenever :math:`4(T/100)^{r}` is not an
+    integer. ``opt_bandwidth`` now equals ``bwNeweyWest`` of sandwich.
+  * The kernels that are 0 beyond a finite lag, which are all except the quadratic
+    spectral kernel, weight lag :math:`h` by :math:`k(h/(H+1))` for a bandwidth
+    :math:`H`, while the optimal bandwidth :math:`S` of Andrews (1991) and Newey and
+    West (1994) is that of :math:`k(h/S)`. :math:`S` was used as :math:`H`, which gave
+    the weights of :math:`S+1`. The estimated ``bandwidth`` of these kernels is now
+    :math:`\max(S-1, 0)`, so that the weights are those of :math:`S`, as in
+    ``kernHAC`` of sandwich (and ``NeweyWest`` for the Bartlett kernel with
+    ``force_int=True``). ``opt_bandwidth`` is still :math:`S`, and so
+    ``Bartlett(x, bandwidth=est.opt_bandwidth)`` is not the same as ``Bartlett(x)``.
+  * A bandwidth that is not an integer, estimated or given, uses every lag with a
+    positive weight. The lag :math:`\lfloor H \rfloor + 1` was not used. An integer
+    ``bandwidth`` gives the same estimates as before.
+
+  For example, the Bartlett, Parzen and quadratic spectral bandwidths of the daily S&P
+  500 percent returns in ``arch.data.sp500`` change from 22.88, 31.99 and 13.25 to
+  30.96, 34.50 and 13.61, and their ``opt_bandwidth`` to 31.96, 35.50 and 13.61. The
+  constant of the Tukey-Parzen kernel is also corrected from 1.8576 to 1.8587, which
+  changes its automatic bandwidth slightly. Pass ``bandwidth`` to use a specific value
+  (:issue:`964`, :issue:`983`).
+- Fixed the critical values and p-values of the ADF-Z statistic without a trend
+  (``regression="n"``), which :class:`~arch.unitroot.PhillipsPerron` uses with
+  ``test_type="rho"`` and ``trend="n"``, and which ``mackinnoncrit`` and ``mackinnonp``
+  return with ``dist_type="adf-z"``. The values are from a new simulation that starts
+  the random walk at 0. The 1%, 5% and 10% critical values with 100 observations change
+  from -10.78, -6.13 and -4.27 to -13.08, -7.78 and -5.56, and the asymptotic ones from
+  -13.30, -7.83 and -5.57 to -13.69, -8.04 and -5.71. In small samples the previous
+  critical values were wrong: with 10 observations they were 20.32, 13.84 and 10.54,
+  and are now -8.95, -5.98 and -4.41. For example the p-value of a statistic of -8
+  changes from 0.0477 to 0.0504. The tables with a constant or a trend are also from the
+  new simulation. Their critical values change by less than 0.005 with 25 or more
+  observations and their p-values below 0.2 by at most 0.0001. Contributed by mkzung
+  (:issue:`971`, :issue:`972`, :issue:`973`, :issue:`980`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
@@ -620,7 +696,7 @@ Backward-incompatible changes
   not ``bool`` raise errors that name the argument. ``plot`` raises a ``ValueError`` for
   a ``scale`` that is not positive and finite and for an ``annualize`` that is not
   ``"d"``, ``"w"`` or ``"m"``, and ``arch_lm_test`` requires ``standardized`` to be a
-  ``bool``. ``var_ratio`` raises for a ``level`` that is not a number and for
+  ``bool``. ``var_ratio`` raises for a ``p`` that is not a number and for
   ``parameters`` that do not have one finite element for each parameter of the
   distribution, and ``hill_estimator`` for a ``k`` that is not an integer or is outside
   ``[1, n - 1]`` (:issue:`949`).
@@ -727,6 +803,11 @@ Backward-incompatible changes
   ``astype(np.float32)`` or ``astype(np.float64)`` if that is intended. Complex data
   raise a ``TypeError`` too, except in the kernel covariance estimators, ``cov_nw``,
   ``add_trend`` and the ``apply``, ``cov`` and ``var`` of the bootstraps (:issue:`957`).
+- Strings in object data, including object ``Series`` and ``DataFrame`` columns, raise
+  a ``TypeError``, as an array of strings does. A string that contains a number, such
+  as ``"1.5"``, was converted to the number. Convert the data with ``astype(float)``
+  first if that is intended. An integer that is too large for ``float64`` raises a
+  ``TypeError`` where it raised an ``OverflowError`` (:issue:`985`).
 
 Bug fixes
 ~~~~~~~~~
@@ -979,6 +1060,44 @@ Bug fixes
   :func:`~arch.univariate.arch_model`, is no longer renamed to the string ``"None"``
   (:issue:`948`).
 
+- Fixed the bootstraps of a statistic that returns the same array in every call, for
+  example one that writes its result with NumPy's ``out=`` argument. The estimate of the
+  original sample and the jackknife estimates were overwritten by later calls, which
+  shifted the confidence intervals, changed ``cov`` and ``var`` and could make BCa
+  raise an error. They are now copied. Contributed by antonsoo (:issue:`954`).
+- Fixed ``partial_moment`` of :class:`~arch.univariate.StudentsT` for odd orders when
+  ``nu`` is 342 or more, which returned 0. For example the first partial moment at 0
+  with ``nu=342`` is -0.39865. The partial moments of :class:`~arch.univariate.Normal`
+  and :class:`~arch.univariate.StudentsT` of order 2 or more at ``-inf`` and ``inf``,
+  which were NaN, are 0 and the moment of that order. Contributed by mkzung
+  (:issue:`969`, :issue:`970`, :issue:`985`).
+- Small p-values are no longer rounded to 0. The p-value of
+  :class:`~arch.utility.testing.WaldTestStatistic`, which the ARCH LM test and other
+  tests return, the p-value of :class:`~arch.unitroot.VarianceRatio` and the
+  ``pvalues`` of the results of :class:`~arch.unitroot.cointegration.DynamicOLS`,
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` were computed as 1
+  minus a CDF, which is 0 for p-values smaller than about 1e-16. For example the
+  p-value of a Wald statistic of 100 with 2 degrees of freedom was 0 and is 1.9e-22.
+  Contributed by galafis (:issue:`975`, :issue:`977`).
+- :attr:`~arch.bootstrap.StepM.superior_models` returns Python integers for the models
+  that are found after the first step, which were NumPy integers. Contributed by
+  wavebyrd (:issue:`974`).
+- Fixed ``add_trend`` for a ``DataFrame`` with a duplicated index, which multiplied the
+  rows and mixed the trend values of different observations. The trend columns are now
+  added by position. Contributed by jackiectl2 (:issue:`978`).
+- Object data, including object ``Series`` and ``DataFrame`` columns, whose elements are
+  complex numbers with imaginary parts that are all 0 are converted to ``float64``, as
+  for real numbers. They were rejected unless complex data are allowed, and were then
+  ``complex128``. Contributed by galafis (:issue:`976`, :issue:`982`).
+- The automatic bandwidth of the kernel covariance estimators and of
+  :class:`~arch.covariance.var.PreWhitenedRecolored` raises a ``ValueError`` for data in
+  which every column is constant, as ``bandwidth_method="andrews"`` does, where it
+  raised a ``ZeroDivisionError`` (:issue:`985`).
+- ``mackinnonp`` returns 0 for a statistic of ``-inf`` and 1 for ``inf``, where it
+  returned NaN for the ADF-Z tables and for the ADF test without a trend, and no longer
+  warns about an overflow for a very large statistic (:issue:`985`).
+
 Performance
 ~~~~~~~~~~~
 - Automatic lag selection in :class:`~arch.unitroot.DFGLS` no longer estimates an
@@ -1056,6 +1175,16 @@ Documentation and maintenance
   the dependencies, runs the style checks in their own workflow, and builds and tests
   the wheel on macOS (arm64 and Intel) (:issue:`893`, :issue:`918`, :issue:`920`,
   :issue:`929`, :issue:`932`).
+- The continuous integration tests the wheel without matplotlib, as the wheels are
+  tested when they are built, installs the conda environment with Miniforge from
+  conda-forge, and runs the slow tests on the newest Python (:issue:`960`,
+  :issue:`961`, :issue:`981`, :issue:`984`).
+- An editable install no longer rewrites the version file, ``arch/_version.py``, when
+  it is unchanged, and replaces it in one step when it changes, so that a process that
+  imports arch while another one does, such as a worker of a multiprocessing pool,
+  cannot read a truncated file. The README lists the current features, and the scripts
+  that simulate the ADF-Z critical values run without the optional arguments
+  (:issue:`985`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1099,10 +1228,10 @@ Minimum versions
 
 Contributors
 ~~~~~~~~~~~~
-- Thanks to the contributors to this release: aeshef, albystack, antonsoo, gjunjie,
-  heykav, pedrosfaria2, premdev1234, raashish1601, shaneraphel, VenishPaneliya,
-  WatchTree-19 and ZacKienzle2. Thanks also to lucaluo925 for reporting the BCa issue
-  (:issue:`866`), to nicoloangileri for reporting the skewed GJR forecasts
-  (:issue:`867`), and to mjwillson and novdanody for the issues that the documentation
-  of ``conf_int`` and of the covariance estimators addresses (:issue:`801`,
-  :issue:`715`).
+- Thanks to the contributors to this release: aeshef, albystack, antonsoo, galafis,
+  gjunjie, heykav, jackiectl2, mkzung, pedrosfaria2, premdev1234, raashish1601,
+  shaneraphel, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks also to
+  lucaluo925 for reporting the BCa issue (:issue:`866`), to nicoloangileri for
+  reporting the skewed GJR forecasts (:issue:`867`), and to mjwillson and novdanody for
+  the issues that the documentation of ``conf_int`` and of the covariance estimators
+  addresses (:issue:`801`, :issue:`715`).

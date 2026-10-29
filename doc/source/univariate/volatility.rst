@@ -143,10 +143,10 @@ non-negativity, as for :class:`~arch.univariate.APARCH`, and not
     params["alpha[1]"] * (1 + params["theta[1]"] ** 2) + params["beta[1]"]
 
 The process can also be selected using ``vol="ngarch"`` in
-:func:`~arch.univariate.arch_model`, where ``o=1`` adds the shift. Without a shift
-(``o=0``, the default of ``arch_model``) the model is a GARCH, so ``arch_model`` uses
-:class:`~arch.univariate.GARCH` and issues a ``ValueWarning``. Analytic forecasts
-are exact at all horizons. For ``p=q=1`` they satisfy
+:func:`~arch.univariate.arch_model`, where ``o=1`` adds the shift and is required.
+Without a shift (``o=0``, the default of ``arch_model``) the model is a GARCH, so
+``arch_model`` raises a ``ValueError``. Use ``vol="garch"`` for that model. Analytic
+forecasts are exact at all horizons. For ``p=q=1`` they satisfy
 :math:`f_h=\omega+\phi f_{h-1}`.
 
 .. ipython:: python

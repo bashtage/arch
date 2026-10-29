@@ -20,6 +20,7 @@ from arch.bootstrap import (
     CircularBlockBootstrap,
     IIDBootstrap,
     IndependentSamplesBootstrap,
+    LocalBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
     optimal_block_length,
@@ -68,6 +69,7 @@ CTORS: dict[str, Callable[..., Any]] = {
     "Circular": lambda **kw: CircularBlockBootstrap(5, Y, **kw),
     "Moving": lambda **kw: MovingBlockBootstrap(5, Y, **kw),
     "Stationary": lambda **kw: StationaryBootstrap(5, Y, **kw),
+    "Local": lambda **kw: LocalBlockBootstrap(5, 3, Y, **kw),
 }
 
 ROWS: list[Row] = []
@@ -121,6 +123,7 @@ for _name, _ctor in {
     "Circular": lambda **kw: CircularBlockBootstrap(5, **kw),
     "Moving": lambda **kw: MovingBlockBootstrap(5, **kw),
     "Stationary": lambda **kw: StationaryBootstrap(5, **kw),
+    "Local": lambda **kw: LocalBlockBootstrap(5, 3, **kw),
 }.items():
     for _label, _value, _exc, _rule in DATA_BAD:
         ROWS.append(

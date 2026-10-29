@@ -17,6 +17,7 @@ import pytest
 from arch.bootstrap import (
     CircularBlockBootstrap,
     IIDBootstrap,
+    LocalBlockBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
@@ -49,6 +50,7 @@ def _bootstraps():
         (StationaryBootstrap, (10,), "stationary"),
         (CircularBlockBootstrap, (10,), "circular"),
         (MovingBlockBootstrap, (10,), "moving"),
+        (LocalBlockBootstrap, (10, 20), "local"),
     ]
 
 

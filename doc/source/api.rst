@@ -66,6 +66,18 @@ Residual Diagnostics
    ~arch.univariate.hill_estimator
    ~arch.univariate.var_ratio
 
+VaR Backtests
+~~~~~~~~~~~~~
+
+.. autosummary::
+
+   ~arch.univariate.var_exceptions
+   ~arch.univariate.kupiec_pof
+   ~arch.univariate.christoffersen_independence
+   ~arch.univariate.christoffersen_conditional_coverage
+   ~arch.univariate.traffic_light
+   ~arch.univariate.TrafficLightResult
+
 Model Results and Forecasts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

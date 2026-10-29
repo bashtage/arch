@@ -87,3 +87,20 @@ def test_students_t_odd_partial_moment_large_nu(nu):
         for z in (-2.0, 0.0, 1.5):
             m_quad = quad(f, -inf, z, args=(n,))[0]
             assert_almost_equal(dist.partial_moment(n, z, [nu]), m_quad)
+
+
+@pytest.mark.parametrize(("dist", "params"), DISTRIBUTIONS)
+def test_partial_moment_infinite_bound(dist, params):
+    # The lower partial moment to -inf is 0 and to inf is the moment. Normal and
+    # StudentsT gave nan, and StudentsT also gave nan for n=1 with large nu
+    for n in range(5):
+        assert_almost_equal(dist.partial_moment(n, -inf, params), 0.0)
+        assert_almost_equal(dist.partial_moment(n, inf, params), dist.moment(n, params))
+
+
+@pytest.mark.parametrize("nu", [5.0, 400.0])
+def test_students_t_partial_moment_infinite_bound(nu):
+    dist = StudentsT()
+    for n in range(5):
+        assert dist.partial_moment(n, -inf, [nu]) == 0.0
+        assert_almost_equal(dist.partial_moment(n, inf, [nu]), dist.moment(n, [nu]))

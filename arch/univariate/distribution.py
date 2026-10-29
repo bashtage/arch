@@ -750,10 +750,9 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             return stats.norm.cdf(z)
         elif n == 1:
             return -stats.norm.pdf(z)
-        else:
-            return -(z ** (n - 1)) * stats.norm.pdf(z) + (n - 1) * (
-                Normal._normal_partial_moment(n - 2, z)
-            )
+        # The term in the density is 0 at -inf and inf, and inf * 0 would be nan
+        boundary = -(z ** (n - 1)) * stats.norm.pdf(z) if np.isfinite(z) else 0.0
+        return boundary + (n - 1) * Normal._normal_partial_moment(n - 2, z)
 
 
 class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
@@ -1006,12 +1005,15 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         """
         if n < 0 or n >= nu:
             return nan
-        elif n == 0:
+        # The terms in the density are 0 at -inf and inf when n < nu, and inf * 0
+        # would be nan
+        finite = np.isfinite(z)
+        if n == 0:
             moment = stats.t.cdf(z, nu)
         elif n == 1:
-            moment = -(nu + z**2) / (nu - 1) * stats.t.pdf(z, nu)
+            moment = -(nu + z**2) / (nu - 1) * stats.t.pdf(z, nu) if finite else 0.0
         else:
-            t1 = (z ** (n - 1)) * (nu + z**2) * stats.t.pdf(z, nu)
+            t1 = (z ** (n - 1)) * (nu + z**2) * stats.t.pdf(z, nu) if finite else 0.0
             t2 = (n - 1) * nu * StudentsT._ord_t_partial_moment(n - 2, z, nu)
             moment = (1 / (n - nu)) * (t1 - t2)
         return moment

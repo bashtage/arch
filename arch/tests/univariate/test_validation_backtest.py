@@ -88,6 +88,10 @@ def _rows() -> list[Row]:
                 (np.float64(1.0), ValueError),
                 (0, ValueError),
                 (1, ValueError),
+                # The confidence level of the VaR is not the probability of an
+                # exception
+                (0.95, ValueError),
+                (0.99, ValueError),
             ]
             rows += bad_value_rows(
                 target,
@@ -95,7 +99,7 @@ def _rows() -> list[Row]:
                 base,
                 "p",
                 p_bad,
-                rule=r"a finite float in \(0, 1\)",
+                rule=r"a finite float in \(0, 0.5\]",
             )
             rows += good_value_rows(target, func, base, "p", [*FLOAT_GOOD, 1e-9])
         if "window" in extra:
