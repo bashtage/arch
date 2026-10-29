@@ -1,0 +1,45 @@
+﻿arch.univariate.NGARCH
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: NGARCH
+   :exclude-members: backcast,backcast_transform,bounds,compute_variance,constraints,forecast,parameter_names,simulate,starting_values,update,variance_bounds,
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~NGARCH.backcast
+      ~NGARCH.backcast_transform
+      ~NGARCH.bounds
+      ~NGARCH.compute_variance
+      ~NGARCH.constraints
+      ~NGARCH.forecast
+      ~NGARCH.parameter_names
+      ~NGARCH.simulate
+      ~NGARCH.starting_values
+      ~NGARCH.update
+      ~NGARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~NGARCH.name
+      ~NGARCH.num_params
+      ~NGARCH.start
+      ~NGARCH.stop
+      ~NGARCH.updateable
+      ~NGARCH.volatility_updater
+   
+   
+   

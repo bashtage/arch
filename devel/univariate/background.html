@@ -23,7 +23,7 @@
     
   
       
-        <title>Theoretical Background - arch v8.0.1 (+648)</title>
+        <title>Theoretical Background - arch v8.0.1 (+663)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+648)
+            arch v8.0.1 (+663)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+648)
+    arch v8.0.1 (+663)
   </label>
   
     <div class="md-nav__source">
@@ -1111,26 +1111,32 @@ representation <a class="reference internal" href="#bailliebollerslevmikkelsen19
 <td><p>Fractionally integrated asymmetric power ARCH, which extends the FIGARCH with
 the asymmetry and the power of the APARCH <a class="reference internal" href="#tse1998" id="id10"><span>[Tse1998]</span></a></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.HARCH.html#arch.univariate.HARCH" title="arch.univariate.HARCH (Python class) — Heterogeneous ARCH process."><code class="xref py py-class docutils literal notranslate"><span class="pre">HARCH</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.NGARCH.html#arch.univariate.NGARCH" title="arch.univariate.NGARCH (Python class) — Nonlinear asymmetric GARCH (NGARCH) volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">NGARCH</span></code></a></p></td>
+<td><p>Nonlinear asymmetric GARCH (NAGARCH), in which the shock is shifted by a
+multiple of the lagged volatility,
+<span class="math notranslate nohighlight">\(\sigma_t^{2}=\omega+\alpha(\epsilon_{t-1}-\theta\sigma_{t-1})^{2}
++\beta\sigma_{t-1}^{2}\)</span> <a class="reference internal" href="#engleng1993" id="id11"><span>[EngleNg1993]</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.HARCH.html#arch.univariate.HARCH" title="arch.univariate.HARCH (Python class) — Heterogeneous ARCH process."><code class="xref py py-class docutils literal notranslate"><span class="pre">HARCH</span></code></a></p></td>
 <td><p>Heterogeneous ARCH, in which the variance depends on averages of past squared
 shocks over several lag lengths</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process."><code class="xref py py-class docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.MIDASHyperbolic.html#arch.univariate.MIDASHyperbolic" title="arch.univariate.MIDASHyperbolic (Python class) — MIDAS Hyperbolic ARCH process."><code class="xref py py-class docutils literal notranslate"><span class="pre">MIDASHyperbolic</span></code></a></p></td>
 <td><p>Variance that depends on <span class="math notranslate nohighlight">\(m\)</span> lagged squared shocks, with weights
 <span class="math notranslate nohighlight">\(\phi_i(\theta)\propto\Gamma(i+\theta)/(\Gamma(i+1)\Gamma(\theta))\)</span>
-that sum to 1 <a class="reference internal" href="#foroni2013" id="id11"><span>[Foroni2013]</span></a> <a class="reference internal" href="#sheppard2018" id="id12"><span>[Sheppard2018]</span></a></p></td>
+that sum to 1 <a class="reference internal" href="#foroni2013" id="id12"><span>[Foroni2013]</span></a> <a class="reference internal" href="#sheppard2018" id="id13"><span>[Sheppard2018]</span></a></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.EWMAVariance.html#arch.univariate.EWMAVariance" title="arch.univariate.EWMAVariance (Python class) — Exponentially Weighted Moving-Average (RiskMetrics) Variance process."><code class="xref py py-class docutils literal notranslate"><span class="pre">EWMAVariance</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.EWMAVariance.html#arch.univariate.EWMAVariance" title="arch.univariate.EWMAVariance (Python class) — Exponentially Weighted Moving-Average (RiskMetrics) Variance process."><code class="xref py py-class docutils literal notranslate"><span class="pre">EWMAVariance</span></code></a></p></td>
 <td><p><span class="math notranslate nohighlight">\(\sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}\)</span>, with
-<span class="math notranslate nohighlight">\(\lambda=0.94\)</span> by default <a class="reference internal" href="#riskmetrics1996" id="id13"><span>[RiskMetrics1996]</span></a></p></td>
+<span class="math notranslate nohighlight">\(\lambda=0.94\)</span> by default <a class="reference internal" href="#riskmetrics1996" id="id14"><span>[RiskMetrics1996]</span></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process."><code class="xref py py-class docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.RiskMetrics2006.html#arch.univariate.RiskMetrics2006" title="arch.univariate.RiskMetrics2006 (Python class) — RiskMetrics 2006 Variance process."><code class="xref py py-class docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code></a></p></td>
 <td><p>A weighted average of <code class="docutils literal notranslate"><span class="pre">kmax</span></code> EWMA variance processes</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.ConstantVariance.html#arch.univariate.ConstantVariance" title="arch.univariate.ConstantVariance (Python class) — Constant volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantVariance</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.ConstantVariance.html#arch.univariate.ConstantVariance" title="arch.univariate.ConstantVariance (Python class) — Constant volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantVariance</span></code></a></p></td>
 <td><p>The same variance in all periods</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedVariance</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/arch.univariate.FixedVariance.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance (Python class) — Fixed volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedVariance</span></code></a></p></td>
 <td><p>A variance that is provided by the user</p></td>
 </tr>
 </tbody>
@@ -1142,12 +1148,12 @@ have mean 0 and variance 1.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="generated/arch.univariate.Normal.html#arch.univariate.Normal" title="arch.univariate.Normal (Python class) — Standard normal distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">Normal</span></code></a>.</p></li>
 <li><p><a class="reference internal" href="generated/arch.univariate.StudentsT.html#arch.univariate.StudentsT" title="arch.univariate.StudentsT (Python class) — Standardized Student's distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">StudentsT</span></code></a>, with one shape parameter <span class="math notranslate nohighlight">\(\nu\)</span>
-<a class="reference internal" href="#bollerslev1987" id="id14"><span>[Bollerslev1987]</span></a>.</p></li>
+<a class="reference internal" href="#bollerslev1987" id="id15"><span>[Bollerslev1987]</span></a>.</p></li>
 <li><p><a class="reference internal" href="generated/arch.univariate.SkewStudent.html#arch.univariate.SkewStudent" title="arch.univariate.SkewStudent (Python class) — Standardized Skewed Student's distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">SkewStudent</span></code></a>, a skewed Student’s t with the tail shape
-<span class="math notranslate nohighlight">\(\eta\)</span> and the skewness <span class="math notranslate nohighlight">\(\lambda\)</span> <a class="reference internal" href="#hansen1994" id="id15"><span>[Hansen1994]</span></a>. When <span class="math notranslate nohighlight">\(\lambda=0\)</span>
+<span class="math notranslate nohighlight">\(\eta\)</span> and the skewness <span class="math notranslate nohighlight">\(\lambda\)</span> <a class="reference internal" href="#hansen1994" id="id16"><span>[Hansen1994]</span></a>. When <span class="math notranslate nohighlight">\(\lambda=0\)</span>
 it is the standardized Student’s t.</p></li>
 <li><p><a class="reference internal" href="generated/arch.univariate.GeneralizedError.html#arch.univariate.GeneralizedError" title="arch.univariate.GeneralizedError (Python class) — Generalized Error distribution for use with ARCH models."><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedError</span></code></a>, the generalized error distribution, with
-one shape parameter <span class="math notranslate nohighlight">\(\nu\)</span> <a class="reference internal" href="#nelson1991" id="id16"><span>[Nelson1991]</span></a>.</p></li>
+one shape parameter <span class="math notranslate nohighlight">\(\nu\)</span> <a class="reference internal" href="#nelson1991" id="id17"><span>[Nelson1991]</span></a>.</p></li>
 </ul>
 <h2 id="references">References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <div role="list" class="citation-list">
@@ -1163,7 +1169,7 @@ heteroskedasticity. <em>Journal of Econometrics</em>, 74(1), 3-30.</p>
 heteroskedasticity. <em>Journal of Econometrics</em>, 31(3), 307-327.</p>
 </div>
 <div class="citation" id="bollerslev1987" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">Bollerslev1987</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">Bollerslev1987</a><span class="fn-bracket">]</span></span>
 <p>Bollerslev, T. (1987). A conditionally heteroskedastic time series
 model for speculative prices and rates of return. <em>The Review of Economics and
 Statistics</em>, 69(3), 542-547.</p>
@@ -1192,8 +1198,13 @@ estimates of the variance of United Kingdom inflation. <em>Econometrica</em>, 50
 Estimating time varying risk premia in the term structure: The ARCH-M model.
 <em>Econometrica</em>, 55(2), 391-407.</p>
 </div>
+<div class="citation" id="engleng1993" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">EngleNg1993</a><span class="fn-bracket">]</span></span>
+<p>Engle, R. F., &amp; Ng, V. K. (1993). Measuring and testing the impact of
+news on volatility. <em>The Journal of Finance</em>, 48(5), 1749-1778.</p>
+</div>
 <div class="citation" id="foroni2013" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">Foroni2013</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">Foroni2013</a><span class="fn-bracket">]</span></span>
 <p>Foroni, Claudia, and Massimiliano Marcellino. “A survey of
 Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 </div>
@@ -1204,23 +1215,28 @@ between the expected value and the volatility of the nominal excess return on
 stocks. <em>The Journal of Finance</em>, 48(5), 1779-1801.</p>
 </div>
 <div class="citation" id="hansen1994" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">Hansen1994</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">Hansen1994</a><span class="fn-bracket">]</span></span>
 <p>Hansen, B. E. (1994). Autoregressive conditional density estimation.
 <em>International Economic Review</em>, 35(3), 705-730.</p>
 </div>
+<div class="citation" id="higginsbera1992" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>HigginsBera1992<span class="fn-bracket">]</span></span>
+<p>Higgins, M. L., &amp; Bera, A. K. (1992). A class of nonlinear ARCH
+models. <em>International Economic Review</em>, 33(1), 137-158.</p>
+</div>
 <div class="citation" id="nelson1991" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>Nelson1991<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id16">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
 <p>Nelson, D. B. (1991). Conditional heteroskedasticity in asset returns:
 a new approach. <em>Econometrica</em>, 59(2), 347-370.</p>
 </div>
 <div class="citation" id="riskmetrics1996" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">RiskMetrics1996</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">RiskMetrics1996</a><span class="fn-bracket">]</span></span>
 <p>J.P. Morgan/Reuters (1996). <em>RiskMetrics Technical Document</em>,
 Fourth Edition. New York: J.P. Morgan/Reuters, December 17, 1996.</p>
 </div>
 <div class="citation" id="sheppard2018" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">Sheppard2018</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">Sheppard2018</a><span class="fn-bracket">]</span></span>
 <p>Sheppard, Kevin. “Direct volatility modeling”. Manuscript. (2018).</p>
 </div>
 <div class="citation" id="tse1998" role="doc-biblioentry">

@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~PreWhitenedRecolored.bandwidth
+      ~PreWhitenedRecolored.bandwidth_method
       ~PreWhitenedRecolored.bandwidth_scale
       ~PreWhitenedRecolored.centered
       ~PreWhitenedRecolored.cov

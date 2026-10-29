@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~ParzenGeometric.bandwidth
+      ~ParzenGeometric.bandwidth_method
       ~ParzenGeometric.bandwidth_scale
       ~ParzenGeometric.centered
       ~ParzenGeometric.cov

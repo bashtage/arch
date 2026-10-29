@@ -83,6 +83,11 @@ The GARCH(1,1) of the :doc:`introduction <introduction>` is the case :math:`p=q=
    * - :class:`~arch.univariate.FIAPARCH`
      - Fractionally integrated asymmetric power ARCH, which extends the FIGARCH with
        the asymmetry and the power of the APARCH [Tse1998]_
+   * - :class:`~arch.univariate.NGARCH`
+     - Nonlinear asymmetric GARCH (NAGARCH), in which the shock is shifted by a
+       multiple of the lagged volatility,
+       :math:`\sigma_t^{2}=\omega+\alpha(\epsilon_{t-1}-\theta\sigma_{t-1})^{2}
+       +\beta\sigma_{t-1}^{2}` [EngleNg1993]_
    * - :class:`~arch.univariate.HARCH`
      - Heterogeneous ARCH, in which the variance depends on averages of past squared
        shocks over several lag lengths
@@ -144,6 +149,9 @@ References
    Estimating time varying risk premia in the term structure: The ARCH-M model.
    *Econometrica*, 55(2), 391-407.
 
+.. [EngleNg1993] Engle, R. F., & Ng, V. K. (1993). Measuring and testing the impact of
+   news on volatility. *The Journal of Finance*, 48(5), 1749-1778.
+
 .. [Foroni2013] Foroni, Claudia, and Massimiliano Marcellino. "A survey of
    Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
 
@@ -153,6 +161,9 @@ References
 
 .. [Hansen1994] Hansen, B. E. (1994). Autoregressive conditional density estimation.
    *International Economic Review*, 35(3), 705-730.
+
+.. [HigginsBera1992] Higgins, M. L., & Bera, A. K. (1992). A class of nonlinear ARCH
+   models. *International Economic Review*, 33(1), 137-158.
 
 .. [Nelson1991] Nelson, D. B. (1991). Conditional heteroskedasticity in asset returns:
    a new approach. *Econometrica*, 59(2), 347-370.

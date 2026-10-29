@@ -1,0 +1,6 @@
+arch.univariate.NGARCH.start
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: NGARCH.start

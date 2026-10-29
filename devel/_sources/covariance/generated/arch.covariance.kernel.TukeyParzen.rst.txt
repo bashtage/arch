@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~TukeyParzen.bandwidth
+      ~TukeyParzen.bandwidth_method
       ~TukeyParzen.bandwidth_scale
       ~TukeyParzen.centered
       ~TukeyParzen.cov

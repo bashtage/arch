@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.starting\_values
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.starting_values

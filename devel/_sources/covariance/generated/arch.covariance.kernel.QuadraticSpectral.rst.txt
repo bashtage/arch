@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~QuadraticSpectral.bandwidth
+      ~QuadraticSpectral.bandwidth_method
       ~QuadraticSpectral.bandwidth_scale
       ~QuadraticSpectral.centered
       ~QuadraticSpectral.cov

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.update
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.update

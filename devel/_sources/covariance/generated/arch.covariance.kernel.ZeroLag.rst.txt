@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~ZeroLag.bandwidth
+      ~ZeroLag.bandwidth_method
       ~ZeroLag.bandwidth_scale
       ~ZeroLag.centered
       ~ZeroLag.cov

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.parameter\_names
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.parameter_names

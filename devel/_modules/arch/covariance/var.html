@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.var - arch v8.0.1 (+648)</title>
+        <title>arch.covariance.var - arch v8.0.1 (+663)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+648)
+            arch v8.0.1 (+663)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+648)
+    arch v8.0.1 (+663)
   </label>
   
     <div class="md-nav__source">
@@ -645,6 +645,13 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth of the VAR residuals when</span>
+<span class="sd">        bandwidth is None. "newey-west" uses the nonparametric estimate of</span>
+<span class="sd">        Newey &amp; West (1994) and "andrews" uses the AR(1) plug-in estimate of</span>
+<span class="sd">        Andrews (1991), see ``opt_bandwidth`` of the kernel estimators. Not case</span>
+<span class="sd">        sensitive, and hyphens and underscores are ignored as in the names of</span>
+<span class="sd">        kernels. Ignored if bandwidth is provided or kernel is None.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -653,16 +660,19 @@
 <span class="sd">        contains strings or objects that are not numbers), if lags, max_lag or</span>
 <span class="sd">        df_adjust is not an integer (a float, including 5.0, or a Boolean is</span>
 <span class="sd">        not accepted), if bandwidth is not a real number, if diagonal,</span>
-<span class="sd">        sample_autocov, center or force_int is not a bool, or if method or</span>
-<span class="sd">        kernel is not a str.</span>
+<span class="sd">        sample_autocov, center or force_int is not a bool, or if method, kernel</span>
+<span class="sd">        or bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if lags or max_lag is negative or lags is larger than</span>
 <span class="sd">        the largest order that can be estimated; if bandwidth is negative, not</span>
 <span class="sd">        finite or not None or 0 when kernel is None; if df_adjust is negative</span>
 <span class="sd">        or not smaller than the number of observations; if weights does not</span>
-<span class="sd">        have nvar finite non-negative elements, or has only zeros; or if</span>
-<span class="sd">        method or kernel is not one of the available names.</span>
+<span class="sd">        have nvar finite non-negative elements, or has only zeros; if method,</span>
+<span class="sd">        kernel or bandwidth_method is not one of the available names; or if</span>
+<span class="sd">        bandwidth_method is "andrews" and the AR(1) cannot be fitted to the</span>
+<span class="sd">        columns of the VAR residuals with positive weight, for example because</span>
+<span class="sd">        they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -705,7 +715,8 @@
 
 <span class="sd">    **Kernel estimation.** The long-run covariance of the VAR residuals,</span>
 <span class="sd">    :math:`\hat{\Omega}_\epsilon`, is estimated using the selected kernel</span>
-<span class="sd">    applied to the residuals without centering. When ``kernel`` is None, a</span>
+<span class="sd">    applied to the residuals without centering. The automatic bandwidth is</span>
+<span class="sd">    estimated from the residuals using ``bandwidth_method``. When ``kernel`` is None, a</span>
 <span class="sd">    zero-lag kernel is used so that</span>
 <span class="sd">    :math:`\hat{\Omega}_\epsilon=\hat{\Sigma}`, which is the VAR-HAC</span>
 <span class="sd">    estimator of den Haan &amp; Levin. This is also the case when the bandwidth is</span>
@@ -831,6 +842,7 @@
         <span class="n">center</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">weights</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">bandwidth_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"newey-west"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">x</span><span class="p">,</span>
@@ -839,6 +851,7 @@
             <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span>
             <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
             <span class="n">force_int</span><span class="o">=</span><span class="n">force_int</span><span class="p">,</span>
+            <span class="n">bandwidth_method</span><span class="o">=</span><span class="n">bandwidth_method</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal_lags</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1126,6 +1139,7 @@
                 <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="p">,</span>
                 <span class="n">force_int</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">,</span>
+                <span class="n">bandwidth_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_instance</span>
 
@@ -1200,10 +1214,12 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">            The user-provided bandwidth or the estimated optimal bandwidth.</span>
-<span class="sd">            The kernel is applied to the residuals of the VAR, and so the</span>
-<span class="sd">            estimated bandwidth is the optimal bandwidth for the residuals</span>
-<span class="sd">            and not for x. It is 0 when kernel is None.</span>
+<span class="sd">            The user-provided bandwidth or the bandwidth of the estimated</span>
+<span class="sd">            optimal bandwidth, which is ``opt_bandwidth`` less 1 (at least 0)</span>
+<span class="sd">            for a kernel that is 0 beyond 1, see ``bandwidth`` of the kernel</span>
+<span class="sd">            estimators. The kernel is applied to the residuals of the VAR, and</span>
+<span class="sd">            so the estimated bandwidth is the optimal bandwidth for the</span>
+<span class="sd">            residuals and not for x. It is 0 when kernel is None.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bandwidth</span>
 
@@ -1217,8 +1233,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">            The estimated optimal bandwidth of the residuals of the VAR.</span>
-<span class="sd">            This is the bandwidth used when bandwidth is not provided.</span>
+<span class="sd">            The estimated optimal bandwidth of the residuals of the VAR, from</span>
+<span class="sd">            which the bandwidth is computed when bandwidth is not provided.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">opt_bandwidth</span></div>
 

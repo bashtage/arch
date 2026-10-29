@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~ParzenRiesz.bandwidth
+      ~ParzenRiesz.bandwidth_method
       ~ParzenRiesz.bandwidth_scale
       ~ParzenRiesz.centered
       ~ParzenRiesz.cov

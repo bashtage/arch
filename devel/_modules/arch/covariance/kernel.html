@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v8.0.1 (+648)</title>
+        <title>arch.covariance.kernel - arch v8.0.1 (+663)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+648)
+            arch v8.0.1 (+663)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+648)
+    arch v8.0.1 (+663)
   </label>
   
     <div class="md-nav__source">
@@ -789,6 +789,14 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -797,13 +805,16 @@
 <span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
 <span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
 <span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
-<span class="sd">        if center or force_int is not a bool.</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
 <span class="sd">        is negative or not smaller than the number of observations; or if</span>
 <span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
-<span class="sd">        has only zeros.</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -813,11 +824,12 @@
 
 <span class="sd">       %(formula)s</span>
 
-<span class="sd">    where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.</span>
+<span class="sd">    %(lags)s</span>
 
 <span class="sd">    If the bandwidth is not provided, it is estimated using the constants of</span>
-<span class="sd">    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for</span>
-<span class="sd">    details.</span>
+<span class="sd">    [1]_ and either the automatic lag selection of [2]_, the default, or the</span>
+<span class="sd">    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See</span>
+<span class="sd">    ``opt_bandwidth`` and ``bandwidth`` for details.</span>
 
 <span class="sd">    **Complex data.** The estimators accept complex data, for which they are</span>
 <span class="sd">    Hermitian. The lag-:math:`j` autocovariance is</span>
@@ -848,17 +860,89 @@
 <span class="n">_KernelT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_KernelT"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
 
 
+<span class="n">_BOUNDED_LAGS</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""where :math:`z=\frac</span><span class="si">{h}</span><span class="s2">{H+1}` for the lags :math:`h=0, 1, \ldots` that</span>
+<span class="s2">    are smaller than :math:`H+1`, and H is the bandwidth. The weights of the</span>
+<span class="s2">    lags :math:`h\geq H+1` are 0, so that H is the number of lags with a</span>
+<span class="s2">    positive weight, as in the estimator of Newey and West (1987), and a</span>
+<span class="s2">    bandwidth of 0 uses only lag 0. The weights of a bandwidth H are those of</span>
+<span class="s2">    the kernel :math:`k\left(h/S\right)` of [1]_ and [2]_ with</span>
+<span class="s2">    :math:`S=H+1`."""</span>
+
+<span class="n">_QS_LAGS</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""where :math:`z=\frac</span><span class="si">{h}{H}</span><span class="s2">` for the lags :math:`h=0, 1, \ldots, T-1` and</span>
+<span class="s2">    H is the bandwidth, as in [1]_. Every lag has a weight, and a bandwidth of</span>
+<span class="s2">    0 uses only lag 0."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bounded_lags</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The lags h = 0, 1, ... with a positive weight in a kernel that is 0 beyond 1.</span>
+
+<span class="sd">    These are the lags smaller than bandwidth + 1, since the weight of lag h is</span>
+<span class="sd">    k(h / (bandwidth + 1)). A fractional bandwidth uses the lag floor(bandwidth) + 1.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">bandwidth</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_kernel_substitution</span><span class="p">(</span>
-    <span class="n">kernel_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">formula</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">kernel_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">formula</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_BOUNDED_LAGS</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_KernelT</span><span class="p">],</span> <span class="n">_KernelT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Set the docstring of a kernel estimator using its name and weight formula"""</span>
-    <span class="n">substitution</span> <span class="o">=</span> <span class="n">Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">kernel_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">)</span>
+    <span class="n">substitution</span> <span class="o">=</span> <span class="n">Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">kernel_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">lags</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">_KernelT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_KernelT</span><span class="p">:</span>
         <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">_KERNEL_COVARIANCE_DOC</span>
         <span class="k">return</span> <span class="n">substitution</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="n">_BANDWIDTH_METHODS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"neweywest"</span><span class="p">:</span> <span class="s2">"newey-west"</span><span class="p">,</span> <span class="s2">"andrews"</span><span class="p">:</span> <span class="s2">"andrews"</span><span class="p">}</span>
+<span class="sd">"""The methods that select the bandwidth when it is not provided, keyed by their</span>
+<span class="sd">normalized names."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_bandwidth_method</span><span class="p">(</span><span class="n">bandwidth_method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Validate a bandwidth method, which is normalized like the name of a kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bandwidth_method : str</span>
+<span class="sd">        The name of the method, such as "newey-west", "Newey_West" or "andrews".</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The canonical name, "newey-west" or "andrews".</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"bandwidth_method"</span><span class="p">,</span>
+        <span class="n">bandwidth_method</span><span class="p">,</span>
+        <span class="n">_BANDWIDTH_METHODS</span><span class="p">,</span>
+        <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"newey-west"</span><span class="p">,</span> <span class="s2">"andrews"</span><span class="p">),</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize_kernel_name</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_power_of_two_scaled</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Divide x by the power of 2 nearest its largest absolute value.</span>
+
+<span class="sd">    The bandwidth estimators are ratios of sums of products of the data that</span>
+<span class="sd">    do not depend on a common scale. Scaling by a power of 2 is exact, so the</span>
+<span class="sd">    estimates do not change, but data that are very large or very small do not</span>
+<span class="sd">    overflow or underflow when squared.</span>
+<span class="sd">    """</span>
+    <span class="n">largest</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">largest</span><span class="p">)</span> <span class="ow">or</span> <span class="n">largest</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">frexp</span><span class="p">(</span><span class="n">largest</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">scaled</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+        <span class="n">scaled</span><span class="o">.</span><span class="n">imag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scaled</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CovarianceEstimator">
@@ -892,6 +976,14 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -900,23 +992,29 @@
 <span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
 <span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
 <span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
-<span class="sd">        if center or force_int is not a bool.</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
 <span class="sd">        is negative or not smaller than the number of observations; or if</span>
 <span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
-<span class="sd">        has only zeros.</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The kernel weights are defined by the concrete estimators that inherit from</span>
-<span class="sd">    this class. They are computed using :math:`z=\frac{h}{H}, h=0, 1, \ldots, H`</span>
-<span class="sd">    where H is the bandwidth.</span>
+<span class="sd">    this class. A kernel that is 0 beyond 1 uses :math:`z=\frac{h}{H+1}` for the</span>
+<span class="sd">    lags h that are smaller than :math:`H+1`, where H is the bandwidth, so that</span>
+<span class="sd">    H is the number of lags with a positive weight. The quadratic-spectral</span>
+<span class="sd">    kernel uses :math:`z=\frac{h}{H}` for every lag.</span>
 
 <span class="sd">    If the bandwidth is not provided, it is estimated using the constants of</span>
-<span class="sd">    [1]_ and the automatic lag selection of [2]_. See ``opt_bandwidth`` for</span>
-<span class="sd">    details.</span>
+<span class="sd">    [1]_ and either the automatic lag selection of [2]_, the default, or the</span>
+<span class="sd">    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See</span>
+<span class="sd">    ``opt_bandwidth`` for details.</span>
 
 <span class="sd">    **Complex data.** The estimators accept complex data, for which they are</span>
 <span class="sd">    Hermitian. The lag-:math:`j` autocovariance is</span>
@@ -946,6 +1044,9 @@
     <span class="c1"># Whether complex data are accepted. The estimators that cannot be Hermitian, such</span>
     <span class="c1"># as the VAR prewhitening, set this to False</span>
     <span class="n">_allow_complex</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Whether the kernel is 0 beyond 1. Lag h then has the weight k(h / (H + 1)) for a</span>
+    <span class="c1"># bandwidth H, while the quadratic-spectral kernel uses k(h / H)</span>
+    <span class="n">_bounded_support</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -955,6 +1056,7 @@
         <span class="n">center</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">weights</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">bandwidth_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"newey-west"</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">x_checked</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
             <span class="s2">"x"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_complex</span>
@@ -984,6 +1086,7 @@
                 <span class="n">_describe</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="n">force_int</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"force_int"</span><span class="p">,</span> <span class="n">force_int</span><span class="p">)</span>
+        <span class="n">bandwidth_method</span> <span class="o">=</span> <span class="n">_check_bandwidth_method</span><span class="p">(</span><span class="n">bandwidth_method</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_complex</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="p">)</span>
@@ -1003,6 +1106,7 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights_checked</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span> <span class="o">=</span> <span class="n">force_int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span> <span class="o">=</span> <span class="n">bandwidth_method</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
@@ -1031,20 +1135,46 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        The bandwidth used by the covariance estimator.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">            The user-provided or estimated optimal bandwidth.</span>
+<span class="sd">            The user-provided bandwidth, or the bandwidth of the estimated</span>
+<span class="sd">            optimal bandwidth ``opt_bandwidth``.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        ``opt_bandwidth`` is the bandwidth S of the kernel :math:`k(h/S)` of</span>
+<span class="sd">        Andrews (1991) and Newey and West (1994). A kernel that is 0 beyond 1</span>
+<span class="sd">        gives lag h the weight :math:`k(h/(H+1))` for a bandwidth H, so its</span>
+<span class="sd">        estimated bandwidth is :math:`H=\max(S-1, 0)`, and the weights are those</span>
+<span class="sd">        of S. The quadratic-spectral kernel uses :math:`k(h/H)`, and its estimated</span>
+<span class="sd">        bandwidth is S. The bandwidth is rounded up if ``force_int`` is True.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_bandwidth</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_bandwidth</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounded_support</span><span class="p">:</span>
+                <span class="n">bandwidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bandwidth</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">)))</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The method used to estimate the bandwidth.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Either "newey-west" or "andrews". The method is only used if the</span>
+<span class="sd">            bandwidth is not provided by the user, and ZeroLag ignores it.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1099,7 +1229,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">_power_of_two_scaled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="p">)</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># The integer part, as in Newey and West (1994, eq. 2-2) and auto_bandwidth</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="n">nobs</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">))</span>
@@ -1116,6 +1246,59 @@
             <span class="n">f_qs</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">j</span><span class="o">**</span><span class="n">q</span> <span class="o">*</span> <span class="n">sig_j</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">f_qs</span> <span class="o">/</span> <span class="n">f_0s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_andrews_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The AR(1) plug-in estimate of alpha(q) of Andrews (1991), eq. (6.4).</span>
+<span class="sd">        """</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" requires a kernel with a characteristic '</span>
+                <span class="sa">f</span><span class="s2">"exponent of 1 or 2; the exponent of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1"># Real and imaginary parts are separate series with the same weight</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">weights</span><span class="p">,</span> <span class="n">weights</span><span class="p">])</span>
+        <span class="c1"># Columns without weight need not have a usable AR(1), and constant columns</span>
+        <span class="c1"># have no variance and do not change the weighted sums</span>
+        <span class="n">used</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">used</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot estimate the bandwidth since '</span>
+                <span class="s2">"every column of x with a positive weight is constant"</span>
+            <span class="p">)</span>
+        <span class="c1"># One scale for all columns, since a separate scale for each column would</span>
+        <span class="c1"># change their relative weights in the sums</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">_power_of_two_scaled</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">used</span><span class="p">]),</span> <span class="n">weights</span><span class="p">[</span><span class="n">used</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot fit an AR(1) to a column of x that '</span>
+                <span class="s2">"is constant except for its final value"</span>
+            <span class="p">)</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">lead</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">lag_ss</span> <span class="o">=</span> <span class="p">(</span><span class="n">lag</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># OLS of x_t on a constant and x_{t-1}, as in R's ar.ols</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="p">(</span><span class="n">lag</span> <span class="o">*</span> <span class="n">lead</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">lag_ss</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="n">lead</span> <span class="o">-</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">lag</span>
+        <span class="n">sigma4</span> <span class="o">=</span> <span class="p">((</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">lag</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">numer</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">numer</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">numer</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">alpha_q</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot estimate the bandwidth since an '</span>
+                <span class="s2">"AR(1) coefficient of x is -1 or 1"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">alpha_q</span>
+
 <div class="viewcode-block" id="CovarianceEstimator.opt_bandwidth">
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.opt_bandwidth.html#arch.covariance.kernel.CovarianceEstimator.opt_bandwidth">[docs]</a>
     <span class="nd">@cached_property</span>
@@ -1127,6 +1310,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The estimated optimal bandwidth.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``bandwidth_method`` is "andrews" and the AR(1) cannot be fitted</span>
+<span class="sd">            to the columns of x with positive weight, for example because they</span>
+<span class="sd">            are all constant.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1142,7 +1332,8 @@
 <span class="sd">        The constants and the values of q are from [1]_. For example,</span>
 <span class="sd">        :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2</span>
 <span class="sd">        for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral</span>
-<span class="sd">        kernel. :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))</span>
+<span class="sd">        kernel. When ``bandwidth_method`` is "newey-west", the default,</span>
+<span class="sd">        :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))</span>
 <span class="sd">        estimate that is suggested in [1]_. It is the nonparametric estimate</span>
 <span class="sd">        of [2]_,</span>
 
@@ -1160,6 +1351,56 @@
 <span class="sd">        2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for</span>
 <span class="sd">        the quadratic-spectral kernel, as in [2]_.</span>
 
+<span class="sd">        When ``bandwidth_method`` is "andrews",</span>
+<span class="sd">        :math:`\hat{\alpha}\left(q\right)` is the AR(1) plug-in estimate of</span>
+<span class="sd">        [1]_, equations (6.3) and (6.4), which has no pilot lag. An AR(1),</span>
+<span class="sd">        :math:`u_{a,t}=\mu_a+\rho_a u_{a,t-1}+\epsilon_{a,t}`, is fitted to each</span>
+<span class="sd">        column :math:`a` of x by OLS, and :math:`\hat{\sigma}_a^2` is the sum of</span>
+<span class="sd">        the squared residuals divided by :math:`T-1`. Then</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">           \hat{\alpha}\left(1\right) =</span>
+<span class="sd">           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4</span>
+<span class="sd">           / \left[\left(1-\hat{\rho}_a\right)^6</span>
+<span class="sd">           \left(1+\hat{\rho}_a\right)^2\right]}</span>
+<span class="sd">           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4},</span>
+<span class="sd">           \quad</span>
+<span class="sd">           \hat{\alpha}\left(2\right) =</span>
+<span class="sd">           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4</span>
+<span class="sd">           / \left(1-\hat{\rho}_a\right)^8}</span>
+<span class="sd">           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4}</span>
+
+<span class="sd">        where :math:`w_a` are the ``weights`` and the sums are over the columns</span>
+<span class="sd">        with a positive weight. The constant :math:`\mu_a` makes the estimate</span>
+<span class="sd">        the same whether or not x is centered, as in ``sandwich::bwAndrews`` in</span>
+<span class="sd">        R. The constants :math:`c_k` are the values of ``kernel_const`` for all</span>
+<span class="sd">        kernels. They are :math:`\left(q k_q^2 / \int k^2\right)^{1/(2q+1)}` in</span>
+<span class="sd">        the notation of [1]_, rounded to 4 decimals. The formula is applied to</span>
+<span class="sd">        every kernel using its own :math:`q`, which is 1 or 2. Constant columns</span>
+<span class="sd">        do not change the sums and are ignored. The real and imaginary parts of</span>
+<span class="sd">        complex data are separate columns that both have the weight of the</span>
+<span class="sd">        column.</span>
+
+<span class="sd">        Both estimates of :math:`\hat{\alpha}\left(q\right)` are ratios that do</span>
+<span class="sd">        not change if the data are multiplied by a constant. Before they are</span>
+<span class="sd">        computed, the data are divided by the power of 2 nearest their largest</span>
+<span class="sd">        absolute value, which is exact, so that data with a very large or very</span>
+<span class="sd">        small scale do not overflow or underflow. All columns are divided by the</span>
+<span class="sd">        same value, since a different value for each column would change the</span>
+<span class="sd">        weights of the columns in the "andrews" estimate.</span>
+
+<span class="sd">        In both cases the bandwidth is at most the number of observations less</span>
+<span class="sd">        1, and is rounded up if ``force_int`` is True. ZeroLag ignores</span>
+<span class="sd">        ``bandwidth_method``, and its bandwidth is 0.</span>
+
+<span class="sd">        :math:`\hat{b}_T` is the bandwidth S of the kernel :math:`k(h/S)` in [1]_</span>
+<span class="sd">        and [2]_. A kernel that is 0 beyond 1 weights lag h by</span>
+<span class="sd">        :math:`k(h/(H+1))` for a bandwidth H, so the estimator uses</span>
+<span class="sd">        :math:`H=\max(\hat{b}_T-1, 0)`, whose weights are those of</span>
+<span class="sd">        :math:`\hat{b}_T`. The quadratic-spectral kernel uses</span>
+<span class="sd">        :math:`H=\hat{b}_T`. See ``bandwidth``.</span>
+
 <span class="sd">        References</span>
 <span class="sd">        ----------</span>
 <span class="sd">        .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation</span>
@@ -1171,7 +1412,10 @@
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_const</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_q</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span> <span class="o">==</span> <span class="s2">"andrews"</span><span class="p">:</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_andrews_alpha_q</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_q</span><span class="p">()</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha_q</span> <span class="o">*</span> <span class="n">nobs</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span>
@@ -1273,9 +1517,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-            <span class="nb">float</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
 
 
 
@@ -1306,7 +1548,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
         <span class="n">w</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">])</span>
@@ -1341,7 +1583,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span></div>
 
 
@@ -1374,7 +1616,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span></div>
 
 
@@ -1405,7 +1647,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
@@ -1436,7 +1678,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.54</span> <span class="o">+</span> <span class="mf">0.46</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
@@ -1467,7 +1709,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
@@ -1486,7 +1728,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyParzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">1.8576</span>
+        <span class="k">return</span> <span class="mf">1.8587</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1498,7 +1740,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.436</span> <span class="o">+</span> <span class="mf">0.564</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
@@ -1514,8 +1756,10 @@
 
 <div class="viewcode-block" id="QuadraticSpectral">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.QuadraticSpectral.html#arch.covariance.kernel.QuadraticSpectral">[docs]</a>
-<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">_QS_LAGS</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QuadraticSpectral</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+    <span class="n">_bounded_support</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">1.3221</span>
@@ -1572,6 +1816,14 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -1580,13 +1832,16 @@
 <span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
 <span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
 <span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
-<span class="sd">        if center or force_int is not a bool.</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
 <span class="sd">        is negative or not smaller than the number of observations; or if</span>
 <span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
-<span class="sd">        has only zeros.</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -1626,6 +1881,14 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -1634,13 +1897,16 @@
 <span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
 <span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
 <span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
-<span class="sd">        if center or force_int is not a bool.</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
 <span class="sd">        is negative or not smaller than the number of observations; or if</span>
 <span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
-<span class="sd">        has only zeros.</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -1681,6 +1947,14 @@
 <span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
 <span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -1689,13 +1963,16 @@
 <span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
 <span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
 <span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
-<span class="sd">        if center or force_int is not a bool.</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
 <span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
 <span class="sd">        is negative or not smaller than the number of observations; or if</span>
 <span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
-<span class="sd">        has only zeros.</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>

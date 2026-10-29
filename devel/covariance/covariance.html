@@ -23,7 +23,7 @@
     
   
       
-        <title>Long-run Covariance Estimation - arch v8.0.1 (+648)</title>
+        <title>Long-run Covariance Estimation - arch v8.0.1 (+663)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+648)
+            arch v8.0.1 (+663)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+648)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+648)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+663)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+663)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+648)
+    arch v8.0.1 (+663)
   </label>
   
     <div class="md-nav__source">
@@ -1619,6 +1619,63 @@ only used by
 </tr>
 </tbody>
 </table>
+<p>The kernels that are 0 beyond 1, all except the quadratic-spectral, weight lag
+<span class="math notranslate nohighlight">\(h\)</span> by <span class="math notranslate nohighlight">\(k(h/(H+1))\)</span> for a <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> <span class="math notranslate nohighlight">\(H\)</span>, so that <span class="math notranslate nohighlight">\(H\)</span> is the
+number of lags with a positive weight, as in the estimator of Newey and West (1987).
+<code class="docutils literal notranslate"><span class="pre">Bartlett(x,</span> <span class="pre">bandwidth=L)</span></code> is the estimator with <span class="math notranslate nohighlight">\(L\)</span> lags. The quadratic-spectral
+kernel weights every lag by <span class="math notranslate nohighlight">\(k(h/H)\)</span>.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> the optimal bandwidth
+<span class="math notranslate nohighlight">\(\hat{b}_T=c_k[\hat{\alpha}(q)T]^{1/(2q+1)}\)</span> of Andrews (1991) is estimated, where
+<span class="math notranslate nohighlight">\(c_k\)</span> and <span class="math notranslate nohighlight">\(q\)</span> depend on the kernel and <span class="math notranslate nohighlight">\(\hat{\alpha}(q)\)</span> measures the
+persistence of the data. It is <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code>, the bandwidth <span class="math notranslate nohighlight">\(S\)</span> of the kernel
+<span class="math notranslate nohighlight">\(k(h/S)\)</span> in Andrews (1991) and Newey and West (1994), so the kernels that are 0
+beyond 1 use <code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> <span class="math notranslate nohighlight">\(H=\max(\hat{b}_T-1,0)\)</span>, whose weights are those of
+<span class="math notranslate nohighlight">\(\hat{b}_T\)</span>, and the quadratic-spectral kernel uses <span class="math notranslate nohighlight">\(H=\hat{b}_T\)</span>. With
+<code class="docutils literal notranslate"><span class="pre">force_int=True</span></code>, <span class="math notranslate nohighlight">\(H\)</span> is rounded up, which is the integer part of
+<span class="math notranslate nohighlight">\(\hat{b}_T\)</span> for the kernels that are 0 beyond 1, as in Newey and West (1994).
+<code class="docutils literal notranslate"><span class="pre">bandwidth_method</span></code> chooses how <span class="math notranslate nohighlight">\(\hat{\alpha}(q)\)</span> is estimated. An explicit
+<code class="docutils literal notranslate"><span class="pre">bandwidth</span></code> overrides it, and <code class="docutils literal notranslate"><span class="pre">ZeroLag</span></code> has no bandwidth.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;newey-west&quot;</span></code> (the default) uses the nonparametric estimate of Newey and West
+(1994), which depends on the number of autocovariances used in the pilot estimate
+(<span class="math notranslate nohighlight">\(n=\lfloor 4(T/100)^r\rfloor\)</span>). <code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> agrees with
+<code class="docutils literal notranslate"><span class="pre">sandwich::bwNeweyWest</span></code> in R, the long-run covariance with <code class="docutils literal notranslate"><span class="pre">sandwich::kernHAC</span></code>
+using that bandwidth, and the Bartlett estimate with <code class="docutils literal notranslate"><span class="pre">force_int=True</span></code> with
+<code class="docutils literal notranslate"><span class="pre">sandwich::NeweyWest</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;andrews&quot;</span></code> uses the AR(1) plug-in estimate of Andrews (1991, Section 6), which has
+no pilot lag. An AR(1) with a constant is fitted to each column of the data, and the
+persistence and innovation variance of the columns are combined using <code class="docutils literal notranslate"><span class="pre">weights</span></code>.
+<code class="docutils literal notranslate"><span class="pre">opt_bandwidth</span></code> agrees with <code class="docutils literal notranslate"><span class="pre">sandwich::bwAndrews</span></code> in R, and the long-run covariance
+with <code class="docutils literal notranslate"><span class="pre">sandwich::kernHAC</span></code> using that bandwidth, for the Bartlett, Parzen,
+Tukey-Hanning and quadratic-spectral kernels. The formula is applied to all other
+kernels using their own <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(c_k\)</span>. For complex data, the real and
+imaginary parts are two columns with the same weight.</p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="gp">In [2]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.kernel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bartlett</span><span class="p">,</span> <span class="n">QuadraticSpectral</span>
+
+<span class="gp">In [3]: </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [4]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="gp">In [5]: </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">):</span>
+<span class="gp">   ...: </span>    <span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [6]: </span><span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"newey-west"</span><span class="p">,</span> <span class="s2">"andrews"</span><span class="p">):</span>
+<span class="gp">   ...: </span>    <span class="n">est</span> <span class="o">=</span> <span class="n">Bartlett</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bandwidth_method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+<span class="gp">   ...: </span>    <span class="nb">print</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">est</span><span class="o">.</span><span class="n">opt_bandwidth</span><span class="p">,</span> <span class="n">est</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">)</span>
+<span class="gp">   ...: </span>
+<span class="go">newey-west 14.437598478070166 13.437598478070166</span>
+<span class="go">andrews 26.71152836438175 25.71152836438175</span>
+
+<span class="gp">In [7]: </span><span class="n">QuadraticSpectral</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bandwidth_method</span><span class="o">=</span><span class="s2">"andrews"</span><span class="p">,</span> <span class="n">force_int</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">bandwidth</span>
+<span class="gh">Out[7]: </span><span class="go">23.0</span>
+</code></pre></div>
+</div>
+<p><a class="reference internal" href="generated/arch.covariance.var.PreWhitenedRecolored.html#arch.covariance.var.PreWhitenedRecolored" title="arch.covariance.var.PreWhitenedRecolored (Python class) — VAR-HAC and Pre-Whitened-Recolored Long-run covariance estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code></a> has the same option, which is used
+to choose the bandwidth of its kernel for the VAR residuals.</p>
 <p>The data are converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code>: integer, Boolean and <code class="docutils literal notranslate"><span class="pre">float32</span></code> data are
 accepted and the calculation is done in <code class="docutils literal notranslate"><span class="pre">float64</span></code>, and <code class="docutils literal notranslate"><span class="pre">float16</span></code> data raise a
 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. Complex data are also accepted, and are converted to <code class="docutils literal notranslate"><span class="pre">complex128</span></code>. The
@@ -1679,60 +1736,60 @@ lags and diagonal coefficients on lags <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">resid_cov</span></code> are the residuals of the VAR and their covariance.</p>
 <p>The example compares the estimators using the absolute returns of the S&amp;P 500 and
 NASDAQ, which are highly persistent.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [8]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="gp">In [2]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.nasdaq</span>
+<span class="gp">In [9]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.nasdaq</span>
 
-<span class="gp">In [3]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
+<span class="gp">In [10]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
 
-<span class="gp">In [4]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.kernel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bartlett</span>
+<span class="gp">In [11]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.kernel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bartlett</span>
 
-<span class="gp">In [5]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.var</span><span class="w"> </span><span class="kn">import</span> <span class="n">PreWhitenedRecolored</span>
+<span class="gp">In [12]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.var</span><span class="w"> </span><span class="kn">import</span> <span class="n">PreWhitenedRecolored</span>
 
-<span class="gp">In [6]: </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()[</span><span class="s2">"Adj Close"</span><span class="p">]</span>
+<span class="gp">In [13]: </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()[</span><span class="s2">"Adj Close"</span><span class="p">]</span>
 
-<span class="gp">In [7]: </span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">load</span><span class="p">()[</span><span class="s2">"Adj Close"</span><span class="p">]</span>
+<span class="gp">In [14]: </span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">load</span><span class="p">()[</span><span class="s2">"Adj Close"</span><span class="p">]</span>
 
-<span class="gp">In [8]: </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-<span class="gp">   ...: </span>    <span class="p">[</span><span class="n">sp500</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="n">nasdaq</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()],</span>
-<span class="gp">   ...: </span>    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">   ...: </span>    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"SP500"</span><span class="p">,</span> <span class="s2">"NASDAQ"</span><span class="p">],</span>
-<span class="gp">   ...: </span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="gp">   ...: </span>
+<span class="gp">In [15]: </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+<span class="gp">   ....: </span>    <span class="p">[</span><span class="n">sp500</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="n">nasdaq</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()],</span>
+<span class="gp">   ....: </span>    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">   ....: </span>    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"SP500"</span><span class="p">,</span> <span class="s2">"NASDAQ"</span><span class="p">],</span>
+<span class="gp">   ....: </span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="gp">   ....: </span>
 
-<span class="gp">In [9]: </span><span class="n">Bartlett</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
-<span class="gh">Out[9]: </span>
+<span class="gp">In [16]: </span><span class="n">Bartlett</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
+<span class="gh">Out[16]: </span>
 <span class="go">            SP500     NASDAQ</span>
-<span class="go">SP500   11.149080  12.552035</span>
-<span class="go">NASDAQ  12.552035  20.935195</span>
+<span class="go">SP500   10.987079  12.364903</span>
+<span class="go">NASDAQ  12.364903  20.607163</span>
 
-<span class="gp">In [10]: </span><span class="n">pwrc</span> <span class="o">=</span> <span class="n">PreWhitenedRecolored</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="gp">In [17]: </span><span class="n">pwrc</span> <span class="o">=</span> <span class="n">PreWhitenedRecolored</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 
-<span class="gp">In [11]: </span><span class="n">pwrc</span><span class="o">.</span><span class="n">order</span>
-<span class="gh">Out[11]: </span><span class="go">(16, 16)</span>
+<span class="gp">In [18]: </span><span class="n">pwrc</span><span class="o">.</span><span class="n">order</span>
+<span class="gh">Out[18]: </span><span class="go">(16, 16)</span>
 
-<span class="gp">In [12]: </span><span class="n">pwrc</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
-<span class="gh">Out[12]: </span>
+<span class="gp">In [19]: </span><span class="n">pwrc</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
+<span class="gh">Out[19]: </span>
 <span class="go">            SP500     NASDAQ</span>
-<span class="go">SP500   21.413037  24.862941</span>
-<span class="go">NASDAQ  24.862941  44.283212</span>
+<span class="go">SP500   21.563282  25.082088</span>
+<span class="go">NASDAQ  25.082088  44.729634</span>
 </code></pre></div>
 </div>
 <p>The VAR-HAC estimator is computed by setting <code class="docutils literal notranslate"><span class="pre">kernel</span></code> to <code class="docutils literal notranslate"><span class="pre">None</span></code>, and here the order
 is selected using the BIC.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [13]: </span><span class="n">var_hac</span> <span class="o">=</span> <span class="n">PreWhitenedRecolored</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"bic"</span><span class="p">)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [20]: </span><span class="n">var_hac</span> <span class="o">=</span> <span class="n">PreWhitenedRecolored</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"bic"</span><span class="p">)</span>
 
-<span class="gp">In [14]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">order</span>
-<span class="gh">Out[14]: </span><span class="go">(0, 11)</span>
+<span class="gp">In [21]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">order</span>
+<span class="gh">Out[21]: </span><span class="go">(0, 11)</span>
 
-<span class="gp">In [15]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
-<span class="gh">Out[15]: </span>
+<span class="gp">In [22]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">long_run</span>
+<span class="gh">Out[22]: </span>
 <span class="go">            SP500     NASDAQ</span>
 <span class="go">SP500   19.368378  21.840605</span>
 <span class="go">NASDAQ  21.840605  36.745658</span>
 
-<span class="gp">In [16]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">resid_cov</span>
-<span class="gh">Out[16]: </span>
+<span class="gp">In [23]: </span><span class="n">var_hac</span><span class="o">.</span><span class="n">resid_cov</span>
+<span class="gh">Out[23]: </span>
 <span class="go">           SP500    NASDAQ</span>
 <span class="go">SP500   0.589247  0.623944</span>
 <span class="go">NASDAQ  0.623944  0.985745</span>

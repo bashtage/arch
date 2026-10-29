@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimator.bandwidth\_method
+============================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimator.bandwidth_method

@@ -1,0 +1,6 @@
+arch.univariate.NGARCH.stop
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: NGARCH.stop
