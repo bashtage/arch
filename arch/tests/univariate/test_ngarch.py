@@ -1168,23 +1168,21 @@ class TestArchModel:
         with pytest.raises(ValueError, match=r"o must be an integer <= p \(1\)"):
             arch_model(y, vol="ngarch", p=1, o=2)
         with pytest.raises(ValueError, match="p must be an integer >= 1"):
-            arch_model(y, vol="ngarch", p=0, o=0)
+            arch_model(y, vol="ngarch", p=0, o=1)
 
     @pytest.mark.parametrize(
         "kwargs",
         [{}, {"o": 0}, {"p": 2, "o": 0, "q": 1}, {"p": 1, "o": 0, "q": 0}],
         ids=["default", "o0", "p2-o0-q1", "p1-o0-q0"],
     )
-    def test_arch_model_without_a_shift_is_garch(self, kwargs):
+    def test_arch_model_without_a_shift_raises(self, kwargs):
+        # A model without a shift is a GARCH, and the default o=0 of arch_model
+        # must not silently produce one
         y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 600, 41)
-        with pytest.warns(ValueWarning, match="vol='ngarch' with o=0 has no shift"):
-            am = arch_model(y, vol="ngarch", **kwargs)
-        assert type(am.volatility) is GARCH
-        ref = arch_model(y, vol="garch", **kwargs)
-        assert str(am.volatility) == str(ref.volatility)
-        assert_allclose(
-            am.fit(disp="off").params.to_numpy(), ref.fit(disp="off").params.to_numpy()
-        )
+        with pytest.raises(
+            ValueError, match=r"o must be at least 1 when vol='ngarch'.*got 0"
+        ):
+            arch_model(y, vol="ngarch", **kwargs)
 
     def test_fit_results(self):
         y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 1500, 42)
@@ -1275,12 +1273,6 @@ def value_warnings(record):
 
 
 class TestWarnings:
-    def test_arch_model_without_a_shift_points_at_the_caller(self):
-        y, _ = simulate_data((1, 1, 1), [0.1, 0.1, 0.5, 0.75], 200, 41)
-        with pytest.warns(ValueWarning, match="vol='ngarch' with o=0") as record:
-            arch_model(y, vol="ngarch")
-        assert [w.filename for w in value_warnings(record)] == [__file__]
-
     def test_no_shift_points_at_the_caller(self):
         with pytest.warns(ValueWarning, match=NO_SHIFT) as record:
             process = NGARCH(1, 0, 1)
