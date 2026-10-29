@@ -99,7 +99,7 @@ New features
   :func:`~arch.unitroot.cointegration.phillips_ouliaris`. The default, ``"newey-west"``,
   is the nonparametric method of Newey and West (1994). ``"andrews"`` is the AR(1)
   plug-in method of Andrews (1991), whose bandwidths equal those of ``bwAndrews`` in the
-  R package sandwich (:issue:`887`, :issue:`964`).
+  R package sandwich (:issue:`887`, :issue:`964`, :issue:`985`).
 - Added the residual diagnostics :func:`~arch.univariate.excess_kurtosis`,
   :func:`~arch.univariate.hill_estimator` and :func:`~arch.univariate.var_ratio`, which
   use standardized residuals. The results of a model also have
@@ -807,7 +807,7 @@ Backward-incompatible changes
   a ``TypeError``, as an array of strings does. A string that contains a number, such
   as ``"1.5"``, was converted to the number. Convert the data with ``astype(float)``
   first if that is intended. An integer that is too large for ``float64`` raises a
-  ``TypeError`` where it raised an ``OverflowError``.
+  ``TypeError`` where it raised an ``OverflowError`` (:issue:`985`).
 
 Bug fixes
 ~~~~~~~~~
@@ -1045,7 +1045,7 @@ Bug fixes
   with ``nu=342`` is -0.39865. The partial moments of :class:`~arch.univariate.Normal`
   and :class:`~arch.univariate.StudentsT` of order 2 or more at ``-inf`` and ``inf``,
   which were NaN, are 0 and the moment of that order. Contributed by mkzung
-  (:issue:`969`, :issue:`970`).
+  (:issue:`969`, :issue:`970`, :issue:`985`).
 - Small p-values are no longer rounded to 0. The p-value of
   :class:`~arch.utility.testing.WaldTestStatistic`, which the ARCH LM test and other
   tests return, the p-value of :class:`~arch.unitroot.VarianceRatio` and the
@@ -1068,10 +1068,10 @@ Bug fixes
 - The automatic bandwidth of the kernel covariance estimators and of
   :class:`~arch.covariance.var.PreWhitenedRecolored` raises a ``ValueError`` for data in
   which every column is constant, as ``bandwidth_method="andrews"`` does, where it
-  raised a ``ZeroDivisionError``.
+  raised a ``ZeroDivisionError`` (:issue:`985`).
 - ``mackinnonp`` returns 0 for a statistic of ``-inf`` and 1 for ``inf``, where it
   returned NaN for the ADF-Z tables and for the ADF test without a trend, and no longer
-  warns about an overflow for a very large statistic.
+  warns about an overflow for a very large statistic (:issue:`985`).
 
 Performance
 ~~~~~~~~~~~
@@ -1158,7 +1158,8 @@ Documentation and maintenance
   it is unchanged, and replaces it in one step when it changes, so that a process that
   imports arch while another one does, such as a worker of a multiprocessing pool,
   cannot read a truncated file. The README lists the current features, and the scripts
-  that simulate the ADF-Z critical values run without the optional arguments.
+  that simulate the ADF-Z critical values run without the optional arguments
+  (:issue:`985`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
