@@ -2,8 +2,8 @@
 Tests of the VaR backtests: exceptions, Kupiec, Christoffersen and the traffic light.
 
 The references are in the constants at the top.  They were produced by
-``C:/git/arch-roadmap/work/f904/reference.R`` (R 4.6.1, rugarch 1.5.6) and are not
-computed at run time, so R is not needed.  Each case has
+``results/var_backtest_reference.R`` (R 4.6.1, rugarch 1.5.6), which prints them, and
+are not computed at run time, so R is not needed.  Each case has
 
 * the statistics and p-values of an independent implementation of the likelihoods in R,
   with the optimum found numerically and 0 log 0 = 0 (``uc``, ``ind``, ``cc``), and
@@ -38,8 +38,8 @@ from arch.univariate import (
 )
 from arch.utility.testing import WaldTestStatistic
 
-# R 4.6.1, rugarch 1.5.6: C:/git/arch-roadmap/work/f904/reference.R.  Statistics and
-# p-values are (statistic, p-value); ``pattern`` is the 0/1 exception series.
+# R 4.6.1, rugarch 1.5.6: results/var_backtest_reference.R.  Statistics and p-values
+# are (statistic, p-value); ``pattern`` is the 0/1 exception series.
 
 
 def _vec(text):
