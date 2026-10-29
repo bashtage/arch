@@ -460,6 +460,17 @@ def _dols_fit(**kw):
 
 
 FIT_BASE = {"kernel": "bartlett", "bandwidth": 3}
+AUTO_FIT_BASE = {"kernel": "bartlett"}
+METHOD_RULE = r"one of 'newey-west' or 'andrews'"
+METHOD_BAD = [
+    ("bogus", ValueError),
+    ("", ValueError),
+    ("newey west", ValueError),
+    (5, TypeError),
+    (None, TypeError),
+    (["andrews"], TypeError),
+]
+METHOD_GOOD = ["newey-west", "andrews", "Newey_West", "NEWEYWEST", np.str_("andrews")]
 DOLS_FIT_ROWS = [
     *bad_value_rows(
         "dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
@@ -483,6 +494,17 @@ DOLS_FIT_ROWS = [
     *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_GOOD),
     *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "force_int", BOOL_GOOD),
     *good_value_rows("dols-fit", _dols_fit, FIT_BASE, "df_adjust", BOOL_GOOD),
+    *bad_value_rows(
+        "dols-fit",
+        _dols_fit,
+        AUTO_FIT_BASE,
+        "bandwidth_method",
+        METHOD_BAD,
+        rule=METHOD_RULE,
+    ),
+    *good_value_rows(
+        "dols-fit", _dols_fit, AUTO_FIT_BASE, "bandwidth_method", METHOD_GOOD
+    ),
 ]
 
 
@@ -539,6 +561,17 @@ def _fm_rows(name, ctor, fit):
             )
         ],
         *good_value_rows(f"{name}-fit", fit, FIT_BASE, "bandwidth", BANDWIDTH_GOOD),
+        *bad_value_rows(
+            f"{name}-fit",
+            fit,
+            AUTO_FIT_BASE,
+            "bandwidth_method",
+            METHOD_BAD,
+            rule=METHOD_RULE,
+        ),
+        *good_value_rows(
+            f"{name}-fit", fit, AUTO_FIT_BASE, "bandwidth_method", METHOD_GOOD
+        ),
     ]
 
 

@@ -14,6 +14,7 @@ from arch._typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRo
 from arch.covariance.kernel import (
     CovarianceEstimate,
     CovarianceEstimator,
+    _check_bandwidth_method,
     get_kernel_estimator,
 )
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
@@ -747,6 +748,7 @@ class DynamicOLS:
         bandwidth: float | None = None,
         force_int: bool = False,
         df_adjust: bool = False,
+        bandwidth_method: str = "newey-west",
     ) -> DynamicOLSResults:
         r"""
         Estimate the Dynamic OLS regression.
@@ -775,6 +777,13 @@ class DynamicOLS:
             number of parameters estimated in the regression. If true, the
             parameter covariance estimator is multiplied by T/(T-k) where
             k is the number of regressors in the model.
+        bandwidth_method : {"newey-west", "andrews"}, optional
+            The method used to estimate the bandwidth when bandwidth is None.
+            "newey-west" uses the nonparametric estimate of Newey and West (1994)
+            and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+            ``opt_bandwidth`` of the kernel estimators. Not case sensitive, and
+            hyphens and underscores are ignored as in the names of kernels.
+            Ignored if bandwidth is provided.
 
         Returns
         -------
@@ -785,10 +794,11 @@ class DynamicOLS:
         ------
         TypeError
             If bandwidth is not a real number or None, force_int or df_adjust is
-            not a bool, or cov_type or kernel is not a string.
+            not a bool, or cov_type, kernel or bandwidth_method is not a string.
         ValueError
-            If bandwidth is negative, NaN or inf, or cov_type or kernel is not one
-            of the options.
+            If bandwidth is negative, NaN or inf, cov_type, kernel or
+            bandwidth_method is not one of the options, or bandwidth_method is
+            "andrews" and the AR(1) cannot be fitted to the residuals or scores.
 
         See Also
         --------
@@ -833,6 +843,7 @@ class DynamicOLS:
         bandwidth = check_float("bandwidth", bandwidth, lower=0.0, allow_none=True)
         force_int = check_bool("force_int", force_int)
         df_adjust = check_bool("df_adjust", df_adjust)
+        bandwidth_method = _check_bandwidth_method(bandwidth_method)
         leads, lags = self._leads_and_lags()
         # TODO: Rank check and drop??
         lhs, rhs = self._format_variables(leads, lags)
@@ -843,7 +854,14 @@ class DynamicOLS:
             lhs.squeeze() - np.asarray(rhs @ coeffs).squeeze(), name="resid"
         )
         cov, est = self._cov(
-            cov_type, kernel, bandwidth, force_int, df_adjust, rhs, resid
+            cov_type,
+            kernel,
+            bandwidth,
+            force_int,
+            df_adjust,
+            rhs,
+            resid,
+            bandwidth_method,
         )
         params = Series(np.squeeze(coeffs), index=rhs.columns, name="params")
         num_x = self._x.shape[1]
@@ -870,6 +888,7 @@ class DynamicOLS:
         df_adjust: bool,
         rhs: pd.DataFrame,
         resids: Series,
+        bandwidth_method: str = "newey-west",
     ) -> tuple[pd.DataFrame, CovarianceEstimator]:
         """Estimate the covariance"""
         kernel_est = get_kernel_estimator(kernel)
@@ -880,12 +899,24 @@ class DynamicOLS:
         sigma_xx_inv = np.linalg.inv(sigma_xx)
         scale = nobs / (nobs - nx) if df_adjust else 1.0
         if cov_type in ("unadjusted", "homoskedastic"):
-            est = kernel_est(eps, bandwidth, center=False, force_int=force_int)
+            est = kernel_est(
+                eps,
+                bandwidth,
+                center=False,
+                force_int=force_int,
+                bandwidth_method=bandwidth_method,
+            )
             sigma2 = np.squeeze(est.cov.long_run)
             cov = (scale * sigma2) * sigma_xx_inv / nobs
         elif cov_type in ("robust", "kernel"):
             scores = x * eps
-            est = kernel_est(scores, bandwidth, center=False, force_int=force_int)
+            est = kernel_est(
+                scores,
+                bandwidth,
+                center=False,
+                force_int=force_int,
+                bandwidth_method=bandwidth_method,
+            )
             s = est.cov.long_run
             cov = scale * sigma_xx_inv @ s @ sigma_xx_inv / nobs
         else:
@@ -1106,14 +1137,19 @@ FMOLS_ESTIMATOR = r"""
 
 
 def _check_fit_arguments(
-    bandwidth: float | None, force_int: bool, diff: bool, df_adjust: bool
-) -> tuple[float | None, bool, bool, bool]:
+    bandwidth: float | None,
+    force_int: bool,
+    diff: bool,
+    df_adjust: bool,
+    bandwidth_method: str,
+) -> tuple[float | None, bool, bool, bool, str]:
     """Check the arguments of the fit method of FMOLS and CCR"""
     return (
         check_float("bandwidth", bandwidth, lower=0.0, allow_none=True),
         cast("bool", check_bool("force_int", force_int)),
         cast("bool", check_bool("diff", diff)),
         cast("bool", check_bool("df_adjust", df_adjust)),
+        _check_bandwidth_method(bandwidth_method),
     )
 
 
@@ -1146,7 +1182,12 @@ class FullyModifiedOLS:
         self._y_df = pd.DataFrame(self._y)
 
     def _common_fit(
-        self, kernel: str, bandwidth: float | None, force_int: bool, diff: bool
+        self,
+        kernel: str,
+        bandwidth: float | None,
+        force_int: bool,
+        diff: bool,
+        bandwidth_method: str = "newey-west",
     ) -> tuple[CovarianceEstimator, Float64Array, Float64Array]:
         kern_est = get_kernel_estimator(kernel)
         res = _cross_section(self._y, self._x, self._trend)
@@ -1170,7 +1211,13 @@ class FullyModifiedOLS:
                 eps = x
             eta_2 = np.diff(eps, axis=0)
         eta = np.column_stack([eta_1[1:], eta_2])
-        cov_est = kern_est(eta, bandwidth=bandwidth, center=False, force_int=force_int)
+        cov_est = kern_est(
+            eta,
+            bandwidth=bandwidth,
+            center=False,
+            force_int=force_int,
+            bandwidth_method=bandwidth_method,
+        )
         beta = np.asarray(res.params)[: x.shape[1]]
         return cov_est, eta, beta
 
@@ -1198,6 +1245,7 @@ class FullyModifiedOLS:
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,
+        bandwidth_method: str = "newey-west",
     ) -> CointegrationAnalysisResults:
         """
         Estimate the cointegrating vector.
@@ -1222,6 +1270,13 @@ class FullyModifiedOLS:
             number of parameters estimated in the regression. If true, the
             parameter covariance estimator is multiplied by T/(T-k) where
             k is the number of regressors in the model.
+        bandwidth_method : {"newey-west", "andrews"}, optional
+            The method used to estimate the bandwidth when bandwidth is None.
+            "newey-west" uses the nonparametric estimate of Newey and West (1994)
+            and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see
+            ``opt_bandwidth`` of the kernel estimators. Not case sensitive, and
+            hyphens and underscores are ignored as in the names of kernels.
+            Ignored if bandwidth is provided.
 
         Returns
         -------
@@ -1232,15 +1287,19 @@ class FullyModifiedOLS:
         ------
         TypeError
             If bandwidth is not a real number or None, force_int, diff or
-            df_adjust is not a bool, or kernel is not a string.
+            df_adjust is not a bool, or kernel or bandwidth_method is not a
+            string.
         ValueError
-            If bandwidth is negative, NaN or inf, or kernel is not one of the
-            options.
+            If bandwidth is negative, NaN or inf, kernel or bandwidth_method is
+            not one of the options, or bandwidth_method is "andrews" and the
+            AR(1) cannot be fitted to the residuals.
         """
-        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
-            bandwidth, force_int, diff, df_adjust
+        bandwidth, force_int, diff, df_adjust, bandwidth_method = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust, bandwidth_method
         )
-        cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
+        cov_est, eta, _ = self._common_fit(
+            kernel, bandwidth, force_int, diff, bandwidth_method
+        )
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
         omega_12 = omega[:1, 1:]
@@ -1277,7 +1336,10 @@ class FullyModifiedOLS:
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params_s)
         resid_kern = type(cov_est)(
-            resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
+            resid,
+            bandwidth=cov_est.bandwidth,
+            force_int=cov_est.force_int,
+            bandwidth_method=cov_est.bandwidth_method,
         )
         return CointegrationAnalysisResults(
             params_s,
@@ -1314,11 +1376,14 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,
+        bandwidth_method: str = "newey-west",
     ) -> CointegrationAnalysisResults:
-        bandwidth, force_int, diff, df_adjust = _check_fit_arguments(
-            bandwidth, force_int, diff, df_adjust
+        bandwidth, force_int, diff, df_adjust, bandwidth_method = _check_fit_arguments(
+            bandwidth, force_int, diff, df_adjust, bandwidth_method
         )
-        cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
+        cov_est, eta, beta = self._common_fit(
+            kernel, bandwidth, force_int, diff, bandwidth_method
+        )
         omega = np.asarray(cov_est.cov.long_run)
         lmbda = np.asarray(cov_est.cov.one_sided)
         sigma = np.asarray(cov_est.cov.short_run)
@@ -1352,7 +1417,10 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params)
         resid_kern = type(cov_est)(
-            resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
+            resid,
+            bandwidth=cov_est.bandwidth,
+            force_int=cov_est.force_int,
+            bandwidth_method=cov_est.bandwidth_method,
         )
         return CointegrationAnalysisResults(
             params,
