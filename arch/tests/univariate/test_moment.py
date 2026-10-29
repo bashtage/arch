@@ -95,9 +95,7 @@ def test_partial_moment_infinite_bound(dist, params):
     # StudentsT gave nan, and StudentsT also gave nan for n=1 with large nu
     for n in range(5):
         assert_almost_equal(dist.partial_moment(n, -inf, params), 0.0)
-        assert_almost_equal(
-            dist.partial_moment(n, inf, params), dist.moment(n, params)
-        )
+        assert_almost_equal(dist.partial_moment(n, inf, params), dist.moment(n, params))
 
 
 @pytest.mark.parametrize("nu", [5.0, 400.0])

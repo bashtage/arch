@@ -659,7 +659,7 @@ def test_all_constant_newey_west_raises() -> None:
     with pytest.raises(ValueError, match=match):
         _opt(Bartlett(np.ones((50, 2)), bandwidth_method="newey-west"))
     with pytest.raises(ValueError, match=match):
-        PreWhitenedRecolored(np.ones((30, 1))).bandwidth
+        _ = PreWhitenedRecolored(np.ones((30, 1))).bandwidth
     # An explicit bandwidth does not need the estimate
     assert_allclose(Bartlett(np.ones((50, 1)), bandwidth=3).cov.long_run, 0.0)
 
