@@ -12,9 +12,8 @@ if platform.system() == "Linux":
     BASE_PATH = pathlib.Path("/mnt", "c")
 else:
     BASE_PATH = pathlib.Path(r"C:\\")
+# Created by the scripts that write to it, and not when this module is imported
 OUTPUT_PATH = BASE_PATH / "Users" / "kevin" / "Dropbox" / "adf-z"
-if not OUTPUT_PATH.exists():
-    OUTPUT_PATH.mkdir(parents=True)
 
 _PERCENTILES = (
     list(arange(1, 10))

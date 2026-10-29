@@ -2119,9 +2119,9 @@ def mackinnonp(
 
     Notes
     -----
-    Most values are from MacKinnon (1994).  Values for DFGLS test statistics
-    and the "n" version of the ADF z test statistic were computed following
-    the methodology of MacKinnon (1994).
+    Most values are from MacKinnon (1994). Values for DFGLS test statistics
+    and the ADF z test statistic were computed following the methodology of
+    MacKinnon (1994).
 
     References
     ----------
