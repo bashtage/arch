@@ -316,10 +316,28 @@ def test_kpss_extreme_scale_automatic_lags():
 
 @pytest.mark.filterwarnings("ignore::RuntimeWarning")
 def test_linear_algebra_error_is_infeasible():
-    # ZivotAndrews raised LinAlgError: SVD did not converge
+    # ZivotAndrews raised LinAlgError: SVD did not converge. On some platforms and
+    # NumPy versions, its own check of the rank finds the matrix singular first
     za = ZivotAndrews(EXTREME_SCALES["1e-300"], lags=2)
-    with pytest.raises(InfeasibleTestException, match="matrix that it needs"):
+    with pytest.raises(
+        InfeasibleTestException,
+        match=r"matrix that it needs|regressor matrix is singular",
+    ):
         _ = za.stat
+
+
+def test_linear_algebra_error_is_converted(monkeypatch):
+    # A LinAlgError while the statistic is computed raises InfeasibleTestException,
+    # every time, on every platform
+    adf = ADF(RANDOM_WALK, lags=2)
+
+    def singular() -> None:
+        raise np.linalg.LinAlgError("SVD did not converge")
+
+    monkeypatch.setattr(adf, "_compute_statistic", singular)
+    for _ in range(2):
+        with pytest.raises(InfeasibleTestException, match="matrix that it needs"):
+            _ = adf.stat
 
 
 # Exact trends, computed in float64 as users compute them, so that their
