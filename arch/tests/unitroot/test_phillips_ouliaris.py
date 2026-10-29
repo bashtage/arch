@@ -170,6 +170,36 @@ def test_auto_bandwidth(trivariate_data):
     assert int(res.bandwidth) == res.bandwidth
 
 
+@pytest.mark.parametrize("test_type", ["za", "zt", "pu", "pz"])
+@pytest.mark.parametrize("kernel", ["bartlett", "parzen", "quadratic-spectral"])
+def test_bandwidth_method(trivariate_data, test_type, kernel):
+    y, x = trivariate_data
+    nw = phillips_ouliaris(y, x, test_type=test_type, kernel=kernel)
+    default = phillips_ouliaris(
+        y, x, test_type=test_type, kernel=kernel, bandwidth_method="Newey_West"
+    )
+    assert_allclose(default.stat, nw.stat, rtol=1e-12)
+    andrews = phillips_ouliaris(
+        y, x, test_type=test_type, kernel=kernel, bandwidth_method="andrews"
+    )
+    assert andrews.bandwidth != nw.bandwidth
+    # The statistic is the one with the bandwidth that the method selected
+    direct = phillips_ouliaris(
+        y, x, test_type=test_type, kernel=kernel, bandwidth=andrews.bandwidth
+    )
+    assert_allclose(andrews.stat, direct.stat, rtol=1e-12)
+    # bandwidth_method is ignored when bandwidth is given
+    fixed = phillips_ouliaris(
+        y,
+        x,
+        test_type=test_type,
+        kernel=kernel,
+        bandwidth=5,
+        bandwidth_method="andrews",
+    )
+    assert fixed.bandwidth == 5
+
+
 @pytest.mark.parametrize("kernel", KERNELS)
 def test_all_kernels(trivariate_data, kernel):
     y, x = trivariate_data

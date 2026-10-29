@@ -471,6 +471,26 @@ METHOD_BAD = [
     (["andrews"], TypeError),
 ]
 METHOD_GOOD = ["newey-west", "andrews", "Newey_West", "NEWEYWEST", np.str_("andrews")]
+PO_METHOD_ROWS = [
+    *bad_value_rows(
+        "po",
+        _po,
+        {**BASE, "test_type": "zt"},
+        "bandwidth_method",
+        METHOD_BAD,
+        rule=METHOD_RULE,
+    ),
+    *good_value_rows(
+        "po", _po, {**BASE, "test_type": "zt"}, "bandwidth_method", METHOD_GOOD
+    ),
+]
+
+
+@pytest.mark.parametrize("row", to_params(PO_METHOD_ROWS))
+def test_phillips_ouliaris_bandwidth_method(row):
+    run_row(row)
+
+
 DOLS_FIT_ROWS = [
     *bad_value_rows(
         "dols-fit", _dols_fit, FIT_BASE, "bandwidth", BANDWIDTH_BAD, rule=BANDWIDTH_RULE
