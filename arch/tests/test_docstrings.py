@@ -85,6 +85,7 @@ SIGNATURE_CODES = frozenset({"PR01", "PR02", "PR03"})
 ALL_MODULES = (
     "arch",
     "arch.univariate",
+    "arch.univariate.backtest",
     "arch.univariate.base",
     "arch.univariate.diagnostics",
     "arch.univariate.volatility",

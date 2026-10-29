@@ -35,6 +35,7 @@ from arch._typing import (
     Literal,
 )
 from arch.univariate.diagnostics import (
+    _tail_probability,
     excess_kurtosis as _excess_kurtosis,
     hill_estimator as _hill_estimator,
     var_ratio as _var_ratio,
@@ -1919,15 +1920,23 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         return _hill_estimator(self.std_resid, k)
 
-    def var_ratio(self, level: float = 0.999) -> float:
+    def var_ratio(self, p: float | None = None, *, level: float | None = None) -> float:
         """
         Compute the ratio of Gaussian VaR to model-distribution VaR.
 
         Parameters
         ----------
+        p : float, optional
+            The probability of an exception that the VaR is designed for, which
+            is the size of the tail, in the open interval (0, 0.5). It is 0.05
+            for a 95% VaR and 0.01 for a 99% VaR. The default is 0.001, a 99.9%
+            VaR.
         level : float, optional
-            VaR confidence level. Must be finite and between 0.5 and 1.0,
-            exclusive.
+            Deprecated. The confidence level of the VaR, ``1 - p``, in
+            (0.5, 1). Use ``p`` instead.
+
+            .. deprecated:: 9.1
+               Use ``p``, the probability of an exception.
 
         Returns
         -------
@@ -1938,12 +1947,14 @@ class ARCHModelFixedResult(_SummaryRepr):
         Raises
         ------
         TypeError
-            If ``level`` is not a real number.
+            If ``p`` or ``level`` is not a real number.
         ValueError
-            If ``level`` is not in (0.5, 1.0).
+            If ``p`` is not in (0, 0.5), ``level`` is not in (0.5, 1), or both
+            are given.
         """
+        p = _tail_probability(p, level)
         _, _, dp = self.model._parse_parameters(self._params)
-        return _var_ratio(level, distribution=self.model.distribution, parameters=dp)
+        return _var_ratio(p, distribution=self.model.distribution, parameters=dp)
 
     def plot(
         self, annualize: str | None = None, scale: float | None = None
