@@ -87,7 +87,10 @@ VOLATILITIES = [
     RiskMetrics2006(),
     APARCH(),
     EGARCH(),
-    NGARCH(2, 1, 2),
+    # NGARCH(2, 1, 2) is weakly identified on these data (alpha[1] and a large
+    # theta[1] lie on a ridge), so two fits can stop at different points. It is
+    # used in test_fix_after_append, which does not compare two fits.
+    NGARCH(),
 ]
 
 X_MEAN_MODELS = [HARXWrapper, ARXWrapper, LS]
