@@ -16,13 +16,15 @@ jobs:
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
-    # Python 3.14, the newest release, has the most jobs. The jobs with older Python
-    # versions have exact versions of numpy, scipy, pandas, statsmodels and matplotlib,
-    # from the oldest that arch supports (3.10) to the last releases before the newest
-    # (3.13). Together with the newest versions in the 3.14 jobs they cover numpy 1.x
-    # and 2.x, pandas 1.x, 2.x and 3.x, and both sides of the pandas 2.2 and
-    # matplotlib 3.10 checks in arch/compat and arch/univariate. The sdist and the
-    # wheel are built with the newest numpy and tested with an older one.
+    # Python 3.15, the newest release, runs all of the tests, including the slow ones,
+    # with the newest versions of everything. Python 3.14 has the most jobs: without the
+    # Cython extensions, with statsmodels main and with nightly builds. The jobs with
+    # older Python versions have exact versions of numpy, scipy, pandas, statsmodels and
+    # matplotlib, from the oldest that arch supports (3.10) to the last releases before
+    # the newest (3.13). Together with the newest versions in the 3.14 and 3.15 jobs
+    # they cover numpy 1.x and 2.x, pandas 1.x, 2.x and 3.x, and both sides of the
+    # pandas 2.2 and matplotlib 3.10 checks in arch/compat and arch/univariate. The
+    # sdist and the wheel are built with the newest numpy and tested with an older one.
     #
     # Variables of an entry
     #   python.version   Version of Python.
@@ -48,8 +50,9 @@ jobs:
     #   nightly          Install nightly builds of numpy, scipy, pandas, ...
     #   experimental     Do not fail when the tests fail and do not collect coverage
     matrix:
-      python_314:
-        python.version: '3.14'
+      # The newest versions of everything
+      python_315:
+        python.version: '3.15'
         PYTEST_PATTERN: "(slow or not slow)"
       # Without the Cython extensions, so numba runs the recursions
       python_314_no_binary:
@@ -119,8 +122,6 @@ jobs:
         python.version: '3.14'
         nightly: true
         experimental: true
-      python_315:
-        python.version: '3.15'
 
     maxParallel: 10
 
