@@ -3,6 +3,7 @@ Residual diagnostics for univariate ARCH models.
 """
 
 from collections.abc import Sequence
+import warnings
 
 import numpy as np
 from scipy import stats
@@ -124,24 +125,58 @@ def hill_estimator(
     return float(1.0 / hill)
 
 
+def _tail_probability(p: float | None, level: float | None) -> float:
+    """
+    The probability of an exception from ``p``, or from the deprecated ``level``.
+
+    The warning is issued for the caller of the public function or method.
+    """
+    if level is not None:
+        if p is not None:
+            raise ValueError(
+                "p and level cannot both be given; level is deprecated, use p"
+            )
+        level = check_float("level", level, lower=0.5, upper=1.0, inclusive="neither")
+        p = 1.0 - level
+        warnings.warn(
+            "level is deprecated and will be removed in a future version. Use p, the "
+            f"probability of an exception, instead: level={level:g} is p={p:.6g}.",
+            FutureWarning,
+            stacklevel=3,
+        )
+    if p is None:
+        return 0.001
+    return check_float("p", p, lower=0.0, upper=0.5, inclusive="neither")
+
+
 def var_ratio(
-    level: float = 0.999,
+    p: float | None = None,
     distribution: Distribution | None = None,
     parameters: Sequence[float] | ArrayLike1D | None = None,
+    *,
+    level: float | None = None,
 ) -> float:
-    """
+    r"""
     Ratio of Gaussian VaR to model-distribution VaR.
 
     Parameters
     ----------
-    level : float, optional
-        VaR confidence level. Must be finite and between 0.5 and 1.0, exclusive.
+    p : float, optional
+        The probability of an exception that the VaR is designed for, which is
+        the size of the tail, in the open interval (0, 0.5). It is 0.05 for a 95%
+        VaR and 0.01 for a 99% VaR. The default is 0.001, a 99.9% VaR.
     distribution : Distribution, optional
         Standardized distribution used to compute the model VaR. If not
         provided, uses the standard normal distribution.
     parameters : array_like, optional
         Distribution parameters. Must have one finite element for each parameter
         of ``distribution``. Use ``None`` for parameterless distributions.
+    level : float, optional
+        Deprecated. The confidence level of the VaR, ``1 - p``, in (0.5, 1). Use
+        ``p`` instead.
+
+        .. deprecated:: 9.1
+           Use ``p``, the probability of an exception.
 
     Returns
     -------
@@ -152,14 +187,22 @@ def var_ratio(
     Raises
     ------
     TypeError
-        If ``level`` is not a real number, ``distribution`` is not a Distribution
-        or ``parameters`` cannot be converted to numbers.
+        If ``p`` or ``level`` is not a real number, ``distribution`` is not a
+        Distribution or ``parameters`` cannot be converted to numbers.
     ValueError
-        If ``level`` is not in (0.5, 1.0), ``parameters`` does not have one finite
-        element for each parameter of the distribution, or the model distribution
-        does not produce a positive finite VaR.
+        If ``p`` is not in (0, 0.5), ``level`` is not in (0.5, 1), both ``p`` and
+        ``level`` are given, ``parameters`` does not have one finite element for
+        each parameter of the distribution, or the model distribution does not
+        produce a positive finite VaR.
+
+    Notes
+    -----
+    VaR is named by its confidence level, and ``p`` is the probability of an
+    exception, as in the VaR backtests of :mod:`arch.univariate`. The ratio is
+    :math:`\Phi^{-1}(p)/F^{-1}(p)` where :math:`F` is the standardized
+    distribution.
     """
-    level = check_float("level", level, lower=0.5, upper=1.0, inclusive="neither")
+    p = _tail_probability(p, level)
     distribution = check_instance(
         "distribution", distribution, Distribution, allow_none=True
     )
@@ -174,9 +217,8 @@ def var_ratio(
         allow_none=nparams == 0,
     )
 
-    tail_probability = 1.0 - level
-    gaussian_var = -stats.norm.ppf(tail_probability)
-    model_var = -float(distribution.ppf(tail_probability, parameters))
+    gaussian_var = -stats.norm.ppf(p)
+    model_var = -float(distribution.ppf(p, parameters))
     if not np.isfinite(model_var) or model_var <= 0.0:
         raise ValueError("model distribution must produce a positive finite VaR")
     return float(gaussian_var / model_var)

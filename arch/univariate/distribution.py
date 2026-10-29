@@ -1009,9 +1009,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         elif n == 0:
             moment = stats.t.cdf(z, nu)
         elif n == 1:
-            c = gamma(0.5 * (nu + 1)) / (sqrt(nu * pi) * gamma(0.5 * nu))
-            e = 0.5 * (nu + 1)
-            moment = (0.5 * (c * nu) / (1 - e)) * ((1 + (z**2) / nu) ** (1 - e))
+            moment = -(nu + z**2) / (nu - 1) * stats.t.pdf(z, nu)
         else:
             t1 = (z ** (n - 1)) * (nu + z**2) * stats.t.pdf(z, nu)
             t2 = (n - 1) * nu * StudentsT._ord_t_partial_moment(n - 2, z, nu)

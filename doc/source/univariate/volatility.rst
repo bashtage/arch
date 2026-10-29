@@ -22,6 +22,7 @@ volatility.
    ARCH
    APARCH
    FIAPARCH
+   NGARCH
 
 Fractionally Integrated Asymmetric Power ARCH
 ---------------------------------------------
@@ -88,6 +89,69 @@ Longer horizons require ``method="simulation"`` or ``method="bootstrap"``.
         random_state=np.random.RandomState(0),
     )
     forecasts.variance
+
+Nonlinear Asymmetric GARCH
+--------------------------
+
+:class:`~arch.univariate.NGARCH` is the nonlinear asymmetric GARCH of Engle and Ng
+[EngleNg1993]_, which the rugarch package for R calls NAGARCH. The shock is shifted by
+a multiple of the lagged volatility before it is squared,
+
+.. math::
+
+   \sigma_t^{2} = \omega
+   + \sum_{i=1}^{p}\alpha_i\left(\epsilon_{t-i} - \theta_i I_{[o\geq i]}
+   \sigma_{t-i}\right)^{2}
+   + \sum_{j=1}^{q}\beta_j \sigma_{t-j}^{2}.
+
+In terms of the standardized shock :math:`e_t=\epsilon_t/\sigma_t` the news impact is
+:math:`\sigma_{t-1}^2(e_{t-1}-\theta)^2`, a parabola with a minimum at
+:math:`e_{t-1}=\theta`. With :math:`\theta>0`, the leverage effect, a negative shock
+increases the variance by more than a positive shock of the same size. Engle and Ng
+write the shift as :math:`(\epsilon_{t-1}+\gamma\sigma_{t-1})^2` and expect
+:math:`\gamma<0`, so that :math:`\theta=-\gamma`. The sign convention of
+:class:`~arch.univariate.NGARCH` is that of rugarch. The parameters are named
+``omega``, ``alpha[i]``, ``theta[i]`` and ``beta[j]``, and the orders must satisfy
+:math:`o\leq p`, as for :class:`~arch.univariate.APARCH`. Unlike the GJR-GARCH, the
+expected value of the shock term does not depend on the distribution of :math:`e_t`
+beyond its mean and variance, since :math:`E[(e_t-\theta)^2]=1+\theta^2` for any
+standardized distribution.
+
+.. note::
+
+   Another model, the nonlinear ARCH of Higgins and Bera [HigginsBera1992]_, is also
+   called NGARCH. It is not available in arch.
+
+The process is covariance stationary when the persistence
+:math:`\phi=\sum_i\alpha_i(1+\theta_i^2)+\sum_j\beta_j` is smaller than 1. Estimation
+imposes the linear constraints :math:`\sum_i\alpha_i+\sum_j\beta_j<1` and
+non-negativity, as for :class:`~arch.univariate.APARCH`, and not
+:math:`\phi<1`, which is not linear in the parameters. ``fit`` issues a
+``ValueWarning`` when the persistence of the estimated model is 1 or more.
+
+.. ipython:: python
+
+    import arch.data.sp500
+    from arch.univariate import ConstantMean, NGARCH
+
+    sp500 = arch.data.sp500.load()
+    returns = 100 * sp500["Adj Close"].pct_change().dropna()
+    am = ConstantMean(returns, volatility=NGARCH(p=1, o=1, q=1))
+    res = am.fit(disp="off")
+    res.params
+    params = res.params
+    params["alpha[1]"] * (1 + params["theta[1]"] ** 2) + params["beta[1]"]
+
+The process can also be selected using ``vol="ngarch"`` in
+:func:`~arch.univariate.arch_model`, where ``o=1`` adds the shift. Without a shift
+(``o=0``, the default of ``arch_model``) the model is a GARCH, so ``arch_model`` uses
+:class:`~arch.univariate.GARCH` and issues a ``ValueWarning``. Analytic forecasts
+are exact at all horizons. For ``p=q=1`` they satisfy
+:math:`f_h=\omega+\phi f_{h-1}`.
+
+.. ipython:: python
+
+    res.forecast(horizon=5).variance.iloc[-1]
 
 Parameterless Variance Processes
 --------------------------------

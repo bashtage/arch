@@ -789,6 +789,7 @@ class TestStepM:
         assert 0 < len(stepm.spa.better_models()) < self.k
         stepm.compute()
         assert_equal(len(stepm.superior_models), self.models.shape[1])
+        assert all(type(i) is int for i in stepm.superior_models)
 
     def test_errors(self):
         stepm = StepM(self.benchmark, self.models, size=0.10)

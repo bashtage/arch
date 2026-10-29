@@ -20,6 +20,7 @@ from arch.univariate import (
     GARCH,
     HARCH,
     HARX,
+    NGARCH,
     ConstantMean,
     ConstantVariance,
     EWMAVariance,
@@ -105,6 +106,7 @@ VOLATILITIES = [
     RiskMetrics2006(),
     APARCH(),
     EGARCH(),
+    NGARCH(),
 ]
 
 ANALYTICAL_VOLATILITIES = [
@@ -115,6 +117,7 @@ ANALYTICAL_VOLATILITIES = [
     MIDASHyperbolic(),
     HARCH(lags=[1, 5, 22]),
     RiskMetrics2006(),
+    NGARCH(2, 1, 2),
 ]
 
 

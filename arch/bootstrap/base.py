@@ -46,6 +46,7 @@ __all__ = [
     "CircularBlockBootstrap",
     "IIDBootstrap",
     "IndependentSamplesBootstrap",
+    "LocalBlockBootstrap",
     "MovingBlockBootstrap",
     "StationaryBootstrap",
     "optimal_block_length",
@@ -332,7 +333,7 @@ def _loo_jackknife(
                 kwargs_copy[k] = v[items]
         if extra_kwargs is not None:
             kwargs_copy.update(extra_kwargs)
-        results.append(func(*args_copy, **kwargs_copy))
+        results.append(np.array(func(*args_copy, **kwargs_copy)))
     return np.array(results)
 
 
@@ -1219,8 +1220,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             semi = True
 
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
-        # Allows lists, tuples, scalars and 0-d arrays
-        base = np.asarray(func(*self._args, **kwargs))
+        # Snapshot lists, tuples, scalars and arrays before evaluating func again.
+        base = np.array(func(*self._args, **kwargs))
         if real_only:
             _check_real_statistic(base)
 
@@ -2150,6 +2151,281 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
             return cast("Int64Array1D", indices[: self._num_items])
         else:
             return indices
+
+
+class LocalBlockBootstrap(CircularBlockBootstrap):
+    """
+    Bootstrap using blocks that are resampled from near their own position.
+
+    Parameters
+    ----------
+    block_size : int
+        Size of block to use. Must be an integer that is at least 1. Blocks do
+        not wrap around, so the block size cannot be larger than the number of
+        observations, which is checked when the iteration starts.
+    locality : int
+        Half-width of the window, in observations, from which the start of a
+        block is drawn. Must be an integer that is at least 0. The start of
+        each block is drawn uniformly from the starts that are at most
+        ``locality`` observations from the start of the block in the data. A
+        value of 0 keeps every block in place. A value of at least the number
+        of observations draws each block from anywhere in the data, which is
+        the moving block bootstrap. See Notes.
+    *args : ndarray, Series or DataFrame
+        Positional arguments to bootstrap. Each must have at least one row.
+    seed : int, Generator or RandomState, optional
+        Seed to use to ensure reproducible results. If an int, it must be
+        non-negative and is passed to ``np.random.default_rng``. If None, a
+        fresh Generator is constructed with system-provided entropy.
+    **kwargs : ndarray, Series or DataFrame
+        Keyword arguments to bootstrap. Each must have at least one row.
+
+    Attributes
+    ----------
+    data : tuple
+        Two-element tuple with the pos_data in the first position and kw_data
+        in the second (pos_data, kw_data).
+    pos_data : tuple
+        Tuple containing the positional arguments (in the order entered).
+    kw_data : dict
+        Dictionary containing the keyword arguments.
+
+    Raises
+    ------
+    TypeError
+        If an input is not an ndarray, Series or DataFrame, ``block_size`` or
+        ``locality`` is not an int, or ``seed`` is not None, a non-negative
+        int, a Generator or a RandomState.
+    ValueError
+        If there are no inputs, an input has no rows, the inputs do not have
+        the same number of rows, ``block_size`` is less than 1 (or, when the
+        iteration starts, larger than the number of observations),
+        ``locality`` is negative, ``seed`` is a negative int, or a keyword
+        argument has the name of an attribute or method of the bootstrap.
+
+    See Also
+    --------
+    arch.bootstrap.MovingBlockBootstrap
+        Blocks without wrap around, drawn from the whole sample.
+    arch.bootstrap.CircularBlockBootstrap
+        Circular (wrap-around) bootstrap.
+    arch.bootstrap.optimal_block_length
+        Optimal block length estimation, for stationary data.
+
+    Notes
+    -----
+    The local block bootstrap [1]_ is designed for series whose properties
+    change slowly, such as a series with a trend or with a variance that moves
+    over time. The block bootstraps for stationary data mix blocks from the
+    whole sample, which is not appropriate when the observations at the start
+    and at the end of the sample have different distributions. The local block
+    bootstrap replaces a block only with a block that starts close to it.
+
+    The sample is covered by ``ceil(n / block_size)`` blocks, where ``n`` is
+    the number of observations. With zero-based positions, block ``m`` (for
+    ``m = 0, 1, ...``) has the nominal start ``m * block_size``, which is where
+    it starts in the data. The start of the block that is used in its place is
+    drawn uniformly from the integers in the interval::
+
+        [max(0, m * block_size - locality),
+         min(n - block_size, m * block_size + locality)]
+
+    Both end points are possible. The blocks are independent, they do not wrap
+    around the end of the data, and the concatenated blocks are truncated to
+    ``n`` observations. In the last blocks the lower end can exceed the upper
+    end, and it is then set to the upper end. If ``block_size`` does not
+    divide ``n``, the last block starts at ``n - block_size`` or earlier so
+    that no block extends past the data, and so with ``locality=0`` the
+    bootstrap sample is the data only when ``block_size`` divides ``n``.
+
+    Paparoditis and Politis [1]_ number the observations from 1 and draw the
+    start of block ``m`` from ``[max(1, m * b - K), min(n - b + 1, m * b + K)]``,
+    where ``b`` is the block size and ``K = nB`` for a fraction ``B`` of the
+    sample. Here the observations are numbered from 0 and the window of block
+    ``m`` is centered on ``m * b``, the position where the block starts in the
+    data. In the numbering of the paper the window is centered one observation
+    earlier, and this does not matter for the asymptotic results. The locality
+    is the integer number of observations ``K``, and not the fraction ``B``,
+    so that ``clone`` can create a bootstrap with the same locality for data of
+    any length. A block size of 1 is the local bootstrap for heteroskedastic
+    regression of Shi [2]_.
+
+    The method requires a block size that is large, and a window that is large
+    relative to the block size and small relative to the number of
+    observations. Neither is chosen automatically. ``optimal_block_length``
+    assumes stationary data and does not give values to use here.
+
+    Some of the methods that use the bootstrap need care:
+
+    * The BCa interval computes its acceleration using a leave-one-out
+      jackknife. This is a heuristic for dependent data, and in particular for
+      data that are not stationary.
+    * The studentized interval estimates the standard error of each resampled
+      statistic using a bootstrap of the resampled data with the same block
+      size and locality (see ``clone``). Use ``std_err_func`` in ``conf_int``
+      to provide another estimate of the standard error.
+
+    The local block bootstrap is not an option of the multiple comparison
+    procedures ``SPA``, ``StepM`` and ``MCS``, which assume stationary data.
+
+    The data are used as given. They are not converted to float64 and are not
+    checked for NaN or inf, since the function that is bootstrapped decides how
+    to treat them (for example, using ``np.nanmean``).
+
+    Data entered using keyword arguments is directly accessible as an
+    attribute.
+
+    To ensure a reproducible bootstrap, you must pass the ``seed`` keyword
+    argument when the bootstrap is created. See the example below.
+    Note that ``seed`` is a reserved keyword and any variable
+    passed using this keyword must be an integer, a ``Generator`` or a
+    ``RandomState``.
+
+    References
+    ----------
+    .. [1] Paparoditis, E. and Politis, D. N. (2002). Local block bootstrap.
+       Comptes Rendus Mathematique, Academie des Sciences, Paris, Ser. I
+       335(11), 959-962.
+    .. [2] Shi, S. G. (1991). Local bootstrap. Annals of the Institute of
+       Statistical Mathematics, 43, 667-676.
+
+    Examples
+    --------
+    Estimate the standard error of the mean of a series with a trend.
+
+    >>> import numpy as np
+    >>> from arch.bootstrap import LocalBlockBootstrap
+    >>> rng = np.random.default_rng(1234)
+    >>> y = 3 * np.arange(600) / 600 + rng.standard_normal(600)
+    >>> bs = LocalBlockBootstrap(10, 40, y, seed=rng)
+    >>> se = np.sqrt(bs.var(np.mean, reps=500))
+
+    Data can be accessed in a number of ways.  Positional data is retained in
+    the same order as it was entered when the bootstrap was initialized.
+    Keyword data is available both as an attribute or using a dictionary syntax
+    on kw_data.
+
+    >>> x = rng.standard_normal((600, 2))
+    >>> z = rng.standard_normal(600)
+    >>> bs = LocalBlockBootstrap(10, 40, x, y=y, z=z)
+    >>> for data in bs.bootstrap(100):
+    ...     bs_x = data[0][0]
+    ...     bs_y = data[1]['y']
+    ...     bs_z = bs.z
+    """
+
+    _name = "Local Block Bootstrap"
+
+    def __init__(
+        self,
+        block_size: int,
+        locality: int,
+        *args: ArrayLike,
+        seed: int | Generator | RandomState | None = None,
+        **kwargs: ArrayLike,
+    ) -> None:
+        checked = check_int("locality", locality, lower=0)
+        super().__init__(block_size, *args, seed=seed, **kwargs)
+        self._locality: int = checked
+        self._parameters = [self._block_size, checked]
+
+    @property
+    def locality(self) -> int:
+        """
+        The locality of the bootstrap.
+
+        Returns
+        -------
+        int
+            The half-width, in observations, of the window of starts from which
+            each block is drawn. It cannot be changed after the bootstrap has
+            been created.
+        """
+        return self._locality
+
+    @locality.setter
+    def locality(self, value: int) -> None:
+        raise AttributeError(
+            "locality cannot be changed after the bootstrap has been created. "
+            "Create a new bootstrap with the required locality, for example "
+            "using clone."
+        )
+
+    def clone(
+        self,
+        *args: ArrayLike,
+        seed: int | Generator | RandomState | None = None,
+        **kwargs: ArrayLike,
+    ) -> "LocalBlockBootstrap":
+        """
+        Clone the bootstrap using different data with a fresh prng.
+
+        The block size and the locality are those of this bootstrap.
+
+        Parameters
+        ----------
+        *args : ndarray, Series or DataFrame
+            Positional arguments to bootstrap.
+        seed : int, Generator or RandomState, optional
+            The seed value to pass to the cloned generator.
+        **kwargs : ndarray, Series or DataFrame
+            Keyword arguments to bootstrap.
+
+        Returns
+        -------
+        LocalBlockBootstrap
+            A new bootstrap instance of the same type as this instance.
+        """
+        return self.__class__(
+            self.block_size, self.locality, *args, seed=seed, **kwargs
+        )
+
+    def __str__(self) -> str:
+        txt = self._name
+        txt += "(block size: " + str(self.block_size)
+        txt += ", locality: " + str(self.locality)
+        txt += ", no. pos. inputs: " + str(len(self.pos_data))
+        txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
+        return txt
+
+    def _repr_html_(self) -> str:
+        html = "<strong>" + self._name + "</strong>("
+        html += "<strong>block size</strong>: " + str(self.block_size)
+        html += ", <strong>locality</strong>: " + str(self.locality)
+        html += ", <strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
+        html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
+        html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
+        return html
+
+    def _check_sampling(self) -> None:
+        # The blocks do not wrap around, so a block is at most the whole sample
+        check_int("block_size", self._block_size, lower=1, upper=self._num_items)
+
+    def update_indices(self) -> Int64Array1D:
+        num_items = self._num_items
+        block_size = self._block_size
+        if block_size > num_items:
+            # A direct call skips the check made when the iteration starts
+            self._check_sampling()
+        num_blocks = -(-num_items // block_size)
+        # Zero-based nominal start of each block and the inclusive range of starts
+        # A locality of n or more is the whole sample, and the cap avoids overflow
+        locality = min(self._locality, num_items)
+        nominal = block_size * np.arange(num_blocks, dtype=np.int64)
+        upper = np.minimum(num_items - block_size, nominal + locality)
+        lower = np.minimum(np.maximum(nominal - locality, 0), upper)
+        if isinstance(self._generator, Generator):
+            draws = self._generator.random(num_blocks)
+        else:
+            draws = self._generator.random_sample(num_blocks)
+        # Uniform on lower, ..., upper. The draws are 53-bit doubles in [0, 1), so
+        # draws * (width + 1) rounds to less than width + 1 and the floor is at
+        # most width
+        width = upper - lower
+        offset = np.floor(draws * (width + 1)).astype(np.int64)
+        starts = lower + offset
+        indices = (starts[:, None] + np.arange(block_size, dtype=np.int64)).ravel()
+        return cast("Int64Array1D", indices[:num_items])
 
 
 class MOONBootstrap(IIDBootstrap):  # pragma: no cover

@@ -64,6 +64,7 @@ __all__ = [
     "FIGARCH",
     "GARCH",
     "HARCH",
+    "NGARCH",
     "BootstrapRng",
     "ConstantVariance",
     "EWMAVariance",
@@ -714,6 +715,23 @@ class VolatilityProcess(metaclass=ABCMeta):
             * If method is not known or not supported
         """
 
+    def _fit_warning(self, parameters: Float64Array1D) -> str | None:
+        """
+        Check the estimated parameters of the volatility process
+
+        Parameters
+        ----------
+        parameters : ndarray
+            Estimated parameters of the volatility process.
+
+        Returns
+        -------
+        str or None
+            The text of a warning about the estimated parameters, or None if
+            there is nothing to report. ``ARCHModel.fit`` issues the warning.
+        """
+        return None
+
     def _one_step_forecast(
         self,
         parameters: Float64Array1D,
@@ -1283,8 +1301,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         ``initial_value`` is the initial value of the quantity that the process
         updates, which is not always the variance :math:`\sigma^2`:
 
-        * :math:`\sigma^2`: ARCH, GARCH with ``power=2``, HARCH,
-          MIDASHyperbolic, EWMAVariance and RiskMetrics2006.
+        * :math:`\sigma^2`: ARCH, GARCH with ``power=2``, HARCH, MIDASHyperbolic,
+          NGARCH, EWMAVariance and RiskMetrics2006.
         * :math:`\sigma^{p}`: GARCH and FIGARCH with ``power=p``, which
           includes the absolute value (``power=1``) models.
         * :math:`\sigma^{\delta}`: APARCH and FIAPARCH, where :math:`\delta`
@@ -5094,3 +5112,419 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
 
         return descr
+
+
+class NGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
+    r"""
+    Nonlinear asymmetric GARCH (NGARCH) volatility process.
+
+    The process of Engle and Ng [1]_, which is called NAGARCH in the rugarch
+    package for R.
+
+    Parameters
+    ----------
+    p : int, optional
+        Order of the symmetric innovation. Must satisfy p>=o and be positive.
+    o : int, optional
+        Number of innovations that have a shift (an asymmetry parameter). Must
+        satisfy o<=p and be non-negative. The first ``o`` of the ``p``
+        innovations are shifted.
+    q : int, optional
+        Order of the lagged conditional variance. Must be non-negative.
+
+    Raises
+    ------
+    TypeError
+        If ``p``, ``o`` or ``q`` is not an integer.
+    ValueError
+        If ``p`` is smaller than 1, ``o`` or ``q`` is negative, or ``o`` is larger
+        than ``p``.
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}^{2}=\omega
+        +\sum_{i=1}^{p}\alpha_{i}
+        \left(\epsilon_{t-i}-\theta_{i}I_{[o\geq i]}\sigma_{t-i}\right)^{2}
+        +\sum_{j=1}^{q}\beta_{j}\sigma_{t-j}^{2}
+
+    which is :math:`\sigma_{t-i}^2 (e_{t-i}-\theta_{i})^2` in terms of the
+    standardized shock :math:`e_{t}=\epsilon_{t}/\sigma_{t}`. The parameters are
+    named ``omega``, ``alpha[i]``, ``theta[i]`` and ``beta[j]``.
+
+    The shift :math:`\theta` is the position of the minimum of the news impact curve
+    in units of the lagged volatility. The sign convention is that of the rugarch
+    package and of most textbooks: a positive :math:`\theta` is the leverage effect,
+    since a negative shock then raises the variance more than a positive shock of
+    the same size. Engle and Ng [1]_ write the shift as
+    :math:`(\epsilon_{t-1}+\gamma\sigma_{t-1})^2` and expect :math:`\gamma<0`, so
+    that :math:`\theta=-\gamma`.
+
+    The name NGARCH is also used for the nonlinear ARCH model of Higgins and
+    Bera [2]_, which is a different model and is not available here.
+
+    The expected value of :math:`(e_{t}-\theta)^2` is :math:`1+\theta^2` for any
+    standardized distribution, since :math:`e_t` has mean 0 and variance 1. The
+    process is covariance stationary if the persistence
+
+    .. math::
+
+        \phi=\sum_{i=1}^{p}\alpha_{i}\left(1+\theta_{i}^{2}\right)
+        +\sum_{j=1}^{q}\beta_{j}
+
+    is smaller than 1, and then the unconditional variance of :math:`\epsilon_t` is
+    :math:`\omega/(1-\phi)`. Analytic forecasts are exact at every horizon. When
+    :math:`p=q=1`, they satisfy :math:`f_h=\omega+\phi f_{h-1}`.
+
+    Estimation uses the linear constraints :math:`\omega,\alpha_i,\beta_j\geq 0` and
+    :math:`\sum\alpha_i+\sum\beta_j<1`, as for :class:`~arch.univariate.APARCH`,
+    and bounds of -5 and 5 for :math:`\theta`. The stationarity condition
+    :math:`\phi<1` is not imposed during estimation, since it is not linear in the
+    parameters, and a model with :math:`\theta\neq 0` can be estimated with a
+    persistence of 1 or more. ``fit`` then issues a ``ValueWarning``.
+
+    With ``o=0`` there is no shift and the process is a GARCH process, so
+    :class:`~arch.univariate.GARCH` should be used instead. A ``ValueWarning`` is
+    issued in this case.
+
+    Before the start of the sample, the variance and the squared residual are both
+    replaced by the backcast of the variance, so that each shock term is
+    :math:`\alpha_i(1+\theta_i^2)` times the backcast.
+
+    References
+    ----------
+    .. [1] Engle, R. F., & Ng, V. K. (1993). Measuring and testing the impact of
+       news on volatility. *The Journal of Finance*, 48(5), 1749-1778.
+    .. [2] Higgins, M. L., & Bera, A. K. (1992). A class of nonlinear ARCH models.
+       *International Economic Review*, 33(1), 137-158.
+
+    Examples
+    --------
+    >>> from arch.univariate import NGARCH
+
+    Standard NGARCH(1,1)
+
+    >>> ngarch = NGARCH(p=1, o=1, q=1)
+
+    Two lags of the shock, with a shift on the first lag only
+
+    >>> ngarch = NGARCH(p=2, o=1, q=1)
+    """
+
+    def __init__(self, p: int = 1, o: int = 1, q: int = 1) -> None:
+        super().__init__()
+        self.p: int = _check_count("p", p, 1)
+        self.o: int = _check_count("o", o, 0)
+        self.q: int = _check_count("q", q, 0)
+        if self.o > self.p:
+            _fail(ValueError, "o", f"an integer <= p ({self.p})", _describe(o))
+        self._num_params = 1 + self.p + self.o + self.q
+        self._name = "NGARCH"
+        self._volatility_updater = rec.NGARCHUpdater(self.p, self.o, self.q)
+        if self.o == 0:
+            warn(
+                "NGARCH with o=0 has no shift, and so is the same model as GARCH. "
+                "Use GARCH for a symmetric model, or set o > 0.",
+                ValueWarning,
+                stacklevel=2,
+            )
+
+    def __str__(self) -> str:
+        descr = self.name + "("
+        for k, v in (("p", self.p), ("o", self.o), ("q", self.q)):
+            if v > 0:
+                descr += f"{k}: {v}, "
+        descr = descr[:-2] + ")"
+        return descr
+
+    def variance_bounds(
+        self, resids: ArrayLike1D, power: float = 2.0
+    ) -> Float64Array2D:
+        resids = ensure1d(resids, "resids")
+        return super().variance_bounds(resids, 2.0)
+
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
+        resids = ensure1d(resids, "resids")
+        v = float(np.mean(resids**2))
+
+        bounds = [(1e-8 * v, 10.0 * v)]
+        bounds.extend([(0.0, 1.0)] * self.p)
+        bounds.extend([(-5.0, 5.0)] * self.o)
+        bounds.extend([(0.0, 1.0)] * self.q)
+
+        return bounds
+
+    def constraints(self) -> tuple[Float64Array, Float64Array]:
+        p, o, q = self.p, self.o, self.q
+        # omega > 0, 1
+        # alpha[i] > 0, p
+        # beta[j] > 0, q
+        # sum(alpha) + sum(beta) < 1, 1
+        a = np.zeros((1 + p + q + 1, 1 + p + o + q))
+        for i in range(1 + p):
+            a[i, i] = 1.0
+        for j in range(q):
+            a[1 + p + j, 1 + p + o + j] = 1.0
+        a[-1, 1 : 1 + p] = -1.0
+        a[-1, 1 + p + o :] = -1.0
+        b = np.zeros(1 + p + q + 1)
+        b[-1] = -1.0
+        return a, b
+
+    def compute_variance(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        sigma2: Float64Array1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+    ) -> Float64Array1D:
+        parameters, resids, backcast, var_bounds = self._check_compute_variance(
+            parameters, resids, sigma2, backcast, var_bounds
+        )
+        rec.ngarch_recursion(
+            parameters,
+            resids,
+            sigma2,
+            self.p,
+            self.o,
+            self.q,
+            resids.shape[0],
+            backcast,
+            var_bounds,
+        )
+
+        return sigma2
+
+    def _unpack(
+        self, parameters: Float64Array1D
+    ) -> tuple[float, Float64Array1D, Float64Array1D, Float64Array1D]:
+        """The parameters as omega, alpha, theta (p elements) and beta"""
+        p, o = self.p, self.o
+        theta = np.zeros(p)
+        theta[:o] = parameters[1 + p : 1 + p + o]
+        return (
+            float(parameters[0]),
+            parameters[1 : 1 + p],
+            theta,
+            parameters[1 + p + o :],
+        )
+
+    def simulate(
+        self,
+        parameters: Sequence[int | float] | ArrayLike1D,
+        nobs: int,
+        rng: RNGType,
+        burn: int = 500,
+        initial_value: float | Float64Array | None = None,
+    ) -> tuple[Float64Array, Float64Array]:
+        p, q = self.p, self.q
+        parameters, nobs, rng, burn, initial_value = self._check_simulate_arguments(
+            parameters, nobs, rng, burn, initial_value, max(p, q)
+        )
+        omega, alpha, theta, beta = self._unpack(parameters)
+        errors = rng(nobs + burn)
+
+        if initial_value is None:
+            persistence = float(np.sum(alpha * (1.0 + theta**2)) + np.sum(beta))
+            if (1.0 - persistence) > 0:
+                initial_value = omega / (1.0 - persistence)
+            else:
+                warn(initial_value_warning, InitialValueWarning, stacklevel=2)
+                initial_value = omega
+
+        sigma2 = np.zeros(nobs + burn)
+        data = np.zeros(nobs + burn)
+        max_lag = max(p, q)
+        sigma2[:max_lag] = initial_value
+        data[:max_lag] = np.sqrt(sigma2[:max_lag]) * errors[:max_lag]
+
+        for t in range(max_lag, nobs + burn):
+            sigma2[t] = omega
+            for j in range(p):
+                shock = data[t - 1 - j] - theta[j] * np.sqrt(sigma2[t - 1 - j])
+                sigma2[t] += alpha[j] * shock * shock
+            for j in range(q):
+                sigma2[t] += beta[j] * sigma2[t - 1 - j]
+            data[t] = errors[t] * np.sqrt(sigma2[t])
+
+        return data[burn:], sigma2[burn:]
+
+    def starting_values(self, resids: ArrayLike1D) -> Float64Array1D:
+        resids = ensure1d(resids, "resids")
+        p, o, q = self.p, self.o, self.q
+        alphas = [0.03, 0.05, 0.08, 0.15]
+        # The persistence is sum(alpha * (1 + theta ** 2)) + sum(beta)
+        persistence = [0.8, 0.9, 0.95, 0.975, 0.99]
+        thetas = [-0.5, 0.0, 0.5, 1.0] if o > 0 else [0.0]
+        grid = list(itertools.product(*[alphas, thetas, persistence]))
+
+        target = float(np.mean(resids**2))
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        svs = []
+        llfs = []
+        for alpha, theta, total in grid:
+            # The first o lags have the same theta
+            alpha_part = alpha * (1.0 + theta**2 * o / p)
+            # alpha_part is at most 0.3, so alpha_part + beta_part is at most 0.99
+            beta_part = max(total - alpha_part, 0.0) if q > 0 else 0.0
+            sv = np.empty(1 + p + o + q)
+            sv[0] = (1.0 - alpha_part - beta_part) * target
+            sv[1 : 1 + p] = alpha / p
+            sv[1 + p : 1 + p + o] = theta
+            sv[1 + p + o :] = beta_part / q if q > 0 else 0.0
+            svs.append(sv)
+            llfs.append(
+                self._gaussian_loglikelihood(
+                    to_array_1d(sv), to_array_1d(resids), backcast, var_bounds
+                )
+            )
+        # A NaN log-likelihood is never selected
+        llf = np.nan_to_num(np.array(llfs), nan=-np.inf)
+        return svs[int(np.argmax(llf))]
+
+    def parameter_names(self) -> list[str]:
+        p, o, q = self.p, self.o, self.q
+        names = ["omega"]
+        names.extend([f"alpha[{i + 1}]" for i in range(p)])
+        names.extend([f"theta[{i + 1}]" for i in range(o)])
+        names.extend([f"beta[{j + 1}]" for j in range(q)])
+        return names
+
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
+        # Analytic forecasts are available at all horizons
+        return
+
+    def _fit_warning(self, parameters: Float64Array1D) -> str | None:
+        _, alpha, theta, beta = self._unpack(parameters)
+        persistence = float(np.sum(alpha * (1.0 + theta**2)) + np.sum(beta))
+        if persistence < 1.0:
+            return None
+        return (
+            "The persistence of the estimated NGARCH process, "
+            f"sum(alpha * (1 + theta ** 2)) + sum(beta) = {persistence:0.4f}, is 1 or "
+            "more, and so the process is not covariance stationary and the variance "
+            "forecasts do not revert to a long-run level. The constraint used in "
+            "estimation, sum(alpha) + sum(beta) < 1, does not ensure that the "
+            "persistence is less than 1."
+        )
+
+    def _analytic_forecast(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+        start: int,
+        horizon: int,
+    ) -> VarianceForecast:
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
+        )
+        if horizon == 1:
+            return VarianceForecast(forecasts)
+
+        t = resids.shape[0]
+        p, q = self.p, self.q
+        omega, alpha, theta, beta = self._unpack(parameters)
+        m = max(p, q)
+        n_origins = t - start
+        # The forecasts from every origin are computed together. The first m
+        # columns of _sigma2 hold the variances of the last m observations up to
+        # the origin, and the later columns the variance forecasts of each horizon
+        _sigma2 = np.empty((n_origins, m + horizon))
+        origins = np.arange(start, t)
+        loc = origins[:, None] - m + 1 + np.arange(m)[None, :]
+        # Locations before the start of the sample use the backcast
+        available = loc >= 0
+        loc = np.where(available, loc, 0)
+        _resids = np.asarray(resids)[loc]
+        _sigma2[:, :m] = np.where(available, sigma2[loc], backcast)
+        _sigma2[:, m] = forecasts[:, 0]
+        # The shift is applied to the realized shocks. The expected value of a
+        # shock term that is not realized is (1 + theta ** 2) times the variance
+        for h in range(1, horizon):
+            col = h + m
+            forecast_h = np.full(n_origins, omega, dtype=float)
+            for j in range(p):
+                c = col - 1 - j
+                if c >= m:
+                    shock_sq = (1.0 + theta[j] ** 2) * _sigma2[:, c]
+                else:
+                    shock = _resids[:, c] - theta[j] * np.sqrt(_sigma2[:, c])
+                    shock_sq = np.where(
+                        available[:, c],
+                        shock * shock,
+                        (1.0 + theta[j] ** 2) * backcast,
+                    )
+                forecast_h += alpha[j] * shock_sq
+            for j in range(q):
+                forecast_h += beta[j] * _sigma2[:, col - 1 - j]
+            _sigma2[:, col] = forecast_h
+            forecasts[:, h] = forecast_h
+
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(
+        self,
+        parameters: Float64Array1D,
+        resids: ArrayLike1D,
+        backcast: float | Float64Array1D,
+        var_bounds: Float64Array2D,
+        start: int,
+        horizon: int,
+        simulations: int,
+        rng: RNGType,
+    ) -> VarianceForecast:
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, to_array_1d(resids), backcast, var_bounds, horizon, start
+        )
+        t = resids.shape[0]
+        p, q = self.p, self.q
+        omega, alpha, theta, beta = self._unpack(parameters)
+        m = max(p, q)
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
+        _all_resids = np.asarray(resids)
+        _sigma2 = np.empty((simulations, m + horizon))
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            # The m last observations up to the origin are the same in all paths.
+            # Observations before the start of the sample use the backcast
+            realized = np.arange(i - m + 1, i + 1) >= 0
+            lagged = np.where(realized, np.arange(i - m + 1, i + 1), 0)
+            realized_resids = _all_resids[lagged]
+            realized_sigma2 = np.where(realized, sigma2[lagged], backcast)
+            _sigma2[:, :m] = realized_sigma2
+            _sigma2[:, m] = forecasts[i - start, 0]
+            for h in range(1, horizon):
+                col = h + m
+                variance = np.full(simulations, omega, dtype=float)
+                for j in range(p):
+                    c = col - 1 - j
+                    if c >= m:
+                        # A simulated shock is sigma * z
+                        z = std_shocks[:, c - m]
+                        variance += alpha[j] * _sigma2[:, c] * (z - theta[j]) ** 2
+                    elif realized[c]:
+                        shock = realized_resids[c] - theta[j] * np.sqrt(
+                            realized_sigma2[c]
+                        )
+                        variance += alpha[j] * shock * shock
+                    else:
+                        variance += alpha[j] * (1.0 + theta[j] ** 2) * backcast
+                for j in range(q):
+                    variance += beta[j] * _sigma2[:, col - 1 - j]
+                _sigma2[:, col] = variance
+            loc = i - start
+            paths[loc] = _sigma2[:, m:]
+            shocks[loc] = np.sqrt(paths[loc]) * std_shocks
+
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)

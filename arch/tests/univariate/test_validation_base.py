@@ -650,9 +650,33 @@ RESULT_ROWS = [
         "var-ratio",
         ratio,
         {},
+        "p",
+        plus(
+            without_none(FLOAT_BAD),
+            (0.5, ValueError),
+            (0.99, ValueError),
+            (1.0, ValueError),
+            (0.0, ValueError),
+            (0, ValueError),
+            (-0.1, ValueError),
+        ),
+        rule=r"a finite float in \(0, 0.5\)",
+    ),
+    *good_value_rows(
+        "var-ratio",
+        ratio,
+        {},
+        "p",
+        [None, 0.01, 0.001, np.float32(0.1), Fraction(1, 10)],
+    ),
+    # The deprecated confidence level is still validated
+    *bad_value_rows(
+        "var-ratio",
+        ratio,
+        {},
         "level",
         plus(
-            FLOAT_BAD,
+            without_none(FLOAT_BAD),
             (0.5, ValueError),
             (1.0, ValueError),
             (0.0, ValueError),
@@ -661,9 +685,6 @@ RESULT_ROWS = [
             (-0.9, ValueError),
         ),
         rule=r"a finite float in \(0.5, 1\)",
-    ),
-    *good_value_rows(
-        "var-ratio", ratio, {}, "level", [0.99, 0.999, np.float32(0.9), Fraction(9, 10)]
     ),
     *bad_value_rows(
         "plot",
@@ -872,9 +893,32 @@ DIAGNOSTIC_ROWS = [
         "var-ratio-function",
         var_ratio,
         {},
+        "p",
+        plus(
+            without_none(FLOAT_BAD),
+            (0.5, ValueError),
+            (0.99, ValueError),
+            (1.0, ValueError),
+            (0.0, ValueError),
+            (-0.1, ValueError),
+        ),
+        rule=r"a finite float in \(0, 0.5\)",
+    ),
+    *good_value_rows(
+        "var-ratio-function",
+        var_ratio,
+        {},
+        "p",
+        [None, 0.01, np.float32(0.1), Fraction(1, 10)],
+    ),
+    # The deprecated confidence level is still validated
+    *bad_value_rows(
+        "var-ratio-function",
+        var_ratio,
+        {},
         "level",
         plus(
-            FLOAT_BAD,
+            without_none(FLOAT_BAD),
             (0.5, ValueError),
             (1.0, ValueError),
             (0.0, ValueError),
@@ -882,13 +926,6 @@ DIAGNOSTIC_ROWS = [
             (-0.9, ValueError),
         ),
         rule=r"a finite float in \(0.5, 1\)",
-    ),
-    *good_value_rows(
-        "var-ratio-function",
-        var_ratio,
-        {},
-        "level",
-        [0.99, np.float32(0.9), Fraction(9, 10)],
     ),
     *bad_value_rows(
         "var-ratio-function",

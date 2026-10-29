@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 
 if [[ ${USE_CONDA} == "true" ]]; then
-  conda config --set always_yes true
-  conda update --all --quiet
-  conda create -n arch-test python=${PYTHON_VERSION} -y
-  conda activate arch-test
-  conda init
-  echo ${PATH}
-  source activate arch-test
+  # Miniforge (conda-forge only) is installed by the pipeline and the env's bin
+  # directory is on PATH, so no activation is needed.
+  mamba create -n arch-test -y python=${PYTHON_VERSION} || exit 1
   echo ${PATH}
   which python
-  CMD="conda install numpy"
+  # Fail here rather than silently using a different Python
+  if [[ "$(which python)" != */envs/arch-test/bin/python ]]; then
+    echo "##vso[task.logissue type=error]python is not from the arch-test environment"
+    exit 1
+  fi
+  CMD="mamba install -n arch-test -y -c conda-forge numpy"
 else
   CMD="python -m pip install numpy"
 fi
@@ -29,9 +30,13 @@ CMD="$CMD pandas"
 if [[ -n ${PANDAS} ]]; then CMD="$CMD==${PANDAS}"; fi;
 CMD="$CMD statsmodels"
 if [[ -n ${STATSMODELS} ]]; then CMD="$CMD==${STATSMODELS}"; fi
-CMD="$CMD matplotlib"
-if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD==${MATPLOTLIB}"; fi
-CMD="$CMD seaborn"
+# NO_MATPLOTLIB leaves out matplotlib and seaborn, which needs it, as the tests of the
+# arch-wheels builds do
+if [[ ${NO_MATPLOTLIB,,} != true ]]; then
+  CMD="$CMD matplotlib"
+  if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD==${MATPLOTLIB}"; fi
+  CMD="$CMD seaborn"
+fi
 if [[ ${USE_NUMBA} = true ]]; then
   CMD="${CMD} numba";
   if [[ -n ${NUMBA} ]]; then
@@ -41,6 +46,14 @@ fi;
 CMD="$CMD $EXTRA"
 echo $CMD
 eval $CMD || exit 1
+
+if [[ ${NO_MATPLOTLIB,,} == true ]]; then
+  # Fail if another package installed matplotlib, so that the job really tests without it
+  if python -c "import importlib.util, sys; sys.exit(importlib.util.find_spec('matplotlib') is None)"; then
+    echo "##vso[task.logissue type=error]matplotlib is installed although NO_MATPLOTLIB is true"
+    exit 1
+  fi
+fi
 
 if [ "${NIGHTLY}" = true ]; then
   # Install over the released versions, rather than uninstalling them first, so that

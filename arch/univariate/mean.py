@@ -85,6 +85,7 @@ from arch.univariate.volatility import (
     FIGARCH,
     GARCH,
     HARCH,
+    NGARCH,
     ConstantVariance,
     VolatilityProcess,
 )
@@ -93,6 +94,7 @@ from arch.utility.array import (
     as_float64,
     parse_dataframe,
 )
+from arch.utility.exceptions import ValueWarning
 
 __all__ = [
     "ARX",
@@ -3206,7 +3208,7 @@ def arch_model(
     mean: Literal["constant", "zero", "ls", "ar", "arx", "har", "harx"] = "constant",
     lags: int | list[int] | Int32Array | Int64Array | None = 0,
     vol: Literal[
-        "garch", "arch", "egarch", "figarch", "fiaparch", "aparch", "harch"
+        "garch", "arch", "egarch", "figarch", "fiaparch", "aparch", "harch", "ngarch"
     ] = "garch",
     p: int | list[int] = 1,
     o: int = 0,
@@ -3244,8 +3246,8 @@ def arch_model(
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'garch' (default), 'arch', 'egarch', 'figarch', 'fiaparch', 'aparch'
-        and 'harch'.  Not case sensitive.
+        'garch' (default), 'arch', 'egarch', 'figarch', 'fiaparch', 'aparch',
+        'harch' and 'ngarch'.  Not case sensitive.
     p : int or list of int, optional
         Lag order of the symmetric innovation.  A list of lags can only be used
         with the 'harch' volatility model.  Must be at least 0, and integers
@@ -3299,6 +3301,12 @@ def arch_model(
     Input that are not relevant for a particular specification, such as `lags`
     when `mean='zero'`, are silently ignored, and so are not checked.
 
+    The default ``o=0`` has no asymmetric term in any volatility model. With
+    ``vol='ngarch'``, ``o`` is the number of shifted innovations, and must not exceed
+    ``p``. Use ``o=1`` for the NGARCH(1,1) of Engle and Ng. An NGARCH model without
+    a shift is a GARCH model, and so ``vol='ngarch'`` with ``o=0`` returns a
+    ``GARCH`` volatility process and issues a ``ValueWarning``.
+
     Examples
     --------
     >>> from arch.data.sp500 import load
@@ -3333,6 +3341,7 @@ def arch_model(
         "harch",
         "constant",
         "egarch",
+        "ngarch",
     )
     known_dist = (
         "normal",
@@ -3372,7 +3381,7 @@ def arch_model(
     else:
         # p, o and q must be integers, which includes NumPy integers
         p = _check_order("p", p)
-        if vol_model in ("garch", "egarch", "aparch", "fiaparch"):
+        if vol_model in ("garch", "egarch", "aparch", "fiaparch", "ngarch"):
             o = _check_order("o", o)
         if vol_model != "arch":
             q = _check_order("q", q)
@@ -3388,6 +3397,18 @@ def arch_model(
             v = EGARCH(p=p, o=o, q=q)
         elif vol_model == "fiaparch":
             v = FIAPARCH(p=p, o=o, q=q)
+        elif vol_model == "ngarch" and o == 0:
+            # Without a shift the model is a GARCH
+            v = GARCH(p=p, o=0, q=q)
+            warnings.warn(
+                "vol='ngarch' with o=0 has no shift, and so is the same model as "
+                "vol='garch'. A GARCH volatility process is used. Use vol='garch' "
+                "for a symmetric model, or set o > 0 to estimate an NGARCH model.",
+                ValueWarning,
+                stacklevel=2,
+            )
+        elif vol_model == "ngarch":
+            v = NGARCH(p=p, o=o, q=q)
         else:  # vol == 'aparch'
             v = APARCH(p=p, o=o, q=q)
 

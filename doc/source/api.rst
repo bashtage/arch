@@ -40,6 +40,7 @@ Volatility Process Specification
    ~arch.univariate.HARCH
    ~arch.univariate.FIGARCH
    ~arch.univariate.FIAPARCH
+   ~arch.univariate.NGARCH
    ~arch.univariate.MIDASHyperbolic
    ~arch.univariate.EWMAVariance
    ~arch.univariate.RiskMetrics2006
@@ -127,6 +128,7 @@ Bootstraps
    ~arch.bootstrap.StationaryBootstrap
    ~arch.bootstrap.CircularBlockBootstrap
    ~arch.bootstrap.MovingBlockBootstrap
+   ~arch.bootstrap.LocalBlockBootstrap
 
 Block-length Selection
 ~~~~~~~~~~~~~~~~~~~~~~

@@ -3,7 +3,7 @@ Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 """
 
 import argparse
-import os
+import pathlib
 import random
 from typing import cast
 
@@ -28,11 +28,11 @@ RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 
 # Number of repetitions
-EX_NUM = 500
+EX_NUM = 2000
 # Number of simulations per exercise
-EX_SIZE = 250000
+EX_SIZE = 250_000
 # Approximately controls memory use, in MiB
-MAX_MEMORY_SIZE = 100
+MAX_MEMORY_SIZE = 250
 
 
 # raw entropy (16 bits each) from random.org
@@ -61,7 +61,9 @@ RAW = [
 ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
-def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
+def single_experiment(
+    trend: str, gen: Generator, file_name: pathlib.Path, max_memory_size: int
+) -> None:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
@@ -74,7 +76,7 @@ def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
     for col, nobs in enumerate(TIME_SERIES_LENGTHS):
         remaining = EX_SIZE
         finished = 0
-        block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * nobs))
+        block_size = int(2**20.0 * max_memory_size / (8.0 * nobs))
         for _ in range(0, EX_SIZE, block_size):
             if block_size < remaining:
                 count = block_size
@@ -111,10 +113,19 @@ if __name__ == "__main__":
         action="store_true",
         help="Only execute Z-type tests",
     )
+    parser.add_argument(
+        "--max-memory-size",
+        type=int,
+        action="store",
+        help="Maximum memory size to use in each thread. Default is 250",
+    )
+
     args = parser.parse_args()
     njobs = getattr(args, "ncpu", None)
     njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
     njobs = max(njobs, 1)
+
+    max_memory_size = getattr(args, "max_memory_size", MAX_MEMORY_SIZE)
 
     ss = SeedSequence(ENTROPY)
     children = ss.spawn(len(TRENDS) * EX_NUM)
@@ -123,10 +134,10 @@ if __name__ == "__main__":
     count = 0
     for tr in TRENDS:
         for i in range(EX_NUM):
-            file_name = os.path.join(OUTPUT_PATH, f"adf_z_{tr}-{i:04d}.npz")
+            file_name = OUTPUT_PATH / f"adf_z_{tr}-{i:04d}.npz"
             jobs.append((tr, generators[count], file_name))
             count += 1
-    jobs = [job for job in jobs if not os.path.exists(job[-1])]
+    jobs = [job for job in jobs if not job[-1].exists()]
     random.shuffle(jobs)
     nremconfig = len(jobs)
     nconfig = len(children)
@@ -137,7 +148,7 @@ if __name__ == "__main__":
     print(f"Running on {BLUE}{njobs}{RESET} CPUs")
     if njobs > 1:
         Parallel(verbose=50, n_jobs=njobs)(
-            delayed(single_experiment)(t, g, f) for t, g, f in jobs
+            delayed(single_experiment)(t, g, f, max_memory_size) for t, g, f in jobs
         )
     else:
         for job in jobs:

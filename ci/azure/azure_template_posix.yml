@@ -16,13 +16,15 @@ jobs:
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
-    # Python 3.14, the newest release, has the most jobs. The jobs with older Python
-    # versions have exact versions of numpy, scipy, pandas, statsmodels and matplotlib,
-    # from the oldest that arch supports (3.10) to the last releases before the newest
-    # (3.13). Together with the newest versions in the 3.14 jobs they cover numpy 1.x
-    # and 2.x, pandas 1.x, 2.x and 3.x, and both sides of the pandas 2.2 and
-    # matplotlib 3.10 checks in arch/compat and arch/univariate. The sdist and the
-    # wheel are built with the newest numpy and tested with an older one.
+    # Python 3.15, the newest release, runs all of the tests, including the slow ones,
+    # with the newest versions of everything. Python 3.14 has the most jobs: without the
+    # Cython extensions, with statsmodels main and with nightly builds. The jobs with
+    # older Python versions have exact versions of numpy, scipy, pandas, statsmodels and
+    # matplotlib, from the oldest that arch supports (3.10) to the last releases before
+    # the newest (3.13). Together with the newest versions in the 3.14 and 3.15 jobs
+    # they cover numpy 1.x and 2.x, pandas 1.x, 2.x and 3.x, and both sides of the
+    # pandas 2.2 and matplotlib 3.10 checks in arch/compat and arch/univariate. The
+    # sdist and the wheel are built with the newest numpy and tested with an older one.
     #
     # Variables of an entry
     #   python.version   Version of Python.
@@ -32,7 +34,8 @@ jobs:
     #                    work with them.
     #   USE_NUMBA        Install numba, which runs the recursions when the Cython
     #                    extensions are not built
-    #   use.conda        Install with conda instead of pip
+    #   use.conda        Install Miniforge and use mamba and conda-forge instead of
+    #                    pip
     #   PYTEST_PATTERN   (slow or not slow) also runs the slow tests, which include
     #                    the example notebooks
     #   test.sdist, test.wheel
@@ -41,12 +44,15 @@ jobs:
     #   cython.coverage  Create the C files that coverage uses to report on the Cython
     #                    code and run a few tests. This only works up to Python 3.12
     #                    and with COVERAGE_CORE=ctrace.
+    #   NO_MATPLOTLIB    Do not install matplotlib or seaborn, and fail if they are
+    #                    installed anyway
     #   STATSMODELS_MAIN Install statsmodels from its main branch
     #   nightly          Install nightly builds of numpy, scipy, pandas, ...
     #   experimental     Do not fail when the tests fail and do not collect coverage
     matrix:
-      python_314:
-        python.version: '3.14'
+      # The newest versions of everything
+      python_315:
+        python.version: '3.15'
         PYTEST_PATTERN: "(slow or not slow)"
       # Without the Cython extensions, so numba runs the recursions
       python_314_no_binary:
@@ -67,6 +73,13 @@ jobs:
         STATSMODELS: 0.14.5
         ARCH_TEST_COPY_ON_WRITE: 1
         test.wheel: true
+      # Without matplotlib and seaborn, testing the installed wheel from outside of the
+      # source tree, as the arch-wheels builds do. The tests that need matplotlib must
+      # skip without it; a test module that imports it unconditionally fails to collect.
+      python_313_no_matplotlib_wheel:
+        python.version: '3.13'
+        NO_MATPLOTLIB: 'true'
+        test.wheel: true
       # Coverage of the Cython code, from the tests of the extensions. Coverage only
       # reports Cython lines with its ctrace core, which does not work after Python
       # 3.12. Tracing every line is slow, so the tests that fit models (test_mean.py
@@ -77,7 +90,7 @@ jobs:
         BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
         cython.coverage: true
         COVERAGE_CORE: ctrace
-      # numpy 2.0, the first 2.x, with numba from conda
+      # numpy 2.0, the first 2.x, with numba from conda-forge
       python_312_conda_numba:
         python.version: '3.12'
         use.conda: 'true'
@@ -109,8 +122,6 @@ jobs:
         python.version: '3.14'
         nightly: true
         experimental: true
-      python_315:
-        python.version: '3.15'
 
     maxParallel: 10
 
@@ -124,11 +135,16 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - bash: |
-      echo "##vso[task.prependpath]$CONDA/bin"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test/condabin"
-      echo "##vso[task.prependpath]$CONDA/envs/arch-test/bin"
-    displayName: 'Add conda and env to PATH'
+      # Use Miniforge, which only uses conda-forge, rather than the Miniconda on the
+      # hosted image, which newer images (Ubuntu 26.04) no longer provide
+      curl -fsSL -o miniforge.sh \
+        "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+      bash miniforge.sh -b -p "${HOME}/miniforge3"
+      rm miniforge.sh
+      "${HOME}/miniforge3/bin/mamba" --version
+      echo "##vso[task.prependpath]${HOME}/miniforge3/bin"
+      echo "##vso[task.prependpath]${HOME}/miniforge3/envs/arch-test/bin"
+    displayName: 'Install Miniforge and add it and the env to PATH'
     condition: eq(variables['use.conda'], 'true')
 
   - script: |
@@ -136,7 +152,6 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      source ci/azure/update_path.sh
       if [[ ${STATSMODELS_MAIN} == "true" ]]; then
         echo "Installing statsmodels main"
         source ci/install-statsmodels-main.sh
@@ -182,9 +197,7 @@ jobs:
     displayName: 'List Configuration (PyPI)'
     condition: ne(variables['use.conda'], 'true')
 
-  - script: |
-     source ci/azure/update_path.sh
-     conda list
+  - script: mamba list -n arch-test
     displayName: 'List Configuration (conda)'
     condition: eq(variables['use.conda'], 'true')
 

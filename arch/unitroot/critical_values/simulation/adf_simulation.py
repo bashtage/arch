@@ -1,4 +1,4 @@
-import os
+import pathlib
 import platform
 
 from numpy import arange, array, cumsum, dot, ones, vstack
@@ -9,10 +9,12 @@ from arch._typing import UnitRootTrend
 
 # Storage Location
 if platform.system() == "Linux":
-    BASE_PATH = os.path.join("/mnt", "c")
+    BASE_PATH = pathlib.Path("/mnt", "c")
 else:
-    BASE_PATH = "C:\\\\"
-OUTPUT_PATH = os.path.join(BASE_PATH, "Users", "kevin", "Dropbox", "adf-z")
+    BASE_PATH = pathlib.Path(r"C:\\")
+OUTPUT_PATH = BASE_PATH / "Users" / "kevin" / "Dropbox" / "adf-z"
+if not OUTPUT_PATH.exists():
+    OUTPUT_PATH.mkdir(parents=True)
 
 _PERCENTILES = (
     list(arange(1, 10))
@@ -84,9 +86,8 @@ def adf_simulation(
         tau = arange(1, nobs + 1)
         z = vstack((ones(nobs), tau, tau**2.0)).T
 
-    y = standard_normal((n + 50, b))
+    y = standard_normal((n, b))
     y = cumsum(y, axis=0)
-    y = y[50:, :]
     lhs = y[1:, :]
     rhs = y[:-1, :]
     if z is not None:

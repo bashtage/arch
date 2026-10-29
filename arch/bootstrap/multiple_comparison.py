@@ -766,7 +766,7 @@ class StepM(MultipleComparison):
             self.spa.subset(selector)
             # B. Rerun
             self.spa.compute()
-            better_models = list(self.spa.better_models(self.size))
+            better_models = [int(i) for i in self.spa.better_models(self.size)]
             all_better_models.extend(better_models)
         # Reset SPA
         selector = np.ones(self.k, dtype=np.bool_)

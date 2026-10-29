@@ -20,6 +20,7 @@ from arch.univariate import (
     FIGARCH,
     GARCH,
     HARCH,
+    NGARCH,
     ConstantVariance,
     EWMAVariance,
     FixedVariance,
@@ -44,6 +45,8 @@ PROCESSES = {
     "figarch": FIGARCH,
     "fiaparch": FIAPARCH,
     "aparch": lambda: APARCH(1, 1, 1),
+    "ngarch": lambda: NGARCH(1, 1, 1),
+    "ngarch-p2": lambda: NGARCH(2, 1, 2),
     "constant": ConstantVariance,
     "fixed": lambda: FixedVariance(np.linspace(0.5, 1.5, NOBS)),
 }
