@@ -893,8 +893,12 @@ def test_traffic_light_basel_table2(count):
     assert result.p == 0.01
     zone = "green" if count <= 4 else ("yellow" if count <= 9 else "red")
     assert result.zone == zone
-    assert type(result.exceptions) is int
-    assert type(result.probability) is float
+    # Plain Python numbers, not NumPy scalars (np.float64 is a float) or bool
+    assert isinstance(result.exceptions, int)
+    assert not isinstance(result.exceptions, (bool, np.integer))
+    for value in (result.probability, result.type1_error):
+        assert isinstance(value, float)
+        assert not isinstance(value, np.floating)
     # the published percentages are rounded to 2 digits
     assert abs(100.0 * result.probability - BASEL_TABLE2_PERCENT[count]) <= 0.005 + 1e-9
     assert_allclose(result.probability, BASEL_TABLE2_CDF[count], rtol=1e-12)
