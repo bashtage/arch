@@ -1,0 +1,6 @@
+﻿arch.univariate.kupiec\_pof
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: kupiec_pof

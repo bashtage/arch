@@ -1,0 +1,6 @@
+﻿arch.univariate.var\_exceptions
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: var_exceptions

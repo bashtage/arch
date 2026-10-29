@@ -381,7 +381,7 @@
     "\n",
     "$$VaR_{t+1|t} = -\\mu_{t+1|t} - \\sigma_{t+1|t} q_{\\alpha}$$\n",
     "\n",
-    "where $q_{\\alpha}$ is the $\\alpha$ quantile of the standardized residuals, e.g., 5%. \n",
+    "where $q_{\\alpha}$ is the $\\alpha$ quantile of the standardized residuals. VaR is named by its confidence level, so a 95% VaR uses the 5% quantile, $\\alpha=0.05$, and a 99% VaR uses the 1% quantile. \n",
     "\n",
     "The quantile can be either computed from the estimated model density or computed using the empirical distribution of the standardized residuals.  The example below shows both methods."
    ]
@@ -423,7 +423,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Next, we plot the two VaRs along with the returns.  The returns that violate the VaR forecasts are highlighted. "
+    "Next, we plot the 99% and the 95% VaR along with the returns.  The returns that violate the VaR forecasts are highlighted. "
    ]
   },
   {
@@ -433,24 +433,24 @@
    "outputs": [],
    "source": [
     "value_at_risk = -cond_mean.values - np.sqrt(cond_var).values * q[None, :]\n",
-    "value_at_risk = pd.DataFrame(value_at_risk, columns=[\"1%\", \"5%\"], index=cond_var.index)\n",
+    "value_at_risk = pd.DataFrame(value_at_risk, columns=[\"99%\", \"95%\"], index=cond_var.index)\n",
     "ax = value_at_risk.plot(legend=False)\n",
     "xl = ax.set_xlim(value_at_risk.index[0], value_at_risk.index[-1])\n",
     "rets_2018 = returns[\"2018\":].copy()\n",
     "rets_2018.name = \"S&P 500 Return\"\n",
     "c = []\n",
     "for idx in value_at_risk.index:\n",
-    "    if rets_2018[idx] > -value_at_risk.loc[idx, \"5%\"]:\n",
+    "    if rets_2018[idx] > -value_at_risk.loc[idx, \"95%\"]:\n",
     "        c.append(\"#000000\")\n",
-    "    elif rets_2018[idx] < -value_at_risk.loc[idx, \"1%\"]:\n",
+    "    elif rets_2018[idx] < -value_at_risk.loc[idx, \"99%\"]:\n",
     "        c.append(\"#BB0000\")\n",
     "    else:\n",
     "        c.append(\"#BB00BB\")\n",
     "c = np.array(c, dtype=\"object\")\n",
     "labels = {\n",
-    "    \"#BB0000\": \"1% Exceedence\",\n",
-    "    \"#BB00BB\": \"5% Exceedence\",\n",
-    "    \"#000000\": \"No Exceedence\",\n",
+    "    \"#BB0000\": \"99% VaR exceedance\",\n",
+    "    \"#BB00BB\": \"95% VaR exceedance\",\n",
+    "    \"#000000\": \"No exceedance\",\n",
     "}\n",
     "markers = {\"#BB0000\": \"x\", \"#BB00BB\": \"s\", \"#000000\": \"o\"}\n",
     "for color in np.unique(c):\n",
@@ -494,16 +494,16 @@
    "outputs": [],
    "source": [
     "value_at_risk = -cond_mean.values - np.sqrt(cond_var).values * q.values[None, :]\n",
-    "value_at_risk = pd.DataFrame(value_at_risk, columns=[\"1%\", \"5%\"], index=cond_var.index)\n",
+    "value_at_risk = pd.DataFrame(value_at_risk, columns=[\"99%\", \"95%\"], index=cond_var.index)\n",
     "ax = value_at_risk.plot(legend=False)\n",
     "xl = ax.set_xlim(value_at_risk.index[0], value_at_risk.index[-1])\n",
     "rets_2018 = returns[\"2018\":].copy()\n",
     "rets_2018.name = \"S&P 500 Return\"\n",
     "c = []\n",
     "for idx in value_at_risk.index:\n",
-    "    if rets_2018[idx] > -value_at_risk.loc[idx, \"5%\"]:\n",
+    "    if rets_2018[idx] > -value_at_risk.loc[idx, \"95%\"]:\n",
     "        c.append(\"#000000\")\n",
-    "    elif rets_2018[idx] < -value_at_risk.loc[idx, \"1%\"]:\n",
+    "    elif rets_2018[idx] < -value_at_risk.loc[idx, \"99%\"]:\n",
     "        c.append(\"#BB0000\")\n",
     "    else:\n",
     "        c.append(\"#BB00BB\")\n",

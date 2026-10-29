@@ -1,0 +1,6 @@
+﻿arch.univariate.christoffersen\_conditional\_coverage
+=====================================================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: christoffersen_conditional_coverage

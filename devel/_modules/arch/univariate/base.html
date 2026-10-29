@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+632)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+643)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+632)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+632)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+643)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+643)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+632)
+            arch v8.0.1 (+643)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+632)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+632)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+643)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+643)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+632)
+    arch v8.0.1 (+643)
   </label>
   
     <div class="md-nav__source">
@@ -563,6 +563,7 @@
     <span class="n">Literal</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.diagnostics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_tail_probability</span><span class="p">,</span>
     <span class="n">excess_kurtosis</span> <span class="k">as</span> <span class="n">_excess_kurtosis</span><span class="p">,</span>
     <span class="n">hill_estimator</span> <span class="k">as</span> <span class="n">_hill_estimator</span><span class="p">,</span>
     <span class="n">var_ratio</span> <span class="k">as</span> <span class="n">_var_ratio</span><span class="p">,</span>
@@ -2529,15 +2530,23 @@
 
 <div class="viewcode-block" id="ARCHModelFixedResult.var_ratio">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.var_ratio.html#arch.univariate.base.ARCHModelFixedResult.var_ratio">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">var_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">var_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the ratio of Gaussian VaR to model-distribution VaR.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        p : float, optional</span>
+<span class="sd">            The probability of an exception that the VaR is designed for, which</span>
+<span class="sd">            is the size of the tail, in the open interval (0, 0.5). It is 0.05</span>
+<span class="sd">            for a 95% VaR and 0.01 for a 99% VaR. The default is 0.001, a 99.9%</span>
+<span class="sd">            VaR.</span>
 <span class="sd">        level : float, optional</span>
-<span class="sd">            VaR confidence level. Must be finite and between 0.5 and 1.0,</span>
-<span class="sd">            exclusive.</span>
+<span class="sd">            Deprecated. The confidence level of the VaR, ``1 - p``, in</span>
+<span class="sd">            (0.5, 1). Use ``p`` instead.</span>
+
+<span class="sd">            .. deprecated:: 9.1</span>
+<span class="sd">               Use ``p``, the probability of an exception.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2548,12 +2557,14 @@
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        TypeError</span>
-<span class="sd">            If ``level`` is not a real number.</span>
+<span class="sd">            If ``p`` or ``level`` is not a real number.</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``level`` is not in (0.5, 1.0).</span>
+<span class="sd">            If ``p`` is not in (0, 0.5), ``level`` is not in (0.5, 1), or both</span>
+<span class="sd">            are given.</span>
 <span class="sd">        """</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">_tail_probability</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_var_ratio</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">dp</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_var_ratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">dp</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ARCHModelFixedResult.plot">
