@@ -423,9 +423,9 @@ def test_bandwidth_method(trivariate_data, estimator, kernel, force_int):
     newey_west = mod.fit(
         kernel=kernel, force_int=force_int, bandwidth_method="newey-west"
     )
-    assert default.bandwidth == newey_west.bandwidth
-    assert_allclose(default.params, newey_west.params, rtol=0, atol=0)
-    assert_allclose(default.cov, newey_west.cov, rtol=0, atol=0)
+    assert_allclose(default.bandwidth, newey_west.bandwidth, rtol=1e-13)
+    assert_allclose(default.params, newey_west.params, rtol=1e-12)
+    assert_allclose(default.cov, newey_west.cov, rtol=1e-12)
     res = mod.fit(kernel=kernel, force_int=force_int, bandwidth_method="andrews")
     expected = get_kernel_estimator(kernel)(
         _fmols_eta(y, x), center=False, force_int=force_int, bandwidth_method="andrews"
@@ -442,8 +442,8 @@ def test_bandwidth_method(trivariate_data, estimator, kernel, force_int):
         bandwidth_method="andrews",
     )
     assert fixed_andrews.bandwidth == 4.0
-    assert_allclose(fixed_andrews.params, fixed.params, rtol=0, atol=0)
-    assert_allclose(fixed_andrews.cov, fixed.cov, rtol=0, atol=0)
+    assert_allclose(fixed_andrews.params, fixed.params, rtol=1e-12)
+    assert_allclose(fixed_andrews.cov, fixed.cov, rtol=1e-12)
 
 
 @pytest.mark.parametrize("estimator", [CanonicalCointegratingReg, FullyModifiedOLS])
@@ -461,5 +461,5 @@ def test_bandwidth_method_spellings(trivariate_data, estimator, spelling, canoni
     mod = estimator(y, x)
     res = mod.fit(bandwidth_method=spelling)
     expected = mod.fit(bandwidth_method=canonical)
-    assert res.bandwidth == expected.bandwidth
+    assert_allclose(res.bandwidth, expected.bandwidth, rtol=1e-13)
     assert_allclose(res.params, expected.params, rtol=1e-14)

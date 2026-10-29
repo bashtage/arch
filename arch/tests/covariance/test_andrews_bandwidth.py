@@ -809,15 +809,14 @@ def test_extreme_scale(method: str, cls: type[CovarianceEstimator], case: str) -
     # very small scale neither overflows nor underflows
     x, weights = {name: (x, w) for name, x, w in _scale_cases()}[case]
     expected = cls(x, weights=weights, bandwidth_method=method).opt_bandwidth
+    # The largest differences seen are 2.2e-15 (Windows) and, for powers of 2, which
+    # are exact, 5e-16 (macOS Intel), where the sums round differently in the last bits
+    scales = (1e-200, 1e-150, 1e-100, 1e100, 1e150, 1e200, 2.0**-600, 2.0**600)
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        for scale in (1e-200, 1e-150, 1e-100, 1e100, 1e150, 1e200):
+        for scale in scales:
             est = cls(scale * x, weights=weights, bandwidth_method=method)
-            assert_allclose(est.opt_bandwidth, expected, rtol=1e-12)
-        # A power of 2 is exact, and so is the bandwidth
-        for power in (-600, -300, 300, 600):
-            est = cls(x * 2.0**power, weights=weights, bandwidth_method=method)
-            assert est.opt_bandwidth == expected
+            assert_allclose(est.opt_bandwidth, expected, rtol=1e-13)
 
 
 @pytest.mark.parametrize("bad", ["bogus", "", "newey west", "newey", "andrew"])

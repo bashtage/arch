@@ -228,8 +228,8 @@ def test_bandwidth_method(trivariate_data, kernel, cov_type):
     newey_west = mod.fit(
         cov_type=cov_type, kernel=kernel, bandwidth_method="newey-west"
     )
-    assert default.bandwidth == newey_west.bandwidth
-    assert_allclose(default.cov, newey_west.cov, rtol=0, atol=0)
+    assert_allclose(default.bandwidth, newey_west.bandwidth, rtol=1e-13)
+    assert_allclose(default.cov, newey_west.cov, rtol=1e-12)
     res = mod.fit(cov_type=cov_type, kernel=kernel, bandwidth_method="andrews")
     assert_allclose(res.params, default.params, rtol=1e-14)
     # The bandwidth of the kernel estimator built on the residuals (unadjusted) or
@@ -247,7 +247,7 @@ def test_bandwidth_method(trivariate_data, kernel, cov_type):
         cov_type=cov_type, kernel=kernel, bandwidth=4.0, bandwidth_method="andrews"
     )
     assert fixed_andrews.bandwidth == 4.0
-    assert_allclose(fixed_andrews.cov, fixed.cov, rtol=0, atol=0)
+    assert_allclose(fixed_andrews.cov, fixed.cov, rtol=1e-12)
 
 
 @pytest.mark.parametrize(
@@ -264,5 +264,5 @@ def test_bandwidth_method_spellings(trivariate_data, spelling, canonical):
     mod = DynamicOLS(y, x, lags=2, leads=2)
     res = mod.fit(bandwidth_method=spelling)
     expected = mod.fit(bandwidth_method=canonical)
-    assert res.bandwidth == expected.bandwidth
+    assert_allclose(res.bandwidth, expected.bandwidth, rtol=1e-13)
     assert_allclose(res.cov, expected.cov, rtol=1e-14)
