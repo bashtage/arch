@@ -2200,9 +2200,11 @@ def _mackinnonp(
         small_p = dfgls_small_p[regression]
         large_p = dfgls_large_p[regression]
 
-    if stat > maxstat:
+    # The bounds of some tables are infinite, and so -inf and inf would reach the
+    # polynomials, which are nan there
+    if stat > maxstat or stat == inf:
         return 1.0
-    elif stat < minstat:
+    elif stat < minstat or stat == -inf:
         return 0.0
     if stat <= starstat:
         poly_coef = small_p
@@ -2210,7 +2212,10 @@ def _mackinnonp(
             stat = float(log(abs(stat)))  # Transform stat for small p ADF-z
     else:
         poly_coef = large_p
-    return float(norm.cdf(polyval(poly_coef[::-1], stat)))
+    # The polynomial overflows to -inf or inf for a very large statistic when a
+    # bound is infinite, and the p-value is then 0 or 1
+    with np.errstate(over="ignore"):
+        return float(norm.cdf(polyval(poly_coef[::-1], stat)))
 
 
 def mackinnoncrit(
