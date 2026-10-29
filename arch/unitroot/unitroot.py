@@ -54,8 +54,11 @@ from arch._typing import (
     UnitRootTrend,
 )
 from arch.unitroot._shared import (
+    _UNIT_ROOT_SINGULAR,
     _check_finite_statistic,
     _check_not_constant,
+    _check_not_deterministic,
+    _fit_ols,
     _infeasible_from,
 )
 from arch.unitroot.critical_values.dfgls import (
@@ -531,7 +534,17 @@ def _estimate_df_regression(
     if trend != "n":
         rhs = add_trend(rhs.iloc[:, : lags + 1], trend)
 
-    return OLS(lhs, rhs).fit()
+    # lhs, the lagged level and the lagged differences have the rounding errors of
+    # y, and the trend terms, which are last, are exact
+    y_scale = float(amax(abs(y)))
+    return _fit_ols(
+        lhs,
+        rhs,
+        "Dickey-Fuller",
+        scale=y_scale,
+        column_scales=[y_scale] * (lags + 1) + [0.0] * (rhs.shape[1] - lags - 1),
+        hint=_UNIT_ROOT_SINGULAR,
+    )
 
 
 def _newey_west_lags(nobs: int) -> int:
@@ -645,13 +658,19 @@ class UnitRootTest(metaclass=ABCMeta):
 
     def _validate(self) -> None:
         """
-        Check the specification, and then that y is not constant.
+        Check the specification, and then that y is not constant or a trend.
 
         This is called at the end of the constructor of every test. A specification
         that is not possible, such as too few observations, is reported first.
         """
         self._check_specification()
         _check_not_constant(self._y)
+        _check_not_deterministic(self._y, self._deterministic_terms)
+
+    @property
+    def _deterministic_terms(self) -> str:
+        """The deterministic terms that the test removes, as a trend."""
+        return self._trend
 
     def _check_nobs(
         self,
@@ -1404,10 +1423,37 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         lhs = y[1:, None]
         if trend != "n":
             rhs_df = add_trend(rhs_df, trend)
-
-        mod = OLS(lhs, rhs_df)
-        resols = mod.fit()
-        self._regression = mod.fit(cov_type="HAC", cov_kwds={"maxlags": lags})
+        # With a constant, the statistic does not depend on the level of y, and it is
+        # computed from y less its mean. Otherwise a variation that is small compared
+        # with the level loses precision, which gave a statistic of -150 for a random
+        # walk with steps of 1e-6 around 1000, where the steps of 1 give -2.67
+        lhs_stat, rhs_stat = lhs, rhs_df
+        if trend != "n":
+            centered = y - y.mean()
+            lhs_stat = centered[1:, None]
+            rhs_stat = rhs_df.copy()
+            rhs_stat.iloc[:, 0] = centered[:-1]
+        # The lagged level has the rounding errors of y, and the trend terms are exact
+        y_scale = float(amax(abs(y)))
+        resols = _fit_ols(
+            lhs_stat,
+            rhs_stat,
+            "Phillips-Perron",
+            scale=y_scale,
+            column_scales=[y_scale] + [0.0] * (rhs_df.shape[1] - 1),
+            hint=_UNIT_ROOT_SINGULAR,
+        )
+        # The regression of the specification of the test, with the level of y. It is
+        # not used by the statistic, and statsmodels finds it rank-deficient when the
+        # variation of y is small compared with its level, which the centered
+        # regression above is not
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore", message="The design matrix is rank-deficient"
+            )
+            self._regression = OLS(lhs, rhs_df).fit(
+                cov_type="HAC", cov_kwds={"maxlags": lags}
+            )
         k = rhs_df.shape[1]
         n, u = resols.nobs, resols.resid
         lam2 = cov_nw(u, lags, demean=False)
@@ -1783,6 +1829,11 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         e = endog - exog @ b
         sigma2 = e.T @ e / (nobs - k_exog)
         return b / sqrt(diag(sigma2 * xpxi))
+
+    @property
+    def _deterministic_terms(self) -> str:
+        # Every Zivot-Andrews regression has a constant and a time trend
+        return "ct"
 
     def _check_specification(self) -> None:
         # The regression has nobs - 1 - lags rows and basecols + lags columns, and it

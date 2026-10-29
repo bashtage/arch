@@ -8,7 +8,7 @@ from pandas import DataFrame, Series
 from scipy import stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
-from statsmodels.regression.linear_model import OLS, RegressionResults
+from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
 from arch.covariance.kernel import (
@@ -24,10 +24,12 @@ from arch.unitroot._phillips_ouliaris import (
     phillips_ouliaris,
 )
 from arch.unitroot._shared import (
+    _COINTEGRATION_SINGULAR,
     _TREND_TERMS,
     _check_cointegrating_regression,
     _check_finite_estimates,
     _cross_section,
+    _fit_ols,
     _infeasible_on_error,
 )
 from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
@@ -852,8 +854,15 @@ class DynamicOLS:
         leads, lags = self._leads_and_lags()
         # TODO: Rank check and drop??
         lhs, rhs = self._format_variables(leads, lags)
-        mod = OLS(lhs, rhs)
-        res = mod.fit()
+        # The leads and lags of the differences of x can be collinear even if the
+        # cointegrating regression is not, for example if a column of x is a trend
+        res = _fit_ols(
+            lhs,
+            rhs,
+            "Dynamic OLS",
+            hint=_COINTEGRATION_SINGULAR,
+            result="the parameters cannot be estimated",
+        )
         coeffs = np.asarray(res.params)
         resid = pd.Series(
             lhs.squeeze() - np.asarray(rhs @ coeffs).squeeze(), name="resid"
