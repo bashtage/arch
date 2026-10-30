@@ -54,6 +54,7 @@ from arch._typing import (
     UnitRootTrend,
 )
 from arch.unitroot._shared import (
+    _check_finite_data,
     _check_finite_statistic,
     _check_not_constant,
     _check_not_deterministic,
@@ -1890,9 +1891,14 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
             basecols = 5
         else:
             basecols = 4
-        # first-diff y and standardize for numerical stability
+        # first-diff y and standardize for numerical stability. Dividing by the
+        # largest absolute value first keeps the sums of squares from underflowing
+        # or overflowing, which gave inf for data of 1e-300 or 1e300, and the
+        # statistic does not depend on the scale
         dy = diff(y_2d, axis=0)[:, 0]
+        dy /= amax(abs(dy))
         dy /= sqrt(dy.T @ dy)
+        y_2d = y_2d / amax(abs(y_2d))
         y_2d = y_2d / sqrt(y_2d.T @ y_2d)
         # reserve exog space
         exog = empty((dy[baselags:].shape[0], basecols + baselags))
@@ -1931,6 +1937,13 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 exog[(cutoff - 1) :, 2] = t_const[0 : (nobs - bp + 1)]
             # check exog rank on first iteration
             if bp == start_period + 1:
+                # LAPACK raises a ValueError for data that are not finite with some
+                # NumPy versions, or does not return
+                _check_finite_data(
+                    "regressors of the Zivot-Andrews regression",
+                    exog,
+                    result="the test statistic cannot be computed",
+                )
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
                     raise InfeasibleTestException(

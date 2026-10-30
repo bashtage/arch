@@ -315,16 +315,16 @@ def test_kpss_extreme_scale_automatic_lags():
         _ = kpss.stat
 
 
-@pytest.mark.filterwarnings("ignore::RuntimeWarning")
-def test_linear_algebra_error_is_infeasible():
-    # ZivotAndrews raised LinAlgError: SVD did not converge. On some platforms and
-    # NumPy versions, its own check of the rank finds the matrix singular first
-    za = ZivotAndrews(EXTREME_SCALES["1e-300"], lags=2)
-    with pytest.raises(
-        InfeasibleTestException,
-        match=r"matrix that it needs|regressor matrix is singular",
-    ):
-        _ = za.stat
+@pytest.mark.parametrize("trend", ["c", "t", "ct"])
+@pytest.mark.parametrize("scale", [1e-300, 1e-150, 1e150, 1e300])
+def test_zivot_andrews_extreme_scale(trend, scale):
+    # The data were standardized by the square root of their sum of squares, which
+    # underflows or overflows. The statistic does not depend on the scale. With
+    # data of 1e-300, it raised LinAlgError, or a ValueError from LAPACK with NumPy
+    # 1.22
+    y = RANDOM_WALK
+    expected = ZivotAndrews(y, trend=trend, lags=2).stat
+    assert_allclose(ZivotAndrews(scale * y, trend=trend, lags=2).stat, expected)
 
 
 def test_linear_algebra_error_is_converted(monkeypatch):

@@ -220,7 +220,9 @@ def _check_finite_statistic(stat: float, pvalue: float, test: str) -> None:
         )
 
 
-def _check_finite_data(what: str, *arrays: Any) -> None:
+def _check_finite_data(
+    what: str, *arrays: Any, result: str = "the parameters cannot be estimated"
+) -> None:
     """
     Raise InfeasibleTestException if data computed during an estimation are not
     finite.
@@ -230,8 +232,7 @@ def _check_finite_data(what: str, *arrays: Any) -> None:
     """
     if not all(np.all(np.isfinite(np.asarray(a, dtype=float))) for a in arrays):
         raise InfeasibleTestException(
-            f"The {what} are not finite, and so the parameters cannot be estimated. "
-            f"{_DEGENERATE}"
+            f"The {what} are not finite, and so {result}. {_DEGENERATE}"
         )
 
 
