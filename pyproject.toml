@@ -93,7 +93,7 @@ doc = [
   "jinja2",
   "sphinx>=7",
   "seaborn",
-  "numpydoc>=1.0.0",
+  "numpydoc>=1.10",
   "nbsphinx",
   "sphinx-immaterial",
   "jupyter",
