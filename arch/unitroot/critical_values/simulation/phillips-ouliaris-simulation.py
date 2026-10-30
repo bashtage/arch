@@ -23,8 +23,6 @@ BLUE = colorama.Fore.BLUE
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 MAX_STOCHASTIC_TRENDS = 13
-if not os.path.exists(ROOT):
-    os.mkdir(ROOT)
 # Number of simulations per exercise
 EX_SIZE = 250000
 # Number of experiments
@@ -214,7 +212,7 @@ def block(
     max_sample = max(SAMPLE_SIZES)
     e = gen.standard_normal((num, max_sample, MAX_STOCHASTIC_TRENDS))
     z = e.cumsum(axis=1)
-    columns = DF_Z_COLUMNS if statistic == "a" else DF_P_COLUMNS
+    columns = DF_Z_COLUMNS if statistic == "z" else DF_P_COLUMNS
     results = np.empty((num, len(columns)))
     loc = 0
     for ss in SAMPLE_SIZES:
@@ -278,17 +276,18 @@ def worker(
     trend: UnitRootTrend,
     idx: int,
     full_path: str,
+    ex_size: int = EX_SIZE,
 ) -> None:
     print(
         f"Starting Index: {BLUE}{idx}{RESET}, Statistic: {RED}{statistic}{RESET},"
         f"Trend: {GREEN}{trend}{RESET}"
     )
-    remaining = EX_SIZE
+    remaining = ex_size
     ncols = len(SAMPLE_SIZES) * MAX_STOCHASTIC_TRENDS * 4
     block_size = int(MAX_MEMORY / (ncols * 8))
     columns = DF_Z_COLUMNS if statistic == "z" else DF_P_COLUMNS
     results = pd.DataFrame(
-        index=pd.RangeIndex(EX_SIZE), columns=columns, dtype="double"
+        index=pd.RangeIndex(ex_size), columns=columns, dtype="double"
     )
     gen, results, remaining = load_partial(gen, results, remaining, full_path)
     start = dt.datetime.now()
@@ -296,12 +295,12 @@ def worker(
     while remaining > 0:
         nsim = min(remaining, block_size)
         res_block = block(gen, statistic, nsim, trend)
-        loc = EX_SIZE - remaining
+        loc = ex_size - remaining
         results.iloc[loc : loc + nsim] = res_block
         remaining -= block_size
         remaining = max(0, remaining)
         elapsed = dt.datetime.now() - start
-        time_per_iter = elapsed.total_seconds() / (EX_SIZE - remaining)
+        time_per_iter = elapsed.total_seconds() / (ex_size - remaining)
         remaining_time = int(time_per_iter * remaining)
         rem = str(dt.timedelta(seconds=remaining_time))
         if last_print_remaining - remaining >= DISP_ITERATIONS:
@@ -323,7 +322,9 @@ def worker(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Simulations for Engle-Granger critical values")
+    parser = argparse.ArgumentParser(
+        "Simulations for Phillips-Ouliaris critical values"
+    )
     parser.add_argument(
         "--ncpu",
         type=int,
@@ -335,7 +336,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Only execute Z-type tests",
     )
+    parser.add_argument(
+        "--ex-num", type=int, default=EX_NUM, help="Number of experiments"
+    )
+    parser.add_argument(
+        "--ex-size",
+        type=int,
+        default=EX_SIZE,
+        help="Number of simulations per experiment",
+    )
+    parser.add_argument(
+        "--root", default=ROOT, help="Directory to write the results to"
+    )
     args = parser.parse_args()
+    os.makedirs(args.root, exist_ok=True)
     njobs = getattr(args, "ncpu", None)
     njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
     njobs = max(njobs, 1)
@@ -354,14 +368,16 @@ if __name__ == "__main__":
     ]
 
     ss = np.random.SeedSequence(entropy)
-    children = ss.spawn(len(TRENDS) * EX_NUM * len(STATISTICS))
+    children = ss.spawn(len(TRENDS) * args.ex_num * len(STATISTICS))
     jobs: list[
-        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str]
+        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str, int]
     ] = []
-    loc = 0
     from itertools import product
 
-    for statistic, trend, idx in product(STATISTICS, TRENDS, range(EX_NUM)):
+    # Each file has its own seed, whether or not it exists, so that a restarted
+    # simulation does not reuse the seeds of the files that are complete
+    configs = product(STATISTICS, TRENDS, range(args.ex_num))
+    for loc, (statistic, trend, idx) in enumerate(configs):
         child = children[loc]
         gen = np.random.Generator(np.random.PCG64(child))
         filename = (
@@ -369,7 +385,7 @@ if __name__ == "__main__":
             f"{statistic}-trend-{trend}-{idx:04d}.hdf"
         )
 
-        full_file = os.path.join(ROOT, filename)
+        full_file = os.path.join(args.root, filename)
         if os.path.exists(full_file):
             continue
         jobs.append(
@@ -379,9 +395,9 @@ if __name__ == "__main__":
                 cast("UnitRootTrend", trend),
                 idx,
                 full_file,
+                args.ex_size,
             )
         )
-        loc += 1
     shuffle(jobs)
     if args.z_only:
         print(f"{BLUE}Note{RESET}: Only running Z-type tests")
@@ -407,6 +423,6 @@ if __name__ == "__main__":
             worker(*job)
     else:
         Parallel(verbose=50, n_jobs=njobs)(
-            delayed(worker)(gen, statistic, trend, idx, fullfile)
-            for (gen, statistic, trend, idx, fullfile) in jobs
+            delayed(worker)(gen, statistic, trend, idx, fullfile, ex_size)
+            for (gen, statistic, trend, idx, fullfile, ex_size) in jobs
         )
