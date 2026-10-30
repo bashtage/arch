@@ -4,7 +4,9 @@ to MacKinnon (2010).  Makes use of parallel_fun which works
 best when joblib is installed.
 """
 
+import argparse
 import datetime as dt
+import os
 from typing import cast
 
 import numpy as np
@@ -93,6 +95,25 @@ def dfgsl_simulation(
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Simulate DFGLS critical values")
+    parser.add_argument(
+        "--ex-num", type=int, default=EX_NUM, help="Number of experiments"
+    )
+    parser.add_argument(
+        "--ex-size",
+        type=int,
+        default=EX_SIZE,
+        help="Number of simulations per experiment",
+    )
+    parser.add_argument(
+        "--n-jobs", type=int, default=NUM_JOBS, help="Number of parallel jobs"
+    )
+    parser.add_argument(
+        "--output-path",
+        default=".",
+        help="Directory to write dfgls_c.npz and dfgls_ct.npz to",
+    )
+    args = parser.parse_args()
     trends = ("c", "ct")
     T = np.array(
         (
@@ -132,31 +153,36 @@ if __name__ == "__main__":
     T = T[::-1]
     percentiles = list(np.arange(0.5, 100.0, 0.5))
     seeds = np.arange(0, 2**32, step=2**23)
+    if args.ex_num > seeds.shape[0]:
+        raise ValueError(f"ex-num must be at most {seeds.shape[0]}")
     for tr in trends:
-        results = np.zeros((len(percentiles), len(T), EX_NUM))
+        results = np.zeros((len(percentiles), len(T), args.ex_num))
+        file_name = os.path.join(args.output_path, "dfgls_" + tr + ".npz")
 
-        for i in range(EX_NUM):
-            print(f"Experiment Number {i + 1} of {EX_NUM} (trend {tr})")
+        for i in range(args.ex_num):
+            print(f"Experiment Number {i + 1} of {args.ex_num} (trend {tr})")
             now = dt.datetime.now()
             parallel, p_func, n_jobs = parallel_func(
-                wrapper, n_jobs=NUM_JOBS, verbose=2
+                wrapper, n_jobs=args.n_jobs, verbose=2
             )
-            out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
+            out = parallel(p_func(t, tr, args.ex_size, seed=seeds[i]) for t in T)
             quantiles = [np.percentile(x, percentiles) for x in out]
             results[:, :, i] = np.array(quantiles).T
             print(f"Elapsed time {dt.datetime.now() - now} seconds")
 
             if i % 50 == 0:
+                # Only the experiments that have finished, so that a partial file
+                # can be processed
                 np.savez(
-                    "dfgls_" + tr + ".npz",
+                    file_name,
                     trend=tr,
-                    results=results,
+                    results=results[:, :, : i + 1],
                     percentiles=percentiles,
                     T=T,
                 )
 
         np.savez(
-            "dfgls_" + tr + ".npz",
+            file_name,
             trend=tr,
             results=results,
             percentiles=percentiles,
