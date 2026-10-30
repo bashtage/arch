@@ -110,6 +110,14 @@ parser.add_argument(
     default=os.path.join("..", "phillips_ouliaris.py"),
     help="File to write",
 )
+# The files hold quantiles only, so the number of simulations per file, the
+# --ex-size of phillips-ouliaris-simulation.py, is only known from the run
+parser.add_argument(
+    "--ex-size",
+    type=int,
+    default=250_000,
+    help="Simulations per file, for the docstring of the output",
+)
 args = parser.parse_args()
 
 results = defaultdict(list)
@@ -131,9 +139,10 @@ for file_type in FILE_TYPES:
                 single.columns = single.columns.droplevel(level=2)
                 results[(stat, trend)].append(single)
 
-assert len(num_files) > 0
-# assert all([nf == num_files[0] for nf in num_files])
-nsimulation = {k: 250_000 * v for k, v in num_files.items()}
+missing = [key for key, count in num_files.items() if count == 0]
+if missing:
+    raise FileNotFoundError(f"No result files in {args.root} for {missing}")
+nsimulation = {k: args.ex_size * v for k, v in num_files.items()}
 
 joined = defaultdict(list)
 for key in results:
