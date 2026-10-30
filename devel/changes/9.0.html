@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+696)</title>
+        <title>Version 9 - arch v8.0.1 (+702)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+696)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+696)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+702)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+702)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+696)
+            arch v8.0.1 (+702)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+696)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+696)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+702)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+702)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+696)
+    arch v8.0.1 (+702)
   </label>
   
     <div class="md-nav__source">
@@ -921,8 +921,20 @@ critical values were wrong: with 10 observations they were 20.32, 13.84 and 10.5
 and are now -8.95, -5.98 and -4.41. For example the p-value of a statistic of -8
 changes from 0.0477 to 0.0504. The tables with a constant or a trend are also from the
 new simulation. Their critical values change by less than 0.005 with 25 or more
-observations and their p-values below 0.2 by at most 0.0001. Contributed by mkzung
+observations and their p-values below 0.15 by at most 0.0001. Contributed by mkzung
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/971">GH971</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/972">GH972</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/973">GH973</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/980">GH980</a>).</p></li>
+<li><p>The p-value of the ADF-Z statistic, which <a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> uses
+with <code class="docutils literal notranslate"><span class="pre">test_type=&quot;rho&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code> returns with <code class="docutils literal notranslate"><span class="pre">dist_type=&quot;adf-z&quot;</span></code>, is now
+a smooth and increasing function of the statistic. It is approximated by one
+polynomial below a cut-off and another above it. These were estimated separately, so
+the p-value jumped down at the cut-off, by 0.033 with <code class="docutils literal notranslate"><span class="pre">&quot;n&quot;</span></code>, 0.014 with <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>,
+0.010 with <code class="docutils literal notranslate"><span class="pre">&quot;ct&quot;</span></code> and 0.008 with <code class="docutils literal notranslate"><span class="pre">&quot;ctt&quot;</span></code>. The two are now estimated jointly, so
+that they have the same value and slope at the cut-off. The approximation of the
+middle of the distribution is also more accurate: the largest difference from the
+simulated distribution is now 0.012 with <code class="docutils literal notranslate"><span class="pre">&quot;n&quot;</span></code> and at most 0.0015 otherwise.
+Compared with 8.0, with a constant or a trend, p-values below 0.15 change by at most
+0.0001, and the largest change is 0.013, at p-values between 0.7 and 0.8. The
+critical values are unchanged (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/989">GH989</a>).</p></li>
 <li><p>Integer, unsigned integer and Boolean data are now converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code> when they
 are passed to an estimator, so that no calculation is done in integer arithmetic.
 Previously a calculation that used the products or differences of integer data could
