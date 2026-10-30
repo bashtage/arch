@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -159,6 +161,26 @@ def test_pval_extremes():
     above = phillips_ouliaris_pval(1.0, "zt", "n", 2)
     below = phillips_ouliaris_pval(0.0, "zt", "n", 2)
     assert above > below
+
+
+@pytest.mark.parametrize("test_type", ["za", "zt", "pu", "pz"])
+@pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
+def test_pval_infinite_and_huge(test_type, trend):
+    # Some tables have infinite bounds, and then the polynomials are evaluated at
+    # the statistic, which overflows when it is huge
+    for num in range(2, 14):
+        for stat in (np.inf, 1e300, 1e200, 1e12):
+            with warnings.catch_warnings():
+                warnings.simplefilter("error")
+                large = phillips_ouliaris_pval(stat, test_type, trend, num)
+                small = phillips_ouliaris_pval(-stat, test_type, trend, num)
+            assert isinstance(large, float)
+            assert isinstance(small, float)
+            if test_type in ("pu", "pz"):
+                # Large values reject
+                large, small = small, large
+            assert large == 1.0
+            assert small == 0.0
 
 
 def test_auto_bandwidth(trivariate_data):
