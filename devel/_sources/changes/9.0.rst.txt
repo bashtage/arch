@@ -1018,6 +1018,47 @@ Bug fixes
   with ``dist_type="dfgls"`` raises a ``ValueError`` for the ``"n"`` and ``"ctt"``
   regressions, which are not available, where it raised a ``KeyError`` (:issue:`949`).
 
+- The unit root tests (:class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS`,
+  :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.KPSS`,
+  :class:`~arch.unitroot.ZivotAndrews` and :class:`~arch.unitroot.VarianceRatio`), the
+  cointegration tests :func:`~arch.unitroot.cointegration.engle_granger` and
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris`, and
+  :class:`~arch.unitroot.cointegration.DynamicOLS`,
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` raise an
+  :class:`~arch.utility.exceptions.InfeasibleTestException`, which is also a
+  ``ValueError``, when ``y`` is constant. The unit root tests raise it when they are
+  created. Previously they returned NaN, raised a ``ZeroDivisionError`` or a
+  ``LinAlgError``, or, for a constant that is not 0, computed the statistic and the
+  p-value from the rounding errors of removing the mean. For example
+  :class:`~arch.unitroot.KPSS` rejected stationarity with a p-value of 0.0001, and
+  :func:`~arch.unitroot.cointegration.engle_granger` and
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris` returned arbitrary statistics.
+  They also raise it, where they returned NaN or raised ``LinAlgError`` or
+  ``ValueError``, when the statistic or its p-value, or the estimates or their
+  covariance, are not finite or a matrix is singular, which data at an extreme scale
+  such as 1e300 or 1e-300 produce. For example the statistics of
+  :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.PhillipsPerron` and
+  :class:`~arch.unitroot.VarianceRatio` of a random walk multiplied by 1e300 were NaN,
+  and :class:`~arch.unitroot.KPSS` raised
+  ``ValueError: cannot convert float NaN to integer``. They raise it too when a
+  regression is exactly singular, which statsmodels only warned about with
+  ``SingularMatrixWarning``, or fits exactly, which gave statistics computed from
+  rounding errors: when ``y`` is exactly a trend that the test removes (a linear trend
+  with ``trend="ct"`` and a quadratic trend with ``trend="ctt"``), when the differences
+  of ``y`` are exactly a deterministic function of its lags, as for the series 0, 1, 0,
+  1, ..., or when ``y`` is an exact linear combination of ``x`` and the deterministic
+  terms or the columns of ``x`` are collinear. For example
+  :class:`~arch.unitroot.ADF` with ``trend="ct"`` of a linear trend was 1.9e14, and
+  :class:`~arch.unitroot.KPSS` and :class:`~arch.unitroot.DFGLS` with ``trend="ct"``
+  rejected their null hypotheses for it (:issue:`987`).
+- :class:`~arch.unitroot.PhillipsPerron` with ``trend="c"`` or ``trend="ct"`` computes
+  its statistic from ``y`` less its mean, on which it does not depend. A variation that
+  is small compared with the level of ``y`` lost precision, so that a random walk with
+  steps of 1e-6 around 1000 had a statistic of -150 where the same walk has -2.67. The
+  results in ``PhillipsPerron.regression`` are still those of the regression of ``y``
+  (:issue:`987`).
+
 - Fixed ``SkewStudent.ppf`` for a 0-d array such as ``np.array(0.4)``, which failed an
   ``assert`` (it returns a float, as for a Python float), and ``add_trend`` with a
   ``DataFrame`` that already has a constant and ``has_constant="skip"`` (the default)

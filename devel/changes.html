@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v8.0.1 (+681)</title>
+        <title>Change Logs - arch v8.0.1 (+694)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+681)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+694)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+694)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+681)
+            arch v8.0.1 (+694)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+681)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+681)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+694)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+694)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+681)
+    arch v8.0.1 (+694)
   </label>
   
     <div class="md-nav__source">
@@ -2262,6 +2262,46 @@ process, and it now returns a copy. <code class="docutils literal notranslate"><
 <code class="docutils literal notranslate"><span class="pre">kpss_crit(nan)</span></code> returned NaN, and they now raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. <code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code>
 with <code class="docutils literal notranslate"><span class="pre">dist_type=&quot;dfgls&quot;</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for the <code class="docutils literal notranslate"><span class="pre">&quot;n&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;ctt&quot;</span></code>
 regressions, which are not available, where it raised a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/949">GH949</a>).</p></li>
+<li><p>The unit root tests (<a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a>,
+<a class="reference internal" href="unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a>, <a class="reference internal" href="unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>,
+<a class="reference internal" href="unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> and <a class="reference internal" href="unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a>), the
+cointegration tests <a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a> and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris" title="arch.unitroot.cointegration.phillips_ouliaris (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code></a>, and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>,
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a> raise an
+<a class="reference internal" href="warnings.html#arch.utility.exceptions.InfeasibleTestException" title="arch.utility.exceptions.InfeasibleTestException (Python exception) — Raised by the unit root tests when the regression of the test cannot be estimated, for example because the maximum lag length is too large for the number of observations or the series is constant. Reduce max_lags or provide lags. Subclass of RuntimeError."><code class="xref py py-class docutils literal notranslate"><span class="pre">InfeasibleTestException</span></code></a>, which is also a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, when <code class="docutils literal notranslate"><span class="pre">y</span></code> is constant. The unit root tests raise it when they are
+created. Previously they returned NaN, raised a <code class="docutils literal notranslate"><span class="pre">ZeroDivisionError</span></code> or a
+<code class="docutils literal notranslate"><span class="pre">LinAlgError</span></code>, or, for a constant that is not 0, computed the statistic and the
+p-value from the rounding errors of removing the mean. For example
+<a class="reference internal" href="unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> rejected stationarity with a p-value of 0.0001, and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a> and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris" title="arch.unitroot.cointegration.phillips_ouliaris (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code></a> returned arbitrary statistics.
+They also raise it, where they returned NaN or raised <code class="docutils literal notranslate"><span class="pre">LinAlgError</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, when the statistic or its p-value, or the estimates or their
+covariance, are not finite or a matrix is singular, which data at an extreme scale
+such as 1e300 or 1e-300 produce. For example the statistics of
+<a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a> of a random walk multiplied by 1e300 were NaN,
+and <a class="reference internal" href="unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> raised
+<code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">cannot</span> <span class="pre">convert</span> <span class="pre">float</span> <span class="pre">NaN</span> <span class="pre">to</span> <span class="pre">integer</span></code>. They raise it too when a
+regression is exactly singular, which statsmodels only warned about with
+<code class="docutils literal notranslate"><span class="pre">SingularMatrixWarning</span></code>, or fits exactly, which gave statistics computed from
+rounding errors: when <code class="docutils literal notranslate"><span class="pre">y</span></code> is exactly a trend that the test removes (a linear trend
+with <code class="docutils literal notranslate"><span class="pre">trend=&quot;ct&quot;</span></code> and a quadratic trend with <code class="docutils literal notranslate"><span class="pre">trend=&quot;ctt&quot;</span></code>), when the differences
+of <code class="docutils literal notranslate"><span class="pre">y</span></code> are exactly a deterministic function of its lags, as for the series 0, 1, 0,
+1, …, or when <code class="docutils literal notranslate"><span class="pre">y</span></code> is an exact linear combination of <code class="docutils literal notranslate"><span class="pre">x</span></code> and the deterministic
+terms or the columns of <code class="docutils literal notranslate"><span class="pre">x</span></code> are collinear. For example
+<a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> with <code class="docutils literal notranslate"><span class="pre">trend=&quot;ct&quot;</span></code> of a linear trend was 1.9e14, and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a> and <a class="reference internal" href="unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> with <code class="docutils literal notranslate"><span class="pre">trend=&quot;ct&quot;</span></code>
+rejected their null hypotheses for it (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/987">GH987</a>).</p></li>
+<li><p><a class="reference internal" href="unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> with <code class="docutils literal notranslate"><span class="pre">trend=&quot;c&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">trend=&quot;ct&quot;</span></code> computes
+its statistic from <code class="docutils literal notranslate"><span class="pre">y</span></code> less its mean, on which it does not depend. A variation that
+is small compared with the level of <code class="docutils literal notranslate"><span class="pre">y</span></code> lost precision, so that a random walk with
+steps of 1e-6 around 1000 had a statistic of -150 where the same walk has -2.67. The
+results in <code class="docutils literal notranslate"><span class="pre">PhillipsPerron.regression</span></code> are still those of the regression of <code class="docutils literal notranslate"><span class="pre">y</span></code>
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/987">GH987</a>).</p></li>
 <li><p>Fixed <code class="docutils literal notranslate"><span class="pre">SkewStudent.ppf</span></code> for a 0-d array such as <code class="docutils literal notranslate"><span class="pre">np.array(0.4)</span></code>, which failed an
 <code class="docutils literal notranslate"><span class="pre">assert</span></code> (it returns a float, as for a Python float), and <code class="docutils literal notranslate"><span class="pre">add_trend</span></code> with a
 <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> that already has a constant and <code class="docutils literal notranslate"><span class="pre">has_constant=&quot;skip&quot;</span></code> (the default)
