@@ -1,63 +1,154 @@
 """
 Critical value simulation for the Dickey-Fuller GLS model.  Similar in design
-to MacKinnon (2010).  Makes use of parallel_fun which works
+to MacKinnon (2010).  Makes use of parallel_func which works
 best when joblib is installed.
 """
 
 import argparse
-import datetime as dt
-import os
+import pathlib
+import platform
+import random
 from typing import cast
 
+import colorama
+from joblib import Parallel, delayed
 import numpy as np
 from numpy.linalg import pinv
-from numpy.random import RandomState
-from statsmodels.tools.parallel import parallel_func
+from numpy.random import PCG64, Generator, SeedSequence
+import psutil
 
 from arch._typing import Literal
 
-# Controls memory use, in MiB
+# Storage Location
+if platform.system() == "Linux":
+    BASE_PATH = pathlib.Path("/mnt", "c")
+else:
+    BASE_PATH = pathlib.Path(r"C:\\")
+# Created by the scripts that write to it, and not when this module is imported
+OUTPUT_PATH = BASE_PATH / "Users" / "kevin" / "Dropbox" / "dfgls-simulation"
+if not OUTPUT_PATH.exists():
+    OUTPUT_PATH.mkdir(parents=True)
+
+
+GREEN = colorama.Fore.GREEN
+BLUE = colorama.Fore.BLUE
+RED = colorama.Fore.RED
+RESET = colorama.Fore.RESET
+
+# Number of repetitions
+EX_NUM = 2000
+# Number of simulations per exercise
+EX_SIZE = 250_000
+# Approximately controls memory use, in MiB
 MAX_MEMORY_SIZE = 100
-NUM_JOBS = 4
-EX_NUM = 500
-EX_SIZE = 200000
+PERCENTILES = list(np.arange(0, 500, 25) / 100.0)
+PERCENTILES += list(np.arange(50, 950, 5) / 10.0)
+PERCENTILES += list(np.arange(9500, 10000, 25) / 100.0)
+PERCENTILES = sorted(float(v) for v in PERCENTILES)
+
+TRENDS = ("c", "ct")
+T = np.array(
+    (
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        120,
+        140,
+        160,
+        180,
+        200,
+        250,
+        300,
+        350,
+        400,
+        450,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1200,
+        1400,
+        2000,
+    )
+)
+
+# raw entropy (16 bits each) from random.org
+RAW = [
+    13991,
+    62560,
+    42376,
+    1909,
+    45867,
+    59806,
+    25767,
+    65094,
+    54534,
+    46023,
+    16925,
+    34786,
+    20589,
+    8564,
+    55417,
+    41999,
+]
+ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
-def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndarray:
+def wrapper(
+    trend: Literal["c", "ct"],
+    gen: Generator,
+    file_name: pathlib.Path,
+    max_memory_size: int = MAX_MEMORY_SIZE,
+) -> pathlib.Path:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
-    can be controlled on multi processor systems when executing in parallel
+    can be controlled on multi-processor systems when executing in parallel
     """
-    rng = RandomState()
-    rng.seed(seed)
-    remaining = b
-    res = np.zeros(b)
-    finished = 0
-    block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * n))
-    for _ in range(0, b, block_size):
-        if block_size < remaining:
-            count = block_size
-        else:
-            count = remaining
-        st = finished
-        en = finished + count
-        res[st:en] = dfgsl_simulation(n, trend, count, rng)
-        finished += count
-        remaining -= count
+    if file_name.exists():
+        return file_name
+    results = np.zeros((len(T), len(PERCENTILES)))
 
-    return res
+    for i, nobs in enumerate(T):
+        output = np.zeros(EX_SIZE)
+        remaining = EX_SIZE
+        finished = 0
+        block_size = int(2**20.0 * max_memory_size / (8.0 * nobs))
+        for _ in range(0, EX_SIZE, block_size):
+            if block_size < remaining:
+                nsim = block_size
+            else:
+                nsim = remaining
+            st = finished
+            en = finished + nsim
+            output[st:en] = dfgls_simulation(nobs, trend, nsim, gen)
+            finished += nsim
+            remaining -= nsim
+
+        results[i] = np.percentile(output, PERCENTILES)
+
+    np.save(file_name, results)
+
+    return file_name
 
 
-def dfgsl_simulation(
-    n: int, trend: Literal["c", "ct"], b: int, rng: RandomState | None = None
+def dfgls_simulation(
+    n: int, trend: Literal["c", "ct"], block_size: int, gen: Generator
 ) -> float:
     """
     Simulates the empirical distribution of the DFGLS test statistic
     """
-    if rng is None:
-        rng = RandomState(0)
-    standard_normal = rng.standard_normal
-
+    standard_normal = gen.standard_normal
     nobs = n
     if trend == "c":
         c = -7.0
@@ -71,9 +162,8 @@ def dfgsl_simulation(
     delta_z = np.copy(z)
     delta_z[1:, :] = delta_z[1:, :] - (1 + ct) * delta_z[:-1, :]
     delta_z_inv = pinv(delta_z)
-    y = standard_normal((n + 50, b))
+    y = standard_normal((n, block_size))
     y = np.cumsum(y, axis=0)
-    y = y[50:, :]
     delta_y = y.copy()
     delta_y[1:, :] = delta_y[1:, :] - (1 + ct) * delta_y[:-1, :]
     detrend_coef = delta_z_inv.dot(delta_y)
@@ -95,96 +185,59 @@ def dfgsl_simulation(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Simulate DFGLS critical values")
+    parser = argparse.ArgumentParser("Simulations for DFGLS critical values")
     parser.add_argument(
-        "--ex-num", type=int, default=EX_NUM, help="Number of experiments"
-    )
-    parser.add_argument(
-        "--ex-size",
+        "--ncpu",
         type=int,
-        default=EX_SIZE,
-        help="Number of simulations per experiment",
+        action="store",
+        help="Number of CPUs to use. If not specified, uses cpu_count() - 1",
     )
     parser.add_argument(
-        "--n-jobs", type=int, default=NUM_JOBS, help="Number of parallel jobs"
+        "--max-memory-size",
+        type=int,
+        action="store",
+        help="Maximum memory size to use in each thread. Default is 250",
     )
-    parser.add_argument(
-        "--output-path",
-        default=".",
-        help="Directory to write dfgls_c.npz and dfgls_ct.npz to",
-    )
+
     args = parser.parse_args()
-    trends = ("c", "ct")
-    T = np.array(
-        (
-            20,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            120,
-            140,
-            160,
-            180,
-            200,
-            250,
-            300,
-            350,
-            400,
-            450,
-            500,
-            600,
-            700,
-            800,
-            900,
-            1000,
-            1200,
-            1400,
-            2000,
-        )
-    )
-    T = T[::-1]
-    percentiles = list(np.arange(0.5, 100.0, 0.5))
-    seeds = np.arange(0, 2**32, step=2**23)
-    if args.ex_num > seeds.shape[0]:
-        raise ValueError(f"ex-num must be at most {seeds.shape[0]}")
-    for tr in trends:
-        results = np.zeros((len(percentiles), len(T), args.ex_num))
-        file_name = os.path.join(args.output_path, "dfgls_" + tr + ".npz")
+    ncpu = getattr(args, "ncpu", None)
+    ncpu = psutil.cpu_count(logical=False) - 1 if ncpu is None else ncpu
+    ncpu = max(ncpu, 1)
 
-        for i in range(args.ex_num):
-            print(f"Experiment Number {i + 1} of {args.ex_num} (trend {tr})")
-            now = dt.datetime.now()
-            parallel, p_func, n_jobs = parallel_func(
-                wrapper, n_jobs=args.n_jobs, verbose=2
-            )
-            out = parallel(p_func(t, tr, args.ex_size, seed=seeds[i]) for t in T)
-            quantiles = [np.percentile(x, percentiles) for x in out]
-            results[:, :, i] = np.array(quantiles).T
-            print(f"Elapsed time {dt.datetime.now() - now} seconds")
+    # argparse sets max_memory_size to None when the option is not given
+    max_memory_size = getattr(args, "max_memory_size", None)
+    max_memory_size = MAX_MEMORY_SIZE if max_memory_size is None else max_memory_size
 
-            if i % 50 == 0:
-                # Only the experiments that have finished, so that a partial file
-                # can be processed
-                np.savez(
-                    file_name,
-                    trend=tr,
-                    results=results[:, :, : i + 1],
-                    percentiles=percentiles,
-                    T=T,
+    jobs = []
+    ss = SeedSequence(ENTROPY)
+    children = ss.spawn(len(TRENDS) * EX_NUM)
+    generators = [Generator(PCG64(child)) for child in children]
+
+    count = 0
+    for tr in TRENDS:
+        for i in range(EX_NUM):
+            jobs.append(
+                (
+                    tr,
+                    generators[count],
+                    pathlib.Path(f"dfgls_{tr}_{i}.npy"),
                 )
-
-        np.savez(
-            file_name,
-            trend=tr,
-            results=results,
-            percentiles=percentiles,
-            T=T,
+            )
+            count += 1
+    jobs = [job for job in jobs if not job[-1].exists()]
+    random.shuffle(jobs)
+    nremconfig = len(jobs)
+    nconfig = len(children)
+    print(
+        f"Total configurations: {BLUE}{nconfig}{RESET}, "
+        f"Remaining: {RED}{nremconfig}{RESET}"
+    )
+    print(f"Running on {BLUE}{ncpu}{RESET} CPUs")
+    if ncpu > 1:
+        Parallel(verbose=50, n_jobs=ncpu)(
+            delayed(wrapper)(tr, gen, file_name, max_memory_size)
+            for tr, gen, file_name in jobs
         )
+    else:
+        for job in jobs:
+            wrapper(*job)
