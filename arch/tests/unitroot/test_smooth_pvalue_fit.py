@@ -36,6 +36,16 @@ CASES = {
     ),
     "student-t-cubic": (-1.5 + stats.t(5).ppf(PROBS), 4, False),
     "logistic-cubic": (-2.0 + stats.logistic.ppf(PROBS), 4, False),
+    # Both polynomials turn beyond the simulated quantiles, so that tau_min and
+    # tau_max are both finite
+    "heavy-tail-cubic": (
+        -1.5
+        + NORMAL_QUANTILES
+        + 0.02 * NORMAL_QUANTILES**2
+        + 0.002 * NORMAL_QUANTILES**3,
+        4,
+        False,
+    ),
     # Similar to ADF-Z
     "exponential-log": (-4.0 * np.exp(-0.7 * NORMAL_QUANTILES), 4, True),
 }
@@ -51,7 +61,7 @@ def simulation_shared():
         / "simulation"
         / "shared.py"
     )
-    if not path.exists():
+    if not path.exists():  # pragma: no cover
         pytest.skip("The simulation scripts are not available")
     spec = importlib.util.spec_from_file_location("simulation_shared", path)
     assert spec is not None
