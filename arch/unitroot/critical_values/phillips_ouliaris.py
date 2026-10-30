@@ -2321,3 +2321,6 @@ PVAL_TAU_MIN = {
     ("Pu", "n", 12): -245.72855,
     ("Pu", "n", 13): -257.9681,
 }
+
+# Whether the small p polynomials are in log|stat|, or in stat
+PVAL_SMALL_P_LOG = {"Za": False, "Zt": False, "Pu": False, "Pz": False}

@@ -26,6 +26,7 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_TAU_MIN,
     PVAL_LARGE_P,
     PVAL_SMALL_P,
+    PVAL_SMALL_P_LOG,
     PVAL_TAU_MAX,
     PVAL_TAU_MIN,
     PVAL_TAU_STAR,
@@ -599,14 +600,20 @@ def phillips_ouliaris_pval(
     tau_max = PVAL_TAU_MAX[key]
     tau_min = PVAL_TAU_MIN[key]
     tau_star = PVAL_TAU_STAR[key]
-    if stat > tau_max:
+    # The bounds of some tables are infinite, and so -inf and inf would reach the
+    # polynomials, which are nan there
+    if stat > tau_max or stat == np.inf:
         return 1.0
-    elif stat < tau_min:
+    elif stat < tau_min or stat == -np.inf:
         return 0.0
     if stat > tau_star:
         params = np.array(PVAL_LARGE_P[key])
     else:
         params = np.array(PVAL_SMALL_P[key])
-    order = params.shape[0]
-    x = stat ** np.arange(order)
-    return stats.norm().cdf(params @ x)
+        if PVAL_SMALL_P_LOG[key[0]]:
+            # tau_star is negative when the small p polynomial is in log|stat|
+            stat = float(np.log(abs(stat)))
+    # Horner's method overflows to -inf or inf for a very large statistic, which
+    # gives a p-value of 0 or 1, while the powers of the statistic can give inf - inf
+    with np.errstate(over="ignore"):
+        return float(stats.norm.cdf(np.polyval(params[::-1], stat)))
