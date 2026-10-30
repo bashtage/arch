@@ -30,6 +30,7 @@ from arch.unitroot import (
     VarianceRatio,
     ZivotAndrews,
 )
+from arch.unitroot._shared import _check_not_deterministic
 from arch.unitroot.cointegration import (
     CanonicalCointegratingReg,
     DynamicOLS,
@@ -523,3 +524,13 @@ def test_phillips_perron_level_does_not_change_statistic(trend, test_type):
     for level, step in ((1e3, 1e-3), (1e3, 1e-6), (1e8, 1.0)):
         res = PhillipsPerron(level + step * e, trend=trend, test_type=test_type)
         assert_allclose(res.stat, expected, rtol=1e-6)
+
+
+def test_check_not_deterministic_short_series():
+    # The tests check the number of observations first, and so a series too short
+    # to difference only reaches the check when it is called directly
+    _check_not_deterministic(np.array([1.0, 2.0]), "ct")
+    _check_not_deterministic(np.array([1.0, 2.0, 4.0]), "ctt")
+    _check_not_deterministic(np.arange(10.0), "c")
+    with pytest.raises(InfeasibleTestException, match="exactly a linear trend"):
+        _check_not_deterministic(np.arange(3.0), "ctt")
