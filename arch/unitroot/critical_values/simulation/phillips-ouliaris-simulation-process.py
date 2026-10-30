@@ -16,7 +16,6 @@ from statsmodels.regression.linear_model import OLS
 
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)
-PLOT = False
 WINS: dict[int, int] = defaultdict(int)
 # The p-value may be set to 0 or 1 beyond a turning point of a polynomial, which
 # is beyond the simulated quantiles, if p (or 1 - p) is no larger than the step
@@ -118,6 +117,11 @@ parser.add_argument(
     default=250_000,
     help="Simulations per file, for the docstring of the output",
 )
+parser.add_argument(
+    "--plot",
+    action="store_true",
+    help="Plot the quantiles at the largest sample size to output.pdf",
+)
 args = parser.parse_args()
 
 results = defaultdict(list)
@@ -202,7 +206,7 @@ for key in quantiles_d:
     quantiles[key] = pd.concat(selected, axis=1)
 
 
-if PLOT:
+if args.plot:
     plt.rc("figure", figsize=(16, 8))
     sns.set_style("darkgrid")
     pdf = matplotlib.backends.backend_pdf.PdfPages("output.pdf")
@@ -243,6 +247,7 @@ for pval_key, pval_value in pval_data.items():
     # The two polynomials are fit jointly so that the p-value is continuous, has a
     # continuous first derivative and is monotone in the statistic
     small_order, use_log = SMALL_P_MODEL[pval_key[0]]
+    error: RuntimeError | None = None
     for max_tail_step in MAX_TAIL_STEPS:
         try:
             res = fit_smooth_pval_model(
