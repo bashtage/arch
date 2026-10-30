@@ -32,7 +32,7 @@ EX_NUM = 2000
 # Number of simulations per exercise
 EX_SIZE = 250_000
 # Approximately controls memory use, in MiB
-MAX_MEMORY_SIZE = 250
+MAX_MEMORY_SIZE = 100
 
 
 # raw entropy (16 bits each) from random.org
