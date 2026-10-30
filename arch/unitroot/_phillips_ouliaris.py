@@ -17,7 +17,9 @@ from arch.covariance.kernel import (
 from arch.unitroot._shared import (
     ResidualCointegrationTestResult,
     _check_cointegrating_regression,
+    _check_finite_statistic,
     _cross_section,
+    _infeasible_on_error,
 )
 from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_PARAMETERS,
@@ -52,6 +54,7 @@ def _check_num_trends(num: int) -> None:
         )
 
 
+@_infeasible_on_error("Phillips-Ouliaris")
 def _po_ptests(
     z: pd.DataFrame,
     xsection: RegressionResults,
@@ -99,6 +102,7 @@ def _po_ptests(
         test_stat = nobs * float(np.squeeze((omega @ np.linalg.inv(m_zz)).trace()))
     cv = phillips_ouliaris_cv(test_type, trend, z.shape[1], z.shape[0])
     pval = phillips_ouliaris_pval(test_stat, test_type, trend, z.shape[1])
+    _check_finite_statistic(test_stat, pval, "Phillips-Ouliaris")
     return PhillipsOuliarisTestResults(
         test_stat,
         pval,
@@ -111,6 +115,7 @@ def _po_ptests(
     )
 
 
+@_infeasible_on_error("Phillips-Ouliaris")
 def _po_ztests(
     yx: pd.DataFrame,
     xsection: RegressionResults,
@@ -149,6 +154,7 @@ def _po_ztests(
         test_stat = z / se
     cv = phillips_ouliaris_cv(test_type, trend, yx.shape[1], yx.shape[0])
     pval = phillips_ouliaris_pval(test_stat, test_type, trend, yx.shape[1])
+    _check_finite_statistic(test_stat, pval, "Phillips-Ouliaris")
     x = xsection.model.exog
     return PhillipsOuliarisTestResults(
         test_stat,
@@ -245,6 +251,8 @@ def phillips_ouliaris(
         test_type, kernel or bandwidth_method is not one of the options, or
         bandwidth_method is "andrews" and the AR(1) cannot be fitted to the
         residuals.
+    InfeasibleTestException
+        If y is constant. This is also a ``ValueError``.
 
     See Also
     --------
