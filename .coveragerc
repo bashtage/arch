@@ -4,6 +4,8 @@ branch = True
 omit =
     */_version.py
     */compat/*
+    # Scripts that simulate and fit the critical values
+    */critical_values/simulation/*
 plugins = Cython.Coverage
 
 [report]
@@ -36,6 +38,8 @@ include = */arch/*
 omit =
     */_version.py
     */compat/*
+    # Scripts that simulate and fit the critical values
+    */critical_values/simulation/*
     *recursions.py
     *samplers.py
 ignore_errors = True
