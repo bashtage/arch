@@ -382,6 +382,8 @@ omit = [
   "*/_version.py",
   # Compatibility code
   "*/compat/*",
+  # Scripts that simulate and fit the critical values
+  "*/critical_values/simulation/*",
   "*/conftest.py",
 ]
 
@@ -425,6 +427,8 @@ include = [ "*/arch/*" ]
 omit = [
   "*/_version.py",
   "*/compat/*",
+  # Scripts that simulate and fit the critical values
+  "*/critical_values/simulation/*",
   "*recursions.py",
   "*samplers.py",
 ]

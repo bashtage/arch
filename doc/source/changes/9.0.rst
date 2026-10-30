@@ -401,8 +401,20 @@ to restore the previous results.
   and are now -8.95, -5.98 and -4.41. For example the p-value of a statistic of -8
   changes from 0.0477 to 0.0504. The tables with a constant or a trend are also from the
   new simulation. Their critical values change by less than 0.005 with 25 or more
-  observations and their p-values below 0.2 by at most 0.0001. Contributed by mkzung
+  observations and their p-values below 0.15 by at most 0.0001. Contributed by mkzung
   (:issue:`971`, :issue:`972`, :issue:`973`, :issue:`980`).
+- The p-value of the ADF-Z statistic, which :class:`~arch.unitroot.PhillipsPerron` uses
+  with ``test_type="rho"`` and ``mackinnonp`` returns with ``dist_type="adf-z"``, is now
+  a smooth and increasing function of the statistic. It is approximated by one
+  polynomial below a cut-off and another above it. These were estimated separately, so
+  the p-value jumped down at the cut-off, by 0.033 with ``"n"``, 0.014 with ``"c"``,
+  0.010 with ``"ct"`` and 0.008 with ``"ctt"``. The two are now estimated jointly, so
+  that they have the same value and slope at the cut-off. The approximation of the
+  middle of the distribution is also more accurate: the largest difference from the
+  simulated distribution is now 0.012 with ``"n"`` and at most 0.0015 otherwise.
+  Compared with 8.0, with a constant or a trend, p-values below 0.15 change by at most
+  0.0001, and the largest change is 0.013, at p-values between 0.7 and 0.8. The
+  critical values are unchanged (:issue:`989`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
