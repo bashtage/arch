@@ -1,60 +1,65 @@
+"""
+Process the output of dfgls_critical_values_simulation.py into dfgls.py.
+
+Run from this directory, after the simulation has written dfgls_c.npz and
+dfgls_ct.npz:
+
+    python dfgls_simulation_process.py --data-path <dir> --output ../dfgls.py
+"""
+
+import argparse
+import os
+
+from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
-from scipy.stats import norm
-from statsmodels.regression.linear_model import OLS, WLS
+import pandas as pd
+from shared import fit_smooth_pval_model, format_dict
+from statsmodels.regression.linear_model import OLS
 
-trends = ("c", "ct")
-critical_values = (1.0, 5.0, 10.0)
+TRENDS = ("c", "ct")
+CRITICAL_VALUES = (1.0, 5.0, 10.0)
+# The p-value may be set to 0 below the turning point of the small p polynomial,
+# which is far in the tail, if p is no larger than this there
+MAX_TAIL_STEP = 1e-12
+
+HEADER = '''\
+"""
+Contains values used to approximate the critical value and p-value from DFGLS
+statistics
+
+These have been computed using the methodology of MacKinnon (1994) and (2010)
+simulation. See dfgls_critival_values_simulation for implementation.
+"""
+
+'''
+
+parser = argparse.ArgumentParser(description="Process the DFGLS simulations")
+parser.add_argument(
+    "--data-path",
+    default=".",
+    help="Directory containing dfgls_c.npz and dfgls_ct.npz",
+)
+parser.add_argument(
+    "--output", default=os.path.join("..", "dfgls.py"), help="File to write"
+)
+args = parser.parse_args()
+
 dfgls_cv_approx = {}
-for t in trends:
+dfgls_large_p = {}
+dfgls_small_p = {}
+dfgls_tau_star = {}
+dfgls_tau_max = {}
+dfgls_tau_min = {}
+for t in TRENDS:
     print(t)
-    data = np.load("dfgls_" + t + ".npz")
-    percentiles = data["percentiles"]
-    trend = data["trend"]
-    results = data["results"]
-    # T = data['T']
-    data.close()
-
-    # Remove later
-    T = np.array(
-        (
-            20,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            120,
-            140,
-            160,
-            180,
-            200,
-            250,
-            300,
-            350,
-            400,
-            450,
-            500,
-            600,
-            700,
-            800,
-            900,
-            1000,
-            1200,
-            1400,
-            2000,
-        )
-    )
-    T = T[::-1]
+    with np.load(os.path.join(args.data_path, "dfgls_" + t + ".npz")) as data:
+        percentiles = data["percentiles"]
+        results = data["results"]
+        T = data["T"]
 
     # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
     out = []
-    for cv in critical_values:
+    for cv in CRITICAL_VALUES:
         num_ex = results.shape[2]
         loc = np.where(percentiles == cv)[0][0]
         lhs = np.squeeze(results[loc, :, :])
@@ -74,74 +79,47 @@ for t in trends:
 
     dfgls_cv_approx[t] = np.array(out)
 
-trends = ("c", "ct")
-dfgls_large_p = {}
-dfgls_small_p = {}
-dfgls_tau_star = {}
-dfgls_tau_max = {}
-dfgls_tau_min = {}
-for t in trends:
-    data = np.load("dfgls_" + t + ".npz")
-    percentiles = data["percentiles"]
-    results = data["results"]  # Remove later
-    # LHS is norm cdf inv of percentiles
-    lhs = norm().ppf(percentiles / 100.0)
-    lhs_large = lhs
-    # RHS is made up of avg test stats for largest T, which is in pos 1
-    avg_test_stats = results[:, 1, :].mean(axis=1)
-    avg_test_std = results[:, 1, :].std(axis=1)
-    avg_test_stats = avg_test_stats[:, None]
-    m = lhs.shape[0]
-    rhs = np.ones((m, 1))
-    rhs = np.hstack((rhs, avg_test_stats))
-    rhs = np.hstack((rhs, avg_test_stats**2.0))
-    rhs = np.hstack((rhs, avg_test_stats**3.0))
-    rhs_large = rhs
-    res_large = WLS(lhs, rhs, weights=1.0 / avg_test_std).fit()
-    dfgls_large_p[t] = res_large.params
-    # Compute tau_max, by finding the func maximum
-    p = res_large.params
-    poly_roots = np.roots(np.array([3, 2, 1.0]) * p[:0:-1])
-    dfgls_tau_max[t] = float(np.squeeze(np.real(np.max(poly_roots))))
+    # The p-value models are fit to the quantiles of the largest sample size. The
+    # two polynomials, a quadratic in the statistic for small p and a cubic for
+    # large p, are fit jointly so that the p-value is continuous, has a continuous
+    # first derivative and is monotone in the statistic
+    quantiles = pd.DataFrame(
+        results[:, np.argmax(T), :], index=pd.Index(percentiles / 100.0)
+    )
+    pvals = fit_smooth_pval_model(
+        quantiles, small_order=3, use_log=False, max_tail_step=MAX_TAIL_STEP
+    )
+    dfgls_tau_max[t] = pvals.tau_max
+    dfgls_tau_min[t] = pvals.tau_min
+    dfgls_tau_star[t] = pvals.tau_star
+    dfgls_large_p[t] = pvals.large_p
+    dfgls_small_p[t] = pvals.small_p
 
-    # Small p regression using only p<=15%
-    cutoff = np.where(percentiles <= 15.0)[0]
-    avg_test_stats = results[cutoff, 1, :].mean(axis=1)
-    avg_test_std = results[cutoff, 1, :].std(axis=1)
-    avg_test_stats = avg_test_stats[:, None]
-    lhs = lhs[cutoff]
-    m = lhs.shape[0]
-    rhs = np.ones((m, 1))
-    rhs = np.hstack((rhs, avg_test_stats))
-    rhs = np.hstack((rhs, avg_test_stats**2.0))
-    res_small = WLS(lhs, rhs, weights=1.0 / avg_test_std).fit()
-    dfgls_small_p[t] = res_small.params
+bounds = list(dfgls_tau_max.values()) + list(dfgls_tau_min.values())
+imports = "array, inf" if not np.all(np.isfinite(bounds)) else "array"
+# The arrays are written as numpy prints them
+with np.printoptions(precision=8):
+    cv_approx = ", ".join(f'"{t}": {dfgls_cv_approx[t]!r}' for t in dfgls_cv_approx)
 
-    # Compute tau star
-    err_large = res_large.resid
-    # Missing 1 parameter here, replace with 0
-    params = np.append(np.asarray(res_small.params), np.zeros(1))
-    err_small = lhs_large - rhs_large.dot(params)
-    # Find the location that minimizes the total absolute error
-    m = lhs_large.shape[0]
-    abs_err = np.zeros((m, 1))
-    for i in range(m):
-        abs_err[i] = np.abs(err_large[i:]).sum() + np.abs(err_small[:i]).sum()
-    loc = np.argmin(abs_err)
-    dfgls_tau_star[t] = rhs_large[loc, 1]
-    # Compute tau min
-    dfgls_tau_min[t] = -params[1] / (2 * params[2])
+formatted_code = HEADER + f"from numpy import {imports}\n\n"
+formatted_code += "dfgls_cv_approx = {" + cv_approx + "}"
+formatted_code += "\n\ndfgls_tau_max = " + format_dict(dfgls_tau_max)
+formatted_code += "\n\ndfgls_tau_min = " + format_dict(dfgls_tau_min)
+formatted_code += "\n\ndfgls_tau_star = " + format_dict(dfgls_tau_star)
+formatted_code += "\n\ndfgls_large_p = " + format_dict(dfgls_large_p)
+formatted_code += "\n\ndfgls_small_p = " + format_dict(dfgls_small_p)
+formatted_code += "\n"
 
-print("from numpy import array")
-print("")
-print("dfgls_cv_approx = " + str(dfgls_cv_approx))
-print("")
-print("dfgls_tau_max = " + str(dfgls_tau_max))
-print("")
-print("dfgls_tau_min = " + str(dfgls_tau_min))
-print("")
-print("dfgls_tau_star = " + str(dfgls_tau_star))
-print("")
-print("dfgls_large_p = " + str(dfgls_large_p))
-print("")
-print("dfgls_small_p = " + str(dfgls_small_p))
+targets = {
+    TargetVersion.PY310,
+    TargetVersion.PY311,
+    TargetVersion.PY312,
+    TargetVersion.PY313,
+    TargetVersion.PY314,
+}
+fm = FileMode(target_versions=targets)
+formatted_code = format_file_contents(formatted_code, fast=False, mode=fm)
+
+# LF line endings on every platform, as in the repository
+with open(args.output, "w", newline="\n") as cvs:
+    cvs.write(formatted_code)
