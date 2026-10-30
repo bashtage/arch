@@ -139,50 +139,125 @@ def fit_pval_model(
     return PvalueResult(large_p, small_p, tau_max, tau_star, tau_min)
 
 
-def _junction_constraints(tau: float) -> np.ndarray:
+def _junction_constraints(
+    tau: float, small_order: int = 4, use_log: bool = True
+) -> np.ndarray:
     """
     Linear constraints that join the two p-value polynomials at ``tau``.
 
-    The parameter vector is (a_0, ..., a_3, b_0, ..., b_3), where the small p
-    polynomial a is in log|stat| and the large p polynomial b is in stat. The two
-    rows require that the fitted values and the first derivatives with respect to
-    the statistic agree at tau < 0.
+    The parameter vector is (a_0, ..., a_{k-1}, b_0, ..., b_3), where k is
+    small_order and the small p polynomial a is in log|stat| if use_log is True and
+    in stat otherwise. The large p polynomial b is in stat. The two rows require
+    that the fitted values and the first derivatives with respect to the statistic
+    agree at tau, which must be negative if use_log is True.
     """
+    k = np.arange(small_order)
+    x = np.log(abs(tau)) if use_log else tau
+    value_a = x**k
+    slope_a = np.zeros(small_order)
+    slope_a[1:] = k[1:] * x ** (k[1:] - 1)
+    if use_log:
+        # d log|stat| / d stat = 1 / stat
+        slope_a /= tau
     k = np.arange(4)
-    log_tau = np.log(abs(tau))
-    value_a = log_tau**k
     value_b = tau**k
-    # d log|stat| / d stat = 1 / stat
-    slope_a = np.zeros(4)
-    slope_a[1:] = k[1:] * log_tau ** (k[1:] - 1) / tau
     slope_b = np.zeros(4)
     slope_b[1:] = k[1:] * tau ** (k[1:] - 1)
     return np.vstack([np.r_[value_a, -value_b], np.r_[slope_a, -slope_b]])
 
 
-def _is_monotone(small_p: np.ndarray, large_p: np.ndarray, tau: float) -> bool:
+def _tail_end(coefs: np.ndarray, x0: float, direction: float) -> float | None:
+    """
+    Find where a polynomial stops falling on the ray x0 + direction * t, t >= 0.
+
+    Parameters
+    ----------
+    coefs : ndarray
+        The coefficients of the polynomial, lowest power first.
+    x0 : float
+        The start of the ray.
+    direction : {1.0, -1.0}
+        The direction of the ray.
+
+    Returns
+    -------
+    float or None
+        None if the polynomial rises at x0. Otherwise the first turning point of
+        the polynomial on the ray, or direction * inf if there is none, in which
+        case the polynomial falls to -inf along the whole ray.
+    """
+    deriv = np.polynomial.polynomial.polyder(coefs)
+    if direction * np.polynomial.polynomial.polyval(x0, deriv) > 0:
+        return None
+    roots = np.polynomial.polynomial.polyroots(deriv) if deriv.shape[0] > 1 else []
+    ahead = [
+        float(root.real)
+        for root in np.atleast_1d(roots)
+        if abs(root.imag) <= 1e-10 * max(1.0, abs(root))
+        and direction * (root.real - x0) > 0
+    ]
+    if not ahead:
+        return direction * np.inf
+    return min(ahead, key=lambda root: direction * (root - x0))
+
+
+def _monotone_bounds(
+    small_p: np.ndarray,
+    large_p: np.ndarray,
+    tau: float,
+    use_log: bool,
+    max_tail_step: float | None,
+) -> tuple[float, float] | None:
     """
     Check that both pieces are increasing in the statistic on their domain.
 
-    The small p polynomial is a cubic in u = log|stat| and must be decreasing in
-    u on [log|tau|, inf), so that it is increasing in the statistic on (-inf, tau]
-    and tends to -inf (p tends to 0). The large p polynomial must be increasing on
-    [tau, inf) and tend to inf (p tends to 1).
+    The small p polynomial must be increasing in the statistic on (-inf, tau] and
+    the large p polynomial on [tau, inf). If a polynomial turns, the p-value is set
+    to 0 below (or 1 above) its turning point, which is allowed if the p-value
+    steps by no more than max_tail_step there.
+
+    Returns
+    -------
+    tuple[float, float] or None
+        tau_min and tau_max, where the p-value is set to 0 and 1, or None if the
+        pieces are not monotone. Infinite bounds mean that the p-value tends to 0
+        and 1 without a step.
     """
-    a1, a2, a3 = small_p[1:]
-    b1, b2, b3 = large_p[1:]
-    if not (a3 < 0 and b3 > 0):
-        return False
-    u = np.log(abs(tau))
-    # Slope in u is a concave quadratic, which has to be <= 0 everywhere on [u, inf)
-    u_vertex = -a2 / (3 * a3)
-    u_max = max(u, u_vertex)
-    if a1 + 2 * a2 * u_max + 3 * a3 * u_max**2 > 0:
-        return False
-    # Slope in the statistic is a convex quadratic, which has to be >= 0 on [tau, inf)
-    z_vertex = -b2 / (3 * b3)
-    z_min = max(tau, z_vertex)
-    return bool(b1 + 2 * b2 * z_min + 3 * b3 * z_min**2 >= 0)
+    # The small p piece is in u = log|stat|, which increases as the statistic
+    # falls, or in the statistic itself
+    if use_log:
+        end = _tail_end(small_p, float(np.log(abs(tau))), 1.0)
+    else:
+        end = _tail_end(small_p, tau, -1.0)
+    # The large p polynomial rises with the statistic when its negative falls
+    tau_max = _tail_end(-large_p, tau, 1.0)
+    if end is None or tau_max is None:
+        return None
+    if np.isfinite(end):
+        if max_tail_step is None:
+            return None
+        step = stats.norm.cdf(np.polynomial.polynomial.polyval(end, small_p))
+        if step > max_tail_step:
+            return None
+    # A turning point beyond log|stat| = 709.8 is never reached by a finite stat
+    with np.errstate(over="ignore"):
+        tau_min = -np.exp(end) if use_log else end
+    if np.isfinite(tau_max):
+        if max_tail_step is None:
+            return None
+        step = stats.norm.sf(np.polynomial.polynomial.polyval(tau_max, large_p))
+        if step > max_tail_step:
+            return None
+    return float(tau_min), float(tau_max)
+
+
+def _round_toward(value: float, target: float, significant_digits: int) -> float:
+    """Round to significant_digits, toward target if the rounding changes value"""
+    if not np.isfinite(value):
+        return float(value)
+    ulp = 10.0 ** (np.floor(np.log10(abs(value))) - (significant_digits - 1))
+    rounded = np.ceil(value / ulp) if target > value else np.floor(value / ulp)
+    return float(f"{rounded * ulp:.{significant_digits - 1}e}")
 
 
 def fit_smooth_pval_model(
@@ -192,21 +267,24 @@ def fit_smooth_pval_model(
     body_tolerance: float = 0.03,
     junction_range: tuple[float, float] = (0.02, 0.95),
     significant_digits: int = 10,
+    small_order: int = 4,
+    use_log: bool = True,
+    max_tail_step: float | None = None,
 ) -> PvalueResult:
     """
     Fit p-value models that join smoothly at tau_star.
 
-    The p-value is Phi(poly(log|stat|)) if stat <= tau_star and Phi(poly(stat))
-    otherwise, where both polynomials are cubic. The two polynomials are fit
-    jointly, using the points at or below tau_star for the first and the points
-    at or above tau_star for the second, subject to the constraints that the two
-    polynomials have the same value and the same first derivative at tau_star.
-    The fitted p-value is then continuous and has a continuous first derivative.
-    tau_star is chosen among the average simulated quantiles in `junction_range`
-    to minimize the weighted squared error of the model that is used. Only
-    junctions where both pieces are monotone and where the p-value tends to 0
-    and 1 in the tails are considered, so that the p-value is a monotone function
-    of the statistic on the real line.
+    The p-value is Phi(poly(log|stat|)) (or Phi(poly(stat)) if use_log is False)
+    if stat <= tau_star and Phi(poly(stat)) otherwise, where the second polynomial
+    is cubic. The two polynomials are fit jointly, using the points at or below
+    tau_star for the first and the points at or above tau_star for the second,
+    subject to the constraints that the two polynomials have the same value and
+    the same first derivative at tau_star. The fitted p-value is then continuous
+    and has a continuous first derivative. tau_star is chosen among the average
+    simulated quantiles in `junction_range` to minimize the weighted squared error
+    of the model that is used. Only junctions where both pieces are monotone are
+    considered, so that the p-value is a monotone function of the statistic on the
+    real line.
 
     Parameters
     ----------
@@ -228,13 +306,28 @@ def fit_smooth_pval_model(
         The number of significant digits of the returned coefficients. The
         digits must be large enough that rounding does not make the p-value
         discontinuous.
+    small_order : int, default 4
+        The number of coefficients of the small p polynomial, 3 for a quadratic
+        and 4 for a cubic.
+    use_log : bool, default True
+        Whether the small p polynomial is in log|stat|. If False, it is in stat.
+    max_tail_step : float, optional
+        If None, both polynomials must be monotone on their whole domain, so that
+        the p-value tends to 0 and 1 in the tails. Otherwise a polynomial may turn
+        in its tail outside the simulated quantiles, if the p-value is no larger
+        than max_tail_step (or no smaller than 1 - max_tail_step) at the turning
+        point. The p-value is then set to 0 below (or 1 above) the turning point,
+        which is a step of at most max_tail_step.
 
     Returns
     -------
     PvalueResult
-        The coefficients and the junction. tau_min is -inf and tau_max is inf
-        since both tails are monotone and tend to 0 and 1.
+        The coefficients and the junction. tau_min and tau_max are the points
+        below and above which the p-value is 0 and 1. They are -inf and inf when
+        both tails are monotone and tend to 0 and 1.
     """
+    if small_order not in (3, 4):
+        raise ValueError("small_order must be 3 or 4")
     quantiles = quantiles.sort_index(ascending=False)
     probs = quantiles.index.to_numpy(dtype=float)
     data = np.asarray(quantiles, dtype=float)
@@ -249,34 +342,40 @@ def fit_smooth_pval_model(
     scale = np.minimum(probs, np.maximum(1 - probs, 0.05))
     sqrt_w = stats.norm.pdf(lhs) / (rel_tol * scale)
 
-    rhs_log = np.log(np.abs(stats_mean))[:, None] ** np.arange(4)
+    if use_log:
+        rhs_small = np.log(np.abs(stats_mean))[:, None] ** np.arange(small_order)
+    else:
+        rhs_small = stats_mean[:, None] ** np.arange(small_order)
     rhs_lin = stats_mean[:, None] ** np.arange(4)
 
     n = probs.shape[0]
+    nparams = small_order + 4
     best: tuple[float, float, np.ndarray, np.ndarray] | None = None
     for i in np.where((probs >= junction_range[0]) & (probs <= junction_range[1]))[0]:
         tau = round(float(stats_mean[i]), 5)
-        if tau >= 0:
+        if use_log and tau >= 0:
             continue
         # The large p piece uses rows 0..i and the small p piece rows i..n-1, so the
         # junction point is in both
         n_large = i + 1
-        design = np.zeros((n_large + n - i, 8))
-        design[:n_large, 4:] = rhs_lin[:n_large]
-        design[n_large:, :4] = rhs_log[i:]
+        design = np.zeros((n_large + n - i, nparams))
+        design[:n_large, small_order:] = rhs_lin[:n_large]
+        design[n_large:, :small_order] = rhs_small[i:]
         sw = np.r_[sqrt_w[:n_large], sqrt_w[i:]]
         design = design * sw[:, None]
         y = np.r_[lhs[:n_large], lhs[i:]] * sw
         # Scale the columns, since the powers span many orders of magnitude
         col_scale = np.linalg.norm(design, axis=0)
-        constraints = _junction_constraints(tau) / col_scale
+        constraints = _junction_constraints(tau, small_order, use_log) / col_scale
         null_basis = np.linalg.svd(constraints)[2][2:].T
         coefs = np.linalg.lstsq((design / col_scale) @ null_basis, y, rcond=None)[0]
         params = (null_basis @ coefs) / col_scale
-        small_p, large_p = params[:4], params[4:]
-        if not _is_monotone(small_p, large_p, tau):
+        small_p, large_p = params[:small_order], params[small_order:]
+        bounds = _monotone_bounds(small_p, large_p, tau, use_log, max_tail_step)
+        # The p-value can only be set to 0 or 1 outside of the simulated quantiles
+        if bounds is None or bounds[0] >= stats_mean[-1] or bounds[1] <= stats_mean[0]:
             continue
-        fitted = np.where(np.arange(n) >= i, rhs_log @ small_p, rhs_lin @ large_p)
+        fitted = np.where(np.arange(n) >= i, rhs_small @ small_p, rhs_lin @ large_p)
         loss = float((((lhs - fitted) * sqrt_w) ** 2).sum())
         if best is None or loss < best[0]:
             best = (loss, tau, small_p, large_p)
@@ -293,14 +392,26 @@ def fit_smooth_pval_model(
     # quantile scale. Move the constant of the large p polynomial up to the first
     # rounded value at which the large p polynomial is not below the small p
     # polynomial, so that rounding never makes the p-value step down at tau.
-    target = np.polyval(small[::-1], np.log(abs(tau)))
+    x_tau = np.log(abs(tau)) if use_log else tau
+    target = np.polyval(small[::-1], x_tau)
     target -= np.polyval(np.r_[0.0, large[1:]][::-1], tau)
     ulp = 10.0 ** (np.floor(np.log10(abs(target))) - (significant_digits - 1))
     large[0] = float(
         f"{np.ceil((target + 1e-12) / ulp) * ulp:.{significant_digits - 1}e}"
     )
-    gap = np.polyval(large[::-1], tau) - np.polyval(small[::-1], np.log(abs(tau)))
-    jump = np.abs(_junction_constraints(tau) @ np.r_[small, large])
+    gap = np.polyval(large[::-1], tau) - np.polyval(small[::-1], x_tau)
+    jump = np.abs(
+        _junction_constraints(tau, small_order, use_log) @ np.r_[small, large]
+    )
     if not (0 <= gap < 1e-8 and jump[1] < 1e-8):
         raise RuntimeError("Rounding the coefficients broke the continuity")
-    return PvalueResult(large, small, float("inf"), tau, float("-inf"))
+    # The bounds of the rounded polynomials, rounded toward tau so that the
+    # p-value is monotone between them
+    bounds = _monotone_bounds(
+        np.array(small), np.array(large), tau, use_log, max_tail_step
+    )
+    if bounds is None:
+        raise RuntimeError("Rounding the coefficients broke the monotonicity")
+    tau_min = _round_toward(bounds[0], tau, significant_digits)
+    tau_max = _round_toward(bounds[1], tau, significant_digits)
+    return PvalueResult(large, small, tau_max, tau, tau_min)
