@@ -2,7 +2,7 @@ from adf_simulation import OUTPUT_PATH, PERCENTILES, TIME_SERIES_LENGTHS, TRENDS
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
 import pandas as pd
-from shared import estimate_cv_regression, fit_pval_model, format_dict
+from shared import estimate_cv_regression, fit_smooth_pval_model, format_dict
 
 critical_values = (1.0, 5.0, 10.0)
 adf_z_cv_approx = {}
@@ -30,7 +30,9 @@ for trend in TRENDS:
         [float(val) for val in cv_approx[cv]] for cv in critical_values
     ]
 
-    pvals = fit_pval_model(results_df[2000], small_order=4, use_log=True)
+    # The two p-value polynomials are fit jointly so that the p-value is continuous,
+    # has a continuous first derivative and is monotone in the statistic
+    pvals = fit_smooth_pval_model(results_df[2000])
     adf_z_max[trend] = pvals.tau_max
     adf_z_min[trend] = pvals.tau_min
     adf_z_star[trend] = float(pvals.tau_star)
