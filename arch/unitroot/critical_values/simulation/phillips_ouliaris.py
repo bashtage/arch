@@ -1,14 +1,19 @@
 import os
+import pathlib
 
 import numpy as np
 
 FILE_TYPES = ("z", "p")
 TRENDS = ("n", "c", "ct", "ctt")
 
+
 if os.name == "posix":
-    ROOT = "/mnt/c/Users/kevin/Dropbox/phillips-ouliaris"
+    ROOT = pathlib.Path("/mnt/c/Users/kevin")
 else:
-    ROOT = r"c:\Users\kevin\Dropbox\phillips-ouliaris"
+    ROOT = pathlib.Path(r"c:\Users\kevin")
+ROOT = ROOT / "Dropbox" / "phillips-ouliaris"
+if not ROOT.exists():
+    ROOT.mkdir(parents=True)
 
 # percentiles to save
 PERCENTILES = (

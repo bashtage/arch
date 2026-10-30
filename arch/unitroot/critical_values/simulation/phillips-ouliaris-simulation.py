@@ -2,9 +2,9 @@ import argparse
 import datetime as dt
 import gzip
 import os
+import pathlib
 import pickle
 from random import shuffle
-import sys
 from typing import IO, cast
 
 import colorama
@@ -26,16 +26,13 @@ MAX_STOCHASTIC_TRENDS = 13
 if not os.path.exists(ROOT):
     os.mkdir(ROOT)
 # Number of simulations per exercise
-EX_SIZE = 250000
+EX_SIZE = 250_000
 # Number of experiments
 EX_NUM = 100
 # Maximum memory of the main simulated data
 MAX_MEMORY = 2**21
 # Number of iterations between display
 DISP_ITERATIONS = 25000
-
-if sys.platform.lower() == "win32":
-    os.system("color")
 
 STATISTICS = ("z", "p")
 Z_STATISTICS = ("z_a", "z_t")
@@ -238,15 +235,19 @@ def block(
     return results
 
 
-def temp_file_name(full_path: str, gzip: bool = True) -> str:
-    base, file_name = list(os.path.split(full_path))
+def temp_file_name(full_path: pathlib.Path, gzip: bool = True) -> pathlib.Path:
+    base = full_path.parent
+    file_name = full_path.name
     extension = ".pkl" if not gzip else ".pkl.gz"
     temp_file = "partial-" + file_name.replace(".hdf", extension)
-    return os.path.join(base, temp_file)
+    return base / temp_file
 
 
 def save_partial(
-    gen: np.random.Generator, results: pd.DataFrame, remaining: int, full_path: str
+    gen: np.random.Generator,
+    results: pd.DataFrame,
+    remaining: int,
+    full_path: pathlib.Path,
 ) -> None:
     temp_file = temp_file_name(full_path)
     info = {"results": results, "remaining": remaining, "gen": gen}
@@ -255,10 +256,13 @@ def save_partial(
 
 
 def load_partial(
-    gen: np.random.Generator, results: pd.DataFrame, remaining: int, full_path: str
+    gen: np.random.Generator,
+    results: pd.DataFrame,
+    remaining: int,
+    full_path: pathlib.Path,
 ) -> tuple[np.random.Generator, pd.DataFrame, int]:
     temp_file = temp_file_name(full_path)
-    if os.path.exists(temp_file):
+    if temp_file.exists():
         try:
             with gzip.open(temp_file, "rb") as pkl:
                 info = pickle.load(cast("IO[bytes]", pkl))
@@ -277,7 +281,7 @@ def worker(
     statistic: str,
     trend: UnitRootTrend,
     idx: int,
-    full_path: str,
+    full_path: pathlib.Path,
 ) -> None:
     print(
         f"Starting Index: {BLUE}{idx}{RESET}, Statistic: {RED}{statistic}{RESET},"
@@ -323,7 +327,9 @@ def worker(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Simulations for Engle-Granger critical values")
+    parser = argparse.ArgumentParser(
+        "Simulations for Phillips-Ouliaris critical values"
+    )
     parser.add_argument(
         "--ncpu",
         type=int,
@@ -336,9 +342,9 @@ if __name__ == "__main__":
         help="Only execute Z-type tests",
     )
     args = parser.parse_args()
-    njobs = getattr(args, "ncpu", None)
-    njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
-    njobs = max(njobs, 1)
+    ncpu = getattr(args, "ncpu", None)
+    ncpu = psutil.cpu_count(logical=False) - 1 if ncpu is None else ncpu
+    ncpu = max(ncpu, 1)
     # random.org seeds
     entropy = [
         387520566,
@@ -356,22 +362,23 @@ if __name__ == "__main__":
     ss = np.random.SeedSequence(entropy)
     children = ss.spawn(len(TRENDS) * EX_NUM * len(STATISTICS))
     jobs: list[
-        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str]
+        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, pathlib.Path]
     ] = []
     loc = 0
     from itertools import product
 
     for statistic, trend, idx in product(STATISTICS, TRENDS, range(EX_NUM)):
-        child = children[loc]
+        child = children[idx]
         gen = np.random.Generator(np.random.PCG64(child))
         filename = (
             "phillips-ouliaris-results-statistic-"
             f"{statistic}-trend-{trend}-{idx:04d}.hdf"
         )
 
-        full_file = os.path.join(ROOT, filename)
-        if os.path.exists(full_file):
+        full_file = pathlib.Path(ROOT) / filename
+        if full_file.exists():
             continue
+
         jobs.append(
             (
                 gen,
@@ -381,7 +388,7 @@ if __name__ == "__main__":
                 full_file,
             )
         )
-        loc += 1
+
     shuffle(jobs)
     if args.z_only:
         print(f"{BLUE}Note{RESET}: Only running Z-type tests")
@@ -401,12 +408,12 @@ if __name__ == "__main__":
         f"Total configurations: {BLUE}{nconfig}{RESET}, "
         f"Remaining: {RED}{nremconfig}{RESET}"
     )
-    print(f"Running on {BLUE}{njobs}{RESET} CPUs")
-    if njobs == 1:
-        for job in jobs:
-            worker(*job)
-    else:
-        Parallel(verbose=50, n_jobs=njobs)(
+    print(f"Running on {BLUE}{ncpu}{RESET} CPUs")
+    if ncpu > 1:
+        Parallel(verbose=50, n_jobs=ncpu)(
             delayed(worker)(gen, statistic, trend, idx, fullfile)
             for (gen, statistic, trend, idx, fullfile) in jobs
         )
+    else:
+        for job in jobs:
+            worker(*job)
