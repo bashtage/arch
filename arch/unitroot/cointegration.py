@@ -27,6 +27,7 @@ from arch.unitroot._shared import (
     _COINTEGRATION_SINGULAR,
     _TREND_TERMS,
     _check_cointegrating_regression,
+    _check_finite_data,
     _check_finite_estimates,
     _cross_section,
     _fit_ols,
@@ -1423,6 +1424,11 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         #  K by 1
         y_star = y[1:] - eta @ (sigma_inv @ lmbda2 @ beta[:, None] + bias)
         z_star = add_trend(x_star, trend=self._trend)
+        # The transformed data are not finite when the covariance of the residuals
+        # is nearly singular, and some LAPACK builds never return from lstsq then
+        _check_finite_data(
+            "transformed data of the Canonical Cointegrating Regression", z_star, y_star
+        )
         params = np.linalg.lstsq(z_star, y_star, rcond=None)[0]
 
         omega_11 = omega[:1, :1]

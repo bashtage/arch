@@ -30,7 +30,7 @@ from arch.unitroot import (
     VarianceRatio,
     ZivotAndrews,
 )
-from arch.unitroot._shared import _check_not_deterministic
+from arch.unitroot._shared import _check_finite_data, _check_not_deterministic
 from arch.unitroot.cointegration import (
     CanonicalCointegratingReg,
     DynamicOLS,
@@ -534,3 +534,12 @@ def test_check_not_deterministic_short_series():
     _check_not_deterministic(np.arange(10.0), "c")
     with pytest.raises(InfeasibleTestException, match="exactly a linear trend"):
         _check_not_deterministic(np.arange(3.0), "ctt")
+
+
+def test_check_finite_data():
+    # CanonicalCointegratingReg checks its transformed data before lstsq, which
+    # some LAPACK builds do not return from when the data are not finite
+    _check_finite_data("data", np.ones(3), np.zeros((2, 2)))
+    for bad in (np.nan, np.inf):
+        with pytest.raises(InfeasibleTestException, match="data are not finite"):
+            _check_finite_data("data", np.ones(3), np.array([1.0, bad]))

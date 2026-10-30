@@ -220,6 +220,21 @@ def _check_finite_statistic(stat: float, pvalue: float, test: str) -> None:
         )
 
 
+def _check_finite_data(what: str, *arrays: Any) -> None:
+    """
+    Raise InfeasibleTestException if data computed during an estimation are not
+    finite.
+
+    Used before routines that iterate, such as lstsq, which some LAPACK builds do
+    not return from when their input is not finite.
+    """
+    if not all(np.all(np.isfinite(np.asarray(a, dtype=float))) for a in arrays):
+        raise InfeasibleTestException(
+            f"The {what} are not finite, and so the parameters cannot be estimated. "
+            f"{_DEGENERATE}"
+        )
+
+
 def _check_finite_estimates(params: Any, cov: Any, method: str) -> None:
     """
     Raise InfeasibleTestException if the estimates or their covariance are not finite.
