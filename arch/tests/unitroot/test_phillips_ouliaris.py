@@ -7,12 +7,19 @@ from statsmodels.iolib.summary import Summary
 
 from arch._typing import Float64Array, UnitRootTrend
 from arch.covariance.kernel import KERNELS
+from arch.unitroot import _phillips_ouliaris as po_module
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
     phillips_ouliaris_cv,
     phillips_ouliaris_pval,
 )
 from arch.unitroot.cointegration import phillips_ouliaris
+from arch.unitroot.critical_values.dickey_fuller import (
+    adf_z_large_p,
+    adf_z_small_p,
+    adf_z_star,
+)
+from arch.unitroot.unitroot import mackinnonp
 from arch.utility.timeseries import add_trend
 
 
@@ -161,6 +168,22 @@ def test_pval_extremes():
     above = phillips_ouliaris_pval(1.0, "zt", "n", 2)
     below = phillips_ouliaris_pval(0.0, "zt", "n", 2)
     assert above > below
+
+
+def test_pval_small_p_in_log(monkeypatch):
+    # The ADF-Z table has a small p polynomial in log|stat|, and mackinnonp
+    # evaluates it independently
+    key = ("Za", "c", 3)
+    monkeypatch.setitem(po_module.PVAL_SMALL_P, key, adf_z_small_p["c"])
+    monkeypatch.setitem(po_module.PVAL_LARGE_P, key, adf_z_large_p["c"])
+    monkeypatch.setitem(po_module.PVAL_TAU_STAR, key, adf_z_star["c"])
+    monkeypatch.setitem(po_module.PVAL_TAU_MIN, key, -np.inf)
+    monkeypatch.setitem(po_module.PVAL_TAU_MAX, key, np.inf)
+    monkeypatch.setitem(po_module.PVAL_SMALL_P_LOG, "Za", True)
+    star = adf_z_star["c"]
+    for stat in (-1e6, -50.0, -20.0, star - 1e-6, star, star + 1e-6, -1.0, 3.0):
+        expected = mackinnonp(stat, regression="c", dist_type="adf-z")
+        assert_allclose(phillips_ouliaris_pval(stat, "za", "c", 3), expected)
 
 
 @pytest.mark.parametrize("test_type", ["za", "zt", "pu", "pz"])
