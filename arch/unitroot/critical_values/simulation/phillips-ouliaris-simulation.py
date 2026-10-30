@@ -2,9 +2,9 @@ import argparse
 import datetime as dt
 import gzip
 import os
+import pathlib
 import pickle
 from random import shuffle
-import sys
 from typing import IO, cast
 
 import colorama
@@ -23,17 +23,16 @@ BLUE = colorama.Fore.BLUE
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 MAX_STOCHASTIC_TRENDS = 13
+if not os.path.exists(ROOT):
+    os.mkdir(ROOT)
 # Number of simulations per exercise
-EX_SIZE = 250000
+EX_SIZE = 250_000
 # Number of experiments
 EX_NUM = 100
 # Maximum memory of the main simulated data
 MAX_MEMORY = 2**21
 # Number of iterations between display
 DISP_ITERATIONS = 25000
-
-if sys.platform.lower() == "win32":
-    os.system("color")
 
 STATISTICS = ("z", "p")
 Z_STATISTICS = ("z_a", "z_t")
@@ -212,7 +211,7 @@ def block(
     max_sample = max(SAMPLE_SIZES)
     e = gen.standard_normal((num, max_sample, MAX_STOCHASTIC_TRENDS))
     z = e.cumsum(axis=1)
-    columns = DF_Z_COLUMNS if statistic == "z" else DF_P_COLUMNS
+    columns = DF_Z_COLUMNS if statistic == "a" else DF_P_COLUMNS
     results = np.empty((num, len(columns)))
     loc = 0
     for ss in SAMPLE_SIZES:
@@ -236,15 +235,19 @@ def block(
     return results
 
 
-def temp_file_name(full_path: str, gzip: bool = True) -> str:
-    base, file_name = list(os.path.split(full_path))
+def temp_file_name(full_path: pathlib.Path, gzip: bool = True) -> pathlib.Path:
+    base = full_path.parent
+    file_name = full_path.name
     extension = ".pkl" if not gzip else ".pkl.gz"
     temp_file = "partial-" + file_name.replace(".hdf", extension)
-    return os.path.join(base, temp_file)
+    return base / temp_file
 
 
 def save_partial(
-    gen: np.random.Generator, results: pd.DataFrame, remaining: int, full_path: str
+    gen: np.random.Generator,
+    results: pd.DataFrame,
+    remaining: int,
+    full_path: pathlib.Path,
 ) -> None:
     temp_file = temp_file_name(full_path)
     info = {"results": results, "remaining": remaining, "gen": gen}
@@ -253,10 +256,13 @@ def save_partial(
 
 
 def load_partial(
-    gen: np.random.Generator, results: pd.DataFrame, remaining: int, full_path: str
+    gen: np.random.Generator,
+    results: pd.DataFrame,
+    remaining: int,
+    full_path: pathlib.Path,
 ) -> tuple[np.random.Generator, pd.DataFrame, int]:
     temp_file = temp_file_name(full_path)
-    if os.path.exists(temp_file):
+    if temp_file.exists():
         try:
             with gzip.open(temp_file, "rb") as pkl:
                 info = pickle.load(cast("IO[bytes]", pkl))
@@ -275,19 +281,18 @@ def worker(
     statistic: str,
     trend: UnitRootTrend,
     idx: int,
-    full_path: str,
-    ex_size: int = EX_SIZE,
+    full_path: pathlib.Path,
 ) -> None:
     print(
         f"Starting Index: {BLUE}{idx}{RESET}, Statistic: {RED}{statistic}{RESET},"
         f"Trend: {GREEN}{trend}{RESET}"
     )
-    remaining = ex_size
+    remaining = EX_SIZE
     ncols = len(SAMPLE_SIZES) * MAX_STOCHASTIC_TRENDS * 4
     block_size = int(MAX_MEMORY / (ncols * 8))
     columns = DF_Z_COLUMNS if statistic == "z" else DF_P_COLUMNS
     results = pd.DataFrame(
-        index=pd.RangeIndex(ex_size), columns=columns, dtype="double"
+        index=pd.RangeIndex(EX_SIZE), columns=columns, dtype="double"
     )
     gen, results, remaining = load_partial(gen, results, remaining, full_path)
     start = dt.datetime.now()
@@ -295,12 +300,12 @@ def worker(
     while remaining > 0:
         nsim = min(remaining, block_size)
         res_block = block(gen, statistic, nsim, trend)
-        loc = ex_size - remaining
+        loc = EX_SIZE - remaining
         results.iloc[loc : loc + nsim] = res_block
         remaining -= block_size
         remaining = max(0, remaining)
         elapsed = dt.datetime.now() - start
-        time_per_iter = elapsed.total_seconds() / (ex_size - remaining)
+        time_per_iter = elapsed.total_seconds() / (EX_SIZE - remaining)
         remaining_time = int(time_per_iter * remaining)
         rem = str(dt.timedelta(seconds=remaining_time))
         if last_print_remaining - remaining >= DISP_ITERATIONS:
@@ -336,23 +341,10 @@ if __name__ == "__main__":
         action="store_true",
         help="Only execute Z-type tests",
     )
-    parser.add_argument(
-        "--ex-num", type=int, default=EX_NUM, help="Number of experiments"
-    )
-    parser.add_argument(
-        "--ex-size",
-        type=int,
-        default=EX_SIZE,
-        help="Number of simulations per experiment",
-    )
-    parser.add_argument(
-        "--root", default=ROOT, help="Directory to write the results to"
-    )
     args = parser.parse_args()
-    os.makedirs(args.root, exist_ok=True)
-    njobs = getattr(args, "ncpu", None)
-    njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
-    njobs = max(njobs, 1)
+    ncpu = getattr(args, "ncpu", None)
+    ncpu = psutil.cpu_count(logical=False) - 1 if ncpu is None else ncpu
+    ncpu = max(ncpu, 1)
     # random.org seeds
     entropy = [
         387520566,
@@ -368,26 +360,25 @@ if __name__ == "__main__":
     ]
 
     ss = np.random.SeedSequence(entropy)
-    children = ss.spawn(len(TRENDS) * args.ex_num * len(STATISTICS))
+    children = ss.spawn(len(TRENDS) * EX_NUM * len(STATISTICS))
     jobs: list[
-        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str, int]
+        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, pathlib.Path]
     ] = []
+    loc = 0
     from itertools import product
 
-    # Each file has its own seed, whether or not it exists, so that a restarted
-    # simulation does not reuse the seeds of the files that are complete
-    configs = product(STATISTICS, TRENDS, range(args.ex_num))
-    for loc, (statistic, trend, idx) in enumerate(configs):
-        child = children[loc]
+    for statistic, trend, idx in product(STATISTICS, TRENDS, range(EX_NUM)):
+        child = children[idx]
         gen = np.random.Generator(np.random.PCG64(child))
         filename = (
             "phillips-ouliaris-results-statistic-"
             f"{statistic}-trend-{trend}-{idx:04d}.hdf"
         )
 
-        full_file = os.path.join(args.root, filename)
-        if os.path.exists(full_file):
+        full_file = pathlib.Path(ROOT) / filename
+        if full_file.exists():
             continue
+
         jobs.append(
             (
                 gen,
@@ -395,9 +386,9 @@ if __name__ == "__main__":
                 cast("UnitRootTrend", trend),
                 idx,
                 full_file,
-                args.ex_size,
             )
         )
+
     shuffle(jobs)
     if args.z_only:
         print(f"{BLUE}Note{RESET}: Only running Z-type tests")
@@ -417,12 +408,12 @@ if __name__ == "__main__":
         f"Total configurations: {BLUE}{nconfig}{RESET}, "
         f"Remaining: {RED}{nremconfig}{RESET}"
     )
-    print(f"Running on {BLUE}{njobs}{RESET} CPUs")
-    if njobs == 1:
+    print(f"Running on {BLUE}{ncpu}{RESET} CPUs")
+    if ncpu > 1:
+        Parallel(verbose=50, n_jobs=ncpu)(
+            delayed(worker)(gen, statistic, trend, idx, fullfile)
+            for (gen, statistic, trend, idx, fullfile) in jobs
+        )
+    else:
         for job in jobs:
             worker(*job)
-    else:
-        Parallel(verbose=50, n_jobs=njobs)(
-            delayed(worker)(gen, statistic, trend, idx, fullfile, ex_size)
-            for (gen, statistic, trend, idx, fullfile, ex_size) in jobs
-        )
