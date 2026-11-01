@@ -35,6 +35,9 @@ BLUE = colorama.Fore.BLUE
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 
+
+print(f"Output path: {GREEN}{OUTPUT_PATH}{RESET}")
+
 # Number of repetitions
 EX_NUM = 2000
 # Number of simulations per exercise
@@ -220,7 +223,7 @@ if __name__ == "__main__":
                 (
                     tr,
                     generators[count],
-                    pathlib.Path(f"dfgls_{tr}_{i}.npy"),
+                    OUTPUT_PATH / f"dfgls_{tr}_{i}.npy",
                 )
             )
             count += 1
