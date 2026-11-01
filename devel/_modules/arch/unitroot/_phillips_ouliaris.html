@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+706)</title>
+        <title>arch.unitroot._phillips_ouliaris - arch v8.0.1 (+721)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+706)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+706)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+721)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+721)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+706)
+            arch v8.0.1 (+721)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+706)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+706)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+721)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+721)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+706)
+    arch v8.0.1 (+721)
   </label>
   
     <div class="md-nav__source">
@@ -554,6 +554,7 @@
     <span class="n">CV_TAU_MIN</span><span class="p">,</span>
     <span class="n">PVAL_LARGE_P</span><span class="p">,</span>
     <span class="n">PVAL_SMALL_P</span><span class="p">,</span>
+    <span class="n">PVAL_SMALL_P_LOG</span><span class="p">,</span>
     <span class="n">PVAL_TAU_MAX</span><span class="p">,</span>
     <span class="n">PVAL_TAU_MIN</span><span class="p">,</span>
     <span class="n">PVAL_TAU_STAR</span><span class="p">,</span>
@@ -1139,17 +1140,23 @@
     <span class="n">tau_max</span> <span class="o">=</span> <span class="n">PVAL_TAU_MAX</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="n">tau_min</span> <span class="o">=</span> <span class="n">PVAL_TAU_MIN</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="n">tau_star</span> <span class="o">=</span> <span class="n">PVAL_TAU_STAR</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">tau_max</span><span class="p">:</span>
+    <span class="c1"># The bounds of some tables are infinite, and so -inf and inf would reach the</span>
+    <span class="c1"># polynomials, which are nan there</span>
+    <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">tau_max</span> <span class="ow">or</span> <span class="n">stat</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">1.0</span>
-    <span class="k">elif</span> <span class="n">stat</span> <span class="o">&lt;</span> <span class="n">tau_min</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">stat</span> <span class="o">&lt;</span> <span class="n">tau_min</span> <span class="ow">or</span> <span class="n">stat</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
     <span class="k">if</span> <span class="n">stat</span> <span class="o">&gt;</span> <span class="n">tau_star</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">PVAL_LARGE_P</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">PVAL_SMALL_P</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">stat</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">params</span> <span class="o">@</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">PVAL_SMALL_P_LOG</span><span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+            <span class="c1"># tau_star is negative when the small p polynomial is in log|stat|</span>
+            <span class="n">stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">stat</span><span class="p">)))</span>
+    <span class="c1"># Horner's method overflows to -inf or inf for a very large statistic, which</span>
+    <span class="c1"># gives a p-value of 0 or 1, while the powers of the statistic can give inf - inf</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">params</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stat</span><span class="p">)))</span>
 </code></pre></div>
 
 
