@@ -1,8 +1,8 @@
+import argparse
 from collections import defaultdict
 import glob
-from itertools import product
 import os
-from typing import NamedTuple, cast
+from typing import cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import matplotlib.backends.backend_pdf
@@ -10,25 +10,31 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from phillips_ouliaris import FILE_TYPES, ROOT, TRENDS
-from scipy import stats
 import seaborn as sns
-from shared import format_dict
-from statsmodels.regression.linear_model import OLS, WLS
+from shared import fit_smooth_pval_model, format_dict
+from statsmodels.regression.linear_model import OLS
 
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)
-PLOT = False
 WINS: dict[int, int] = defaultdict(int)
+# The p-value may be set to 0 or 1 beyond a turning point of a polynomial, which
+# is beyond the simulated quantiles, if p (or 1 - p) is no larger than the step
+# there. A larger step is only used if no junction gives a monotone p-value.
+MAX_TAIL_STEPS = (1e-12, 1e-9, 1e-6)
+# The coefficients are ill-conditioned when the statistic is large, as Pz is, and
+# rounding them to fewer digits moves the slopes at the junction apart
+SIGNIFICANT_DIGITS = 15
+# The small p polynomial of each statistic: the number of coefficients and
+# whether it is in log|stat|. phillips_ouliaris_pval reads the second from
+# PVAL_SMALL_P_LOG.
+SMALL_P_MODEL = {
+    "z_a": (4, True),
+    "z_t": (4, True),
+    "p_u": (4, True),
+    "p_z": (4, True),
+}
 # 1. Load data
 # 2. Compute critical values
-
-
-class PvalueResult(NamedTuple):
-    large_p: list[float]
-    small_p: list[float]
-    tau_max: float
-    tau_star: float
-    tau_min: float
 
 
 def xval(lhs: np.ndarray, rhs: np.ndarray, log: bool = True, folds: int = 5) -> None:
@@ -94,65 +100,37 @@ def estimate_cv_regression(
     return out, float(tau.min())
 
 
-def fit_pval_model(quantiles: pd.DataFrame | pd.Series) -> PvalueResult:
-    percentiles = quantiles.index.to_numpy()
-    lhs = stats.norm.ppf(percentiles)
-    data = np.asarray(quantiles)
-    avg_test_stats = data.mean(1)
-    avg_test_std = data.std(1)
-    avg_test_stats = avg_test_stats[:, None]
-
-    rhs = avg_test_stats ** np.arange(4)
-    rhs_large = rhs
-    lhs_large = lhs
-    res_large = WLS(lhs_large, rhs, weights=1.0 / avg_test_std).fit()
-    large_p = res_large.params.tolist()
-
-    # Compute tau_max, by finding the func maximum
-    p = res_large.params
-    poly_roots = np.roots(np.array([3, 2, 1.0]) * p[:0:-1])
-    if np.isreal(poly_roots[0]):
-        tau_max = float(np.squeeze(np.real(np.max(poly_roots))))
-    else:
-        tau_max = np.inf
-
-    # Small p regression using only p<=15%
-    cutoff = np.where(percentiles <= 0.150)[0]
-    avg_test_stats = avg_test_stats[cutoff]
-    avg_test_std = avg_test_std[cutoff]
-    lhs_small = lhs[cutoff]
-    rhs = avg_test_stats ** np.arange(3)
-    res_small = WLS(lhs_small, rhs, weights=1.0 / avg_test_std).fit()
-    small_p = res_small.params.tolist()
-
-    # Compute tau star
-    err_large = lhs_large - rhs_large.dot(res_large.params)
-    # Missing 1 parameter here, replace with 0
-    params = np.append(res_small.params, 0.0)
-    err_small = lhs_large - rhs_large.dot(params)
-    # Find the location that minimizes the total absolute error
-    m = lhs_large.shape[0]
-    abs_err = np.zeros((m, 1))
-    for j in range(m):
-        abs_err[j] = np.abs(err_large[:j]).sum() + np.abs(err_small[j:]).sum()
-    loc = np.argmin(abs_err)
-    tau_star = rhs_large[loc, 1]
-    # Compute tau min
-    tau_min = -params[1] / (2 * params[2])
-    large_p = [round(val, 5) for val in large_p]
-    small_p = [round(val, 5) for val in small_p]
-    tau_max = round(tau_max, 5)
-    tau_star = round(tau_star, 5)
-    tau_min = round(tau_min, 5)
-    return PvalueResult(large_p, small_p, tau_max, tau_star, tau_min)
-
+parser = argparse.ArgumentParser(
+    description="Process the Phillips-Ouliaris simulations"
+)
+parser.add_argument("--root", default=ROOT, help="Directory of the simulation results")
+parser.add_argument(
+    "--output",
+    default=os.path.join("..", "phillips_ouliaris.py"),
+    help="File to write",
+)
+# The files hold quantiles only, so the number of simulations per file, the
+# --ex-size of phillips-ouliaris-simulation.py, is only known from the run
+parser.add_argument(
+    "--ex-size",
+    type=int,
+    default=250_000,
+    help="Simulations per file, for the docstring of the output",
+)
+parser.add_argument(
+    "--plot",
+    action="store_true",
+    help="Plot the quantiles at the largest sample size to output.pdf",
+)
+args = parser.parse_args()
 
 results = defaultdict(list)
 num_files = {}
 for file_type in FILE_TYPES:
     for trend in TRENDS:
         pattern = f"*-statistic-{file_type}-trend-{trend}-*.hdf"
-        result_files = glob.glob(os.path.join(ROOT, pattern))
+        # Sorted so that the averages do not depend on the order of the directory
+        result_files = sorted(glob.glob(os.path.join(args.root, pattern)))
         num_files[(file_type, trend)] = len(result_files)
         for rf in result_files:
             temp = pd.DataFrame(pd.read_hdf(rf, "results"))
@@ -165,9 +143,10 @@ for file_type in FILE_TYPES:
                 single.columns = single.columns.droplevel(level=2)
                 results[(stat, trend)].append(single)
 
-assert len(num_files) > 0
-# assert all([nf == num_files[0] for nf in num_files])
-nsimulation = {k: 250_000 * v for k, v in num_files.items()}
+missing = [key for key, count in num_files.items() if count == 0]
+if missing:
+    raise FileNotFoundError(f"No result files in {args.root} for {missing}")
+nsimulation = {k: args.ex_size * v for k, v in num_files.items()}
 
 joined = defaultdict(list)
 for key in results:
@@ -186,10 +165,12 @@ final = {key: pd.concat(joined[key], axis=1) for key in joined}
 stat_names = {"p_z": "Pz", "p_u": "Pu", "z_t": "Zt", "z_a": "Za"}
 cv_params = {}
 cv_tau_min = {}
-for _final_key in final:
+for _final_key, final_value in final.items():
+    # The results are keyed by the statistic's name in the simulation, z_a, and
+    # the constants by its name in arch, Za
     final_key = (stat_names[_final_key[0]],) + _final_key[1:]
     cv_params[final_key], cv_tau_min[final_key] = estimate_cv_regression(
-        final[final_key], final_key[0]
+        final_value, _final_key[0]
     )
 
 print("Best methods")
@@ -206,16 +187,16 @@ for key, n_sim_value in nsimulation.items():
 
 counts = "\n".join(report)
 
-STATISTICS = {str(final_key[0]) for final_key in final}
-ALL_TRENDS = {str(final_key[1]) for final_key in final}
-NSTOCHASTICS = {int(final_key[-1]) for final_key in final}
 quantiles_d = defaultdict(list)
 pval_data = {}
-for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
+# In the order of the results, as the critical values, so that the order of the
+# keys in the output does not depend on the hash of the strings
+for multi_key in final:
     # TODO: Bug in pandas-stubs prevents valid index types
-    pval_data[multi_key] = final[multi_key].loc[:, 2000]
+    # A list so that there is a column for each file, even if there is one
+    pval_data[multi_key] = final[multi_key].loc[:, [2000]]
     # TODO: Bug in pandas-stubs prevents valid index types
-    temp_series = final[multi_key].loc[:, 2000].mean(axis=1)
+    temp_series = final[multi_key].loc[:, [2000]].mean(axis=1)
     # This is a series since there are many columns with 2000
     temp_series.name = multi_key[-1]
     quantiles_d[multi_key[:-1]].append(temp_series)
@@ -225,28 +206,29 @@ for key in quantiles_d:
     quantiles[key] = pd.concat(selected, axis=1)
 
 
-plt.rc("figure", figsize=(16, 8))
-sns.set_style("darkgrid")
-pdf = matplotlib.backends.backend_pdf.PdfPages("output.pdf")
-for quantile_key, quantile_value in quantiles.items():
-    temp = quantile_value
-    y = temp.index.to_numpy()[:, None]
-    x = temp.to_numpy()
-    stat = quantile_key[0]
-    if stat in ("z_t", "z_a"):
-        x = -1 * x
-    if stat in ("p_u", "p_z"):
-        y = 1 - y
-    fig, ax = plt.subplots(1, 1)
-    plt.plot(x, y)
-    plt.title(", ".join(quantile_key))
-    pdf.savefig(fig)
-    if stat in ("p_u", "p_z"):
+if args.plot:
+    plt.rc("figure", figsize=(16, 8))
+    sns.set_style("darkgrid")
+    pdf = matplotlib.backends.backend_pdf.PdfPages("output.pdf")
+    for quantile_key, quantile_value in quantiles.items():
+        temp = quantile_value
+        y = temp.index.to_numpy()[:, None]
+        x = temp.to_numpy()
+        stat = quantile_key[0]
+        if stat in ("z_t", "z_a"):
+            x = -1 * x
+        if stat in ("p_u", "p_z"):
+            y = 1 - y
         fig, ax = plt.subplots(1, 1)
-        plt.plot(np.log(x), y)
-        plt.title(f"Log {quantile_key[0]}, {quantile_key[1]}")
+        plt.plot(x, y)
+        plt.title(", ".join(quantile_key))
         pdf.savefig(fig)
-pdf.close()
+        if stat in ("p_u", "p_z"):
+            fig, ax = plt.subplots(1, 1)
+            plt.plot(np.log(x), y)
+            plt.title(f"Log {quantile_key[0]}, {quantile_key[1]}")
+            pdf.savefig(fig)
+    pdf.close()
 
 pval_results = {}
 pval_large_p = {}
@@ -254,20 +236,44 @@ pval_small_p = {}
 pval_tau_star = {}
 pval_tau_min = {}
 pval_tau_max = {}
+failures = []
 for pval_key, pval_value in pval_data.items():
     pval_series = pval_value.copy()
     if pval_key[0] in ("p_z", "p_u"):
         pval_series.index = 1 - pval_series.index
         pval_series = -1 * pval_series
     pval_series = pval_series.sort_index()
-    res = fit_pval_model(pval_series)
     out_key = (stat_names[pval_key[0]],) + pval_key[1:]
+    # The two polynomials are fit jointly so that the p-value is continuous, has a
+    # continuous first derivative and is monotone in the statistic
+    small_order, use_log = SMALL_P_MODEL[pval_key[0]]
+    error: RuntimeError | None = None
+    for max_tail_step in MAX_TAIL_STEPS:
+        try:
+            res = fit_smooth_pval_model(
+                pval_series,
+                small_order=small_order,
+                use_log=use_log,
+                max_tail_step=max_tail_step,
+                significant_digits=SIGNIFICANT_DIGITS,
+            )
+        except RuntimeError as exc:
+            error = exc
+            continue
+        if max_tail_step > MAX_TAIL_STEPS[0]:
+            print(f"{out_key}: the p-value steps by up to {max_tail_step} in a tail")
+        break
+    else:
+        failures.append(f"{out_key}: {error}")
+        continue
     pval_results[out_key] = res
     pval_large_p[out_key] = res.large_p
     pval_small_p[out_key] = res.small_p
     pval_tau_min[out_key] = res.tau_min
     pval_tau_max[out_key] = res.tau_max
     pval_tau_star[out_key] = res.tau_star
+if failures:
+    raise RuntimeError("No p-value model for\n" + "\n".join(failures))
 
 
 header = f'''\
@@ -288,10 +294,16 @@ formatted_code += "\n\nPVAL_SMALL_P = " + format_dict(pval_small_p)
 formatted_code += "\n\nPVAL_TAU_MAX = " + format_dict(pval_tau_max)
 formatted_code += "\n\nPVAL_TAU_STAR = " + format_dict(pval_tau_star)
 formatted_code += "\n\nPVAL_TAU_MIN = " + format_dict(pval_tau_min)
+pval_small_p_log = {
+    stat_names[stat]: use_log for stat, (_, use_log) in SMALL_P_MODEL.items()
+}
+formatted_code += "\n\n# Whether the small p polynomials are in log|stat|, or in stat\n"
+formatted_code += "PVAL_SMALL_P_LOG = " + format_dict(pval_small_p_log)
 
 targets = {TargetVersion.PY38, TargetVersion.PY39, TargetVersion.PY310}
 fm = FileMode(target_versions=targets)
 formatted_code = format_file_contents(formatted_code, fast=False, mode=fm)
 
-with open("../phillips_ouliaris.py", "w") as po:
+# CRLF line endings on every platform, as in the repository
+with open(args.output, "w", newline="\r\n") as po:
     po.write(formatted_code)
