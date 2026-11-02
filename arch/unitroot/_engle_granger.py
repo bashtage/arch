@@ -363,14 +363,17 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     trend = check_option("trend", trend, ("n", "c", "ct", "ctt"))
     _check_num_x(num_x)
     key = (trend, num_x)
-    if stat > TAU_MAX[key]:
+    # The bounds of some tables are infinite, and so -inf and inf would reach the
+    # polynomials, which are nan there
+    if stat > TAU_MAX[key] or stat == np.inf:
         return 1.0
-    elif stat < TAU_MIN[key]:
+    elif stat < TAU_MIN[key] or stat == -np.inf:
         return 0.0
     if stat > TAU_STAR[key]:
         params = np.array(LARGE_PARAMETERS[key])
     else:
         params = np.array(SMALL_PARAMETERS[key])
-    order = params.shape[0]
-    x = stat ** np.arange(order)
-    return stats.norm().cdf(params @ x)
+    # The polynomial overflows to -inf or inf for a very large statistic when a
+    # bound is infinite, and the p-value is then 0 or 1
+    with np.errstate(over="ignore"):
+        return float(stats.norm.cdf(np.polynomial.polynomial.polyval(stat, params)))

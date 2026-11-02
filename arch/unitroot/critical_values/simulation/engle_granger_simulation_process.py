@@ -1,19 +1,58 @@
+"""
+Process the output of engle_granger_simulation.py into engle_granger.py.
+
+Run from this directory, after the simulation has written
+engle-granger-results-trend-<trend>-<i>.npz, one file per experiment:
+
+    python engle_granger_simulation_process.py --data-path <dir>
+"""
+
+import argparse
 from collections import defaultdict
 from collections.abc import MutableMapping
-import glob
+import os
+import pathlib
 from typing import cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
-from scipy import stats
-from shared import format_dict
-from statsmodels.regression.linear_model import OLS, WLS
+import pandas as pd
+from shared import fit_smooth_pval_model, format_dict
+from statsmodels.regression.linear_model import OLS
 
 PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
 PERCENTILES = PERCENTILES[::-1]
+# The p-value may be set to 0 below the turning point of the small p polynomial,
+# which is far in the tail, if p is no larger than this there
+MAX_TAIL_STEP = 1e-12
+# The small p polynomial is a cubic in the statistic. It fits the tail better than a
+# quadratic: the largest relative error in p at 0.1% is 0.2%, and 0.6% with a
+# quadratic.
+SMALL_ORDER = 4
 
+parser = argparse.ArgumentParser(description="Process the Engle-Granger simulations")
+parser.add_argument(
+    "--data-path",
+    default="engle-granger",
+    help="Directory containing the engle-granger-results-trend-<trend>-<i>.npz files",
+)
+parser.add_argument(
+    "--output", default=os.path.join("..", "engle_granger.py"), help="File to write"
+)
+# The files hold quantiles only, so the number of simulations per file, EX_SIZE in
+# engle_granger_simulation.py, is only known from the run
+parser.add_argument(
+    "--ex-size",
+    type=int,
+    default=250_000,
+    help="Simulations per file, for the docstring of the output",
+)
+args = parser.parse_args()
 
-files = glob.glob("engle-granger/*.npz")
+# Sorted so that the averages do not depend on the order of the directory
+files = sorted(pathlib.Path(args.data_path).glob("*.npz"))
+if not files:
+    raise FileNotFoundError(f"No .npz files in {args.data_path}")
 input_data = defaultdict(list)
 for f in files:
     contents = np.load(f)
@@ -62,70 +101,58 @@ final_cv["n"] = final_cv["nc"]
 del final_cv["nc"]
 formatted_str = format_dict(final_cv)
 
-header = """
-import numpy as np
-
-eg_num_variables = np.arange(1, 13)
-"""
-
-
-targets = {TargetVersion.PY36, TargetVersion.PY37, TargetVersion.PY38}
-fm = FileMode(target_versions=targets)
-formatted_code = header + "CV_PARAMETERS = " + formatted_str
-
 # %%
+# The p-value models are fit to the quantiles of the largest sample size. The two
+# polynomials, both cubics in the statistic, are fit jointly so that the p-value is
+# continuous, has a continuous first derivative and is monotone in the statistic.
+percentiles = np.array(PERCENTILES) / 100.0
 large_p = {}
 small_p = {}
 tau_max = {}
 tau_star = {}
 tau_min = {}
 for trend in trends:
-    data = final[trend].mean(3)
-    data_std = final[trend].std(3)
-    percentiles = np.array(PERCENTILES)
-    lhs = stats.norm().ppf(percentiles / 100.0)
-    lhs_large = lhs
-    for i in range(1, data.shape[2]):
-        out_trend = "n" if trend == "nc" else trend
-        avg_test_stats = data[:, -1, i]
-        avg_test_std = data_std[:, -1, i]
-        avg_test_stats = avg_test_stats[:, None]
-        rhs = avg_test_stats ** np.arange(4)
-        rhs_large = rhs
-        res_large = WLS(lhs_large, rhs, weights=1.0 / avg_test_std).fit()
-        large_p[(out_trend, i)] = res_large.params.tolist()
+    out_trend = "n" if trend == "nc" else trend
+    # The first statistic is the Dickey-Fuller test of the dependent variable,
+    # which has no regressors
+    for i in range(1, final[trend].shape[2]):
+        quantiles = pd.DataFrame(
+            final[trend][:, np.argmax(sample_sizes), i], index=pd.Index(percentiles)
+        )
+        pvals = fit_smooth_pval_model(
+            quantiles,
+            small_order=SMALL_ORDER,
+            use_log=False,
+            max_tail_step=MAX_TAIL_STEP,
+        )
+        large_p[(out_trend, i)] = pvals.large_p
+        small_p[(out_trend, i)] = pvals.small_p
+        tau_max[(out_trend, i)] = pvals.tau_max
+        tau_star[(out_trend, i)] = pvals.tau_star
+        tau_min[(out_trend, i)] = pvals.tau_min
 
-        # Compute tau_max, by finding the func maximum
-        p = res_large.params
-        poly_roots = np.roots(np.array([3, 2, 1.0]) * p[:0:-1])
-        tau_max[(out_trend, i)] = float(np.squeeze(np.real(np.max(poly_roots))))
+counts = "\n".join(
+    f"Trend {'n' if trend == 'nc' else trend} is based on {final[trend].shape[-1]} "
+    f"experiments of {args.ex_size:,} simulations."
+    for trend in trends
+)
+bounds = list(tau_max.values()) + list(tau_min.values())
+inf_import = "" if np.all(np.isfinite(bounds)) else "from math import inf\n\n"
+header = f'''\
+"""
+Critical values and p-values produced by engle_granger_simulation_process.py
 
-        # Small p regression using only p<=15%
-        cutoff = np.where(percentiles <= 15.0)[0]
-        avg_test_stats = data[cutoff][:, -1, i]
-        avg_test_std = data_std[cutoff][:, -1, i]
-        avg_test_stats = avg_test_stats[:, None]
-        lhs_small = lhs[cutoff]
-        rhs = avg_test_stats ** np.arange(3)
-        res_small = WLS(lhs_small, rhs, weights=1.0 / avg_test_std).fit()
-        small_p[(out_trend, i)] = res_small.params.tolist()
+{counts}
+"""
 
-        # Compute tau star
-        err_large = lhs_large - rhs_large.dot(res_large.params)
-        # Missing 1 parameter here, replace with 0
-        params = np.append(res_small.params, 0.0)
-        err_small = lhs_large - rhs_large.dot(params)
-        # Find the location that minimizes the total absolute error
-        m = lhs_large.shape[0]
-        abs_err = np.zeros((m, 1))
-        for j in range(m):
-            abs_err[j] = np.abs(err_large[:j]).sum() + np.abs(err_small[j:]).sum()
-        loc = np.argmin(abs_err)
-        tau_star[(out_trend, i)] = rhs_large[loc, 1]
-        # Compute tau min
-        tau_min[(out_trend, i)] = -params[1] / (2 * params[2])
+{inf_import}import numpy as np
 
-pvals = (
+eg_num_variables = np.arange(1, 12)
+'''
+
+formatted_code = header + "CV_PARAMETERS = " + formatted_str
+
+pvals_code = (
     "LARGE_PARAMETERS=" + format_dict(large_p),
     "SMALL_PARAMETERS=" + format_dict(small_p),
     "TAU_MAX=" + format_dict(tau_max),
@@ -133,10 +160,17 @@ pvals = (
     "TAU_MIN=" + format_dict(tau_min),
 )
 
-formatted_code += "\n\n" + "\n\n".join(pvals)
+formatted_code += "\n\n" + "\n\n".join(pvals_code) + "\n"
 
-with open("../engle_granger-pre.py", "w") as eg:
-    eg.write(formatted_code)
+targets = {
+    TargetVersion.PY310,
+    TargetVersion.PY311,
+    TargetVersion.PY312,
+    TargetVersion.PY313,
+    TargetVersion.PY314,
+}
+fm = FileMode(target_versions=targets)
 blackened = format_file_contents(formatted_code, fast=False, mode=fm)
-with open("../engle_granger.py", "w") as eg:
+# LF line endings on every platform, as in the repository
+with open(args.output, "w", newline="\n") as eg:
     eg.write(blackened)
