@@ -425,7 +425,7 @@ to restore the previous results.
   relative error of p-values of 0.001 falls from 1.1% to 0.2%, and the largest
   difference from the simulated distribution from 0.006 to 0.005. P-values below 0.15
   change by at most 0.0001, and the largest change is 0.008, at a p-value near 0.7 with
-  ``"n"``. The critical values are unchanged.
+  ``"n"``. The critical values are unchanged (:issue:`995`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
@@ -869,7 +869,8 @@ Bug fixes
   and do not change (:issue:`949`).
 - :func:`~arch.unitroot.cointegration.engle_granger` with 12 columns in ``x`` raised an
   ``IndexError``, since the critical values and p-values are only available for 1 to 11
-  regressors. It now raises a ``ValueError``, and the documentation says 1 to 11.
+  regressors. It now raises a ``ValueError``, and the documentation says 1 to 11
+  (:issue:`995`).
 
 - The summary of the results of
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` now has the title
