@@ -856,6 +856,9 @@ Bug fixes
   or ``"ctt"`` the ``trend`` property, ``str(res)`` and ``summary()`` said constant. The
   statistic, p-value and critical values were computed with the trend that was requested
   and do not change (:issue:`949`).
+- :func:`~arch.unitroot.cointegration.engle_granger` with 12 columns in ``x`` raised an
+  ``IndexError``, since the critical values and p-values are only available for 1 to 11
+  regressors. It now raises a ``ValueError``, and the documentation says 1 to 11.
 
 - The summary of the results of
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` now has the title
