@@ -415,6 +415,17 @@ to restore the previous results.
   Compared with 8.0, with a constant or a trend, p-values below 0.15 change by at most
   0.0001, and the largest change is 0.013, at p-values between 0.7 and 0.8. The
   critical values are unchanged (:issue:`989`).
+- The p-value of :func:`~arch.unitroot.cointegration.engle_granger` is now a smooth and
+  increasing function of the statistic. It is approximated by one polynomial below a
+  cut-off and another above it. These were estimated separately, so the p-value jumped
+  down at the cut-off, by up to 0.011 with ``trend="n"`` and 0.005 with ``"c"``, and
+  jumped up to 1 at the largest statistic covered, by up to 0.009. The two are now
+  cubics, estimated jointly from the same simulations so that they have the same value
+  and slope at the cut-off. The approximation is also more accurate: the largest
+  relative error of p-values of 0.001 falls from 1.1% to 0.2%, and the largest
+  difference from the simulated distribution from 0.006 to 0.005. P-values below 0.15
+  change by at most 0.0001, and the largest change is 0.008, at a p-value near 0.7 with
+  ``"n"``. The critical values are unchanged (:issue:`995`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
@@ -856,6 +867,10 @@ Bug fixes
   or ``"ctt"`` the ``trend`` property, ``str(res)`` and ``summary()`` said constant. The
   statistic, p-value and critical values were computed with the trend that was requested
   and do not change (:issue:`949`).
+- :func:`~arch.unitroot.cointegration.engle_granger` with 12 columns in ``x`` raised an
+  ``IndexError``, since the critical values and p-values are only available for 1 to 11
+  regressors. It now raises a ``ValueError``, and the documentation says 1 to 11
+  (:issue:`995`).
 
 - The summary of the results of
   :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg` now has the title

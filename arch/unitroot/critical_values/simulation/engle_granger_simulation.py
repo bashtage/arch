@@ -86,7 +86,7 @@ def block(
                 _tau -= _tau.mean()
                 _tau2 = np.arange(float(sub_size + 1)) ** 2
                 _tau2 -= _tau2.mean()
-                _tau2 -= (_tau * _tau2).sum() / (_tau**2).sum() * tau
+                _tau2 -= (_tau * _tau2).sum() / (_tau**2).sum() * _tau
                 tau2 = _tau2.reshape((sub_size + 1, 1))
                 coefs = (tau2 * sub).sum(1) / (tau2**2).sum()
                 coefs = np.reshape(

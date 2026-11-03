@@ -192,6 +192,28 @@ def test_pval_max_min():
     assert engle_granger_pval(-300.0, "n", 2) == 0.0
 
 
+@pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
+def test_num_x_range(trend):
+    # The tables have 1 to 11 regressors
+    for num_x in range(1, 12):
+        assert np.all(np.isfinite(engle_granger_cv(trend, num_x, 500)))
+        assert 0 < engle_granger_pval(-3.0, trend, num_x) < 1
+    for num_x in (0, 12):
+        with pytest.raises(ValueError, match=r"between 1 and 11"):
+            engle_granger_cv(trend, num_x, 500)
+        with pytest.raises(ValueError, match=r"between 1 and 11"):
+            engle_granger_pval(-3.0, trend, num_x)
+
+
+def test_twelve_regressors():
+    rs = np.random.RandomState([3920, 3029])
+    xy = rs.standard_normal((200, 13)).cumsum(0)
+    with pytest.raises(ValueError, match=r"between 1 and 11"):
+        engle_granger(xy[:, 0], xy[:, 1:])
+    res = engle_granger(xy[:, 0], xy[:, 1:12])
+    assert 0 <= res.pvalue <= 1
+
+
 def test_exceptions(data):
     if isinstance(data, pd.DataFrame):
         y, x = data.y, data.x
