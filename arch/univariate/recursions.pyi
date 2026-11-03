@@ -2,6 +2,32 @@ from typing import Optional, Union
 
 from arch._typing import Float64Array, Float64Array1D, Float64Array2D, Int32Array
 
+__all__ = [
+    "ARCHInMeanRecursion",
+    "EGARCHUpdater",
+    "EWMAUpdater",
+    "FIAPARCHUpdater",
+    "FIGARCHUpdater",
+    "GARCHUpdater",
+    "HARCHUpdater",
+    "MIDASUpdater",
+    "NGARCHUpdater",
+    "RiskMetrics2006Updater",
+    "VolatilityUpdater",
+    "aparch_recursion",
+    "arch_recursion",
+    "egarch_recursion",
+    "fiaparch_recursion",
+    "figarch_recursion",
+    "figarch_weights",
+    "garch_core",
+    "garch_recursion",
+    "harch_core",
+    "harch_recursion",
+    "midas_recursion",
+    "ngarch_recursion",
+]
+
 def harch_recursion(
     parameters: Float64Array1D,
     resids: Float64Array1D,
@@ -148,6 +174,9 @@ class VolatilityUpdater:
 
 class GARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, o: int, q: int, power: float) -> None: ...
+
+class EGARCHUpdater(VolatilityUpdater):
+    def __init__(self, p: int, o: int, q: int) -> None: ...
 
 class EWMAUpdater(VolatilityUpdater):
     def __init__(self, lam: Optional[float]) -> None: ...
