@@ -865,7 +865,7 @@ Bug fixes
   afterwards. The regression has ``lags + 1`` fewer observations in ADF and DFGLS and
   1 fewer in Phillips-Perron. ``nobs`` of every unit root test now computes the
   statistic if needed, as ``stat`` and ``pvalue`` do, and so raises the same exception
-  as ``stat`` when the statistic cannot be computed.
+  as ``stat`` when the statistic cannot be computed (:issue:`998`).
 
 - Fixed the ``trend`` property of the results of
   :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``
