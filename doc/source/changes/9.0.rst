@@ -872,6 +872,13 @@ Bug fixes
   :func:`~arch.unitroot.cointegration.engle_granger`, which raised a ``ValueError`` when
   no lag had a significant t-statistic. Zero lags are now selected, as they are when
   ``low_memory=False`` (:issue:`946`).
+- Fixed ``nobs`` of :class:`~arch.unitroot.ADF`, :class:`~arch.unitroot.DFGLS` and
+  :class:`~arch.unitroot.PhillipsPerron`, which was the number of observations in ``y``
+  until the statistic had been computed and the number used in the regression
+  afterwards. The regression has ``lags + 1`` fewer observations in ADF and DFGLS and
+  1 fewer in Phillips-Perron. ``nobs`` of every unit root test now computes the
+  statistic if needed, as ``stat`` and ``pvalue`` do, and so raises the same exception
+  as ``stat`` when the statistic cannot be computed (:issue:`998`).
 
 - Fixed the ``trend`` property of the results of
   :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``
