@@ -1,5 +1,16 @@
 """
-Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
+Simulation of ADF z-test and t-test critical values.  Closely follows MacKinnon
+(2010).
+
+Each experiment writes the quantiles of the z-test statistic to
+adf-z/adf_z_<trend>-<i>.npz and those of the t-test statistic, computed from the
+same random walks, to adf-t/adf_t_<trend>-<i>.npz. Files that exist are not
+overwritten, and an experiment is only run if one of its files is missing. The
+generator of an experiment depends only on the trend and i, so the t-test
+quantiles can be added to an existing set of z-test files. With the same
+--max-memory-size, they are then computed from the random walks of those files.
+The z-test files of the tables in dickey_fuller.py were simulated with a memory
+size of 250, so use --max-memory-size 250 to add the t-test quantiles to them.
 """
 
 import argparse
@@ -10,9 +21,10 @@ from typing import cast
 from adf_simulation import (
     OUTPUT_PATH,
     PERCENTILES,
+    T_OUTPUT_PATH,
     TIME_SERIES_LENGTHS,
     TRENDS,
-    adf_simulation,
+    adf_statistics,
 )
 import colorama
 from joblib import Parallel, delayed
@@ -62,17 +74,25 @@ ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
 def single_experiment(
-    trend: str, gen: Generator, file_name: pathlib.Path, max_memory_size: int
+    trend: str,
+    gen: Generator,
+    file_name: pathlib.Path,
+    t_file_name: pathlib.Path | None,
+    max_memory_size: int,
 ) -> None:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
+
+    The t-test quantiles are not saved if t_file_name is None.
     """
 
     res = np.zeros(EX_SIZE)
+    t_res = np.zeros(EX_SIZE)
     output: np.ndarray = np.zeros(
         (len(cast("np.ndarray", PERCENTILES)), len(TIME_SERIES_LENGTHS))
     )
+    t_output: np.ndarray = np.zeros_like(output)
     for col, nobs in enumerate(TIME_SERIES_LENGTHS):
         remaining = EX_SIZE
         finished = 0
@@ -93,15 +113,21 @@ def single_experiment(
                 _trend = "ct"
             else:
                 _trend = "ctt"
-            res[st:en] = adf_simulation(nobs, _trend, count, gen)
+            res[st:en], t_res[st:en] = adf_statistics(nobs, _trend, count, gen)
             finished += count
             remaining -= count
         output[:, col] = np.percentile(res, PERCENTILES)
-    np.savez(file_name, results=output)
+        t_output[:, col] = np.percentile(t_res, PERCENTILES)
+    if not file_name.exists():
+        np.savez(file_name, results=output)
+    if t_file_name is not None and not t_file_name.exists():
+        np.savez(t_file_name, results=t_output)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Simulations for ADF-Z critical values")
+    parser = argparse.ArgumentParser(
+        description="Simulations for ADF-Z and ADF-t critical values"
+    )
     parser.add_argument(
         "--ncpu",
         type=int,
@@ -111,13 +137,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--z_only",
         action="store_true",
-        help="Only execute Z-type tests",
+        help="Only execute Z-type tests, and do not save the t-test quantiles",
     )
     parser.add_argument(
         "--max-memory-size",
         type=int,
         action="store",
-        help="Maximum memory size to use in each thread. Default is 250",
+        help=f"Maximum memory size to use in each thread. Default is {MAX_MEMORY_SIZE}",
     )
 
     args = parser.parse_args()
@@ -129,6 +155,8 @@ if __name__ == "__main__":
     max_memory_size = getattr(args, "max_memory_size", None)
     max_memory_size = MAX_MEMORY_SIZE if max_memory_size is None else max_memory_size
     OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
+    if not args.z_only:
+        T_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
 
     ss = SeedSequence(ENTROPY)
     children = ss.spawn(len(TRENDS) * EX_NUM)
@@ -138,9 +166,16 @@ if __name__ == "__main__":
     for tr in TRENDS:
         for i in range(EX_NUM):
             file_name = OUTPUT_PATH / f"adf_z_{tr}-{i:04d}.npz"
-            jobs.append((tr, generators[count], file_name))
+            t_file_name = (
+                None if args.z_only else T_OUTPUT_PATH / f"adf_t_{tr}-{i:04d}.npz"
+            )
+            jobs.append((tr, generators[count], file_name, t_file_name))
             count += 1
-    jobs = [job for job in jobs if not job[-1].exists()]
+    jobs = [
+        job
+        for job in jobs
+        if not job[2].exists() or (job[3] is not None and not job[3].exists())
+    ]
     random.shuffle(jobs)
     nremconfig = len(jobs)
     nconfig = len(children)
@@ -151,8 +186,9 @@ if __name__ == "__main__":
     print(f"Running on {BLUE}{njobs}{RESET} CPUs")
     if njobs > 1:
         Parallel(verbose=50, n_jobs=njobs)(
-            delayed(single_experiment)(t, g, f, max_memory_size) for t, g, f in jobs
+            delayed(single_experiment)(t, g, f, tf, max_memory_size)
+            for t, g, f, tf in jobs
         )
     else:
         for job in jobs:
-            single_experiment(*job)
+            single_experiment(*job, max_memory_size)
