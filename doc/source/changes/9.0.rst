@@ -426,6 +426,19 @@ to restore the previous results.
   difference from the simulated distribution from 0.006 to 0.005. P-values below 0.15
   change by at most 0.0001, and the largest change is 0.008, at a p-value near 0.7 with
   ``"n"``. The critical values are unchanged (:issue:`995`).
+- The p-value of :class:`~arch.unitroot.DFGLS`, which ``mackinnonp`` returns with
+  ``dist_type="dfgls"``, is now a smooth and increasing function of the statistic. The
+  p-values and the critical values are from a new simulation with 500,000,000 draws for
+  each trend. The p-value is approximated by one polynomial below a cut-off and another
+  above it. These were estimated separately, so with ``trend="c"`` the p-value jumped
+  down by 0.024 at the cut-off. The two are now estimated jointly so that they have the
+  same value and slope at the cut-off. The approximation is also more accurate: the
+  largest error of the p-values of the 1%, 5% and 10% critical values falls from 0.0011
+  to 0.0001, the largest relative error of p-values of 0.0025 from 3.7% to 0.4%, and the
+  largest difference from the simulated distribution from 0.015 to 0.007. P-values
+  below 0.15 change by at most 0.0017, and the largest change is 0.022, at the old
+  cut-off with ``"c"``. The critical values change by at most 0.0011 in the smallest
+  samples and by at most 0.0001 with 100 or more observations.
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
