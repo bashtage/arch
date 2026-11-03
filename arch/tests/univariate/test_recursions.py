@@ -1,4 +1,6 @@
+import ast
 import os
+import pathlib
 import pickle
 import timeit
 import types
@@ -1686,3 +1688,38 @@ def test_fiaparch():
         )
         cython_sigma2 = sigma2.copy()
         assert_allclose(python_sigma2, cython_sigma2)
+
+
+def test_exports():
+    # The compiled and Python implementations export the same names, except the Python
+    # bounds_check, and the stub of the compiled module defines every one of them
+    expected = set(recpy.__all__) - {"bounds_check"}
+    assert all(hasattr(recpy, name) for name in recpy.__all__)
+    stub = ast.parse(
+        pathlib.Path(recpy.__file__).with_name("recursions.pyi").read_text()
+    )
+    defined = {
+        node.name
+        for node in stub.body
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef))
+    }
+    stub_all = [
+        ast.literal_eval(node.value)
+        for node in stub.body
+        if isinstance(node, ast.Assign)
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id == "__all__"
+    ]
+    assert defined == expected
+    assert len(stub_all) == 1
+    assert set(stub_all[0]) == expected
+    if MISSING_EXTENSION:
+        return
+    compiled_public = {
+        name
+        for name, value in vars(rec_cython).items()
+        if not name.startswith("_")
+        and getattr(value, "__module__", None) == rec_cython.__name__
+    }
+    assert compiled_public == expected
+    assert set(rec_cython.__all__) == expected

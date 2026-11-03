@@ -1228,6 +1228,12 @@ Documentation and maintenance
   cannot read a truncated file. The README lists the current features, and the scripts
   that simulate the ADF-Z critical values run without the optional arguments
   (:issue:`985`).
+- Added ``EGARCHUpdater``, which type checkers reported as missing, and ``__all__``
+  to the type stub of the compiled recursions, ``arch.univariate.recursions``.
+  ``FIAPARCHUpdater``, ``RiskMetrics2006Updater`` and ``fiaparch_recursion`` are
+  added to ``__all__`` of the compiled and pure Python recursions, and ``garch_core``
+  and ``harch_core`` to that of the pure Python recursions, so that both export the
+  functions and classes that they share (:issue:`1000`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~

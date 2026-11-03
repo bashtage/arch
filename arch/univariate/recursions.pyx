@@ -22,6 +22,7 @@ __all__ = [
     "figarch_recursion",
     "figarch_weights",
     "aparch_recursion",
+    "fiaparch_recursion",
     "harch_core",
     "garch_core",
     "GARCHUpdater",
@@ -32,7 +33,9 @@ __all__ = [
     "ARCHInMeanRecursion",
     "VolatilityUpdater",
     "FIGARCHUpdater",
+    "FIAPARCHUpdater",
     "MIDASUpdater",
+    "RiskMetrics2006Updater",
 ]
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
