@@ -307,6 +307,24 @@ def test_not_finite_statistic_raises_every_time():
 
 
 @pytest.mark.filterwarnings("ignore::RuntimeWarning")
+@pytest.mark.parametrize(
+    ("test", "match"),
+    [
+        (
+            lambda: VarianceRatio(1.0 + 0.5 * np.arange(NOBS), lags=2),
+            "statistic is nan",
+        ),
+        (lambda: KPSS(1e300 * RANDOM_WALK), "autocovariances of the residuals"),
+    ],
+    ids=["VarianceRatio", "KPSS"],
+)
+def test_nobs_raises_when_statistic_cannot_be_computed(test, match):
+    # nobs returned the length of y for a test without a statistic
+    with pytest.raises(InfeasibleTestException, match=match):
+        _ = test().nobs
+
+
+@pytest.mark.filterwarnings("ignore::RuntimeWarning")
 def test_kpss_extreme_scale_automatic_lags():
     kpss = KPSS(1e300 * RANDOM_WALK)
     with pytest.raises(

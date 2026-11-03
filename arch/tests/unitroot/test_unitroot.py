@@ -888,3 +888,27 @@ def test_adf_z_no_trend_critical_values():
     for nobs, expected in fuller.items():
         cv = mackinnoncrit(regression="n", nobs=nobs, dist_type="adf-z")
         assert_allclose(cv, expected, atol=0.3)
+
+
+# The regressions of ADF and DFGLS lose 1 + lags observations, and that of
+# Phillips-Perron loses 1. KPSS, Zivot-Andrews and the variance ratio report all of y.
+@pytest.mark.parametrize(
+    ("test", "expected"),
+    [
+        (lambda y: ADF(y, lags=2), 97),
+        (lambda y: DFGLS(y, lags=2), 97),
+        (PhillipsPerron, 99),
+        (KPSS, 100),
+        (lambda y: ZivotAndrews(y, lags=2), 100),
+        (lambda y: VarianceRatio(y, lags=2), 100),
+    ],
+    ids=["ADF", "DFGLS", "PhillipsPerron", "KPSS", "ZivotAndrews", "VarianceRatio"],
+)
+def test_nobs_before_and_after_stat(test, expected):
+    # nobs was the length of y until the statistic had been computed
+    y = np.cumsum(np.random.default_rng(0).standard_normal(100))
+    nobs_first = test(y).nobs
+    res = test(y)
+    _ = res.stat
+    assert nobs_first == expected
+    assert res.nobs == expected

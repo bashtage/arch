@@ -774,6 +774,7 @@ class UnitRootTest(metaclass=ABCMeta):
 
         Accounts for loss of data due to lags for regression-based tests.
         """
+        self._compute_if_needed()
         return self._nobs
 
     @property
