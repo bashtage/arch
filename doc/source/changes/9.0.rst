@@ -871,7 +871,7 @@ Bug fixes
   which has ``lags + 1`` fewer, as in :class:`~arch.unitroot.ADF`. ``nobs`` of
   :class:`~arch.unitroot.VarianceRatio` with ``overlap=False`` no longer counts the
   observations at the end of ``y`` that are dropped because they do not fill a
-  block.
+  block (:issue:`999`).
 
 - Fixed the ``trend`` property of the results of
   :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``
