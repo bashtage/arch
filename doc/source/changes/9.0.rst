@@ -438,7 +438,7 @@ to restore the previous results.
   largest difference from the simulated distribution from 0.015 to 0.007. P-values
   below 0.15 change by at most 0.0017, and the largest change is 0.022, at the old
   cut-off with ``"c"``. The critical values change by at most 0.0011 in the smallest
-  samples and by at most 0.0001 with 100 or more observations.
+  samples and by at most 0.0001 with 100 or more observations (:issue:`996`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
