@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v8.0.1 (+741)</title>
+        <title>Change Logs - arch v8.0.1 (+744)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+741)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+741)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+744)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+744)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+741)
+            arch v8.0.1 (+744)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+741)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+741)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+744)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+744)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+741)
+    arch v8.0.1 (+744)
   </label>
   
     <div class="md-nav__source">
@@ -2122,6 +2122,13 @@ are integers. Contributed by raashish1601 (<a class="extlink-issue reference ext
 <a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>, which raised a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when
 no lag had a significant t-statistic. Zero lags are now selected, as they are when
 <code class="docutils literal notranslate"><span class="pre">low_memory=False</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/946">GH946</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">nobs</span></code> of <a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and
+<a class="reference internal" href="unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a>, which was the number of observations in <code class="docutils literal notranslate"><span class="pre">y</span></code>
+until the statistic had been computed and the number used in the regression
+afterwards. The regression has <code class="docutils literal notranslate"><span class="pre">lags</span> <span class="pre">+</span> <span class="pre">1</span></code> fewer observations in ADF and DFGLS and
+1 fewer in Phillips-Perron. <code class="docutils literal notranslate"><span class="pre">nobs</span></code> of every unit root test now computes the
+statistic if needed, as <code class="docutils literal notranslate"><span class="pre">stat</span></code> and <code class="docutils literal notranslate"><span class="pre">pvalue</span></code> do, and so raises the same exception
+as <code class="docutils literal notranslate"><span class="pre">stat</span></code> when the statistic cannot be computed (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/998">GH998</a>).</p></li>
 <li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">trend</span></code> property of the results of
 <a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>, which was always <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/841">GH841</a>), and the same property of the results of
