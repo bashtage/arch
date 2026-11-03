@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.unitroot.cointegration.engle_granger - arch v8.0.1 (+725)</title>
+        <title>arch.unitroot.cointegration.engle_granger - arch v8.0.1 (+732)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+725)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+725)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+732)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+732)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+725)
+            arch v8.0.1 (+732)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+725)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+725)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+732)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+732)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+725)
+    arch v8.0.1 (+732)
   </label>
   
     <div class="md-nav__source">
@@ -1071,7 +1071,7 @@
 1-d and contain only finite values.</p>
 </dd>
 <dt id="arch.unitroot.cointegration.engle_granger.x"><span class="n sig-name">x</span><span class="p">:</span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">ndarray</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a><span class="p">]</span><span class="p">,</span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)">dtype</a><span class="p">[</span>float64<span class="p">]</span><span class="p">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.1)">DataFrame</a></span></span><a class="headerlink" href="#arch.unitroot.cointegration.engle_granger.x" title="Permalink to this definition">¶</a></dt><dd><p>The right-hand-side variables in the cointegrating regression. It must
-be 1-d or 2-d with the same number of rows as y, between 1 and 12 columns,
+be 1-d or 2-d with the same number of rows as y, between 1 and 11 columns,
 the same index as y if both are pandas objects, and contain only finite
 values. The number of rows must be at least two more than the number of
 parameters in the cointegrating regression (the number of columns of x
@@ -1128,7 +1128,7 @@ If None, the algorithm is selected automatically. See
     not a string.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If y or x contains NaN or inf, does not have the required dimensions, the
     same number of rows or the same index, or has too few rows. Also if x has
-    more than 12 columns, lags is negative, max_lags is not between 0 and
+    more than 11 columns, lags is negative, max_lags is not between 0 and
     nobs - 2, or trend or method is not one of the options.</p></li>
 <li><p><a class="reference internal" href="../../warnings.html#arch.utility.exceptions.InfeasibleTestException" title="arch.utility.exceptions.InfeasibleTestException (Python exception) — Raised by the unit root tests when the regression of the test cannot be estimated, for example because the maximum lag length is too large for the number of observations or the series is constant. Reduce max_lags or provide lags. Subclass of RuntimeError."><strong>InfeasibleTestException</strong></a> – If <cite>y</cite> is constant, or the Augmented Dickey-Fuller regression of the
     residual cannot be estimated with the lags requested. This is also a
