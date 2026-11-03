@@ -866,6 +866,12 @@ Bug fixes
   1 fewer in Phillips-Perron. ``nobs`` of every unit root test now computes the
   statistic if needed, as ``stat`` and ``pvalue`` do, and so raises the same exception
   as ``stat`` when the statistic cannot be computed (:issue:`998`).
+- Fixed ``nobs`` of :class:`~arch.unitroot.ZivotAndrews`, which was the number of
+  observations in ``y``. It is now the number of observations in the regression,
+  which has ``lags + 1`` fewer, as in :class:`~arch.unitroot.ADF`. ``nobs`` of
+  :class:`~arch.unitroot.VarianceRatio` with ``overlap=False`` no longer counts the
+  observations at the end of ``y`` that are dropped because they do not fill a
+  block.
 
 - Fixed the ``trend`` property of the results of
   :func:`~arch.unitroot.cointegration.engle_granger`, which was always ``"c"``

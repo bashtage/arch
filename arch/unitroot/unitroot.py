@@ -1958,6 +1958,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._all_stats[start_period + 1 : end_period + 1] = stats[
             start_period + 1 : end_period + 1
         ]
+        # Every regression has the nobs - 1 - lags observations of dy after the lags
+        self._nobs = exog.shape[0]
         self._stat = float(amin(stats))
         self._cv_interpolate()
 
@@ -2007,7 +2009,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         Indicates whether to use all overlapping blocks.  If
         False, the number of observations in y minus 1 must be an exact
         multiple of lags.  If this condition is not satisfied, some values at
-        the end of y will be discarded.
+        the end of y will be discarded, and are not included in nobs.
 
     Raises
     ------
@@ -2115,9 +2117,10 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust
-        y, nobs, q, trend = self._y, self._nobs, self._lags, self._trend
+        # The length of y, since _nobs is set below to the observations that are used
+        y, q, trend = self._y, self._lags, self._trend
         assert q is not None
-        nq = nobs - 1
+        nq = y.shape[0] - 1
         if not overlap:
             # Check length of y
             if nq % q != 0:
@@ -2130,6 +2133,8 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 )
 
         nobs = y.shape[0]
+        # The observations dropped from the end of y are not used
+        self._nobs = nobs
         if trend == "n":
             mu = 0
         else:
