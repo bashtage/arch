@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+732)</title>
+        <title>Version 9 - arch v8.0.1 (+735)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+732)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+732)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+735)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+735)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+732)
+            arch v8.0.1 (+735)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+732)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+732)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+735)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+735)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+732)
+    arch v8.0.1 (+735)
   </label>
   
     <div class="md-nav__source">
@@ -1712,6 +1712,12 @@ imports arch while another one does, such as a worker of a multiprocessing pool,
 cannot read a truncated file. The README lists the current features, and the scripts
 that simulate the ADF-Z critical values run without the optional arguments
 (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">EGARCHUpdater</span></code>, which type checkers reported as missing, and <code class="docutils literal notranslate"><span class="pre">__all__</span></code>
+to the type stub of the compiled recursions, <code class="docutils literal notranslate"><span class="pre">arch.univariate.recursions</span></code>.
+<code class="docutils literal notranslate"><span class="pre">FIAPARCHUpdater</span></code>, <code class="docutils literal notranslate"><span class="pre">RiskMetrics2006Updater</span></code> and <code class="docutils literal notranslate"><span class="pre">fiaparch_recursion</span></code> are
+added to <code class="docutils literal notranslate"><span class="pre">__all__</span></code> of the compiled and pure Python recursions, and <code class="docutils literal notranslate"><span class="pre">garch_core</span></code>
+and <code class="docutils literal notranslate"><span class="pre">harch_core</span></code> to that of the pure Python recursions, so that both export the
+functions and classes that they share (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1000">GH1000</a>).</p></li>
 </ul>
 <h3 id="deprecations-and-removals">Deprecations and removals<a class="headerlink" href="#deprecations-and-removals" title="Link to this heading">¶</a></h3>
 <ul class="simple">
