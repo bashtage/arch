@@ -693,8 +693,8 @@ class TestStepM:
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
         cls.k = k = 500
-        cls.benchmark = fixed_rng.rvs(t)
-        cls.models = fixed_rng.rvs((t, k))
+        cls.benchmark = fixed_rng.rvs(t, random_state=cls.rng)
+        cls.models = fixed_rng.rvs((t, k), random_state=cls.rng)
         index = pd.date_range("2000-01-01", periods=t)
         cls.benchmark_series = pd.Series(cls.benchmark, index=index)
         cls.benchmark_df = pd.DataFrame(cls.benchmark, index=index)
@@ -719,17 +719,17 @@ class TestStepM:
 
     def test_superior_models(self):
         adj_models = self.models - linspace(-1.0, 1.0, self.k)
-        stepm = StepM(self.benchmark, adj_models, reps=120)
+        stepm = StepM(self.benchmark, adj_models, reps=120, seed=23456)
         stepm.compute()
         superior_models = stepm.superior_models
         assert len(superior_models) > 0
-        spa = SPA(self.benchmark, adj_models, reps=120)
+        spa = SPA(self.benchmark, adj_models, reps=120, seed=23456)
         spa.compute()
         assert isinstance(spa.pvalues, pd.Series)
         spa.critical_values(0.05)
         spa.better_models(0.05)
         adj_models = self.models_df - linspace(-3.0, 3.0, self.k)
-        stepm = StepM(self.benchmark_series, adj_models, reps=120)
+        stepm = StepM(self.benchmark_series, adj_models, reps=120, seed=23456)
         stepm.compute()
         superior_models = stepm.superior_models
         assert len(superior_models) > 0
@@ -766,15 +766,15 @@ class TestStepM:
         assert_equal(expected, str(stepm))
 
     def test_single_model(self):
-        stepm = StepM(self.benchmark, self.models[:, 0], size=0.10)
+        stepm = StepM(self.benchmark, self.models[:, 0], size=0.10, seed=23456)
         stepm.compute()
 
-        stepm = StepM(self.benchmark_series, self.models_df.iloc[:, 0])
+        stepm = StepM(self.benchmark_series, self.models_df.iloc[:, 0], seed=23456)
         stepm.compute()
 
     def test_all_superior(self):
         adj_models = self.models - 100.0
-        stepm = StepM(self.benchmark, adj_models, size=0.10)
+        stepm = StepM(self.benchmark, adj_models, size=0.10, seed=23456)
         stepm.compute()
         assert_equal(len(stepm.superior_models), self.models.shape[1])
 
@@ -800,7 +800,7 @@ class TestStepM:
         adj_models = self.models_df - 100.0
         adj_models.iloc[:, :2] -= adj_models.iloc[:, :2].mean()
         adj_models.iloc[:, :2] += self.benchmark_df.mean().iloc[0]
-        stepm = StepM(self.benchmark_df, adj_models, size=0.10)
+        stepm = StepM(self.benchmark_df, adj_models, size=0.10, seed=23456)
         stepm.compute()
         assert_equal(len(stepm.superior_models), self.models.shape[1] - 2)
 
