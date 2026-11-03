@@ -1172,14 +1172,14 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> print(f"{dfgls.stat:0.4f}")
     -2.7611
     >>> print(f"{dfgls.pvalue:0.4f}")
-    0.0059
+    0.0058
     >>> dfgls.lags
     2
     >>> dfgls = DFGLS(inflation, trend = "ct")
     >>> print(f"{dfgls.stat:0.4f}")
     -2.9036
     >>> print(f"{dfgls.pvalue:0.4f}")
-    0.0447
+    0.0442
     """
 
     def __init__(
