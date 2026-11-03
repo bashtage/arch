@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v8.0.1 (+744)</title>
+        <title>arch.unitroot.unitroot - arch v8.0.1 (+753)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+744)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+744)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+753)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+753)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+744)
+            arch v8.0.1 (+753)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+744)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+744)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+753)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+753)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+744)
+    arch v8.0.1 (+753)
   </label>
   
     <div class="md-nav__source">
@@ -2500,6 +2500,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_all_stats</span><span class="p">[</span><span class="n">start_period</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">end_period</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span>
             <span class="n">start_period</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">end_period</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">]</span>
+        <span class="c1"># Every regression has the nobs - 1 - lags observations of dy after the lags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">amin</span><span class="p">(</span><span class="n">stats</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolate</span><span class="p">()</span>
 
@@ -2552,7 +2554,7 @@
 <span class="sd">        Indicates whether to use all overlapping blocks.  If</span>
 <span class="sd">        False, the number of observations in y minus 1 must be an exact</span>
 <span class="sd">        multiple of lags.  If this condition is not satisfied, some values at</span>
-<span class="sd">        the end of y will be discarded.</span>
+<span class="sd">        the end of y will be discarded, and are not included in nobs.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -2660,9 +2662,10 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">overlap</span><span class="p">,</span> <span class="n">debiased</span><span class="p">,</span> <span class="n">robust</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debiased</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust</span>
-        <span class="n">y</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
+        <span class="c1"># The length of y, since _nobs is set below to the observations that are used</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
         <span class="k">assert</span> <span class="n">q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">nq</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">nq</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">overlap</span><span class="p">:</span>
             <span class="c1"># Check length of y</span>
             <span class="k">if</span> <span class="n">nq</span> <span class="o">%</span> <span class="n">q</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -2675,6 +2678,8 @@
                 <span class="p">)</span>
 
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># The observations dropped from the end of y are not used</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="n">nobs</span>
         <span class="k">if</span> <span class="n">trend</span> <span class="o">==</span> <span class="s2">"n"</span><span class="p">:</span>
             <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
