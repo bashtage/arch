@@ -1233,7 +1233,7 @@ Documentation and maintenance
   ``FIAPARCHUpdater``, ``RiskMetrics2006Updater`` and ``fiaparch_recursion`` are
   added to ``__all__`` of the compiled and pure Python recursions, and ``garch_core``
   and ``harch_core`` to that of the pure Python recursions, so that both export the
-  functions and classes that they share.
+  functions and classes that they share (:issue:`1000`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
