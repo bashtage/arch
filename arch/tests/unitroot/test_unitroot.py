@@ -33,7 +33,11 @@ from arch.unitroot.unitroot import (
     mackinnoncrit,
     mackinnonp,
 )
-from arch.utility.exceptions import InfeasibleTestException, PerformanceWarning
+from arch.utility.exceptions import (
+    InfeasibleTestException,
+    InvalidLengthWarning,
+    PerformanceWarning,
+)
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -890,8 +894,10 @@ def test_adf_z_no_trend_critical_values():
         assert_allclose(cv, expected, atol=0.3)
 
 
-# The regressions of ADF and DFGLS lose 1 + lags observations, and that of
-# Phillips-Perron loses 1. KPSS, Zivot-Andrews and the variance ratio report all of y.
+# The regressions of ADF, DFGLS and Zivot-Andrews lose 1 + lags observations, and
+# that of Phillips-Perron loses 1. KPSS and the variance ratio use all of y, except
+# the end of y that does not fill a block when the blocks do not overlap.
+@pytest.mark.filterwarnings("ignore::arch.utility.exceptions.InvalidLengthWarning")
 @pytest.mark.parametrize(
     ("test", "expected"),
     [
@@ -899,10 +905,21 @@ def test_adf_z_no_trend_critical_values():
         (lambda y: DFGLS(y, lags=2), 97),
         (PhillipsPerron, 99),
         (KPSS, 100),
-        (lambda y: ZivotAndrews(y, lags=2), 100),
+        (lambda y: ZivotAndrews(y, lags=2), 97),
         (lambda y: VarianceRatio(y, lags=2), 100),
+        (lambda y: VarianceRatio(y, lags=3, overlap=False), 100),
+        (lambda y: VarianceRatio(y, lags=4, overlap=False), 97),
     ],
-    ids=["ADF", "DFGLS", "PhillipsPerron", "KPSS", "ZivotAndrews", "VarianceRatio"],
+    ids=[
+        "ADF",
+        "DFGLS",
+        "PhillipsPerron",
+        "KPSS",
+        "ZivotAndrews",
+        "VarianceRatio",
+        "VarianceRatio-blocks-of-3",
+        "VarianceRatio-blocks-of-4",
+    ],
 )
 def test_nobs_before_and_after_stat(test, expected):
     # nobs was the length of y until the statistic had been computed
@@ -912,3 +929,24 @@ def test_nobs_before_and_after_stat(test, expected):
     _ = res.stat
     assert nobs_first == expected
     assert res.nobs == expected
+
+
+@pytest.mark.parametrize("trend", ["c", "t", "ct"])
+def test_zivot_andrews_nobs_with_selected_lags(trend):
+    # The regression loses 1 + lags observations, with the lags selected by ADF
+    y = np.cumsum(np.random.default_rng(0).standard_normal(100))
+    za = ZivotAndrews(y, trend=trend, max_lags=8)
+    assert za.nobs == y.shape[0] - 1 - za.lags
+
+
+def test_variance_ratio_nobs_without_overlap():
+    # The 99 differences do not fill blocks of 4, so the last 3 observations of y are
+    # dropped, and the test is the same as the test of the first 97
+    y = np.cumsum(np.random.default_rng(0).standard_normal(100))
+    vr = VarianceRatio(y, lags=4, overlap=False)
+    with pytest.warns(InvalidLengthWarning):
+        assert vr.nobs == 97
+    first = VarianceRatio(y[:97], lags=4, overlap=False)
+    assert first.nobs == 97
+    assert_allclose(vr.stat, first.stat, rtol=1e-12)
+    assert_allclose(vr.vr, first.vr, rtol=1e-12)
