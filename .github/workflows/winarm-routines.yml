@@ -1,0 +1,81 @@
+name: Windows ARM OpenBLAS routines
+
+# Experiment, not for merging (see #1003). Calls the LAPACK and BLAS routines in
+# numpy's OpenBLAS directly, with ctypes, to find the routine that crashes on Windows on
+# ARM: getrf, getrs, gesv, getri, potrf, trsm, laswp, gemm and gemv. Also sets the
+# number of threads at run time with openblas_set_num_threads, to find whether the
+# crash follows the number of threads when OpenBLAS starts or when it is called. Only
+# numpy is installed: arch is not built or tested.
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# A new push cancels the run of the one before
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map:
+    name: OPENBLAS_NUM_THREADS ${{ matrix.threads }}, set to ${{ matrix.set-threads || 'no change' }}
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        # threads is OPENBLAS_NUM_THREADS when OpenBLAS starts, and set-threads the
+        # number given to openblas_set_num_threads before the calls
+        include:
+          - threads: "1"
+          - threads: "4"
+          - threads: "unset"
+          - threads: "unset"
+            set-threads: "1"
+          - threads: "4"
+            set-threads: "1"
+          - threads: "1"
+            set-threads: "4"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          architecture: arm64
+
+      - name: Check that Python is ARM64
+        run: python -c "import sys, sysconfig; print(sys.version, sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
+
+      - name: Install numpy
+        run: |
+          python -m pip install --only-binary=:all: numpy==2.5.4
+
+      - name: Show the system and the BLAS
+        run: python ci/github-actions/winarm_blas.py info
+
+      # inv and solve are numpy.linalg's, to compare with
+      - name: Map the sizes that crash
+        working-directory: ${{ runner.temp }}
+        env:
+          THREADS: ${{ matrix.threads }}
+          SET_THREADS: ${{ matrix.set-threads }}
+        run: |
+          args=(--calls openblas,inv,solve --threads "${THREADS}")
+          if [[ -n "${SET_THREADS}" ]]; then
+            args+=(--set-threads "${SET_THREADS}")
+          fi
+          python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md "${args[@]}"
+
+      - name: Upload the report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: routines-threads-${{ matrix.threads }}-set-${{ matrix.set-threads || 'none' }}
+          path: ${{ runner.temp }}/report.md
+          if-no-files-found: ignore
