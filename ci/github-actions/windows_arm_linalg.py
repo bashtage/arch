@@ -20,7 +20,9 @@ import hashlib
 import importlib.util
 import json
 import os
-import subprocess
+
+# Runs this script in new processes, so that a crash does not stop the others
+import subprocess  # nosec B404
 import sys
 
 # The tests that crashed in the first run, as paths in the tests of the installed arch
@@ -55,9 +57,10 @@ SWEEP_MAX = 160
 
 def blas_info() -> str:
     """The BLAS libraries that numpy loaded"""
-    import numpy as np  # noqa: F401, PLC0415
     from threadpoolctl import threadpool_info  # noqa: PLC0415
 
+    # threadpoolctl only finds the BLAS of the modules that are loaded
+    importlib.import_module("numpy")
     keys = ("internal_api", "version", "architecture", "threading_layer", "num_threads")
     return json.dumps([{k: i.get(k) for k in keys} for i in threadpool_info()])
 
@@ -140,7 +143,8 @@ def child(args: list[str], coretype: str | None = None, threads: str | None = No
         env["OPENBLAS_NUM_THREADS"] = env["OMP_NUM_THREADS"] = threads
     cmd = [sys.executable, "-X", "faulthandler", os.path.abspath(__file__), *args]
     try:
-        proc = subprocess.run(
+        # Only this script, with arguments from this script, and without a shell
+        proc = subprocess.run(  # nosec B603
             cmd, capture_output=True, text=True, env=env, timeout=900, check=False
         )
     except subprocess.TimeoutExpired as exc:
@@ -190,8 +194,8 @@ def main(outdir: str) -> int:
 
     os.makedirs(outdir, exist_ok=True)
     spec = importlib.util.find_spec("arch")
-    assert spec is not None
-    assert spec.submodule_search_locations is not None
+    if spec is None or not spec.submodule_search_locations:
+        raise RuntimeError("arch is not installed")
     tests_dir = os.path.join(spec.submodule_search_locations[0], "tests")
     summary = ["## numpy.linalg on Windows on ARM", ""]
 
