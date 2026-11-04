@@ -212,15 +212,33 @@ class OpenBLAS:
             )  # fmt: skip
             self._info(info, name)
             check(close(mul(a, x), b), "A x != b")
-        elif name == "dgesv":
+        elif name in ("dgesv", "dgesv-3"):
+            rhs = b if name == "dgesv" else bb
+            nrhs = 1 if rhs.ndim == 1 else rhs.shape[1]
             work = np.array(a, order="F")
-            x = np.array(b, order="F")
+            x = np.array(rhs, order="F")
             ipiv = np.zeros(n, dtype=self.np_int)
             self.fortran("dgesv")(
-                self.i(n), self.i(1), self.ptr(work), self.i(n), self.iptr(ipiv),
+                self.i(n), self.i(nrhs), self.ptr(work), self.i(n), self.iptr(ipiv),
                 self.ptr(x), self.i(n), ctypes.byref(info),
             )  # fmt: skip
             self._info(info, name)
+            check(close(mul(a, x), rhs), "A X != B")
+        elif name == "dgetrf-dgetrs":
+            # What dgesv does inside, as two calls
+            work = np.array(a, order="F")
+            x = np.array(b, order="F")
+            ipiv = np.zeros(n, dtype=self.np_int)
+            self.fortran("dgetrf")(
+                self.i(n), self.i(n), self.ptr(work), self.i(n), self.iptr(ipiv),
+                ctypes.byref(info),
+            )  # fmt: skip
+            self._info(info, "dgetrf")
+            self.fortran("dgetrs")(
+                self.ch("N"), self.i(n), self.i(1), self.ptr(work), self.i(n),
+                self.iptr(ipiv), self.ptr(x), self.i(n), ctypes.byref(info), one,
+            )  # fmt: skip
+            self._info(info, "dgetrs")
             check(close(mul(a, x), b), "A x != b")
         elif name == "dgetri":
             inv = np.array(lu, order="F")
@@ -387,6 +405,8 @@ OPENBLAS_CALLS = [
     "dgetrf",
     "dgetrs",
     "dgesv",
+    "dgesv-3",
+    "dgetrf-dgetrs",
     "dgetri",
     "dpotrf",
     "dtrsm",
