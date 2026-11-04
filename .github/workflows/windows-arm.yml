@@ -3,6 +3,12 @@ name: Windows ARM
 # Builds the wheel on Windows on ARM (ARM64) and tests the installed package. numpy,
 # scipy, pandas, statsmodels, matplotlib and numba all have win_arm64 wheels, so arch
 # is the only package that is compiled.
+#
+# The first run crashed (access violation) in numpy.linalg.inv and solve, in the
+# OpenBLAS of numpy's win_arm64 wheel, in the unit root tests. Until that is isolated,
+# only the univariate and the multiple comparison tests run, in a single process with
+# the name of each test, and the tests that crashed are run on their own to find the
+# matrices that crash and whether numpy alone crashes on them.
 
 on:
   push:
@@ -27,8 +33,6 @@ jobs:
       MKL_NUM_THREADS: 1
       OMP_NUM_THREADS: 1
       OPENBLAS_NUM_THREADS: 1
-      # The same hash seed in every pytest-xdist worker, so that they collect the same
-      # tests
       PYTHONHASHSEED: 12345678
       MPLBACKEND: agg
 
@@ -53,7 +57,7 @@ jobs:
       - name: Install the dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --only-binary=:all: numpy scipy pandas statsmodels matplotlib seaborn numba "pytest>=9,<10" pytest-xdist
+          python -m pip install --only-binary=:all: numpy scipy pandas statsmodels matplotlib seaborn numba "pytest>=9,<10" threadpoolctl
 
       - name: Build the wheel
         run: |
@@ -67,15 +71,45 @@ jobs:
       - name: List the packages
         run: python -m pip list
 
+      # The BLAS that numpy was built with and the one, and the kernels, it loads
+      - name: Show the BLAS
+        run: |
+          python -c "import numpy; numpy.show_config()"
+          python -m threadpoolctl -i numpy
+
       # arch falls back to the pure Python code when an extension cannot be imported, so
       # import them directly. Outside of the source tree, so that the installed package
       # is imported.
       - name: Check that the compiled extensions load
+        id: extensions
         working-directory: ${{ runner.temp }}
         run: |
           python -c "from arch.univariate import recursions; print(recursions.__file__)"
           python -c "from arch.bootstrap import _samplers; print(_samplers.__file__)"
 
-      - name: Run the tests
+      # One process, with the name of each test shown before it runs, so that a crash
+      # names the test
+      - name: Run the univariate tests
         working-directory: ${{ runner.temp }}
-        run: python -c "import arch; arch.test(['-n', 'auto', '-m', 'not slow', '--durations=25'])"
+        run: python -X faulthandler -c "import arch; arch.test(['-v', '-m', 'not slow', '--durations=25'], location='tests/univariate')"
+
+      # Only when the univariate tests pass
+      - name: Run the multiple comparison tests
+        working-directory: ${{ runner.temp }}
+        run: python -X faulthandler -c "import arch; arch.test(['-v', '-m', 'not slow', '-k', 'multiple_comparison', '--durations=25'], location='tests/bootstrap')"
+
+      # Runs whether or not the tests pass. The results are in the log and the job
+      # summary, and the matrices that crashed are uploaded.
+      - name: Isolate the crashes in numpy.linalg
+        if: ${{ !cancelled() && steps.extensions.outcome == 'success' }}
+        continue-on-error: true
+        working-directory: ${{ runner.temp }}
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" linalg-crashes
+
+      - name: Upload the matrices that crashed
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-arm-linalg-crashes
+          path: ${{ runner.temp }}/linalg-crashes
+          if-no-files-found: ignore

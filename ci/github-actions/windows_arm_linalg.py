@@ -1,0 +1,269 @@
+"""
+Isolate the access violations in numpy.linalg on Windows on ARM.
+
+The tests that crashed in the first Windows on ARM run are run one at a time, each in
+its own process. Before every call to numpy.linalg.inv or solve the arguments are
+saved, so that after a crash the file holds the matrix that crashed. Each of these
+matrices is then passed to inv or solve in new processes that only import numpy, with
+the OpenBLAS kernels that OpenBLAS picks and with others, and with 1 and 4 threads.
+A sweep over random matrices of sizes 1 to 160 runs in each of these configurations.
+
+    python windows_arm_linalg.py OUTPUT_DIR
+
+The saved matrices of the crashes are left in OUTPUT_DIR. Exits with 1 if any test
+crashes.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import importlib.util
+import json
+import os
+import subprocess
+import sys
+
+# The tests that crashed in the first run, as paths in the tests of the installed arch
+TESTS = [
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-None-None-ct]",
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-None-None-ctt]",
+    "unitroot/test_dynamic_ols.py::test_smoke[False-aic-None-False-None-None-ct]",
+    "unitroot/test_dynamic_ols.py::test_smoke[False-aic-None-False-None-None-ctt]",
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-None-2-n]",
+    "unitroot/test_dynamic_ols.py::test_smoke[False-aic-None-False-None-2-n]",
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-None-2-c]",
+    "unitroot/test_dynamic_ols.py::test_smoke[False-aic-None-False-None-2-c]",
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-3-None-ctt]",
+    "unitroot/test_dynamic_ols.py::test_smoke[False-aic-None-False-3-None-ctt]",
+    "unitroot/test_dynamic_ols.py::test_direct_eviews[pandas-config3]",
+    "unitroot/test_dynamic_ols.py::test_direct_eviews[numpy-config3]",
+    "unitroot/test_unitroot.py::test_autolag_warning",
+    "unitroot/test_unitroot.py::TestUnitRoot::test_dfgls_auto_low_memory",
+]
+# Tests that passed, to compare with: larger and smaller matrices than the crashes
+CONTROLS = [
+    "unitroot/test_dynamic_ols.py::test_smoke[True-aic-None-False-None-None-c]",
+    "unitroot/test_dynamic_ols.py::test_smoke[True-bic-None-False-None-None-ct]",
+]
+# OPENBLAS_CORETYPE, where None lets OpenBLAS pick the kernels, and the threads
+CORETYPES = [None, "ARMV8", "NEOVERSEN1", "CORTEXA57"]
+THREADS = ["1", "4"]
+REPEATS = 50
+SWEEP_PASSES = 3
+SWEEP_MAX = 160
+
+
+def blas_info() -> str:
+    """The BLAS libraries that numpy loaded"""
+    import numpy as np  # noqa: F401, PLC0415
+    from threadpoolctl import threadpool_info  # noqa: PLC0415
+
+    keys = ("internal_api", "version", "architecture", "threading_layer", "num_threads")
+    return json.dumps([{k: i.get(k) for k in keys} for i in threadpool_info()])
+
+
+def run_test(nodeid: str, dump: str) -> None:
+    """Run a test and save the arguments of every inv and solve before the call"""
+    import numpy as np  # noqa: PLC0415
+    import pytest  # noqa: PLC0415
+
+    from arch.unitroot import unitroot  # noqa: PLC0415
+
+    calls = [0]
+
+    def wrap(name, func):
+        def wrapper(a, *args, **kwargs):
+            calls[0] += 1
+            arrays = {"a": np.asarray(a)}
+            if args:
+                arrays["b"] = np.asarray(args[0])
+            with open(dump, "wb") as f:
+                np.savez(f, func=np.array(name), call=np.array(calls[0]), **arrays)
+                f.flush()
+                os.fsync(f.fileno())
+            return func(a, *args, **kwargs)
+
+        return wrapper
+
+    inv = wrap("inv", np.linalg.inv)
+    solve = wrap("solve", np.linalg.solve)
+    # cointegration calls np.linalg.inv and unitroot imports inv and solve by name
+    np.linalg.inv = inv
+    np.linalg.solve = solve
+    unitroot.inv = inv
+    unitroot.solve = solve
+    print("BLAS", blas_info(), flush=True)
+    sys.exit(pytest.main([nodeid, "-v", "-p", "no:cacheprovider", "-p", "no:randomly"]))
+
+
+def replay(dump: str) -> None:
+    """Call inv or solve on a saved matrix in a process that only imports numpy"""
+    import numpy as np  # noqa: PLC0415
+
+    print("BLAS", blas_info(), flush=True)
+    data = np.load(dump)
+    func, a = str(data["func"]), data["a"]
+    for _ in range(REPEATS):
+        if func == "inv":
+            np.linalg.inv(a)
+        else:
+            np.linalg.solve(a, data["b"])
+    print("ok", flush=True)
+
+
+def sweep() -> None:
+    """inv and solve of random positive definite matrices of increasing size"""
+    import numpy as np  # noqa: PLC0415
+
+    print("BLAS", blas_info(), flush=True)
+    rng = np.random.default_rng(0)
+    for _ in range(SWEEP_PASSES):
+        for n in range(1, SWEEP_MAX + 1):
+            x = rng.standard_normal((max(2 * n, 200), n))
+            a = x.T @ x / x.shape[0]
+            print(f"inv {n}", flush=True)
+            np.linalg.inv(a)
+            print(f"solve {n}", flush=True)
+            np.linalg.solve(a, rng.standard_normal(n))
+            print(f"solve (n, 3) {n}", flush=True)
+            np.linalg.solve(a, rng.standard_normal((n, 3)))
+    print("ok", flush=True)
+
+
+def child(args: list[str], coretype: str | None = None, threads: str | None = None):
+    """Run this script in a new process and return its outcome and output"""
+    env = os.environ.copy()
+    env.pop("OPENBLAS_CORETYPE", None)
+    if coretype is not None:
+        env["OPENBLAS_CORETYPE"] = coretype
+    if threads is not None:
+        env["OPENBLAS_NUM_THREADS"] = env["OMP_NUM_THREADS"] = threads
+    cmd = [sys.executable, "-X", "faulthandler", os.path.abspath(__file__), *args]
+    try:
+        proc = subprocess.run(
+            cmd, capture_output=True, text=True, env=env, timeout=900, check=False
+        )
+    except subprocess.TimeoutExpired as exc:
+        out = exc.stdout or ""
+        if isinstance(out, bytes):
+            out = out.decode(errors="replace")
+        return "timeout", out
+    code = proc.returncode
+    if code == 0:
+        outcome = "ok"
+    elif code in (1, 2, 3, 4, 5):
+        outcome = f"failed ({code})"
+    else:
+        outcome = f"crashed (0x{code & 0xFFFFFFFF:08X})"
+    return outcome, proc.stdout + proc.stderr
+
+
+def architecture(out: str) -> str:
+    """The OpenBLAS kernels from the BLAS line of a child's output"""
+    for line in out.splitlines():
+        if line.startswith("BLAS "):
+            info = json.loads(line[5:])
+            return ", ".join(f"{i['architecture']} ({i['version']})" for i in info)
+    return "?"
+
+
+def last_line(out: str) -> str:
+    lines = [line for line in out.splitlines() if line and not line.startswith("BLAS")]
+    return lines[-1] if lines else ""
+
+
+def describe(dump: str) -> str:
+    """The function, shape and call number of a saved matrix"""
+    import numpy as np  # noqa: PLC0415
+
+    data = np.load(dump)
+    a = data["a"]
+    text = f"{data['func']} #{data['call']} of {a.shape} {a.dtype}"
+    if "b" in data:
+        text += f", b {data['b'].shape}"
+    return text
+
+
+def main(outdir: str) -> int:
+    # Only to read the saved matrices: this process does not call numpy.linalg
+    import numpy as np  # noqa: PLC0415
+
+    os.makedirs(outdir, exist_ok=True)
+    spec = importlib.util.find_spec("arch")
+    assert spec is not None
+    assert spec.submodule_search_locations is not None
+    tests_dir = os.path.join(spec.submodule_search_locations[0], "tests")
+    summary = ["## numpy.linalg on Windows on ARM", ""]
+
+    _, out = child(["--blas"])
+    summary += ["BLAS: " + out.strip(), ""]
+
+    summary += ["### Each test in its own process", ""]
+    summary += ["| Test | Outcome | Last inv or solve |", "|---|---|---|"]
+    crashes: dict[str, str] = {}
+    for i, test in enumerate(TESTS + CONTROLS):
+        dump = os.path.join(outdir, f"test-{i:02d}.npz")
+        outcome, out = child(["--test", os.path.join(tests_dir, test), dump])
+        last = describe(dump) if os.path.exists(dump) else ""
+        print(f"{test}: {outcome}; last call {last}", flush=True)
+        if outcome.startswith("crashed"):
+            print("\n".join(out.splitlines()[-40:]), flush=True)
+            if last:
+                # Replay each matrix once, however many tests crashed on it
+                data = np.load(dump)
+                key = data["a"].tobytes() + data.get("b", np.empty(0)).tobytes()
+                crashes.setdefault(hashlib.sha256(key).hexdigest(), dump)
+        elif os.path.exists(dump):
+            os.remove(dump)
+        summary.append(f"| `{test}` | {outcome} | {last} |")
+
+    summary += ["", "### The saved matrices of the crashes, with only numpy", ""]
+    summary += ["| Matrix | OPENBLAS_CORETYPE | Threads | Kernels | Outcome |"]
+    summary += ["|---|---|---|---|---|"]
+    for dump in crashes.values():
+        for coretype in CORETYPES:
+            for threads in THREADS:
+                outcome, out = child(["--replay", dump], coretype, threads)
+                row = (
+                    f"| {os.path.basename(dump)}: {describe(dump)} | {coretype} "
+                    f"| {threads} | {architecture(out)} | {outcome} |"
+                )
+                print(row, flush=True)
+                summary.append(row)
+
+    summary += ["", "### Random matrices of sizes 1 to 160, with only numpy", ""]
+    summary += ["| OPENBLAS_CORETYPE | Threads | Kernels | Outcome | Last call |"]
+    summary += ["|---|---|---|---|---|"]
+    for coretype in CORETYPES:
+        for threads in THREADS:
+            outcome, out = child(["--sweep"], coretype, threads)
+            row = (
+                f"| {coretype} | {threads} | {architecture(out)} | {outcome} "
+                f"| {last_line(out)} |"
+            )
+            print(row, flush=True)
+            summary.append(row)
+
+    text = "\n".join(summary) + "\n"
+    with open(os.path.join(outdir, "summary.md"), "w") as f:
+        f.write(text)
+    if "GITHUB_STEP_SUMMARY" in os.environ:
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+            f.write(text)
+    print(text)
+    return 1 if crashes else 0
+
+
+if __name__ == "__main__":
+    if sys.argv[1] == "--blas":
+        print(blas_info())
+    elif sys.argv[1] == "--test":
+        run_test(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "--replay":
+        replay(sys.argv[2])
+    elif sys.argv[1] == "--sweep":
+        sweep()
+    elif sys.argv[1].startswith("-"):
+        sys.exit(f"Unknown option {sys.argv[1]}")
+    else:
+        sys.exit(main(sys.argv[1]))
