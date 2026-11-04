@@ -15,10 +15,11 @@ crashes.
 
     python windows_arm_linalg.py --sizes OUTPUT_DIR
 
-maps the sizes at which inv of the identity, and inv and solve of a random positive
-definite matrix, crash with 1 OpenBLAS thread, each call in its own process that only
-imports numpy, and then tries other numbers of threads at the sizes that crash. Exits
-with 1 if any call crashes.
+maps the sizes at which inv of the identity, and inv, solve, det and cholesky of a
+random positive definite matrix, crash with 1 OpenBLAS thread, and SciPy's inv,
+lu_factor and lu_solve, which use SciPy's own OpenBLAS. Each call runs in its own
+process. At the sizes that crash, it then tries other numbers of threads, and a thread
+with a large stack. Exits with 1 if any call crashes.
 """
 
 from __future__ import annotations
@@ -62,9 +63,20 @@ SWEEP_PASSES = 3
 SWEEP_MAX = 160
 # The map of the sizes that crash: every size to 64, then every 8th
 SIZES = list(range(1, 65)) + list(range(72, SWEEP_MAX + 1, 8))
-OPS = ["inv-identity", "inv-random", "solve-random"]
+OPS = [
+    "inv-identity",
+    "inv-random",
+    "solve-random",
+    "det-random",
+    "cholesky-random",
+    "scipy-inv",
+    "scipy-lu_factor",
+    "scipy-lu_solve",
+]
 # OPENBLAS_NUM_THREADS, where "" leaves it unset so that OpenBLAS picks the number
 THREAD_COUNTS = ["", "1", "2", "3", "4"]
+# The stack of the thread that reruns a call that crashes
+STACK_MB = 64
 
 
 def blas_info() -> str:
@@ -152,15 +164,44 @@ def run_op(op: str, n: int) -> None:
     rng = np.random.default_rng(n)
     x = rng.standard_normal((max(2 * n, 200), n))
     a = x.T @ x / x.shape[0]
+    b = rng.standard_normal(n)
     if op == "inv-identity":
         np.linalg.inv(np.eye(n))
     elif op == "inv-random":
+        # gesv with the identity as the right-hand side
         np.linalg.inv(a)
     elif op == "solve-random":
-        np.linalg.solve(a, rng.standard_normal(n))
+        np.linalg.solve(a, b)
+    elif op == "det-random":
+        # The LU factorization (getrf) without the solve
+        np.linalg.det(a)
+    elif op == "cholesky-random":
+        np.linalg.cholesky(a)
+    elif op.startswith("scipy-"):
+        # SciPy has its own copy of OpenBLAS
+        import scipy.linalg  # noqa: PLC0415
+
+        if op == "scipy-inv":
+            scipy.linalg.inv(a)
+        elif op == "scipy-lu_factor":
+            scipy.linalg.lu_factor(a)
+        elif op == "scipy-lu_solve":
+            scipy.linalg.lu_solve(scipy.linalg.lu_factor(a), b)
+        else:
+            raise ValueError(op)
     else:
         raise ValueError(op)
     print("ok", flush=True)
+
+
+def run_op_in_thread(op: str, n: int) -> None:
+    """run_op in a thread with a large stack, to rule out a stack overflow"""
+    import threading  # noqa: PLC0415
+
+    threading.stack_size(STACK_MB * 1024 * 1024)
+    thread = threading.Thread(target=run_op, args=(op, n))
+    thread.start()
+    thread.join()
 
 
 def child(args: list[str], coretype: str | None = None, threads: str | None = None):
@@ -260,6 +301,15 @@ def map_sizes(outdir: str) -> int:
                 row = f"| {op} | {n} | {threads or 'unset'} | {outcome} |"
                 print(row, flush=True)
                 summary.append(row)
+
+    summary += ["", f"### In a thread with a {STACK_MB} MB stack, with 1 thread", ""]
+    summary += ["| Call | Size | Outcome |", "|---|---|---|"]
+    for op in OPS:
+        for n in check:
+            outcome, _ = child(["--op-in-thread", op, str(n)], threads="1")
+            row = f"| {op} | {n} | {outcome} |"
+            print(row, flush=True)
+            summary.append(row)
 
     text = "\n".join(summary) + "\n"
     with open(os.path.join(outdir, "sizes.md"), "w") as f:
@@ -364,6 +414,8 @@ if __name__ == "__main__":
         sweep()
     elif sys.argv[1] == "--op":
         run_op(sys.argv[2], int(sys.argv[3]))
+    elif sys.argv[1] == "--op-in-thread":
+        run_op_in_thread(sys.argv[2], int(sys.argv[3]))
     elif sys.argv[1] == "--sizes":
         sys.exit(map_sizes(sys.argv[2]))
     elif sys.argv[1].startswith("-"):

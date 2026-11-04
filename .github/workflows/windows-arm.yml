@@ -78,6 +78,7 @@ jobs:
           echo "Runner image: ${ImageOS} ${ImageVersion}"
           powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Format-List Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors; Get-CimInstance Win32_OperatingSystem | Format-List Caption, Version, BuildNumber, OSArchitecture"
           python -c "import numpy; numpy.show_config()"
+          python -c "import scipy; scipy.show_config()"
           python -m threadpoolctl -i numpy
 
       # arch falls back to the pure Python code when an extension cannot be imported, so
