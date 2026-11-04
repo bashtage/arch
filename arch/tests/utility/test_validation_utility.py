@@ -601,6 +601,7 @@ def test_wald_values():
     assert wald.df == 2
     assert isinstance(wald.df, int)
     assert wald.dist_name == "chi2(2)"
+    assert str(wald).endswith("Distributed: chi2(2)")
     # The chi2(2) survival function is exp(-x / 2)
     assert_allclose(wald.pval, np.exp(-1.5), rtol=1e-12)
     assert np.isnan(WaldTestStatistic(np.nan, 1, "a", "b").pval)

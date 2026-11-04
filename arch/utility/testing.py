@@ -83,7 +83,7 @@ class WaldTestStatistic:
         name = "" if not self._name else self._name + "\n"
         return (
             f"{name}H0: {self.null}\n{name}H1: {self.alternative}\nStatistic: {self.stat:0.4f}\n"
-            f"P-value: {self.pval:0.4f}\nDistributed: {self.dist}"
+            f"P-value: {self.pval:0.4f}\nDistributed: {self.dist_name}"
         )
 
     def __repr__(self) -> str:
