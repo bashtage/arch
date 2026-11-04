@@ -1,0 +1,74 @@
+name: Windows ARM numpy versions
+
+# Experiment, not for merging (see #1003). Maps the sizes at which numpy.linalg
+# crashes on Windows on ARM with 1 OpenBLAS thread, for every minor release of numpy
+# with win_arm64 wheels and for the nightly build, to find whether the crash is new and
+# whether it is fixed. Only numpy is installed: arch is not built or tested.
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# A new push cancels the run of the one before
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map:
+    name: numpy ${{ matrix.numpy }}, Python ${{ matrix.python-version }}
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        # 2.3.0 is the first numpy with win_arm64 wheels. Python 3.13 has wheels of all.
+        python-version: ["3.13"]
+        numpy: ["2.3.0", "2.3.5", "2.4.1", "2.4.6", "2.5.0", "2.5.4", "nightly"]
+        include:
+          - python-version: "3.14"
+            numpy: "2.5.4"
+          - python-version: "3.14"
+            numpy: "nightly"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: arm64
+
+      - name: Check that Python is ARM64
+        run: python -c "import sys, sysconfig; print(sys.version, sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
+
+      - name: Install numpy
+        env:
+          NUMPY: ${{ matrix.numpy }}
+        run: |
+          if [[ "${NUMPY}" == "nightly" ]]; then
+            python -m pip install --pre --only-binary=:all: --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple numpy
+          else
+            python -m pip install --only-binary=:all: "numpy==${NUMPY}"
+          fi
+          python -m pip list
+
+      - name: Show the system and the BLAS
+        run: python ci/github-actions/winarm_blas.py info
+
+      # selftest crashes at size 5 on purpose, to show that crashes are found
+      - name: Map the sizes that crash
+        working-directory: ${{ runner.temp }}
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md --calls selftest,inv,solve,solve-3,det,cholesky,matmul --threads 1
+
+      - name: Upload the report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: numpy-${{ matrix.numpy }}-python-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/report.md
+          if-no-files-found: ignore
