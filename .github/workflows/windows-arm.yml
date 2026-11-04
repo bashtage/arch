@@ -1,0 +1,81 @@
+name: Windows ARM
+
+# Builds the wheel on Windows on ARM (ARM64) and tests the installed package. numpy,
+# scipy, pandas, statsmodels, matplotlib and numba all have win_arm64 wheels, so arch
+# is the only package that is compiled.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Windows ARM64, Python ${{ matrix.python-version }}
+    runs-on: windows-11-arm
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.14"]
+    env:
+      MKL_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      # The same hash seed in every pytest-xdist worker, so that they collect the same
+      # tests
+      PYTHONHASHSEED: 12345678
+      MPLBACKEND: agg
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # setuptools_scm reads the version from the tags
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: arm64
+
+      # Fail rather than test an x64 Python that runs under emulation
+      - name: Check that Python is ARM64
+        run: |
+          python -c "import platform, sys; print(sys.version, platform.machine())"
+          python -c "import sys, sysconfig; print(sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
+
+      # Only wheels, so that the job fails if a dependency would have to be compiled
+      - name: Install the dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --only-binary=:all: numpy scipy pandas statsmodels matplotlib seaborn numba "pytest>=9,<10" pytest-xdist
+
+      - name: Build the wheel
+        run: |
+          python -m pip wheel . --no-deps --wheel-dir dist -v
+          ls dist
+
+      - name: Install the wheel
+        run: python -m pip install dist/arch-*-win_arm64.whl
+
+      # After arch is installed so that this shows what is tested
+      - name: List the packages
+        run: python -m pip list
+
+      # arch falls back to the pure Python code when an extension cannot be imported, so
+      # import them directly. Outside of the source tree, so that the installed package
+      # is imported.
+      - name: Check that the compiled extensions load
+        working-directory: ${{ runner.temp }}
+        run: |
+          python -c "from arch.univariate import recursions; print(recursions.__file__)"
+          python -c "from arch.bootstrap import _samplers; print(_samplers.__file__)"
+
+      - name: Run the tests
+        working-directory: ${{ runner.temp }}
+        run: python -c "import arch; arch.test(['-n', 'auto', '-m', 'not slow', '--durations=25'])"
