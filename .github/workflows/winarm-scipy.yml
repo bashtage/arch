@@ -1,0 +1,88 @@
+name: Windows ARM SciPy, stack and faulthandler
+
+# Experiment, not for merging (see #1003). On Windows on ARM, finds whether SciPy's own
+# copy of OpenBLAS crashes too (scipy.linalg and its LAPACK and BLAS wrappers), whether
+# numpy.linalg crashes in a thread with a larger or a smaller stack, and whether it
+# crashes without faulthandler. Only numpy and SciPy are installed: arch is not built or
+# tested.
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# A new push cancels the run of the one before
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map:
+    name: ${{ matrix.name }}
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: scipy-threads-1
+            name: SciPy, 1 thread
+            calls: scipy
+            threads: "1"
+          - id: scipy-threads-4
+            name: SciPy, 4 threads
+            calls: scipy
+            threads: "4"
+          - id: stack-64mb
+            name: numpy, 64 MB stack
+            calls: inv,solve,det
+            threads: "1"
+            options: --stack 64
+          - id: stack-256kb
+            name: numpy, 256 KB stack
+            calls: inv,solve,det
+            threads: "1"
+            options: --stack 0.25
+          - id: no-faulthandler
+            name: numpy, no faulthandler
+            calls: inv,solve,det
+            threads: "1"
+            options: --no-faulthandler
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          architecture: arm64
+
+      - name: Check that Python is ARM64
+        run: python -c "import sys, sysconfig; print(sys.version, sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
+
+      - name: Install numpy and SciPy
+        run: |
+          python -m pip install --only-binary=:all: numpy==2.5.4 scipy==1.18.1
+
+      - name: Show the system and the BLAS
+        run: python ci/github-actions/winarm_blas.py info
+
+      - name: Map the sizes that crash
+        working-directory: ${{ runner.temp }}
+        env:
+          CALLS: ${{ matrix.calls }}
+          THREADS: ${{ matrix.threads }}
+          OPTIONS: ${{ matrix.options }}
+        # OPTIONS is split into words on purpose
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md --calls "${CALLS}" --threads "${THREADS}" ${OPTIONS}
+
+      - name: Upload the report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.id }}
+          path: ${{ runner.temp }}/report.md
+          if-no-files-found: ignore
