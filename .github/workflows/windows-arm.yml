@@ -110,12 +110,9 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" linalg-crashes
 
-      # The sizes at which inv and solve crash in numpy alone, and the numbers of threads
-      - name: Map the sizes that crash numpy.linalg
-        if: ${{ !cancelled() && steps.extensions.outcome == 'success' }}
-        continue-on-error: true
-        working-directory: ${{ runner.temp }}
-        run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" --sizes linalg-crashes
+      # The map of the sizes that crash, which ran a process for every size and took
+      # more than an hour, is in #1004 to #1007, which walk through the sizes in one
+      # process and take minutes
 
       - name: Upload the matrices that crashed
         if: ${{ !cancelled() }}
