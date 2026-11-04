@@ -1,0 +1,62 @@
+name: Windows ARM calls
+
+# Experiment, not for merging (see #1003). Maps the sizes at which each numpy.linalg
+# call crashes on Windows on ARM, for each number of OpenBLAS threads. Only numpy is
+# installed: arch is not built or tested.
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# A new push cancels the run of the one before
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map:
+    name: numpy.linalg, OPENBLAS_NUM_THREADS ${{ matrix.threads }}
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        # unset lets OpenBLAS pick the number of threads
+        threads: ["1", "2", "4", "unset"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          architecture: arm64
+
+      - name: Check that Python is ARM64
+        run: python -c "import sys, sysconfig; print(sys.version, sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
+
+      - name: Install numpy
+        run: |
+          python -m pip install --only-binary=:all: numpy==2.5.4
+
+      - name: Show the system and the BLAS
+        run: python ci/github-actions/winarm_blas.py info
+
+      # selftest crashes at size 5 on purpose, to show that crashes are found
+      - name: Map the sizes that crash
+        working-directory: ${{ runner.temp }}
+        env:
+          THREADS: ${{ matrix.threads }}
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md --calls selftest,numpy --threads "${THREADS}"
+
+      - name: Upload the report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: calls-threads-${{ matrix.threads }}
+          path: ${{ runner.temp }}/report.md
+          if-no-files-found: ignore
