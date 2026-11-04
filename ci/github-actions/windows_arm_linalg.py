@@ -12,6 +12,13 @@ A sweep over random matrices of sizes 1 to 160 runs in each of these configurati
 
 The saved matrices of the crashes are left in OUTPUT_DIR. Exits with 1 if any test
 crashes.
+
+    python windows_arm_linalg.py --sizes OUTPUT_DIR
+
+maps the sizes at which inv of the identity, and inv and solve of a random positive
+definite matrix, crash with 1 OpenBLAS thread, each call in its own process that only
+imports numpy, and then tries other numbers of threads at the sizes that crash. Exits
+with 1 if any call crashes.
 """
 
 from __future__ import annotations
@@ -53,6 +60,11 @@ THREADS = ["1", "4"]
 REPEATS = 50
 SWEEP_PASSES = 3
 SWEEP_MAX = 160
+# The map of the sizes that crash: every size to 64, then every 8th
+SIZES = list(range(1, 65)) + list(range(72, SWEEP_MAX + 1, 8))
+OPS = ["inv-identity", "inv-random", "solve-random"]
+# OPENBLAS_NUM_THREADS, where "" leaves it unset so that OpenBLAS picks the number
+THREAD_COUNTS = ["", "1", "2", "3", "4"]
 
 
 def blas_info() -> str:
@@ -133,13 +145,39 @@ def sweep() -> None:
     print("ok", flush=True)
 
 
+def run_op(op: str, n: int) -> None:
+    """One call of inv or solve with an n by n matrix"""
+    import numpy as np  # noqa: PLC0415
+
+    rng = np.random.default_rng(n)
+    x = rng.standard_normal((max(2 * n, 200), n))
+    a = x.T @ x / x.shape[0]
+    if op == "inv-identity":
+        np.linalg.inv(np.eye(n))
+    elif op == "inv-random":
+        np.linalg.inv(a)
+    elif op == "solve-random":
+        np.linalg.solve(a, rng.standard_normal(n))
+    else:
+        raise ValueError(op)
+    print("ok", flush=True)
+
+
 def child(args: list[str], coretype: str | None = None, threads: str | None = None):
-    """Run this script in a new process and return its outcome and output"""
+    """
+    Run this script in a new process and return its outcome and output
+
+    threads is the number of OpenBLAS threads, "" to leave it to OpenBLAS, and None
+    to keep the number of the job.
+    """
     env = os.environ.copy()
     env.pop("OPENBLAS_CORETYPE", None)
     if coretype is not None:
         env["OPENBLAS_CORETYPE"] = coretype
-    if threads is not None:
+    if threads == "":
+        env.pop("OPENBLAS_NUM_THREADS", None)
+        env.pop("OMP_NUM_THREADS", None)
+    elif threads is not None:
         env["OPENBLAS_NUM_THREADS"] = env["OMP_NUM_THREADS"] = threads
     cmd = [sys.executable, "-X", "faulthandler", os.path.abspath(__file__), *args]
     try:
@@ -172,8 +210,65 @@ def architecture(out: str) -> str:
 
 
 def last_line(out: str) -> str:
-    lines = [line for line in out.splitlines() if line and not line.startswith("BLAS")]
+    """The last call of a sweep, or ok, rather than the end of a traceback"""
+    lines = [
+        line for line in out.splitlines() if line.startswith(("inv ", "solve ", "ok"))
+    ]
     return lines[-1] if lines else ""
+
+
+def ranges(values: list[int]) -> str:
+    """Sizes as ranges, such as 1-5, 8"""
+    parts: list[list[int]] = []
+    for v in sorted(values):
+        if parts and parts[-1][1] == v - 1:
+            parts[-1][1] = v
+        else:
+            parts.append([v, v])
+    return ", ".join(str(a) if a == b else f"{a}-{b}" for a, b in parts)
+
+
+def map_sizes(outdir: str) -> int:
+    # Only to read the build configuration: this process does not call numpy.linalg
+    import numpy as np  # noqa: PLC0415
+
+    os.makedirs(outdir, exist_ok=True)
+    blas = np.show_config(mode="dicts")["Build Dependencies"]["blas"]
+    summary = ["## Sizes at which numpy.linalg crashes on Windows on ARM", ""]
+    summary += [f"numpy {np.__version__}, {blas.get('openblas configuration')}", ""]
+    summary += [f"Sizes: {ranges(SIZES)}. Each call in its own process.", ""]
+    summary += ["| Call | Sizes that crash with 1 thread |", "|---|---|"]
+    crashed: dict[str, list[int]] = {}
+    for op in OPS:
+        crashed[op] = []
+        for n in SIZES:
+            outcome, _ = child(["--op", op, str(n)], threads="1")
+            print(f"{op} {n}: {outcome}", flush=True)
+            if not outcome.startswith("ok"):
+                crashed[op].append(n)
+        summary.append(f"| {op} | {ranges(crashed[op]) or 'none'} |")
+
+    # The smallest sizes that crash, and the largest
+    found = sorted({n for sizes in crashed.values() for n in sizes})
+    check = sorted(set(found[:2] + found[-1:])) if found else [23, 30]
+    summary += ["", "### Numbers of threads at these sizes", ""]
+    summary += ["| Call | Size | OPENBLAS_NUM_THREADS | Outcome |", "|---|---|---|---|"]
+    for op in OPS:
+        for n in check:
+            for threads in THREAD_COUNTS:
+                outcome, _ = child(["--op", op, str(n)], threads=threads)
+                row = f"| {op} | {n} | {threads or 'unset'} | {outcome} |"
+                print(row, flush=True)
+                summary.append(row)
+
+    text = "\n".join(summary) + "\n"
+    with open(os.path.join(outdir, "sizes.md"), "w") as f:
+        f.write(text)
+    if "GITHUB_STEP_SUMMARY" in os.environ:
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+            f.write(text)
+    print(text)
+    return 1 if found else 0
 
 
 def describe(dump: str) -> str:
@@ -267,6 +362,10 @@ if __name__ == "__main__":
         replay(sys.argv[2])
     elif sys.argv[1] == "--sweep":
         sweep()
+    elif sys.argv[1] == "--op":
+        run_op(sys.argv[2], int(sys.argv[3]))
+    elif sys.argv[1] == "--sizes":
+        sys.exit(map_sizes(sys.argv[2]))
     elif sys.argv[1].startswith("-"):
         sys.exit(f"Unknown option {sys.argv[1]}")
     else:

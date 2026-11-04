@@ -71,9 +71,12 @@ jobs:
       - name: List the packages
         run: python -m pip list
 
-      # The BLAS that numpy was built with and the one, and the kernels, it loads
-      - name: Show the BLAS
+      # The runner, the BLAS that numpy was built with and the one, and the kernels, it
+      # loads
+      - name: Show the system and the BLAS
         run: |
+          echo "Runner image: ${ImageOS} ${ImageVersion}"
+          powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Format-List Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors; Get-CimInstance Win32_OperatingSystem | Format-List Caption, Version, BuildNumber, OSArchitecture"
           python -c "import numpy; numpy.show_config()"
           python -m threadpoolctl -i numpy
 
@@ -105,6 +108,13 @@ jobs:
         continue-on-error: true
         working-directory: ${{ runner.temp }}
         run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" linalg-crashes
+
+      # The sizes at which inv and solve crash in numpy alone, and the numbers of threads
+      - name: Map the sizes that crash numpy.linalg
+        if: ${{ !cancelled() && steps.extensions.outcome == 'success' }}
+        continue-on-error: true
+        working-directory: ${{ runner.temp }}
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" --sizes linalg-crashes
 
       - name: Upload the matrices that crashed
         if: ${{ !cancelled() }}
