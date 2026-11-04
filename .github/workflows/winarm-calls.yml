@@ -26,7 +26,14 @@ jobs:
       fail-fast: false
       matrix:
         # unset lets OpenBLAS pick the number of threads
-        threads: ["1", "2", "4", "unset"]
+        threads: ["1", "4", "unset"]
+        # With 2 threads inv and solve hang rather than crash. Each hang costs the
+        # timeout, so these map fewer calls and sizes, and go on after every hang.
+        include:
+          - threads: "2"
+            options: --calls selftest,inv-identity,inv,solve,det --sizes 1-40 --timeout 15 --max-hangs 0
+          - threads: "3"
+            options: --calls selftest,inv-identity,inv,solve,det --sizes 1-40 --timeout 15 --max-hangs 0
 
     steps:
       - uses: actions/checkout@v7
@@ -51,7 +58,9 @@ jobs:
         working-directory: ${{ runner.temp }}
         env:
           THREADS: ${{ matrix.threads }}
-        run: python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md --calls selftest,numpy --threads "${THREADS}"
+          OPTIONS: ${{ matrix.options }}
+        # OPTIONS is split into words on purpose, and its --calls replaces the first
+        run: python "${GITHUB_WORKSPACE}/ci/github-actions/winarm_blas.py" map report.md --calls selftest,numpy --threads "${THREADS}" ${OPTIONS}
 
       - name: Upload the report
         if: ${{ !cancelled() }}

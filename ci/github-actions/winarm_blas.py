@@ -26,6 +26,8 @@ not anything crashed. The options are
     --no-faulthandler       run the children without -X faulthandler
     --repeats 3             the number of calls at each size
     --budget 20             minutes, after which the remaining calls are skipped
+    --timeout 60            seconds for a child to walk through the sizes
+    --max-hangs 2           hangs in a row after which a call is skipped, 0 never
 """
 
 from __future__ import annotations
@@ -49,7 +51,7 @@ import numpy as np
 
 DEFAULT_SIZES = "1-64,72-160:8"
 # Seconds for a child to walk through every size. A walk takes a few seconds.
-WALK_TIMEOUT = 60
+WALK_TIMEOUT = 60.0
 # A call is skipped after this many hangs in a row
 MAX_HANGS = 2
 EXCEPTIONS = {
@@ -522,6 +524,8 @@ class Options:
         self.faulthandler = True
         self.repeats = 3
         self.budget = 20.0
+        self.timeout = WALK_TIMEOUT
+        self.max_hangs = MAX_HANGS
         args = iter(argv)
         for arg in args:
             if arg == "--calls":
@@ -544,6 +548,10 @@ class Options:
                 self.repeats = int(next(args))
             elif arg == "--budget":
                 self.budget = float(next(args))
+            elif arg == "--timeout":
+                self.timeout = float(next(args))
+            elif arg == "--max-hangs":
+                self.max_hangs = int(next(args))
             else:
                 raise SystemExit(f"unknown option: {arg}")
 
@@ -563,6 +571,7 @@ class Options:
             parts.append(f"in a thread with a {self.stack:g} MB stack")
         parts.append("-X faulthandler" if self.faulthandler else "no faulthandler")
         parts.append(f"{self.repeats} calls at each size")
+        parts.append(f"a walk hangs after {self.timeout:g} s")
         return ", ".join(parts)
 
 
@@ -610,7 +619,7 @@ def map_call(call: str, opts: Options) -> dict[int, str]:
     while todo:
         sizes = ",".join(map(str, todo))
         outcome, out = child(
-            ["walk", call, sizes, *opts.walk_args()], opts, WALK_TIMEOUT
+            ["walk", call, sizes, *opts.walk_args()], opts, opts.timeout
         )
         for line in out.splitlines():
             if line.startswith("openblas_set_num_threads") or ": openblas_set" in line:
@@ -624,19 +633,21 @@ def map_call(call: str, opts: Options) -> dict[int, str]:
             for n in re.findall(rf"^start {re.escape(call)} (\d+)$", out, re.MULTILINE)
         ]
         outcomes.update(dict.fromkeys(done, "ok"))
-        if outcome == "ok":
+        if outcome == "ok" or len(done) == len(todo):
             break
-        if not started or started[-1] in done:
+        in_call = bool(started) and started[-1] not in done
+        if not in_call and outcome != "hang":
             # Not in a call: an error of this script, or of an import
             print(f"{call}: {outcome}\n{out[-2000:]}", flush=True)
             outcomes.update(dict.fromkeys(todo[len(done) :], f"not run ({outcome})"))
             break
-        n = started[-1]
-        outcomes[n] = outcome
+        # A hang between calls is put on the next size
+        n = started[-1] if in_call else todo[len(done)]
+        outcomes[n] = outcome if in_call else f"{outcome} (before the call)"
         print(f"{call} {n}: {outcome}", flush=True)
         hangs = hangs + 1 if outcome == "hang" else 0
         todo = todo[todo.index(n) + 1 :]
-        if hangs >= MAX_HANGS:
+        if 0 < opts.max_hangs <= hangs:
             outcomes.update(dict.fromkeys(todo, "not run (hangs)"))
             break
     return outcomes
@@ -644,7 +655,7 @@ def map_call(call: str, opts: Options) -> dict[int, str]:
 
 def run_map(report: str, opts: Options) -> int:
     start = time.monotonic()
-    outcome, out = child(["info"], opts, WALK_TIMEOUT)
+    outcome, out = child(["info"], opts, opts.timeout)
     lines = [line for line in out.splitlines() if line.startswith("INFO ")]
     details = json.loads(lines[0][5:]) if lines else {"info": outcome}
     print(json.dumps(details, indent=2), flush=True)
@@ -670,22 +681,22 @@ def run_map(report: str, opts: Options) -> int:
         alone = []
         for n in sorted(crashes):
             result, _ = child(
-                ["walk", call, str(n), *opts.walk_args()], opts, WALK_TIMEOUT
+                ["walk", call, str(n), *opts.walk_args()], opts, opts.timeout
             )
             print(f"{call} {n} alone: {result}", flush=True)
             if result != "ok":
                 alone.append(n)
         kinds = sorted(set(crashes.values()))
-        other = sorted(
-            {
-                f"{o} at {n}"
-                for n, o in outcomes.items()
-                if o != "ok" and n not in crashes
-            }
+        other: dict[str, list[int]] = {}
+        for n, o in outcomes.items():
+            if o != "ok" and n not in crashes:
+                other.setdefault(o, []).append(n)
+        other_text = "; ".join(
+            f"{o} at {ranges(ns)}" for o, ns in sorted(other.items())
         )
         row = (
             f"| {call} | {ranges(crashes) or 'none'} {' '.join(kinds)} "
-            f"| {ranges(alone) if crashes else ''} | {'; '.join(other[:5])} |"
+            f"| {ranges(alone) if crashes else ''} | {other_text} |"
         )
         print(row, flush=True)
         rows.append(row)
