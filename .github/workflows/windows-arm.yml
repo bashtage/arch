@@ -1,14 +1,13 @@
 name: Windows ARM
 
-# Builds the wheel on Windows on ARM (ARM64) and tests the installed package. numpy,
-# scipy, pandas, statsmodels, matplotlib and numba all have win_arm64 wheels, so arch
-# is the only package that is compiled.
+# Builds the wheel on Windows on ARM (ARM64) and runs the whole test suite on the
+# installed package. numpy, scipy, pandas, statsmodels, matplotlib and numba have
+# win_arm64 wheels, so arch is the only package that is compiled.
 #
-# The first run crashed (access violation) in numpy.linalg.inv and solve, in the
-# OpenBLAS of numpy's win_arm64 wheel, in the unit root tests. Until that is isolated,
-# only the univariate and the multiple comparison tests run, in a single process with
-# the name of each test, and the tests that crashed are run on their own to find the
-# matrices that crash and whether numpy alone crashes on them.
+# The number of BLAS threads is not limited, unlike the other CI. With
+# OPENBLAS_NUM_THREADS=1, numpy.linalg.inv and solve crash (access violation) for 23x23
+# to 31x31 matrices in the OpenBLAS of every numpy win_arm64 wheel (numpy#29442; see
+# #1003 to #1007), and with 2 threads they hang.
 
 on:
   push:
@@ -17,22 +16,33 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# A new push to a pull request cancels the run of the one before
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   test:
     name: Windows ARM64, Python ${{ matrix.python-version }}
     runs-on: windows-11-arm
-    timeout-minutes: 120
+    timeout-minutes: 90
     defaults:
       run:
         shell: bash
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.14"]
+        # statsmodels has win_arm64 wheels from Python 3.13
+        python-version: ["3.13", "3.14"]
+        numba: [true]
+        include:
+          # numba has no win_arm64 wheels for Python 3.15, so its code is tested
+          # without it
+          - python-version: "3.15"
+            numba: false
     env:
-      MKL_NUM_THREADS: 1
-      OMP_NUM_THREADS: 1
-      OPENBLAS_NUM_THREADS: 1
+      # The same hash seed in every pytest-xdist worker, so that they collect the same
+      # tests
       PYTHONHASHSEED: 12345678
       MPLBACKEND: agg
 
@@ -46,6 +56,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: arm64
+          allow-prereleases: true
 
       # Fail rather than test an x64 Python that runs under emulation
       - name: Check that Python is ARM64
@@ -55,9 +66,15 @@ jobs:
 
       # Only wheels, so that the job fails if a dependency would have to be compiled
       - name: Install the dependencies
+        env:
+          NUMBA: ${{ matrix.numba }}
         run: |
+          packages=(numpy scipy pandas statsmodels matplotlib seaborn "pytest>=9,<10" pytest-xdist)
+          if [[ "${NUMBA}" == "true" ]]; then
+            packages+=(numba)
+          fi
           python -m pip install --upgrade pip
-          python -m pip install --only-binary=:all: numpy scipy pandas statsmodels matplotlib seaborn numba "pytest>=9,<10" threadpoolctl
+          python -m pip install --only-binary=:all: "${packages[@]}"
 
       - name: Build the wheel
         run: |
@@ -65,59 +82,62 @@ jobs:
           ls dist
 
       - name: Install the wheel
+        id: install-arch
         run: python -m pip install dist/arch-*-win_arm64.whl
 
       # After arch is installed so that this shows what is tested
       - name: List the packages
         run: python -m pip list
 
-      # The runner, the BLAS that numpy was built with and the one, and the kernels, it
-      # loads
       - name: Show the system and the BLAS
         run: |
           echo "Runner image: ${ImageOS} ${ImageVersion}"
-          powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Format-List Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors; Get-CimInstance Win32_OperatingSystem | Format-List Caption, Version, BuildNumber, OSArchitecture"
+          powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Format-List Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors"
           python -c "import numpy; numpy.show_config()"
           python -c "import scipy; scipy.show_config()"
-          python -m threadpoolctl -i numpy
+
+      # threadpoolctl does not find this OpenBLAS, so ask it directly
+      - name: Check that the BLAS threads are not limited
+        run: |
+          for var in OPENBLAS_NUM_THREADS GOTO_NUM_THREADS OMP_NUM_THREADS MKL_NUM_THREADS NUMEXPR_NUM_THREADS VML_NUM_THREADS; do
+            if [[ -n "${!var:-}" ]]; then
+              echo "${var} is set to ${!var}"
+              exit 1
+            fi
+          done
+          python - <<'EOF'
+          import ctypes
+          import glob
+          import os
+
+          import numpy
+
+          site = os.path.dirname(os.path.dirname(numpy.__file__))
+          path = glob.glob(os.path.join(site, "numpy.libs", "*openblas*.dll"))[0]
+          lib = ctypes.CDLL(path)
+          names = ["scipy_openblas_get_num_threads64_", "scipy_openblas_get_num_threads"]
+          name = next(n for n in names if hasattr(lib, n))
+          threads = getattr(lib, name)()
+          print(f"{os.path.basename(path)}: {threads} threads")
+          raise SystemExit(threads < 2)
+          EOF
 
       # arch falls back to the pure Python code when an extension cannot be imported, so
       # import them directly. Outside of the source tree, so that the installed package
       # is imported.
       - name: Check that the compiled extensions load
-        id: extensions
         working-directory: ${{ runner.temp }}
         run: |
           python -c "from arch.univariate import recursions; print(recursions.__file__)"
           python -c "from arch.bootstrap import _samplers; print(_samplers.__file__)"
 
-      # One process, with the name of each test shown before it runs, so that a crash
-      # names the test
-      - name: Run the univariate tests
+      # The tests that the other CI runs
+      - name: Run the tests
         working-directory: ${{ runner.temp }}
-        run: python -X faulthandler -c "import arch; arch.test(['-v', '-m', 'not slow', '--durations=25'], location='tests/univariate')"
+        run: python -X faulthandler -c "import arch; arch.test(['-n', 'auto', '-m', 'not slow', '--durations=25'])"
 
-      # Only when the univariate tests pass
-      - name: Run the multiple comparison tests
+      # And the rest of the suite, whether or not the tests pass
+      - name: Run the slow tests
+        if: ${{ !cancelled() && steps.install-arch.outcome == 'success' }}
         working-directory: ${{ runner.temp }}
-        run: python -X faulthandler -c "import arch; arch.test(['-v', '-m', 'not slow', '-k', 'multiple_comparison', '--durations=25'], location='tests/bootstrap')"
-
-      # Runs whether or not the tests pass. The results are in the log and the job
-      # summary, and the matrices that crashed are uploaded.
-      - name: Isolate the crashes in numpy.linalg
-        if: ${{ !cancelled() && steps.extensions.outcome == 'success' }}
-        continue-on-error: true
-        working-directory: ${{ runner.temp }}
-        run: python "${GITHUB_WORKSPACE}/ci/github-actions/windows_arm_linalg.py" linalg-crashes
-
-      # The map of the sizes that crash, which ran a process for every size and took
-      # more than an hour, is in #1004 to #1007, which walk through the sizes in one
-      # process and take minutes
-
-      - name: Upload the matrices that crashed
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: windows-arm-linalg-crashes
-          path: ${{ runner.temp }}/linalg-crashes
-          if-no-files-found: ignore
+        run: python -X faulthandler -c "import arch; arch.test(['-n', 'auto', '-m', 'slow', '--durations=25'])"
