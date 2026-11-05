@@ -439,6 +439,23 @@ to restore the previous results.
   below 0.15 change by at most 0.0017, and the largest change is 0.022, at the old
   cut-off with ``"c"``. The critical values change by at most 0.0011 in the smallest
   samples and by at most 0.0001 with 100 or more observations (:issue:`996`).
+- The p-value of :class:`~arch.unitroot.ADF`, which
+  :class:`~arch.unitroot.PhillipsPerron` uses with ``test_type="tau"`` and
+  ``mackinnonp`` returns with ``dist_type="adf-t"`` and one unit root, is now a smooth
+  and increasing function of the statistic. The p-values are from a new simulation
+  with 134,000,000 to 145,000,000 draws for each trend. The p-value is approximated by
+  one polynomial below a cut-off and another above it. These were estimated separately
+  (MacKinnon, 1994), so the p-value jumped up at the cut-off, by 0.004 with
+  ``trend="n"`` and by up to 0.0006 otherwise, and jumped up to 1 at the largest
+  statistic covered, by up to 0.003. The two are now cubics, estimated jointly so that
+  they have the same value and slope at the cut-off. The approximation is also more
+  accurate in the left tail: the largest error of the p-values of the 1%, 5% and 10%
+  quantiles falls from 0.0004 to 0.00002, and the largest relative error of p-values
+  below 0.15 from 2.5% to 0.12%. In the middle of the distribution, the largest
+  difference from the simulated distribution is 0.006 with ``"n"`` (0.004 before) and
+  at most 0.003 otherwise, as before. P-values below 0.15 change by at most 0.0005,
+  and the largest change is 0.004, at a p-value near 0.6 with ``"c"``. The p-values
+  with more than one unit root and the critical values are unchanged (:issue:`1008`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
