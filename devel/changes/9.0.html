@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+755)</title>
+        <title>Version 9 - arch v8.0.1 (+767)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+755)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+755)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+767)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+767)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+755)
+            arch v8.0.1 (+767)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+755)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+755)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+767)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+767)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+755)
+    arch v8.0.1 (+767)
   </label>
   
     <div class="md-nav__source">
@@ -573,8 +573,9 @@ message that names the argument, shows the value and says what is accepted, the 
 options are not case sensitive, and integer, Boolean and list data are converted to
 <code class="docutils literal notranslate"><span class="pre">float64</span></code>. Some calls that were accepted by earlier versions now raise. See
 “Backward-incompatible changes”.</p></li>
-<li><p>Python 3.10 to 3.15 are supported, with wheels for each of them. 9.0 is the last
-release that supports Python 3.10 and NumPy 1.x.</p></li>
+<li><p>Python 3.10 to 3.15 are supported, with wheels for each of them. Wheels for Windows
+on ARM (ARM64) are new, for Python 3.13 to 3.15. 9.0 is the last release that
+supports Python 3.10 and NumPy 1.x.</p></li>
 </ul>
 <h3 id="new-features">New features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1744,6 +1745,10 @@ to the type stub of the compiled recursions, <code class="docutils literal notra
 added to <code class="docutils literal notranslate"><span class="pre">__all__</span></code> of the compiled and pure Python recursions, and <code class="docutils literal notranslate"><span class="pre">garch_core</span></code>
 and <code class="docutils literal notranslate"><span class="pre">harch_core</span></code> to that of the pure Python recursions, so that both export the
 functions and classes that they share (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1000">GH1000</a>).</p></li>
+<li><p>The continuous integration builds the wheel on Windows on ARM (ARM64) and runs the
+test suite, including the slow tests, on Python 3.13 to 3.15. Unlike the other jobs,
+it does not limit the number of BLAS threads, because NumPy’s OpenBLAS on this
+platform crashes with one thread (see “Compatibility”) (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1003">GH1003</a>).</p></li>
 </ul>
 <h3 id="deprecations-and-removals">Deprecations and removals<a class="headerlink" href="#deprecations-and-removals" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1764,8 +1769,17 @@ a <code class="docutils literal notranslate"><span class="pre">ModuleNotFoundErr
 <ul class="simple">
 <li><p>Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux on
 x86-64 and aarch64, and musllinux on x86-64), Windows (AMD64) and macOS (arm64 and
-x86-64) for each of them. 9.0 is the last release that supports Python 3.10 and NumPy
-1.x. Later releases will raise the other minimum versions accordingly.</p></li>
+x86-64) for each of them, and for Windows on ARM (ARM64) for Python 3.13 to 3.15. 9.0
+is the last release that supports Python 3.10 and NumPy 1.x. Later releases will
+raise the other minimum versions accordingly.</p></li>
+<li><p>Wheels for Windows on ARM (ARM64) are new. They start at Python 3.13, the first
+version for which statsmodels has Windows on ARM wheels. Do not limit OpenBLAS to one
+thread on this platform, for example with <code class="docutils literal notranslate"><span class="pre">OPENBLAS_NUM_THREADS=1</span></code> or
+<code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=1</span></code>. With one thread, the OpenBLAS of every NumPy release with
+Windows on ARM wheels crashes in <code class="docutils literal notranslate"><span class="pre">numpy.linalg.inv</span></code> and <code class="docutils literal notranslate"><span class="pre">numpy.linalg.solve</span></code> for
+23 by 23 to 31 by 31 matrices, such as those of the lag selection of the unit root
+tests and of <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a>, and with two or three
+threads it can hang (NumPy issue 29442) (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1003">GH1003</a>).</p></li>
 <li><p>Building from source requires Cython 3.1.0 or later.</p></li>
 <li><p>Running the test suite requires pytest 9 or later.</p></li>
 <li><p>Improved compatibility with current and upcoming releases of NumPy and pandas: the
