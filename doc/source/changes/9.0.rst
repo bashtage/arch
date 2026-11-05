@@ -51,8 +51,9 @@ Highlights
   options are not case sensitive, and integer, Boolean and list data are converted to
   ``float64``. Some calls that were accepted by earlier versions now raise. See
   "Backward-incompatible changes".
-- Python 3.10 to 3.15 are supported, with wheels for each of them. 9.0 is the last
-  release that supports Python 3.10 and NumPy 1.x.
+- Python 3.10 to 3.15 are supported, with wheels for each of them. Wheels for Windows
+  on ARM (ARM64) are new, for Python 3.13 to 3.15. 9.0 is the last release that
+  supports Python 3.10 and NumPy 1.x.
 
 New features
 ~~~~~~~~~~~~
@@ -1260,6 +1261,10 @@ Documentation and maintenance
   added to ``__all__`` of the compiled and pure Python recursions, and ``garch_core``
   and ``harch_core`` to that of the pure Python recursions, so that both export the
   functions and classes that they share (:issue:`1000`).
+- The continuous integration builds the wheel on Windows on ARM (ARM64) and runs the
+  test suite, including the slow tests, on Python 3.13 to 3.15. Unlike the other jobs,
+  it does not limit the number of BLAS threads, because NumPy's OpenBLAS on this
+  platform crashes with one thread (see "Compatibility") (:issue:`1003`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1283,8 +1288,17 @@ Compatibility
 ~~~~~~~~~~~~~
 - Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux on
   x86-64 and aarch64, and musllinux on x86-64), Windows (AMD64) and macOS (arm64 and
-  x86-64) for each of them. 9.0 is the last release that supports Python 3.10 and NumPy
-  1.x. Later releases will raise the other minimum versions accordingly.
+  x86-64) for each of them, and for Windows on ARM (ARM64) for Python 3.13 to 3.15. 9.0
+  is the last release that supports Python 3.10 and NumPy 1.x. Later releases will
+  raise the other minimum versions accordingly.
+- Wheels for Windows on ARM (ARM64) are new. They start at Python 3.13, the first
+  version for which statsmodels has Windows on ARM wheels. Do not limit OpenBLAS to one
+  thread on this platform, for example with ``OPENBLAS_NUM_THREADS=1`` or
+  ``OMP_NUM_THREADS=1``. With one thread, the OpenBLAS of every NumPy release with
+  Windows on ARM wheels crashes in ``numpy.linalg.inv`` and ``numpy.linalg.solve`` for
+  23 by 23 to 31 by 31 matrices, such as those of the lag selection of the unit root
+  tests and of :class:`~arch.unitroot.cointegration.DynamicOLS`, and with two or three
+  threads it can hang (NumPy issue 29442) (:issue:`1003`).
 - Building from source requires Cython 3.1.0 or later.
 - Running the test suite requires pytest 9 or later.
 - Improved compatibility with current and upcoming releases of NumPy and pandas: the
