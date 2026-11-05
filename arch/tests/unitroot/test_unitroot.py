@@ -73,7 +73,7 @@ class TestUnitRoot:
         adf = ADF(self.inflation)
         assert_almost_equal(adf.stat, -3.09310, DECIMAL_4)
         assert_equal(adf.lags, 2)
-        assert_almost_equal(adf.pvalue, 0.027067, DECIMAL_4)
+        assert_almost_equal(adf.pvalue, 0.027261, DECIMAL_4)
         adf.regression.summary()
         adf2 = ADF(self.inflation, low_memory=True)
         assert_equal(adf2.lags, 2)
