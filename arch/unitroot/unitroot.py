@@ -70,6 +70,11 @@ from arch.unitroot.critical_values.dfgls import (
     dfgls_tau_star,
 )
 from arch.unitroot.critical_values.dickey_fuller import (
+    adf_t_large_p,
+    adf_t_max,
+    adf_t_min,
+    adf_t_small_p,
+    adf_t_star,
     adf_z_cv_approx,
     adf_z_large_p,
     adf_z_max,
@@ -953,8 +958,11 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     above a critical size, then the null cannot be rejected and the series
     appears to be a unit root.
 
-    The p-values are obtained through regression surface approximation from
-    MacKinnon (1994) using the updated 2010 tables.
+    The p-values are from an approximation of the asymptotic distribution of the
+    statistic that follows the methodology of MacKinnon (1994), fit to new
+    simulations, and are a smooth and increasing function of the statistic. The
+    critical values are from the response surface regressions of MacKinnon (2010),
+    and depend on the number of observations.
     If the p-value is close to significant, then the critical values should be
     used to judge whether to reject the null.
 
@@ -992,14 +1000,14 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> print(f"{adf.stat:0.4f}")
     -3.0931
     >>> print(f"{adf.pvalue:0.4f}")
-    0.0271
+    0.0273
     >>> adf.lags
     2
     >>> adf = ADF(inflation, trend="ct")
     >>> print(f"{adf.stat:0.4f}")
     -3.2111
     >>> print(f"{adf.pvalue:0.4f}")
-    0.0822
+    0.0825
     """
 
     def __init__(
@@ -2216,7 +2224,7 @@ def mackinnonp(
     Returns
     -------
     p-value : float
-        The p-value for the ADF statistic estimated using MacKinnon 1994.
+        The approximate asymptotic p-value of the statistic.
 
     Raises
     ------
@@ -2230,9 +2238,10 @@ def mackinnonp(
 
     Notes
     -----
-    Most values are from MacKinnon (1994). Values for DFGLS test statistics
-    and the ADF z test statistic were computed following the methodology of
-    MacKinnon (1994).
+    The values for the ADF t-test with one unit root, the ADF z-test and the DFGLS
+    test are fit to new simulations following the methodology of MacKinnon (1994),
+    and are smooth and increasing functions of the statistic. The values for the ADF
+    t-test with more than one unit root are from MacKinnon (1994).
 
     References
     ----------
@@ -2292,7 +2301,13 @@ def _mackinnonp(
     A NaN statistic gives a NaN p-value here, which is how the tests report a
     statistic that could not be computed.
     """
-    if dist_type == "adf-t":
+    if dist_type == "adf-t" and num_unit_roots == 1:
+        maxstat = adf_t_max[regression]
+        minstat = adf_t_min[regression]
+        starstat = adf_t_star[regression]
+        small_p = adf_t_small_p[regression]
+        large_p = adf_t_large_p[regression]
+    elif dist_type == "adf-t":
         maxstat = tau_max[regression][num_unit_roots - 1]
         minstat = tau_min[regression][num_unit_roots - 1]
         starstat = tau_star[regression][num_unit_roots - 1]
