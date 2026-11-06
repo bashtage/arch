@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch v8.0.1 (+772)</title>
+        <title>arch.univariate.distribution - arch v8.0.1 (+775)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+772)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+772)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+775)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+775)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+772)
+            arch v8.0.1 (+775)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+772)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+772)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+775)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+775)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+772)
+    arch v8.0.1 (+775)
   </label>
   
     <div class="md-nav__source">
@@ -550,7 +550,6 @@
     <span class="n">log</span><span class="p">,</span>
     <span class="n">nan</span><span class="p">,</span>
     <span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">ones_like</span><span class="p">,</span>
     <span class="n">pi</span><span class="p">,</span>
     <span class="n">sign</span><span class="p">,</span>
     <span class="n">sqrt</span><span class="p">,</span>
@@ -1986,13 +1985,15 @@
 
         <span class="n">cond</span> <span class="o">=</span> <span class="n">pits</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
-        <span class="n">icdf1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
-        <span class="n">icdf2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="p">(</span><span class="n">pits</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
-        <span class="n">icdf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.99</span> <span class="o">*</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">icdf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)</span>
-        <span class="n">icdf</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">icdf1</span>
-        <span class="n">icdf</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">icdf2</span>
-        <span class="n">icdf</span> <span class="o">=</span> <span class="n">icdf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sign</span><span class="p">(</span><span class="n">pits</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">a</span>
+        <span class="n">icdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
+        <span class="n">icdf</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lam</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># The left half-t has all the mass, with a finite upper endpoint.</span>
+            <span class="n">icdf</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The survival probability avoids rounding upper-tail probabilities to 1.</span>
+            <span class="n">icdf</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pits</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
+        <span class="n">icdf</span> <span class="o">=</span> <span class="n">icdf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">a</span>
         <span class="n">icdf</span> <span class="o">=</span> <span class="n">icdf</span> <span class="o">/</span> <span class="n">float64</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
