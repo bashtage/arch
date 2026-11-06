@@ -22,7 +22,6 @@ from numpy import (
     log,
     nan,
     ndarray,
-    ones_like,
     pi,
     sign,
     sqrt,
@@ -1334,13 +1333,15 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         cond = pits < (1 - lam) / 2
 
-        icdf1 = stats.t.ppf(pits[cond] / (1 - lam), eta)
-        icdf2 = stats.t.ppf(0.5 + (pits[~cond] - (1 - lam) / 2) / (1 + lam), eta)
-        icdf = -999.99 * ones_like(pits)
-        assert isinstance(icdf, ndarray)
-        icdf[cond] = icdf1
-        icdf[~cond] = icdf2
-        icdf = icdf * (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** 0.5 - a
+        icdf = np.empty_like(pits)
+        icdf[cond] = (1 - lam) * stats.t.ppf(pits[cond] / (1 - lam), eta)
+        if lam == -1:
+            # The left half-t has all the mass, with a finite upper endpoint.
+            icdf[~cond] = 0.0
+        else:
+            # The survival probability avoids rounding upper-tail probabilities to 1.
+            icdf[~cond] = (1 + lam) * stats.t.isf((1 - pits[~cond]) / (1 + lam), eta)
+        icdf = icdf * (1 - 2 / eta) ** 0.5 - a
         icdf = icdf / float64(b)
 
         if scalar:

@@ -1,6 +1,11 @@
 import numpy as np
 from numpy.random import RandomState, default_rng
-from numpy.testing import assert_almost_equal, assert_array_equal, assert_equal
+from numpy.testing import (
+    assert_allclose,
+    assert_almost_equal,
+    assert_array_equal,
+    assert_equal,
+)
 import pytest
 from scipy import stats
 from scipy.special import gamma, gammaln
@@ -210,6 +215,37 @@ def test_roundtrip_cdf_ppf(distribution):
     x = dist.ppf(pits, param)
     p = dist.cdf(x, param)
     assert_almost_equal(pits, p)
+
+
+@pytest.mark.parametrize("scalar", [False, True])
+@pytest.mark.parametrize(
+    ("skew", "probability", "expected"),
+    [
+        (-0.9, np.nextafter(1.0, 0.0), 12.535601810976443),
+        (0.9, np.nextafter(1.0, 0.0), 312.48964170109026),
+        (-0.2, np.nextafter(1.0, 0.0), 145.0769272661238),
+        (-0.999999, np.nextafter(1.0, 0.0), 1.1896026481430079),
+        (-0.9, 1 - 1e-12, 4.768586495068847),
+        (0.9, 1 - 1e-12, 99.30472268897068),
+    ],
+)
+def test_skew_student_upper_tail_quantile(skew, probability, expected, scalar):
+    # Reference quantiles use 100-digit inversion of the incomplete beta integral.
+    pits = probability if scalar else np.array([probability])
+    actual = SkewStudent().ppf(pits, [8.0, skew])
+    assert_allclose(actual, expected, rtol=2e-10)
+
+
+@pytest.mark.parametrize("skew", [-1.0, -0.999999, -0.9, 0.0, 0.9, 1.0])
+def test_skew_student_quantile_endpoints(skew):
+    support = 1.1895773785772162
+    expected = [
+        -support if skew == 1.0 else -np.inf,
+        support if skew == -1.0 else np.inf,
+    ]
+    with np.errstate(all="raise"):
+        actual = SkewStudent().ppf([0.0, 1.0], [8.0, skew])
+    assert_allclose(actual, expected, rtol=1e-13)
 
 
 def test_invalid_params():
