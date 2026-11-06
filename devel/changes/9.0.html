@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+775)</title>
+        <title>Version 9 - arch v8.0.1 (+777)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+775)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+775)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+777)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+777)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+775)
+            arch v8.0.1 (+777)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+775)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+775)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+777)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+777)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+775)
+    arch v8.0.1 (+777)
   </label>
   
     <div class="md-nav__source">
@@ -1670,6 +1670,17 @@ raised a <code class="docutils literal notranslate"><span class="pre">ZeroDivisi
 <li><p><code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code> returns 0 for a statistic of <code class="docutils literal notranslate"><span class="pre">-inf</span></code> and 1 for <code class="docutils literal notranslate"><span class="pre">inf</span></code>, where it
 returned NaN for the ADF-Z tables and for the ADF test without a trend, and no longer
 warns about an overflow for a very large statistic (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
+<li><p>The output of <a class="reference internal" href="../univariate/utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic (Python class) — Test statistic holder for Wald-type tests."><code class="xref py py-class docutils literal notranslate"><span class="pre">WaldTestStatistic</span></code></a>, which the ARCH LM
+test and other tests return, shows the name of the distribution again, such as
+<code class="docutils literal notranslate"><span class="pre">Distributed:</span> <span class="pre">chi2(5)</span></code>. Since 7.2.0 it showed the representation of a frozen SciPy
+distribution. Contributed by wavebyrd (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1002">GH1002</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">SkewStudent.ppf</span></code> for probabilities close to 1, which lost precision and
+returned <code class="docutils literal notranslate"><span class="pre">inf</span></code> for some probabilities below 1. For example, with <span class="math notranslate nohighlight">\(\eta=8\)</span> and
+<span class="math notranslate nohighlight">\(\lambda=0.9\)</span> the quantile of the largest float below 1 was <code class="docutils literal notranslate"><span class="pre">inf</span></code> and is
+312.49, and with <span class="math notranslate nohighlight">\(\lambda=-0.9\)</span> it was 13.57 and is 12.54. The quantiles of
+probabilities up to 0.999999 change by less than 1e-10 of their value. Simulations
+with the skew t distribution use <code class="docutils literal notranslate"><span class="pre">ppf</span></code>, so a uniform draw of the largest float below
+1 could also give <code class="docutils literal notranslate"><span class="pre">inf</span></code>. Contributed by mkzung (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1009">GH1009</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1010">GH1010</a>).</p></li>
 </ul>
 <h3 id="performance">Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h3>
 <ul class="simple">

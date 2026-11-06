@@ -1184,6 +1184,17 @@ Bug fixes
 - ``mackinnonp`` returns 0 for a statistic of ``-inf`` and 1 for ``inf``, where it
   returned NaN for the ADF-Z tables and for the ADF test without a trend, and no longer
   warns about an overflow for a very large statistic (:issue:`985`).
+- The output of :class:`~arch.utility.testing.WaldTestStatistic`, which the ARCH LM
+  test and other tests return, shows the name of the distribution again, such as
+  ``Distributed: chi2(5)``. Since 7.2.0 it showed the representation of a frozen SciPy
+  distribution. Contributed by wavebyrd (:issue:`1002`).
+- Fixed ``SkewStudent.ppf`` for probabilities close to 1, which lost precision and
+  returned ``inf`` for some probabilities below 1. For example, with :math:`\eta=8` and
+  :math:`\lambda=0.9` the quantile of the largest float below 1 was ``inf`` and is
+  312.49, and with :math:`\lambda=-0.9` it was 13.57 and is 12.54. The quantiles of
+  probabilities up to 0.999999 change by less than 1e-10 of their value. Simulations
+  with the skew t distribution use ``ppf``, so a uniform draw of the largest float below
+  1 could also give ``inf``. Contributed by mkzung (:issue:`1009`, :issue:`1010`).
 
 Performance
 ~~~~~~~~~~~
