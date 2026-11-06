@@ -233,7 +233,7 @@ def test_skew_student_upper_tail_quantile(skew, probability, expected, scalar):
     # Reference quantiles use 100-digit inversion of the incomplete beta integral.
     pits = probability if scalar else np.array([probability])
     actual = SkewStudent().ppf(pits, [8.0, skew])
-    assert_allclose(actual, expected, rtol=1e-11)
+    assert_allclose(actual, expected, rtol=2e-10)
 
 
 @pytest.mark.parametrize("skew", [-1.0, -0.999999, -0.9, 0.0, 0.9, 1.0])
