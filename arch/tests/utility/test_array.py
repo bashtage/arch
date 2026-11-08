@@ -597,3 +597,15 @@ def test_arch_model_does_not_rename_series():
     y = Series(np.random.default_rng(0).standard_normal(100))
     arch_model(y)
     assert y.name is None
+
+
+@pytest.mark.parametrize("as_series", [False, True])
+def test_date_to_index_long_datetime_span(as_series):
+    index = DatetimeIndex(["1700-01-01", "2100-01-01"]).as_unit("ns")
+    if as_series:
+        index = Series(index)
+    assert date_to_index("1680-01-01", index) == 0
+    assert date_to_index("1700-01-01", index) == 0
+    assert date_to_index("1900-01-01", index) == 1
+    assert date_to_index("2100-01-01", index) == 1
+    assert date_to_index("2200-01-01", index) == 2

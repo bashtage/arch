@@ -819,7 +819,7 @@ def date_to_index(
             "a non-empty array of dates",
             _describe(date_index),
         )
-    if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
+    if not np.all(values[1:] > values[:-1]):
         _fail(
             ValueError,
             "date_index",
