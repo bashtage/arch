@@ -601,7 +601,7 @@ def test_arch_model_does_not_rename_series():
 
 @pytest.mark.parametrize("as_series", [False, True])
 def test_date_to_index_long_datetime_span(as_series):
-    index = DatetimeIndex(["1700-01-01", "2100-01-01"]).as_unit("ns")
+    index = DatetimeIndex(["1700-01-01", "2100-01-01"], dtype="datetime64[ns]")
     if as_series:
         index = Series(index)
     assert date_to_index("1680-01-01", index) == 0
