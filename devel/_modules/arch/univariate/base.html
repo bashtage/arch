@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v8.0.1 (+779)</title>
+        <title>arch.univariate.base - arch v8.0.1 (+784)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+779)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+779)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+784)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+779)
+            arch v8.0.1 (+784)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+779)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+779)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+784)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+779)
+    arch v8.0.1 (+784)
   </label>
   
     <div class="md-nav__source">
@@ -836,6 +836,10 @@
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``hold_back`` is negative or ``y`` contains NaN or inf.</span>
 <span class="sd">    """</span>
+
+    <span class="c1"># Whether the r-squared is centered, that is computed from the deviations of y</span>
+    <span class="c1"># from its mean. Mean models without a constant use the uncentered r-squared.</span>
+    <span class="n">_r2_centered</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -3381,9 +3385,11 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Degree of freedom adjusted R-squared.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="c1"># The total sum of squares of an uncentered r-square has nobs degrees of</span>
+        <span class="c1"># freedom, since no mean is estimated</span>
+        <span class="n">df_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_r2_centered</span><span class="p">)</span>
+        <span class="n">df_resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span> <span class="o">*</span> <span class="n">df_total</span> <span class="o">/</span> <span class="n">df_resid</span></div>
 
 
 <div class="viewcode-block" id="ARCHModelResult.pvalues">
