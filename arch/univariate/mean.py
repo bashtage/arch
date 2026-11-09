@@ -1189,17 +1189,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             "Float64Array2D",
             np.ascontiguousarray(np.hstack((reg_constant, reg_lags, reg_x))),
         )
-
-    def _r2_centered(self) -> bool:
-        x = self._fit_regressors
-        if x is None or x.shape[1] == 0:
-            return False
-        return bool(self.constant or implicit_constant(x))
+        self._r2_centered = self.regressors.shape[1] > 0 and bool(
+            self.constant or implicit_constant(self.regressors)
+        )
 
     def _r2(self, params: ArrayLike1D, resids: Float64Array1D | None = None) -> float:
         y = self._fit_y
         x = self._fit_regressors
-        if self._r2_centered():
+        if self._r2_centered:
             if x.shape[1] == 1 and len(params) == 1:
                 # Shortcut for constant only, which is the only mean parameter
                 return 0.0
@@ -2770,6 +2767,7 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         self.lags: int = lags
         self.constant: bool = constant
+        self._r2_centered = constant
         self._name = "MA"
 
     def _model_description(self, include_lags: bool = True) -> dict[str, str]:
@@ -2878,12 +2876,9 @@ class MAMean(ARCHModel, metaclass=AbstractDocStringInheritor):
             resids = np.clip(resids, -_MAX_MA_RESID, _MAX_MA_RESID)
         return to_array_1d(resids)
 
-    def _r2_centered(self) -> bool:
-        return self.constant
-
     def _r2(self, params: ArrayLike1D, resids: Float64Array1D | None = None) -> float:
         y = self._fit_y
-        if self._r2_centered():
+        if self._r2_centered:
             y = y - np.mean(y)
         tss = float(y.dot(y))
         if tss <= 0.0:

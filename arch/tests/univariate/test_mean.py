@@ -1449,12 +1449,12 @@ def test_rsquared_adj_zero_mean():
     assert res.rsquared_adj == 0.0
 
 
-def test_r2_centered_default():
-    # Mean models that only implement _r2 keep the centered adjustment
-    mod = ConstantMean(np.random.RandomState(20261109).standard_normal(50))
-    assert ARCHModel._r2_centered(mod) is True
-    assert mod._r2_centered() is True
-    assert ZeroMean(mod._y)._r2_centered() is False
+def test_r2_centered():
+    y = np.random.RandomState(20261109).standard_normal(50)
+    assert ConstantMean(y)._r2_centered
+    assert not ZeroMean(y)._r2_centered
+    # An implicit constant in x also centers the r-squared
+    assert LS(y, x=np.ones((50, 1)), constant=False)._r2_centered
 
 
 def test_backcast_restricted(simulated_data):

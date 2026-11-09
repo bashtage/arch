@@ -316,6 +316,9 @@ class ARCHModel(metaclass=ABCMeta):
         rescale: bool | None = None,
     ) -> None:
         self._name = "ARCHModel"
+        # Whether the r-squared is centered, that is computed from the deviations
+        # of y from its mean. Models without a constant use the uncentered r-squared.
+        self._r2_centered = True
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
         if y is not None:
             self._y_series = cast("pd.Series", ensure1d(y, "y", series=True))
@@ -600,13 +603,6 @@ class ARCHModel(metaclass=ABCMeta):
         computed from the mean model.
         """
         raise NotImplementedError("Subclasses optionally may provide.")
-
-    def _r2_centered(self) -> bool:
-        """
-        Whether the r-square is centered, that is computed from the deviations
-        of y from its mean. Models without a constant use the uncentered r-square.
-        """
-        return True
 
     def _fitted_resids_variance(
         self,
@@ -2741,7 +2737,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         """
         # The total sum of squares of an uncentered r-square has nobs degrees of
         # freedom, since no mean is estimated
-        df_total = self.nobs - int(self.model._r2_centered())
+        df_total = self.nobs - int(self.model._r2_centered)
         df_resid = self.nobs - self.model.num_params
         return 1 - (1 - self.rsquared) * df_total / df_resid
 
