@@ -583,9 +583,13 @@ def test_rsquared():
     res = MAMean(y, lags=1).fit(disp="off")
     e = np.asarray(res.resid)
     assert_allclose(res.rsquared, 1 - e @ e / ((y - y.mean()) @ (y - y.mean())))
+    nobs = y.shape[0]
+    assert_allclose(res.rsquared_adj, 1 - (1 - res.rsquared) * (nobs - 1) / (nobs - 2))
     res = MAMean(y, lags=1, constant=False).fit(disp="off")
     e = np.asarray(res.resid)
     assert_allclose(res.rsquared, 1 - e @ e / (y @ y))
+    # The R-squared is uncentered, and so is the degree of freedom adjustment
+    assert_allclose(res.rsquared_adj, 1 - (1 - res.rsquared) * nobs / (nobs - 1))
     # No variation in the data
     assert np.isnan(MAMean(np.ones(100), lags=1)._r2(np.r_[0.0, 0.0] + 1.0))
 
