@@ -307,6 +307,10 @@ class ARCHModel(metaclass=ABCMeta):
         If ``hold_back`` is negative or ``y`` contains NaN or inf.
     """
 
+    # Whether the r-squared is centered, that is computed from the deviations of y
+    # from its mean. Mean models without a constant use the uncentered r-squared.
+    _r2_centered: bool = True
+
     def __init__(
         self,
         y: ArrayLike | None = None,
@@ -2732,9 +2736,11 @@ class ARCHModelResult(ARCHModelFixedResult):
         """
         Degree of freedom adjusted R-squared.
         """
-        return 1 - (
-            (1 - self.rsquared) * (self.nobs - 1) / (self.nobs - self.model.num_params)
-        )
+        # The total sum of squares of an uncentered r-square has nobs degrees of
+        # freedom, since no mean is estimated
+        df_total = self.nobs - int(self.model._r2_centered)
+        df_resid = self.nobs - self.model.num_params
+        return 1 - (1 - self.rsquared) * df_total / df_resid
 
     @cached_property
     def pvalues(self) -> pd.Series:

@@ -1419,6 +1419,44 @@ def test_harx_lag_spec(simulated_data):
     assert_almost_equal(harx_4.fit().rsquared, r2)
 
 
+@pytest.mark.parametrize("constant", [True, False])
+@pytest.mark.parametrize("model", ["LS", "ARX"])
+def test_rsquared_adj_matches_ols(model, constant):
+    # Without a constant the R-squared is uncentered, and so is the adjustment
+    rs = np.random.RandomState(20261109)
+    nobs = 60
+    x = rs.standard_normal((nobs, 2))
+    y = 0.5 + x @ np.array([1.0, -0.5]) + rs.standard_normal(nobs)
+    if model == "LS":
+        mod = LS(y, x=x, constant=constant, volatility=ConstantVariance())
+        endog, exog = y, x
+    else:
+        mod = ARX(y, lags=1, constant=constant, volatility=ConstantVariance())
+        endog, exog = y[1:], y[:-1, None]
+    res = mod.fit(disp=DISPLAY)
+    if constant:
+        exog = smtools.add_constant(exog)
+    ols_res = smlm.OLS(endog, exog).fit()
+    assert_allclose(res.rsquared, ols_res.rsquared)
+    assert_allclose(res.rsquared_adj, ols_res.rsquared_adj)
+
+
+def test_rsquared_adj_zero_mean():
+    y = np.random.RandomState(20261109).standard_normal(50)
+    res = ZeroMean(y, volatility=ConstantVariance()).fit(disp=DISPLAY)
+    assert res.rsquared == 0.0
+    # The adjustment cannot make the R-squared larger
+    assert res.rsquared_adj == 0.0
+
+
+def test_r2_centered():
+    y = np.random.RandomState(20261109).standard_normal(50)
+    assert ConstantMean(y)._r2_centered
+    assert not ZeroMean(y)._r2_centered
+    # An implicit constant in x also centers the r-squared
+    assert LS(y, x=np.ones((50, 1)), constant=False)._r2_centered
+
+
 def test_backcast_restricted(simulated_data):
     # GH 440
     mod = arch_model(simulated_data)
