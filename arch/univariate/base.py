@@ -307,6 +307,10 @@ class ARCHModel(metaclass=ABCMeta):
         If ``hold_back`` is negative or ``y`` contains NaN or inf.
     """
 
+    # Whether the r-squared is centered, that is computed from the deviations of y
+    # from its mean. Mean models without a constant use the uncentered r-squared.
+    _r2_centered: bool = True
+
     def __init__(
         self,
         y: ArrayLike | None = None,
@@ -316,9 +320,6 @@ class ARCHModel(metaclass=ABCMeta):
         rescale: bool | None = None,
     ) -> None:
         self._name = "ARCHModel"
-        # Whether the r-squared is centered, that is computed from the deviations
-        # of y from its mean. Models without a constant use the uncentered r-squared.
-        self._r2_centered = True
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
         if y is not None:
             self._y_series = cast("pd.Series", ensure1d(y, "y", series=True))
