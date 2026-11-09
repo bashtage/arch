@@ -602,6 +602,9 @@ def test_wald_values():
     assert isinstance(wald.df, int)
     assert wald.dist_name == "chi2(2)"
     assert str(wald).endswith("Distributed: chi2(2)")
+    # The name is the first line and is not repeated before the alternative
+    assert str(wald).splitlines()[:3] == ["t", "H0: a", "H1: b"]
+    assert str(WaldTestStatistic(1.0, 1, "a", "b")).startswith("H0: a\nH1: b\n")
     # The chi2(2) survival function is exp(-x / 2)
     assert_allclose(wald.pval, np.exp(-1.5), rtol=1e-12)
     assert np.isnan(WaldTestStatistic(np.nan, 1, "a", "b").pval)
