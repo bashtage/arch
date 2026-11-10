@@ -29,10 +29,12 @@ import pytest
 from scipy import stats
 
 from arch.univariate import (
+    MaxUndetectableUnderstatementResult,
     TrafficLightResult,
     christoffersen_conditional_coverage,
     christoffersen_independence,
     kupiec_pof,
+    max_undetectable_understatement,
     traffic_light,
     var_exceptions,
 )
@@ -1051,3 +1053,225 @@ def test_p_boundaries():
     # Values that are close to the lower boundary and 0.5 are valid
     assert kupiec_pof(returns, var, 1e-12).stat > 0.0
     assert kupiec_pof(returns, var, 0.5).stat > 0.0
+
+
+# Maximum undetectable understatement (xref #904)
+
+
+def _mul_passes(ret, var, scale, p=0.05, size=0.05, ignore_too_few=True, window=250):
+    """Independent pass/fail check using the public tests directly."""
+    scaled = scale * var
+    hits = var_exceptions(ret, scaled)
+    too_few = bool(hits.mean() < p)
+    ok = kupiec_pof(ret, scaled, p).pval > size or (ignore_too_few and too_few)
+    ok &= christoffersen_independence(ret, scaled).pval > size
+    cc = christoffersen_conditional_coverage(ret, scaled, p)
+    ok &= cc.pval > size or (ignore_too_few and too_few)
+    ok &= traffic_light(ret, scaled, p, window).zone == "green"
+    return bool(ok)
+
+
+@pytest.fixture(scope="module")
+def mul_sim():
+    rng = np.random.default_rng(20261109)
+    nobs = 600
+    sigma = np.exp(0.25 * rng.standard_normal(nobs))
+    ret = sigma * rng.standard_normal(nobs) * 0.01
+    var = -stats.norm.ppf(0.05) * sigma * 0.01  # a generous, correctly sized 95% VaR
+    return ret, var
+
+
+def test_hand_computed_kupiec_only():
+    # 4 observations, ratios -returns/var are 2, 0.5, 0.5, 0.5. Only one exception
+    # (2 > 1) at the reported VaR, and the three ties at 0.5 do not become
+    # exceptions until the VaR is scaled below 0.5, so the limit is exactly 0.5.
+    returns = np.array([-2.0, -0.5, -0.5, -0.5])
+    var = np.ones(4)
+    res = max_undetectable_understatement(returns, var, p=0.5, tests=["kupiec_pof"])
+    assert isinstance(res, MaxUndetectableUnderstatementResult)
+    assert res.passes
+    assert res.failed == ()
+    assert_allclose(res.understatement, 0.5)
+    assert res.exceptions == 1
+    assert res.extra_exceptions == 0
+    assert res.binding == ("kupiec_pof",)
+    assert res.nobs == 4
+    assert res.p == 0.5
+
+
+def test_passes_and_reports_counts(mul_sim):
+    ret, var = mul_sim
+    res = max_undetectable_understatement(ret, var)
+    assert res.passes
+    assert res.failed == ()
+    assert 0.0 <= res.understatement <= 1.0
+    assert res.extra_exceptions >= 0
+    assert res.exceptions == int(var_exceptions(ret, var).sum())
+    assert res.nobs == ret.shape[0]
+
+
+def test_brute_force_grid_matches_public_tests(mul_sim):
+    # The limit is the SMALLEST proportional scaling that still passes: scale=1 (no
+    # understatement) always passes, since the baseline passes, so a grid search for
+    # the computed limit has to look for the minimum passing point, not the maximum.
+    ret, var = mul_sim
+    res = max_undetectable_understatement(ret, var)
+    scale = 1.0 - res.understatement
+    grid = np.linspace(0.0, 1.0, 4001)
+    passing = [s for s in grid if _mul_passes(ret, var, s)]
+    best = min(passing)
+    # the exact limit is at or below the best grid point, and within one cell of it
+    assert scale <= best + 1e-9
+    assert best - scale <= grid[1] - grid[0] + 1e-9
+    assert _mul_passes(ret, var, scale)
+
+
+def test_boundary_agrees_with_public_functions(mul_sim):
+    ret, var = mul_sim
+    res = max_undetectable_understatement(ret, var)
+    scale = 1.0 - res.understatement
+    assert _mul_passes(ret, var, scale)
+    hits = var_exceptions(ret, scale * var)
+    assert int(hits.sum()) - res.exceptions == res.extra_exceptions
+
+
+def test_more_tests_never_increase_understatement(mul_sim):
+    ret, var = mul_sim
+    only_kupiec = max_undetectable_understatement(ret, var, tests=["kupiec_pof"])
+    all_tests = max_undetectable_understatement(ret, var)
+    assert all_tests.understatement <= only_kupiec.understatement + 1e-12
+
+
+def test_stricter_size_never_increases_understatement(mul_sim):
+    # Restricted to kupiec_pof, whose baseline passes at every size tried here;
+    # Christoffersen's independence test can reject the baseline itself at a loose
+    # size, which makes the comparison undefined rather than merely smaller.
+    ret, var = mul_sim
+    loose = max_undetectable_understatement(ret, var, size=0.01, tests=["kupiec_pof"])
+    strict = max_undetectable_understatement(ret, var, size=0.20, tests=["kupiec_pof"])
+    assert loose.passes
+    assert strict.passes
+    assert strict.understatement <= loose.understatement + 1e-12
+
+
+def test_no_exceptions_can_be_fully_understated():
+    # Every return is a gain: var can be scaled all the way to 0 undetected
+    ret = np.full(300, 0.01)
+    var = np.ones(300)
+    res = max_undetectable_understatement(ret, var)
+    assert res.passes
+    assert_allclose(res.understatement, 1.0)
+    assert res.exceptions == 0
+    assert res.extra_exceptions == 0
+    assert res.binding == ()
+
+
+def test_all_exceptions_fails_baseline():
+    # Every day is an exception at the reported VaR: far too many for any p < 1
+    ret = np.full(20, -5.0)
+    var = np.ones(20)
+    res = max_undetectable_understatement(ret, var, p=0.3, window=20)
+    assert not res.passes
+    assert "kupiec_pof" in res.failed
+    assert math.isnan(res.understatement)
+    assert res.exceptions == 20
+    assert res.extra_exceptions == 0
+    assert res.binding == ()
+
+
+def test_ignore_too_few_true_passes_a_conservative_var():
+    # No exceptions in 250 observations at p=0.01 is conservative, not understated
+    ret = np.full(250, 0.001)
+    var = np.ones(250)
+    res = max_undetectable_understatement(ret, var, p=0.01, ignore_too_few=True)
+    assert res.passes
+    assert res.failed == ()
+
+
+def test_ignore_too_few_false_fails_the_same_var():
+    ret = np.full(250, 0.001)
+    var = np.ones(250)
+    res = max_undetectable_understatement(ret, var, p=0.01, ignore_too_few=False)
+    assert not res.passes
+    assert "kupiec_pof" in res.failed
+    assert math.isnan(res.understatement)
+    assert res.extra_exceptions == 0
+    assert res.binding == ()
+
+
+def test_overstated_var_fails_baseline(mul_sim):
+    ret, var = mul_sim
+    res = max_undetectable_understatement(ret, 0.3 * var)
+    assert not res.passes
+    assert math.isnan(res.understatement)
+    assert res.failed
+
+
+def test_traffic_light_only_sets_the_limit():
+    nobs = 250
+    var = np.ones(nobs)
+    # ratios -returns / var are strictly increasing and all in (0.5, 1)
+    returns = -0.5 * (1.0 + np.arange(nobs) / nobs)
+    res = max_undetectable_understatement(
+        returns, var, p=0.01, tests=["traffic_light"], window=nobs
+    )
+    ratios = np.sort(-returns / var)[::-1]
+    # green allows 4 exceptions at p=0.01: the 5th largest ratio sets the limit
+    assert_allclose(1.0 - res.understatement, ratios[4])
+    assert res.exceptions == 0
+    assert res.extra_exceptions == 4
+    assert res.binding == ("traffic_light",)
+
+
+def test_result_is_immutable(mul_sim):
+    ret, var = mul_sim
+    res = max_undetectable_understatement(ret, var)
+    assert dataclasses.is_dataclass(res)
+    assert [f.name for f in dataclasses.fields(res)] == [
+        "understatement",
+        "exceptions",
+        "extra_exceptions",
+        "binding",
+        "passes",
+        "failed",
+        "nobs",
+        "p",
+    ]
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        res.passes = False
+
+
+def test_mul_pandas_alignment():
+    returns, var = _series_pair()  # 120 observations
+    scaled_var = var.abs() + 1.0  # strictly positive and generous
+    result = max_undetectable_understatement(returns, scaled_var, window=100)
+    expected = max_undetectable_understatement(
+        returns.to_numpy(), scaled_var.to_numpy(), window=100
+    )
+    assert result == expected
+
+
+def test_mul_input_validation(mul_sim):
+    ret, var = mul_sim
+    with pytest.raises(ValueError, match="strictly positive"):
+        max_undetectable_understatement(ret, np.zeros_like(var))
+    with pytest.raises(ValueError, match="one of"):
+        max_undetectable_understatement(ret, var, tests=["not_a_test"])
+    with pytest.raises(ValueError, match="non-empty"):
+        max_undetectable_understatement(ret, var, tests=[])
+    with pytest.raises(TypeError, match="single str"):
+        max_undetectable_understatement(ret, var, tests="kupiec_pof")
+    with pytest.raises(ValueError, match="size must be"):
+        max_undetectable_understatement(ret, var, size=1.5)
+    with pytest.raises(ValueError, match=r"p must be a finite float in \(0, 0.5\]"):
+        max_undetectable_understatement(ret, var, p=0.9)
+    with pytest.raises(ValueError, match="window must be"):
+        max_undetectable_understatement(ret, var, window=0)
+    with pytest.raises(TypeError, match="ignore_too_few"):
+        max_undetectable_understatement(ret, var, ignore_too_few="yes")
+    with pytest.raises(ValueError, match="same length as returns"):
+        max_undetectable_understatement(ret, var[:-1])
+    with pytest.raises(ValueError, match="at least 2 observations"):
+        max_undetectable_understatement(
+            ret[:1], var[:1], tests=["christoffersen_independence"]
+        )
