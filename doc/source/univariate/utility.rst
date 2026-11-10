@@ -170,3 +170,32 @@ exception, or with only exceptions, has a statistic.
    traffic_light
 
 .. autoclass:: TrafficLightResult
+
+A passing backtest only says that the reported VaR was not rejected. It does not say
+how close it was. :func:`~arch.univariate.max_undetectable_understatement` answers a
+more specific question: by what fraction could the whole VaR series have been scaled
+down, with the same returns, and still have passed the selected tests. The search is
+over proportional scalings of ``var``, is exact, and needs no optimizer, since the set
+of exceptions only changes at the breakpoints where an observation crosses the scaled
+VaR. It is a lower bound on what a series that understates VaR on some days and
+overstates it on others could hide.
+
+``kupiec_pof`` and ``christoffersen_conditional_coverage`` are two-sided, so a VaR with
+too few exceptions is otherwise rejected for being too conservative. By default,
+``ignore_too_few=True`` does not count that as a failure, since it is not evidence of
+an understated VaR.
+
+.. ipython:: python
+
+    from arch.univariate import max_undetectable_understatement
+
+    result = max_undetectable_understatement(returns, var, p=0.01)
+    result.understatement
+    result.binding
+
+.. autosummary::
+   :toctree: generated/
+
+   max_undetectable_understatement
+
+.. autoclass:: MaxUndetectableUnderstatementResult
