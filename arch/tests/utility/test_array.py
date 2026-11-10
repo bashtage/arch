@@ -406,6 +406,7 @@ def test_date_to_index_tz_aware(tz):
     for date, position in expected.items():
         assert date_to_index(date, date_index) == position
         assert date_to_index(Timestamp(date), date_index) == position
+        assert date_to_index(Timestamp(date), Series(date_index)) == position
         assert date_to_index(np.datetime64(date), date_index) == position
         assert date_to_index(Timestamp(date).to_pydatetime(), date_index) == position
         # A Timestamp with a time zone is converted to UTC
