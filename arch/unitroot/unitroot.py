@@ -70,6 +70,7 @@ from arch.unitroot.critical_values.dfgls import (
     dfgls_tau_star,
 )
 from arch.unitroot.critical_values.dickey_fuller import (
+    adf_t_cv_approx,
     adf_t_large_p,
     adf_t_max,
     adf_t_min,
@@ -959,10 +960,12 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     appears to be a unit root.
 
     The p-values are from an approximation of the asymptotic distribution of the
-    statistic that follows the methodology of MacKinnon (1994), fit to new
-    simulations, and are a smooth and increasing function of the statistic. The
-    critical values are from the response surface regressions of MacKinnon (2010),
-    and depend on the number of observations.
+    statistic that follows the methodology of MacKinnon (1994), and are a smooth
+    and increasing function of the statistic. The critical values are from
+    response surface regressions that follow the methodology of MacKinnon (2010),
+    and depend on the number of observations. Both are fit to the same new
+    simulations, and the p-values of the asymptotic critical values are 1%, 5% and
+    10%.
     If the p-value is close to significant, then the critical values should be
     used to judge whether to reject the null.
 
@@ -1000,14 +1003,14 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> print(f"{adf.stat:0.4f}")
     -3.0931
     >>> print(f"{adf.pvalue:0.4f}")
-    0.0273
+    0.0271
     >>> adf.lags
     2
     >>> adf = ADF(inflation, trend="ct")
     >>> print(f"{adf.stat:0.4f}")
     -3.2111
     >>> print(f"{adf.pvalue:0.4f}")
-    0.0825
+    0.0822
     """
 
     def __init__(
@@ -2353,9 +2356,8 @@ def mackinnoncrit(
     """
     Return the critical values for cointegrating and the ADF test.
 
-    In 2010 MacKinnon updated the values of his 1994 paper with critical values
-    for the augmented Dickey-Fuller tests.  These new values are to be
-    preferred and are used here.
+    The critical values are from response surface regressions that follow the
+    methodology of MacKinnon (2010), and depend on the number of observations.
 
     Parameters
     ----------
@@ -2368,12 +2370,11 @@ def mackinnoncrit(
         Following MacKinnon (1996), these stand for the type of regression run.
         "c" for constant and no trend, "ct" for constant with a linear trend,
         "ctt" for constant with a linear and quadratic trend, and "n" for
-        no constant.  The values for the no constant case are taken from the
-        1996 paper, as they were not updated for 2010 due to the unrealistic
-        assumptions that would underlie such a case. Not case sensitive.
+        no constant. Not case sensitive.
     nobs : int or float, optional
-        This is the sample size, which must be positive.  If the sample size is
-        numpy.inf, then the asymptotic critical values are returned.
+        This is the sample size, the number of observations in the regression of
+        the test, which must be positive.  If the sample size is numpy.inf, then
+        the asymptotic critical values are returned.
     dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         Type of test statistic. Not case sensitive.
 
@@ -2395,8 +2396,11 @@ def mackinnoncrit(
 
     Notes
     -----
-    Results for ADF t-stats from MacKinnon (1994,2010).  Results for DFGLS and
-    ADF z-tests use the same methodology as MacKinnon.
+    The values for the ADF t-test with one unit root are fit to the same
+    simulations as the p-values of mackinnonp, and the p-values of the asymptotic
+    critical values are 1%, 5% and 10%. The values for the ADF z-test and the
+    DFGLS test are also fit to new simulations. The values for the ADF t-test with
+    more than one unit root are from MacKinnon (2010).
 
     References
     ----------
@@ -2414,7 +2418,10 @@ def mackinnoncrit(
         "float", check_float("nobs", nobs, lower=0, inclusive="right", allow_inf=True)
     )
 
-    if lower_dist_type == "adf-t":
+    if lower_dist_type == "adf-t" and num_unit_roots == 1:
+        poly_coef = array(adf_t_cv_approx[regression]).T
+        asymptotic_cv = array(adf_t_cv_approx[regression])[:, 0]
+    elif lower_dist_type == "adf-t":
         asymptotic_cv = tau_2010[regression][num_unit_roots - 1, :, 0]
         poly_coef = tau_2010[regression][num_unit_roots - 1, :, :].T
     elif lower_dist_type == "adf-z":
