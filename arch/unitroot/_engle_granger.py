@@ -322,7 +322,9 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
         The number of cross-sectional regressors in the model.
         Must be between 1 and 11.
     nobs : int
-        The number of observations in the time series.
+        The number of observations in the ADF regression of the residuals, which
+        is the number of observations in the time series less the number of lags
+        less 1. The critical values are fit to simulations in this nobs.
 
     Returns
     -------
