@@ -444,26 +444,26 @@ to restore the previous results.
   :class:`~arch.unitroot.PhillipsPerron` uses with ``test_type="tau"`` and
   ``mackinnonp`` returns with ``dist_type="adf-t"`` and one unit root, is now a smooth
   and increasing function of the statistic, and the critical values with one unit root
-  are fit to the same simulations. The simulations have 486,750,000 to 491,500,000
-  draws for each trend. The p-value is approximated by one polynomial below a cut-off
-  and another above it. These were estimated separately (MacKinnon, 1994), so the
-  p-value jumped up at the cut-off, by 0.004 with ``trend="n"`` and by up to 0.0006
-  otherwise, and jumped up to 1 at the largest statistic covered, by up to 0.003. The
-  two are now cubics, estimated jointly so that they have the same value and slope at
-  the cut-off. They are fit to the asymptotic quantiles, which are the constants of the
-  regressions of the simulated quantiles on powers of 1/nobs, and the critical values
-  are the regressions of the 1%, 5% and 10% quantiles. The p-values of the asymptotic
-  critical values are then 1%, 5% and 10%, to 0.00002, where the values of MacKinnon
-  (1994, 2010) differed by up to 0.0001. The approximation is also more accurate in
-  the left tail: the largest error of the p-values of the 1%, 5% and 10% quantiles
-  falls from 0.00008 to 0.00001, and the largest relative error of p-values below 0.15
-  from 5.3% to 0.05%. In the middle of the distribution, the largest difference from
-  the simulated distribution is 0.006 with ``"n"`` and 0.004 with ``"c"`` (0.004 and
-  0.003 before), and at most 0.002 otherwise, as before. P-values below 0.15 change by
-  at most 0.0002, and the largest change is 0.004, at a p-value near 0.6 with
-  ``"c"``. The critical values change by at most 0.0008 in the smallest samples and by
-  at most 0.0003 with 100 or more observations. The p-values and critical values with
-  more than one unit root are unchanged (:issue:`1008`, :issue:`1017`).
+  are fit to the same simulations, which have 500,000,000 draws for each trend. The
+  p-value is approximated by one polynomial below a cut-off and another above it. These
+  were estimated separately (MacKinnon, 1994), so the p-value jumped up at the cut-off,
+  by 0.004 with ``trend="n"`` and by up to 0.0006 otherwise, and jumped up to 1 at the
+  largest statistic covered, by up to 0.003. The two are now cubics, estimated jointly
+  so that they have the same value and slope at the cut-off. They are fit to the
+  asymptotic quantiles, which are the constants of the regressions of the simulated
+  quantiles on powers of 1/nobs, and the critical values are the regressions of the 1%,
+  5% and 10% quantiles. The p-values of the asymptotic critical values are then 1%, 5%
+  and 10%, to 0.00002, where the values of MacKinnon (1994, 2010) differed by up to
+  0.0001. The approximation is also more accurate in the left tail: the largest error of
+  the p-values of the 1%, 5% and 10% quantiles falls from 0.00008 to 0.00001, and the
+  largest relative error of p-values below 0.15 from 5.3% to 0.06%. In the middle of the
+  distribution, the largest difference from the simulated distribution is 0.006 with
+  ``"n"`` and 0.004 with ``"c"`` (0.004 and 0.003 before), and at most 0.002 otherwise,
+  as before. P-values below 0.15 change by at most 0.0002, and the largest change is
+  0.005, at a p-value near 0.6 with ``"c"``. The critical values change by at most
+  0.0008 in the smallest samples and by at most 0.0003 with 100 or more observations.
+  The p-values and critical values with more than one unit root are unchanged
+  (:issue:`1008`, :issue:`1017`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
