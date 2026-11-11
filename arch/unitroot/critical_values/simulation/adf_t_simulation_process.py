@@ -6,25 +6,34 @@ statistic to adf-t/adf_t_<trend>-<i>.npz. Run from this directory:
 
     python adf_t_simulation_process.py
 
-The p-value of the t-test statistic with one unit root is fit to the quantiles
-with T=2000. The values are written to a section of dickey_fuller.py that is
-before the z-test values, so that adf_z_simlation_process.py keeps it, and which
-is replaced if it exists. The critical values remain those of MacKinnon (2010) in
-tau_2010, and the simulated quantiles are compared with them.
+The statistic of a series of length T is computed from the nobs = T - 1
+observations of the regression of ADF, which is the nobs that ADF and
+PhillipsPerron give mackinnoncrit. Each simulated quantile is regressed on a
+constant and powers of 1/nobs. The regressions of the 1%, 5% and 10% quantiles
+are the critical values, as for the ADF z-test. The constants of the regressions
+are the asymptotic quantiles, and the p-value is fit to them, so that the p-value
+at an asymptotic critical value is its size, up to the error of the fit. The
+values are for one unit root. They are written to a section of dickey_fuller.py
+that is before the z-test values, so that adf_z_simlation_process.py keeps it,
+and which is replaced if it exists.
 """
 
 import argparse
 import os
 import pathlib
+import runpy
 
 from adf_simulation import PERCENTILES, T_OUTPUT_PATH, TIME_SERIES_LENGTHS, TRENDS
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
 import pandas as pd
 from scipy import stats
-from shared import fit_smooth_pval_model, format_dict
-
-from arch.unitroot.unitroot import mackinnoncrit
+from shared import (
+    PvalueResult,
+    estimate_response_surface,
+    fit_smooth_pval_model,
+    format_dict,
+)
 
 # The small p polynomial is a cubic in the statistic, and not a quadratic as in
 # MacKinnon (1994)
@@ -56,10 +65,32 @@ parser.add_argument(
     help="Simulations per file, for the comment in the output",
 )
 args = parser.parse_args()
+output = pathlib.Path(args.output)
+# MacKinnon (2010), for comparison, from the file that is updated. Importing it from
+# arch.unitroot would fail if the file does not have the values that this writes.
+tau_2010 = runpy.run_path(str(output))["tau_2010"]
+
+
+def pvalue(stat: np.ndarray, pvals: PvalueResult) -> np.ndarray:
+    small, large = np.array(pvals.small_p), np.array(pvals.large_p)
+    with np.errstate(over="ignore"):
+        return stats.norm.cdf(
+            np.where(
+                stat <= pvals.tau_star,
+                np.polyval(small[::-1], stat),
+                np.polyval(large[::-1], stat),
+            )
+        )
+
 
 data_path = pathlib.Path(args.data_path)
 critical_values = (1.0, 5.0, 10.0)
+cv_rows = [int(np.argmin(np.abs(PERCENTILES - cv))) for cv in critical_values]
+nobs = TIME_SERIES_LENGTHS - 1
+rhs = (1.0 / nobs[:, None]) ** np.arange(4)
+probs = PERCENTILES / 100.0
 counts = {}
+adf_t_cv_approx = {}
 adf_t_max = {}
 adf_t_min = {}
 adf_t_star = {}
@@ -76,11 +107,15 @@ for trend in TRENDS:
         with np.load(df) as data:
             all_results.append(data["results"])
     results = np.hstack(all_results)
-    cols = TIME_SERIES_LENGTHS.tolist() * len(data_files)
-    results_df = pd.DataFrame(
-        results, index=pd.Index(PERCENTILES / 100.0), columns=cols
-    )
+    cols = nobs.tolist() * len(data_files)
+    results_df = pd.DataFrame(results, index=pd.Index(probs), columns=cols)
     counts[trend] = len(data_files)
+
+    surface = estimate_response_surface(results_df)
+    adf_t_cv_approx[trend] = [
+        [float(val) for val in surface.iloc[row]] for row in cv_rows
+    ]
+    asymptotic = surface.iloc[:, :1]
 
     # The two p-value polynomials are fit jointly so that the p-value is continuous,
     # has a continuous first derivative and is monotone in the statistic
@@ -88,7 +123,7 @@ for trend in TRENDS:
     for max_tail_step in MAX_TAIL_STEPS:
         try:
             pvals = fit_smooth_pval_model(
-                results_df[2000],
+                asymptotic,
                 small_order=SMALL_ORDER,
                 use_log=False,
                 max_tail_step=max_tail_step,
@@ -107,53 +142,57 @@ for trend in TRENDS:
     adf_t_small_p[trend] = [float(val) for val in pvals.small_p]
     adf_t_large_p[trend] = [float(val) for val in pvals.large_p]
 
-    # The fit at the average simulated quantiles that it is estimated from
-    stat = np.asarray(results_df[2000]).mean(axis=1)
-    small, large = np.array(pvals.small_p), np.array(pvals.large_p)
-    with np.errstate(over="ignore"):
-        fitted = stats.norm.cdf(
-            np.where(
-                stat <= pvals.tau_star,
-                np.polyval(small[::-1], stat),
-                np.polyval(large[::-1], stat),
-            )
-        )
-    probs = PERCENTILES / 100.0
-    err = np.abs(fitted - probs)
+    # The fit at the asymptotic quantiles that it is estimated from
+    err = np.abs(pvalue(asymptotic.iloc[:, 0].to_numpy(), pvals) - probs)
     tail = probs <= 0.15
     print(
         f"{trend}: {len(data_files)} files, tau_star {pvals.tau_star}, largest "
         f"error in p {err[tail].max():.1e} if p <= 0.15 and {err[~tail].max():.4f} "
         f"otherwise, relative error at p={probs[0]:g} {err[0] / probs[0]:.2%}"
     )
-    # The regression of ADF with a series of length T has T - 1 observations
+    asymptotic_cv = np.array([cv[0] for cv in adf_t_cv_approx[trend]])
+    print(
+        "  p-value at the asymptotic critical values: "
+        + ", ".join(f"{val:.6f}" for val in pvalue(asymptotic_cv, pvals))
+    )
+    # The critical values compared with the average simulated quantiles and with
+    # the critical values of MacKinnon (2010)
     for j, cv in enumerate(critical_values):
-        row = results_df.iloc[int(np.argmin(np.abs(PERCENTILES - cv)))]
-        grouped = row.groupby(level=0)
-        mean = grouped.mean()
-        se = grouped.std() / np.sqrt(grouped.count())
-        tau = mean.index.to_numpy()
-        mackinnon = np.array([mackinnoncrit(1, trend, t - 1, "adf-t")[j] for t in tau])
-        diff = mean.to_numpy() - mackinnon
+        grouped = results_df.iloc[cv_rows[j]].groupby(level=0)
+        mean = grouped.mean().to_numpy()
+        se = (grouped.std() / np.sqrt(grouped.count())).to_numpy()
+        fitted = rhs @ np.array(adf_t_cv_approx[trend][j])
+        mackinnon = rhs @ tau_2010[trend][0, j]
+        fit_err = fitted - mean
+        diff = fitted - mackinnon
+        worst_fit = int(np.argmax(np.abs(fit_err / se)))
         worst = int(np.argmax(np.abs(diff)))
         print(
-            f"  {cv:g}%: largest difference from MacKinnon (2010) {diff[worst]:+.4f} "
-            f"at T={tau[worst]} ({diff[worst] / se.iloc[worst]:+.1f} s.e.)"
+            f"  {cv:g}%: {adf_t_cv_approx[trend][j]}, largest error "
+            f"{fit_err[worst_fit]:+.4f} at nobs={nobs[worst_fit]} "
+            f"({fit_err[worst_fit] / se[worst_fit]:+.1f} s.e.), largest difference "
+            f"from MacKinnon (2010) {diff[worst]:+.4f} at nobs={nobs[worst]}"
         )
 
+t_section = f"{T_MARKER} new simulations, {args.ex_size:,} per ex., "
 if len(set(counts.values())) == 1:
-    exercises = f"{counts[TRENDS[0]]:,} exercises"
+    t_section += f"{counts[TRENDS[0]]:,} exercises.\n"
 else:
-    exercises = "exercises " + ", ".join(f"{t} {c:,}" for t, c in counts.items())
-t_section = f"{T_MARKER} new simulations, {exercises}, {args.ex_size:,} per ex.\n"
-t_section += "# One unit root. The critical values are those of MacKinnon (2010).\n"
+    t_section += "exercises\n# " + ", ".join(f"{t} {c:,}" for t, c in counts.items())
+    t_section += ".\n"
+t_section += (
+    "# One unit root. The critical values and the p-values are fit to the same\n"
+)
+t_section += (
+    "# simulations, and the p-value at an asymptotic critical value is its size.\n"
+)
 t_section += "adf_t_min = " + format_dict(adf_t_min)
 t_section += "\n\nadf_t_star = " + format_dict(adf_t_star)
 t_section += "\n\nadf_t_max = " + format_dict(adf_t_max)
 t_section += "\n\nadf_t_small_p = " + format_dict(adf_t_small_p)
 t_section += "\n\nadf_t_large_p = " + format_dict(adf_t_large_p)
+t_section += "\n\nadf_t_cv_approx = " + format_dict(adf_t_cv_approx)
 
-output = pathlib.Path(args.output)
 lines = output.read_text().splitlines(keepends=True)
 z_start = next(i for i, line in enumerate(lines) if line.startswith(Z_MARKER))
 t_start = next(

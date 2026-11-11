@@ -23,7 +23,7 @@ except ImportError:
     from statsmodels.tsa.stattools._stattools import _autolag
 
 from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio, ZivotAndrews
-from arch.unitroot.critical_values.dickey_fuller import tau_2010
+from arch.unitroot.critical_values.dickey_fuller import adf_t_cv_approx
 from arch.unitroot.unitroot import (
     _autolag_ols,
     _autolag_ols_low_memory,
@@ -73,7 +73,7 @@ class TestUnitRoot:
         adf = ADF(self.inflation)
         assert_almost_equal(adf.stat, -3.09310, DECIMAL_4)
         assert_equal(adf.lags, 2)
-        assert_almost_equal(adf.pvalue, 0.027261, DECIMAL_4)
+        assert_almost_equal(adf.pvalue, 0.027104, DECIMAL_4)
         adf.regression.summary()
         adf2 = ADF(self.inflation, low_memory=True)
         assert_equal(adf2.lags, 2)
@@ -110,7 +110,7 @@ class TestUnitRoot:
     def test_adf_critical_value(self):
         adf = ADF(self.inflation, trend="c", lags=3)
         adf_cv = adf.critical_values
-        temp = polyval(tau_2010["c"][0, :, ::-1].T, 1.0 / adf.nobs)
+        temp = polyval(np.array(adf_t_cv_approx["c"])[:, ::-1].T, 1.0 / adf.nobs)
         cv = {"1%": temp[0], "5%": temp[1], "10%": temp[2]}
         for k, v in cv.items():
             assert_almost_equal(v, adf_cv[k])
