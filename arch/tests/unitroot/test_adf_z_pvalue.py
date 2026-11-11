@@ -1,7 +1,7 @@
 """
 Tests of the ADF-Z p-value and critical values.
 
-The p-value is a cubic in log|stat| below adf_z_star and a cubic in stat above it.
+The p-value is a quartic in log|stat| below adf_z_star and a cubic in stat above it.
 The two pieces are estimated jointly so that they have the same value and the same
 slope at adf_z_star, and the p-value is monotone in the statistic. The critical
 values are fit to the same simulations, and the p-value is fit to the asymptotic
@@ -36,8 +36,8 @@ SIMULATED_QUANTILES = {
     "ct": [-29.3556, -21.7105, -18.2449, -9.1027, -3.7673],
     "ctt": [-36.5964, -28.1110, -24.1853, -13.4049, -6.6436],
 }
-# The largest error seen is 7.7e-5 for the 1, 5 and 10 percentiles and 4.6e-3 for the
-# 50 and 90 percentiles (cubic polynomials cannot track the whole distribution)
+# The largest error seen is 4.1e-5 for the 1, 5 and 10 percentiles and 6.7e-3 for the
+# 50 and 90 percentiles (the polynomials cannot track the whole distribution)
 ATOL = np.array([1e-4, 1e-4, 1e-4, 7.5e-3, 7.5e-3])
 # Mean over the simulation files of the 1, 5 and 10 percentiles with nobs = 24 and
 # nobs = 99 observations in the regression (series of 25 and 100 observations),
