@@ -2,7 +2,7 @@
 
 # The build tools, the test requirements and the packages that the example notebooks
 # need are dependency groups in pyproject.toml, which pip 25.1 or later installs
-DEP_GROUPS="--group build --group test --group notebooks"
+DEP_GROUPS=(--group build --group test --group notebooks)
 
 if [[ ${USE_CONDA} == "true" ]]; then
   # Miniforge (conda-forge only) is installed by the pipeline and the env's bin
@@ -17,7 +17,7 @@ if [[ ${USE_CONDA} == "true" ]]; then
   fi
   CMD="mamba install -n arch-test -y -c conda-forge numpy"
 else
-  CMD="python -m pip install ${DEP_GROUPS} numpy"
+  CMD="python -m pip install ${DEP_GROUPS[*]} numpy"
 fi
 
 python -m pip install --upgrade pip
@@ -52,8 +52,8 @@ eval $CMD || exit 1
 
 if [[ ${USE_CONDA} == "true" ]]; then
   # After the conda packages, so that pip keeps the numpy from conda-forge
-  echo python -m pip install ${DEP_GROUPS}
-  python -m pip install ${DEP_GROUPS} || exit 1
+  echo python -m pip install "${DEP_GROUPS[@]}"
+  python -m pip install "${DEP_GROUPS[@]}" || exit 1
 fi
 
 if [[ ${NO_MATPLOTLIB,,} == true ]]; then
