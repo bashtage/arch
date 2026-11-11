@@ -52,6 +52,54 @@ def estimate_cv_regression(
     return out
 
 
+def estimate_response_surface(
+    results: pd.DataFrame, max_pvalue: float = 0.05, decimals: int = 5
+) -> pd.DataFrame:
+    """
+    Regress each simulated quantile on a constant and powers of 1/nobs.
+
+    Parameters
+    ----------
+    results : DataFrame
+        The simulated quantiles, indexed by the probability. Each column is one
+        simulation of the quantiles, and is labeled with the number of observations
+        that the statistic is computed from.
+    max_pvalue : float, default 0.05
+        While the p-value of the highest power of 1/nobs is larger than this, it is
+        dropped and the regression is estimated again. The constant and 1/nobs are
+        always included.
+    decimals : int, default 5
+        The number of decimals of the returned coefficients.
+
+    Returns
+    -------
+    DataFrame
+        The coefficients of 1, 1/nobs, 1/nobs**2 and 1/nobs**3, indexed by the
+        probability. The coefficients of the powers that are dropped are 0. The
+        constant is the asymptotic quantile.
+
+    Notes
+    -----
+    Unlike estimate_cv_regression, which sets the coefficients that are not
+    significant to 0 and keeps the others, the regression is estimated again
+    without the powers that are dropped, so that the coefficients that are kept fit
+    the quantiles.
+    """
+    nobs = np.asarray(results.columns, dtype=float)
+    rhs = (1.0 / nobs[:, None]) ** np.arange(4)
+    out = np.zeros((results.shape[0], 4))
+    for i in range(results.shape[0]):
+        lhs = np.asarray(results.iloc[i], dtype=float)
+        for order in range(4, 1, -1):
+            res = OLS(lhs, rhs[:, :order]).fit()
+            if order == 2 or res.pvalues[-1] <= max_pvalue:
+                break
+        out[i, :order] = np.round(res.params, decimals)
+    return pd.DataFrame(
+        out, index=results.index, columns=["1", "1/nobs", "1/nobs**2", "1/nobs**3"]
+    )
+
+
 def fit_pval_model(
     quantiles: pd.Series | pd.DataFrame,
     small_order: int = 3,
