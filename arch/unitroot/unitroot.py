@@ -2396,11 +2396,11 @@ def mackinnoncrit(
 
     Notes
     -----
-    The values for the ADF t-test with one unit root are fit to the same
-    simulations as the p-values of mackinnonp, and the p-values of the asymptotic
-    critical values are 1%, 5% and 10%. The values for the ADF z-test and the
-    DFGLS test are also fit to new simulations. The values for the ADF t-test with
-    more than one unit root are from MacKinnon (2010).
+    The values for the ADF t-test with one unit root and for the ADF z-test are fit
+    to the same simulations as the p-values of mackinnonp, and the p-values of the
+    asymptotic critical values are 1%, 5% and 10%. The values for the DFGLS test
+    are also fit to new simulations. The values for the ADF t-test with more than
+    one unit root are from MacKinnon (2010).
 
     References
     ----------

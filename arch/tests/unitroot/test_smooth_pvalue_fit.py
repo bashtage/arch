@@ -48,6 +48,7 @@ CASES = {
     ),
     # Similar to ADF-Z
     "exponential-log": (-4.0 * np.exp(-0.7 * NORMAL_QUANTILES), 4, True),
+    "exponential-log-quartic": (-4.0 * np.exp(-0.7 * NORMAL_QUANTILES), 5, True),
 }
 MAX_TAIL_STEP = 1e-12
 
@@ -203,16 +204,17 @@ def test_fit_significant_digits(simulation_shared, digits):
         assert float(f"{value:.{digits - 1}e}") == value
 
 
-def test_fit_small_order_invalid(simulation_shared):
+@pytest.mark.parametrize("small_order", [2, 6])
+def test_fit_small_order_invalid(simulation_shared, small_order):
     quantiles = simulated(CASES["exponential-log"][0])
-    with pytest.raises(ValueError, match="small_order must be 3 or 4"):
-        simulation_shared.fit_smooth_pval_model(quantiles, small_order=5)
+    with pytest.raises(ValueError, match="small_order must be 3, 4 or 5"):
+        simulation_shared.fit_smooth_pval_model(quantiles, small_order=small_order)
 
 
 @pytest.mark.parametrize(
     ("small_order", "use_log"),
-    [(3, False), (4, False), (3, True), (4, True)],
-    ids=["quadratic", "cubic", "log-quadratic", "log-cubic"],
+    [(3, False), (4, False), (5, False), (3, True), (4, True), (5, True)],
+    ids=["quadratic", "cubic", "quartic", "log-quadratic", "log-cubic", "log-quartic"],
 )
 def test_junction_constraints(simulation_shared, small_order, use_log):
     rng = np.random.default_rng(1234)
