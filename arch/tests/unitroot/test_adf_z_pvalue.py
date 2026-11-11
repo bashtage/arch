@@ -1,9 +1,12 @@
 """
-Tests that the ADF-Z p-value is a smooth function of the test statistic.
+Tests of the ADF-Z p-value and critical values.
 
 The p-value is a cubic in log|stat| below adf_z_star and a cubic in stat above it.
 The two pieces are estimated jointly so that they have the same value and the same
-slope at adf_z_star, and the p-value is monotone in the statistic.
+slope at adf_z_star, and the p-value is monotone in the statistic. The critical
+values are fit to the same simulations, and the p-value is fit to the asymptotic
+quantiles that are the constants of the critical value regressions, so the p-values
+of the asymptotic critical values are 1%, 5% and 10%.
 """
 
 import importlib.util
@@ -15,26 +18,40 @@ import pandas as pd
 import pytest
 from scipy import stats
 
-from arch.unitroot.critical_values.dickey_fuller import adf_z_star
-from arch.unitroot.unitroot import mackinnonp
+from arch.unitroot.critical_values.dickey_fuller import adf_z_cv_approx, adf_z_star
+from arch.unitroot.unitroot import mackinnoncrit, mackinnonp
 
 TRENDS = ["n", "c", "ct", "ctt"]
 
-# Mean over the 2,000 simulation files adf_z_<trend>-NNNN.npz (written by the
-# adf_z_critical_values_simulation scripts in critical_values/simulation) of the 1, 5,
-# 10, 50 and 90 percentiles of the ADF-Z statistic with T=2000 observations, rounded
-# to 4 decimals. These are the data that the p-value models are fit to, and are the
+# The asymptotic 1, 5, 10, 50 and 90 percentiles of the ADF-Z statistic, rounded to 4
+# decimals. These are the constants of the regressions of the percentiles in the 2,000
+# simulation files adf_z_<trend>-NNNN.npz (written by
+# adf_z_critical_values_simulation_joblib.py in critical_values/simulation) on powers
+# of 1/nobs, which adf_z_simlation_process.py fits the p-value models to. They are the
 # reference for the accuracy of the fitted p-values.
 PERCENTILES = np.array([0.01, 0.05, 0.10, 0.50, 0.90])
 SIMULATED_QUANTILES = {
-    "n": [-13.6630, -8.0260, -5.7053, -0.8518, 0.9285],
-    "c": [-20.5667, -14.0644, -11.2311, -4.3534, -0.8439],
-    "ct": [-29.2396, -21.6459, -18.1980, -9.0901, -3.7642],
-    "ctt": [-36.4242, -28.0074, -24.1075, -13.3801, -6.6372],
+    "n": [-13.6946, -8.0394, -5.7137, -0.8528, 0.9280],
+    "c": [-20.6250, -14.0929, -11.2503, -4.3570, -0.8455],
+    "ct": [-29.3556, -21.7105, -18.2449, -9.1027, -3.7673],
+    "ctt": [-36.5964, -28.1110, -24.1853, -13.4049, -6.6436],
 }
-# The largest error seen is 7.8e-5 for the 1, 5 and 10 percentiles and 3.1e-3 for the
+# The largest error seen is 7.7e-5 for the 1, 5 and 10 percentiles and 4.6e-3 for the
 # 50 and 90 percentiles (cubic polynomials cannot track the whole distribution)
-ATOL = np.array([1.5e-4, 1.5e-4, 1.5e-4, 5e-3, 5e-3])
+ATOL = np.array([1e-4, 1e-4, 1e-4, 7.5e-3, 7.5e-3])
+# Mean over the simulation files of the 1, 5 and 10 percentiles with nobs = 24 and
+# nobs = 99 observations in the regression (series of 25 and 100 observations),
+# rounded to 4 decimals. Their standard errors are at most 0.0019.
+SIMULATED_CRITICAL_VALUES = {
+    "n": {24: [-11.4410, -7.0767, -5.1360], 99: [-13.0796, -7.7830, -5.5619]},
+    "c": {24: [-16.4941, -11.9877, -9.8359], 99: [-19.4769, -13.5272, -10.8754]},
+    "ct": {24: [-21.7334, -17.2364, -14.9653], 99: [-27.1485, -20.4596, -17.3423]},
+    "ctt": {24: [-25.4915, -21.1170, -18.8359], 99: [-33.2677, -26.0924, -22.6684]},
+}
+# The largest error of the critical value regressions is 0.0075 with "ctt" at 1% and
+# nobs = 24 (7 standard errors of the simulated percentile), and 0.0014 (2.5 standard
+# errors) otherwise. The asymptotic critical values are the reference quantiles.
+CV_ATOL = {24: 1e-2, 99: 2.5e-3, np.inf: 1e-4}
 
 # Wide enough that the p-value is 0 or 1 to machine precision at the ends
 GRID_LIMITS = {"n": -200.0, "c": -200.0, "ct": -400.0, "ctt": -600.0}
@@ -110,6 +127,28 @@ def test_pvalue_matches_simulated_distribution(trend):
     pvals = np.array([adf_z_pvalue(stat, trend) for stat in quantiles])
     # assert_allclose does not take an array for atol
     assert np.all(np.abs(pvals - PERCENTILES) <= ATOL)
+
+
+@pytest.mark.parametrize("trend", TRENDS)
+def test_pvalue_at_asymptotic_critical_values(trend):
+    # The p-value is fit to the constants of the critical value regressions
+    critical_values = mackinnoncrit(1, trend, np.inf, "adf-z")
+    pvals = [adf_z_pvalue(float(cv), trend) for cv in critical_values]
+    assert_allclose(pvals, [0.01, 0.05, 0.10], rtol=1e-3)
+
+
+@pytest.mark.parametrize("trend", TRENDS)
+@pytest.mark.parametrize("nobs", [24, 99, np.inf])
+def test_critical_values_match_simulated_distribution(trend, nobs):
+    coef = np.array(adf_z_cv_approx[trend])
+    critical_values = mackinnoncrit(1, trend, nobs, "adf-z")
+    if nobs == np.inf:
+        assert_allclose(critical_values, coef[:, 0])
+        expected = SIMULATED_QUANTILES[trend][:3]
+    else:
+        assert_allclose(critical_values, np.polyval(coef[:, ::-1].T, 1.0 / nobs))
+        expected = SIMULATED_CRITICAL_VALUES[trend][nobs]
+    assert_allclose(critical_values, expected, rtol=0, atol=CV_ATOL[nobs])
 
 
 @pytest.fixture(scope="module")
