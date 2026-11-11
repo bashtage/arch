@@ -769,7 +769,7 @@ def date_to_index(
     ----------
     date : str, datetime, datetime64 or Timestamp
         Date to use when returning the index.
-    date_index : DatetimeIndex or ndarray
+    date_index : DatetimeIndex, Series or ndarray
         Index data containing datetime64 values.
 
     Returns
@@ -804,16 +804,19 @@ def date_to_index(
             "a datetime64 array",
             _describe(date_index),
         )
-    if isinstance(date_index, Series):
-        date_index = DatetimeIndex(date_index)
-    if isinstance(date_index, DatetimeIndex):
-        if date_index.tzinfo is not None:
+    # The errors describe date_index as it was passed, so the converted dates are kept
+    # separately
+    dates = date_index
+    if isinstance(dates, Series):
+        dates = DatetimeIndex(dates)
+    if isinstance(dates, DatetimeIndex):
+        if dates.tzinfo is not None:
             # The same UTC values without a time zone that .values returned. Using
             # .values is deprecated for time zone aware indices.
-            date_index = date_index.tz_convert("GMT").tz_localize(None)
-        values = date_index.to_numpy()
+            dates = dates.tz_convert("GMT").tz_localize(None)
+        values = dates.to_numpy()
     else:
-        values = np.asarray(date_index)
+        values = np.asarray(dates)
     if values.shape[0] == 0:
         _fail(
             ValueError,
