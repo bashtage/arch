@@ -45,17 +45,17 @@ SIMULATED_QUANTILES = {
     "ct": [-3.9585, -3.4104, -3.1270, -2.1806, -1.2464],
     "ctt": [-4.3712, -3.8323, -3.5532, -2.6201, -1.7365],
 }
-# The largest error seen is 3.3e-5 for the 1, 5 and 10 percentiles and 6.3e-3 for the
+# The largest error seen is 3.3e-5 for the 1, 5 and 10 percentiles and 6.2e-3 for the
 # 50 and 90 percentiles (cubic polynomials cannot track the whole distribution)
 ATOL = np.array([1e-4, 1e-4, 1e-4, 7.5e-3, 7.5e-3])
 # Mean over the simulation files of the 1, 5 and 10 percentiles with nobs = 24 and
 # nobs = 99 observations in the regression (series of 25 and 100 observations),
 # rounded to 4 decimals. Their standard errors are at most 0.00022.
 SIMULATED_CRITICAL_VALUES = {
-    "n": {24: [-2.6649, -1.9557, -1.6086], 99: [-2.5886, -1.9440, -1.6144]},
+    "n": {24: [-2.6649, -1.9558, -1.6086], 99: [-2.5887, -1.9440, -1.6144]},
     "c": {24: [-3.7379, -2.9922, -2.6356], 99: [-3.4983, -2.8913, -2.5826]},
     "ct": {24: [-4.3940, -3.6122, -3.2431], 99: [-4.0535, -3.4558, -3.1536]},
-    "ctt": {24: [-4.9400, -4.1087, -3.7194], 99: [-4.4923, -3.8935, -3.5909]},
+    "ctt": {24: [-4.9399, -4.1087, -3.7194], 99: [-4.4923, -3.8935, -3.5909]},
 }
 
 
