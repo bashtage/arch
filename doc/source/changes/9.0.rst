@@ -429,7 +429,7 @@ to restore the previous results.
   from -25.49 to -25.83, and with 100 observations from -33.27 to -33.30. With a
   constant or a trend, the critical values change by up to 0.49 with 19 observations, by
   at most 0.032 with 100 or more, and the asymptotic ones by at most 0.002
-  (:issue:`989`, :issue:`1017`).
+  (:issue:`989`, :issue:`1018`).
 - The p-value of :func:`~arch.unitroot.cointegration.engle_granger` is now a smooth and
   increasing function of the statistic. It is approximated by one polynomial below a
   cut-off and another above it. These were estimated separately, so the p-value jumped
@@ -477,7 +477,7 @@ to restore the previous results.
   0.005, at a p-value near 0.6 with ``"c"``. The critical values change by at most
   0.0008 in the smallest samples and by at most 0.0003 with 100 or more observations.
   The p-values and critical values with more than one unit root are unchanged
-  (:issue:`1008`, :issue:`1017`).
+  (:issue:`1008`, :issue:`1017`, :issue:`1018`).
 - Integer, unsigned integer and Boolean data are now converted to ``float64`` when they
   are passed to an estimator, so that no calculation is done in integer arithmetic.
   Previously a calculation that used the products or differences of integer data could
