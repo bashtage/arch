@@ -1,0 +1,6 @@
+﻿arch.data.sp500.load
+====================
+
+.. currentmodule:: arch.data.sp500
+
+.. autofunction:: load

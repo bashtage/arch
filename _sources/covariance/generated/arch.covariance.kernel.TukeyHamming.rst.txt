@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~TukeyHamming.bandwidth
+      ~TukeyHamming.bandwidth_method
       ~TukeyHamming.bandwidth_scale
       ~TukeyHamming.centered
       ~TukeyHamming.cov

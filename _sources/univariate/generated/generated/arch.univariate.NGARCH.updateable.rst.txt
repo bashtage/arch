@@ -1,0 +1,6 @@
+arch.univariate.NGARCH.updateable
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: NGARCH.updateable

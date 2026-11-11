@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate.base
 
 .. autoclass:: ARCHModelFixedResult
-   :exclude-members: arch_lm_test,forecast,hedgehog_plot,plot,summary,
+   :exclude-members: arch_lm_test,forecast,hedgehog_plot,hill_estimator,plot,summary,var_ratio,
 
    
    
@@ -16,8 +16,10 @@
       ~ARCHModelFixedResult.arch_lm_test
       ~ARCHModelFixedResult.forecast
       ~ARCHModelFixedResult.hedgehog_plot
+      ~ARCHModelFixedResult.hill_estimator
       ~ARCHModelFixedResult.plot
       ~ARCHModelFixedResult.summary
+      ~ARCHModelFixedResult.var_ratio
    
    
    
@@ -31,6 +33,7 @@
       ~ARCHModelFixedResult.aic
       ~ARCHModelFixedResult.bic
       ~ARCHModelFixedResult.conditional_volatility
+      ~ARCHModelFixedResult.excess_kurtosis
       ~ARCHModelFixedResult.loglikelihood
       ~ARCHModelFixedResult.model
       ~ARCHModelFixedResult.nobs

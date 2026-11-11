@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MAMean.constraints
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MAMean.constraints

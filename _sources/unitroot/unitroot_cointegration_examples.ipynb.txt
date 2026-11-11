@@ -308,7 +308,7 @@
     "from arch.unitroot.cointegration import phillips_ouliaris\n",
     "\n",
     "po_zt_test = phillips_ouliaris(\n",
-    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"Zt\"\n",
+    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"zt\"\n",
     ")\n",
     "po_zt_test.summary()"
    ]
@@ -320,7 +320,7 @@
    "outputs": [],
    "source": [
     "po_za_test = phillips_ouliaris(\n",
-    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"Za\"\n",
+    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"za\"\n",
     ")\n",
     "po_za_test.summary()"
    ]
@@ -339,7 +339,7 @@
    "outputs": [],
    "source": [
     "po_pu_test = phillips_ouliaris(\n",
-    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"Pu\"\n",
+    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"pu\"\n",
     ")\n",
     "po_pu_test.summary()"
    ]
@@ -351,7 +351,7 @@
    "outputs": [],
    "source": [
     "po_pz_test = phillips_ouliaris(\n",
-    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"Pz\"\n",
+    "    log_price.WTI, log_price.Brent, trend=\"c\", test_type=\"pz\"\n",
     ")\n",
     "po_pz_test.summary()"
    ]

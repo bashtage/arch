@@ -121,7 +121,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "ax = vol_res.plot(\"D\")"
+    "ax = vol_res.plot(\"d\")"
    ]
   },
   {

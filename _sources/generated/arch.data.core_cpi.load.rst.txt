@@ -1,0 +1,6 @@
+﻿arch.data.core\_cpi.load
+========================
+
+.. currentmodule:: arch.data.core_cpi
+
+.. autofunction:: load

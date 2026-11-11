@@ -23,7 +23,7 @@
     
   
       
-        <title>Covariance Estimation - arch 8.0.0</title>
+        <title>Covariance Estimation - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -94,7 +94,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -105,7 +105,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -200,10 +200,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -667,12 +667,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -743,25 +812,25 @@
 analytical computation is challenging, or simply as an alternative to
 traditional estimators.</p>
 <p>This example estimates the covariance of the mean, standard deviation and
-Sharpe ratio of the S&amp;P 500 using Yahoo! Finance data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+Sharpe ratio of the S&amp;P 500 using monthly returns computed from the daily
+prices distributed with <code class="docutils literal notranslate"><span class="pre">arch</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
+
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">low</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="n">high</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
-<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">'ME'</span><span class="p">)</span>
+<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'ffill'</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'Adj Close'</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <p>The function that returns the parameters.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="n">mu</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
     <span class="n">sr</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">sr</span><span class="p">])</span>
 </code></pre></div>
@@ -774,7 +843,7 @@ bootstrap with an average block size of 12.</p>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">returns</span><span class="p">)</span>
 <span class="n">param_cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">)</span>
-<span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">,</span> <span class="s1">&#39;SR&#39;</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'mu'</span><span class="p">,</span> <span class="s1">'sigma'</span><span class="p">,</span> <span class="s1">'SR'</span><span class="p">]</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 <span class="n">param_cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
@@ -782,16 +851,16 @@ bootstrap with an average block size of 12.</p>
 </div>
 <p>The output is</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span>
-<span class="go">mu        8.148534</span>
-<span class="go">sigma    14.508540</span>
-<span class="go">SR        0.561637</span>
+<span class="go">mu        4.439391</span>
+<span class="go">sigma    14.468318</span>
+<span class="go">SR        0.306835</span>
 <span class="go">dtype: float64</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">param_cov</span>
-<span class="go">             mu     sigma        SR</span>
-<span class="go">mu     3.729435 -0.442891  0.273945</span>
-<span class="go">sigma -0.442891  0.495087 -0.049454</span>
-<span class="go">SR     0.273945 -0.049454  0.020830</span>
+<span class="go">              mu     sigma        SR</span>
+<span class="go">mu     12.521785 -3.272164  0.941381</span>
+<span class="go">sigma  -3.272164  2.137770 -0.280233</span>
+<span class="go">SR      0.941381 -0.280233  0.072791</span>
 </code></pre></div>
 </div>
 <div class="note admonition">
@@ -840,7 +909,7 @@ keyword argument <code class="docutils literal notranslate"><span class="pre">re
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -891,7 +960,7 @@ keyword argument <code class="docutils literal notranslate"><span class="pre">re
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

@@ -10,17 +10,14 @@ This example makes use of monthly S&P 500 data.
 
 .. code-block:: python
 
-    import datetime as dt
-
     import pandas as pd
-    import pandas_datareader.data as web
 
-    start = dt.datetime(1951, 1, 1)
-    end = dt.datetime(2014, 1, 1)
-    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    import arch.data.sp500
+
+    sp500 = arch.data.sp500.load()
     low = sp500.index.min()
     high = sp500.index.max()
-    monthly_dates = pd.date_range(low, high, freq='M')
+    monthly_dates = pd.date_range(low, high, freq='ME')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -37,11 +34,10 @@ The bootstrapped Sharpe ratios can be directly computed using `apply`.
 
 .. code-block:: python
 
-    import seaborn
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    sharpe_ratios = bs.apply(sr, 1000)
-    sharpe_ratios = pd.DataFrame(sharp_ratios, columns=['Sharpe Ratio'])
+    sharpe_ratios = bs.apply(sharpe_ratio, 1000)
+    sharpe_ratios = pd.DataFrame(sharpe_ratios, columns=['Sharpe Ratio'])
     sharpe_ratios.hist(bins=20)
 
 .. image:: bootstrap_histogram.png

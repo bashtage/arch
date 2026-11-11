@@ -1,0 +1,6 @@
+arch.univariate.NGARCH.name
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: NGARCH.name

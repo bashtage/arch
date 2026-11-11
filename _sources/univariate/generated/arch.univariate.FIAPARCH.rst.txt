@@ -1,0 +1,47 @@
+﻿arch.univariate.FIAPARCH
+========================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: FIAPARCH
+   :exclude-members: backcast,backcast_transform,bounds,compute_variance,constraints,forecast,parameter_names,simulate,starting_values,update,variance_bounds,
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FIAPARCH.backcast
+      ~FIAPARCH.backcast_transform
+      ~FIAPARCH.bounds
+      ~FIAPARCH.compute_variance
+      ~FIAPARCH.constraints
+      ~FIAPARCH.forecast
+      ~FIAPARCH.parameter_names
+      ~FIAPARCH.simulate
+      ~FIAPARCH.starting_values
+      ~FIAPARCH.update
+      ~FIAPARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FIAPARCH.delta
+      ~FIAPARCH.name
+      ~FIAPARCH.num_params
+      ~FIAPARCH.start
+      ~FIAPARCH.stop
+      ~FIAPARCH.truncation
+      ~FIAPARCH.updateable
+      ~FIAPARCH.volatility_updater
+   
+   
+   

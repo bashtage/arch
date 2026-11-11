@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MAMean.parameter\_names
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MAMean.parameter_names

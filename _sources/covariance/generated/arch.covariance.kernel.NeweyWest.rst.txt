@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~NeweyWest.bandwidth
+      ~NeweyWest.bandwidth_method
       ~NeweyWest.bandwidth_scale
       ~NeweyWest.centered
       ~NeweyWest.cov

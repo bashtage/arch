@@ -1,0 +1,6 @@
+arch.covariance.kernel.ZeroLag.force\_int
+=========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ZeroLag.force_int

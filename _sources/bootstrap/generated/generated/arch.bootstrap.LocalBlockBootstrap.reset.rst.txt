@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.LocalBlockBootstrap.reset
+========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: LocalBlockBootstrap.reset

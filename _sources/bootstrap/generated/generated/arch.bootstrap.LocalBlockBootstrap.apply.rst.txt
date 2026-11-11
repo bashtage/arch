@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.LocalBlockBootstrap.apply
+========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: LocalBlockBootstrap.apply

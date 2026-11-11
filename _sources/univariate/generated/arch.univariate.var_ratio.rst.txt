@@ -1,0 +1,6 @@
+﻿arch.univariate.var\_ratio
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: var_ratio

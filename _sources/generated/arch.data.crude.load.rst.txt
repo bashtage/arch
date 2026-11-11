@@ -1,0 +1,6 @@
+﻿arch.data.crude.load
+====================
+
+.. currentmodule:: arch.data.crude
+
+.. autofunction:: load

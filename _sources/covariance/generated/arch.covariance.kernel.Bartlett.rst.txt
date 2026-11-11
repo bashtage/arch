@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~Bartlett.bandwidth
+      ~Bartlett.bandwidth_method
       ~Bartlett.bandwidth_scale
       ~Bartlett.centered
       ~Bartlett.cov

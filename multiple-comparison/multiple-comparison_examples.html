@@ -23,7 +23,7 @@
     
   
       
-        <title>Multiple Comparisons - arch 8.0.0</title>
+        <title>Multiple Comparisons - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -594,12 +594,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -738,11 +807,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"figure"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"savefig"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -838,13 +907,13 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.273
-consistent    0.320
-upper         0.322
+lower         0.066
+consistent    0.075
+upper         0.075
 dtype: float64
 </pre></div></div>
 </div>
-<p>The same blocks can be repeated to perform a simulation study. Here I only use 100 replications since this should complete in a reasonable amount of time. Also I set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap replications in each application of the SPA (the default is a more reasonable 1000).</p>
+<p>The same blocks can be repeated to perform a simulation study. Here I only use 100 replications since this should complete in a reasonable amount of time. I also use 100 models in each replication rather than 500, and set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap replications in each application of the SPA (the default is a more reasonable 1000). The cost of each SPA grows with the number of models and with <code class="docutils literal notranslate"><span class="pre">reps</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
 </code></pre></div>
@@ -868,8 +937,8 @@ dtype: float64
     <span class="n">bm_beta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span> <span class="n">bm_factors</span><span class="p">[:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
     <span class="c1"># MSE loss</span>
     <span class="n">bm_losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bm_factors</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">bm_beta</span><span class="p">))</span> <span class="o">**</span> <span class="mf">2.0</span>
-    <span class="c1"># Number of models</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="c1"># Number of models, fewer than above to limit the run time</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="n">model_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="n">model_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
@@ -955,9 +1024,9 @@ dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.003
-consistent    0.003
-upper         0.003
+lower         0.018
+consistent    0.022
+upper         0.022
 dtype: float64
 </pre></div></div>
 </div>
@@ -967,10 +1036,10 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">model_losses_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="n">model_losses</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;model.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+    <span class="n">model_losses</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"model."</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
 <span class="p">)</span>
-<span class="n">avg_model_losses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_losses_df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Average loss&quot;</span><span class="p">])</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">avg_model_losses</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">])</span>
+<span class="n">avg_model_losses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_losses_df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Average loss"</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">avg_model_losses</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
 </code></pre></div>
 </div>
 </div>
@@ -991,8 +1060,8 @@ dtype: float64
 
 <span class="n">stepm</span> <span class="o">=</span> <span class="n">StepM</span><span class="p">(</span><span class="n">bm_losses</span><span class="p">,</span> <span class="n">model_losses_df</span><span class="p">)</span>
 <span class="n">stepm</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model indices:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Model indices:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span><span class="p">])</span>
 </code></pre></div>
 </div>
 </div>
@@ -1002,7 +1071,7 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Model indices:
-[&#39;248&#39;, &#39;342&#39;, &#39;353&#39;, &#39;377&#39;, &#39;390&#39;, &#39;392&#39;, &#39;411&#39;, &#39;416&#39;, &#39;428&#39;, &#39;435&#39;, &#39;436&#39;, &#39;441&#39;, &#39;444&#39;, &#39;453&#39;, &#39;456&#39;, &#39;458&#39;, &#39;461&#39;, &#39;462&#39;, &#39;471&#39;, &#39;477&#39;, &#39;480&#39;, &#39;481&#39;, &#39;486&#39;, &#39;493&#39;]
+[&#39;291&#39;, &#39;405&#39;, &#39;433&#39;, &#39;484&#39;, &#39;486&#39;, &#39;490&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1012,12 +1081,12 @@ Model indices:
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">better_models</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
     <span class="p">[</span><span class="n">model_losses_df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">model_losses_df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
-<span class="n">better_models</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="s2">&quot;Same or worse&quot;</span><span class="p">,</span> <span class="s2">&quot;Better&quot;</span><span class="p">])</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="s2">"Same or worse"</span><span class="p">,</span> <span class="s2">"Better"</span><span class="p">])</span>
 <span class="n">better</span> <span class="o">=</span> <span class="n">better_models</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span><span class="p">)</span>
 <span class="n">worse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">better</span><span class="p">)</span>
-<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">better</span><span class="p">,</span> <span class="s2">&quot;Same or worse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">worse</span><span class="p">,</span> <span class="s2">&quot;Better&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">better_models</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">],</span> <span class="n">rot</span><span class="o">=</span><span class="mi">270</span><span class="p">)</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">better</span><span class="p">,</span> <span class="s2">"Same or worse"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">worse</span><span class="p">,</span> <span class="s2">"Better"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">better_models</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">"o"</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">],</span> <span class="n">rot</span><span class="o">=</span><span class="mi">270</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1040,14 +1109,14 @@ Model indices:
 <span class="n">losses</span> <span class="o">=</span> <span class="n">model_losses_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">::</span><span class="mi">20</span><span class="p">]</span>
 <span class="n">mcs</span> <span class="o">=</span> <span class="n">MCS</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.10</span><span class="p">)</span>
 <span class="n">mcs</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MCS P-values&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"MCS P-values"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Included&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Included"</span><span class="p">)</span>
 <span class="n">included</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">included</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">included</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Excluded&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">included</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Excluded"</span><span class="p">)</span>
 <span class="n">excluded</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">excluded</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">])</span>
 </code></pre></div>
 </div>
 </div>
@@ -1059,35 +1128,35 @@ Model indices:
 MCS P-values
             Pvalue
 Model name
-model.0      0.000
-model.200    0.000
-model.40     0.000
-model.280    0.001
-model.20     0.001
-model.100    0.003
-model.220    0.003
-model.160    0.006
-model.140    0.026
-model.300    0.032
-model.240    0.058
-model.120    0.116
-model.360    0.116
-model.180    0.116
-model.60     0.133
-model.80     0.272
-model.320    0.451
-model.440    0.561
-model.380    0.561
-model.260    0.561
-model.340    0.561
-model.420    0.561
-model.460    0.561
-model.400    0.561
-model.480    1.000
+model.100    0.001
+model.140    0.009
+model.20     0.028
+model.220    0.136
+model.0      0.224
+model.180    0.224
+model.200    0.514
+model.160    0.703
+model.320    0.703
+model.300    0.751
+model.360    0.759
+model.260    0.759
+model.400    0.863
+model.120    0.863
+model.60     0.863
+model.340    0.863
+model.80     0.863
+model.380    0.863
+model.240    0.863
+model.40     0.863
+model.420    0.863
+model.440    0.863
+model.480    0.863
+model.280    0.863
+model.460    1.000
 Included
-[&#39;120&#39;, &#39;180&#39;, &#39;260&#39;, &#39;320&#39;, &#39;340&#39;, &#39;360&#39;, &#39;380&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;, &#39;60&#39;, &#39;80&#39;]
+[&#39;0&#39;, &#39;120&#39;, &#39;160&#39;, &#39;180&#39;, &#39;200&#39;, &#39;220&#39;, &#39;240&#39;, &#39;260&#39;, &#39;280&#39;, &#39;300&#39;, &#39;320&#39;, &#39;340&#39;, &#39;360&#39;, &#39;380&#39;, &#39;40&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;, &#39;60&#39;, &#39;80&#39;]
 Excluded
-[&#39;0&#39;, &#39;100&#39;, &#39;140&#39;, &#39;160&#39;, &#39;20&#39;, &#39;200&#39;, &#39;220&#39;, &#39;240&#39;, &#39;280&#39;, &#39;300&#39;, &#39;40&#39;]
+[&#39;100&#39;, &#39;140&#39;, &#39;20&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1095,11 +1164,11 @@ Excluded
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">status</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Excluded&quot;</span><span class="p">,</span> <span class="s2">&quot;Included&quot;</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"Excluded"</span><span class="p">,</span> <span class="s2">"Included"</span><span class="p">]</span>
 <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">included</span><span class="p">),</span> <span class="s2">&quot;Excluded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">excluded</span><span class="p">),</span> <span class="s2">&quot;Included&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">])</span>
+<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">included</span><span class="p">),</span> <span class="s2">"Excluded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">excluded</span><span class="p">),</span> <span class="s2">"Included"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">"o"</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">])</span>
 </code></pre></div>
 </div>
 </div>
@@ -1150,7 +1219,7 @@ Excluded
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1201,13 +1270,13 @@ Excluded
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

@@ -1,0 +1,6 @@
+arch.univariate.MAMean.y
+========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MAMean.y

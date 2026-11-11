@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.utility.testing - arch 8.0.0</title>
+        <title>arch.utility.testing - arch 9.0.0</title>
       
     
 
@@ -49,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -385,12 +385,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -461,28 +530,39 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WaldTestStatistic&quot;</span><span class="p">]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_float</span><span class="p">,</span> <span class="n">check_int</span><span class="p">,</span> <span class="n">check_str</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"WaldTestStatistic"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="WaldTestStatistic">
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">WaldTestStatistic</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test statistic holder for Wald-type tests</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Test statistic holder for Wald-type tests.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    stat : float</span>
-<span class="sd">        The test statistic</span>
+<span class="sd">        The test statistic. Must not be negative. NaN is accepted and gives a</span>
+<span class="sd">        NaN p-value, for a statistic that cannot be computed.</span>
 <span class="sd">    df : int</span>
-<span class="sd">        Degree of freedom.</span>
+<span class="sd">        Degree of freedom. Must be positive.</span>
 <span class="sd">    null : str</span>
-<span class="sd">        A statement of the test&#39;s null hypothesis</span>
+<span class="sd">        A statement of the test's null hypothesis.</span>
 <span class="sd">    alternative : str</span>
-<span class="sd">        A statement of the test&#39;s alternative hypothesis</span>
-<span class="sd">    name : str, default &quot;&quot; (empty)</span>
-<span class="sd">        Name of test</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        A statement of the test's alternative hypothesis.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of test.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If stat is not a real number, df is not an integer, or null, alternative</span>
+<span class="sd">        or name is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If stat is negative or df is not positive.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -490,58 +570,61 @@
         <span class="n">df</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">null</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"stat"</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">allow_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"df"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="n">stat</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_null</span> <span class="o">=</span> <span class="n">null</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span> <span class="o">=</span> <span class="n">alternative</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_null</span> <span class="o">=</span> <span class="n">check_str</span><span class="p">(</span><span class="s2">"null"</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span> <span class="o">=</span> <span class="n">check_str</span><span class="p">(</span><span class="s2">"alternative"</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">df</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">check_str</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">chi2</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;chi2(</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"chi2(</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test statistic&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Test statistic."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span>
 
 <div class="viewcode-block" id="WaldTestStatistic.pval">
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic.pval">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;P-value of test statistic&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">)</span></div>
+<span class="w">        </span><span class="sd">"""P-value of test statistic."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaldTestStatistic.critical_values">
 <a class="viewcode-back" href="../../../univariate/utility.html#arch.utility.testing.WaldTestStatistic.critical_values">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Critical values test for common test sizes&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Critical values of the test for common test sizes."""</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;10%&quot;</span><span class="p">,</span> <span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="s2">&quot;1%&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">zip</span><span class="p">([</span><span class="s2">"10%"</span><span class="p">,</span> <span class="s2">"5%"</span><span class="p">,</span> <span class="s2">"1%"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Null hypothesis&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Null hypothesis."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">alternative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Alternative hypothesis."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alternative</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">H0: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">null</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">H1: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternative</span><span class="si">}</span><span class="se">\n</span><span class="s2">Statistic: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;P-value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pval</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">Distributed: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">H0: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">null</span><span class="si">}</span><span class="se">\n</span><span class="s2">H1: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternative</span><span class="si">}</span><span class="se">\n</span><span class="s2">Statistic: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"P-value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pval</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">Distributed: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dist_name</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;, id: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">", id: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 </code></pre></div>
@@ -585,7 +668,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -636,7 +719,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../../../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

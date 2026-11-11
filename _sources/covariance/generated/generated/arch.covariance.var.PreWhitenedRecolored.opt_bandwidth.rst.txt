@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.opt\_bandwidth
+=======================================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.opt_bandwidth

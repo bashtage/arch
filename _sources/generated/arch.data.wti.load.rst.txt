@@ -1,0 +1,6 @@
+﻿arch.data.wti.load
+==================
+
+.. currentmodule:: arch.data.wti
+
+.. autofunction:: load

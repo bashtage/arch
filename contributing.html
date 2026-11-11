@@ -1,0 +1,1331 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="types.html">
+      
+      
+        <link rel="next" href="changes.html">
+      
+      
+      <link rel="icon" href="_static/favicon.ico">
+    
+    
+  
+      
+        <title>Contributing - arch 9.0.0</title>
+      
+    
+
+  <link rel="apple-touch-icon" sizes="180x180" href="_static/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="_static/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="_static/images/favicon-16x16.png">
+  <link rel="manifest" href="_static/images/site.webmanifest">
+  <link rel="mask-icon" href="_static/images/safari-pinned-tab.svg" color="#2196f3">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="_static/images/browserconfig.xml">
+
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
+        <link rel="stylesheet" type="text/css" href="_static/css/small_fixes.css?v=64f7a1ef" />
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#development-environment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
+      <img src="_static/bw-logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            arch 9.0.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contributing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+  
+
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
+      <img src="_static/bw-logo.svg" alt="logo">
+    </a>
+    arch 9.0.0
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate/univariate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate.rst (reference label)"><span>Univariate Volatility Models</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bootstrap/bootstrap.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bootstrap/bootstrap.rst (reference label)"><span>Bootstrapping</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="multiple-comparison/multiple-comparisons.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/multiple-comparison/multiple-comparisons.rst (reference label)"><span>Multiple Comparison Problems</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="unitroot/unitroot.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst (reference label)"><span>Unit Root Testing</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="unitroot/unitroot.html#cointegration-analysis" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)"><span>Cointegration Analysis</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="covariance/covariance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/covariance/covariance.rst (reference label)"><span>Long-<wbr>run Covariance Estimation</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/api.rst (reference label)"><span>API Reference</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="types.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#development-environment" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#development-environment (reference label)"><span>Development environment</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docstrings" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#docstrings (reference label)"><span>Docstrings</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Docstrings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-docstrings" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#checking-docstrings (reference label)"><span>Checking docstrings</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-validation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#input-validation (reference label)"><span>Input validation</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Input validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-rules" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-rules (reference label)"><span>The rules</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-message" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-message (reference label)"><span>The message</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-exception" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-exception (reference label)"><span>The exception</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-helpers" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#using-the-helpers (reference label)"><span>Using the helpers</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-types" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#data-types (reference label)"><span>Data types</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#testing-validation (reference label)"><span>Testing validation</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="changes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/changes.rst (reference label)"><span>Change Log</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#development-environment" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#development-environment (reference label)"><span>Development environment</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docstrings" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#docstrings (reference label)"><span>Docstrings</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Docstrings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-docstrings" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#checking-docstrings (reference label)"><span>Checking docstrings</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-validation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#input-validation (reference label)"><span>Input validation</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Input validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-rules" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-rules (reference label)"><span>The rules</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-message" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-message (reference label)"><span>The message</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-exception" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#the-exception (reference label)"><span>The exception</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-helpers" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#using-the-helpers (reference label)"><span>Using the helpers</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-types" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#data-types (reference label)"><span>Data types</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/contributing.rst#testing-validation (reference label)"><span>Testing validation</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Link to this heading">¶</a></h1>
+<h2 id="development-environment">Development environment<a class="headerlink" href="#development-environment" title="Link to this heading">¶</a></h2>
+<p>The development requirements are dependency groups (PEP 735) in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>,
+which pip 25.1 or later installs. From the root of a clone of the repository,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--group<span class="w"> </span>dev
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>--no-build-isolation
+</code></pre></div>
+</div>
+<p>installs the build tools, the test runner, the linters and the packages that the example
+notebooks need, and then builds and installs arch in place. Add <code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">doc</span></code> to the
+first command to also build the documentation. The groups are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build</span></code>: what <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span> <span class="pre">--no-build-isolation</span></code> needs (Cython,
+meson, meson-python, ninja, NumPy and setuptools-scm).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test</span></code>: pytest, pytest-xdist, pytest-cov and numpydoc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notebooks</span></code>: jupyter and nbconvert, which the slow tests use to run the example
+notebooks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lint</span></code>: ruff, black, isort, numpydoc, mypy and the pandas and SciPy stubs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docstrings</span></code>: numpydoc, which <code class="docutils literal notranslate"><span class="pre">test</span></code> and <code class="docutils literal notranslate"><span class="pre">lint</span></code> include.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev</span></code>: <code class="docutils literal notranslate"><span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">test</span></code>, <code class="docutils literal notranslate"><span class="pre">lint</span></code> and <code class="docutils literal notranslate"><span class="pre">notebooks</span></code>, with matplotlib, seaborn and
+pytest-randomly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doc</span></code>: Sphinx, sphinx-immaterial and nbsphinx, in addition to <code class="docutils literal notranslate"><span class="pre">dev</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulation</span></code>: the packages that the scripts in
+<code class="docutils literal notranslate"><span class="pre">arch/unitroot/critical_values/simulation</span></code> need in addition to <code class="docutils literal notranslate"><span class="pre">dev</span></code>.</p></li>
+</ul>
+<p>The groups do not include the dependencies of arch, which pip installs with arch. The
+tests and the checks that CI runs are</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>arch/tests<span class="w"> </span>-n<span class="w"> </span>auto<span class="w"> </span>-m<span class="w"> </span><span class="s2">"not slow"</span>
+ruff<span class="w"> </span>check<span class="w"> </span>arch
+black<span class="w"> </span>--check<span class="w"> </span>arch
+isort<span class="w"> </span>--check<span class="w"> </span>arch
+python<span class="w"> </span>-m<span class="w"> </span>numpydoc<span class="w"> </span>lint<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>ls-files<span class="w"> </span><span class="s2">"arch/*.py"</span><span class="k">)</span>
+</code></pre></div>
+</div>
+<p>and the settings of all of these tools are in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p>
+<h2 id="docstrings">Docstrings<a class="headerlink" href="#docstrings" title="Link to this heading">¶</a></h2>
+<p>Public classes, methods, properties and functions have docstrings in the
+<a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/format.html">numpydoc</a> format. These ten
+rules apply to all of them. Each rule shows a good and a bad form of a parameter type or
+of a line of a docstring.</p>
+<ol class="arabic simple">
+<li><p><strong>Optional parameters.</strong> A parameter with a default has <code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">optional</span></code> in its type.
+The default value goes in the description only when the signature does not make it
+obvious. A parameter whose default cannot be used, because the value has to be
+provided, is still <code class="docutils literal notranslate"><span class="pre">optional</span></code>, and its description says that it must be provided.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">reps</span> <span class="pre">:</span> <span class="pre">int,</span> <span class="pre">optional</span></code>, and <code class="docutils literal notranslate"><span class="pre">adf</span> <span class="pre">:</span> <span class="pre">ADF,</span> <span class="pre">optional</span></code> described as “The ADF
+instance used to perform the test. It must be provided.”</p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">reps</span> <span class="pre">:</span> <span class="pre">int,</span> <span class="pre">default</span> <span class="pre">1000</span></code> or <code class="docutils literal notranslate"><span class="pre">reps</span> <span class="pre">:</span> <span class="pre">int</span></code> for <code class="docutils literal notranslate"><span class="pre">reps=1000</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">adf</span> <span class="pre">:</span> <span class="pre">ADF</span></code> for <code class="docutils literal notranslate"><span class="pre">adf=None</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Unions.</strong> Write a union of types with <code class="docutils literal notranslate"><span class="pre">or</span></code>. A union of three or more types is
+written “A, B or C”, with no comma before <code class="docutils literal notranslate"><span class="pre">or</span></code>. Braces are only for a set of
+literal values.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">:</span> <span class="pre">ndarray</span> <span class="pre">or</span> <span class="pre">Series</span></code>, <code class="docutils literal notranslate"><span class="pre">seed</span> <span class="pre">:</span> <span class="pre">int,</span> <span class="pre">Generator</span> <span class="pre">or</span> <span class="pre">RandomState</span></code> and
+<code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">:</span> <span class="pre">{&quot;aic&quot;,</span> <span class="pre">&quot;bic&quot;}</span></code></p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">:</span> <span class="pre">{ndarray,</span> <span class="pre">Series}</span></code> and <code class="docutils literal notranslate"><span class="pre">seed</span> <span class="pre">:</span> <span class="pre">int,</span> <span class="pre">Generator,</span> <span class="pre">or</span> <span class="pre">RandomState</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>No subscripted types.</strong> Spell out the contents.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">str</span></code> and <code class="docutils literal notranslate"><span class="pre">dict</span> <span class="pre">of</span> <span class="pre">str</span> <span class="pre">to</span> <span class="pre">DataFrame</span></code></p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">(str)</span></code> and <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">DataFrame]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Arrays.</strong> <code class="docutils literal notranslate"><span class="pre">array_like</span></code> is input that is converted with <code class="docutils literal notranslate"><span class="pre">np.asarray</span></code>.
+<code class="docutils literal notranslate"><span class="pre">ndarray</span></code> is input that must already be an array.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">:</span> <span class="pre">array_like</span></code> when the code starts with <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">np.asarray(y)</span></code></p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">:</span> <span class="pre">ndarray</span></code> for the same code, or <code class="docutils literal notranslate"><span class="pre">array-like</span></code> and <code class="docutils literal notranslate"><span class="pre">ArrayLike</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Basic types.</strong> Use <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code> and <code class="docutils literal notranslate"><span class="pre">callable</span></code>.
+Document <code class="docutils literal notranslate"><span class="pre">*args</span></code> and <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> with their stars, and list the keys that
+<code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> accepts.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">**kwargs</span> <span class="pre">:</span> <span class="pre">dict,</span> <span class="pre">optional</span></code> (<code class="docutils literal notranslate"><span class="pre">*args</span> <span class="pre">:</span> <span class="pre">tuple,</span> <span class="pre">optional</span></code>)</p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">kwargs</span> <span class="pre">:</span> <span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">flag</span> <span class="pre">:</span> <span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">:</span> <span class="pre">string</span></code> and
+<code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">:</span> <span class="pre">function</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Sections.</strong> Use the numpydoc section names in the numpydoc order: Parameters,
+Returns (or Yields), Other Parameters, Raises, Warns, See Also, Notes, References,
+Examples. The names are case sensitive.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">See</span> <span class="pre">Also</span></code> before <code class="docutils literal notranslate"><span class="pre">Notes</span></code>, and <code class="docutils literal notranslate"><span class="pre">Examples</span></code> last</p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">See</span> <span class="pre">also</span></code>, or <code class="docutils literal notranslate"><span class="pre">Examples</span></code> before <code class="docutils literal notranslate"><span class="pre">Notes</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Returns.</strong> Give the concrete type of each returned value. A named entry is allowed.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> or <code class="docutils literal notranslate"><span class="pre">names</span> <span class="pre">:</span> <span class="pre">list</span> <span class="pre">of</span> <span class="pre">str</span></code></p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">array</span></code> or <code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">fitted</span> <span class="pre">values</span></code> as the type</p></li>
+</ul>
+</li>
+<li><p><strong>Complete parameters.</strong> Document every parameter in the signature, in signature
+order, and document nothing else. Public properties have a docstring with a summary
+line.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">fit(self,</span> <span class="pre">reps,</span> <span class="pre">method)</span></code> documents <code class="docutils literal notranslate"><span class="pre">reps</span></code> and then <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
+<li><p>Bad: a missing parameter, one in a different order, <code class="docutils literal notranslate"><span class="pre">resids</span> <span class="pre">``</span> <span class="pre">with</span> <span class="pre">a</span> <span class="pre">trailing</span>
+<span class="pre">space,</span> <span class="pre">or</span> <span class="pre">``method:</span> <span class="pre">str</span></code> without a space before the colon</p></li>
+</ul>
+</li>
+<li><p><strong>Punctuation.</strong> The summary is one line. The summary of a function or a method
+starts with a verb in the imperative mood, and the summary of a class or a property
+is a noun phrase. The summary, the parameter descriptions and the return descriptions
+start with a capital letter and end with a period.</p>
+<ul class="simple">
+<li><p>Good: <code class="docutils literal notranslate"><span class="pre">Compute</span> <span class="pre">the</span> <span class="pre">log-likelihood.</span></code> for a method and <code class="docutils literal notranslate"><span class="pre">Augmented</span> <span class="pre">Dickey-Fuller</span>
+<span class="pre">unit</span> <span class="pre">root</span> <span class="pre">test.</span></code> for a class</p></li>
+<li><p>Bad: <code class="docutils literal notranslate"><span class="pre">Computes</span> <span class="pre">the</span> <span class="pre">log-likelihood</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Bugs.</strong> A bug found while editing a docstring is not fixed in the docstring commit.
+It goes in its own commit with the <code class="docutils literal notranslate"><span class="pre">BUG:</span></code> prefix.</p></li>
+</ol>
+<p>Extended summaries, <code class="docutils literal notranslate"><span class="pre">See</span> <span class="pre">Also</span></code> sections and examples are encouraged but not required.
+As an example, this is a compliant docstring.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Scale a series.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The series to scale.</span>
+<span class="sd">    factor : float, optional</span>
+<span class="sd">        Multiplier applied after centering.</span>
+<span class="sd">    method : {"mean", "median"}, optional</span>
+<span class="sd">        The statistic used to center the series.</span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Keyword arguments passed to ``numpy.asarray``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The scaled series.</span>
+<span class="sd">    """</span>
+</code></pre></div>
+</div>
+<h3 id="checking-docstrings">Checking docstrings<a class="headerlink" href="#checking-docstrings" title="Link to this heading">¶</a></h3>
+<p>The rules are configured in the <code class="docutils literal notranslate"><span class="pre">[tool.numpydoc_validation]</span></code> table of
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and checked in two ways. From the root of the repository, run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>numpydoc<span class="w"> </span>lint<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>ls-files<span class="w"> </span><span class="s2">"arch/*.py"</span><span class="k">)</span>
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>arch/tests/test_docstrings.py
+</code></pre></div>
+</div>
+<p>Both need numpydoc 1.10 or later, which the <code class="docutils literal notranslate"><span class="pre">test</span></code>, <code class="docutils literal notranslate"><span class="pre">lint</span></code> and <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependency
+groups install. The Lint workflow runs the first command, and the second is skipped when
+numpydoc is not installed.</p>
+<p><code class="docutils literal notranslate"><span class="pre">numpydoc</span> <span class="pre">lint</span></code> reads the source files. It cannot see a docstring that a class
+inherits when it is created or the docstring of a compiled object, so it does not check
+for a missing docstring (GL08) or a missing Returns section (RT01).
+<code class="docutils literal notranslate"><span class="pre">arch/tests/test_docstrings.py</span></code> validates the live public objects for these and the
+other structural problems. <code class="docutils literal notranslate"><span class="pre">KNOWN_FAILURES</span></code> in that file lists the problems that remain.
+The test fails for a new problem and for a listed problem that no longer occurs, so
+remove an entry when you fix it.</p>
+<p>A check that is wrong for one object can be silenced with a comment on the line that
+starts its definition, for example <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">method(self):</span>&#160; <span class="pre">#</span> <span class="pre">numpydoc</span> <span class="pre">ignore=PR01</span></code>.</p>
+<h2 id="input-validation">Input validation<a class="headerlink" href="#input-validation" title="Link to this heading">¶</a></h2>
+<p>Every public function, constructor and method checks its arguments when it is called,
+before any computation, so that a bad argument never fails deep inside NumPy, SciPy or
+the optimizer. The checks are in <code class="docutils literal notranslate"><span class="pre">arch/utility/_validation.py</span></code> and are used in the
+same way everywhere.</p>
+<div class="note admonition">
+<p class="admonition-title">Note</p>
+<p>The rules below are the decisions of the 9.0 release. They are switches in the
+helpers (the private functions <code class="docutils literal notranslate"><span class="pre">_is_bool</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_flag_integer</span></code>, <code class="docutils literal notranslate"><span class="pre">_is_integer</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_is_real</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_float_in_range</span></code> in <code class="docutils literal notranslate"><span class="pre">arch/utility/_validation.py</span></code>) and in the lists of values in
+<code class="docutils literal notranslate"><span class="pre">arch/tests/validation_table.py</span></code>, so that a change of policy changes those places
+and not the code that calls them.</p>
+</div>
+<h3 id="the-rules">The rules<a class="headerlink" href="#the-rules" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Flags</strong> accept <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">np.bool_</span></code> and the integers <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (Python and
+NumPy integers), and <code class="docutils literal notranslate"><span class="pre">check_bool</span></code> returns a Python <code class="docutils literal notranslate"><span class="pre">bool</span></code>. An integer other than
+<code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Floats (including <code class="docutils literal notranslate"><span class="pre">1.0</span></code>), <code class="docutils literal notranslate"><span class="pre">&quot;no&quot;</span></code> and
+arrays raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> is accepted only where it is the documented
+default.</p></li>
+<li><p><strong>Integers</strong> accept Python and NumPy integers (<code class="docutils literal notranslate"><span class="pre">operator.index</span></code>). A float is
+rejected, including <code class="docutils literal notranslate"><span class="pre">5.0</span></code>, and so is a <code class="docutils literal notranslate"><span class="pre">bool</span></code>.</p></li>
+<li><p><strong>Floats</strong> accept Python and NumPy real numbers, including integers. <code class="docutils literal notranslate"><span class="pre">bool</span></code> is
+rejected. NaN and inf are rejected unless the argument is documented to accept them.</p></li>
+<li><p><strong>NumPy scalars</strong> are accepted wherever the Python type of the same kind is accepted.</p></li>
+<li><p><strong>Data</strong> is <code class="docutils literal notranslate"><span class="pre">array_like</span></code> and is converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code> (<code class="docutils literal notranslate"><span class="pre">as_float64</span></code> in
+<code class="docutils literal notranslate"><span class="pre">arch/utility/array.py</span></code>), following the rules in “Data types” below. Strings,
+dates, <code class="docutils literal notranslate"><span class="pre">None</span></code> and objects that are not numbers cannot be converted, and neither
+can float16 data or, where complex data are not accepted, complex data. NaN and inf
+in the data of the tests, the estimators and the covariance estimators raise a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> that names the argument, except where NaN is handled by design (the
+data of the bootstraps, the diagnostics that drop NaN, outputs padded with NaN),
+which the docstring says.</p></li>
+<li><p><strong>String options</strong> are not case sensitive (<code class="docutils literal notranslate"><span class="pre">check_option</span></code>).</p></li>
+<li><p><strong>Positions and dates</strong> (<code class="docutils literal notranslate"><span class="pre">first_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">start</span></code>) must be in
+<code class="docutils literal notranslate"><span class="pre">[-nobs,</span> <span class="pre">nobs]</span></code> or, for a data set with a date index, a date within the index. A
+negative position counts from the end with the semantics that Python gives the
+argument: <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> are slice bounds, so <code class="docutils literal notranslate"><span class="pre">last_obs=-1</span></code> drops
+the last observation, and <code class="docutils literal notranslate"><span class="pre">start</span></code> is the index of an observation, so <code class="docutils literal notranslate"><span class="pre">start=-1</span></code>
+is the last observation. The helper returns the position as a non-negative integer.
+A position outside the range raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Say this in the docstring of
+every argument that takes a position.</p></li>
+<li><p><strong>When:</strong> everything that can be decided from the arguments (type, range, option,
+shape, finiteness, lags against the number of observations) is checked when the object
+is created or the function is called. Only errors in the numerical work (a singular
+matrix, no convergence) and errors in the order of calls stay lazy.</p></li>
+<li><p>An argument that does not apply to the selected model is ignored, as documented
+(<code class="docutils literal notranslate"><span class="pre">arch_model</span></code> ignores the arguments of a model that it does not select).</p></li>
+<li><p>Methods of the volatility processes and distributions that are part of the API
+reference (<code class="docutils literal notranslate"><span class="pre">compute_variance</span></code>, <code class="docutils literal notranslate"><span class="pre">simulate</span></code>, <code class="docutils literal notranslate"><span class="pre">forecast</span></code>, <code class="docutils literal notranslate"><span class="pre">bounds</span></code>, …) check
+the type, <code class="docutils literal notranslate"><span class="pre">float64</span></code> dtype, contiguity, dimensions and length of the arrays that they
+pass to the compiled recursions, since a wrong array reads or writes memory that
+does not belong to it. The rules for the values (for example that the variance is
+positive) stay with the caller, because the optimizer tries any value.</p></li>
+</ol>
+<h3 id="the-message">The message<a class="headerlink" href="#the-message" title="Link to this heading">¶</a></h3>
+<p>Every message has one form, built by the helpers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span> <span class="n">must</span> <span class="n">be</span> <span class="o">&lt;</span><span class="n">rule</span><span class="o">&gt;</span><span class="p">;</span> <span class="n">got</span> <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">&lt;</span><span class="nb">type</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code> is the name of the argument as the user wrote it, <code class="docutils literal notranslate"><span class="pre">rule</span></code> states what is
+accepted, and the value received is shortened to about 40 characters. For an array
+the value is its shape. Examples:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><code>lags must be an integer &gt;= 0; got 2.5 (float)
+size must be a finite float in (0, 1); got 1.5 (float)
+method must be one of 'aic', 'bic', 't-stat' or 'maic'; got 'xyz' (str)
+y must be a 1-d array of finite numbers; got 1 NaN (list)
+seed must be None, a non-negative integer, a NumPy Generator or a NumPy RandomState;
+got -1 (int)
+</code></pre></div>
+</div>
+<h3 id="the-exception">The exception<a class="headerlink" href="#the-exception" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for a value of the wrong type, including a non-string for a string option
+and data that cannot be converted to numbers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for a value of the right type that is not allowed: outside its range,
+not one of the options, the wrong shape or length, NaN or inf where finite values are
+needed.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">InfeasibleTestException</span></code> is both a <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<h3 id="using-the-helpers">Using the helpers<a class="headerlink" href="#using-the-helpers" title="Link to this heading">¶</a></h3>
+<p>Each helper takes the name of the argument first and the value second, checks it, and
+returns the value in its canonical type: a Python <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">bool</span></code> and a
+<code class="docutils literal notranslate"><span class="pre">float64</span></code> ndarray.</p>
+<table class="docutils data align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Helper</p></th>
+<th class="head"><p>Use it for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_bool(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>flags</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_int(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">lower=None,</span> <span class="pre">upper=None,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>integers, with inclusive bounds</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_float(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">lower=None,</span> <span class="pre">upper=None,</span> <span class="pre">inclusive=&quot;both&quot;,</span>
+<span class="pre">allow_nan=False,</span> <span class="pre">allow_inf=False,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>real numbers, with bounds and <code class="docutils literal notranslate"><span class="pre">inclusive</span></code> in <code class="docutils literal notranslate"><span class="pre">&quot;both&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;neither&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;left&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_seed(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">allow_none=True)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: None, a non-negative integer, a <code class="docutils literal notranslate"><span class="pre">Generator</span></code> or a <code class="docutils literal notranslate"><span class="pre">RandomState</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_option(name,</span> <span class="pre">value,</span> <span class="pre">allowed,</span> <span class="pre">*,</span> <span class="pre">display=None,</span> <span class="pre">normalize=None)</span></code></p></td>
+<td><p>string options, not case sensitive</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_str(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>free strings, such as names</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_callable(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>functions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_instance(name,</span> <span class="pre">value,</span> <span class="pre">types,</span> <span class="pre">*,</span> <span class="pre">allow_none=False)</span></code></p></td>
+<td><p>objects of a class, such as a distribution</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_array(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">ndim=None,</span> <span class="pre">shape=None,</span> <span class="pre">min_length=None,</span>
+<span class="pre">squeeze=True,</span> <span class="pre">allow_nan=False,</span> <span class="pre">allow_inf=False,</span> <span class="pre">allow_none=False,</span>
+<span class="pre">allow_complex=False)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">array_like</span></code> data, converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code> (<code class="docutils literal notranslate"><span class="pre">complex128</span></code> if
+<code class="docutils literal notranslate"><span class="pre">allow_complex</span></code> and the data are complex), with its dimensions, length and
+finiteness</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_ndarray(name,</span> <span class="pre">value,</span> <span class="pre">*,</span> <span class="pre">ndim,</span> <span class="pre">shape=None,</span> <span class="pre">writeable=False,</span>
+<span class="pre">allow_none=False)</span></code></p></td>
+<td><p>arrays that are passed to compiled code and must not be converted</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_index(name,</span> <span class="pre">value,</span> <span class="pre">nobs,</span> <span class="pre">*,</span> <span class="pre">index=None,</span> <span class="pre">default=None,</span> <span class="pre">upper=None,</span>
+<span class="pre">allow_none=True)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">first_obs</span></code>, <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">start</span></code>, with negative positions counted from
+the end</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_float</span><span class="p">,</span> <span class="n">check_int</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+    <span class="n">lags</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"lags"</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="n">lags</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="o">...</span>
+</code></pre></div>
+</div>
+<p>Call the helpers at the top of the function or in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, and use the value that
+they return. The helpers are private (<code class="docutils literal notranslate"><span class="pre">arch.utility._validation</span></code> is not part of the
+API), so a library that wants the same checks copies them.</p>
+<h3 id="data-types">Data types<a class="headerlink" href="#data-types" title="Link to this heading">¶</a></h3>
+<p>One rule decides which data types the public API accepts. It is in <code class="docutils literal notranslate"><span class="pre">as_float64</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_rejected_dtype</span></code> in <code class="docutils literal notranslate"><span class="pre">arch/utility/array.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">ensure1d</span></code>, <code class="docutils literal notranslate"><span class="pre">ensure2d</span></code>,
+<code class="docutils literal notranslate"><span class="pre">to_array_1d</span></code> and <code class="docutils literal notranslate"><span class="pre">check_array</span></code> use it, so a function never tests a data type
+itself.</p>
+<table class="docutils data align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 35.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Data type</p></th>
+<th class="head"><p>Real data (the default)</p></th>
+<th class="head"><p>Complex allowed (<code class="docutils literal notranslate"><span class="pre">allow_complex=True</span></code>)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bool, integer, unsigned integer</p></td>
+<td><p>converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code></p></td>
+<td><p>converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>float32, float64, longdouble</p></td>
+<td><p>converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code></p></td>
+<td><p>converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>complex64, complex128</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+<td><p>converted to <code class="docutils literal notranslate"><span class="pre">complex128</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>float16</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>strings, dates, <code class="docutils literal notranslate"><span class="pre">None</span></code>, other objects</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><strong>Everything is computed in float64.</strong> float32 is accepted and promoted on entry, as
+NumPy does for <code class="docutils literal notranslate"><span class="pre">numpy.cov</span></code>, so that the result for float32 data is the result for
+the same values stored as float64. A calculation in float32 is not accurate enough
+for these estimators. In an emulation with every array in float32, the kernel
+covariance estimators are accurate to about 1e-6 for well scaled data and to 1e-2 for
+data whose mean is large relative to the standard deviation, the unit root statistics
+differ from float64 by 1e-7 to 1e-6 for well scaled series and by up to 4e-2
+(Phillips-Perron) for a series with a large level, the ADF lag search fails with a
+singular matrix for such series and for a series with a trend and thousands of
+observations, and the parameters of the cointegrating regressions differ by up to
+1e-4.</p></li>
+<li><p><strong>float16 is rejected</strong> wherever data are accepted. Its 11 bits are about 3 decimal
+digits, which is not enough for any of the estimators, and a float16 array is almost
+always a mistake (an array that was cast to save memory). The message names the
+accepted types, so that the fix, <code class="docutils literal notranslate"><span class="pre">astype(np.float32)</span></code> or <code class="docutils literal notranslate"><span class="pre">astype(np.float64)</span></code>, is
+clear.</p></li>
+<li><p><strong>Complex data are accepted only where the function is Hermitian</strong> and the result is
+correct: the kernel covariance estimators in <code class="docutils literal notranslate"><span class="pre">arch.covariance.kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">cov_nw</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">add_trend</span></code>, whose real trend columns are added to the data. The bootstraps do
+not convert their data, so they resample complex data, and <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> and
+<code class="docutils literal notranslate"><span class="pre">var</span></code> accept a statistic that returns complex values (<code class="docutils literal notranslate"><span class="pre">cov</span></code> is then Hermitian and
+<code class="docutils literal notranslate"><span class="pre">var</span></code> is real). All other estimators raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>: the unit root and
+cointegration tests, the ARCH models, volatility processes and distributions, the
+multiple comparison procedures, <code class="docutils literal notranslate"><span class="pre">optimal_block_length</span></code> and the VAR prewhitening of
+<code class="docutils literal notranslate"><span class="pre">PreWhitenedRecolored</span></code>, for which there is no single model of complex data (see its
+Notes).</p></li>
+</ul>
+<p>To accept complex data in a new function, pass <code class="docutils literal notranslate"><span class="pre">allow_complex=True</span></code> and make every
+product Hermitian: use the conjugate transpose (<code class="docutils literal notranslate"><span class="pre">x.conj().T</span></code>), take the real part of a
+quantity that is real by construction, such as the autocovariance used in a bandwidth
+that is summed over positive and negative lags, and return the same data type for a
+real input as before. Test it against the real data of the real and imaginary parts
+(see <code class="docutils literal notranslate"><span class="pre">arch/tests/covariance/test_covariance_dtypes.py</span></code>): for <span class="math notranslate nohighlight">\(z=a+ib\)</span> the
+Hermitian covariance is <span class="math notranslate nohighlight">\(\Omega_{aa}+\Omega_{bb}+i(\Omega_{ba}-\Omega_{ab})\)</span>
+where <span class="math notranslate nohighlight">\(\Omega_{uv}\)</span> is the covariance of the real data <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span>
+computed with the same kernel and bandwidth. The tables in
+<code class="docutils literal notranslate"><span class="pre">arch/tests/test_validation_dtypes.py</span></code> and <code class="docutils literal notranslate"><span class="pre">arch/tests/utility/test_dtype_policy.py</span></code>
+list every data type for every entry point and for each helper; add a row for a new
+entry point.</p>
+<h3 id="testing-validation">Testing validation<a class="headerlink" href="#testing-validation" title="Link to this heading">¶</a></h3>
+<p>Add a <code class="docutils literal notranslate"><span class="pre">test_validation_&lt;area&gt;.py</span></code> file to the tests of the area. Build a list of rows
+that give the callable, its arguments, the exception and a pattern for the message with
+<code class="docutils literal notranslate"><span class="pre">arch/tests/validation_table.py</span></code>. The helper checks that every message has the form
+above, supplies the usual bad and good values of flags, integers, floats and seeds, and
+gives every row a unique id (pytest requires it):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.tests.validation_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">INT_BAD</span><span class="p">,</span> <span class="n">INT_GOOD</span><span class="p">,</span> <span class="n">bad_value_rows</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.tests.validation_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">good_value_rows</span><span class="p">,</span> <span class="n">run_row</span><span class="p">,</span> <span class="n">to_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span>
+
+<span class="n">BASE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"y"</span><span class="p">:</span> <span class="n">Y</span><span class="p">}</span>
+<span class="n">ROWS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="o">*</span><span class="n">bad_value_rows</span><span class="p">(</span><span class="s2">"ADF"</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kw</span><span class="p">:</span> <span class="n">ADF</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">BASE</span><span class="p">,</span> <span class="s2">"lags"</span><span class="p">,</span> <span class="n">INT_BAD</span><span class="p">),</span>
+    <span class="o">*</span><span class="n">good_value_rows</span><span class="p">(</span><span class="s2">"ADF"</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kw</span><span class="p">:</span> <span class="n">ADF</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">),</span> <span class="n">BASE</span><span class="p">,</span> <span class="s2">"lags"</span><span class="p">,</span> <span class="n">INT_GOOD</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"row"</span><span class="p">,</span> <span class="n">to_params</span><span class="p">(</span><span class="n">ROWS</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_validation</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">run_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>Every fix needs a test that fails before it and passes after it. The pattern of a row
+names the argument, which most of the old errors from NumPy and SciPy did not.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2021, Kevin Sheppard.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    9.2.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/bashtage/arch" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/arch/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://doi.org/10.5281/zenodo.593254" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216m256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
+    
+      
+        <script src="_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="_static/mathjax/tex-mml-chtml.js"></script>
+    
+  </body>
+</html>

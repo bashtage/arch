@@ -1,0 +1,6 @@
+﻿arch.data.utility.load\_file
+============================
+
+.. currentmodule:: arch.data.utility
+
+.. autofunction:: load_file

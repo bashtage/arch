@@ -1,0 +1,6 @@
+arch.univariate.MAMean.num\_params
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MAMean.num_params

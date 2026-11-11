@@ -5,7 +5,7 @@
 Independent, Identical Distributed Data (i.i.d.)
 ------------------------------------------------
 :class:`~arch.bootstrap.IIDBootstrap` is the standard bootstrap that is appropriate for data that is
-either i.i.d. or at least not serially dependant.
+either i.i.d. or at least not serially dependent.
 
 .. autosummary::
    :toctree: generated/

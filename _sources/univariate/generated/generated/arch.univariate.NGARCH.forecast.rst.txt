@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.forecast
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.forecast

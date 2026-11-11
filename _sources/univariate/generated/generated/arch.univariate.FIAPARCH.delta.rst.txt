@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.delta
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.delta

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIAPARCH.update
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIAPARCH.update

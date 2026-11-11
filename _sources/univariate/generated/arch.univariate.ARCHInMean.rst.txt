@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate
 
 .. autoclass:: ARCHInMean
-   :exclude-members: bounds,compute_param_cov,constraints,fit,fix,forecast,parameter_names,resids,simulate,starting_values,
+   :exclude-members: append,bounds,compute_param_cov,constraints,fit,fix,forecast,parameter_names,resids,simulate,starting_values,
 
    
    
@@ -13,6 +13,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~ARCHInMean.append
       ~ARCHInMean.bounds
       ~ARCHInMean.compute_param_cov
       ~ARCHInMean.constraints

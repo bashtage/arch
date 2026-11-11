@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.centered
+=================================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.centered

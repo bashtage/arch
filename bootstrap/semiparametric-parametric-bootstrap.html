@@ -23,7 +23,7 @@
     
   
       
-        <title>Semiparametric Bootstraps - arch 8.0.0</title>
+        <title>Semiparametric Bootstraps - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -786,12 +786,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -932,8 +1001,8 @@ ensure that the parameters estimated are 1d.</p>
 <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
-                 <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'percentile'</span><span class="p">,</span>
+                 <span class="n">sampling</span><span class="o">=</span><span class="s1">'semi'</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'x_orig'</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </code></pre></div>
 </div>
 <h2 id="using-partial-instead-of-extra-kwargs">Using <code class="docutils literal notranslate"><span class="pre">partial</span></code> instead of <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code><a class="headerlink" href="#using-partial-instead-of-extra-kwargs" title="Link to this heading">¶</a></h2>
@@ -942,7 +1011,7 @@ can then be used in the bootstrap.  This example fixed the value of <code class=
 so that it is not necessary to use <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="n">ols_partial</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_partial</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_partial</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">'semi'</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <h2 id="semiparametric-bootstrap-alternative-method">Semiparametric Bootstrap (Alternative Method)<a class="headerlink" href="#semiparametric-bootstrap-alternative-method" title="Link to this heading">¶</a></h2>
@@ -966,7 +1035,7 @@ bootstrap, although ultimately it is not meaningfully simpler than the
 previous method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">resids</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="n">resids</span><span class="p">)</span>
-<span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
+<span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">'semi'</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'x_orig'</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </code></pre></div>
 </div>
 <div class="note admonition">
@@ -992,7 +1061,7 @@ asymptotic normality are required (and may not be desirable).</p>
 bootstrap, requires specific keyword arguments. The first is <code class="docutils literal notranslate"><span class="pre">params</span></code>,
 which, when present, will contain the parameters estimated on the original
 data.  The second is <code class="docutils literal notranslate"><span class="pre">rng</span></code> which will contain the
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> instance that is used by the bootstrap.
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> instance that is used by the bootstrap.
 This is provided to facilitate simulation in a reproducible manner.</p>
 <p>A parametric bootstrap function must:</p>
 <ul class="simple">
@@ -1021,8 +1090,8 @@ estimator is the MLE.</p>
 </div>
 <p>This function can then be used to form parametric bootstrap confidence intervals.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_para</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
-                 <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;parametric&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_para</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'percentile'</span><span class="p">,</span>
+                 <span class="n">sampling</span><span class="o">=</span><span class="s1">'parametric'</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'x_orig'</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </code></pre></div>
 </div>
 <div class="note admonition">
@@ -1070,7 +1139,7 @@ required when specifying a complete model.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1121,7 +1190,7 @@ required when specifying a complete model.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

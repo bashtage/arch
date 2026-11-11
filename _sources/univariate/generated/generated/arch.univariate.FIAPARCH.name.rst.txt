@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.name
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.name

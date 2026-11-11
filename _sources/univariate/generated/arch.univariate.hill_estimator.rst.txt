@@ -1,0 +1,6 @@
+﻿arch.univariate.hill\_estimator
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: hill_estimator

@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~CovarianceEstimator.bandwidth
+      ~CovarianceEstimator.bandwidth_method
       ~CovarianceEstimator.bandwidth_scale
       ~CovarianceEstimator.centered
       ~CovarianceEstimator.cov

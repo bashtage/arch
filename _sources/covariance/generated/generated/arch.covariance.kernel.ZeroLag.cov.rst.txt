@@ -1,0 +1,6 @@
+arch.covariance.kernel.ZeroLag.cov
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ZeroLag.cov

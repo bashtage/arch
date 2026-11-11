@@ -1,0 +1,6 @@
+arch.univariate.FIAPARCH.truncation
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIAPARCH.truncation

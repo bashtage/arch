@@ -23,7 +23,7 @@
     
   
       
-        <title>Using the Fixed Variance process - arch 8.0.0</title>
+        <title>Using the Fixed Variance process - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -878,12 +878,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -1043,11 +1112,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"figure"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"savefig"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1071,8 +1140,8 @@
 
 <span class="n">vix_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">vix</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;VIX Index&quot;</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">vix</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;VIX Index&quot;</span><span class="p">)</span>
+<span class="n">vix</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"VIX Index"</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">vix</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"VIX Index"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1111,8 +1180,8 @@ Vol Model:          Constant Variance   Log-Likelihood:               -2267.95
 Distribution:                  Normal   AIC:                           4545.90
 Method:            Maximum Likelihood   BIC:                           4571.50
                                         No. Observations:                 1237
-Date:                Tue, Oct 21 2025   Df Residuals:                     1233
-Time:                        08:39:30   Df Model:                            4
+Date:                Wed, Nov 11 2026   Df Residuals:                     1233
+Time:                        22:08:24   Df Model:                            4
                                    Mean Model
 ================================================================================
                       coef    std err          t      P&gt;|t|     95.0% Conf. Int.
@@ -1138,7 +1207,7 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">vol_mod</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">vol_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </code></pre></div>
 </div>
@@ -1151,13 +1220,13 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
                      Zero Mean - GJR-GARCH Model Results
 ==============================================================================
 Dep. Variable:                  resid   R-squared:                       0.000
-Mean Model:                 Zero Mean   Adj. R-squared:                  0.001
+Mean Model:                 Zero Mean   Adj. R-squared:                  0.000
 Vol Model:                  GJR-GARCH   Log-Likelihood:               -1936.93
 Distribution:                  Normal   AIC:                           3881.86
 Method:            Maximum Likelihood   BIC:                           3902.35
                                         No. Observations:                 1237
-Date:                Tue, Oct 21 2025   Df Residuals:                     1237
-Time:                        08:39:30   Df Model:                            0
+Date:                Wed, Nov 11 2026   Df Residuals:                     1237
+Time:                        22:08:24   Df Model:                            0
                               Volatility Model
 ===========================================================================
                  coef    std err          t      P&gt;|t|     95.0% Conf. Int.
@@ -1175,7 +1244,7 @@ Covariance estimator: robust
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ax</span> <span class="o">=</span> <span class="n">vol_res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ax</span> <span class="o">=</span> <span class="n">vol_res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"d"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1208,16 +1277,16 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      1,   Func. Count:      7,   Neg. LLF: 255807126419.29395
-Iteration:      2,   Func. Count:     19,   Neg. LLF: 930334.8246089637
-Iteration:      3,   Func. Count:     28,   Neg. LLF: 3486.655722686516
-Iteration:      4,   Func. Count:     36,   Neg. LLF: 2885.7186383397548
-Iteration:      5,   Func. Count:     44,   Neg. LLF: 65535600.4083469
-Iteration:      6,   Func. Count:     53,   Neg. LLF: 1935.9527548190574
-Iteration:      7,   Func. Count:     59,   Neg. LLF: 1935.9470520907971
-Iteration:      8,   Func. Count:     65,   Neg. LLF: 1935.947051480343
+Iteration:      1,   Func. Count:      7,   Neg. LLF: 255807212187.38138
+Iteration:      2,   Func. Count:     19,   Neg. LLF: 930335.2000795482
+Iteration:      3,   Func. Count:     28,   Neg. LLF: 3486.719189720781
+Iteration:      4,   Func. Count:     36,   Neg. LLF: 2885.6831826775933
+Iteration:      5,   Func. Count:     44,   Neg. LLF: 65536192.62272484
+Iteration:      6,   Func. Count:     53,   Neg. LLF: 1935.9527545452072
+Iteration:      7,   Func. Count:     59,   Neg. LLF: 1935.947051975386
+Iteration:      8,   Func. Count:     65,   Neg. LLF: 1935.9470513651265
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 1935.947051480343
+            Current function value: 1935.9470513651265
             Iterations: 8
             Function evaluations: 65
             Gradient evaluations: 8
@@ -1229,14 +1298,14 @@ Vol Model:             Fixed Variance   Log-Likelihood:               -1935.95
 Distribution:                  Normal   AIC:                           3881.89
 Method:            Maximum Likelihood   BIC:                           3907.50
                                         No. Observations:                 1237
-Date:                Tue, Oct 21 2025   Df Residuals:                     1233
-Time:                        08:39:30   Df Model:                            4
+Date:                Wed, Nov 11 2026   Df Residuals:                     1233
+Time:                        22:08:24   Df Model:                            4
                                     Mean Model
 ==================================================================================
                       coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 ----------------------------------------------------------------------------------
-Const               0.5584      0.153      3.662  2.507e-04      [  0.260,  0.857]
-VIX Index[0:1]      0.9376  3.625e-02     25.866 1.607e-147      [  0.867,  1.009]
+Const               0.5584      0.153      3.661  2.507e-04      [  0.260,  0.857]
+VIX Index[0:1]      0.9376  3.625e-02     25.866 1.608e-147      [  0.867,  1.009]
 VIX Index[0:5]     -0.0249  3.782e-02     -0.657      0.511 [-9.899e-02,4.926e-02]
 VIX Index[0:22]     0.0493  2.102e-02      2.344  1.909e-02  [8.064e-03,9.044e-02]
                             Volatility Model
@@ -1258,11 +1327,11 @@ Covariance estimator: robust
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">vol_mod</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
     <span class="n">variance</span><span class="p">[</span><span class="mi">22</span><span class="p">:]</span> <span class="o">=</span> <span class="n">vol_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="o">**</span><span class="mf">2.0</span>
     <span class="n">fv</span> <span class="o">=</span> <span class="n">FixedVariance</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">],</span> <span class="n">volatility</span><span class="o">=</span><span class="n">fv</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </code></pre></div>
 </div>
@@ -1285,14 +1354,14 @@ Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -
 Distribution:                           Normal   AIC:                           3879.48
 Method:                     Maximum Likelihood   BIC:                           3899.96
                                                  No. Observations:                 1237
-Date:                         Tue, Oct 21 2025   Df Residuals:                     1233
-Time:                                 08:39:31   Df Model:                            4
+Date:                         Wed, Nov 11 2026   Df Residuals:                     1233
+Time:                                 22:08:24   Df Model:                            4
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ---------------------------------------------------------------------------------
-Const               0.5602      0.152      3.681  2.323e-04     [  0.262,  0.858]
-VIX Index[0:1]      0.9381  3.616e-02     25.939 2.389e-148     [  0.867,  1.009]
+Const               0.5602      0.152      3.681  2.324e-04     [  0.262,  0.858]
+VIX Index[0:1]      0.9381  3.616e-02     25.940 2.388e-148     [  0.867,  1.009]
 VIX Index[0:5]     -0.0262  3.774e-02     -0.693      0.488   [ -0.100,4.781e-02]
 VIX Index[0:22]     0.0499  2.099e-02      2.380  1.733e-02 [8.810e-03,9.109e-02]
 =================================================================================
@@ -1307,7 +1376,7 @@ Covariance estimator: robust
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">],</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">"off"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </code></pre></div>
 </div>
@@ -1325,8 +1394,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -1932.61
 Distribution:                  Normal   AIC:                           3881.23
 Method:            Maximum Likelihood   BIC:                           3922.19
                                         No. Observations:                 1237
-Date:                Tue, Oct 21 2025   Df Residuals:                     1233
-Time:                        08:39:31   Df Model:                            4
+Date:                Wed, Nov 11 2026   Df Residuals:                     1233
+Time:                        22:08:24   Df Model:                            4
                                    Mean Model
 ================================================================================
                       coef    std err          t      P&gt;|t|     95.0% Conf. Int.
@@ -1340,7 +1409,7 @@ VIX Index[0:22]     0.0632  6.353e-02      0.994      0.320 [-6.136e-02,  0.188]
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
 omega          0.2357      0.250      0.944      0.345 [ -0.254,  0.725]
-alpha[1]       0.7091      1.069      0.663      0.507 [ -1.386,  2.804]
+alpha[1]       0.7091      1.069      0.664      0.507 [ -1.386,  2.804]
 gamma[1]      -0.7091      0.519     -1.367      0.172 [ -1.726,  0.308]
 beta[1]        0.5579      0.855      0.653      0.514 [ -1.117,  2.233]
 ========================================================================
@@ -1388,7 +1457,7 @@ Covariance estimator: robust
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1439,13 +1508,13 @@ Covariance estimator: robust
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

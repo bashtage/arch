@@ -1,0 +1,6 @@
+﻿arch.univariate.christoffersen\_independence
+============================================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: christoffersen_independence

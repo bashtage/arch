@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.bounds
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.bounds

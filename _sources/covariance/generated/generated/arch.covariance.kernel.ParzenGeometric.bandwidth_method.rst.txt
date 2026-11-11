@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.bandwidth\_method
+========================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.bandwidth_method

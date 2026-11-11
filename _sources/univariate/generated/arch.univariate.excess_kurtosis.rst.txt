@@ -1,0 +1,6 @@
+﻿arch.univariate.excess\_kurtosis
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: excess_kurtosis

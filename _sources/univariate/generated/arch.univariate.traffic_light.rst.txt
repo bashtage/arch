@@ -1,0 +1,6 @@
+﻿arch.univariate.traffic\_light
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: traffic_light

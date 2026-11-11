@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.NGARCH.constraints
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: NGARCH.constraints

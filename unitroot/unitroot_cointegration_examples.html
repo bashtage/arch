@@ -23,7 +23,7 @@
     
   
       
-        <title>Cointegration Testing - arch 8.0.0</title>
+        <title>Cointegration Testing - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -548,12 +548,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -646,11 +715,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"figure"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"savefig"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -684,7 +753,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span>
 
-<span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -699,7 +768,7 @@
   <td>Test Statistic</td>    <td>-1.780</td>
 </tr>
 <tr>
-  <td>P-value</td>            <td>0.391</td>
+  <td>P-value</td>            <td>0.393</td>
 </tr>
 <tr>
   <td>Lags</td>                   <td>1</td>
@@ -710,7 +779,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ADF</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -725,7 +794,7 @@
   <td>Test Statistic</td>    <td>-1.655</td>
 </tr>
 <tr>
-  <td>P-value</td>            <td>0.454</td>
+  <td>P-value</td>            <td>0.458</td>
 </tr>
 <tr>
   <td>Lags</td>                   <td>1</td>
@@ -749,7 +818,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">engle_granger</span>
 
-<span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -773,7 +842,7 @@
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.939</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -2.47 (10%), -2.78 (5%), -3.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: No Trend<br/>Critical Values: -2.47 (10%), -2.78 (5%), -3.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">plot</span></code> method can be used to plot the model residual. We see that while this appears to be mean 0, it might have a trend in it.</p>
 <div class="nbinput docutils container">
@@ -816,7 +885,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;ct&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"ct"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -840,7 +909,7 @@ dtype: float64
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.840</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -3.52 (10%), -3.81 (5%), -4.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: Constant and Linear Time Trend<br/>Critical Values: -3.52 (10%), -3.81 (5%), -4.37 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
@@ -884,7 +953,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="p">[:</span><span class="s2">&quot;2008&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="p">[:</span><span class="s2">&quot;2008&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">eg_test</span> <span class="o">=</span> <span class="n">engle_granger</span><span class="p">(</span><span class="n">log_price</span><span class="p">[:</span><span class="s2">"2008"</span><span class="p">]</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="p">[:</span><span class="s2">"2008"</span><span class="p">]</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">)</span>
 <span class="n">eg_test</span>
 </code></pre></div>
 </div>
@@ -908,7 +977,7 @@ dtype: float64
 <tr>
   <td>Estimated Root ρ (γ+1)</td>     <td>0.825</td>
 </tr>
-</table><br/><br/>Trend: Constant<br/>Critical Values: -2.48 (10%), -2.79 (5%), -3.38 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
+</table><br/><br/>Trend: No Trend<br/>Critical Values: -2.48 (10%), -2.79 (5%), -3.38 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 1</div>
 </div>
 <p>These residuals look quite a bit better although it is possible the break in the cointegrating vector happened around 2005 when oil prices first surged.</p>
 <div class="nbinput docutils container">
@@ -917,7 +986,7 @@ dtype: float64
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span> <span class="o">=</span> <span class="n">eg_test</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">title</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Pre-2009 Cointegration Residual&quot;</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Pre-2009 Cointegration Residual"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -945,7 +1014,7 @@ dtype: float64
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.cointegration</span><span class="w"> </span><span class="kn">import</span> <span class="n">phillips_ouliaris</span>
 
 <span class="n">po_zt_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Zt&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"zt"</span>
 <span class="p">)</span>
 <span class="n">po_zt_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -959,7 +1028,7 @@ dtype: float64
 <table class="simpletable">
 <caption>Phillips-Ouliaris Zt Cointegration Test</caption>
 <tr>
-  <td>Test Statistic</td>    <td>-5.357</td>
+  <td>Test Statistic</td>    <td>-5.286</td>
 </tr>
 <tr>
   <td>P-value</td>            <td>0.000</td>
@@ -968,7 +1037,7 @@ dtype: float64
   <td>Kernel</td>          <td>Bartlett</td>
 </tr>
 <tr>
-  <td>Bandwidth</td>         <td>10.185</td>
+  <td>Bandwidth</td>          <td>7.901</td>
 </tr>
 </table><br/><br/>Trend: Constant<br/>Critical Values: -3.06 (10%), -3.36 (5%), -3.93 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 3</div>
 </div>
@@ -977,7 +1046,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_za_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Za&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"za"</span>
 <span class="p">)</span>
 <span class="n">po_za_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -991,7 +1060,7 @@ dtype: float64
 <table class="simpletable">
 <caption>Phillips-Ouliaris Za Cointegration Test</caption>
 <tr>
-  <td>Test Statistic</td>   <td>-53.531</td>
+  <td>Test Statistic</td>   <td>-51.995</td>
 </tr>
 <tr>
   <td>P-value</td>            <td>0.000</td>
@@ -1000,7 +1069,7 @@ dtype: float64
   <td>Kernel</td>          <td>Bartlett</td>
 </tr>
 <tr>
-  <td>Bandwidth</td>         <td>10.185</td>
+  <td>Bandwidth</td>          <td>7.901</td>
 </tr>
 </table><br/><br/>Trend: Constant<br/>Critical Values: -16.95 (10%), -20.34 (5%), -27.76 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 3</div>
 </div>
@@ -1010,7 +1079,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_pu_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Pu&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"pu"</span>
 <span class="p">)</span>
 <span class="n">po_pu_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -1024,7 +1093,7 @@ dtype: float64
 <table class="simpletable">
 <caption>Phillips-Ouliaris Pu Cointegration Test</caption>
 <tr>
-  <td>Test Statistic</td>   <td>102.868</td>
+  <td>Test Statistic</td>    <td>92.370</td>
 </tr>
 <tr>
   <td>P-value</td>            <td>0.000</td>
@@ -1033,7 +1102,7 @@ dtype: float64
   <td>Kernel</td>          <td>Bartlett</td>
 </tr>
 <tr>
-  <td>Bandwidth</td>         <td>14.648</td>
+  <td>Bandwidth</td>          <td>6.726</td>
 </tr>
 </table><br/><br/>Trend: Constant<br/>Critical Values: 27.01 (10%), 32.93 (5%), 46.01 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 2</div>
 </div>
@@ -1042,7 +1111,7 @@ dtype: float64
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">po_pz_test</span> <span class="o">=</span> <span class="n">phillips_ouliaris</span><span class="p">(</span>
-    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;Pz&quot;</span>
+    <span class="n">log_price</span><span class="o">.</span><span class="n">WTI</span><span class="p">,</span> <span class="n">log_price</span><span class="o">.</span><span class="n">Brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s2">"pz"</span>
 <span class="p">)</span>
 <span class="n">po_pz_test</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div>
@@ -1056,7 +1125,7 @@ dtype: float64
 <table class="simpletable">
 <caption>Phillips-Ouliaris Pz Cointegration Test</caption>
 <tr>
-  <td>Test Statistic</td>   <td>114.601</td>
+  <td>Test Statistic</td>   <td>103.331</td>
 </tr>
 <tr>
   <td>P-value</td>            <td>0.000</td>
@@ -1065,7 +1134,7 @@ dtype: float64
   <td>Kernel</td>          <td>Bartlett</td>
 </tr>
 <tr>
-  <td>Bandwidth</td>         <td>14.648</td>
+  <td>Bandwidth</td>          <td>6.726</td>
 </tr>
 </table><br/><br/>Trend: Constant<br/>Critical Values: 45.39 (10%), 52.41 (5%), 67.39 (1%)<br/>Null Hypothesis: No Cointegration<br/>Alternative Hypothesis: Cointegration<br/>Distribution Order: 2</div>
 </div>
@@ -1125,7 +1194,7 @@ dtype: float64
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1176,13 +1245,13 @@ dtype: float64
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

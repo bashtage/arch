@@ -1,0 +1,6 @@
+﻿arch.data.nasdaq.load
+=====================
+
+.. currentmodule:: arch.data.nasdaq
+
+.. autofunction:: load

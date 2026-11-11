@@ -1,0 +1,6 @@
+﻿arch.data.vix.load
+==================
+
+.. currentmodule:: arch.data.vix
+
+.. autofunction:: load

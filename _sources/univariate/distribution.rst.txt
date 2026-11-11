@@ -18,7 +18,7 @@ A distribution is the final component of an ARCH Model.
 
 Writing New Distributions
 -------------------------
-All distributions must inherit from :class:Distribution and provide all public
+All distributions must inherit from :class:`~arch.univariate.distribution.Distribution` and provide all public
 methods.
 
 .. currentmodule:: arch.univariate.distribution

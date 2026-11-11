@@ -1,0 +1,44 @@
+﻿arch.univariate.MAMean
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: MAMean
+   :exclude-members: append,bounds,compute_param_cov,constraints,fit,fix,forecast,parameter_names,resids,simulate,starting_values,
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MAMean.append
+      ~MAMean.bounds
+      ~MAMean.compute_param_cov
+      ~MAMean.constraints
+      ~MAMean.fit
+      ~MAMean.fix
+      ~MAMean.forecast
+      ~MAMean.parameter_names
+      ~MAMean.resids
+      ~MAMean.simulate
+      ~MAMean.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MAMean.distribution
+      ~MAMean.name
+      ~MAMean.num_params
+      ~MAMean.volatility
+      ~MAMean.y
+   
+   
+   

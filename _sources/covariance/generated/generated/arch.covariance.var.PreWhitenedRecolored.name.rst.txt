@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.name
+=============================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.name

@@ -210,7 +210,7 @@
    "outputs": [],
    "source": [
     "exog = pd.DataFrame({\"x0\": x0, \"x1\": x1})\n",
-    "mod = arch_model(y, x=exog, mean=\"ARX\", lags=1)\n",
+    "mod = arch_model(y, x=exog, mean=\"arx\", lags=1)\n",
     "res = mod.fit(disp=\"off\")\n",
     "print(res.summary())"
    ]
@@ -421,7 +421,7 @@
    },
    "outputs": [],
    "source": [
-    "mod = arch_model(y, x=exog.iloc[:, :1], mean=\"ARX\", lags=1)\n",
+    "mod = arch_model(y, x=exog.iloc[:, :1], mean=\"arx\", lags=1)\n",
     "res = mod.fit(disp=\"off\")\n",
     "print(res.summary())"
    ]
@@ -453,7 +453,7 @@
     "\n",
     "## Simulation-forecasting\n",
     "\n",
-    "mod = arch_model(y, x=exog, mean=\"ARX\", lags=1, power=1.0)\n",
+    "mod = arch_model(y, x=exog, mean=\"arx\", lags=1, power=1.0)\n",
     "res = mod.fit(disp=\"off\")"
    ]
   },
@@ -579,7 +579,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "mod = arch_model(y, x=exog, mean=\"ARX\", lags=1)\n",
+    "mod = arch_model(y, x=exog, mean=\"arx\", lags=1)\n",
     "res = mod.fit(disp=\"off\")\n",
     "y - res.resid"
    ]
@@ -683,7 +683,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "mod = arch_model(y, x=exog, mean=\"ARX\", lags=1)\n",
+    "mod = arch_model(y, x=exog, mean=\"arx\", lags=1)\n",
     "res = mod.fit(disp=\"off\")\n",
     "\n",
     "actual_x_oos = {\n",

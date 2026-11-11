@@ -23,7 +23,7 @@
     
   
       
-        <title>Introduction - arch 8.0.0</title>
+        <title>Introduction - arch 9.0.0</title>
       
     
 
@@ -53,7 +53,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -405,6 +405,16 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lag-length-selection" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/unitroot/introduction.rst#lag-length-selection (reference label)"><span>Lag Length Selection</span></span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -547,12 +557,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -620,6 +699,16 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lag-length-selection" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/unitroot/introduction.rst#lag-length-selection (reference label)"><span>Lag Length Selection</span></span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -644,11 +733,14 @@ contains a single variable.</p>
 <ul>
 <li><p><cite>stat</cite> - Returns the test statistic</p></li>
 <li><p><cite>pvalue</cite> - Returns the p-value of the test statistic</p></li>
-<li><p><cite>lags</cite> - Sets or gets the number of lags used in the model.  In most test, can be <code class="docutils literal notranslate"><span class="pre">None</span></code> to trigger automatic selection.</p></li>
-<li><p><cite>trend</cite> - Sets or gets the trend used in the model.  Supported trends vary by model, but include:</p>
+<li><p><cite>lags</cite> - Returns the number of lags used in the model.  It is set when the test is constructed, and
+in most tests it can be <code class="docutils literal notranslate"><span class="pre">None</span></code> to trigger automatic selection.</p></li>
+<li><p><cite>trend</cite> - Returns the trend used in the model.  It is set when the test is constructed, and the
+properties of a test cannot be changed afterwards.  Create a new test to use a different
+specification, e.g., <code class="docutils literal notranslate"><span class="pre">ADF(y,</span> <span class="pre">trend='ct')</span></code>.  Supported trends vary by model, but include:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><cite>‘nc’</cite>: No constant</p></li>
+<li><p><cite>‘n’</cite>: No constant</p></li>
 <li><p><cite>‘c’</cite>: Constant</p></li>
 <li><p><cite>‘ct’</cite>: Constant and time trend</p></li>
 <li><p><cite>‘ctt’</cite>: Constant, time trend and quadratic time trend</p></li>
@@ -661,18 +753,13 @@ contains a single variable.</p>
 <p>This basic example show the use of the Augmented-Dickey fuller to test whether the default premium,
 defined as the difference between the yields of large portfolios of BAA and AAA bonds.  This example
 uses a constant and time trend.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.default</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">([</span><span class="s2">&quot;AAA&quot;</span><span class="p">,</span> <span class="s2">&quot;BAA&quot;</span><span class="p">],</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BAA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span>
-<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">])</span>
-<span class="n">adf</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="n">default_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">default_data</span><span class="p">[</span><span class="s1">'BAA'</span><span class="p">]</span> <span class="o">-</span> <span class="n">default_data</span><span class="p">[</span><span class="s1">'AAA'</span><span class="p">]</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1919-01-01'</span><span class="p">:</span><span class="s1">'2014-01-01'</span><span class="p">]</span>
+<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">'ct'</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </code></pre></div>
@@ -691,6 +778,58 @@ uses a constant and time trend.</p>
 <span class="n">Alternative</span> <span class="n">Hypothesis</span><span class="p">:</span> <span class="n">The</span> <span class="n">process</span> <span class="ow">is</span> <span class="n">weakly</span> <span class="n">stationary</span><span class="o">.</span>
 </code></pre></div>
 </div>
+<h2 id="lag-length-selection">Lag Length Selection<a class="headerlink" href="#lag-length-selection" title="Link to this heading">¶</a></h2>
+<p><a class="reference internal" href="generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, <a class="reference internal" href="generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS" title="arch.unitroot.DFGLS (Python class) — Elliott, Rothenberg and Stock's (ers) GLS detrended Dickey-Fuller."><code class="xref py py-class docutils literal notranslate"><span class="pre">DFGLS</span></code></a> and
+<a class="reference internal" href="generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews" title="arch.unitroot.ZivotAndrews (Python class) — Zivot-Andrews structural-break unit-root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZivotAndrews</span></code></a> include lagged differences of the series to
+account for serial correlation in the errors. When <code class="docutils literal notranslate"><span class="pre">lags</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the number
+of lags is selected from 0, 1, …, <code class="docutils literal notranslate"><span class="pre">max_lags</span></code> lags using the <code class="docutils literal notranslate"><span class="pre">method</span></code>. The
+choices, which are not case sensitive, are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;aic&quot;</span></code>: minimize the Akaike information criterion (the default);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;bic&quot;</span></code>: minimize the Schwarz/Bayesian information criterion;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;t-stat&quot;</span></code>: use the longest lag with a t-statistic that is significant, an
+absolute value of at least 1.645 (<code class="docutils literal notranslate"><span class="pre">&quot;t&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;tstat&quot;</span></code> are accepted as aliases); and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;maic&quot;</span></code>: minimize the modified AIC of Ng and Perron (2001).</p></li>
+</ul>
+<p>Ng and Perron showed that the information criteria tend to select too few lags in
+the presence of a large negative moving average root in the errors, which produces
+tests that reject a true unit root too often. Their modified AIC adds a term to the
+penalty that depends on the estimated coefficient on the lagged level of the series,
+<span class="math notranslate nohighlight">\(\hat{\beta}_0\)</span>, which is larger in absolute value when the data look stationary,</p>
+<div class="math notranslate nohighlight">
+\[MAIC(k) = \ln(\hat{\sigma}_k^2) + \frac{2(\tau_T(k) + k)}{T - k_{max}},
+\qquad
+\tau_T(k) = \hat{\sigma}_k^{-2}\hat{\beta}_0^2
+\sum_{t=k_{max}+1}^{T}\tilde{y}_{t-1}^2.\]</div>
+<p><span class="math notranslate nohighlight">\(\hat{\sigma}_k^2\)</span> is the estimated variance of the errors using <span class="math notranslate nohighlight">\(k\)</span>
+lags, and <span class="math notranslate nohighlight">\(\tilde{y}_{t-1}\)</span> is the lagged level after the deterministic terms
+in the regression have been removed. All lag lengths use the same
+<span class="math notranslate nohighlight">\(T - k_{max}\)</span> observations. The modified AIC can select a different number of
+lags than the AIC and BIC.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="gp">In [1]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="gp">In [2]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.crude</span>
+
+<span class="gp">In [3]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span><span class="p">,</span> <span class="n">DFGLS</span>
+
+<span class="gp">In [4]: </span><span class="n">brent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">crude</span><span class="o">.</span><span class="n">load</span><span class="p">()[</span><span class="s2">"Brent"</span><span class="p">])</span>
+
+<span class="gp">In [5]: </span><span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"aic"</span><span class="p">,</span> <span class="s2">"bic"</span><span class="p">,</span> <span class="s2">"maic"</span><span class="p">):</span>
+<span class="gp">   ...: </span>    <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">brent</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+<span class="gp">   ...: </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">method</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">: lags=</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">lags</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">  stat=</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">  p=</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="gp">   ...: </span>
+<span class="go"> aic: lags= 1  stat=-1.655  p=0.458</span>
+<span class="go"> bic: lags= 1  stat=-1.655  p=0.458</span>
+<span class="go">maic: lags= 6  stat=-1.286  p=0.640</span>
+
+<span class="gp">In [6]: </span><span class="n">dfgls</span> <span class="o">=</span> <span class="n">DFGLS</span><span class="p">(</span><span class="n">brent</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"maic"</span><span class="p">)</span>
+
+<span class="gp">In [7]: </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DFGLS maic: lags=</span><span class="si">{</span><span class="n">dfgls</span><span class="o">.</span><span class="n">lags</span><span class="si">}</span><span class="s2">  stat=</span><span class="si">{</span><span class="n">dfgls</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">DFGLS maic: lags=6  stat=-0.516</span>
+</code></pre></div>
+</div>
+<p>Ng, S., &amp; Perron, P. (2001). Lag length selection and the construction of unit
+root tests with good size and power. <em>Econometrica</em>, 69(6), 1519-1554.</p>
 
 
 
@@ -731,7 +870,7 @@ uses a constant and time trend.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -782,11 +921,13 @@ uses a constant and time trend.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
     
   </body>
 </html>

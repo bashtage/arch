@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~Gallant.bandwidth
+      ~Gallant.bandwidth_method
       ~Gallant.bandwidth_scale
       ~Gallant.centered
       ~Gallant.cov

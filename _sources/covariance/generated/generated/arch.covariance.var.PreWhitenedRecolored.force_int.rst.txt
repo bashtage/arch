@@ -1,0 +1,6 @@
+arch.covariance.var.PreWhitenedRecolored.force\_int
+===================================================
+
+.. currentmodule:: arch.covariance.var
+
+.. autoproperty:: PreWhitenedRecolored.force_int

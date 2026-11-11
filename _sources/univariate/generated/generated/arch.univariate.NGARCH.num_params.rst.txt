@@ -1,0 +1,6 @@
+arch.univariate.NGARCH.num\_params
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: NGARCH.num_params

@@ -1,0 +1,6 @@
+arch.bootstrap.SPA.bootstrap
+============================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: SPA.bootstrap

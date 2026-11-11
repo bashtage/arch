@@ -25,6 +25,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~StepM.bootstrap
       ~StepM.superior_models
    
    

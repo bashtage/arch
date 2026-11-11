@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelResult.hill\_estimator
+====================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelResult.hill_estimator

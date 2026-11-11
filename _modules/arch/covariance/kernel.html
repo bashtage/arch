@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch 8.0.0</title>
+        <title>arch.covariance.kernel - arch 9.0.0</title>
       
     
 
@@ -49,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 8.0.0" class="md-header__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 8.0.0
+            arch 9.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 8.0.0" class="md-nav__button md-logo" aria-label="arch 8.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 8.0.0
+    arch 9.0.0
   </label>
   
     <div class="md-nav__source">
@@ -385,12 +385,81 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/data.rst (reference label)"><span>Data Sets</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../warnings.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/warnings.rst (reference label)"><span>Warnings and Exceptions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../types.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     <span title="/types.rst (reference label)"><span>Common Type Definitions</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/contributing.rst (reference label)"><span>Contributing</span></span>
     
   </span>
   
@@ -460,54 +529,97 @@
 <span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.compat.numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">DISABLE_NUMBA</span><span class="p">,</span> <span class="n">HAS_NUMBA</span><span class="p">,</span> <span class="n">jit</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportsInt</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Index</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array2D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_describe</span><span class="p">,</span>
+    <span class="n">_fail</span><span class="p">,</span>
+    <span class="n">check_array</span><span class="p">,</span>
+    <span class="n">check_bool</span><span class="p">,</span>
+    <span class="n">check_float</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+    <span class="n">check_option</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Substitution</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Andrews&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Bartlett&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CovarianceEstimate&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CovarianceEstimator&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Gallant&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NeweyWest&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Parzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenCauchy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenGeometric&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenRiesz&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;QuadraticSpectral&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHamming&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHanning&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyParzen&quot;</span><span class="p">,</span>
+    <span class="s2">"Andrews"</span><span class="p">,</span>
+    <span class="s2">"Bartlett"</span><span class="p">,</span>
+    <span class="s2">"CovarianceEstimate"</span><span class="p">,</span>
+    <span class="s2">"CovarianceEstimator"</span><span class="p">,</span>
+    <span class="s2">"Gallant"</span><span class="p">,</span>
+    <span class="s2">"NeweyWest"</span><span class="p">,</span>
+    <span class="s2">"Parzen"</span><span class="p">,</span>
+    <span class="s2">"ParzenCauchy"</span><span class="p">,</span>
+    <span class="s2">"ParzenGeometric"</span><span class="p">,</span>
+    <span class="s2">"ParzenRiesz"</span><span class="p">,</span>
+    <span class="s2">"QuadraticSpectral"</span><span class="p">,</span>
+    <span class="s2">"TukeyHamming"</span><span class="p">,</span>
+    <span class="s2">"TukeyHanning"</span><span class="p">,</span>
+    <span class="s2">"TukeyParzen"</span><span class="p">,</span>
+    <span class="s2">"ZeroLag"</span><span class="p">,</span>
 <span class="p">]</span>
 
+<span class="c1"># The canonical names of the kernels that are available by name to the</span>
+<span class="c1"># long-run covariance consumers, which are the names of the classes. This is the</span>
+<span class="c1"># only list of kernel names: KERNEL_ESTIMATORS is built from it, and the</span>
+<span class="c1"># estimators in arch.unitroot and arch.covariance.var look up kernels using</span>
+<span class="c1"># get_kernel_estimator. ZeroLag is deliberately excluded since it is only a</span>
+<span class="c1"># building block for arch.covariance.var.PreWhitenedRecolored when kernel=None</span>
+<span class="c1"># (VAR-HAC).</span>
 <span class="n">KERNELS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Bartlett&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Parzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenCauchy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenGeometric&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ParzenRiesz&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHamming&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyHanning&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TukeyParzen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;QuadraticSpectral&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Andrews&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Gallant&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NeweyWest&quot;</span><span class="p">,</span>
+    <span class="s2">"Bartlett"</span><span class="p">,</span>
+    <span class="s2">"Parzen"</span><span class="p">,</span>
+    <span class="s2">"ParzenCauchy"</span><span class="p">,</span>
+    <span class="s2">"ParzenGeometric"</span><span class="p">,</span>
+    <span class="s2">"ParzenRiesz"</span><span class="p">,</span>
+    <span class="s2">"TukeyHamming"</span><span class="p">,</span>
+    <span class="s2">"TukeyHanning"</span><span class="p">,</span>
+    <span class="s2">"TukeyParzen"</span><span class="p">,</span>
+    <span class="s2">"QuadraticSpectral"</span><span class="p">,</span>
+    <span class="s2">"Andrews"</span><span class="p">,</span>
+    <span class="s2">"Gallant"</span><span class="p">,</span>
+    <span class="s2">"NeweyWest"</span><span class="p">,</span>
 <span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_kernel_name</span><span class="p">(</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Normalize the name of a kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel : str</span>
+<span class="sd">        The name of a kernel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The name in lower case without hyphens or underscores, so that</span>
+<span class="sd">        "quadratic-spectral" and "quadratic_spectral" are both</span>
+<span class="sd">        "quadraticspectral".</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">kernel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_display_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The lower case name of a kernel with hyphens between the words"""</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(?&lt;!^)(?=[A-Z])"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="CovarianceEstimate">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimate.html#arch.covariance.kernel.CovarianceEstimate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimate</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Covariance estimate using a long-run covariance estimator</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Covariance estimate using a long-run covariance estimator.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -515,14 +627,14 @@
 <span class="sd">        The short-run covariance estimate.</span>
 <span class="sd">    one_sided_strict : ndarray</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
-<span class="sd">    columns : {None, list[str]}</span>
+<span class="sd">    columns : Index or list of str, optional</span>
 <span class="sd">        Column labels to use if covariance estimates are returned as</span>
 <span class="sd">        DataFrames.</span>
-<span class="sd">    long_run : ndarray, default None</span>
+<span class="sd">    long_run : ndarray, optional</span>
 <span class="sd">        The long-run covariance estimate. If not provided, computed from</span>
 <span class="sd">        short_run and one_sided_strict.</span>
-<span class="sd">    one_sided : ndarray, default None</span>
-<span class="sd">        The one-sided-strict covariance estimate. If not provided, computed</span>
+<span class="sd">    one_sided : ndarray, optional</span>
+<span class="sd">        The one-sided covariance estimate. If not provided, computed</span>
 <span class="sd">        from short_run and one_sided_strict.</span>
 
 <span class="sd">    Notes</span>
@@ -532,14 +644,17 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^\prime</span>
+<span class="sd">        \Omega = \Gamma_0 + \Lambda_1 + \Lambda_1^H</span>
 
 <span class="sd">    and the one-sided covariance is</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        \Lambda_0 = \Gamma_0 + \Lambda_1.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="sd">    :math:`^H` is the conjugate transpose, which is the transpose for real</span>
+<span class="sd">    estimates. The estimates of complex data are complex Hermitian matrices.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -564,11 +679,14 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.long_run.html#arch.covariance.kernel.CovarianceEstimate.long_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">long_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The long-run covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">):</span>
+            <span class="c1"># Added in this order the result is exactly Hermitian</span>
+            <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">long_run</span><span class="p">)</span></div>
@@ -578,9 +696,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.short_run.html#arch.covariance.kernel.CovarianceEstimate.short_run">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">short_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The short-run covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span></div>
 
 
@@ -588,9 +706,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided.html#arch.covariance.kernel.CovarianceEstimate.one_sided">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The one-sided covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span>
         <span class="k">else</span><span class="p">:</span>
@@ -602,9 +720,9 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided_strict.html#arch.covariance.kernel.CovarianceEstimate.one_sided_strict">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">one_sided_strict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div>
 </div>
 
@@ -619,36 +737,84 @@
     <span class="k">return</span> <span class="n">oss</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_cov_kernel_complex</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="c1"># sum_t x_t x_{t-i}^H, so that the lag-i autocovariance is Hermitian</span>
+    <span class="n">oss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">x_conj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">):</span>
+        <span class="n">oss</span> <span class="o">+=</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x_conj</span><span class="p">[:</span><span class="o">-</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">df</span>
+    <span class="k">return</span> <span class="n">oss</span>
+
+
 <span class="k">if</span> <span class="n">HAS_NUMBA</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">DISABLE_NUMBA</span><span class="p">:</span>
     <span class="n">_cov_jit</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">_cov_kernel</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_cov_jit_complex</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">_cov_kernel_complex</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_cov_jit</span> <span class="o">=</span> <span class="n">_cov_kernel</span>
+    <span class="n">_cov_jit_complex</span> <span class="o">=</span> <span class="n">_cov_kernel_complex</span>
 
 
-<div class="viewcode-block" id="CovarianceEstimator">
-<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimator.html#arch.covariance.kernel.CovarianceEstimator">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_covariance_template</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># The docstring is the template of the docstrings of the kernel estimators, which</span>
+    <span class="c1"># is filled using the name of the kernel and the formula of its weights. It is</span>
+    <span class="c1"># written as a docstring so that it is processed in the same way as the</span>
+    <span class="c1"># docstring of a class.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    %(kernel_name)s kernel covariance estimation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    x : array_like</span>
-<span class="sd">        The data to use in covariance estimation.</span>
-<span class="sd">    bandwidth : float, default None</span>
-<span class="sd">        The kernel&#39;s bandwidth.  If None, optimal bandwidth is estimated.</span>
-<span class="sd">    df_adjust : int, default 0</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must</span>
+<span class="sd">        be finite and non-negative.</span>
+<span class="sd">    df_adjust : int, optional</span>
 <span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
 <span class="sd">        number of observations in x minus df_adjust when dividing</span>
-<span class="sd">        inner-products.</span>
-<span class="sd">    center : bool, default True</span>
+<span class="sd">        inner-products. Must be at least 0 and smaller than the number of</span>
+<span class="sd">        observations in x.</span>
+<span class="sd">    center : bool, optional</span>
 <span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
 <span class="sd">        covariance.</span>
-<span class="sd">    weights : array_like, default None</span>
+<span class="sd">    weights : array_like, optional</span>
 <span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
-<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements.</span>
-<span class="sd">    force_int : bool, default False</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
+<span class="sd">    force_int : bool, optional</span>
 <span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x cannot be converted to float64 or complex128 (it is float16, or</span>
+<span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
+<span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
+<span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
+<span class="sd">        is negative or not smaller than the number of observations; or if</span>
+<span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -658,10 +824,229 @@
 
 <span class="sd">       %(formula)s</span>
 
-<span class="sd">    where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    %(lags)s</span>
 
-    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="sd">    If the bandwidth is not provided, it is estimated using the constants of</span>
+<span class="sd">    [1]_ and either the automatic lag selection of [2]_, the default, or the</span>
+<span class="sd">    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See</span>
+<span class="sd">    ``opt_bandwidth`` and ``bandwidth`` for details.</span>
+
+<span class="sd">    **Complex data.** The estimators accept complex data, for which they are</span>
+<span class="sd">    Hermitian. The lag-:math:`j` autocovariance is</span>
+<span class="sd">    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the</span>
+<span class="sd">    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the</span>
+<span class="sd">    long-run covariance</span>
+<span class="sd">    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+</span>
+<span class="sd">    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,</span>
+<span class="sd">    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+</span>
+<span class="sd">    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is</span>
+<span class="sd">    the long-run covariance of the real data :math:`u` and :math:`v` with the same</span>
+<span class="sd">    kernel and bandwidth. The automatic bandwidth combines the columns of x</span>
+<span class="sd">    using ``weights`` and uses the real part of the autocovariances of this</span>
+<span class="sd">    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not</span>
+<span class="sd">    estimated, and the estimates are complex128 arrays. Real data give float64</span>
+<span class="sd">    estimates.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation</span>
+<span class="sd">       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.</span>
+<span class="sd">    .. [2] Newey, W. K., &amp; West, K. D. (1994). Automatic lag selection in</span>
+<span class="sd">       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.</span>
+<span class="sd">    """</span>
+
+
+<span class="n">_KERNEL_COVARIANCE_DOC</span> <span class="o">=</span> <span class="n">_kernel_covariance_template</span><span class="o">.</span><span class="vm">__doc__</span>
+<span class="n">_KernelT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_KernelT"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
+
+
+<span class="n">_BOUNDED_LAGS</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""where :math:`z=\frac</span><span class="si">{h}</span><span class="s2">{H+1}` for the lags :math:`h=0, 1, \ldots` that</span>
+<span class="s2">    are smaller than :math:`H+1`, and H is the bandwidth. The weights of the</span>
+<span class="s2">    lags :math:`h\geq H+1` are 0, so that H is the number of lags with a</span>
+<span class="s2">    positive weight, as in the estimator of Newey and West (1987), and a</span>
+<span class="s2">    bandwidth of 0 uses only lag 0. The weights of a bandwidth H are those of</span>
+<span class="s2">    the kernel :math:`k\left(h/S\right)` of [1]_ and [2]_ with</span>
+<span class="s2">    :math:`S=H+1`."""</span>
+
+<span class="n">_QS_LAGS</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""where :math:`z=\frac</span><span class="si">{h}{H}</span><span class="s2">` for the lags :math:`h=0, 1, \ldots, T-1` and</span>
+<span class="s2">    H is the bandwidth, as in [1]_. Every lag has a weight, and a bandwidth of</span>
+<span class="s2">    0 uses only lag 0."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bounded_lags</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The lags h = 0, 1, ... with a positive weight in a kernel that is 0 beyond 1.</span>
+
+<span class="sd">    These are the lags smaller than bandwidth + 1, since the weight of lag h is</span>
+<span class="sd">    k(h / (bandwidth + 1)). A fractional bandwidth uses the lag floor(bandwidth) + 1.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">bandwidth</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_substitution</span><span class="p">(</span>
+    <span class="n">kernel_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">formula</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_BOUNDED_LAGS</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_KernelT</span><span class="p">],</span> <span class="n">_KernelT</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Set the docstring of a kernel estimator using its name and weight formula"""</span>
+    <span class="n">substitution</span> <span class="o">=</span> <span class="n">Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">kernel_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">lags</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">_KernelT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_KernelT</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">_KERNEL_COVARIANCE_DOC</span>
+        <span class="k">return</span> <span class="n">substitution</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="n">_BANDWIDTH_METHODS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"neweywest"</span><span class="p">:</span> <span class="s2">"newey-west"</span><span class="p">,</span> <span class="s2">"andrews"</span><span class="p">:</span> <span class="s2">"andrews"</span><span class="p">}</span>
+<span class="sd">"""The methods that select the bandwidth when it is not provided, keyed by their</span>
+<span class="sd">normalized names."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_bandwidth_method</span><span class="p">(</span><span class="n">bandwidth_method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Validate a bandwidth method, which is normalized like the name of a kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bandwidth_method : str</span>
+<span class="sd">        The name of the method, such as "newey-west", "Newey_West" or "andrews".</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The canonical name, "newey-west" or "andrews".</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"bandwidth_method"</span><span class="p">,</span>
+        <span class="n">bandwidth_method</span><span class="p">,</span>
+        <span class="n">_BANDWIDTH_METHODS</span><span class="p">,</span>
+        <span class="n">display</span><span class="o">=</span><span class="p">(</span><span class="s2">"newey-west"</span><span class="p">,</span> <span class="s2">"andrews"</span><span class="p">),</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize_kernel_name</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_power_of_two_scaled</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Divide x by the power of 2 nearest its largest absolute value.</span>
+
+<span class="sd">    The bandwidth estimators are ratios of sums of products of the data that</span>
+<span class="sd">    do not depend on a common scale. Scaling by a power of 2 is exact, so the</span>
+<span class="sd">    estimates do not change, but data that are very large or very small do not</span>
+<span class="sd">    overflow or underflow when squared.</span>
+<span class="sd">    """</span>
+    <span class="n">largest</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">largest</span><span class="p">)</span> <span class="ow">or</span> <span class="n">largest</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">frexp</span><span class="p">(</span><span class="n">largest</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">scaled</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+        <span class="n">scaled</span><span class="o">.</span><span class="n">imag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scaled</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ldexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CovarianceEstimator">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimator.html#arch.covariance.kernel.CovarianceEstimator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CovarianceEstimator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Base class of the kernel-based long-run covariance estimators.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must</span>
+<span class="sd">        be finite and non-negative.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products. Must be at least 0 and smaller than the number of</span>
+<span class="sd">        observations in x.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x cannot be converted to float64 or complex128 (it is float16, or</span>
+<span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
+<span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
+<span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
+<span class="sd">        is negative or not smaller than the number of observations; or if</span>
+<span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The kernel weights are defined by the concrete estimators that inherit from</span>
+<span class="sd">    this class. A kernel that is 0 beyond 1 uses :math:`z=\frac{h}{H+1}` for the</span>
+<span class="sd">    lags h that are smaller than :math:`H+1`, where H is the bandwidth, so that</span>
+<span class="sd">    H is the number of lags with a positive weight. The quadratic-spectral</span>
+<span class="sd">    kernel uses :math:`z=\frac{h}{H}` for every lag.</span>
+
+<span class="sd">    If the bandwidth is not provided, it is estimated using the constants of</span>
+<span class="sd">    [1]_ and either the automatic lag selection of [2]_, the default, or the</span>
+<span class="sd">    AR(1) plug-in estimate of [1]_ when ``bandwidth_method`` is "andrews". See</span>
+<span class="sd">    ``opt_bandwidth`` for details.</span>
+
+<span class="sd">    **Complex data.** The estimators accept complex data, for which they are</span>
+<span class="sd">    Hermitian. The lag-:math:`j` autocovariance is</span>
+<span class="sd">    :math:`\hat{\Gamma}_j=T^{-1}\sum_t x_t x_{t-j}^H`, where :math:`^H` is the</span>
+<span class="sd">    conjugate transpose, :math:`\hat{\Gamma}_{-j}=\hat{\Gamma}_j^H`, and the</span>
+<span class="sd">    long-run covariance</span>
+<span class="sd">    :math:`\hat{\Omega}=\hat{\Gamma}_0+\sum_{j\geq 1}w_j(\hat{\Gamma}_j+</span>
+<span class="sd">    \hat{\Gamma}_j^H)` is a complex Hermitian matrix. If :math:`x_t=a_t+ib_t`,</span>
+<span class="sd">    then :math:`\hat{\Omega}=\hat{\Omega}_{aa}+\hat{\Omega}_{bb}+</span>
+<span class="sd">    i(\hat{\Omega}_{ba}-\hat{\Omega}_{ab})`, where :math:`\hat{\Omega}_{uv}` is</span>
+<span class="sd">    the long-run covariance of the real data :math:`u` and :math:`v` with the same</span>
+<span class="sd">    kernel and bandwidth. The automatic bandwidth combines the columns of x</span>
+<span class="sd">    using ``weights`` and uses the real part of the autocovariances of this</span>
+<span class="sd">    complex series. The pseudo-covariance :math:`E[x_t x_{t-j}^\prime]` is not</span>
+<span class="sd">    estimated, and the estimates are complex128 arrays. Real data give float64</span>
+<span class="sd">    estimates.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation</span>
+<span class="sd">       consistent covariance matrix estimation. Econometrica, 59(3), 817-858.</span>
+<span class="sd">    .. [2] Newey, W. K., &amp; West, K. D. (1994). Automatic lag selection in</span>
+<span class="sd">       covariance matrix estimation. Review of Economic Studies, 61(4), 631-653.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_name</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="c1"># Whether complex data are accepted. The estimators that cannot be Hermitian, such</span>
+    <span class="c1"># as the VAR prewhitening, set this to False</span>
+    <span class="n">_allow_complex</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Whether the kernel is 0 beyond 1. Lag h then has the weight k(h / (H + 1)) for a</span>
+    <span class="c1"># bandwidth H, while the quadratic-spectral kernel uses k(h / H)</span>
+    <span class="n">_bounded_support</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -671,130 +1056,166 @@
         <span class="n">center</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">weights</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">bandwidth_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"newey-west"</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+        <span class="n">x_checked</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+            <span class="s2">"x"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_complex</span>
+        <span class="p">)</span>
+        <span class="n">nobs</span><span class="p">,</span> <span class="n">nvar</span> <span class="o">=</span> <span class="n">x_checked</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">nvar</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_fail</span><span class="p">(</span>
+                <span class="ne">ValueError</span><span class="p">,</span>
+                <span class="s2">"x"</span><span class="p">,</span>
+                <span class="s2">"a 2-d array of finite numbers with at least 2 rows and 1 column"</span><span class="p">,</span>
+                <span class="n">_describe</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"bandwidth"</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df_adjust</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"df_adjust"</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">center</span><span class="p">)</span>
+        <span class="n">weights_checked</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span>
+            <span class="s2">"weights"</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">nvar</span><span class="p">,),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">weights_checked</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">weights_checked</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">weights_checked</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">_fail</span><span class="p">(</span>
+                <span class="ne">ValueError</span><span class="p">,</span>
+                <span class="s2">"weights"</span><span class="p">,</span>
+                <span class="s2">"non-negative with at least one value that is strictly greater "</span>
+                <span class="s2">"than 0"</span><span class="p">,</span>
+                <span class="n">_describe</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="n">force_int</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"force_int"</span><span class="p">,</span> <span class="n">force_int</span><span class="p">)</span>
+        <span class="n">bandwidth_method</span> <span class="o">=</span> <span class="n">_check_bandwidth_method</span><span class="p">(</span><span class="n">bandwidth_method</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">allow_complex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_complex</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_center</span> <span class="o">=</span> <span class="n">center</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">bandwidth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">_bandwidth</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">_bandwidth</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bandwidth must be a non-negative scalar.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bandwidth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">df_adjust</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;df_adjust must be a non-negative integer.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;SupportsInt&quot;</span><span class="p">,</span> <span class="n">df_adjust</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Degrees of freedom is &lt;= 0 after adjusting the sample &quot;</span>
-                <span class="s2">&quot;size of x using df_adjust. df_adjust must be less than&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="n">xw</span><span class="p">:</span> <span class="n">Float64Array2D</span>
-        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span> <span class="o">=</span> <span class="n">df_adjust</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="p">:</span> <span class="n">Float64Array2D</span>
+        <span class="k">if</span> <span class="n">weights_checked</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nvar</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">_xw</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Float64Array2D&quot;</span><span class="p">,</span> <span class="n">_xw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="ow">or</span> <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
-            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">xw</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xw</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;weights must be a 1 by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> (x.shape[1]) &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;array with non-negative values where at least one value is &quot;</span>
-                <span class="s2">&quot;strictly greater than 0.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="s2">"Float64Array2D"</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights_checked</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span> <span class="o">=</span> <span class="n">force_int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span> <span class="o">=</span> <span class="n">bandwidth_method</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Kernel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Degree of Freedom Adjustment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Centered: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">centered</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Automatic Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Kernel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Degree of Freedom Adjustment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_adjust</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Centered: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">centered</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Automatic Bandwidth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_auto_bandwidth</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">ID: </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The covariance estimator&#39;s name.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The covariance estimator's name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The covariance estimator&#39;s name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The covariance estimator's name.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        The bandwidth used by the covariance estimator.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">            The user-provided or estimated optimal bandwidth.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The user-provided bandwidth, or the bandwidth of the estimated</span>
+<span class="sd">            optimal bandwidth ``opt_bandwidth``.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        ``opt_bandwidth`` is the bandwidth S of the kernel :math:`k(h/S)` of</span>
+<span class="sd">        Andrews (1991) and Newey and West (1994). A kernel that is 0 beyond 1</span>
+<span class="sd">        gives lag h the weight :math:`k(h/(H+1))` for a bandwidth H, so its</span>
+<span class="sd">        estimated bandwidth is :math:`H=\max(S-1, 0)`, and the weights are those</span>
+<span class="sd">        of S. The quadratic-spectral kernel uses :math:`k(h/H)`, and its estimated</span>
+<span class="sd">        bandwidth is S. The bandwidth is rounded up if ``force_int`` is True.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_bandwidth</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_bandwidth</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounded_support</span><span class="p">:</span>
+                <span class="n">bandwidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bandwidth</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span><span class="p">)))</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Flag indicating whether the data are centered (demeaned).</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The method used to estimate the bandwidth.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Either "newey-west" or "andrews". The method is only used if the</span>
+<span class="sd">            bandwidth is not provided by the user, and ZeroLag ignores it.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Flag indicating whether the data are centered (demeaned).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            A flag indicating whether the estimator is centered.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The constant used in optimal bandwidth calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The constant value used in the optimal bandwidth calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The power used in optimal bandwidth calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The power value used in the optimal bandwidth calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The optimal rate used in bandwidth selection.</span>
 
 <span class="sd">        Controls the number of lags used in the variance estimate that</span>
@@ -804,33 +1225,106 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The rate used in bandwidth selection.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">_power_of_two_scaled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="p">)</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="n">nobs</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)))</span>
+        <span class="c1"># The integer part, as in Newey and West (1994, eq. 2-2) and auto_bandwidth</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="n">nobs</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">))</span>
         <span class="n">f_0s</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">f_qs</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># The autocovariance of a complex series is v_t times the conjugate of v_{t-j},</span>
+        <span class="c1"># which is complex. The sums over -n, ..., n add j and -j, which are conjugates</span>
+        <span class="c1"># (Hermitian), so only the real part of sigma_j is used.</span>
+        <span class="n">lagged</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">sig_j</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">v</span><span class="p">[:</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">j</span><span class="p">)]))</span> <span class="o">/</span> <span class="n">nobs</span>
+            <span class="n">sig_j</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">lagged</span><span class="p">[:</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">j</span><span class="p">)])))</span> <span class="o">/</span> <span class="n">nobs</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">f_0s</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">sig_j</span>
             <span class="n">f_qs</span> <span class="o">+=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">j</span><span class="o">**</span><span class="n">q</span> <span class="o">*</span> <span class="n">sig_j</span>
+        <span class="k">if</span> <span class="n">f_0s</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1"># The weighted sum of the columns is 0, which happens when every</span>
+            <span class="c1"># column of x is constant and x is centered</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="newey-west" cannot estimate the bandwidth since '</span>
+                <span class="s2">"the weighted sum of the columns of x is 0, which happens when every "</span>
+                <span class="s2">"column of x is constant"</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">f_qs</span> <span class="o">/</span> <span class="n">f_0s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_andrews_alpha_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The AR(1) plug-in estimate of alpha(q) of Andrews (1991), eq. (6.4).</span>
+<span class="sd">        """</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" requires a kernel with a characteristic '</span>
+                <span class="sa">f</span><span class="s2">"exponent of 1 or 2; the exponent of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1"># Real and imaginary parts are separate series with the same weight</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">weights</span><span class="p">,</span> <span class="n">weights</span><span class="p">])</span>
+        <span class="c1"># Columns without weight need not have a usable AR(1), and constant columns</span>
+        <span class="c1"># have no variance and do not change the weighted sums</span>
+        <span class="n">used</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">used</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot estimate the bandwidth since '</span>
+                <span class="s2">"every column of x with a positive weight is constant"</span>
+            <span class="p">)</span>
+        <span class="c1"># One scale for all columns, since a separate scale for each column would</span>
+        <span class="c1"># change their relative weights in the sums</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">_power_of_two_scaled</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">used</span><span class="p">]),</span> <span class="n">weights</span><span class="p">[</span><span class="n">used</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot fit an AR(1) to a column of x that '</span>
+                <span class="s2">"is constant except for its final value"</span>
+            <span class="p">)</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">lead</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">lag_ss</span> <span class="o">=</span> <span class="p">(</span><span class="n">lag</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># OLS of x_t on a constant and x_{t-1}, as in R's ar.ols</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="p">(</span><span class="n">lag</span> <span class="o">*</span> <span class="n">lead</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">lag_ss</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="n">lead</span> <span class="o">-</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">lag</span>
+        <span class="n">sigma4</span> <span class="o">=</span> <span class="p">((</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">lag</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">numer</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">numer</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">numer</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">alpha_q</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'bandwidth_method="andrews" cannot estimate the bandwidth since an '</span>
+                <span class="s2">"AR(1) coefficient of x is -1 or 1"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">alpha_q</span>
 
 <div class="viewcode-block" id="CovarianceEstimator.opt_bandwidth">
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.opt_bandwidth.html#arch.covariance.kernel.CovarianceEstimator.opt_bandwidth">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">opt_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Estimate optimal bandwidth.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The estimated optimal bandwidth.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``bandwidth_method`` is "andrews" and the AR(1) cannot be fitted</span>
+<span class="sd">            to the columns of x with positive weight, for example because they</span>
+<span class="sd">            are all constant.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -842,11 +1336,94 @@
 
 <span class="sd">        where :math:`c_k` is a kernel-dependent constant, T is the sample size,</span>
 <span class="sd">        q determines the optimal bandwidth rate for the kernel.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="sd">        The constants and the values of q are from [1]_. For example,</span>
+<span class="sd">        :math:`c_k` is 1.1447 and q is 1 for the Bartlett kernel, 2.6614 and 2</span>
+<span class="sd">        for the Parzen kernel, and 1.3221 and 2 for the quadratic-spectral</span>
+<span class="sd">        kernel. When ``bandwidth_method`` is "newey-west", the default,</span>
+<span class="sd">        :math:`\hat{\alpha}\left(q\right)` is not the parametric (AR(1))</span>
+<span class="sd">        estimate that is suggested in [1]_. It is the nonparametric estimate</span>
+<span class="sd">        of [2]_,</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">           \hat{\alpha}\left(q\right) = \left(</span>
+<span class="sd">           \frac{\sum_{j=-n}^{n} \left|j\right|^q \hat{\sigma}_j}</span>
+<span class="sd">           {\sum_{j=-n}^{n} \hat{\sigma}_j} \right)^2</span>
+
+<span class="sd">        where :math:`\hat{\sigma}_j` is the lag-j autocovariance of the data</span>
+<span class="sd">        combined using ``weights``, which is the real part of the autocovariance</span>
+<span class="sd">        :math:`T^{-1}\sum_t v_t\bar{v}_{t-j}` of the combined series :math:`v_t`</span>
+<span class="sd">        if x is complex, and</span>
+<span class="sd">        :math:`n = \lfloor 4 \left(T / 100\right)^{r} \rfloor`. The rate r is</span>
+<span class="sd">        2/9 for the Bartlett kernel, 4/25 for the Parzen kernel and 2/25 for</span>
+<span class="sd">        the quadratic-spectral kernel, as in [2]_.</span>
+
+<span class="sd">        When ``bandwidth_method`` is "andrews",</span>
+<span class="sd">        :math:`\hat{\alpha}\left(q\right)` is the AR(1) plug-in estimate of</span>
+<span class="sd">        [1]_, equations (6.3) and (6.4), which has no pilot lag. An AR(1),</span>
+<span class="sd">        :math:`u_{a,t}=\mu_a+\rho_a u_{a,t-1}+\epsilon_{a,t}`, is fitted to each</span>
+<span class="sd">        column :math:`a` of x by OLS, and :math:`\hat{\sigma}_a^2` is the sum of</span>
+<span class="sd">        the squared residuals divided by :math:`T-1`. Then</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">           \hat{\alpha}\left(1\right) =</span>
+<span class="sd">           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4</span>
+<span class="sd">           / \left[\left(1-\hat{\rho}_a\right)^6</span>
+<span class="sd">           \left(1+\hat{\rho}_a\right)^2\right]}</span>
+<span class="sd">           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4},</span>
+<span class="sd">           \quad</span>
+<span class="sd">           \hat{\alpha}\left(2\right) =</span>
+<span class="sd">           \frac{\sum_a w_a 4\hat{\rho}_a^2\hat{\sigma}_a^4</span>
+<span class="sd">           / \left(1-\hat{\rho}_a\right)^8}</span>
+<span class="sd">           {\sum_a w_a\hat{\sigma}_a^4 / \left(1-\hat{\rho}_a\right)^4}</span>
+
+<span class="sd">        where :math:`w_a` are the ``weights`` and the sums are over the columns</span>
+<span class="sd">        with a positive weight. The constant :math:`\mu_a` makes the estimate</span>
+<span class="sd">        the same whether or not x is centered, as in ``sandwich::bwAndrews`` in</span>
+<span class="sd">        R. The constants :math:`c_k` are the values of ``kernel_const`` for all</span>
+<span class="sd">        kernels. They are :math:`\left(q k_q^2 / \int k^2\right)^{1/(2q+1)}` in</span>
+<span class="sd">        the notation of [1]_, rounded to 4 decimals. The formula is applied to</span>
+<span class="sd">        every kernel using its own :math:`q`, which is 1 or 2. Constant columns</span>
+<span class="sd">        do not change the sums and are ignored. The real and imaginary parts of</span>
+<span class="sd">        complex data are separate columns that both have the weight of the</span>
+<span class="sd">        column.</span>
+
+<span class="sd">        Both estimates of :math:`\hat{\alpha}\left(q\right)` are ratios that do</span>
+<span class="sd">        not change if the data are multiplied by a constant. Before they are</span>
+<span class="sd">        computed, the data are divided by the power of 2 nearest their largest</span>
+<span class="sd">        absolute value, which is exact, so that data with a very large or very</span>
+<span class="sd">        small scale do not overflow or underflow. All columns are divided by the</span>
+<span class="sd">        same value, since a different value for each column would change the</span>
+<span class="sd">        weights of the columns in the "andrews" estimate.</span>
+
+<span class="sd">        In both cases the bandwidth is at most the number of observations less</span>
+<span class="sd">        1, and is rounded up if ``force_int`` is True. ZeroLag ignores</span>
+<span class="sd">        ``bandwidth_method``, and its bandwidth is 0.</span>
+
+<span class="sd">        :math:`\hat{b}_T` is the bandwidth S of the kernel :math:`k(h/S)` in [1]_</span>
+<span class="sd">        and [2]_. A kernel that is 0 beyond 1 weights lag h by</span>
+<span class="sd">        :math:`k(h/(H+1))` for a bandwidth H, so the estimator uses</span>
+<span class="sd">        :math:`H=\max(\hat{b}_T-1, 0)`, whose weights are those of</span>
+<span class="sd">        :math:`\hat{b}_T`. The quadratic-spectral kernel uses</span>
+<span class="sd">        :math:`H=\hat{b}_T`. See ``bandwidth``.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Andrews, D. W. K. (1991). Heteroskedasticity and autocorrelation</span>
+<span class="sd">           consistent covariance matrix estimation. Econometrica, 59(3), 817-858.</span>
+<span class="sd">        .. [2] Newey, W. K., &amp; West, K. D. (1994). Automatic lag selection in</span>
+<span class="sd">           covariance matrix estimation. Review of Economic Studies, 61(4),</span>
+<span class="sd">           631-653.</span>
+<span class="sd">        """</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_const</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_scale</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_q</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth_method</span> <span class="o">==</span> <span class="s2">"andrews"</span><span class="p">:</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_andrews_alpha_q</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alpha_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_q</span><span class="p">()</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha_q</span> <span class="o">*</span> <span class="n">nobs</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span><span class="p">:</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span>
@@ -855,22 +1432,22 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the kernel&#39;s weights</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute the kernel's weights</span>
+<span class="sd">        """</span>
 
 <div class="viewcode-block" id="CovarianceEstimator.kernel_weights">
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.kernel_weights.html#arch.covariance.kernel.CovarianceEstimator.kernel_weights">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Weights used in covariance calculation.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The weights used in covariance calculation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray</span>
 <span class="sd">            The weight vector including 1 in position 0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">()</span></div>
 
 
@@ -878,7 +1455,7 @@
 <a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimator.cov.html#arch.covariance.kernel.CovarianceEstimator.cov">[docs]</a>
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CovarianceEstimate</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The estimated covariances.</span>
 
 <span class="sd">        Returns</span>
@@ -893,16 +1470,24 @@
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        CovarianceEstimate</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        CovarianceEstimate : The container of the covariance estimates.</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
-        <span class="n">sr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span> <span class="o">/</span> <span class="n">df</span>
         <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_weights</span>
         <span class="n">num_weights</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">oss</span> <span class="o">=</span> <span class="n">_cov_jit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1"># Hermitian estimates: sum_t x_t x_{t-j}^H. The short-run covariance is</span>
+            <span class="c1"># made exactly Hermitian, since the matrix product rounds each element</span>
+            <span class="c1"># on its own.</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="p">(</span><span class="n">sr</span> <span class="o">+</span> <span class="n">sr</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">oss</span> <span class="o">=</span> <span class="n">_cov_jit_complex</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span> <span class="o">/</span> <span class="n">df</span>
+            <span class="n">oss</span> <span class="o">=</span> <span class="n">_cov_jit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">num_weights</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_orig</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">CovarianceEstimate</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="n">oss</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
@@ -910,21 +1495,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">force_int</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Flag indicating whether the bandwidth is restricted to be an integer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_int</span></div>
 
 
 
-<span class="n">_bartlett_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_bartlett_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> 1-</span><span class="se">\\</span><span class="s2">left|z</span><span class="se">\\</span><span class="s2">right| &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> 0 &amp; z&gt;1 </span><span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="Bartlett">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Bartlett&#39;s (Newey-West)&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Bartlett's (Newey-West)"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bartlett</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -940,24 +1525,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-            <span class="nb">float</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
 
 
 
-<span class="n">_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="se">\</span>
 <span class="s2">1-6z^</span><span class="si">{2}</span><span class="se">\\</span><span class="s2">left(1-z</span><span class="se">\\</span><span class="s2">right) &amp; z</span><span class="se">\\</span><span class="s2">leq</span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">2</span><span class="se">\\</span><span class="s2">left(1-z</span><span class="se">\\</span><span class="s2">right)^</span><span class="si">{3}</span><span class="s2"> &amp; </span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2">&lt;z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="Parzen">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Parzen.html#arch.covariance.kernel.Parzen">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -973,7 +1556,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
         <span class="n">w</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">loc</span><span class="p">])</span>
@@ -982,17 +1565,17 @@
 
 
 
-<span class="n">_parzen_reisz_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_reisz_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">1-z^2 &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenRiesz">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenRiesz.html#arch.covariance.kernel.ParzenRiesz">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen-Reisz&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen-Reisz"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenRiesz</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1008,22 +1591,24 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span></div>
 
 
 
-<span class="n">_parzen_geometric_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_geometric_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenGeometric">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenGeometric.html#arch.covariance.kernel.ParzenGeometric">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Geometric&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span>
+    <span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's Geometric"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span>
+<span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenGeometric</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1039,22 +1624,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_parzen_cauchy_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_parzen_cauchy_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z^2} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="ParzenCauchy">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenCauchy.html#arch.covariance.kernel.ParzenCauchy">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Cauchy&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Parzen's Cauchy"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParzenCauchy</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1070,22 +1655,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_hamming_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_hamming_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.54 + 0.46 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyHamming">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHamming.html#arch.covariance.kernel.TukeyHamming">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hamming&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Hamming"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyHamming</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1101,22 +1686,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.54</span> <span class="o">+</span> <span class="mf">0.46</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_hanning_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_hanning_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> + </span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyHanning">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHanning.html#arch.covariance.kernel.TukeyHanning">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hanning&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Hanning"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyHanning</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1132,26 +1717,26 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_tukey_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_tukey_parzen_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.436 + 0.564 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0 &amp; z&gt;1 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="TukeyParzen">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyParzen.html#arch.covariance.kernel.TukeyParzen">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Parzen&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">"Tukey-Parzen"</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TukeyParzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">1.8576</span>
+        <span class="k">return</span> <span class="mf">1.8587</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1163,24 +1748,26 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">_bounded_lags</span><span class="p">(</span><span class="n">bw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.436</span> <span class="o">+</span> <span class="mf">0.564</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="n">_qs_name</span> <span class="o">=</span> <span class="s2">&quot;Quadratic-Spectral (Andrews&#39;)&quot;</span>
-<span class="n">_qs_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="n">_qs_name</span> <span class="o">=</span> <span class="s2">"Quadratic-Spectral (Andrews')"</span>
+<span class="n">_qs_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">1 &amp; z=0</span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{3}</span><span class="s2">{x^</span><span class="si">{2}</span><span class="s2">}</span><span class="se">\\</span><span class="s2">left(</span><span class="se">\\</span><span class="s2">frac{</span><span class="se">\\</span><span class="s2">sin x}</span><span class="si">{x}</span><span class="s2">-</span><span class="se">\\</span><span class="s2">cos x</span><span class="se">\\</span><span class="s2">right),x=</span><span class="se">\\</span><span class="s2">frac{6</span><span class="se">\\</span><span class="s2">pi z}</span><span class="si">{5}</span><span class="s2"> &amp; z&gt;0 </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="QuadraticSpectral">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.QuadraticSpectral.html#arch.covariance.kernel.QuadraticSpectral">[docs]</a>
-<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">)</span>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">_QS_LAGS</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QuadraticSpectral</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+    <span class="n">_bounded_support</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">1.3221</span>
@@ -1208,41 +1795,283 @@
 
 <div class="viewcode-block" id="Gallant">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Gallant.html#arch.covariance.kernel.Gallant">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Parzen covariance estimator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must</span>
+<span class="sd">        be finite and non-negative.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products. Must be at least 0 and smaller than the number of</span>
+<span class="sd">        observations in x.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x cannot be converted to float64 or complex128 (it is float16, or</span>
+<span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
+<span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
+<span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
+<span class="sd">        is negative or not smaller than the number of observations; or if</span>
+<span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    Parzen</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    Parzen : Kernel covariance estimator using the Parzen kernel.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="Andrews">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Andrews.html#arch.covariance.kernel.Andrews">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name of the QuadraticSpectral covariance estimator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must</span>
+<span class="sd">        be finite and non-negative.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products. Must be at least 0 and smaller than the number of</span>
+<span class="sd">        observations in x.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x cannot be converted to float64 or complex128 (it is float16, or</span>
+<span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
+<span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
+<span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
+<span class="sd">        is negative or not smaller than the number of observations; or if</span>
+<span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    QuadraticSpectral</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    QuadraticSpectral : Kernel covariance estimator using the quadratic spectral</span>
+<span class="sd">        kernel.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="NeweyWest">
 <a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.NeweyWest.html#arch.covariance.kernel.NeweyWest">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>  <span class="c1"># numpydoc ignore=PR02</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alternative name for Bartlett covariance estimator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        The data to use in covariance estimation. Observations are in rows and</span>
+<span class="sd">        variables in columns. Integer, Boolean and float32 data are converted to</span>
+<span class="sd">        float64, and complex data to complex128. float16 data are not accepted.</span>
+<span class="sd">        Must have at least 2 rows and 1 column, and must not contain NaN or</span>
+<span class="sd">        infinite values.</span>
+<span class="sd">    bandwidth : float, optional</span>
+<span class="sd">        The kernel's bandwidth.  If None, optimal bandwidth is estimated. Must</span>
+<span class="sd">        be finite and non-negative.</span>
+<span class="sd">    df_adjust : int, optional</span>
+<span class="sd">        Degrees of freedom to remove when adjusting the covariance. Uses the</span>
+<span class="sd">        number of observations in x minus df_adjust when dividing</span>
+<span class="sd">        inner-products. Must be at least 0 and smaller than the number of</span>
+<span class="sd">        observations in x.</span>
+<span class="sd">    center : bool, optional</span>
+<span class="sd">        A flag indicating whether x should be demeaned before estimating the</span>
+<span class="sd">        covariance.</span>
+<span class="sd">    weights : array_like, optional</span>
+<span class="sd">        An array of weights used to combine when estimating optimal bandwidth.</span>
+<span class="sd">        If not provided, a vector of 1s is used. Must have nvar elements, be</span>
+<span class="sd">        finite and non-negative, and at least one must be strictly positive.</span>
+<span class="sd">    force_int : bool, optional</span>
+<span class="sd">        Force bandwidth to be an integer.</span>
+<span class="sd">    bandwidth_method : {"newey-west", "andrews"}, optional</span>
+<span class="sd">        The method used to estimate the bandwidth when bandwidth is None.</span>
+<span class="sd">        "newey-west" uses the nonparametric estimate of Newey and West (1994)</span>
+<span class="sd">        and "andrews" uses the AR(1) plug-in estimate of Andrews (1991), see</span>
+<span class="sd">        ``opt_bandwidth``. Not case sensitive, and hyphens and underscores are</span>
+<span class="sd">        ignored as in the names of kernels, so that "newey_west" and</span>
+<span class="sd">        "neweywest" are "newey-west". Ignored if bandwidth is provided, and by</span>
+<span class="sd">        ZeroLag.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If x cannot be converted to float64 or complex128 (it is float16, or</span>
+<span class="sd">        contains strings or objects that are not numbers), if weights cannot be</span>
+<span class="sd">        converted to float64, if bandwidth is not a real number, if df_adjust is</span>
+<span class="sd">        not an integer (a float, including 5.0, or a Boolean is not accepted), or</span>
+<span class="sd">        if center or force_int is not a bool, or if bandwidth_method is not a str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If x is not 2-d, has fewer than 2 rows or no columns or contains NaN or</span>
+<span class="sd">        infinite values; if bandwidth is negative or not finite; if df_adjust</span>
+<span class="sd">        is negative or not smaller than the number of observations; or if</span>
+<span class="sd">        weights does not have nvar finite elements, has a negative element or</span>
+<span class="sd">        has only zeros; if bandwidth_method is not one of the available names; or</span>
+<span class="sd">        if bandwidth_method is "andrews" and the bandwidth must be estimated but</span>
+<span class="sd">        the AR(1) cannot be fitted to the columns of x with positive weight, for</span>
+<span class="sd">        example because they are all constant.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    Bartlett</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    Bartlett : Kernel covariance estimator using the Bartlett kernel.</span>
+<span class="sd">    """</span></div>
 
+
+
+<span class="n">_zero_lag_name</span> <span class="o">=</span> <span class="s2">"Zero-lag (No autocorrelation)"</span>
+<span class="n">_zero_lag_formula</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
+<span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">1 &amp; z=0</span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">0 &amp; z&gt;0 </span><span class="se">\</span>
+<span class="se">\\</span><span class="s2">end</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">"""</span>
+
+
+<div class="viewcode-block" id="ZeroLag">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ZeroLag.html#arch.covariance.kernel.ZeroLag">[docs]</a>
+<span class="nd">@_kernel_substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_zero_lag_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_zero_lag_formula</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZeroLag</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="ZeroLag.opt_bandwidth">
+<a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.ZeroLag.opt_bandwidth.html#arch.covariance.kernel.ZeroLag.opt_bandwidth">[docs]</a>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">opt_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The optimal bandwidth, which is always 0 since no lags are used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The bandwidth, always 0.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="n">KERNEL_ESTIMATORS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">normalize_kernel_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">KERNELS</span>
+<span class="p">}</span>
+<span class="sd">"""The kernel estimators in KERNELS, keyed by their normalized names."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_kernel_estimator</span><span class="p">(</span><span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Find a kernel estimator using its name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel : str</span>
+<span class="sd">        The name of a kernel estimator, such as "bartlett" or</span>
+<span class="sd">        "quadratic-spectral". The names are those of the classes in ``KERNELS``</span>
+<span class="sd">        in lower case with hyphens between the words. The name is not case</span>
+<span class="sd">        sensitive and hyphens and underscores are ignored, so that</span>
+<span class="sd">        "quadratic-spectral", "quadratic_spectral" and "quadraticspectral" are</span>
+<span class="sd">        all the same.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        The kernel estimator class, a subclass of CovarianceEstimator.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the name is not one of the names in ``KERNELS``.</span>
+<span class="sd">    """</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+        <span class="s2">"kernel"</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="n">KERNEL_ESTIMATORS</span><span class="p">),</span>
+        <span class="n">display</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_kernel_display_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">KERNELS</span><span class="p">),</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize_kernel_name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">KERNEL_ESTIMATORS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div>
 
 
@@ -1284,7 +2113,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1335,7 +2164,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}], "versionPath": null}}</script>
     
       
         <script src="../../../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>

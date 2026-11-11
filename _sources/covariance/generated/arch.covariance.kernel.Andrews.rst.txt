@@ -24,6 +24,7 @@
       :toctree: generated/
 
       ~Andrews.bandwidth
+      ~Andrews.bandwidth_method
       ~Andrews.bandwidth_scale
       ~Andrews.centered
       ~Andrews.cov
