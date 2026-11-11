@@ -18,11 +18,14 @@ jobs:
   strategy:
     # The newest Python with the newest packages, and the oldest Python with numpy 1.x
     # (the default integer is 32 bits on Windows) and pandas 2.1. PACKAGES is installed
-    # in a single pip command with requirements.txt, so that pip also picks versions
-    # of the other packages that work with the pins.
+    # in a single pip command with the build and test dependency groups in
+    # pyproject.toml, so that pip also picks versions of the other packages that work
+    # with the pins. pip installs scipy, pandas and statsmodels with arch when PACKAGES
+    # does not list them.
     matrix:
       python314_win_latest:
         python.version: '3.14'
+        PACKAGES: 'matplotlib seaborn'
       python310_win_numpy126:
         python.version: '3.10'
         PACKAGES: 'numpy==1.26.4 scipy==1.11.4 pandas==2.1.4 statsmodels==0.14.1 matplotlib seaborn numba build'
@@ -40,9 +43,8 @@ jobs:
   - script: |
       python -m venv arch-test
       call arch-test\Scripts\activate.bat
-      python -m pip install --upgrade pip wheel
-      python -m pip install -r requirements-dev.txt -U
-      python -m pip install %PACKAGES% -r requirements.txt -U || exit /b 1
+      python -m pip install --upgrade pip
+      python -m pip install --group build --group test %PACKAGES% -U || exit /b 1
       python -m pip list
     displayName: 'Create Venv and Install dependencies'
 

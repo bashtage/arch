@@ -266,14 +266,19 @@ Building the extensions from source needs the Visual Studio Build Tools
 
 ### Developing
 
-The development requirements are:
+The development requirements are dependency groups in `pyproject.toml`,
+which pip 25.1 or later installs. From a clone of the repository,
 
-- Cython (3.1+), meson-python and ninja, unless building without the binary
-  modules
-- pytest (9+, for tests)
-- sphinx (to build docs)
-- sphinx-immaterial (to build docs)
-- jupyter, notebook and nbsphinx (to build docs)
+```shell
+python -m pip install --group dev
+python -m pip install -e . --no-build-isolation
+```
+
+installs the tools to build (Cython 3.1+, meson-python and ninja), test
+(pytest 9+) and lint arch, and then arch itself. Adding `--group doc` to the
+first command also installs what the documentation needs (sphinx,
+sphinx-immaterial and nbsphinx). `doc/source/contributing.rst` lists the
+commands that check the code.
 
 ### Installation Notes
 
