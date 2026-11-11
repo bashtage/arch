@@ -1314,6 +1314,13 @@ Documentation and maintenance
   test suite, including the slow tests, on Python 3.13 to 3.15. Unlike the other jobs,
   it does not limit the number of BLAS threads, because NumPy's OpenBLAS on this
   platform crashes with one thread (see "Compatibility") (:issue:`1003`).
+- The development requirements are dependency groups in ``pyproject.toml``, which pip
+  25.1 or later installs, for example with ``python -m pip install --group dev`` (see
+  the contributing guide). They replace ``requirements.txt``, ``requirements-dev.txt``
+  and ``doc/requirements.txt``, and the ``test``, ``doc`` and ``dev`` extras, which have
+  been removed. The settings of coverage moved from ``.coveragerc`` to
+  ``pyproject.toml``, and ruff replaces flake8 in the style checks, with the same limit
+  of 99 characters on comments, docstrings and long strings.
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
