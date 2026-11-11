@@ -1320,7 +1320,7 @@ Documentation and maintenance
   and ``doc/requirements.txt``, and the ``test``, ``doc`` and ``dev`` extras, which have
   been removed. The settings of coverage moved from ``.coveragerc`` to
   ``pyproject.toml``, and ruff replaces flake8 in the style checks, with the same limit
-  of 99 characters on comments, docstrings and long strings.
+  of 99 characters on comments, docstrings and long strings (:issue:`1021`).
 
 Deprecations and removals
 ~~~~~~~~~~~~~~~~~~~~~~~~~
