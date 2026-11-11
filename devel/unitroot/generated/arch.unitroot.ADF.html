@@ -23,7 +23,7 @@
     
   
       
-        <title>arch.unitroot.ADF - arch v8.0.1 (+784)</title>
+        <title>arch.unitroot.ADF - arch v8.0.1 (+790)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="arch v8.0.1 (+784)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+790)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+784)
+            arch v8.0.1 (+790)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="arch v8.0.1 (+784)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="../../index.html" title="arch v8.0.1 (+790)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+784)
+    arch v8.0.1 (+790)
   </label>
   
     <div class="md-nav__source">
@@ -1721,10 +1721,12 @@ root, with the alternative that there is no unit root. If the pvalue is
 above a critical size, then the null cannot be rejected and the series
 appears to be a unit root.</p>
 <p>The p-values are from an approximation of the asymptotic distribution of the
-statistic that follows the methodology of MacKinnon (1994), fit to new
-simulations, and are a smooth and increasing function of the statistic. The
-critical values are from the response surface regressions of MacKinnon (2010),
-and depend on the number of observations.
+statistic that follows the methodology of MacKinnon (1994), and are a smooth
+and increasing function of the statistic. The critical values are from
+response surface regressions that follow the methodology of MacKinnon (2010),
+and depend on the number of observations. Both are fit to the same new
+simulations, and the p-values of the asymptotic critical values are 1%, 5% and
+10%.
 If the p-value is close to significant, then the critical values should be
 used to judge whether to reject the null.</p>
 <p>The autolag option and maxlag for it are described in Greene <a class="footnote-reference brackets" href="#id6" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
@@ -1771,14 +1773,14 @@ Econometrica 69, 1519-1554.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="go">-3.0931</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.0273</span>
+<span class="go">0.0271</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adf</span><span class="o">.</span><span class="n">lags</span>
 <span class="go">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">inflation</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"ct"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="go">-3.2111</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">adf</span><span class="o">.</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="go">0.0825</span>
+<span class="go">0.0822</span>
 </code></pre></div>
 </div>
 <p class="rubric">Methods</p>

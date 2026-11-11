@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v8.0.1 (+784)</title>
+        <title>arch.unitroot.unitroot - arch v8.0.1 (+790)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v8.0.1 (+784)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+790)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+784)
+            arch v8.0.1 (+790)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v8.0.1 (+784)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v8.0.1 (+790)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+784)
+    arch v8.0.1 (+790)
   </label>
   
     <div class="md-nav__source">
@@ -598,6 +598,7 @@
     <span class="n">dfgls_tau_star</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.dickey_fuller</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">adf_t_cv_approx</span><span class="p">,</span>
     <span class="n">adf_t_large_p</span><span class="p">,</span>
     <span class="n">adf_t_max</span><span class="p">,</span>
     <span class="n">adf_t_min</span><span class="p">,</span>
@@ -1489,10 +1490,12 @@
 <span class="sd">    appears to be a unit root.</span>
 
 <span class="sd">    The p-values are from an approximation of the asymptotic distribution of the</span>
-<span class="sd">    statistic that follows the methodology of MacKinnon (1994), fit to new</span>
-<span class="sd">    simulations, and are a smooth and increasing function of the statistic. The</span>
-<span class="sd">    critical values are from the response surface regressions of MacKinnon (2010),</span>
-<span class="sd">    and depend on the number of observations.</span>
+<span class="sd">    statistic that follows the methodology of MacKinnon (1994), and are a smooth</span>
+<span class="sd">    and increasing function of the statistic. The critical values are from</span>
+<span class="sd">    response surface regressions that follow the methodology of MacKinnon (2010),</span>
+<span class="sd">    and depend on the number of observations. Both are fit to the same new</span>
+<span class="sd">    simulations, and the p-values of the asymptotic critical values are 1%, 5% and</span>
+<span class="sd">    10%.</span>
 <span class="sd">    If the p-value is close to significant, then the critical values should be</span>
 <span class="sd">    used to judge whether to reject the null.</span>
 
@@ -1530,14 +1533,14 @@
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.stat:0.4f}")</span>
 <span class="sd">    -3.0931</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.pvalue:0.4f}")</span>
-<span class="sd">    0.0273</span>
+<span class="sd">    0.0271</span>
 <span class="sd">    &gt;&gt;&gt; adf.lags</span>
 <span class="sd">    2</span>
 <span class="sd">    &gt;&gt;&gt; adf = ADF(inflation, trend="ct")</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.stat:0.4f}")</span>
 <span class="sd">    -3.2111</span>
 <span class="sd">    &gt;&gt;&gt; print(f"{adf.pvalue:0.4f}")</span>
-<span class="sd">    0.0825</span>
+<span class="sd">    0.0822</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2899,9 +2902,8 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return the critical values for cointegrating and the ADF test.</span>
 
-<span class="sd">    In 2010 MacKinnon updated the values of his 1994 paper with critical values</span>
-<span class="sd">    for the augmented Dickey-Fuller tests.  These new values are to be</span>
-<span class="sd">    preferred and are used here.</span>
+<span class="sd">    The critical values are from response surface regressions that follow the</span>
+<span class="sd">    methodology of MacKinnon (2010), and depend on the number of observations.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2914,12 +2916,11 @@
 <span class="sd">        Following MacKinnon (1996), these stand for the type of regression run.</span>
 <span class="sd">        "c" for constant and no trend, "ct" for constant with a linear trend,</span>
 <span class="sd">        "ctt" for constant with a linear and quadratic trend, and "n" for</span>
-<span class="sd">        no constant.  The values for the no constant case are taken from the</span>
-<span class="sd">        1996 paper, as they were not updated for 2010 due to the unrealistic</span>
-<span class="sd">        assumptions that would underlie such a case. Not case sensitive.</span>
+<span class="sd">        no constant. Not case sensitive.</span>
 <span class="sd">    nobs : int or float, optional</span>
-<span class="sd">        This is the sample size, which must be positive.  If the sample size is</span>
-<span class="sd">        numpy.inf, then the asymptotic critical values are returned.</span>
+<span class="sd">        This is the sample size, the number of observations in the regression of</span>
+<span class="sd">        the test, which must be positive.  If the sample size is numpy.inf, then</span>
+<span class="sd">        the asymptotic critical values are returned.</span>
 <span class="sd">    dist_type : {"adf-t", "adf-z", "dfgls"}, optional</span>
 <span class="sd">        Type of test statistic. Not case sensitive.</span>
 
@@ -2941,8 +2942,11 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Results for ADF t-stats from MacKinnon (1994,2010).  Results for DFGLS and</span>
-<span class="sd">    ADF z-tests use the same methodology as MacKinnon.</span>
+<span class="sd">    The values for the ADF t-test with one unit root are fit to the same</span>
+<span class="sd">    simulations as the p-values of mackinnonp, and the p-values of the asymptotic</span>
+<span class="sd">    critical values are 1%, 5% and 10%. The values for the ADF z-test and the</span>
+<span class="sd">    DFGLS test are also fit to new simulations. The values for the ADF t-test with</span>
+<span class="sd">    more than one unit root are from MacKinnon (2010).</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -2960,7 +2964,10 @@
         <span class="s2">"float"</span><span class="p">,</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"nobs"</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">allow_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">lower_dist_type</span> <span class="o">==</span> <span class="s2">"adf-t"</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">lower_dist_type</span> <span class="o">==</span> <span class="s2">"adf-t"</span> <span class="ow">and</span> <span class="n">num_unit_roots</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">poly_coef</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">adf_t_cv_approx</span><span class="p">[</span><span class="n">regression</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">asymptotic_cv</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">adf_t_cv_approx</span><span class="p">[</span><span class="n">regression</span><span class="p">])[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">lower_dist_type</span> <span class="o">==</span> <span class="s2">"adf-t"</span><span class="p">:</span>
         <span class="n">asymptotic_cv</span> <span class="o">=</span> <span class="n">tau_2010</span><span class="p">[</span><span class="n">regression</span><span class="p">][</span><span class="n">num_unit_roots</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">poly_coef</span> <span class="o">=</span> <span class="n">tau_2010</span><span class="p">[</span><span class="n">regression</span><span class="p">][</span><span class="n">num_unit_roots</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span>
     <span class="k">elif</span> <span class="n">lower_dist_type</span> <span class="o">==</span> <span class="s2">"adf-z"</span><span class="p">:</span>

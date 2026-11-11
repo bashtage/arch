@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v8.0.1 (+784)</title>
+        <title>Change Logs - arch v8.0.1 (+790)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v8.0.1 (+784)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+790)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+784)
+            arch v8.0.1 (+790)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v8.0.1 (+784)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+784)" data-md-component="logo">
+    <a href="index.html" title="arch v8.0.1 (+790)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+790)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+784)
+    arch v8.0.1 (+790)
   </label>
   
     <div class="md-nav__source">
@@ -1717,20 +1717,27 @@ samples and by at most 0.0001 with 100 or more observations (<a class="extlink-i
 <li><p>The p-value of <a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, which
 <a class="reference internal" href="unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> uses with <code class="docutils literal notranslate"><span class="pre">test_type=&quot;tau&quot;</span></code> and
 <code class="docutils literal notranslate"><span class="pre">mackinnonp</span></code> returns with <code class="docutils literal notranslate"><span class="pre">dist_type=&quot;adf-t&quot;</span></code> and one unit root, is now a smooth
-and increasing function of the statistic. The p-values are from a new simulation
-with 134,000,000 to 145,000,000 draws for each trend. The p-value is approximated by
-one polynomial below a cut-off and another above it. These were estimated separately
-(MacKinnon, 1994), so the p-value jumped up at the cut-off, by 0.004 with
-<code class="docutils literal notranslate"><span class="pre">trend=&quot;n&quot;</span></code> and by up to 0.0006 otherwise, and jumped up to 1 at the largest
-statistic covered, by up to 0.003. The two are now cubics, estimated jointly so that
-they have the same value and slope at the cut-off. The approximation is also more
-accurate in the left tail: the largest error of the p-values of the 1%, 5% and 10%
-quantiles falls from 0.0004 to 0.00002, and the largest relative error of p-values
-below 0.15 from 2.5% to 0.12%. In the middle of the distribution, the largest
-difference from the simulated distribution is 0.006 with <code class="docutils literal notranslate"><span class="pre">&quot;n&quot;</span></code> (0.004 before) and
-at most 0.003 otherwise, as before. P-values below 0.15 change by at most 0.0005,
-and the largest change is 0.004, at a p-value near 0.6 with <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>. The p-values
-with more than one unit root and the critical values are unchanged (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1008">GH1008</a>).</p></li>
+and increasing function of the statistic, and the critical values with one unit root
+are fit to the same simulations. The simulations have 486,750,000 to 491,500,000
+draws for each trend. The p-value is approximated by one polynomial below a cut-off
+and another above it. These were estimated separately (MacKinnon, 1994), so the
+p-value jumped up at the cut-off, by 0.004 with <code class="docutils literal notranslate"><span class="pre">trend=&quot;n&quot;</span></code> and by up to 0.0006
+otherwise, and jumped up to 1 at the largest statistic covered, by up to 0.003. The
+two are now cubics, estimated jointly so that they have the same value and slope at
+the cut-off. They are fit to the asymptotic quantiles, which are the constants of the
+regressions of the simulated quantiles on powers of 1/nobs, and the critical values
+are the regressions of the 1%, 5% and 10% quantiles. The p-values of the asymptotic
+critical values are then 1%, 5% and 10%, to 0.00002, where the values of MacKinnon
+(1994, 2010) differed by up to 0.0001. The approximation is also more accurate in
+the left tail: the largest error of the p-values of the 1%, 5% and 10% quantiles
+falls from 0.00008 to 0.00001, and the largest relative error of p-values below 0.15
+from 5.3% to 0.05%. In the middle of the distribution, the largest difference from
+the simulated distribution is 0.006 with <code class="docutils literal notranslate"><span class="pre">&quot;n&quot;</span></code> and 0.004 with <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code> (0.004 and
+0.003 before), and at most 0.002 otherwise, as before. P-values below 0.15 change by
+at most 0.0002, and the largest change is 0.004, at a p-value near 0.6 with
+<code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>. The critical values change by at most 0.0008 in the smallest samples and by
+at most 0.0003 with 100 or more observations. The p-values and critical values with
+more than one unit root are unchanged (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1008">GH1008</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1017">GH1017</a>).</p></li>
 <li><p>Integer, unsigned integer and Boolean data are now converted to <code class="docutils literal notranslate"><span class="pre">float64</span></code> when they
 are passed to an estimator, so that no calculation is done in integer arithmetic.
 Previously a calculation that used the products or differences of integer data could
