@@ -2,8 +2,8 @@
 Version 9
 =========
 
-Release 9.0 (Unreleased)
-========================
+Release 9.0 (November 11, 2026)
+===============================
 
 Highlights
 ~~~~~~~~~~
