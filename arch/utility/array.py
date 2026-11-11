@@ -804,6 +804,8 @@ def date_to_index(
             "a datetime64 array",
             _describe(date_index),
         )
+    if isinstance(date_index, Series):
+        date_index = DatetimeIndex(date_index)
     if isinstance(date_index, DatetimeIndex):
         if date_index.tzinfo is not None:
             # The same UTC values without a time zone that .values returned. Using
