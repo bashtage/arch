@@ -397,7 +397,8 @@ omit = [
 
 [tool.coverage.report]
 show_missing = true
-ignore_errors = false
+# Report on the other files when one cannot be read
+ignore_errors = true
 # Regexes for lines to exclude from consideration
 exclude_also = [
   # Have to re-enable the standard pragma
