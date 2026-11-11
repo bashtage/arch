@@ -1356,6 +1356,12 @@ Deprecations and removals
 - Removed the unused module-level string templates ``deprecation_doc`` from
   ``arch.utility.array`` and ``arch.utility.exceptions`` (:issue:`945`).
 
+- Removed the ``test``, ``doc`` and ``dev`` extras. ``pip install arch[test]`` no
+  longer installs pytest and the other test dependencies, and pip only warns that the
+  extra does not exist. Install pytest 9 or later to run the test suite. The
+  development dependencies are now dependency groups in ``pyproject.toml`` (see
+  "Documentation and maintenance") (:issue:`1021`).
+
 Compatibility
 ~~~~~~~~~~~~~
 - Python 3.10 to 3.15 are supported, and wheels are available for Linux (manylinux on
