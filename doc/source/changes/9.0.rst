@@ -409,20 +409,20 @@ to restore the previous results.
   the same simulations. The p-value is approximated by one polynomial below a cut-off
   and another above it. These were estimated separately, so the p-value jumped down at
   the cut-off, by 0.033 with ``"n"``, 0.014 with ``"c"``, 0.010 with ``"ct"`` and 0.008
-  with ``"ctt"``. The two are now estimated jointly, so that they have the same value
-  and slope at the cut-off. They are fit to the asymptotic quantiles, which are the
-  constants of the regressions of the simulated quantiles on powers of 1/nobs, and the
-  critical values are the regressions of the 1%, 5% and 10% quantiles. The p-values of
-  the asymptotic critical values are then 1%, 5% and 10%, to 0.00008, where they were as
-  low as 0.0097, 0.0491 and 0.0987 with ``"ctt"``. The approximation is also more
-  accurate in the left tail: the largest relative error of p-values below 0.15 is now
-  0.13% with ``"n"`` and at most 0.07% otherwise, where it was up to 6.0% with a
-  constant or a trend. In the middle of the distribution, the largest difference from
-  the simulated distribution is 0.012 with ``"n"`` and at most 0.0017 otherwise.
+  with ``"ctt"``. The two are now a quartic in the log of the statistic and a cubic,
+  estimated jointly so that they have the same value and slope at the cut-off. They are
+  fit to the asymptotic quantiles, which are the constants of the regressions of the
+  simulated quantiles on powers of 1/nobs, and the critical values are the regressions
+  of the 1%, 5% and 10% quantiles. The p-values of the asymptotic critical values are
+  then 1%, 5% and 10%, to 0.00005, where they were as low as 0.0097, 0.0491 and 0.0987
+  with ``"ctt"``. The approximation is also more accurate in the left tail: the largest
+  relative error of p-values below 0.15 is now at most 0.05%, where it was up to 6.0%
+  with a constant or a trend. In the middle of the distribution, the largest difference
+  from the simulated distribution is 0.013 with ``"n"`` and at most 0.0015 otherwise.
   Compared with 8.0, with a constant or a trend, p-values below 0.15 change by at most
-  0.0016, and the largest change is 0.012, at p-values between 0.7 and 0.8. The critical
-  values were regressions on powers of one over the length of the series, which is one
-  more than the number of observations in the regression of the test that
+  0.0015, and the largest change is 0.014, at a p-value near 0.7 with ``"c"``. The
+  critical values were regressions on powers of one over the length of the series, which
+  is one more than the number of observations in the regression of the test that
   :class:`~arch.unitroot.PhillipsPerron` passes to ``mackinnoncrit``, so they were those
   of a sample with one fewer observation. They are now regressions on powers of 1/nobs.
   With 25 observations in the regression, the 1% critical value with ``"ctt"`` changes
