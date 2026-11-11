@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import datetime as dt
+import re
 
 import numpy as np
 from numpy.random import RandomState
@@ -442,6 +443,28 @@ def test_date_to_index_tz_aware_not_monotonic():
         date_to_index("2021-03-14", date_index)
     date_index = DatetimeIndex(utc[::-1]).tz_localize("UTC").tz_convert("Asia/Kolkata")
     with pytest.raises(ValueError, match=r"date_index must be increasing and unique"):
+        date_to_index("2021-03-14", date_index)
+
+
+@pytest.mark.filterwarnings(*NO_DEPRECATIONS)
+@pytest.mark.parametrize("tz", [None, "Asia/Kolkata"])
+@pytest.mark.parametrize("box", [Series, DatetimeIndex])
+@pytest.mark.parametrize(
+    ("positions", "rule"),
+    [
+        ([1, 0, 2], "increasing and unique"),
+        ([0, 1, 1], "increasing and unique"),
+        ([], "a non-empty array of dates"),
+    ],
+)
+def test_date_to_index_error_describes_input(tz, box, positions, rule):
+    # The error describes date_index as it was passed, not as it was converted
+    dates = date_range("2021-03-13", periods=3, tz=tz)[positions]
+    date_index = box(dates)
+    message = (
+        f"date_index must be {rule}; got shape ({len(positions)},) ({box.__name__})"
+    )
+    with pytest.raises(ValueError, match=re.escape(message)):
         date_to_index("2021-03-14", date_index)
 
 

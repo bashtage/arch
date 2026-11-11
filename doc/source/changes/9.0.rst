@@ -1222,6 +1222,9 @@ Bug fixes
 - The output of :class:`~arch.utility.testing.WaldTestStatistic` shows the name of the
   test once, as its first line. Since 4.8.0 the name was also printed between the null
   and the alternative hypotheses. Contributed by sohailshk (:issue:`1014`).
+- ``date_to_index`` in ``arch.utility.array`` accepts a ``Series`` of time zone aware
+  dates, as it accepts a time zone aware ``DatetimeIndex``, where it raised a
+  ``TypeError``. Contributed by jackiectl2 (:issue:`1016`).
 - Fixed ``SkewStudent.ppf`` for probabilities close to 1, which lost precision and
   returned ``inf`` for some probabilities below 1. For example, with :math:`\eta=8` and
   :math:`\lambda=0.9` the quantile of the largest float below 1 was ``inf`` and is
