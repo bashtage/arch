@@ -33,6 +33,9 @@ from shared import (
     format_dict,
 )
 
+# The small p polynomial is a quartic in log|stat|. A cubic misses the asymptotic
+# 10% critical value by up to 7.6e-5 in p with "n".
+SMALL_ORDER = 5
 Z_MARKER = "# Z values from"
 
 parser = argparse.ArgumentParser(description="Process the ADF z-test simulations")
@@ -108,7 +111,7 @@ for trend in TRENDS:
 
     # The two p-value polynomials are fit jointly so that the p-value is continuous,
     # has a continuous first derivative and is monotone in the statistic
-    pvals = fit_smooth_pval_model(asymptotic)
+    pvals = fit_smooth_pval_model(asymptotic, small_order=SMALL_ORDER)
     adf_z_max[trend] = pvals.tau_max
     adf_z_min[trend] = pvals.tau_min
     adf_z_star[trend] = float(pvals.tau_star)
