@@ -1,15 +1,17 @@
 [build-system]
 build-backend = 'mesonpy'
+# The build dependency group below repeats these pins (other than NumPy's) for builds
+# without build isolation, since a dependency group cannot include this table.
+# meson.build also checks the Cython floor.
 requires = [
-  'meson-python',
-  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
+  "meson-python>=0.18.0",
+  "cython>=3.1.0,<4",
   "numpy>=2.0.0,<3",
-  "setuptools_scm>=9.2.0,<10",
+  "setuptools-scm>=9.2.0,<10",
 ]
 
 [project]
 name = "arch"
-# Keep synced with requirements.txt
 dependencies = [
   "numpy>=1.22.3,<3",
   "pandas>=1.4.0",
@@ -67,84 +69,89 @@ maintainers = [
 readme = "README.md"
 requires-python = ">=3.10"
 
-[project.optional-dependencies]
-test = [
-  # test
-  "pytest>=9,<10",
-  "pytest-randomly",
-  "pytest-xdist",
-  "pytest-cov",
-  "coverage[toml]",
-  "meson",
-  "ninja",
-]
-doc = [
-  # Documentation
-  "setuptools>=61",
-  "wheel",
-  "setuptools_scm[toml]>=9.2.0,<10",
-  "cython>=3.1.0,<4",  # Sync with the doc and dev extras and requirements-dev.txt
-  "numpy >=2.3.4",
-  "scipy >=1.16.0",
-  "ipython >=8.0.1",
-  "matplotlib >=3.10",
-  "patsy >=0.5.3",
-  "statsmodels >=0.13.5",
-  "jinja2",
-  "sphinx>=7",
-  "seaborn",
-  "numpydoc>=1.10",
-  "nbsphinx",
-  "sphinx-immaterial",
-  "jupyter",
-  "notebook",
-  "sphinx-autodoc-typehints",
-  "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
-  "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
-  "ipython>=7",
-  "sphinx_immaterial",
-  "nbconvert",
-  "pickleshare",
-  # Requirements for doc build, in addition to requirements.txt
-  "pandas~=2.3.3",
-]
-dev = [
-  # versioning
-  "setuptools_scm[toml]>=9.2.0,<10",
-  "packaging",
-  # Performance
-  "cython>=3.1.0",
-  "numba>=0.55",
-  # Graphics
-  "matplotlib>=3",
-  "seaborn",
-  # Tests
-  "pytest>=9,<10",
-  "pytest-randomly",
-  "pytest-xdist",
-  "pytest-cov",
-  # docstrings: the numpydoc linter and arch/tests/test_docstrings.py
-  "numpydoc>=1.10",
-  # formatting
-  "black[jupyter]~=25.9.0",
-  "isort~=6.0",
-  "colorama",
-  "mypy>=1.3",
-  "pandas-stubs",
-  "scipy-stubs",
-  "ruff>=0.8.6",
-  "pyupgrade>=3.4.0",
-  "jupyterlab-code-formatter",
-  "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
-  "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
-]
-
-
 [project.urls]
 homepage = "https://github.com/bashtage/arch"
 documentation = "https://bashtage.github.io/arch/"
 repository = "https://github.com/bashtage/arch"
 changelog = "https://bashtage.github.io/arch/changes.html"
+
+# Development dependencies (PEP 735), installed with pip 25.1 or later. For example,
+#   python -m pip install --group dev
+#   python -m pip install -e . --no-build-isolation
+# installs everything needed to build, test and lint arch, and adding "--group doc" to
+# the first command also installs what the documentation needs. The groups do not
+# include the dependencies of arch, which pip installs with arch.
+[dependency-groups]
+# Everything that "python -m pip install -e . --no-build-isolation" needs
+build = [
+  "cython>=3.1.0,<4",
+  "meson>=1.9.0",  # meson_version in meson.build
+  "meson-python>=0.18.0",
+  "ninja",
+  "numpy",  # Its range is in the dependencies of arch
+  "setuptools-scm>=9.2.0,<10",
+]
+# numpydoc checks the docstrings, in "python -m numpydoc lint" and in
+# arch/tests/test_docstrings.py
+docstrings = [
+  "numpydoc>=1.10",
+]
+# The test runner and the docstring checks. Without matplotlib and seaborn, the tests of
+# the plots are skipped, and CI tests both with and without them. numba runs the
+# recursions only when arch is built without the Cython extensions.
+test = [
+  "pytest>=9",  # minversion in [tool.pytest]
+  "pytest-cov",
+  "pytest-xdist",
+  "coverage[toml]",  # Python 3.10 needs the extra to read [tool.coverage]
+  { include-group = "docstrings" },
+]
+# The example notebooks, which the slow tests in arch/tests/test_examples.py run and the
+# documentation shows
+notebooks = [
+  "ipython>=8",
+  "jupyter",
+  "nbconvert>=7.17.0",
+  "notebook",
+  "jupyter-server>=2.20.0",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "tornado>=6.5.7",  # not directly required, pinned by Snyk to avoid a vulnerability
+]
+lint = [
+  "black[jupyter]~=26.10.1",
+  "isort~=9.0",
+  "mypy>=1.3",
+  "pandas-stubs",
+  "ruff>=0.17.4",
+  "scipy-stubs",
+  { include-group = "docstrings" },
+]
+dev = [
+  { include-group = "build" },
+  { include-group = "test" },
+  { include-group = "lint" },
+  { include-group = "notebooks" },
+  "matplotlib>=3",
+  "seaborn",
+  "pytest-randomly",
+  "fonttools>=4.62.0",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "urllib3>=2.8.0",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "zipp>=3.19.1",  # not directly required, pinned by Snyk to avoid a vulnerability
+]
+# The documentation, in addition to the dev group
+doc = [
+  "nbsphinx",
+  "pickleshare",
+  "sphinx>=7",
+  "sphinx-immaterial",
+]
+# The scripts in arch/unitroot/critical_values/simulation that simulate the critical
+# values, in addition to the dev group
+simulation = [
+  "colorama",
+  "joblib",
+  "psutil",
+]
 
 [tool.meson-python.args]
 setup = ['--vsenv']

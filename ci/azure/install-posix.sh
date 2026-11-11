@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# The build tools, the test requirements and the packages that the example notebooks
+# need are dependency groups in pyproject.toml, which pip 25.1 or later installs
+DEP_GROUPS="--group build --group test --group notebooks"
+
 if [[ ${USE_CONDA} == "true" ]]; then
   # Miniforge (conda-forge only) is installed by the pipeline and the env's bin
   # directory is on PATH, so no activation is needed.
@@ -13,16 +17,15 @@ if [[ ${USE_CONDA} == "true" ]]; then
   fi
   CMD="mamba install -n arch-test -y -c conda-forge numpy"
 else
-  CMD="python -m pip install numpy"
+  CMD="python -m pip install ${DEP_GROUPS} numpy"
 fi
 
-python -m pip install --upgrade pip "setuptools>=61" wheel
-python -m pip install cython "pytest>=9,<10" pytest-xdist "coverage[toml]" pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" nbconvert setuptools_scm colorama "meson-python>=0.18.0" meson ninja "numpydoc>=1.10"
-
+python -m pip install --upgrade pip
 
 # Versions are exact so that the job tests what its matrix entry says, and all of
-# the packages are installed in a single command so that the installer picks
-# versions of matplotlib, seaborn, ... that work with them
+# the packages (with pip, also the dependency groups) are installed in a single
+# command so that the installer picks versions of matplotlib, seaborn, ... that work
+# with them
 if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
 CMD="$CMD scipy"
 if [[ -n ${SCIPY} ]]; then CMD="$CMD==${SCIPY}"; fi;
@@ -46,6 +49,12 @@ fi;
 CMD="$CMD $EXTRA"
 echo $CMD
 eval $CMD || exit 1
+
+if [[ ${USE_CONDA} == "true" ]]; then
+  # After the conda packages, so that pip keeps the numpy from conda-forge
+  echo python -m pip install ${DEP_GROUPS}
+  python -m pip install ${DEP_GROUPS} || exit 1
+fi
 
 if [[ ${NO_MATPLOTLIB,,} == true ]]; then
   # Fail if another package installed matplotlib, so that the job really tests without it

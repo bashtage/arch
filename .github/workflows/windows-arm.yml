@@ -64,17 +64,18 @@ jobs:
           python -c "import platform, sys; print(sys.version, platform.machine())"
           python -c "import sys, sysconfig; print(sysconfig.get_platform()); sys.exit(sysconfig.get_platform() != 'win-arm64')"
 
-      # Only wheels, so that the job fails if a dependency would have to be compiled
+      # Only wheels, so that the job fails if a dependency would have to be compiled. The
+      # test requirements are the test dependency group in pyproject.toml.
       - name: Install the dependencies
         env:
           NUMBA: ${{ matrix.numba }}
         run: |
-          packages=(numpy scipy pandas statsmodels matplotlib seaborn "pytest>=9,<10" pytest-xdist)
+          packages=(numpy scipy pandas statsmodels matplotlib seaborn)
           if [[ "${NUMBA}" == "true" ]]; then
             packages+=(numba)
           fi
           python -m pip install --upgrade pip
-          python -m pip install --only-binary=:all: "${packages[@]}"
+          python -m pip install --only-binary=:all: --group test "${packages[@]}"
 
       - name: Build the wheel
         run: |

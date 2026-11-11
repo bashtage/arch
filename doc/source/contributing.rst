@@ -1,6 +1,47 @@
 Contributing
 ============
 
+Development environment
+-----------------------
+
+The development requirements are dependency groups (PEP 735) in ``pyproject.toml``,
+which pip 25.1 or later installs. From the root of a clone of the repository,
+
+.. code-block:: bash
+
+   python -m pip install --group dev
+   python -m pip install -e . --no-build-isolation
+
+installs the build tools, the test runner, the linters and the packages that the example
+notebooks need, and then builds and installs arch in place. Add ``--group doc`` to the
+first command to also build the documentation. The groups are:
+
+* ``build``: what ``python -m pip install -e . --no-build-isolation`` needs (Cython,
+  meson, meson-python, ninja, NumPy and setuptools-scm).
+* ``test``: pytest, pytest-xdist, pytest-cov and numpydoc.
+* ``notebooks``: jupyter and nbconvert, which the slow tests use to run the example
+  notebooks.
+* ``lint``: ruff, black, isort, numpydoc, mypy and the pandas and SciPy stubs.
+* ``docstrings``: numpydoc, which ``test`` and ``lint`` include.
+* ``dev``: ``build``, ``test``, ``lint`` and ``notebooks``, with matplotlib, seaborn and
+  pytest-randomly.
+* ``doc``: Sphinx, sphinx-immaterial and nbsphinx, in addition to ``dev``.
+* ``simulation``: the packages that the scripts in
+  ``arch/unitroot/critical_values/simulation`` need in addition to ``dev``.
+
+The groups do not include the dependencies of arch, which pip installs with arch. The
+tests and the checks that CI runs are
+
+.. code-block:: bash
+
+   python -m pytest arch/tests -n auto -m "not slow"
+   ruff check arch
+   black --check arch
+   isort --check arch
+   python -m numpydoc lint $(git ls-files "arch/*.py")
+
+and the settings of all of these tools are in ``pyproject.toml``.
+
 Docstrings
 ----------
 
@@ -115,8 +156,8 @@ The rules are configured in the ``[tool.numpydoc_validation]`` table of
    python -m numpydoc lint $(git ls-files "arch/*.py")
    python -m pytest arch/tests/test_docstrings.py
 
-Both need numpydoc 1.10 or later, which ``requirements-dev.txt`` and the ``dev`` extra
-install. The Lint workflow runs the first command, and the second is skipped when
+Both need numpydoc 1.10 or later, which the ``test``, ``lint`` and ``dev`` dependency
+groups install. The Lint workflow runs the first command, and the second is skipped when
 numpydoc is not installed.
 
 ``numpydoc lint`` reads the source files. It cannot see a docstring that a class

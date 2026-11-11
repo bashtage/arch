@@ -27,11 +27,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # The lint dependency group in pyproject.toml
       - name: Install the linters
         id: install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install black isort ruff "numpydoc>=1.10"
+          python -m pip install --group lint
           python -m pip list
 
       # Every check runs even when an earlier one fails, so that the log shows all of
