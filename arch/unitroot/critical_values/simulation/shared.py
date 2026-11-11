@@ -355,8 +355,8 @@ def fit_smooth_pval_model(
         digits must be large enough that rounding does not make the p-value
         discontinuous.
     small_order : int, default 4
-        The number of coefficients of the small p polynomial, 3 for a quadratic
-        and 4 for a cubic.
+        The number of coefficients of the small p polynomial, 3 for a quadratic,
+        4 for a cubic and 5 for a quartic.
     use_log : bool, default True
         Whether the small p polynomial is in log|stat|. If False, it is in stat.
     max_tail_step : float, optional
@@ -374,8 +374,8 @@ def fit_smooth_pval_model(
         below and above which the p-value is 0 and 1. They are -inf and inf when
         both tails are monotone and tend to 0 and 1.
     """
-    if small_order not in (3, 4):
-        raise ValueError("small_order must be 3 or 4")
+    if small_order not in (3, 4, 5):
+        raise ValueError("small_order must be 3, 4 or 5")
     quantiles = quantiles.sort_index(ascending=False)
     probs = quantiles.index.to_numpy(dtype=float)
     data = np.asarray(quantiles, dtype=float)
