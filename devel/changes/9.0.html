@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v8.0.1 (+805)</title>
+        <title>Version 9 - arch v8.0.1 (+807)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v8.0.1 (+805)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+805)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+807)" class="md-header__button md-logo" aria-label="arch v8.0.1 (+807)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v8.0.1 (+805)
+            arch v8.0.1 (+807)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v8.0.1 (+805)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+805)" data-md-component="logo">
+    <a href="../index.html" title="arch v8.0.1 (+807)" class="md-nav__button md-logo" aria-label="arch v8.0.1 (+807)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v8.0.1 (+805)
+    arch v8.0.1 (+807)
   </label>
   
     <div class="md-nav__source">
@@ -807,6 +807,16 @@ volatility changes by at most 3.7% (<code class="docutils literal notranslate"><
 (<code class="docutils literal notranslate"><span class="pre">&quot;var&quot;</span></code>), the largest change in a residual is 0.15, 0.53 and 1.1, and R-squared
 changes from 0.0021 to 0.0021, from 0.0039 to 0.0012 and from 0.0047 to -0.0006.
 R-squared can now be negative for these models (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/909">GH909</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">rsquared_adj</span></code> of <a class="reference internal" href="../univariate/generated/arch.univariate.ZeroMean.html#arch.univariate.ZeroMean" title="arch.univariate.ZeroMean (Python class) — Model with zero conditional mean estimation and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZeroMean</span></code></a> and of
+<a class="reference internal" href="../univariate/generated/arch.univariate.ARX.html#arch.univariate.ARX" title="arch.univariate.ARX (Python class) — Autoregressive model with optional exogenous regressors."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARX</span></code></a>, <a class="reference internal" href="../univariate/generated/arch.univariate.HARX.html#arch.univariate.HARX" title="arch.univariate.HARX (Python class) — Heterogeneous Autoregression (HAR) model with optional exogenous regressors."><code class="xref py py-class docutils literal notranslate"><span class="pre">HARX</span></code></a> and
+<a class="reference internal" href="../univariate/generated/arch.univariate.LS.html#arch.univariate.LS" title="arch.univariate.LS (Python class) — Least squares model estimation and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">LS</span></code></a> with <code class="docutils literal notranslate"><span class="pre">constant=False</span></code>. Their <code class="docutils literal notranslate"><span class="pre">rsquared</span></code> is the
+uncentered R-squared, but the adjustment used the factor of a centered R-squared,
+<code class="docutils literal notranslate"><span class="pre">(nobs</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">(nobs</span> <span class="pre">-</span> <span class="pre">k)</span></code>, where k is the number of mean parameters. It now uses
+<code class="docutils literal notranslate"><span class="pre">nobs</span> <span class="pre">/</span> <span class="pre">(nobs</span> <span class="pre">-</span> <span class="pre">k)</span></code>, as statsmodels does. For example, an AR(1) without a constant
+was not adjusted at all, and <a class="reference internal" href="../univariate/generated/arch.univariate.ZeroMean.html#arch.univariate.ZeroMean" title="arch.univariate.ZeroMean (Python class) — Model with zero conditional mean estimation and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ZeroMean</span></code></a>, whose <code class="docutils literal notranslate"><span class="pre">rsquared</span></code>
+is 0, had an <code class="docutils literal notranslate"><span class="pre">rsquared_adj</span></code> of <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">nobs</span></code>. Models with a constant, including an
+implicit one in the regressors, are unchanged. Contributed by sohailshk
+(<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1013">GH1013</a>).</p></li>
 <li><p>Fixed <a class="reference internal" href="../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean" title="arch.univariate.ARCHInMean (Python class) — (G)ARCH-in-mean model and simulation."><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHInMean</span></code></a> models that use a
 <a class="reference internal" href="../univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">GARCH</span></code></a> or <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model."><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> volatility
 process with <code class="docutils literal notranslate"><span class="pre">power</span> <span class="pre">!=</span> <span class="pre">2</span></code> (for example <code class="docutils literal notranslate"><span class="pre">TARCH</span></code> and <code class="docutils literal notranslate"><span class="pre">AVGARCH</span></code>). The volatility
@@ -1695,6 +1705,9 @@ warns about an overflow for a very large statistic (<a class="extlink-issue refe
 test and other tests return, shows the name of the distribution again, such as
 <code class="docutils literal notranslate"><span class="pre">Distributed:</span> <span class="pre">chi2(5)</span></code>. Since 7.2.0 it showed the representation of a frozen SciPy
 distribution. Contributed by wavebyrd (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1002">GH1002</a>).</p></li>
+<li><p>The output of <a class="reference internal" href="../univariate/utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic (Python class) — Test statistic holder for Wald-type tests."><code class="xref py py-class docutils literal notranslate"><span class="pre">WaldTestStatistic</span></code></a> shows the name of the
+test once, as its first line. Since 4.8.0 the name was also printed between the null
+and the alternative hypotheses. Contributed by sohailshk (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1014">GH1014</a>).</p></li>
 <li><p>Fixed <code class="docutils literal notranslate"><span class="pre">SkewStudent.ppf</span></code> for probabilities close to 1, which lost precision and
 returned <code class="docutils literal notranslate"><span class="pre">inf</span></code> for some probabilities below 1. For example, with <span class="math notranslate nohighlight">\(\eta=8\)</span> and
 <span class="math notranslate nohighlight">\(\lambda=0.9\)</span> the quantile of the largest float below 1 was <code class="docutils literal notranslate"><span class="pre">inf</span></code> and is
@@ -1849,8 +1862,8 @@ requires pytest 9.</p></li>
 <ul class="simple">
 <li><p>Thanks to the contributors to this release: aeshef, albystack, antonsoo, galafis,
 gjunjie, heykav, jackiectl2, mkzung, pedrosfaria2, premdev1234, raashish1601,
-shaneraphel, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks also to
-lucaluo925 for reporting the BCa issue (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/866">GH866</a>), to nicoloangileri for
+shaneraphel, sohailshk, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks
+also to lucaluo925 for reporting the BCa issue (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/866">GH866</a>), to nicoloangileri for
 reporting the skewed GJR forecasts (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/867">GH867</a>), and to mjwillson and novdanody for
 the issues that the documentation of <code class="docutils literal notranslate"><span class="pre">conf_int</span></code> and of the covariance estimators
 addresses (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/801">GH801</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/715">GH715</a>).</p></li>

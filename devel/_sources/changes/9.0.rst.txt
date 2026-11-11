@@ -288,6 +288,16 @@ to restore the previous results.
   (``"var"``), the largest change in a residual is 0.15, 0.53 and 1.1, and R-squared
   changes from 0.0021 to 0.0021, from 0.0039 to 0.0012 and from 0.0047 to -0.0006.
   R-squared can now be negative for these models (:issue:`909`).
+- Fixed ``rsquared_adj`` of :class:`~arch.univariate.ZeroMean` and of
+  :class:`~arch.univariate.ARX`, :class:`~arch.univariate.HARX` and
+  :class:`~arch.univariate.LS` with ``constant=False``. Their ``rsquared`` is the
+  uncentered R-squared, but the adjustment used the factor of a centered R-squared,
+  ``(nobs - 1) / (nobs - k)``, where k is the number of mean parameters. It now uses
+  ``nobs / (nobs - k)``, as statsmodels does. For example, an AR(1) without a constant
+  was not adjusted at all, and :class:`~arch.univariate.ZeroMean`, whose ``rsquared``
+  is 0, had an ``rsquared_adj`` of ``1 / nobs``. Models with a constant, including an
+  implicit one in the regressors, are unchanged. Contributed by sohailshk
+  (:issue:`1013`).
 - Fixed :class:`~arch.univariate.ARCHInMean` models that use a
   :class:`~arch.univariate.GARCH` or :class:`~arch.univariate.FIGARCH` volatility
   process with ``power != 2`` (for example ``TARCH`` and ``AVGARCH``). The volatility
@@ -1209,6 +1219,9 @@ Bug fixes
   test and other tests return, shows the name of the distribution again, such as
   ``Distributed: chi2(5)``. Since 7.2.0 it showed the representation of a frozen SciPy
   distribution. Contributed by wavebyrd (:issue:`1002`).
+- The output of :class:`~arch.utility.testing.WaldTestStatistic` shows the name of the
+  test once, as its first line. Since 4.8.0 the name was also printed between the null
+  and the alternative hypotheses. Contributed by sohailshk (:issue:`1014`).
 - Fixed ``SkewStudent.ppf`` for probabilities close to 1, which lost precision and
   returned ``inf`` for some probabilities below 1. For example, with :math:`\eta=8` and
   :math:`\lambda=0.9` the quantile of the largest float below 1 was ``inf`` and is
@@ -1368,8 +1381,8 @@ Contributors
 ~~~~~~~~~~~~
 - Thanks to the contributors to this release: aeshef, albystack, antonsoo, galafis,
   gjunjie, heykav, jackiectl2, mkzung, pedrosfaria2, premdev1234, raashish1601,
-  shaneraphel, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks also to
-  lucaluo925 for reporting the BCa issue (:issue:`866`), to nicoloangileri for
+  shaneraphel, sohailshk, VenishPaneliya, WatchTree-19, wavebyrd and ZacKienzle2. Thanks
+  also to lucaluo925 for reporting the BCa issue (:issue:`866`), to nicoloangileri for
   reporting the skewed GJR forecasts (:issue:`867`), and to mjwillson and novdanody for
   the issues that the documentation of ``conf_int`` and of the covariance estimators
   addresses (:issue:`801`, :issue:`715`).
