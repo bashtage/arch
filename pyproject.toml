@@ -129,8 +129,6 @@ dev = [
   "black[jupyter]~=25.9.0",
   "isort~=6.0",
   "colorama",
-  "flake8",
-  "flake8-bugbear",
   "mypy>=1.3",
   "pandas-stubs",
   "scipy-stubs",
@@ -240,8 +238,6 @@ ignore = [
   # Required to allow black formatting
   # Whitespace before ':' (Needed for black)
   "E203",
-  # Line too long (### > 88 characters) (Needed for black)
-  "E501",
   # Multiple statements on one line (colon) (E701)
   "E701",
   # Always ignore
@@ -303,6 +299,11 @@ ignore = [
   # Too many positional arguments
   "PLR0917",
 ]
+
+# black keeps code within 88 characters but cannot shorten comments, docstrings and long
+# strings. E501 limits every line to 99 characters, as flake8 did.
+[tool.ruff.lint.pycodestyle]
+max-line-length = 99
 
 [tool.ruff.lint.per-file-ignores]
 # Has function names test for running test suite, not a (pytest) )test
