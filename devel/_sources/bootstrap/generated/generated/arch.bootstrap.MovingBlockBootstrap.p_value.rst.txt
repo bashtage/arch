@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MovingBlockBootstrap.p\_value
+============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MovingBlockBootstrap.p_value

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.CircularBlockBootstrap.p\_value
+==============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: CircularBlockBootstrap.p_value

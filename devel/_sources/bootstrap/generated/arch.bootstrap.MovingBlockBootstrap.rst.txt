@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: MovingBlockBootstrap
-   :exclude-members: apply,bootstrap,clone,conf_int,cov,reset,update_indices,var,
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,p_value,reset,update_indices,var,
 
    
    
@@ -18,6 +18,7 @@
       ~MovingBlockBootstrap.clone
       ~MovingBlockBootstrap.conf_int
       ~MovingBlockBootstrap.cov
+      ~MovingBlockBootstrap.p_value
       ~MovingBlockBootstrap.reset
       ~MovingBlockBootstrap.update_indices
       ~MovingBlockBootstrap.var

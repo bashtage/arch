@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch 9.0.0</title>
+        <title>arch.bootstrap.base - arch v9.0.1 (+4)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 9.0.0" class="md-header__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+4)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+4)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 9.0.0
+            arch v9.0.1 (+4)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 9.0.0" class="md-nav__button md-logo" aria-label="arch 9.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+4)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+4)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 9.0.0
+    arch v9.0.1 (+4)
   </label>
   
     <div class="md-nav__source">
@@ -920,6 +920,40 @@
         <span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_null_type</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Validate null type and finiteness without knowing the parameter count."""</span>
+    <span class="k">if</span> <span class="n">null</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_fail</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">"a real scalar or a 1-dimensional array"</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">null_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">null</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">_fail</span><span class="p">(</span>
+            <span class="ne">TypeError</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">"a real scalar or a 1-dimensional array"</span><span class="p">,</span> <span class="n">_describe</span><span class="p">(</span><span class="n">null</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">null_arr</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">_fail</span><span class="p">(</span>
+            <span class="ne">ValueError</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="s2">"a finite scalar or a 1-dimensional array without NaN"</span><span class="p">,</span>
+            <span class="n">_describe</span><span class="p">(</span><span class="n">null</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">null_arr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_broadcast_null</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">null_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Broadcast a validated null array to one entry per parameter."""</span>
+    <span class="k">if</span> <span class="n">null_arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_params</span><span class="p">,</span> <span class="n">null_arr</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">null_arr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_params</span><span class="p">,):</span>
+        <span class="k">return</span> <span class="n">null_arr</span>
+    <span class="n">_fail</span><span class="p">(</span>
+        <span class="ne">ValueError</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="s2">"a scalar or a 1-dimensional array with one value per parameter"</span><span class="p">,</span>
+        <span class="n">_describe</span><span class="p">(</span><span class="n">null_arr</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_extra_kwargs</span><span class="p">(</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">extra_kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -1507,84 +1541,351 @@
                 <span class="n">real_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf_int_from_estimates</span><span class="p">(</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">tail_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">extra_kwargs</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_conf_int_from_estimates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">tail_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build a confidence interval from already-computed bootstrap estimates.</span>
+
+<span class="sd">        This is the interval-building half of :meth:`conf_int`. It reads the</span>
+<span class="sd">        bootstrap replications cached on the instance and is kept separate so</span>
+<span class="sd">        that :meth:`p_value` can reuse the same replications while searching over</span>
+<span class="sd">        the confidence level.</span>
+<span class="sd">        """</span>
         <span class="n">base</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
         <span class="k">assert</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">_check_real_statistic</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
-        <span class="n">studentized_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_results</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="n">studentized</span><span class="p">):</span>
-            <span class="n">errors</span> <span class="o">=</span> <span class="n">results</span> <span class="o">-</span> <span class="n">results</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">std_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">reps</span><span class="p">)))</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bca"</span><span class="p">):</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bca_bias</span><span class="p">())</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"bca"</span><span class="p">:</span>
+                <span class="n">lens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lens</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">"BCa cannot be applied to statistics "</span>
+                        <span class="s2">"computed from datasets with "</span>
+                        <span class="s2">"different lengths"</span>
+                    <span class="p">)</span>
+                <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bca_acceleration</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_params</span><span class="p">):</span>
+            <span class="n">lower</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf_int_parameter_from_estimates</span><span class="p">(</span>
+                <span class="n">size</span><span class="p">,</span> <span class="n">tail_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">acceleration</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_conf_int_parameter_from_estimates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">tail_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">param</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">acceleration</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Build the interval for a single parameter from cached estimates."""</span>
+        <span class="n">base_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
+        <span class="k">assert</span> <span class="n">base_all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">base_all</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">if</span> <span class="n">base_all</span><span class="o">.</span><span class="n">ndim</span> <span class="k">else</span> <span class="n">base_all</span>
+        <span class="n">std_err</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"studentized"</span><span class="p">):</span>
+            <span class="n">raw_values</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:,</span> <span class="n">param</span><span class="p">]</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="n">raw_values</span> <span class="o">-</span> <span class="n">raw_values</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">std_err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">errors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:,</span> <span class="n">param</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"studentized"</span><span class="p">:</span>
+            <span class="n">studentized_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_studentized_results</span>
+            <span class="k">assert</span> <span class="n">studentized_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">studentized_results</span><span class="p">[:,</span> <span class="n">param</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"two"</span><span class="p">:</span>
             <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">size</span>
-        <span class="n">nreps</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">]]</span> <span class="o">*</span> <span class="n">nreps</span><span class="p">)</span>
-        <span class="n">norm_quantiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">percentiles</span><span class="p">)</span>
+        <span class="n">norm_quantiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">]))</span>
 
         <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"norm"</span><span class="p">:</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span>
-
+            <span class="n">lower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span><span class="p">)</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_err</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">results</span>
-            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span><span class="p">:</span>
-                <span class="c1"># studentized uses studentized parameter estimates</span>
-                <span class="n">values</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array"</span><span class="p">,</span> <span class="n">studentized_results</span><span class="p">)</span>
-
+            <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bca"</span><span class="p">):</span>
-                <span class="c1"># bias corrected uses modified percentiles, but is</span>
-                <span class="c1"># otherwise identical to the percentile method</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bca_bias</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"bca"</span><span class="p">:</span>
-                    <span class="n">lens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
-                        <span class="nb">len</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-                    <span class="p">]</span>
-                    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lens</span><span class="p">):</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                            <span class="s2">"BCa cannot be applied to statistics "</span>
-                            <span class="s2">"computed from datasets with "</span>
-                            <span class="s2">"different lengths"</span>
-                        <span class="p">)</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bca_acceleration</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">bias</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">if</span> <span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">acceleration</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">if</span> <span class="n">acceleration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">norm_quantiles</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">adjusted</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">z</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="n">percentiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span>
-                    <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">norm_quantiles</span><span class="p">))</span>
-                <span class="p">)</span>
-                <span class="n">percentiles</span> <span class="o">*=</span> <span class="mi">100</span>
+                    <span class="n">adjusted</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">z</span><span class="p">))</span>
+                <span class="n">percentiles</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">adjusted</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+                <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">percentiles</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">percentiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span> <span class="o">*</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">percentiles</span><span class="p">])</span>  <span class="c1"># Rescale</span>
-
-            <span class="n">k</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
-                <span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">percentiles</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">percentiles</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">percentiles</span>
+            <span class="n">lower_q</span><span class="p">,</span> <span class="n">upper_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">percentiles</span><span class="p">))</span>
             <span class="c1"># Basic and studentized use the lower empirical quantile to</span>
             <span class="c1"># compute upper and vice versa.  Bias corrected and percentile use</span>
             <span class="c1"># upper to estimate the upper, and lower to estimate the lower</span>
             <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"basic"</span><span class="p">:</span>
-                <span class="n">lower_copy</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">+</span> <span class="mf">0.0</span>
-                <span class="n">lower</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">base</span> <span class="o">-</span> <span class="n">upper</span>
-                <span class="n">upper</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">base</span> <span class="o">-</span> <span class="n">lower_copy</span>
-            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">studentized</span><span class="p">:</span>
-                <span class="n">lower_copy</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">+</span> <span class="mf">0.0</span>
-                <span class="n">lower</span> <span class="o">=</span> <span class="n">base</span> <span class="o">-</span> <span class="n">upper</span> <span class="o">*</span> <span class="n">std_err</span>
-                <span class="n">upper</span> <span class="o">=</span> <span class="n">base</span> <span class="o">-</span> <span class="n">lower_copy</span> <span class="o">*</span> <span class="n">std_err</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">base</span> <span class="o">-</span> <span class="n">upper_q</span><span class="p">)</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">base</span> <span class="o">-</span> <span class="n">lower_q</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"studentized"</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span> <span class="o">-</span> <span class="n">upper_q</span> <span class="o">*</span> <span class="n">std_err</span><span class="p">)</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span> <span class="o">-</span> <span class="n">lower_q</span> <span class="o">*</span> <span class="n">std_err</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lower_q</span><span class="p">)</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">upper_q</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"lower"</span><span class="p">:</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
-            <span class="n">upper</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
         <span class="k">elif</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"upper"</span><span class="p">:</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
-            <span class="n">lower</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">return</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">))</span></div>
+<div class="viewcode-block" id="IIDBootstrap.p_value">
+<a class="viewcode-back" href="../../../bootstrap/generated/generated/arch.bootstrap.IIDBootstrap.p_value.html#arch.bootstrap.IIDBootstrap.p_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">null</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"two-sided"</span><span class="p">,</span> <span class="s2">"less"</span><span class="p">,</span> <span class="s2">"greater"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"two-sided"</span><span class="p">,</span>
+        <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+            <span class="s2">"basic"</span><span class="p">,</span> <span class="s2">"percentile"</span><span class="p">,</span> <span class="s2">"studentized"</span><span class="p">,</span> <span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bca"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"basic"</span><span class="p">,</span>
+        <span class="n">reuse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">extra_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+            <span class="s2">"nonparametric"</span><span class="p">,</span> <span class="s2">"semi-parametric"</span><span class="p">,</span> <span class="s2">"semi"</span><span class="p">,</span> <span class="s2">"parametric"</span><span class="p">,</span> <span class="s2">"semiparametric"</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">"nonparametric"</span><span class="p">,</span>
+        <span class="n">std_err_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">studentize_reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute a bootstrap p-value by inverting a confidence interval.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            Function that computes parameter values. See :meth:`conf_int` for the</span>
+<span class="sd">            required signature.</span>
+<span class="sd">        null : float or array-like, optional</span>
+<span class="sd">            Value(s) of the parameter under the null hypothesis. Must be a scalar</span>
+<span class="sd">            or a 1-dimensional array with one value per parameter returned by</span>
+<span class="sd">            ``func``.</span>
+<span class="sd">        alternative : {"two-sided", "less", "greater"}, optional</span>
+<span class="sd">            The alternative hypothesis. ``"less"`` tests that the parameter is</span>
+<span class="sd">            less than ``null``, ``"greater"`` that it is greater than ``null``,</span>
+<span class="sd">            and ``"two-sided"`` that it is different from ``null``.</span>
+<span class="sd">        reps : int, optional</span>
+<span class="sd">            Number of bootstrap replications. Must be at least 1.</span>
+<span class="sd">        method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional</span>
+<span class="sd">            The confidence interval method to invert. Not case sensitive.</span>
+<span class="sd">        reuse : bool, optional</span>
+<span class="sd">            Flag indicating whether to reuse previously computed bootstrap</span>
+<span class="sd">            results. The conditions are the same as in :meth:`conf_int`.</span>
+<span class="sd">        extra_kwargs : dict, optional</span>
+<span class="sd">            Extra keyword arguments to use when calling ``func`` and</span>
+<span class="sd">            ``std_err_func``, when appropriate.</span>
+<span class="sd">        sampling : {"nonparametric", "semi-parametric", "parametric"}, optional</span>
+<span class="sd">            Type of sampling to use. Not case sensitive.</span>
+<span class="sd">        std_err_func : callable, optional</span>
+<span class="sd">            Function to use when standardizing estimated parameters when using</span>
+<span class="sd">            the studentized bootstrap.</span>
+<span class="sd">        studentize_reps : int, optional</span>
+<span class="sd">            Number of bootstraps to use in the inner bootstrap when using the</span>
+<span class="sd">            studentized bootstrap without ``std_err_func``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            A 1-dimensional array of p-values, one per parameter returned by</span>
+<span class="sd">            ``func``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``func`` or ``std_err_func`` is not callable, ``reps`` or</span>
+<span class="sd">            ``studentize_reps`` is not an int, ``method``, ``alternative`` or</span>
+<span class="sd">            ``sampling`` is not a str, or ``extra_kwargs`` is not a dict.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``reps`` is less than 1, ``studentize_reps`` is less than 1 when it</span>
+<span class="sd">            is used, ``null`` contains NaN or is not one value per parameter,</span>
+<span class="sd">            ``method``, ``alternative`` or ``sampling`` is not one of the options,</span>
+<span class="sd">            or ``extra_kwargs`` has a key that is the name of bootstrapped data.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The p-value is the smallest significance level at which the</span>
+<span class="sd">        :meth:`conf_int` interval excludes ``null``, computed by inverting the</span>
+<span class="sd">        interval. When the same bootstrap replications are used, the p-value</span>
+<span class="sd">        matches the corresponding ``conf_int`` call by construction, for every</span>
+<span class="sd">        interval method, including bias-corrected and accelerated intervals.</span>
+
+<span class="sd">        ``alternative="less"`` inverts the upper confidence bound,</span>
+<span class="sd">        ``alternative="greater"`` inverts the lower bound, and</span>
+<span class="sd">        ``alternative="two-sided"`` inverts the two-sided interval.</span>
+
+<span class="sd">        The p-value is resolved by 60 bisection steps, so its effective</span>
+<span class="sd">        resolution is about ``1 / reps``: a p-value is exactly 0 when every</span>
+<span class="sd">        replication lies on one side of ``null``.</span>
+
+<span class="sd">        The studentized method uses the same nested bootstrap as</span>
+<span class="sd">        :meth:`conf_int`. The bias-corrected accelerated method computes the</span>
+<span class="sd">        acceleration constant once, before the search.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from arch.bootstrap import IIDBootstrap</span>
+<span class="sd">        &gt;&gt;&gt; def func(x):</span>
+<span class="sd">        ...     return x.mean(0)</span>
+<span class="sd">        &gt;&gt;&gt; y = np.random.default_rng(1234).standard_normal((1000, 2))</span>
+<span class="sd">        &gt;&gt;&gt; bs = IIDBootstrap(y, seed=1234)</span>
+<span class="sd">        &gt;&gt;&gt; p = bs.p_value(func, null=0.0, reps=1000, method="basic")</span>
+<span class="sd">        &gt;&gt;&gt; p.shape</span>
+<span class="sd">        (2,)</span>
+<span class="sd">        """</span>
+        <span class="n">check_callable</span><span class="p">(</span><span class="s2">"func"</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+        <span class="n">reps</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"reps"</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">_CONF_INT_METHODS</span><span class="p">)</span>
+        <span class="n">alternative</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+            <span class="s2">"alternative"</span><span class="p">,</span> <span class="n">alternative</span><span class="p">,</span> <span class="p">(</span><span class="s2">"two-sided"</span><span class="p">,</span> <span class="s2">"less"</span><span class="p">,</span> <span class="s2">"greater"</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">reuse</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"reuse"</span><span class="p">,</span> <span class="n">reuse</span><span class="p">)</span>
+        <span class="n">_check_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+        <span class="n">std_err_func</span> <span class="o">=</span> <span class="n">check_callable</span><span class="p">(</span><span class="s2">"std_err_func"</span><span class="p">,</span> <span class="n">std_err_func</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">used</span> <span class="o">=</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"studentized"</span> <span class="ow">and</span> <span class="n">std_err_func</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">studentize_reps</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span>
+            <span class="s2">"studentize_reps"</span><span class="p">,</span> <span class="n">studentize_reps</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">used</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">studentize_reps</span> <span class="o">=</span> <span class="n">studentize_reps</span> <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"studentized"</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">check_option</span><span class="p">(</span>
+            <span class="s2">"sampling"</span><span class="p">,</span>
+            <span class="n">sampling</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">"nonparametric"</span><span class="p">:</span> <span class="s2">"nonparametric"</span><span class="p">,</span>
+                <span class="s2">"parametric"</span><span class="p">:</span> <span class="s2">"parametric"</span><span class="p">,</span>
+                <span class="s2">"semi"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+                <span class="s2">"semi-parametric"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+                <span class="s2">"semiparametric"</span><span class="p">:</span> <span class="s2">"semiparametric"</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Validate null type and finiteness before any computation. The length</span>
+        <span class="c1"># check needs the number of parameters, which is obtained by evaluating</span>
+        <span class="c1"># func once on the original data, below.</span>
+        <span class="n">null_arr</span> <span class="o">=</span> <span class="n">_check_null_type</span><span class="p">(</span><span class="s2">"null"</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate func once on the original data so the null length can be</span>
+        <span class="c1"># validated before the bootstrap runs.</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_add_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">null_values</span> <span class="o">=</span> <span class="n">_broadcast_null</span><span class="p">(</span><span class="s2">"null"</span><span class="p">,</span> <span class="n">null_arr</span><span class="p">,</span> <span class="n">num_params</span><span class="p">)</span>
+
+        <span class="n">_reuse</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">reuse</span><span class="p">:</span>
+            <span class="n">_reuse</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span> <span class="o">==</span> <span class="n">reps</span>
+                <span class="ow">and</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">"studentized"</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_func</span> <span class="ow">is</span> <span class="n">func</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_reuse</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reuse</span><span class="p">:</span>
+                <span class="n">warn</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">"The conditions to reuse the previous bootstrap has "</span>
+                    <span class="s2">"not been satisfied. A new bootstrap will be used."</span>
+                <span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_construct_bootstrap_estimates</span><span class="p">(</span>
+                <span class="n">func</span><span class="p">,</span>
+                <span class="n">reps</span><span class="p">,</span>
+                <span class="n">extra_kwargs</span><span class="p">,</span>
+                <span class="n">std_err_func</span><span class="o">=</span><span class="n">std_err_func</span><span class="p">,</span>
+                <span class="n">studentize_reps</span><span class="o">=</span><span class="n">studentize_reps</span><span class="p">,</span>
+                <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
+                <span class="n">real_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span>
+        <span class="k">assert</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tail_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"two"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">,</span> <span class="s2">"lower"</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"two-sided"</span><span class="p">:</span> <span class="s2">"two"</span><span class="p">,</span>
+            <span class="s2">"less"</span><span class="p">:</span> <span class="s2">"upper"</span><span class="p">,</span>
+            <span class="s2">"greater"</span><span class="p">:</span> <span class="s2">"lower"</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">tail_name</span> <span class="o">=</span> <span class="n">tail_map</span><span class="p">[</span><span class="n">alternative</span><span class="p">]</span>
+
+        <span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">acceleration</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"bc"</span><span class="p">,</span> <span class="s2">"bca"</span><span class="p">):</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bca_bias</span><span class="p">())</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"bca"</span><span class="p">:</span>
+                <span class="n">lens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lens</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">"BCa cannot be applied to statistics "</span>
+                        <span class="s2">"computed from datasets with "</span>
+                        <span class="s2">"different lengths"</span>
+                    <span class="p">)</span>
+                <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bca_acceleration</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">acceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+
+        <span class="n">pvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_params</span><span class="p">):</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">low</span> <span class="o">+</span> <span class="n">high</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf_int_parameter_from_estimates</span><span class="p">(</span>
+                    <span class="n">size</span><span class="p">,</span> <span class="n">tail_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">acceleration</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"two"</span><span class="p">:</span>
+                    <span class="n">inside</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">&lt;=</span> <span class="n">null_values</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">upper</span>
+                <span class="k">elif</span> <span class="n">tail_name</span> <span class="o">==</span> <span class="s2">"upper"</span><span class="p">:</span>
+                    <span class="n">inside</span> <span class="o">=</span> <span class="n">null_values</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">upper</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">inside</span> <span class="o">=</span> <span class="n">null_values</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">lower</span>
+                <span class="c1"># ``inside`` is monotone increasing in ``size``: wider</span>
+                <span class="c1"># intervals include the null more often. Track the smallest</span>
+                <span class="c1"># size that includes the null for this parameter.</span>
+                <span class="k">if</span> <span class="n">inside</span><span class="p">:</span>
+                    <span class="n">high</span> <span class="o">=</span> <span class="n">size</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">low</span> <span class="o">=</span> <span class="n">size</span>
+            <span class="n">pvals</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">high</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Float64Array"</span><span class="p">,</span> <span class="n">pvals</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

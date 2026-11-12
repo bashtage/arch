@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.p\_value
+====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.p_value
