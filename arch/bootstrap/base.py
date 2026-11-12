@@ -389,14 +389,28 @@ def _check_real_statistic(base: np.ndarray) -> None:
         )
 
 
-def _check_null(name: str, null: float | ArrayLike, num_params: int) -> Float64Array:
-    """Validate and broadcast a null value to one entry per parameter."""
+def _check_null_type(name: str, null: float | ArrayLike) -> np.ndarray:
+    """Validate null type and finiteness without knowing the parameter count."""
+    if null is None:
+        _fail(TypeError, name, "a real scalar or a 1-dimensional array", "None")
     try:
         null_arr: np.ndarray = np.asarray(null, dtype=np.float64)
     except (TypeError, ValueError):
         _fail(
             TypeError, name, "a real scalar or a 1-dimensional array", _describe(null)
         )
+    if np.isnan(null_arr).any():
+        _fail(
+            ValueError,
+            name,
+            "a finite scalar or a 1-dimensional array without NaN",
+            _describe(null),
+        )
+    return null_arr
+
+
+def _broadcast_null(name: str, null_arr: np.ndarray, num_params: int) -> Float64Array:
+    """Broadcast a validated null array to one entry per parameter."""
     if null_arr.ndim == 0:
         return np.full(num_params, null_arr.item(), dtype=np.float64)
     if null_arr.shape == (num_params,):
@@ -405,7 +419,7 @@ def _check_null(name: str, null: float | ArrayLike, num_params: int) -> Float64A
         ValueError,
         name,
         "a scalar or a 1-dimensional array with one value per parameter",
-        _describe(null),
+        _describe(null_arr),
     )
 
 
@@ -1009,81 +1023,105 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         assert results is not None
         assert base is not None
         _check_real_statistic(base)
-        studentized_results = self._studentized_results
+        num_params = 1 if base.ndim == 0 else base.shape[0]
 
-        reps = results.shape[0]
-        std_err = np.empty((0,))
+        bias = None
+        acceleration = None
+        if method in ("bc", "bca"):
+            bias = np.asarray(self._bca_bias()).ravel()
+            if method == "bca":
+                lens = [len(arg) for arg in self._args] + [
+                    len(kwarg) for kwarg in self._kwargs.values()
+                ]
+                if min(lens) != max(lens):
+                    raise ValueError(
+                        "BCa cannot be applied to statistics "
+                        "computed from datasets with "
+                        "different lengths"
+                    )
+                acceleration = np.asarray(
+                    self._bca_acceleration(func, extra_kwargs)
+                ).ravel()
+            else:
+                acceleration = np.zeros(num_params)
+
+        lower = np.zeros(num_params)
+        upper = np.zeros(num_params)
+        for param in range(num_params):
+            lower[param], upper[param] = self._conf_int_parameter_from_estimates(
+                size, tail_name, method, param, bias, acceleration
+            )
+        return np.vstack((lower, upper))
+
+    def _conf_int_parameter_from_estimates(
+        self,
+        size: float,
+        tail_name: Literal["two", "upper", "lower"],
+        method: str,
+        param: int,
+        bias: Float64Array | None,
+        acceleration: Float64Array | None,
+    ) -> tuple[float, float]:
+        """Build the interval for a single parameter from cached estimates."""
+        base_all = self._base
+        results = self._results
+        assert base_all is not None
+        assert results is not None
+        base = base_all[param] if base_all.ndim else base_all
+        std_err = 0.0
         if method in ("norm", "studentized"):
-            errors = results - results.mean(axis=0)
-            std_err = np.asarray(np.sqrt(np.diag(errors.T.dot(errors) / reps)))
+            raw_values = results[:, param]
+            errors = raw_values - raw_values.mean()
+            std_err = float(np.sqrt(np.dot(errors, errors) / errors.shape[0]))
+
+        values = results[:, param]
+        if method == "studentized":
+            studentized_results = self._studentized_results
+            assert studentized_results is not None
+            values = studentized_results[:, param]
 
         if tail_name == "two":
             alpha = (1.0 - size) / 2
         else:
             alpha = 1.0 - size
-        nreps = 1 if not base.shape else base.shape[0]
-        percentiles = np.array([[alpha, 1.0 - alpha]] * nreps)
-        norm_quantiles = stats.norm.ppf(percentiles)
+        norm_quantiles = stats.norm.ppf(np.array([alpha, 1.0 - alpha]))
 
         if method == "norm":
-            lower = base + norm_quantiles[:, 0] * std_err
-            upper = base + norm_quantiles[:, 1] * std_err
-
+            lower = float(base + norm_quantiles[0] * std_err)
+            upper = float(base + norm_quantiles[1] * std_err)
         else:
-            values = results
-            if method == "studentized":
-                # studentized uses studentized parameter estimates
-                values = cast("Float64Array", studentized_results)
-
+            percentiles = np.array([alpha, 1.0 - alpha])
             if method in ("bc", "bca"):
-                # bias corrected uses modified percentiles, but is
-                # otherwise identical to the percentile method
-                b = self._bca_bias()
-                if method == "bca":
-                    lens = [len(arg) for arg in self._args] + [
-                        len(kwarg) for kwarg in self._kwargs.values()
-                    ]
-                    if min(lens) != max(lens):
-                        raise ValueError(
-                            "BCa cannot be applied to statistics "
-                            "computed from datasets with "
-                            "different lengths"
-                        )
-                    a = self._bca_acceleration(func, extra_kwargs)
+                b = bias[param] if bias is not None else 0.0
+                a = acceleration[param] if acceleration is not None else 0.0
+                z = np.clip(norm_quantiles, -30.0, 30.0)
+                if a == 0.0:
+                    adjusted = b + b + z
                 else:
-                    a = np.zeros((1, 1))
-                percentiles = stats.norm.cdf(
-                    b + (b + norm_quantiles) / (1.0 - a * (b + norm_quantiles))
-                )
-                percentiles *= 100
+                    adjusted = b + (b + z) / (1.0 - a * (b + z))
+                percentiles = stats.norm.cdf(adjusted) * 100.0
+                percentiles = np.clip(percentiles, 0.0, 100.0)
             else:
-                percentiles = np.array([100 * p for p in percentiles])  # Rescale
-
-            k = values.shape[1]
-            lower = np.zeros(k)
-            upper = np.zeros(k)
-            for i in range(k):
-                lower[i], upper[i] = np.percentile(values[:, i], list(percentiles[i]))
+                percentiles = 100.0 * percentiles
+            lower_q, upper_q = np.percentile(values, list(percentiles))
             # Basic and studentized use the lower empirical quantile to
             # compute upper and vice versa.  Bias corrected and percentile use
             # upper to estimate the upper, and lower to estimate the lower
             if method == "basic":
-                lower_copy = lower + 0.0
-                lower = 2.0 * base - upper
-                upper = 2.0 * base - lower_copy
+                lower = float(2.0 * base - upper_q)
+                upper = float(2.0 * base - lower_q)
             elif method == "studentized":
-                lower_copy = lower + 0.0
-                lower = base - upper * std_err
-                upper = base - lower_copy * std_err
+                lower = float(base - upper_q * std_err)
+                upper = float(base - lower_q * std_err)
+            else:
+                lower = float(lower_q)
+                upper = float(upper_q)
 
         if tail_name == "lower":
-            upper = np.zeros_like(base)
-            upper.fill(np.inf)
+            upper = np.inf
         elif tail_name == "upper":
-            lower = np.zeros_like(base)
-            lower.fill(-1 * np.inf)
-
-        return np.vstack((lower, upper))
+            lower = -np.inf
+        return lower, upper
 
     def p_value(
         self,
@@ -1094,6 +1132,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         method: Literal[
             "basic", "percentile", "studentized", "norm", "bc", "bca"
         ] = "basic",
+        reuse: bool = False,
         extra_kwargs: dict[str, Any] | None = None,
         sampling: Literal[
             "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
@@ -1121,6 +1160,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Number of bootstrap replications. Must be at least 1.
         method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional
             The confidence interval method to invert. Not case sensitive.
+        reuse : bool, optional
+            Flag indicating whether to reuse previously computed bootstrap
+            results. The conditions are the same as in :meth:`conf_int`.
         extra_kwargs : dict, optional
             Extra keyword arguments to use when calling ``func`` and
             ``std_err_func``, when appropriate.
@@ -1147,7 +1189,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             ``sampling`` is not a str, or ``extra_kwargs`` is not a dict.
         ValueError
             If ``reps`` is less than 1, ``studentize_reps`` is less than 1 when it
-            is used, ``null`` is not a scalar or one value per parameter,
+            is used, ``null`` contains NaN or is not one value per parameter,
             ``method``, ``alternative`` or ``sampling`` is not one of the options,
             or ``extra_kwargs`` has a key that is the name of bootstrapped data.
 
@@ -1155,18 +1197,21 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         -----
         The p-value is the smallest significance level at which the
         :meth:`conf_int` interval excludes ``null``, computed by inverting the
-        interval on the same bootstrap replications. It therefore matches the
-        corresponding ``conf_int`` call by construction, for every interval
-        method, including bias-corrected and accelerated intervals.
+        interval. When the same bootstrap replications are used, the p-value
+        matches the corresponding ``conf_int`` call by construction, for every
+        interval method, including bias-corrected and accelerated intervals.
 
         ``alternative="less"`` inverts the upper confidence bound,
         ``alternative="greater"`` inverts the lower bound, and
         ``alternative="two-sided"`` inverts the two-sided interval.
 
+        The p-value is resolved by 60 bisection steps, so its effective
+        resolution is about ``1 / reps``: a p-value is exactly 0 when every
+        replication lies on one side of ``null``.
+
         The studentized method uses the same nested bootstrap as
-        :meth:`conf_int`. The bias-corrected accelerated method recomputes the
-        acceleration constant during the search, so it is more expensive than the
-        other methods.
+        :meth:`conf_int`. The bias-corrected accelerated method computes the
+        acceleration constant once, before the search.
 
         Examples
         --------
@@ -1174,24 +1219,26 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         >>> from arch.bootstrap import IIDBootstrap
         >>> def func(x):
         ...     return x.mean(0)
-        >>> y = np.random.randn(1000, 2)
+        >>> y = np.random.default_rng(1234).standard_normal((1000, 2))
         >>> bs = IIDBootstrap(y, seed=1234)
-        >>> bs.p_value(func, null=0.0, reps=1000, method="basic")
+        >>> p = bs.p_value(func, null=0.0, reps=1000, method="basic")
+        >>> p.shape
+        (2,)
         """
-        studentized = "studentized"
         check_callable("func", func)
         reps = check_int("reps", reps, lower=1)
         method = check_option("method", method, _CONF_INT_METHODS)
         alternative = check_option(
             "alternative", alternative, ("two-sided", "less", "greater")
         )
+        reuse = check_bool("reuse", reuse)
         _check_extra_kwargs(self._kwargs, extra_kwargs)
         std_err_func = check_callable("std_err_func", std_err_func, allow_none=True)
-        used = method == studentized and std_err_func is None
+        used = method == "studentized" and std_err_func is None
         studentize_reps = check_int(
             "studentize_reps", studentize_reps, lower=1 if used else None
         )
-        studentize_reps = studentize_reps if method == studentized else 0
+        studentize_reps = studentize_reps if method == "studentized" else 0
         sampling = check_option(
             "sampling",
             sampling,
@@ -1204,41 +1251,88 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             },
         )
 
-        self._construct_bootstrap_estimates(
-            func,
-            reps,
-            extra_kwargs,
-            std_err_func=std_err_func,
-            studentize_reps=studentize_reps,
-            sampling=sampling,
-            real_only=True,
-        )
+        # Validate null type and finiteness before any computation. The length
+        # check needs the number of parameters, which is obtained by evaluating
+        # func once on the original data, below.
+        null_arr = _check_null_type("null", null)
+
+        # Evaluate func once on the original data so the null length can be
+        # validated before the bootstrap runs.
+        kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
+        base = np.asarray(func(*self._args, **kwargs))
+        num_params = 1 if base.ndim == 0 else base.shape[0]
+        null_values = _broadcast_null("null", null_arr, num_params)
+
+        _reuse = False
+        if reuse:
+            _reuse = (
+                self._results is not None
+                and len(self._results) == reps
+                and method != "studentized"
+                and self._last_func is func
+            )
+        if not _reuse:
+            if reuse:
+                warn = (
+                    "The conditions to reuse the previous bootstrap has "
+                    "not been satisfied. A new bootstrap will be used."
+                )
+                warnings.warn(warn, RuntimeWarning, stacklevel=2)
+            self._construct_bootstrap_estimates(
+                func,
+                reps,
+                extra_kwargs,
+                std_err_func=std_err_func,
+                studentize_reps=studentize_reps,
+                sampling=sampling,
+                real_only=True,
+            )
 
         base = self._base
         assert base is not None
         num_params = 1 if base.ndim == 0 else base.shape[0]
-        null_values = _check_null("null", null, num_params)
-        tail_name = {"two-sided": "two", "less": "upper", "greater": "lower"}[
-            alternative
-        ]
+        tail_map: dict[str, Literal["two", "upper", "lower"]] = {
+            "two-sided": "two",
+            "less": "upper",
+            "greater": "lower",
+        }
+        tail_name = tail_map[alternative]
+
+        bias = None
+        acceleration = None
+        if method in ("bc", "bca"):
+            bias = np.asarray(self._bca_bias()).ravel()
+            if method == "bca":
+                lens = [len(arg) for arg in self._args] + [
+                    len(kwarg) for kwarg in self._kwargs.values()
+                ]
+                if min(lens) != max(lens):
+                    raise ValueError(
+                        "BCa cannot be applied to statistics "
+                        "computed from datasets with "
+                        "different lengths"
+                    )
+                acceleration = np.asarray(
+                    self._bca_acceleration(func, extra_kwargs)
+                ).ravel()
+            else:
+                acceleration = np.zeros(num_params)
 
         pvals = np.zeros(num_params)
-        for j in range(num_params):
+        for param in range(num_params):
             low = 0.0
             high = 1.0
             for _ in range(60):
                 size = (low + high) / 2.0
-                ci = self._conf_int_from_estimates(
-                    size, tail_name, method, func, extra_kwargs
+                lower, upper = self._conf_int_parameter_from_estimates(
+                    size, tail_name, method, param, bias, acceleration
                 )
-                lower = ci[0, j]
-                upper = ci[1, j]
                 if tail_name == "two":
-                    inside = lower <= null_values[j] <= upper
+                    inside = lower <= null_values[param] <= upper
                 elif tail_name == "upper":
-                    inside = null_values[j] <= upper
+                    inside = null_values[param] <= upper
                 else:
-                    inside = null_values[j] >= lower
+                    inside = null_values[param] >= lower
                 # ``inside`` is monotone increasing in ``size``: wider
                 # intervals include the null more often. Track the smallest
                 # size that includes the null for this parameter.
@@ -1246,7 +1340,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                     high = size
                 else:
                     low = size
-            pvals[j] = 1.0 - high
+            pvals[param] = 1.0 - high
         return cast("Float64Array", pvals)
 
     def _check_data(self) -> None:

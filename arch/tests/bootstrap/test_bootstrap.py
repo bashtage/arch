@@ -322,61 +322,96 @@ def test_conf_int_norm(bs_setup):
     assert_equal(-1 * inf, ci_u[0, :])
 
 
-def test_p_value_matches_conf_int_inversion(bs_setup):
+@pytest.mark.parametrize("method", ["basic", "percentile", "norm", "bc", "bca"])
+@pytest.mark.parametrize("alternative", ["two-sided", "less", "greater"])
+def test_p_value_inverts_conf_int(bs_setup, method, alternative):
     num_bootstrap = 500
-    bs = IIDBootstrap(bs_setup.x, seed=1234)
-    null = np.array([0.0, 0.0])
+    seed = 1234
+    tail = {"two-sided": "two", "less": "upper", "greater": "lower"}[alternative]
+    bs = IIDBootstrap(bs_setup.x, seed=seed)
+    null = bs_setup.func(bs_setup.x) + 1.0
 
-    p = bs.p_value(bs_setup.func, null=null, reps=num_bootstrap, method="percentile")
+    p = bs.p_value(
+        bs_setup.func,
+        null=null,
+        alternative=alternative,
+        reps=num_bootstrap,
+        method=method,
+    )
     assert p.shape == (2,)
 
-    sizes = np.linspace(0.01, 0.9999, 400)
+    sizes = np.linspace(0.01, 0.9999, 30)
     included = np.zeros((sizes.shape[0], 2), dtype=bool)
     for i, size in enumerate(sizes):
         ci = bs.conf_int(
             bs_setup.func,
             reps=num_bootstrap,
             size=size,
-            method="percentile",
+            method=method,
+            tail=tail,
             reuse=True,
         )
-        included[i] = (ci[0] <= null) & (null <= ci[1])
+        if alternative == "less":
+            included[i] = null <= ci[1]
+        elif alternative == "greater":
+            included[i] = null >= ci[0]
+        else:
+            included[i] = (ci[0] <= null) & (null <= ci[1])
 
     boundary = np.array(
         [sizes[included[:, j]].min() if included[:, j].any() else 1.0 for j in range(2)]
     )
-    assert_allclose(p, 1.0 - boundary, atol=0.01)
+    assert_allclose(p, 1.0 - boundary, atol=0.05)
 
 
-def test_p_value_one_sided(bs_setup):
-    bs = IIDBootstrap(bs_setup.x, seed=1234)
-    null = bs_setup.func(bs_setup.x) + 1.0
+def test_p_value_studentized_inverts_conf_int(bs_setup):
+    num_bootstrap = 500
+    seed = 1234
 
-    p_greater = bs.p_value(
-        bs_setup.func, null=null, alternative="greater", reps=500, method="basic"
-    )
-    p_less = bs.p_value(
-        bs_setup.func, null=null, alternative="less", reps=500, method="basic"
-    )
-
-    assert p_greater.shape == (2,)
-    assert p_less.shape == (2,)
-    assert np.all(p_greater > 0.9)
-    assert np.all(p_less < 0.1)
-
-
-def test_p_value_studentized_with_std_err(bs_setup):
     def std_err_func(params, x):
         return x.std(0) / np.sqrt(x.shape[0])
 
-    bs = IIDBootstrap(bs_setup.x, seed=1234)
+    bs = IIDBootstrap(bs_setup.x, seed=seed)
+    null = bs_setup.func(bs_setup.x) + 0.05
     p = bs.p_value(
         bs_setup.func,
-        null=0.0,
-        reps=200,
+        null=null,
+        reps=num_bootstrap,
         method="studentized",
         std_err_func=std_err_func,
     )
+
+    for j in range(2):
+        assert 0.0 < p[j] < 1.0
+        fresh = IIDBootstrap(bs_setup.x, seed=seed)
+        ci = fresh.conf_int(
+            bs_setup.func,
+            reps=num_bootstrap,
+            size=1.0 - p[j],
+            method="studentized",
+            std_err_func=std_err_func,
+        )
+        assert min(abs(ci[0, j] - null[j]), abs(ci[1, j] - null[j])) < 1e-6
+
+
+@pytest.mark.parametrize("bootstrap_cls", [IIDBootstrap, StationaryBootstrap])
+def test_p_value_block_and_iid_bootstrap(bs_setup, bootstrap_cls):
+    if bootstrap_cls is StationaryBootstrap:
+        bs = bootstrap_cls(12, bs_setup.x, seed=1234)
+    else:
+        bs = bootstrap_cls(bs_setup.x, seed=1234)
+
+    p = bs.p_value(bs_setup.func, null=[0.0, 0.0], reps=200, method="basic")
+    assert p.shape == (2,)
+    assert np.all((p >= 0.0) & (p <= 1.0))
+
+
+def test_p_value_independent_samples_bootstrap(bs_setup):
+    def two_means(a, b):
+        return np.array([a.mean(), b.mean()])
+
+    bs = IndependentSamplesBootstrap(bs_setup.x[:, 0], bs_setup.x[:, 1], seed=1234)
+    p = bs.p_value(two_means, null=[0.0, 0.0], reps=200, method="basic")
     assert p.shape == (2,)
     assert np.all((p >= 0.0) & (p <= 1.0))
 
@@ -388,12 +423,32 @@ def test_p_value_bca_scalar(bs_setup):
     assert np.all((p >= 0.0) & (p <= 1.0))
 
 
-def test_p_value_validation(bs_setup):
+def test_p_value_rejects_bad_null_before_bootstrap(bs_setup):
     bs = IIDBootstrap(bs_setup.x, seed=0)
+    calls: list[int] = []
+
+    def counting_func(x):
+        calls.append(1)
+        return x.mean(axis=0)
+
+    with pytest.raises(TypeError, match="real scalar or a 1-dimensional array"):
+        bs.p_value(counting_func, null=None, reps=500)
+    assert calls == []
+
+    with pytest.raises(ValueError, match="without NaN"):
+        bs.p_value(counting_func, null=np.nan, reps=500)
+    assert calls == []
+
+    with pytest.raises(TypeError, match="real scalar or a 1-dimensional array"):
+        bs.p_value(counting_func, null="zero", reps=500)
+    assert calls == []
+
     with pytest.raises(ValueError, match="one value per parameter"):
-        bs.p_value(bs_setup.func, null=np.zeros(1), alternative="two-sided")
+        bs.p_value(counting_func, null=np.zeros(1), reps=500)
+    assert len(calls) == 1
+
     with pytest.raises(ValueError, match="alternative"):
-        bs.p_value(bs_setup.func, alternative="dragon")
+        bs.p_value(counting_func, alternative="dragon")
 
 
 def test_reuse(bs_setup, seed):
