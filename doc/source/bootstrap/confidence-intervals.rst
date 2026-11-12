@@ -101,6 +101,26 @@ Parametric Confidence Intervals
 See :doc:`Parametric Bootstraps <semiparametric-parametric-bootstrap>`
 
 
+P-values
+========
+
+``p_value`` inverts a bootstrap confidence interval to produce a p-value. It
+uses the same bootstrap replications as ``conf_int``, so the p-value matches the
+interval by construction, for every interval method.
+
+.. code-block:: python
+
+    from arch.bootstrap import IIDBootstrap
+
+    bs = IIDBootstrap(returns)
+    p = bs.p_value(sharpe_ratio, null=0.0, reps=1000, method='basic')
+
+By default ``p_value`` tests the two-sided alternative that a parameter differs
+from ``null``. Pass ``alternative='less'`` or ``alternative='greater'`` for a
+one-sided test, and pass an array with one value per parameter when the statistic
+is vector-valued.
+
+
 Confidence Interval Methods
 ===========================
 

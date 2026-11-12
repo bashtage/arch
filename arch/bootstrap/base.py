@@ -389,6 +389,26 @@ def _check_real_statistic(base: np.ndarray) -> None:
         )
 
 
+def _check_null(name: str, null: float | ArrayLike, num_params: int) -> Float64Array:
+    """Validate and broadcast a null value to one entry per parameter."""
+    try:
+        null_arr: np.ndarray = np.asarray(null, dtype=np.float64)
+    except (TypeError, ValueError):
+        _fail(
+            TypeError, name, "a real scalar or a 1-dimensional array", _describe(null)
+        )
+    if null_arr.ndim == 0:
+        return np.full(num_params, null_arr.item(), dtype=np.float64)
+    if null_arr.shape == (num_params,):
+        return null_arr
+    _fail(
+        ValueError,
+        name,
+        "a scalar or a 1-dimensional array with one value per parameter",
+        _describe(null),
+    )
+
+
 def _check_extra_kwargs(
     kwargs: dict[str, Any], extra_kwargs: Mapping[str, Any] | None = None
 ) -> Mapping[str, Any] | None:
@@ -966,14 +986,34 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 real_only=True,
             )
 
+        return self._conf_int_from_estimates(
+            size, tail_name, method, func, extra_kwargs
+        )
+
+    def _conf_int_from_estimates(
+        self,
+        size: float,
+        tail_name: Literal["two", "upper", "lower"],
+        method: str,
+        func: Callable[..., Float64Array],
+        extra_kwargs: dict[str, Any] | None,
+    ) -> Float64Array:
+        """Build a confidence interval from already-computed bootstrap estimates.
+
+        This is the interval-building half of :meth:`conf_int`. It reads the
+        bootstrap replications cached on the instance and is kept separate so
+        that :meth:`p_value` can reuse the same replications while searching over
+        the confidence level.
+        """
         base, results = self._base, self._results
         assert results is not None
         assert base is not None
         _check_real_statistic(base)
         studentized_results = self._studentized_results
 
+        reps = results.shape[0]
         std_err = np.empty((0,))
-        if method in ("norm", studentized):
+        if method in ("norm", "studentized"):
             errors = results - results.mean(axis=0)
             std_err = np.asarray(np.sqrt(np.diag(errors.T.dot(errors) / reps)))
 
@@ -991,7 +1031,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         else:
             values = results
-            if method == studentized:
+            if method == "studentized":
                 # studentized uses studentized parameter estimates
                 values = cast("Float64Array", studentized_results)
 
@@ -1031,7 +1071,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 lower_copy = lower + 0.0
                 lower = 2.0 * base - upper
                 upper = 2.0 * base - lower_copy
-            elif method == studentized:
+            elif method == "studentized":
                 lower_copy = lower + 0.0
                 lower = base - upper * std_err
                 upper = base - lower_copy * std_err
@@ -1044,6 +1084,170 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             lower.fill(-1 * np.inf)
 
         return np.vstack((lower, upper))
+
+    def p_value(
+        self,
+        func: Callable[..., Float64Array],
+        null: float | ArrayLike = 0.0,
+        alternative: Literal["two-sided", "less", "greater"] = "two-sided",
+        reps: int = 1000,
+        method: Literal[
+            "basic", "percentile", "studentized", "norm", "bc", "bca"
+        ] = "basic",
+        extra_kwargs: dict[str, Any] | None = None,
+        sampling: Literal[
+            "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
+        ] = "nonparametric",
+        std_err_func: Callable[..., ArrayLike] | None = None,
+        studentize_reps: int = 1000,
+    ) -> Float64Array:
+        """
+        Compute a bootstrap p-value by inverting a confidence interval.
+
+        Parameters
+        ----------
+        func : callable
+            Function that computes parameter values. See :meth:`conf_int` for the
+            required signature.
+        null : float or array-like, optional
+            Value(s) of the parameter under the null hypothesis. Must be a scalar
+            or a 1-dimensional array with one value per parameter returned by
+            ``func``.
+        alternative : {"two-sided", "less", "greater"}, optional
+            The alternative hypothesis. ``"less"`` tests that the parameter is
+            less than ``null``, ``"greater"`` that it is greater than ``null``,
+            and ``"two-sided"`` that it is different from ``null``.
+        reps : int, optional
+            Number of bootstrap replications. Must be at least 1.
+        method : {"basic", "percentile", "studentized", "norm", "bc", "bca"}, optional
+            The confidence interval method to invert. Not case sensitive.
+        extra_kwargs : dict, optional
+            Extra keyword arguments to use when calling ``func`` and
+            ``std_err_func``, when appropriate.
+        sampling : {"nonparametric", "semi-parametric", "parametric"}, optional
+            Type of sampling to use. Not case sensitive.
+        std_err_func : callable, optional
+            Function to use when standardizing estimated parameters when using
+            the studentized bootstrap.
+        studentize_reps : int, optional
+            Number of bootstraps to use in the inner bootstrap when using the
+            studentized bootstrap without ``std_err_func``.
+
+        Returns
+        -------
+        ndarray
+            A 1-dimensional array of p-values, one per parameter returned by
+            ``func``.
+
+        Raises
+        ------
+        TypeError
+            If ``func`` or ``std_err_func`` is not callable, ``reps`` or
+            ``studentize_reps`` is not an int, ``method``, ``alternative`` or
+            ``sampling`` is not a str, or ``extra_kwargs`` is not a dict.
+        ValueError
+            If ``reps`` is less than 1, ``studentize_reps`` is less than 1 when it
+            is used, ``null`` is not a scalar or one value per parameter,
+            ``method``, ``alternative`` or ``sampling`` is not one of the options,
+            or ``extra_kwargs`` has a key that is the name of bootstrapped data.
+
+        Notes
+        -----
+        The p-value is the smallest significance level at which the
+        :meth:`conf_int` interval excludes ``null``, computed by inverting the
+        interval on the same bootstrap replications. It therefore matches the
+        corresponding ``conf_int`` call by construction, for every interval
+        method, including bias-corrected and accelerated intervals.
+
+        ``alternative="less"`` inverts the upper confidence bound,
+        ``alternative="greater"`` inverts the lower bound, and
+        ``alternative="two-sided"`` inverts the two-sided interval.
+
+        The studentized method uses the same nested bootstrap as
+        :meth:`conf_int`. The bias-corrected accelerated method recomputes the
+        acceleration constant during the search, so it is more expensive than the
+        other methods.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from arch.bootstrap import IIDBootstrap
+        >>> def func(x):
+        ...     return x.mean(0)
+        >>> y = np.random.randn(1000, 2)
+        >>> bs = IIDBootstrap(y, seed=1234)
+        >>> bs.p_value(func, null=0.0, reps=1000, method="basic")
+        """
+        studentized = "studentized"
+        check_callable("func", func)
+        reps = check_int("reps", reps, lower=1)
+        method = check_option("method", method, _CONF_INT_METHODS)
+        alternative = check_option(
+            "alternative", alternative, ("two-sided", "less", "greater")
+        )
+        _check_extra_kwargs(self._kwargs, extra_kwargs)
+        std_err_func = check_callable("std_err_func", std_err_func, allow_none=True)
+        used = method == studentized and std_err_func is None
+        studentize_reps = check_int(
+            "studentize_reps", studentize_reps, lower=1 if used else None
+        )
+        studentize_reps = studentize_reps if method == studentized else 0
+        sampling = check_option(
+            "sampling",
+            sampling,
+            {
+                "nonparametric": "nonparametric",
+                "parametric": "parametric",
+                "semi": "semiparametric",
+                "semi-parametric": "semiparametric",
+                "semiparametric": "semiparametric",
+            },
+        )
+
+        self._construct_bootstrap_estimates(
+            func,
+            reps,
+            extra_kwargs,
+            std_err_func=std_err_func,
+            studentize_reps=studentize_reps,
+            sampling=sampling,
+            real_only=True,
+        )
+
+        base = self._base
+        assert base is not None
+        num_params = 1 if base.ndim == 0 else base.shape[0]
+        null_values = _check_null("null", null, num_params)
+        tail_name = {"two-sided": "two", "less": "upper", "greater": "lower"}[
+            alternative
+        ]
+
+        pvals = np.zeros(num_params)
+        for j in range(num_params):
+            low = 0.0
+            high = 1.0
+            for _ in range(60):
+                size = (low + high) / 2.0
+                ci = self._conf_int_from_estimates(
+                    size, tail_name, method, func, extra_kwargs
+                )
+                lower = ci[0, j]
+                upper = ci[1, j]
+                if tail_name == "two":
+                    inside = lower <= null_values[j] <= upper
+                elif tail_name == "upper":
+                    inside = null_values[j] <= upper
+                else:
+                    inside = null_values[j] >= lower
+                # ``inside`` is monotone increasing in ``size``: wider
+                # intervals include the null more often. Track the smallest
+                # size that includes the null for this parameter.
+                if inside:
+                    high = size
+                else:
+                    low = size
+            pvals[j] = 1.0 - high
+        return cast("Float64Array", pvals)
 
     def _check_data(self) -> None:
         supported = (np.ndarray, pd.DataFrame, pd.Series)

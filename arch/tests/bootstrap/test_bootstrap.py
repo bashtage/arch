@@ -322,6 +322,80 @@ def test_conf_int_norm(bs_setup):
     assert_equal(-1 * inf, ci_u[0, :])
 
 
+def test_p_value_matches_conf_int_inversion(bs_setup):
+    num_bootstrap = 500
+    bs = IIDBootstrap(bs_setup.x, seed=1234)
+    null = np.array([0.0, 0.0])
+
+    p = bs.p_value(bs_setup.func, null=null, reps=num_bootstrap, method="percentile")
+    assert p.shape == (2,)
+
+    sizes = np.linspace(0.01, 0.9999, 400)
+    included = np.zeros((sizes.shape[0], 2), dtype=bool)
+    for i, size in enumerate(sizes):
+        ci = bs.conf_int(
+            bs_setup.func,
+            reps=num_bootstrap,
+            size=size,
+            method="percentile",
+            reuse=True,
+        )
+        included[i] = (ci[0] <= null) & (null <= ci[1])
+
+    boundary = np.array(
+        [sizes[included[:, j]].min() if included[:, j].any() else 1.0 for j in range(2)]
+    )
+    assert_allclose(p, 1.0 - boundary, atol=0.01)
+
+
+def test_p_value_one_sided(bs_setup):
+    bs = IIDBootstrap(bs_setup.x, seed=1234)
+    null = bs_setup.func(bs_setup.x) + 1.0
+
+    p_greater = bs.p_value(
+        bs_setup.func, null=null, alternative="greater", reps=500, method="basic"
+    )
+    p_less = bs.p_value(
+        bs_setup.func, null=null, alternative="less", reps=500, method="basic"
+    )
+
+    assert p_greater.shape == (2,)
+    assert p_less.shape == (2,)
+    assert np.all(p_greater > 0.9)
+    assert np.all(p_less < 0.1)
+
+
+def test_p_value_studentized_with_std_err(bs_setup):
+    def std_err_func(params, x):
+        return x.std(0) / np.sqrt(x.shape[0])
+
+    bs = IIDBootstrap(bs_setup.x, seed=1234)
+    p = bs.p_value(
+        bs_setup.func,
+        null=0.0,
+        reps=200,
+        method="studentized",
+        std_err_func=std_err_func,
+    )
+    assert p.shape == (2,)
+    assert np.all((p >= 0.0) & (p <= 1.0))
+
+
+def test_p_value_bca_scalar(bs_setup):
+    bs = IIDBootstrap(bs_setup.x, seed=1234)
+    p = bs.p_value(np.mean, null=0.0, reps=200, method="bca")
+    assert p.shape == (1,)
+    assert np.all((p >= 0.0) & (p <= 1.0))
+
+
+def test_p_value_validation(bs_setup):
+    bs = IIDBootstrap(bs_setup.x, seed=0)
+    with pytest.raises(ValueError, match="one value per parameter"):
+        bs.p_value(bs_setup.func, null=np.zeros(1), alternative="two-sided")
+    with pytest.raises(ValueError, match="alternative"):
+        bs.p_value(bs_setup.func, alternative="dragon")
+
+
 def test_reuse(bs_setup, seed):
     num_bootstrap = 100
     bs = IIDBootstrap(bs_setup.x, seed=seed)
