@@ -105,8 +105,10 @@ P-values
 ========
 
 ``p_value`` inverts a bootstrap confidence interval to produce a p-value. It
-uses the same bootstrap replications as ``conf_int``, so the p-value matches the
-interval by construction, for every interval method.
+uses the same interval methods as ``conf_int``, so the p-value matches the
+interval by construction whenever both calls share the same bootstrap
+replications. Pass ``reuse=True`` to reuse replications from a preceding call,
+in the same way as ``conf_int``.
 
 .. code-block:: python
 
@@ -118,7 +120,8 @@ interval by construction, for every interval method.
 By default ``p_value`` tests the two-sided alternative that a parameter differs
 from ``null``. Pass ``alternative='less'`` or ``alternative='greater'`` for a
 one-sided test, and pass an array with one value per parameter when the statistic
-is vector-valued.
+is vector-valued. The effective resolution of a p-value is about ``1 / reps``;
+it is exactly 0 when every replication lies on one side of ``null``.
 
 
 Confidence Interval Methods
