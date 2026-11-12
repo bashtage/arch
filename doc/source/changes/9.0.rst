@@ -122,10 +122,10 @@ New features
   the R package rugarch (:issue:`904`, :issue:`965`).
 - Added :func:`~arch.univariate.max_undetectable_understatement`, which finds the
   largest fraction by which a VaR series could have been scaled down, with the same
-  returns, and still have passed the selected backtests. The search over proportional
-  scalings is exact, since the exceptions only change at the points where a loss
-  crosses the scaled VaR, and is a lower bound on what a non-proportional series could
-  hide. The result is a :class:`~arch.univariate.MaxUndetectableUnderstatementResult`
+  returns, such that it and every smaller scaling down pass the selected backtests.
+  The search over proportional scalings is exact, since the exceptions only change at
+  the points where a loss crosses the scaled VaR, and is a lower bound on what a
+  non-proportional series could hide. The result is a :class:`~arch.univariate.MaxUndetectableUnderstatementResult`
   with the limit, the binding test, and the exceptions it would add (:issue:`904`).
 - Added :class:`~arch.bootstrap.LocalBlockBootstrap`, the local block bootstrap of
   Paparoditis and Politis (2002), for series whose properties change slowly over time.

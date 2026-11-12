@@ -610,9 +610,9 @@ class MaxUndetectableUnderstatementResult:  # numpydoc ignore=PR02
     Parameters
     ----------
     understatement : float
-        The largest fraction by which ``var`` could have been scaled down and
-        still pass every selected test. NaN if the reported VaR does not pass
-        to begin with.
+        The largest fraction by which ``var`` could have been scaled down such
+        that it, and every smaller scaling down, passes every selected test.
+        NaN if the reported VaR does not pass to begin with.
     exceptions : int
         The number of exceptions of the reported VaR.
     extra_exceptions : int
@@ -636,9 +636,9 @@ class MaxUndetectableUnderstatementResult:  # numpydoc ignore=PR02
     Attributes
     ----------
     understatement : float
-        The largest fraction by which ``var`` could have been scaled down and
-        still pass every selected test. NaN if the reported VaR does not pass
-        to begin with.
+        The largest fraction by which ``var`` could have been scaled down such
+        that it, and every smaller scaling down, passes every selected test.
+        NaN if the reported VaR does not pass to begin with.
     exceptions : int
         The number of exceptions of the reported VaR.
     extra_exceptions : int
@@ -670,10 +670,6 @@ class MaxUndetectableUnderstatementResult:  # numpydoc ignore=PR02
     p: float
 
 
-def _lr_pof_critical(size: float, df: int) -> float:
-    return float(stats.chi2.ppf(1.0 - size, df))
-
-
 def max_undetectable_understatement(
     returns: ArrayLike1D | list[float],
     var: ArrayLike1D | list[float],
@@ -688,8 +684,9 @@ def max_undetectable_understatement(
 
     A passing backtest only says that a VaR was not rejected. It does not say
     how close it was. This function finds the largest fraction by which the
-    whole VaR series could have been scaled down, with the same returns, and
-    still not have been rejected by the selected tests.
+    whole VaR series could have been scaled down, with the same returns, such
+    that it and every smaller scaling down are not rejected by the selected
+    tests.
 
     Parameters
     ----------
@@ -713,11 +710,16 @@ def max_undetectable_understatement(
         ``"christoffersen_independence"``, ``"christoffersen_conditional_coverage"``
         and ``"traffic_light"``. All four are selected by default.
     ignore_too_few : bool, optional
-        If True, the default, a rejection of `kupiec_pof` or
-        `christoffersen_conditional_coverage` caused by too few exceptions,
-        rather than too many, is not treated as a failure. `kupiec_pof` is
-        two-sided, so a VaR with too few exceptions is otherwise rejected for
-        being too conservative, which is not evidence of an understated VaR.
+        If True, the default, the coverage part of a test is set aside when the
+        rate of exceptions is below `p`, since too few exceptions are not
+        evidence of an understated VaR. `kupiec_pof` is two-sided, and a VaR
+        with too few exceptions is otherwise rejected for being too
+        conservative, so it is not treated as a failure. For
+        `christoffersen_conditional_coverage`, the coverage statistic is set to
+        0 and the independence statistic is compared with the same
+        :math:`\chi^2_2` distribution, so a rejection caused by clustered
+        exceptions is still a failure. `christoffersen_independence` and
+        `traffic_light` are not affected.
     window : int, optional
         The window of `traffic_light`, used only if it is selected. The
         default is 250.
@@ -757,10 +759,26 @@ def max_undetectable_understatement(
     the tests once at each distinct breakpoint, which is exact for this family
     of series and needs no optimizer.
 
+    The scan starts at the reported VaR, :math:`s = 0`, and moves toward larger
+    understatement, stopping at the first scaling that is rejected. The result is
+    the largest :math:`s` such that every scaling from 0 to :math:`s` passes.
+    The independence test, and so the conditional coverage test, is not monotone
+    in :math:`s`, so a larger scaling beyond the first rejection can pass again,
+    and is not reported. `binding` lists the tests that reject at that first
+    rejected scaling.
+
+    A test rejects when its p-value is at most `size`, as in the public tests,
+    and the same rule is used for the reported VaR and for every scaling.
+
     This is a lower bound on what a series that is not a proportional scaling
     of `var` could hide. A series that understates the VaR on some days and
     overstates it on others can produce the same, or a smaller, number of
     exceptions than a proportional scaling, and so can be harder to detect.
+
+    Table 1 of [1] reports how often the traffic light accepts a VaR whose true
+    coverage is lower than stated. This function asks a related question of one
+    realised series: how much lower the VaR could have been before any selected
+    test rejected it.
 
     References
     ----------
@@ -808,71 +826,39 @@ def max_undetectable_understatement(
         )
     nobs = ret.shape[0]
 
-    # The baseline (s = 0) is checked with the public tests, which validates p, the
-    # length of the series and, for traffic_light, the window, with the same error
-    # messages as calling them directly.
-    too_few = float(exceptions0.mean()) < p
-    failed = []
-    if "kupiec_pof" in selected:
-        if kupiec_pof(ret, var_arr, p).pval <= size and not (
-            ignore_too_few and too_few
-        ):
-            failed.append("kupiec_pof")
-    if "christoffersen_independence" in selected:
-        if christoffersen_independence(ret, var_arr).pval <= size:
-            failed.append("christoffersen_independence")
-    if "christoffersen_conditional_coverage" in selected:
-        cc = christoffersen_conditional_coverage(ret, var_arr, p)
-        if cc.pval <= size and not (ignore_too_few and too_few):
-            failed.append("christoffersen_conditional_coverage")
-    if "traffic_light" in selected:
-        if traffic_light(ret, var_arr, p, window).zone != "green":
-            failed.append("traffic_light")
-
-    n_reported = int(exceptions0.sum())
-    if failed:
-        return MaxUndetectableUnderstatementResult(
-            understatement=float("nan"),
-            exceptions=n_reported,
-            extra_exceptions=0,
-            binding=(),
-            passes=False,
-            failed=tuple(failed),
-            nobs=nobs,
-            p=p,
+    if "traffic_light" in selected and window > nobs:
+        raise ValueError(
+            f"window must be an integer no larger than the number of aligned "
+            f"observations ({nobs}); got {window} (int)"
         )
 
-    # Beyond the baseline, the tests are evaluated with the private likelihoods and
-    # the traffic light boundaries directly, which is exact and avoids building a
-    # WaldTestStatistic or a TrafficLightResult at every breakpoint.
-    crit1 = _lr_pof_critical(size, 1)
-    crit2 = _lr_pof_critical(size, 2)
+    def _rejects(stat: float, df: int) -> bool:
+        # The rule of the public tests: reject when the p-value is at most size
+        return bool(stats.chi2.sf(stat, df) <= size)
 
+    # The tests are evaluated with the private likelihoods and the traffic light
+    # boundaries directly, which avoids building a WaldTestStatistic or a
+    # TrafficLightResult at every breakpoint. The p-values are the same as those of
+    # the public tests, and the baseline and the search use the same gate.
     def _gate(hits: BoolArray) -> tuple[str, ...]:
         failed_now = []
-        count = hits.sum()
-        hits_too_few = (float(count) / nobs) < p
-        lr_pof = None
-        if (
-            "kupiec_pof" in selected
-            or "christoffersen_conditional_coverage" in selected
-        ):
-            lr_pof = _lr_pof(int(count), nobs, p)
-        if "kupiec_pof" in selected:
-            if lr_pof > crit1 and not (ignore_too_few and hits_too_few):
+        count = int(hits.sum())
+        # Too few exceptions only sets aside the coverage part of a test, which is
+        # the part that rejects a conservative VaR
+        skip_coverage = ignore_too_few and (count / nobs) < p
+        lr_pof = 0.0 if skip_coverage else _lr_pof(count, nobs, p)
+        if "kupiec_pof" in selected and not skip_coverage:
+            if _rejects(lr_pof, 1):
                 failed_now.append("kupiec_pof")
-        lr_ind = None
         if (
             "christoffersen_independence" in selected
             or "christoffersen_conditional_coverage" in selected
         ):
             lr_ind = _lr_independence(hits)
-        if "christoffersen_independence" in selected:
-            if lr_ind > crit1:
+            if "christoffersen_independence" in selected and _rejects(lr_ind, 1):
                 failed_now.append("christoffersen_independence")
-        if "christoffersen_conditional_coverage" in selected:
-            if lr_pof is not None and lr_ind is not None:
-                if (lr_pof + lr_ind) > crit2 and not (ignore_too_few and hits_too_few):
+            if "christoffersen_conditional_coverage" in selected:
+                if _rejects(lr_pof + lr_ind, 2):
                     failed_now.append("christoffersen_conditional_coverage")
         if "traffic_light" in selected:
             window_count = int(hits[-window:].sum())
@@ -882,19 +868,39 @@ def max_undetectable_understatement(
                     failed_now.append("traffic_light")
         return tuple(t for t in _UNDERSTATEMENT_TESTS if t in failed_now)
 
+    n_reported = int(exceptions0.sum())
+    failed = _gate(exceptions0)
+    if failed:
+        return MaxUndetectableUnderstatementResult(
+            understatement=float("nan"),
+            exceptions=n_reported,
+            extra_exceptions=0,
+            binding=(),
+            passes=False,
+            failed=failed,
+            nobs=nobs,
+            p=p,
+        )
+
+    # A scaling 1 - s turns observation t into an exception when the ratio
+    # -r_t / VaR_t exceeds 1 - s, so the exceptions at a threshold thr = 1 - s are
+    # ratio > thr, constant for thr in [b_k, b_k+1) between consecutive candidates.
+    # The scan starts at the reported VaR (thr = 1) and moves down, toward larger
+    # understatement, and stops at the first candidate that fails. The tests are not
+    # monotone in thr, so a passing candidate below a failing one is not a limit.
     ratio = -ret / var_arr
     breakpoints = np.unique(ratio[(ratio > 0.0) & (ratio < 1.0)])
-    candidates = np.concatenate(([0.0], breakpoints, [1.0]))
-    limit_idx = candidates.shape[0] - 1  # thr = 1 is the baseline, which passes
-    for i in range(candidates.shape[0] - 1):
-        if not _gate(ratio > candidates[i]):
-            limit_idx = i
-            break
-    limit = float(candidates[limit_idx])
+    candidates = np.concatenate(([0.0], breakpoints))[::-1]
+    first_fail = next(
+        (i for i, thr in enumerate(candidates) if _gate(ratio > thr)), None
+    )
     binding: tuple[str, ...] = ()
-    if limit_idx > 0:
-        binding = _gate(ratio > candidates[limit_idx - 1])
-    hits_at_limit = ratio > limit
+    if first_fail is None:
+        limit = 0.0
+    else:
+        binding = _gate(ratio > candidates[first_fail])
+        limit = 1.0 if first_fail == 0 else float(candidates[first_fail - 1])
+    hits_at_limit = ratio > limit if limit < 1.0 else exceptions0
 
     return MaxUndetectableUnderstatementResult(
         understatement=1.0 - limit,
