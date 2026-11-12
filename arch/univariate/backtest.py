@@ -10,6 +10,7 @@ is always the probability of an exception, the size of the tail: ``p=0.05`` for 
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 import numpy as np
@@ -18,17 +19,34 @@ from scipy import stats
 from scipy.special import xlogy
 
 from arch._typing import ArrayLike1D, BoolArray, Float64Array1D
-from arch.utility._validation import check_array, check_float, check_int
+from arch.utility._validation import (
+    check_array,
+    check_bool,
+    check_float,
+    check_int,
+    check_option,
+)
 from arch.utility.testing import WaldTestStatistic
 
 __all__ = [
+    "MaxUndetectableUnderstatementResult",
     "TrafficLightResult",
     "christoffersen_conditional_coverage",
     "christoffersen_independence",
     "kupiec_pof",
+    "max_undetectable_understatement",
     "traffic_light",
     "var_exceptions",
 ]
+
+# The tests that max_undetectable_understatement can select among, and the order in
+# which failed and binding tests are reported
+_UNDERSTATEMENT_TESTS = (
+    "kupiec_pof",
+    "christoffersen_independence",
+    "christoffersen_conditional_coverage",
+    "traffic_light",
+)
 
 # The cumulative probabilities that begin the yellow and the red zone (BCBS, 1996)
 _YELLOW_PROBABILITY = 0.95
@@ -580,5 +598,317 @@ def traffic_light(
         probability=probability,
         type1_error=type1_error,
         nobs=window,
+        p=p,
+    )
+
+
+@dataclass(frozen=True)
+class MaxUndetectableUnderstatementResult:  # numpydoc ignore=PR02
+    """
+    Result of the maximum undetectable understatement backtest of VaR.
+
+    Parameters
+    ----------
+    understatement : float
+        The largest fraction by which ``var`` could have been scaled down such
+        that it, and every smaller scaling down, passes every selected test.
+        NaN if the reported VaR does not pass to begin with.
+    exceptions : int
+        The number of exceptions of the reported VaR.
+    extra_exceptions : int
+        The number of additional exceptions produced by scaling ``var`` down by
+        ``understatement``, beyond ``exceptions``. 0 if the reported VaR does
+        not pass.
+    binding : tuple of str
+        The selected tests that reject a VaR scaled down by just beyond
+        ``understatement``. Empty if ``var`` can be scaled to 0 without being
+        rejected, and empty if the reported VaR does not pass, since no limit
+        is computed.
+    passes : bool
+        Whether the reported VaR passes every selected test.
+    failed : tuple of str
+        The selected tests that reject the reported VaR. Empty if ``passes``.
+    nobs : int
+        The number of observations used.
+    p : float
+        The probability of an exception that the VaR is designed for.
+
+    Attributes
+    ----------
+    understatement : float
+        The largest fraction by which ``var`` could have been scaled down such
+        that it, and every smaller scaling down, passes every selected test.
+        NaN if the reported VaR does not pass to begin with.
+    exceptions : int
+        The number of exceptions of the reported VaR.
+    extra_exceptions : int
+        The number of additional exceptions produced by scaling ``var`` down by
+        ``understatement``, beyond ``exceptions``. 0 if the reported VaR does
+        not pass.
+    binding : tuple of str
+        The selected tests that reject a VaR scaled down by just beyond
+        ``understatement``. Empty if ``var`` can be scaled to 0 without being
+        rejected, and empty if the reported VaR does not pass, since no limit
+        is computed.
+    passes : bool
+        Whether the reported VaR passes every selected test.
+    failed : tuple of str
+        The selected tests that reject the reported VaR. Empty if ``passes``.
+    nobs : int
+        The number of observations used.
+    p : float
+        The probability of an exception that the VaR is designed for.
+    """
+
+    understatement: float
+    exceptions: int
+    extra_exceptions: int
+    binding: tuple[str, ...]
+    passes: bool
+    failed: tuple[str, ...]
+    nobs: int
+    p: float
+
+
+def max_undetectable_understatement(
+    returns: ArrayLike1D | list[float],
+    var: ArrayLike1D | list[float],
+    p: float = 0.05,
+    size: float = 0.05,
+    tests: Sequence[str] = _UNDERSTATEMENT_TESTS,
+    ignore_too_few: bool = True,
+    window: int = 250,
+) -> MaxUndetectableUnderstatementResult:
+    r"""
+    Maximum undetectable understatement of a VaR series.
+
+    A passing backtest only says that a VaR was not rejected. It does not say
+    how close it was. This function finds the largest fraction by which the
+    whole VaR series could have been scaled down, with the same returns, such
+    that it and every smaller scaling down are not rejected by the selected
+    tests.
+
+    Parameters
+    ----------
+    returns : array_like
+        Realized returns, a 1-d array of finite numbers.
+    var : array_like
+        VaR forecasts as positive losses, a 1-d array of finite, strictly
+        positive numbers. See `var_exceptions` for the sign convention and for
+        how the inputs are aligned.
+    p : float, optional
+        The probability of an exception that the VaR is designed for, which is
+        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95%
+        VaR and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR, and is used
+        by every selected test, including `traffic_light`.
+    size : float, optional
+        The size of the Kupiec and the Christoffersen tests, in (0, 1). The
+        default is 0.05. `traffic_light` does not use a size, since its zones
+        are already defined at fixed probabilities.
+    tests : sequence of str, optional
+        The tests to pass, a subset of ``"kupiec_pof"``,
+        ``"christoffersen_independence"``, ``"christoffersen_conditional_coverage"``
+        and ``"traffic_light"``. All four are selected by default.
+    ignore_too_few : bool, optional
+        If True, the default, the coverage part of a test is set aside when the
+        rate of exceptions is below `p`, since too few exceptions are not
+        evidence of an understated VaR. `kupiec_pof` is two-sided, and a VaR
+        with too few exceptions is otherwise rejected for being too
+        conservative, so it is not treated as a failure. For
+        `christoffersen_conditional_coverage`, the coverage statistic is set to
+        0 and the independence statistic is compared with the same
+        :math:`\chi^2_2` distribution, so a rejection caused by clustered
+        exceptions is still a failure. `christoffersen_independence` and
+        `traffic_light` are not affected.
+    window : int, optional
+        The window of `traffic_light`, used only if it is selected. The
+        default is 250.
+
+    Returns
+    -------
+    MaxUndetectableUnderstatementResult
+        The largest fraction by which `var` could have been understated, and
+        supporting information.
+
+    Raises
+    ------
+    TypeError
+        If `returns` or `var` cannot be converted to numbers, `p` or `size` is
+        not a real number, `window` is not an integer, `ignore_too_few` is not
+        a bool, or `tests` is not a sequence of str.
+    ValueError
+        If `returns` or `var` is not valid, as in `var_exceptions`, `var` is
+        not strictly positive, `p` is not in (0, 0.5], `size` is not in (0, 1),
+        `window` is not positive, `tests` is empty or has a value that is not
+        one of the tests listed above, or there are too few observations for a
+        selected test, as in `christoffersen_independence` or `traffic_light`.
+
+    See Also
+    --------
+    kupiec_pof : Test of the proportion of exceptions.
+    christoffersen_independence : Test of the independence of the exceptions.
+    christoffersen_conditional_coverage : Joint test of coverage and independence.
+    traffic_light : The Basel zone of the number of exceptions.
+
+    Notes
+    -----
+    The search is over the proportional scalings :math:`(1-s)\mathrm{VaR}_t` for
+    :math:`s` in :math:`[0, 1]`. An observation becomes an exception at
+    :math:`s = 1 - (-r_t/\mathrm{VaR}_t)`, so the exception set, and so every
+    selected test, is constant between these breakpoints. The search evaluates
+    the tests once at each distinct breakpoint, which is exact for this family
+    of series and needs no optimizer.
+
+    The scan starts at the reported VaR, :math:`s = 0`, and moves toward larger
+    understatement, stopping at the first scaling that is rejected. The result is
+    the largest :math:`s` such that every scaling from 0 to :math:`s` passes.
+    The independence test, and so the conditional coverage test, is not monotone
+    in :math:`s`, so a larger scaling beyond the first rejection can pass again,
+    and is not reported. `binding` lists the tests that reject at that first
+    rejected scaling.
+
+    A test rejects when its p-value is at most `size`, as in the public tests,
+    and the same rule is used for the reported VaR and for every scaling.
+
+    This is a lower bound on what a series that is not a proportional scaling
+    of `var` could hide. A series that understates the VaR on some days and
+    overstates it on others can produce the same, or a smaller, number of
+    exceptions than a proportional scaling, and so can be harder to detect.
+
+    Table 1 of [1] reports how often the traffic light accepts a VaR whose true
+    coverage is lower than stated. This function asks a related question of one
+    realised series: how much lower the VaR could have been before any selected
+    test rejected it.
+
+    References
+    ----------
+    .. [1] Basel Committee on Banking Supervision (1996). Supervisory framework
+       for the use of "backtesting" in conjunction with the internal models
+       approach to market risk capital requirements.
+    .. [2] Christoffersen, P. F. (1998). Evaluating interval forecasts.
+       International Economic Review, 39(4), 841-862.
+    .. [3] Kupiec, P. H. (1995). Techniques for verifying the accuracy of risk
+       measurement models. The Journal of Derivatives, 3(2), 73-84.
+    """
+    p = check_float("p", p, lower=0.0, upper=0.5, inclusive="right")
+    size = check_float("size", size, lower=0.0, upper=1.0, inclusive="neither")
+    window = check_int("window", window, lower=1)
+    ignore_too_few = check_bool("ignore_too_few", ignore_too_few)
+    if isinstance(tests, str):
+        raise TypeError(
+            f"tests must be a sequence of str, not a single str; got {tests!r} (str)"
+        )
+    tests_seq = list(tests)
+    if not tests_seq:
+        raise ValueError(
+            "tests must be a non-empty sequence of 'kupiec_pof', "
+            "'christoffersen_independence', 'christoffersen_conditional_coverage' "
+            f"or 'traffic_light'; got {tests!r} ({type(tests).__name__})"
+        )
+    selected = frozenset(
+        check_option("tests", test, _UNDERSTATEMENT_TESTS) for test in tests_seq
+    )
+
+    min_obs = (
+        2
+        if (
+            "christoffersen_independence" in selected
+            or "christoffersen_conditional_coverage" in selected
+        )
+        else 1
+    )
+    exceptions0, _ = _exceptions(returns, var, min_obs)
+    ret, var_arr, _ = _aligned(returns, var)
+    if not np.all(var_arr > 0.0):
+        raise ValueError(
+            "var must be strictly positive to compute a proportional "
+            f"understatement; got a minimum of {float(var_arr.min()):g} (ndarray)"
+        )
+    nobs = ret.shape[0]
+
+    if "traffic_light" in selected and window > nobs:
+        raise ValueError(
+            f"window must be an integer no larger than the number of aligned "
+            f"observations ({nobs}); got {window} (int)"
+        )
+
+    def _rejects(stat: float, df: int) -> bool:
+        # The rule of the public tests: reject when the p-value is at most size
+        return bool(stats.chi2.sf(stat, df) <= size)
+
+    # The tests are evaluated with the private likelihoods and the traffic light
+    # boundaries directly, which avoids building a WaldTestStatistic or a
+    # TrafficLightResult at every breakpoint. The p-values are the same as those of
+    # the public tests, and the baseline and the search use the same gate.
+    def _gate(hits: BoolArray) -> tuple[str, ...]:
+        failed_now = []
+        count = int(hits.sum())
+        # Too few exceptions only sets aside the coverage part of a test, which is
+        # the part that rejects a conservative VaR
+        skip_coverage = ignore_too_few and (count / nobs) < p
+        lr_pof = 0.0 if skip_coverage else _lr_pof(count, nobs, p)
+        if "kupiec_pof" in selected and not skip_coverage:
+            if _rejects(lr_pof, 1):
+                failed_now.append("kupiec_pof")
+        if (
+            "christoffersen_independence" in selected
+            or "christoffersen_conditional_coverage" in selected
+        ):
+            lr_ind = _lr_independence(hits)
+            if "christoffersen_independence" in selected and _rejects(lr_ind, 1):
+                failed_now.append("christoffersen_independence")
+            if "christoffersen_conditional_coverage" in selected:
+                if _rejects(lr_pof + lr_ind, 2):
+                    failed_now.append("christoffersen_conditional_coverage")
+        if "traffic_light" in selected:
+            window_count = int(hits[-window:].sum())
+            if window_count > 0:
+                prob = float(stats.binom.cdf(window_count, window, p))
+                if prob >= _YELLOW_PROBABILITY:
+                    failed_now.append("traffic_light")
+        return tuple(t for t in _UNDERSTATEMENT_TESTS if t in failed_now)
+
+    n_reported = int(exceptions0.sum())
+    failed = _gate(exceptions0)
+    if failed:
+        return MaxUndetectableUnderstatementResult(
+            understatement=float("nan"),
+            exceptions=n_reported,
+            extra_exceptions=0,
+            binding=(),
+            passes=False,
+            failed=failed,
+            nobs=nobs,
+            p=p,
+        )
+
+    # A scaling 1 - s turns observation t into an exception when the ratio
+    # -r_t / VaR_t exceeds 1 - s, so the exceptions at a threshold thr = 1 - s are
+    # ratio > thr, constant for thr in [b_k, b_k+1) between consecutive candidates.
+    # The scan starts at the reported VaR (thr = 1) and moves down, toward larger
+    # understatement, and stops at the first candidate that fails. The tests are not
+    # monotone in thr, so a passing candidate below a failing one is not a limit.
+    ratio = -ret / var_arr
+    breakpoints = np.unique(ratio[(ratio > 0.0) & (ratio < 1.0)])
+    candidates = np.concatenate(([0.0], breakpoints))[::-1]
+    first_fail = next(
+        (i for i, thr in enumerate(candidates) if _gate(ratio > thr)), None
+    )
+    binding: tuple[str, ...] = ()
+    if first_fail is None:
+        limit = 0.0
+    else:
+        binding = _gate(ratio > candidates[first_fail])
+        limit = 1.0 if first_fail == 0 else float(candidates[first_fail - 1])
+    hits_at_limit = ratio > limit if limit < 1.0 else exceptions0
+
+    return MaxUndetectableUnderstatementResult(
+        understatement=1.0 - limit,
+        exceptions=n_reported,
+        extra_exceptions=int(hits_at_limit.sum()) - n_reported,
+        binding=binding,
+        passes=True,
+        failed=(),
+        nobs=nobs,
         p=p,
     )
