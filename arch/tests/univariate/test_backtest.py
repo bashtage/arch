@@ -1064,9 +1064,14 @@ def _mul_passes(ret, var, scale, p=0.05, size=0.05, ignore_too_few=True, window=
     hits = var_exceptions(ret, scaled)
     too_few = bool(hits.mean() < p)
     ok = kupiec_pof(ret, scaled, p).pval > size or (ignore_too_few and too_few)
-    ok &= christoffersen_independence(ret, scaled).pval > size
+    ind = christoffersen_independence(ret, scaled)
+    ok &= ind.pval > size
     cc = christoffersen_conditional_coverage(ret, scaled, p)
-    ok &= cc.pval > size or (ignore_too_few and too_few)
+    if ignore_too_few and too_few:
+        # only the coverage part is set aside: the independence part keeps chi2(2)
+        ok &= stats.chi2.sf(ind.stat, 2) > size
+    else:
+        ok &= cc.pval > size
     ok &= traffic_light(ret, scaled, p, window).zone == "green"
     return bool(ok)
 
@@ -1111,19 +1116,15 @@ def test_passes_and_reports_counts(mul_sim):
 
 
 def test_brute_force_grid_matches_public_tests(mul_sim):
-    # The limit is the SMALLEST proportional scaling that still passes: scale=1 (no
-    # understatement) always passes, since the baseline passes, so a grid search for
-    # the computed limit has to look for the minimum passing point, not the maximum.
+    # The limit is reached scanning down from the reported VaR (scale=1): every
+    # scaling between the limit and 1 passes, and a scaling just below it fails.
     ret, var = mul_sim
     res = max_undetectable_understatement(ret, var)
     scale = 1.0 - res.understatement
-    grid = np.linspace(0.0, 1.0, 4001)
-    passing = [s for s in grid if _mul_passes(ret, var, s)]
-    best = min(passing)
-    # the exact limit is at or below the best grid point, and within one cell of it
-    assert scale <= best + 1e-9
-    assert best - scale <= grid[1] - grid[0] + 1e-9
-    assert _mul_passes(ret, var, scale)
+    assert res.understatement < 1.0
+    grid = np.linspace(scale, 1.0, 2001)
+    assert all(_mul_passes(ret, var, s) for s in grid)
+    assert not _mul_passes(ret, var, scale - 1e-9)
 
 
 def test_boundary_agrees_with_public_functions(mul_sim):
@@ -1205,6 +1206,127 @@ def test_overstated_var_fails_baseline(mul_sim):
     assert not res.passes
     assert math.isnan(res.understatement)
     assert res.failed
+
+
+def test_clustered_exceptions_fail_baseline_independence():
+    nobs = 100
+    var = np.ones(nobs)
+    returns = np.full(nobs, 0.1)
+    returns[40:50] = -2.0  # one block of 10 consecutive exceptions, 10% of the sample
+    res = max_undetectable_understatement(
+        returns, var, p=0.1, tests=["christoffersen_independence"]
+    )
+    assert not res.passes
+    assert res.failed == ("christoffersen_independence",)
+    assert math.isnan(res.understatement)
+    assert res.exceptions == 10
+    assert res.extra_exceptions == 0
+    assert res.binding == ()
+
+
+def test_no_losses_has_no_breakpoints():
+    nobs = 100
+    var = np.ones(nobs)
+    returns = np.full(nobs, 0.1)  # no losses: no breakpoints in (0, 1)
+    res = max_undetectable_understatement(returns, var, tests=["kupiec_pof"])
+    assert res.passes
+    assert res.failed == ()
+    assert res.understatement == 1.0  # the smallest scaling, 0, already passes
+    assert res.exceptions == 0
+    assert res.extra_exceptions == 0
+    assert res.binding == ()
+
+
+def test_non_monotone_independence_stops_at_first_rejection():
+    # The independence test is not monotone in the scaling: for this seed the VaR
+    # scaled down by 0.187 is rejected while a scaling down by 0.226 passes again.
+    # The limit is the first rejection met scanning down from the reported VaR.
+    rng = np.random.default_rng(1234)
+    for _ in range(32):
+        returns = rng.standard_t(5, 250) * 0.01
+        var = np.full(250, 1.645 * 0.01 * rng.uniform(1.0, 1.4))
+    assert christoffersen_independence(returns, var * (1 - 0.187)).pval <= 0.05
+    assert christoffersen_independence(returns, var * (1 - 0.226)).pval > 0.05
+    res = max_undetectable_understatement(returns, var, p=0.05)
+    assert res.passes
+    assert res.understatement < 0.187
+    assert res.binding == ("christoffersen_independence",)
+    scale = 1.0 - res.understatement
+    ratio = -returns / var
+    # every distinct exception set between the limit and the reported VaR passes
+    points = np.concatenate(([scale, 1.0], ratio[(ratio >= scale) & (ratio < 1.0)]))
+    assert all(_mul_passes(returns, var, s) for s in points)
+    assert not _mul_passes(returns, var, scale - 1e-9)
+
+
+def test_ignore_too_few_keeps_clustering_rejection():
+    # 10 consecutive exceptions in 500 is a rate of 0.02, below p, but the
+    # conditional coverage test rejects because of the clustering
+    returns = np.full(500, 0.001)
+    returns[200:210] = -0.05
+    var = np.full(500, 0.02)
+    assert christoffersen_conditional_coverage(returns, var, 0.05).pval <= 0.05
+    res = max_undetectable_understatement(
+        returns, var, p=0.05, tests=("christoffersen_conditional_coverage",)
+    )
+    assert not res.passes
+    assert res.failed == ("christoffersen_conditional_coverage",)
+    assert math.isnan(res.understatement)
+
+
+def test_ignore_too_few_sets_aside_only_coverage():
+    # 3 scattered exceptions in 500 at p=0.05: the joint test rejects for too few,
+    # but the independence part alone, against chi2(2), does not
+    returns = np.full(500, 0.001)
+    returns[[100, 250, 400]] = -0.05
+    var = np.full(500, 0.02)
+    tests = ("christoffersen_conditional_coverage",)
+    assert christoffersen_conditional_coverage(returns, var, 0.05).pval <= 0.05
+    strict = max_undetectable_understatement(
+        returns, var, p=0.05, tests=tests, ignore_too_few=False
+    )
+    assert not strict.passes
+    res = max_undetectable_understatement(returns, var, p=0.05, tests=tests)
+    assert res.passes
+    assert _mul_passes(returns, var, 1.0 - res.understatement, p=0.05)
+
+
+def test_first_breakpoint_rejected_gives_zero_understatement():
+    # 9 exceptions in 100 pass Kupiec at p=0.05. A loss exactly equal to the VaR is
+    # not an exception, but it becomes the 10th, which is rejected, at any scaling
+    # down, so no understatement at all is undetectable
+    returns = np.full(100, 0.1)
+    returns[:9] = -2.0
+    returns[9] = -1.0
+    var = np.ones(100)
+    res = max_undetectable_understatement(returns, var, p=0.05, tests=["kupiec_pof"])
+    assert res.passes
+    assert res.understatement == 0.0
+    assert res.exceptions == 9
+    assert res.extra_exceptions == 0
+    assert res.binding == ("kupiec_pof",)
+
+
+def test_baseline_and_search_share_the_rejection_rule(mul_sim):
+    # A test rejects when its p-value is at most size. With size set to the
+    # p-value of the reported VaR, the baseline is rejected, as it is by the
+    # public test.
+    ret, var = mul_sim
+    pval = kupiec_pof(ret, var, 0.05).pval
+    res = max_undetectable_understatement(
+        ret, var, size=pval, tests=["kupiec_pof"], ignore_too_few=False
+    )
+    assert not res.passes
+    assert res.failed == ("kupiec_pof",)
+
+
+def test_mul_traffic_light_short_series_raises():
+    returns = np.full(100, 0.01)
+    var = np.ones(100)
+    with pytest.raises(ValueError, match=r"window must be .*\(100\); got 250 \(int\)"):
+        max_undetectable_understatement(returns, var)
+    res = max_undetectable_understatement(returns, var, tests=["kupiec_pof"])
+    assert res.passes
 
 
 def test_traffic_light_only_sets_the_limit():
