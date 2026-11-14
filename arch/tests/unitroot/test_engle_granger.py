@@ -1,13 +1,22 @@
 from arch.compat.matplotlib import HAS_MATPLOTLIB
 
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
 import pytest
 from statsmodels.iolib.summary import Summary
 
 from arch.unitroot._engle_granger import engle_granger_cv, engle_granger_pval
 from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
+from arch.unitroot.critical_values.engle_granger import (
+    CV_PARAMETERS,
+    LARGE_PARAMETERS,
+    SMALL_PARAMETERS,
+    TAU_MAX,
+    TAU_MIN,
+    TAU_STAR,
+    eg_num_variables,
+)
 from arch.unitroot.cointegration import engle_granger
 
 
@@ -194,23 +203,37 @@ def test_pval_max_min():
 
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_num_x_range(trend):
-    # The tables have 1 to 11 regressors
-    for num_x in range(1, 12):
+    # The tables have 1 to eg_num_variables[-1] regressors
+    max_num_x = int(eg_num_variables[-1])
+    assert_equal(eg_num_variables, np.arange(1, max_num_x + 1))
+    for num_x in eg_num_variables:
         assert np.all(np.isfinite(engle_granger_cv(trend, num_x, 500)))
         assert 0 < engle_granger_pval(-3.0, trend, num_x) < 1
-    for num_x in (0, 12):
-        with pytest.raises(ValueError, match=r"between 1 and 11"):
+    for num_x in (0, max_num_x + 1):
+        with pytest.raises(ValueError, match=rf"between 1 and {max_num_x}"):
             engle_granger_cv(trend, num_x, 500)
-        with pytest.raises(ValueError, match=r"between 1 and 11"):
+        with pytest.raises(ValueError, match=rf"between 1 and {max_num_x}"):
             engle_granger_pval(-3.0, trend, num_x)
 
 
-def test_twelve_regressors():
+def test_tables_cover_every_num_x():
+    max_num_x = int(eg_num_variables[-1])
+    for trend in ("n", "c", "ct", "ctt"):
+        for size in (1, 5, 10):
+            # Row 0 is the Dickey-Fuller test of the dependent variable
+            assert len(CV_PARAMETERS[trend][size]) == max_num_x + 1
+        for table in (LARGE_PARAMETERS, SMALL_PARAMETERS, TAU_MAX, TAU_STAR, TAU_MIN):
+            keys = sorted(num_x for key_trend, num_x in table if key_trend == trend)
+            assert keys == list(range(1, max_num_x + 1))
+
+
+def test_too_many_regressors():
+    max_num_x = int(eg_num_variables[-1])
     rs = np.random.RandomState([3920, 3029])
-    xy = rs.standard_normal((200, 13)).cumsum(0)
-    with pytest.raises(ValueError, match=r"between 1 and 11"):
+    xy = rs.standard_normal((200, max_num_x + 2)).cumsum(0)
+    with pytest.raises(ValueError, match=rf"between 1 and {max_num_x}"):
         engle_granger(xy[:, 0], xy[:, 1:])
-    res = engle_granger(xy[:, 0], xy[:, 1:12])
+    res = engle_granger(xy[:, 0], xy[:, 1 : max_num_x + 1])
     assert 0 <= res.pvalue <= 1
 
 
