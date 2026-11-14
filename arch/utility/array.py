@@ -476,7 +476,8 @@ def ensure1d(
         dtype is float64, or complex128 if allow_complex and x is complex. The
         index of a Series is kept. x is returned, or is a view of x, if x is
         float64 data (or complex128 data if allow_complex). The name of a Series
-        that is not a str is converted to a str.
+        that is not a str is converted to a str, and a Series without a name is
+        given ``name``.
 
     Raises
     ------
@@ -506,7 +507,10 @@ def ensure1d(
         check_instance("name", name, Hashable)
     if isinstance(x, Series):
         x_ser = _float64_pandas(x, str(name), allow_complex)
-        if not isinstance(x_ser.name, str):
+        if x_ser.name is None:
+            # An unnamed Series gets the name of the variable, as an ndarray does
+            x_ser = x_ser.rename(str(name))
+        elif not isinstance(x_ser.name, str):
             # Rename a new Series so that the Series of the caller is unchanged
             x_ser = x_ser.rename(str(x_ser.name))
         if series:

@@ -64,6 +64,7 @@ def test_ensure1d():
     assert isinstance(ys, np.ndarray)
     ys = ensure1d(y, "y", True)
     assert isinstance(ys, Series)
+    assert ys.name == "y"
     y = DataFrame(y)
     ys = ensure1d(y, "y")
     assert isinstance(ys, np.ndarray)
