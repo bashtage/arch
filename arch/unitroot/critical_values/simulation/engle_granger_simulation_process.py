@@ -20,8 +20,6 @@ import pandas as pd
 from shared import fit_smooth_pval_model, format_dict
 from statsmodels.regression.linear_model import OLS
 
-PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
-PERCENTILES = PERCENTILES[::-1]
 # The p-value may be set to 0 below the turning point of the small p polynomial,
 # which is far in the tail, if p is no larger than this there
 MAX_TAIL_STEP = 1e-12
@@ -54,16 +52,36 @@ files = sorted(pathlib.Path(args.data_path).glob("*.npz"))
 if not files:
     raise FileNotFoundError(f"No .npz files in {args.data_path}")
 input_data = defaultdict(list)
+# The percentiles and the sample sizes are saved by the simulation, and must be the
+# same in every file
+grid: dict[str, np.ndarray] = {}
 for f in files:
     contents = np.load(f)
+    if "percentiles" not in contents:
+        raise ValueError(
+            f"{f} has no percentiles. It was written by an older version of "
+            "engle_granger_simulation.py, whose results cannot be combined."
+        )
+    for name in ("percentiles", "sample_sizes"):
+        if name not in grid:
+            grid[name] = contents[name]
+        elif not np.array_equal(grid[name], contents[name]):
+            raise ValueError(f"The {name} of {f} differ from those of {files[0]}")
     temp = contents["quantiles"]
     temp = np.reshape(temp, temp.shape + (1,), copy=False)
     input_data[contents["trend"][0]].append(temp)
-    sample_sizes = contents["sample_sizes"]
+PERCENTILES = grid["percentiles"]
+sample_sizes = grid["sample_sizes"]
 
 final: dict[str, np.ndarray] = {}
 for key in input_data:
     final[key] = np.concatenate(input_data[key], -1)
+# The first column is the Dickey-Fuller test of the dependent variable, and column i
+# has i regressors
+num_columns = {value.shape[2] for value in final.values()}
+if len(num_columns) != 1:
+    raise ValueError("The trends have different numbers of regressors")
+max_num_x = num_columns.pop() - 1
 
 trends = ("nc", "c", "ct", "ctt")
 critical_values = (1, 5, 10)
@@ -76,7 +94,10 @@ for trend in trends:
     out: MutableMapping[int, list[list[float]]] = defaultdict(list)
     for cv in critical_values:
         num_ex = results.shape[-1]
-        loc = np.argmin(np.abs(np.array(PERCENTILES) - cv))
+        matches = np.flatnonzero(np.isclose(PERCENTILES, cv))
+        if matches.shape[0] != 1:
+            raise ValueError(f"The simulated percentiles do not include {cv}")
+        loc = matches[0]
         all_lhs = np.squeeze(results[loc])
         tau = np.ones((num_ex, 1)).dot(sample_sizes[None, :])
         tau = tau.T
@@ -105,7 +126,7 @@ formatted_str = format_dict(final_cv)
 # The p-value models are fit to the quantiles of the largest sample size. The two
 # polynomials, both cubics in the statistic, are fit jointly so that the p-value is
 # continuous, has a continuous first derivative and is monotone in the statistic.
-percentiles = np.array(PERCENTILES) / 100.0
+percentiles = PERCENTILES / 100.0
 large_p = {}
 small_p = {}
 tau_max = {}
@@ -147,7 +168,7 @@ Critical values and p-values produced by engle_granger_simulation_process.py
 
 {inf_import}import numpy as np
 
-eg_num_variables = np.arange(1, 12)
+eg_num_variables = np.arange(1, {max_num_x + 1})
 '''
 
 formatted_code = header + "CV_PARAMETERS = " + formatted_str
