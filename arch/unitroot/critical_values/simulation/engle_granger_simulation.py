@@ -17,6 +17,8 @@ from numpy.random import PCG64, Generator, SeedSequence
 
 ROOT = pathlib.Path(__file__).resolve().parent / "engle-granger"
 ROOT.mkdir(exist_ok=True)
+# Colors in the Windows console
+colorama.just_fix_windows_console()
 # Number of simulations per exercise
 EX_SIZE = 250_000
 # Number of experiments
@@ -40,9 +42,10 @@ def block(
     fullfile = ROOT / filename
     if fullfile.exists():
         return
+    # The data are the dependent variable and max_k regressors
     max_k = cross_section_size
     max_t = max(sample_sizes) + 1
-    max_blocks_size = max(MAX_MEMORY // (max_t * max_k * 8), 1)
+    max_blocks_size = max(MAX_MEMORY // (max_t * (max_k + 1) * 8), 1)
     print(f"Max block size: {max_blocks_size}")
     remaining = simulations
     completed = 0
@@ -131,6 +134,7 @@ def block(
     np.savez(
         fullfile,
         quantiles=out,
+        percentiles=np.array(PERCENTILES),
         trend=np.array([trend]),
         sample_sizes=np.array(sample_sizes),
     )
@@ -203,6 +207,7 @@ if __name__ == "__main__":
         2000,
     )
     trends = ("nc", "c", "ct", "ctt")
+    # The largest number of regressors, which is the largest num_x of engle_granger
     cross_section_size = 12
     simulations = EX_SIZE
 
@@ -230,7 +235,6 @@ if __name__ == "__main__":
     if ncpu == 1:
         for (idx, rg), trend in remaining_configs:
             partial_block(rg, trend=trend, idx=idx)
-            raise NotImplementedError("Stop after 1")
     else:
         Parallel(verbose=50, n_jobs=ncpu)(
             delayed(partial_block)(rg, trend=trend, idx=idx)
