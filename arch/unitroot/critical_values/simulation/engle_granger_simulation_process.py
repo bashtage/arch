@@ -98,12 +98,13 @@ for trend in trends:
         if matches.shape[0] != 1:
             raise ValueError(f"The simulated percentiles do not include {cv}")
         loc = matches[0]
-        all_lhs = np.squeeze(results[loc])
+        # Sample sizes x columns x experiments. np.squeeze would also drop the
+        # experiments if there is only one
+        all_lhs = results[loc]
         tau = np.ones((num_ex, 1)).dot(sample_sizes[None, :])
         tau = tau.T
         tau = tau.ravel()
         tau = tau[:, None]
-        n = all_lhs.shape[0]
         rhs = (1.0 / tau) ** np.arange(4)
 
         for i in range(all_lhs.shape[1]):
@@ -132,6 +133,7 @@ small_p = {}
 tau_max = {}
 tau_star = {}
 tau_min = {}
+failures = []
 for trend in trends:
     out_trend = "n" if trend == "nc" else trend
     # The first statistic is the Dickey-Fuller test of the dependent variable,
@@ -140,17 +142,32 @@ for trend in trends:
         quantiles = pd.DataFrame(
             final[trend][:, np.argmax(sample_sizes), i], index=pd.Index(percentiles)
         )
-        pvals = fit_smooth_pval_model(
-            quantiles,
-            small_order=SMALL_ORDER,
-            use_log=False,
-            max_tail_step=MAX_TAIL_STEP,
-        )
+        try:
+            pvals = fit_smooth_pval_model(
+                quantiles,
+                small_order=SMALL_ORDER,
+                use_log=False,
+                max_tail_step=MAX_TAIL_STEP,
+            )
+        except RuntimeError as err:
+            failures.append(f"trend {out_trend} with {i} regressors: {err}")
+            continue
         large_p[(out_trend, i)] = pvals.large_p
         small_p[(out_trend, i)] = pvals.small_p
         tau_max[(out_trend, i)] = pvals.tau_max
         tau_star[(out_trend, i)] = pvals.tau_star
         tau_min[(out_trend, i)] = pvals.tau_min
+if failures:
+    experiments = ", ".join(
+        f"{'n' if trend == 'nc' else trend}: {final[trend].shape[-1]}"
+        for trend in trends
+    )
+    raise RuntimeError(
+        "The p-value models could not be fit for\n  "
+        + "\n  ".join(failures)
+        + f"\nThe number of experiments of each trend is {experiments}. The tail "
+        "quantiles of a few experiments may be too noisy for a monotone fit."
+    )
 
 counts = "\n".join(
     f"Trend {'n' if trend == 'nc' else trend} is based on {final[trend].shape[-1]} "
