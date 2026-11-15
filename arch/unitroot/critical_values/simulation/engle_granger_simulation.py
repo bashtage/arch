@@ -6,7 +6,6 @@ import argparse
 from collections.abc import Sequence
 import datetime as dt
 from functools import partial
-from itertools import product
 import pathlib
 from random import shuffle
 
@@ -28,6 +27,9 @@ PERCENTILES = list(np.arange(1, 50, 1) / 10) + list(np.arange(50, 1000, 5) / 10)
 PERCENTILES = PERCENTILES[::-1]
 # Maximum memory of the main simulated data
 MAX_MEMORY = 2**21
+TRENDS = ("nc", "c", "ct", "ctt")
+BLUE = colorama.Fore.BLUE
+RESET = colorama.Fore.RESET
 
 
 def block(
@@ -125,10 +127,15 @@ def block(
         elapsed = dt.datetime.now() - start
         time_per_iter = elapsed.total_seconds() / completed
         remaining_time = int(time_per_iter * remaining)
-        if last_report - remaining > 1000:
+        if last_report - remaining > 10000:
             last_report = remaining
-            print(f"Index: {idx}, Trend: {trend}, Remaining: {remaining}")
-            print(f"Est. time remaining: {dt.timedelta(seconds=remaining_time)!s}")
+            remaining_count = remaining
+            if remaining_count < 15000:
+                remaining_count = colorama.Fore.RED + f"{remaining_count}"
+            print(f"Index: {idx}, Trend: {trend}, Remaining: {remaining_count}" + RESET)
+            print(
+                f"Est. time remaining: {BLUE}{dt.timedelta(seconds=remaining_time)!s}{RESET}"
+            )
 
     out = np.percentile(tstats, PERCENTILES, 1)
     np.savez(
@@ -172,7 +179,8 @@ if __name__ == "__main__":
     ]
     entropy = sum(bits << (16 * i) for i, bits in enumerate(entropy_bits))
     seq = SeedSequence(entropy)
-    gen = [Generator(PCG64(child)) for child in seq.spawn(EX_NUM)]
+    gen = [Generator(PCG64(child)) for child in seq.spawn(EX_NUM * len(TRENDS))]
+    assert len(gen) == EX_NUM * len(TRENDS)
     sample_sizes = (
         20,
         25,
@@ -206,7 +214,6 @@ if __name__ == "__main__":
         1400,
         2000,
     )
-    trends = ("nc", "c", "ct", "ctt")
     # The largest number of regressors, which is the largest num_x of engle_granger
     cross_section_size = 12
     simulations = EX_SIZE
@@ -219,15 +226,23 @@ if __name__ == "__main__":
     )
 
     remaining_configs = []
-    configs = list(product(enumerate(gen), trends))
-    for config in configs:
-        trend = config[-1]
-        idx = config[0][0]
-        filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
-        fullfile = ROOT / filename
-        if not fullfile.exists():
-            remaining_configs.append(config)
-    nconfig = colorama.Fore.GREEN + f"{len(configs)}" + colorama.Fore.RESET
+    count = 0
+    ids_seen = []
+    for idx in range(EX_NUM):
+        for trend in TRENDS:
+            config = ((idx, gen[count]), trend)
+            ids_seen.append(id(gen[count]))
+            filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
+            fullfile = ROOT / filename
+            count += 1
+            if not fullfile.exists():
+                remaining_configs.append(config)
+    assert len(set(ids_seen)) == (EX_NUM * len(TRENDS))
+    assert len({id(config[0][1]) for config in remaining_configs}) == len(
+        remaining_configs
+    )
+
+    nconfig = colorama.Fore.GREEN + f"{len(gen)}" + colorama.Fore.RESET
     nremconfig = colorama.Fore.RED + f"{len(remaining_configs)}" + colorama.Fore.RESET
     print(f"Total configuration: {nconfig}, Remaining: {nremconfig}")
 
