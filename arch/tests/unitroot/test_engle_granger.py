@@ -8,6 +8,7 @@ from statsmodels.iolib.summary import Summary
 
 from arch.unitroot._engle_granger import engle_granger_cv, engle_granger_pval
 from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
+from arch.unitroot.cointegration import engle_granger
 from arch.unitroot.critical_values.engle_granger import (
     CV_PARAMETERS,
     LARGE_PARAMETERS,
@@ -17,7 +18,6 @@ from arch.unitroot.critical_values.engle_granger import (
     TAU_STAR,
     eg_num_variables,
 )
-from arch.unitroot.cointegration import engle_granger
 
 
 @pytest.fixture(scope="module", params=[True, False])
