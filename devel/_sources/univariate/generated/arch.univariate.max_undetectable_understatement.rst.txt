@@ -1,0 +1,6 @@
+﻿arch.univariate.max\_undetectable\_understatement
+=================================================
+
+.. currentmodule:: arch.univariate
+
+.. autofunction:: max_undetectable_understatement

@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.backtest - arch v9.0.1 (+9)</title>
+        <title>arch.univariate.backtest - arch v9.0.1 (+13)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v9.0.1 (+9)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+9)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+13)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+13)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+9)
+            arch v9.0.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v9.0.1 (+9)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+9)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+13)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+13)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+9)
+    arch v9.0.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -538,6 +538,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -546,17 +547,34 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">xlogy</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">BoolArray</span><span class="p">,</span> <span class="n">Float64Array1D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_float</span><span class="p">,</span> <span class="n">check_int</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_array</span><span class="p">,</span>
+    <span class="n">check_bool</span><span class="p">,</span>
+    <span class="n">check_float</span><span class="p">,</span>
+    <span class="n">check_int</span><span class="p">,</span>
+    <span class="n">check_option</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaldTestStatistic</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"MaxUndetectableUnderstatementResult"</span><span class="p">,</span>
     <span class="s2">"TrafficLightResult"</span><span class="p">,</span>
     <span class="s2">"christoffersen_conditional_coverage"</span><span class="p">,</span>
     <span class="s2">"christoffersen_independence"</span><span class="p">,</span>
     <span class="s2">"kupiec_pof"</span><span class="p">,</span>
+    <span class="s2">"max_undetectable_understatement"</span><span class="p">,</span>
     <span class="s2">"traffic_light"</span><span class="p">,</span>
     <span class="s2">"var_exceptions"</span><span class="p">,</span>
 <span class="p">]</span>
+
+<span class="c1"># The tests that max_undetectable_understatement can select among, and the order in</span>
+<span class="c1"># which failed and binding tests are reported</span>
+<span class="n">_UNDERSTATEMENT_TESTS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"kupiec_pof"</span><span class="p">,</span>
+    <span class="s2">"christoffersen_independence"</span><span class="p">,</span>
+    <span class="s2">"christoffersen_conditional_coverage"</span><span class="p">,</span>
+    <span class="s2">"traffic_light"</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># The cumulative probabilities that begin the yellow and the red zone (BCBS, 1996)</span>
 <span class="n">_YELLOW_PROBABILITY</span> <span class="o">=</span> <span class="mf">0.95</span>
@@ -1125,6 +1143,325 @@
         <span class="n">probability</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span>
         <span class="n">type1_error</span><span class="o">=</span><span class="n">type1_error</span><span class="p">,</span>
         <span class="n">nobs</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
+        <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MaxUndetectableUnderstatementResult">
+<a class="viewcode-back" href="../../../univariate/utility.html#arch.univariate.MaxUndetectableUnderstatementResult">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaxUndetectableUnderstatementResult</span><span class="p">:</span>  <span class="c1"># numpydoc ignore=PR02</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Result of the maximum undetectable understatement backtest of VaR.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    understatement : float</span>
+<span class="sd">        The largest fraction by which ``var`` could have been scaled down such</span>
+<span class="sd">        that it, and every smaller scaling down, passes every selected test.</span>
+<span class="sd">        NaN if the reported VaR does not pass to begin with.</span>
+<span class="sd">    exceptions : int</span>
+<span class="sd">        The number of exceptions of the reported VaR.</span>
+<span class="sd">    extra_exceptions : int</span>
+<span class="sd">        The number of additional exceptions produced by scaling ``var`` down by</span>
+<span class="sd">        ``understatement``, beyond ``exceptions``. 0 if the reported VaR does</span>
+<span class="sd">        not pass.</span>
+<span class="sd">    binding : tuple of str</span>
+<span class="sd">        The selected tests that reject a VaR scaled down by just beyond</span>
+<span class="sd">        ``understatement``. Empty if ``var`` can be scaled to 0 without being</span>
+<span class="sd">        rejected, and empty if the reported VaR does not pass, since no limit</span>
+<span class="sd">        is computed.</span>
+<span class="sd">    passes : bool</span>
+<span class="sd">        Whether the reported VaR passes every selected test.</span>
+<span class="sd">    failed : tuple of str</span>
+<span class="sd">        The selected tests that reject the reported VaR. Empty if ``passes``.</span>
+<span class="sd">    nobs : int</span>
+<span class="sd">        The number of observations used.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        The probability of an exception that the VaR is designed for.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    understatement : float</span>
+<span class="sd">        The largest fraction by which ``var`` could have been scaled down such</span>
+<span class="sd">        that it, and every smaller scaling down, passes every selected test.</span>
+<span class="sd">        NaN if the reported VaR does not pass to begin with.</span>
+<span class="sd">    exceptions : int</span>
+<span class="sd">        The number of exceptions of the reported VaR.</span>
+<span class="sd">    extra_exceptions : int</span>
+<span class="sd">        The number of additional exceptions produced by scaling ``var`` down by</span>
+<span class="sd">        ``understatement``, beyond ``exceptions``. 0 if the reported VaR does</span>
+<span class="sd">        not pass.</span>
+<span class="sd">    binding : tuple of str</span>
+<span class="sd">        The selected tests that reject a VaR scaled down by just beyond</span>
+<span class="sd">        ``understatement``. Empty if ``var`` can be scaled to 0 without being</span>
+<span class="sd">        rejected, and empty if the reported VaR does not pass, since no limit</span>
+<span class="sd">        is computed.</span>
+<span class="sd">    passes : bool</span>
+<span class="sd">        Whether the reported VaR passes every selected test.</span>
+<span class="sd">    failed : tuple of str</span>
+<span class="sd">        The selected tests that reject the reported VaR. Empty if ``passes``.</span>
+<span class="sd">    nobs : int</span>
+<span class="sd">        The number of observations used.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        The probability of an exception that the VaR is designed for.</span>
+<span class="sd">    """</span>
+
+    <span class="n">understatement</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">exceptions</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">extra_exceptions</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">passes</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">failed</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="max_undetectable_understatement">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.max_undetectable_understatement.html#arch.univariate.max_undetectable_understatement">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">max_undetectable_understatement</span><span class="p">(</span>
+    <span class="n">returns</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">var</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">tests</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_UNDERSTATEMENT_TESTS</span><span class="p">,</span>
+    <span class="n">ignore_too_few</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">250</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaxUndetectableUnderstatementResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Maximum undetectable understatement of a VaR series.</span>
+
+<span class="sd">    A passing backtest only says that a VaR was not rejected. It does not say</span>
+<span class="sd">    how close it was. This function finds the largest fraction by which the</span>
+<span class="sd">    whole VaR series could have been scaled down, with the same returns, such</span>
+<span class="sd">    that it and every smaller scaling down are not rejected by the selected</span>
+<span class="sd">    tests.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    returns : array_like</span>
+<span class="sd">        Realized returns, a 1-d array of finite numbers.</span>
+<span class="sd">    var : array_like</span>
+<span class="sd">        VaR forecasts as positive losses, a 1-d array of finite, strictly</span>
+<span class="sd">        positive numbers. See `var_exceptions` for the sign convention and for</span>
+<span class="sd">        how the inputs are aligned.</span>
+<span class="sd">    p : float, optional</span>
+<span class="sd">        The probability of an exception that the VaR is designed for, which is</span>
+<span class="sd">        the size of the tail, in the interval (0, 0.5]. It is 0.05 for a 95%</span>
+<span class="sd">        VaR and 0.01 for a 99% VaR. The default is 0.05, a 95% VaR, and is used</span>
+<span class="sd">        by every selected test, including `traffic_light`.</span>
+<span class="sd">    size : float, optional</span>
+<span class="sd">        The size of the Kupiec and the Christoffersen tests, in (0, 1). The</span>
+<span class="sd">        default is 0.05. `traffic_light` does not use a size, since its zones</span>
+<span class="sd">        are already defined at fixed probabilities.</span>
+<span class="sd">    tests : sequence of str, optional</span>
+<span class="sd">        The tests to pass, a subset of ``"kupiec_pof"`` [3]_,</span>
+<span class="sd">        ``"christoffersen_independence"`` and</span>
+<span class="sd">        ``"christoffersen_conditional_coverage"`` [2]_, and ``"traffic_light"`` [1]_.</span>
+<span class="sd">        All four are selected by default.</span>
+<span class="sd">    ignore_too_few : bool, optional</span>
+<span class="sd">        If True, the default, the coverage part of a test is set aside when the</span>
+<span class="sd">        rate of exceptions is below `p`, since too few exceptions are not</span>
+<span class="sd">        evidence of an understated VaR. `kupiec_pof` is two-sided, and a VaR</span>
+<span class="sd">        with too few exceptions is otherwise rejected for being too</span>
+<span class="sd">        conservative, so it is not treated as a failure. For</span>
+<span class="sd">        `christoffersen_conditional_coverage`, the coverage statistic is set to</span>
+<span class="sd">        0 and the independence statistic is compared with the same</span>
+<span class="sd">        :math:`\chi^2_2` distribution, so a rejection caused by clustered</span>
+<span class="sd">        exceptions is still a failure. `christoffersen_independence` and</span>
+<span class="sd">        `traffic_light` are not affected.</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        The window of `traffic_light`, used only if it is selected. The</span>
+<span class="sd">        default is 250.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MaxUndetectableUnderstatementResult</span>
+<span class="sd">        The largest fraction by which `var` could have been understated, and</span>
+<span class="sd">        supporting information.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If `returns` or `var` cannot be converted to numbers, `p` or `size` is</span>
+<span class="sd">        not a real number, `window` is not an integer, `ignore_too_few` is not</span>
+<span class="sd">        a bool, or `tests` is not a sequence of str.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `returns` or `var` is not valid, as in `var_exceptions`, `var` is</span>
+<span class="sd">        not strictly positive, `p` is not in (0, 0.5], `size` is not in (0, 1),</span>
+<span class="sd">        `window` is not positive, `tests` is empty or has a value that is not</span>
+<span class="sd">        one of the tests listed above, or there are too few observations for a</span>
+<span class="sd">        selected test, as in `christoffersen_independence` or `traffic_light`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    kupiec_pof : Test of the proportion of exceptions.</span>
+<span class="sd">    christoffersen_independence : Test of the independence of the exceptions.</span>
+<span class="sd">    christoffersen_conditional_coverage : Joint test of coverage and independence.</span>
+<span class="sd">    traffic_light : The Basel zone of the number of exceptions.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The search is over the proportional scalings :math:`(1-s)\mathrm{VaR}_t` for</span>
+<span class="sd">    :math:`s` in :math:`[0, 1]`. An observation becomes an exception at</span>
+<span class="sd">    :math:`s = 1 - (-r_t/\mathrm{VaR}_t)`, so the exception set, and so every</span>
+<span class="sd">    selected test, is constant between these breakpoints. The search evaluates</span>
+<span class="sd">    the tests once at each distinct breakpoint, which is exact for this family</span>
+<span class="sd">    of series and needs no optimizer.</span>
+
+<span class="sd">    The scan starts at the reported VaR, :math:`s = 0`, and moves toward larger</span>
+<span class="sd">    understatement, stopping at the first scaling that is rejected. The result is</span>
+<span class="sd">    the largest :math:`s` such that every scaling from 0 to :math:`s` passes.</span>
+<span class="sd">    The independence test, and so the conditional coverage test, is not monotone</span>
+<span class="sd">    in :math:`s`, so a larger scaling beyond the first rejection can pass again,</span>
+<span class="sd">    and is not reported. `binding` lists the tests that reject at that first</span>
+<span class="sd">    rejected scaling.</span>
+
+<span class="sd">    A test rejects when its p-value is at most `size`, as in the public tests,</span>
+<span class="sd">    and the same rule is used for the reported VaR and for every scaling.</span>
+
+<span class="sd">    This is a lower bound on what a series that is not a proportional scaling</span>
+<span class="sd">    of `var` could hide. A series that understates the VaR on some days and</span>
+<span class="sd">    overstates it on others can produce the same, or a smaller, number of</span>
+<span class="sd">    exceptions than a proportional scaling, and so can be harder to detect.</span>
+
+<span class="sd">    Table 1 of [1]_ reports how often the traffic light accepts a VaR whose true</span>
+<span class="sd">    coverage is lower than stated. This function asks a related question of one</span>
+<span class="sd">    realised series: how much lower the VaR could have been before any selected</span>
+<span class="sd">    test rejected it.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Basel Committee on Banking Supervision (1996). Supervisory framework</span>
+<span class="sd">       for the use of "backtesting" in conjunction with the internal models</span>
+<span class="sd">       approach to market risk capital requirements.</span>
+<span class="sd">    .. [2] Christoffersen, P. F. (1998). Evaluating interval forecasts.</span>
+<span class="sd">       International Economic Review, 39(4), 841-862.</span>
+<span class="sd">    .. [3] Kupiec, P. H. (1995). Techniques for verifying the accuracy of risk</span>
+<span class="sd">       measurement models. The Journal of Derivatives, 3(2), 73-84.</span>
+<span class="sd">    """</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">check_float</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inclusive</span><span class="o">=</span><span class="s2">"neither"</span><span class="p">)</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"window"</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ignore_too_few</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"ignore_too_few"</span><span class="p">,</span> <span class="n">ignore_too_few</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"tests must be a sequence of str, not a single str; got </span><span class="si">{</span><span class="n">tests</span><span class="si">!r}</span><span class="s2"> (str)"</span>
+        <span class="p">)</span>
+    <span class="n">tests_seq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tests_seq</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"tests must be a non-empty sequence of 'kupiec_pof', "</span>
+            <span class="s2">"'christoffersen_independence', 'christoffersen_conditional_coverage' "</span>
+            <span class="sa">f</span><span class="s2">"or 'traffic_light'; got </span><span class="si">{</span><span class="n">tests</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+        <span class="n">check_option</span><span class="p">(</span><span class="s2">"tests"</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">_UNDERSTATEMENT_TESTS</span><span class="p">)</span> <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">tests_seq</span>
+    <span class="p">)</span>
+
+    <span class="n">min_obs</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">2</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">"christoffersen_independence"</span> <span class="ow">in</span> <span class="n">selected</span>
+            <span class="ow">or</span> <span class="s2">"christoffersen_conditional_coverage"</span> <span class="ow">in</span> <span class="n">selected</span>
+        <span class="p">)</span>
+        <span class="k">else</span> <span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">exceptions0</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_exceptions</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">var_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_aligned</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">var_arr</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"var must be strictly positive to compute a proportional "</span>
+            <span class="sa">f</span><span class="s2">"understatement; got a minimum of </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">var_arr</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> (ndarray)"</span>
+        <span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">"traffic_light"</span> <span class="ow">in</span> <span class="n">selected</span> <span class="ow">and</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="n">nobs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"window must be an integer no larger than the number of aligned "</span>
+            <span class="sa">f</span><span class="s2">"observations (</span><span class="si">{</span><span class="n">nobs</span><span class="si">}</span><span class="s2">); got </span><span class="si">{</span><span class="n">window</span><span class="si">}</span><span class="s2"> (int)"</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rejects</span><span class="p">(</span><span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># The rule of the public tests: reject when the p-value is at most size</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">size</span><span class="p">)</span>
+
+    <span class="c1"># The tests are evaluated with the private likelihoods and the traffic light</span>
+    <span class="c1"># boundaries directly, which avoids building a WaldTestStatistic or a</span>
+    <span class="c1"># TrafficLightResult at every breakpoint. The p-values are the same as those of</span>
+    <span class="c1"># the public tests, and the baseline and the search use the same gate.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gate</span><span class="p">(</span><span class="n">hits</span><span class="p">:</span> <span class="n">BoolArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="n">failed_now</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hits</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="c1"># Too few exceptions only sets aside the coverage part of a test, which is</span>
+        <span class="c1"># the part that rejects a conservative VaR</span>
+        <span class="n">skip_coverage</span> <span class="o">=</span> <span class="n">ignore_too_few</span> <span class="ow">and</span> <span class="p">(</span><span class="n">count</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">p</span>
+        <span class="n">lr_pof</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">skip_coverage</span> <span class="k">else</span> <span class="n">_lr_pof</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"kupiec_pof"</span> <span class="ow">in</span> <span class="n">selected</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">skip_coverage</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_rejects</span><span class="p">(</span><span class="n">lr_pof</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">failed_now</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"kupiec_pof"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">"christoffersen_independence"</span> <span class="ow">in</span> <span class="n">selected</span>
+            <span class="ow">or</span> <span class="s2">"christoffersen_conditional_coverage"</span> <span class="ow">in</span> <span class="n">selected</span>
+        <span class="p">):</span>
+            <span class="n">lr_ind</span> <span class="o">=</span> <span class="n">_lr_independence</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"christoffersen_independence"</span> <span class="ow">in</span> <span class="n">selected</span> <span class="ow">and</span> <span class="n">_rejects</span><span class="p">(</span><span class="n">lr_ind</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">failed_now</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"christoffersen_independence"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"christoffersen_conditional_coverage"</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_rejects</span><span class="p">(</span><span class="n">lr_pof</span> <span class="o">+</span> <span class="n">lr_ind</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">failed_now</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"christoffersen_conditional_coverage"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"traffic_light"</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+            <span class="n">window_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hits</span><span class="p">[</span><span class="o">-</span><span class="n">window</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">window_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">binom</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">window_count</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;=</span> <span class="n">_YELLOW_PROBABILITY</span><span class="p">:</span>
+                    <span class="n">failed_now</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"traffic_light"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_UNDERSTATEMENT_TESTS</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">failed_now</span><span class="p">)</span>
+
+    <span class="n">n_reported</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">exceptions0</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="n">_gate</span><span class="p">(</span><span class="n">exceptions0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MaxUndetectableUnderstatementResult</span><span class="p">(</span>
+            <span class="n">understatement</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="n">exceptions</span><span class="o">=</span><span class="n">n_reported</span><span class="p">,</span>
+            <span class="n">extra_exceptions</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">binding</span><span class="o">=</span><span class="p">(),</span>
+            <span class="n">passes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">failed</span><span class="o">=</span><span class="n">failed</span><span class="p">,</span>
+            <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span>
+            <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># A scaling 1 - s turns observation t into an exception when the ratio</span>
+    <span class="c1"># -r_t / VaR_t exceeds 1 - s, so the exceptions at a threshold thr = 1 - s are</span>
+    <span class="c1"># ratio &gt; thr, constant for thr in [b_k, b_k+1) between consecutive candidates.</span>
+    <span class="c1"># The scan starts at the reported VaR (thr = 1) and moves down, toward larger</span>
+    <span class="c1"># understatement, and stops at the first candidate that fails. The tests are not</span>
+    <span class="c1"># monotone in thr, so a passing candidate below a failing one is not a limit.</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="o">-</span><span class="n">ret</span> <span class="o">/</span> <span class="n">var_arr</span>
+    <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ratio</span><span class="p">[(</span><span class="n">ratio</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">)])</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">breakpoints</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">first_fail</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">thr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="k">if</span> <span class="n">_gate</span><span class="p">(</span><span class="n">ratio</span> <span class="o">&gt;</span> <span class="n">thr</span><span class="p">)),</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="k">if</span> <span class="n">first_fail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">binding</span> <span class="o">=</span> <span class="n">_gate</span><span class="p">(</span><span class="n">ratio</span> <span class="o">&gt;</span> <span class="n">candidates</span><span class="p">[</span><span class="n">first_fail</span><span class="p">])</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">first_fail</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">candidates</span><span class="p">[</span><span class="n">first_fail</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">hits_at_limit</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="n">limit</span> <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="n">exceptions0</span>
+
+    <span class="k">return</span> <span class="n">MaxUndetectableUnderstatementResult</span><span class="p">(</span>
+        <span class="n">understatement</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">limit</span><span class="p">,</span>
+        <span class="n">exceptions</span><span class="o">=</span><span class="n">n_reported</span><span class="p">,</span>
+        <span class="n">extra_exceptions</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hits_at_limit</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">-</span> <span class="n">n_reported</span><span class="p">,</span>
+        <span class="n">binding</span><span class="o">=</span><span class="n">binding</span><span class="p">,</span>
+        <span class="n">passes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">failed</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span>
         <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
     <span class="p">)</span></div>
 

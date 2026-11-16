@@ -23,7 +23,7 @@
     
   
       
-        <title>Change Logs - arch v9.0.1 (+9)</title>
+        <title>Change Logs - arch v9.0.1 (+13)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v9.0.1 (+9)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+9)" data-md-component="logo">
+    <a href="index.html" title="arch v9.0.1 (+13)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+13)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+9)
+            arch v9.0.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v9.0.1 (+9)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+9)" data-md-component="logo">
+    <a href="index.html" title="arch v9.0.1 (+13)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+13)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+9)
+    arch v9.0.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -809,6 +809,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-9-1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/changes.rst#release-9-1 (reference label)"><span>Release 9.<wbr>1</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release 9.1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-features" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/changes.rst#new-features (reference label)"><span>New Features</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#release-9-0-november-11-2026" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -830,10 +856,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#new-features" class="md-nav__link">
+  <a href="#id1" class="md-nav__link">
     
     <span class="md-ellipsis">
-      <span title="/changes.rst#new-features (reference label)"><span>New features</span></span>
+      <span title="/changes.rst#id1 (reference label)"><span>New features</span></span>
     </span>
   </a>
   
@@ -1096,6 +1122,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-9-1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/changes.rst#release-9-1 (reference label)"><span>Release 9.<wbr>1</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release 9.1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-features" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/changes.rst#new-features (reference label)"><span>New Features</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#release-9-0-november-11-2026" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1117,10 +1169,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#new-features" class="md-nav__link">
+  <a href="#id1" class="md-nav__link">
     
     <span class="md-ellipsis">
-      <span title="/changes.rst#new-features (reference label)"><span>New features</span></span>
+      <span title="/changes.rst#id1 (reference label)"><span>New features</span></span>
     </span>
   </a>
   
@@ -1280,6 +1332,18 @@
 
 <h1 id="change-logs">Change Logs<a class="headerlink" href="#change-logs" title="Link to this heading">¶</a></h1>
 <h2 id="version-9">Version 9<a class="headerlink" href="#version-9" title="Link to this heading">¶</a></h2>
+<h3 id="release-9-1">Release 9.1<a class="headerlink" href="#release-9-1" title="Link to this heading">¶</a></h3>
+<h4 id="new-features">New Features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="univariate/generated/arch.univariate.max_undetectable_understatement.html#arch.univariate.max_undetectable_understatement" title="arch.univariate.max_undetectable_understatement (Python function) — Maximum undetectable understatement of a VaR series."><code class="xref py py-func docutils literal notranslate"><span class="pre">max_undetectable_understatement()</span></code></a>, which finds the
+largest fraction by which a VaR series could have been scaled down, with the same
+returns, such that it and every smaller scaling down pass the selected backtests.
+The search over proportional scalings is exact, since the exceptions only change at
+the points where a loss crosses the scaled VaR, and is a lower bound on what a
+non-proportional series could hide. The result is a
+<a class="reference internal" href="univariate/utility.html#arch.univariate.MaxUndetectableUnderstatementResult" title="arch.univariate.MaxUndetectableUnderstatementResult (Python class) — Result of the maximum undetectable understatement backtest of VaR."><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxUndetectableUnderstatementResult</span></code></a> with the limit, the
+binding test, and the exceptions it would add (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/904">GH904</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1015">GH1015</a>).</p></li>
+</ul>
 <h3 id="release-9-0-november-11-2026">Release 9.0 (November 11, 2026)<a class="headerlink" href="#release-9-0-november-11-2026" title="Link to this heading">¶</a></h3>
 <h4 id="highlights">Highlights<a class="headerlink" href="#highlights" title="Link to this heading">¶</a></h4>
 <ul class="simple">
@@ -1331,7 +1395,7 @@ options are not case sensitive, and integer, Boolean and list data are converted
 on ARM (ARM64) are new, for Python 3.13 to 3.15. 9.0 is the last release that
 supports Python 3.10 and NumPy 1.x.</p></li>
 </ul>
-<h4 id="new-features">New features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h4>
+<h4 id="id1">New features<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p>Added <a class="reference internal" href="univariate/generated/arch.univariate.FIAPARCH.html#arch.univariate.FIAPARCH" title="arch.univariate.FIAPARCH (Python class) — Fractionally Integrated Asymmetric Power ARCH (FIAPARCH) volatility process."><code class="xref py py-class docutils literal notranslate"><span class="pre">FIAPARCH</span></code></a>, a fractionally integrated asymmetric power
 ARCH volatility process that extends <a class="reference internal" href="univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH (Python class) — FIGARCH model."><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> with an
