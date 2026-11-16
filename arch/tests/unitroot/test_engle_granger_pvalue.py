@@ -99,11 +99,13 @@ def test_pvalue_monotone_and_bounded(key):
         engle_granger_pval(float(stat), trend, num_x)
         for stat in np.linspace(star - 3, 0, 301)
     ]
-    assert np.all(np.diff(middle) > 0.0)
     assert engle_granger_pval(-np.inf, trend, num_x) == 0.0
     assert engle_granger_pval(np.inf, trend, num_x) == 1.0
     assert pvals[0] < 1e-12
     assert pvals[-1] > 1 - 1e-12
+    assert np.all(
+        np.diff(middle) > 0.0
+    ), f"Count 0 or negative {(np.diff(middle) <= 0.0).sum()}"
 
 
 @pytest.mark.parametrize("key", list(SIMULATED_QUANTILES))
