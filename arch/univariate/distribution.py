@@ -1406,14 +1406,19 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         moment = 0.0
         for k in range(n + 1):  # binomial expansion around loc
             lbound = min(z, loc)
-            lhs = (
-                (1 - lam)
-                * (loc ** (n - k))
-                * (lscale**k)
-                * StudentsT._ord_t_partial_moment(
-                    k, z=(lbound - loc) / lscale, nu=float(eta)
+            # lambda = 1 leaves the left half with no mass and a zero lscale, so its
+            # t argument is 0 / 0 for every z at or above loc. Skip the empty branch.
+            if lam == 1.0:
+                lhs = 0.0
+            else:
+                lhs = (
+                    (1 - lam)
+                    * (loc ** (n - k))
+                    * (lscale**k)
+                    * StudentsT._ord_t_partial_moment(
+                        k, z=(lbound - loc) / lscale, nu=float(eta)
+                    )
                 )
-            )
 
             if z > loc:
                 rhs = (

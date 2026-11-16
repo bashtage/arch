@@ -89,6 +89,27 @@ def test_students_t_odd_partial_moment_large_nu(nu):
             assert_almost_equal(dist.partial_moment(n, z, [nu]), m_quad)
 
 
+@pytest.mark.parametrize("eta", [5.0, 8.0])
+def test_skew_student_partial_moment_lambda_one(eta):
+    # GH 1024: lambda = 1 leaves the left half with no mass and a zero lscale, so
+    # partial_moment returned nan for every z at or above the support endpoint.
+    dist = SkewStudent()
+    lam = 1.0
+    loc = dist.ppf(0.0, [eta, lam])
+    assert_almost_equal(dist.partial_moment(0, loc, [eta, lam]), 0.0)
+
+    # The partial moments join continuously to the values just below the
+    # degenerate skew, and the upper limit is the complete moment.
+    for n in range(3):
+        for z in (0.0, 2.0, 5.0):
+            m_method = dist.partial_moment(n, z, [eta, lam])
+            m_near = dist.partial_moment(n, z, [eta, 0.999999])
+            assert_almost_equal(m_method, m_near, decimal=6)
+        assert_almost_equal(
+            dist.partial_moment(n, inf, [eta, lam]), dist.moment(n, [eta, lam])
+        )
+
+
 @pytest.mark.parametrize(("dist", "params"), DISTRIBUTIONS)
 def test_partial_moment_infinite_bound(dist, params):
     # The lower partial moment to -inf is 0 and to inf is the moment. Normal and
