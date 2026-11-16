@@ -706,9 +706,10 @@ def max_undetectable_understatement(
         default is 0.05. `traffic_light` does not use a size, since its zones
         are already defined at fixed probabilities.
     tests : sequence of str, optional
-        The tests to pass, a subset of ``"kupiec_pof"``,
-        ``"christoffersen_independence"``, ``"christoffersen_conditional_coverage"``
-        and ``"traffic_light"``. All four are selected by default.
+        The tests to pass, a subset of ``"kupiec_pof"`` [3]_,
+        ``"christoffersen_independence"`` and
+        ``"christoffersen_conditional_coverage"`` [2]_, and ``"traffic_light"`` [1]_.
+        All four are selected by default.
     ignore_too_few : bool, optional
         If True, the default, the coverage part of a test is set aside when the
         rate of exceptions is below `p`, since too few exceptions are not
@@ -775,7 +776,7 @@ def max_undetectable_understatement(
     overstates it on others can produce the same, or a smaller, number of
     exceptions than a proportional scaling, and so can be harder to detect.
 
-    Table 1 of [1] reports how often the traffic light accepts a VaR whose true
+    Table 1 of [1]_ reports how often the traffic light accepts a VaR whose true
     coverage is lower than stated. This function asks a related question of one
     realised series: how much lower the VaR could have been before any selected
     test rejected it.
