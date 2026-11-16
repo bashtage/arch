@@ -5,7 +5,7 @@ Version 9
 Release 9.1
 ===========
 
-New Features
+New features
 ~~~~~~~~~~~~
 - Added :func:`~arch.univariate.max_undetectable_understatement`, which finds the
   largest fraction by which a VaR series could have been scaled down, with the same
