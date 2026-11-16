@@ -2,10 +2,12 @@ import types
 
 from arch.univariate import recursions_python
 from arch.univariate.backtest import (
+    MaxUndetectableUnderstatementResult,
     TrafficLightResult,
     christoffersen_conditional_coverage,
     christoffersen_independence,
     kupiec_pof,
+    max_undetectable_understatement,
     traffic_light,
     var_exceptions,
 )
@@ -70,6 +72,7 @@ __all__ = [
     "GeneralizedError",
     "MAMean",
     "MIDASHyperbolic",
+    "MaxUndetectableUnderstatementResult",
     "Normal",
     "RiskMetrics2006",
     "SkewStudent",
@@ -82,6 +85,7 @@ __all__ = [
     "excess_kurtosis",
     "hill_estimator",
     "kupiec_pof",
+    "max_undetectable_understatement",
     "recursions",
     "recursions_python",
     "traffic_light",
