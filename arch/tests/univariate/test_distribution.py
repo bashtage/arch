@@ -248,6 +248,51 @@ def test_skew_student_quantile_endpoints(skew):
     assert_allclose(actual, expected, rtol=1e-13)
 
 
+@pytest.mark.parametrize("eta", [2.05, 8.0, 300.0])
+@pytest.mark.parametrize("skew", [-1.0, 1.0])
+def test_skew_student_cdf_support_boundary(eta, skew):
+    dist = SkewStudent()
+    parameters = [eta, skew]
+    probability = 0.0 if skew == 1.0 else 1.0
+    outside = -np.inf if skew == 1.0 else np.inf
+    endpoint = dist.ppf(probability, parameters)
+    values = [outside, np.nextafter(endpoint, outside), endpoint]
+
+    with np.errstate(divide="raise", invalid="raise"):
+        actual = dist.cdf(values, parameters)
+        scalar = dist.cdf(endpoint, parameters)
+    assert_array_equal(actual, np.full(3, probability))
+    assert isinstance(scalar, float)
+    assert scalar == probability
+
+
+@pytest.mark.parametrize("skew", [-1.0, 1.0])
+def test_skew_student_cdf_matches_standardized_half_t(skew):
+    eta = 8.0
+    ordinary_t = stats.t(df=eta)
+    half_t_mean = 2 * ordinary_t.expect(lb=0.0)
+    half_t_scale = np.sqrt(ordinary_t.var() - half_t_mean**2)
+    positive_values = np.array([0.125, 0.5, 1.0, 4.0, np.inf])
+    values = skew * (positive_values - half_t_mean) / half_t_scale
+    tail = 2 * ordinary_t.sf(positive_values)
+    expected = 1 - tail if skew == 1.0 else tail
+
+    with np.errstate(divide="raise", invalid="raise"):
+        actual = SkewStudent().cdf(values, [eta, skew])
+    assert_allclose(actual, expected, atol=1e-13, rtol=1e-12)
+
+
+@pytest.mark.parametrize("skew", [np.nextafter(-1.0, 0.0), np.nextafter(1.0, 0.0)])
+def test_skew_student_cdf_near_boundary_roundtrip(skew):
+    dist = SkewStudent()
+    parameters = [8.0, skew]
+    probabilities = np.array([0.0, 1e-10, 0.01, 0.5, 0.95, 1.0 - 1e-10, 1.0])
+    with np.errstate(divide="raise", invalid="raise"):
+        actual = dist.cdf(dist.ppf(probabilities, parameters), parameters)
+    # The round trip includes the numerical error of SciPy's t quantile.
+    assert_allclose(actual, probabilities, atol=1e-10, rtol=0)
+
+
 def test_invalid_params():
     pits = np.arange(1, 100.0) / 100.0
     dist = Normal()

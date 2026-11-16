@@ -1306,15 +1306,27 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
 
-        var = eta / (eta - 2)
-        y1 = (b * _resids + a) / (1 - lam) * sqrt(var)
-        y2 = (b * _resids + a) / (1 + lam) * sqrt(var)
+        loc = -a / b
+        scale = b * sqrt(eta / (eta - 2))
+        left = _resids < loc
+        right = ~left
         tcdf = stats.t(eta).cdf
-        p = (1 - lam) * tcdf(y1) * (_resids < (-a / b))
-        p += (_resids >= (-a / b)) * ((1 - lam) / 2 + (1 + lam) * (tcdf(y2) - 0.5))
-        if scalar:
-            p = float(p[0])
-        return p
+        p = np.empty_like(_resids)
+
+        # At either skew boundary, one half of the distribution has zero mass.
+        if lam == 1:
+            p[left] = 0.0
+        else:
+            y = (_resids[left] - loc) * (scale / (1 - lam))
+            p[left] = (1 - lam) * tcdf(y)
+
+        if lam == -1:
+            p[right] = 1.0
+        else:
+            y = (_resids[right] - loc) * (scale / (1 + lam))
+            p[right] = (1 - lam) / 2 + (1 + lam) * (tcdf(y) - 0.5)
+
+        return float(p[0]) if scalar else p
 
     def ppf(
         self,
