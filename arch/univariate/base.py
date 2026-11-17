@@ -135,7 +135,8 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
     Returns
     -------
     constraints : list of dict
-        Dictionaries of inequality constraints, one for each row of a.
+        Dictionaries of inequality constraints, one for each row of a, with the
+        constraint function in ``"fun"`` and its gradient in ``"jac"``.
 
     Raises
     ------
@@ -158,9 +159,17 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
 
         return f
 
+    def jac_factory(coeff: Float64Array) -> Callable[..., Float64Array]:
+        # The constraints are linear, so the gradient is the row of a. Without it
+        # SLSQP approximates the gradient by finite differences at every iteration.
+        def jac(params: Float64Array, *args: Any) -> Float64Array:
+            return coeff
+
+        return jac
+
     constraints = []
     for i in range(a.shape[0]):
-        con = {"type": "ineq", "fun": factory(a[i], b[i])}
+        con = {"type": "ineq", "fun": factory(a[i], b[i]), "jac": jac_factory(a[i])}
         constraints.append(con)
 
     return constraints

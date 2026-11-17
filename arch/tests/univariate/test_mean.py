@@ -28,12 +28,14 @@ import statsmodels.tools as smtools
 
 from arch._typing import Literal
 from arch.data import sp500
+from arch.univariate import base as arch_base
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelFixedResult,
     ARCHModelForecast,
     ARCHModelResult,
     _align_forecast,
+    constraint,
 )
 from arch.univariate.distribution import (
     GeneralizedError,
@@ -1702,3 +1704,27 @@ def test_fixed_equivalence_forecastable_plots(forecastable_model, agg_backend):
     fig2 = res_fixed.hedgehog_plot(start=SP500.shape[0] - 25)
     assert isinstance(fig1, type(fig2))
     close_plots()
+
+
+def test_constraint_jacobian():
+    a = np.array([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]])
+    b = np.array([0.0, -1.0])
+    params = np.array([0.1, 0.2, 0.3])
+    for row, bound, con in zip(a, b, constraint(a, b), strict=True):
+        assert_allclose(con["fun"](params), row @ params - bound)
+        assert_equal(con["jac"](params), row)
+
+
+def test_fit_with_exact_constraint_jacobian(monkeypatch):
+    # The exact gradient of the linear constraints changes the optimizer path only
+    # at the level of the finite-difference error that it replaces
+    y = sp500.load()["Adj Close"].pct_change().dropna().iloc[-2000:] * 100
+    res = arch_model(y).fit(disp=False)
+
+    def without_jacobian(a, b):
+        return [{"type": "ineq", "fun": con["fun"]} for con in constraint(a, b)]
+
+    monkeypatch.setattr(arch_base, "constraint", without_jacobian)
+    ref = arch_model(y).fit(disp=False)
+    assert_allclose(res.params, ref.params, rtol=1e-4)
+    assert res.loglikelihood >= ref.loglikelihood - 1e-9 * abs(ref.loglikelihood)
