@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v9.0.1 (+17)</title>
+        <title>arch.univariate.base - arch v9.0.1 (+21)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v9.0.1 (+17)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+17)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+17)
+            arch v9.0.1 (+21)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v9.0.1 (+17)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+17)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+17)
+    arch v9.0.1 (+21)
   </label>
   
     <div class="md-nav__source">
@@ -663,7 +663,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    constraints : list of dict</span>
-<span class="sd">        Dictionaries of inequality constraints, one for each row of a.</span>
+<span class="sd">        Dictionaries of inequality constraints, one for each row of a, with the</span>
+<span class="sd">        constraint function in ``"fun"`` and its gradient in ``"jac"``.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -686,9 +687,17 @@
 
         <span class="k">return</span> <span class="n">f</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">jac_factory</span><span class="p">(</span><span class="n">coeff</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="c1"># The constraints are linear, so the gradient is the row of a. Without it</span>
+        <span class="c1"># SLSQP approximates the gradient by finite differences at every iteration.</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">jac</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coeff</span>
+
+        <span class="k">return</span> <span class="n">jac</span>
+
     <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">con</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"ineq"</span><span class="p">,</span> <span class="s2">"fun"</span><span class="p">:</span> <span class="n">factory</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">])}</span>
+        <span class="n">con</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"ineq"</span><span class="p">,</span> <span class="s2">"fun"</span><span class="p">:</span> <span class="n">factory</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="s2">"jac"</span><span class="p">:</span> <span class="n">jac_factory</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])}</span>
         <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">constraints</span>
