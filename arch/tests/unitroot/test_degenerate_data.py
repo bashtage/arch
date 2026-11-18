@@ -489,11 +489,14 @@ def test_dynamic_ols_trend_in_x():
 @pytest.mark.parametrize(
     "y",
     [
-        5.3 + 1e-12 * np.random.default_rng(7).standard_normal(NOBS),
+        # The noise is 1e5 ulps of 5.3. At 1e-12, the lagged level and the constant
+        # of the ADF regression are numerically collinear by the rank rule of
+        # statsmodels 0.15.1, max(nobs, ncols) * eps
+        5.3 + 1e-10 * np.random.default_rng(7).standard_normal(NOBS),
         1e3 + 1e-6 * np.random.default_rng(8).standard_normal(NOBS).cumsum(),
         np.random.default_rng(9).standard_normal(NOBS).cumsum(),
     ],
-    ids=["noise-1e-12-around-5.3", "rw-1e-6-around-1e3", "random-walk"],
+    ids=["noise-1e-10-around-5.3", "rw-1e-6-around-1e3", "random-walk"],
 )
 @pytest.mark.parametrize(
     "test",
