@@ -16,7 +16,6 @@ from scipy import stats
 from scipy.optimize import OptimizeResult, minimize
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
-from statsmodels.regression.linear_model import OLS
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
@@ -42,6 +41,7 @@ from arch.univariate.diagnostics import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
+from arch.utility._regression import centered_ols
 from arch.utility._validation import (
     check_array,
     check_bool,
@@ -2424,6 +2424,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         scales :math:`R^2` by the number of observations in the regression, as
         in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an
         asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.
+        The auxiliary regression is estimated with the squared residuals and
+        their lags centered on their means, which does not change :math:`R^2`.
         """
         lags = check_int("lags", lags, lower=1, allow_none=True)
         standardized = check_bool("standardized", standardized)
@@ -2444,7 +2446,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             raise ValueError("Test requires at least 3 non-nan observations")
         lag, lead = lagmat(resid2, lags, "both", "sep", False)
         lag = add_constant(lag)
-        res = OLS(lead, lag).fit()
+        # The R-squared does not depend on centering the lags
+        res = centered_ols(lead, lag)
         stat = nobs * res.rsquared
         test_type = "R" if not standardized else "Standardized r"
         null = f"{test_type}esiduals are homoskedastic."

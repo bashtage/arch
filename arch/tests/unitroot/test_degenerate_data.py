@@ -22,6 +22,8 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
+from statsmodels.regression.linear_model import OLS
+
 from arch.unitroot import (
     ADF,
     DFGLS,
@@ -561,3 +563,42 @@ def test_check_finite_data():
     for bad in (np.nan, np.inf):
         with pytest.raises(InfeasibleTestException, match="data are not finite"):
             _check_finite_data("data", np.ones(3), np.array([1.0, bad]))
+
+
+def test_level_with_tiny_variation_regressions_are_centered():
+    # The lagged level of a series that varies little around 5.3 is nearly 5.3 times
+    # the constant, which statsmodels can treat as rank-deficient. The regressions
+    # are estimated with the regressors centered and reported for the level.
+    y = 5.3 + 1e-12 * np.random.default_rng(7).standard_normal(NOBS)
+    adf = ADF(y, trend="c", lags=2)
+    reg = adf.regression
+    assert int(reg.model.rank) == reg.model.exog.shape[1]
+    assert reg.tvalues["Level.L1"] == adf.stat
+    pp = PhillipsPerron(y, trend="c")
+    reg = pp.regression
+    assert int(reg.model.rank) == 2
+    # The slope of the regression of y on its lag, from centered and normalized data
+    level = y[:-1] - y[:-1].mean()
+    lhs = y[1:] - y[1:].mean()
+    assert_allclose(reg.params.iloc[0], level @ lhs / (level @ level), rtol=1e-4)
+
+
+@pytest.mark.parametrize("trend", ["c", "ct", "ctt"])
+def test_centered_regressions_match_ols(trend):
+    # The regressions are reported for the regressors of the test, so they are the
+    # regressions on those regressors
+    y = np.random.default_rng(12).standard_normal(NOBS).cumsum() + 50.0
+    adf = ADF(y, trend=trend, lags=2)
+    reg = adf.regression
+    expected = OLS(reg.model.endog, reg.model.exog).fit()
+    assert_allclose(reg.params, expected.params, rtol=1e-8)
+    assert_allclose(reg.bse, expected.bse, rtol=1e-8)
+    assert_allclose(adf.stat, expected.tvalues[0], rtol=1e-8)
+    if trend != "ctt":
+        pp = PhillipsPerron(y, trend=trend, lags=4)
+        reg = pp.regression
+        expected = OLS(reg.model.endog, reg.model.exog).fit(
+            cov_type="HAC", cov_kwds={"maxlags": 4}
+        )
+        assert_allclose(reg.params, expected.params, rtol=1e-8)
+        assert_allclose(reg.bse, expected.bse, rtol=1e-8)

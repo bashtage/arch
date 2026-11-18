@@ -40,7 +40,7 @@ from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
-from statsmodels.regression.linear_model import OLS, RegressionResults
+from statsmodels.regression.linear_model import RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
 from arch._typing import (
@@ -91,6 +91,7 @@ from arch.unitroot.critical_values.dickey_fuller import (
 )
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
+from arch.utility._regression import centered_ols
 from arch.utility._validation import (
     check_array,
     check_bool,
@@ -1082,7 +1083,16 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def regression(self) -> RegressionResults:
-        """The OLS regression results from the ADF model estimated."""
+        """
+        The OLS regression results from the ADF model estimated.
+
+        If the trend includes a constant, the regression is estimated with the
+        dependent variable and the other regressors centered on their means, and
+        the results are then reported for the variables of the ADF regression, so that the
+        estimates, including the constant, and their covariance are those of
+        that regression. Centering does not change the test statistic. See
+        :ref:`centered-regressors`.
+        """
         self._compute_if_needed()
         return self._regression
 
@@ -1461,17 +1471,14 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
             column_scales=[y_scale] + [0.0] * (rhs_df.shape[1] - 1),
             hint=_UNIT_ROOT_SINGULAR,
         )
-        # The regression of the specification of the test, with the level of y. It is
-        # not used by the statistic, and statsmodels finds it rank-deficient when the
-        # variation of y is small compared with its level, which the centered
-        # regression above is not
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore", message="The design matrix is rank-deficient"
-            )
-            self._regression = OLS(lhs, rhs_df).fit(
-                cov_type="HAC", cov_kwds={"maxlags": lags}
-            )
+        # The regression of the specification of the test, with the level of y, which
+        # is not used by the statistic. It is estimated with the lagged level centered
+        # if there is a constant, and reported for the level, since statsmodels finds
+        # the regression on the level rank-deficient when the variation of y is small
+        # compared with its level
+        self._regression = centered_ols(
+            lhs, rhs_df, cov_type="HAC", cov_kwds={"maxlags": lags}
+        )
         k = rhs_df.shape[1]
         n, u = resols.nobs, resols.resid
         lam2 = cov_nw(u, lags, demean=False)
@@ -1530,7 +1537,11 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The OLS regression results for the specification used in the test.
 
         The results returned use a Newey-West covariance matrix with the same
-        number of lags as are used in the test statistic.
+        number of lags as are used in the test statistic. If the trend includes a
+        constant, the regression is estimated with y, its lagged level and the trend
+        terms centered on their means, and the results are then reported for the
+        variables of the specification, as described in
+        :ref:`centered-regressors`.
         """
         self._compute_if_needed()
         return self._regression
@@ -1653,7 +1664,8 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         # 1. Estimate model with trend
         nobs, y, trend = self._nobs, self._y, self._trend
         z = add_trend(nobs=nobs, trend=trend)
-        res = OLS(y, z).fit()
+        # The residuals do not depend on centering the trend
+        res = centered_ols(y, z)
         # 2. Compute KPSS test
         self._resids = u = res.resid
         if self._lags is None:
