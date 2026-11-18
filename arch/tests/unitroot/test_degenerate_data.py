@@ -21,7 +21,6 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
-
 from statsmodels.regression.linear_model import OLS
 
 from arch.unitroot import (
