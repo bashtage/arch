@@ -110,3 +110,32 @@ lags than the AIC and BIC.
 
 Ng, S., & Perron, P. (2001). Lag length selection and the construction of unit
 root tests with good size and power. *Econometrica*, 69(6), 1519-1554.
+
+.. _centered-regressors:
+
+Regressions with a Constant
+===========================
+
+The regressions of :class:`~arch.unitroot.ADF`,
+:class:`~arch.unitroot.PhillipsPerron` and :class:`~arch.unitroot.KPSS`, and the
+cointegrating regressions of the :doc:`cointegration tests and estimators
+<cointegration>`, are estimated with the dependent variable and the regressors
+other than the constant centered on their means when the trend includes a constant.
+Centering only changes the parametrization of the regression: the residuals and the
+estimated coefficients of the other regressors, and their covariance, are
+unchanged, and only the constant becomes the intercept at the means. The results
+are then reported for the original variables. The test statistics, the estimates,
+including the constant, and their standard errors, for example in ``regression`` of
+:class:`~arch.unitroot.ADF`, are those of the regression on the original
+regressors, up to rounding error.
+
+Centering removes the collinearity between the constant and a regressor whose
+variation is small compared with its level, such as the lagged level of a series
+that varies little around a large mean. statsmodels decides the rank of a
+regression from the singular values of its regressors, and from version 0.15.1
+treats a regression as rank-deficient when the smallest singular value is below
+``max(nobs, ncols)`` times the machine precision times the largest. Without
+centering, the regression of a series equal to 5.3 plus noise with a standard
+deviation of 1e-12 would be treated as rank-deficient, although the noise is more
+than 1000 times larger than the rounding error of the series. The test would then
+raise ``InfeasibleTestException``.

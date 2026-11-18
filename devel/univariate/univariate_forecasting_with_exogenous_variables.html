@@ -23,7 +23,7 @@
     
   
       
-        <title>Forecasting with Exogenous Regressors - arch v9.0.1 (+21)</title>
+        <title>Forecasting with Exogenous Regressors - arch v9.0.1 (+24)</title>
       
     
 
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+21)
+            arch v9.0.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -206,10 +206,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+21)
+    arch v9.0.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -1457,8 +1457,8 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([5.01775166, 5.00887583, 5.00443791, 5.00221896, 5.00110948,
-       5.00055474, 5.00027737, 5.00013868, 5.00006934, 5.00003467])
+array([4.98883667, 4.99441834, 4.99720917, 4.99860458, 4.99930229,
+       4.99965115, 4.99982557, 4.99991279, 4.99995639, 4.9999782 ])
 </pre></div></div>
 </div>
 <h2 id="Fitting-the-model">Fitting the model<a class="headerlink" href="#Fitting-the-model" title="Link to this heading">¶</a></h2>
@@ -1483,27 +1483,27 @@ array([5.01775166, 5.00887583, 5.00443791, 5.00221896, 5.00110948,
 ==============================================================================
 Dep. Variable:                   data   R-squared:                       0.992
 Mean Model:                      AR-X   Adj. R-squared:                  0.992
-Vol Model:                      GARCH   Log-Likelihood:               -1448.31
-Distribution:                  Normal   AIC:                           2910.62
-Method:            Maximum Likelihood   BIC:                           2944.97
+Vol Model:                      GARCH   Log-Likelihood:               -1414.17
+Distribution:                  Normal   AIC:                           2842.35
+Method:            Maximum Likelihood   BIC:                           2876.70
                                         No. Observations:                  999
 Date:                Wed, Nov 18 2026   Df Residuals:                      995
-Time:                        10:34:54   Df Model:                            4
+Time:                        14:20:57   Df Model:                            4
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const          3.2944      0.173     19.056  5.857e-81 [  2.956,  3.633]
-data[1]        0.6989  3.696e-03    189.085      0.000 [  0.692,  0.706]
-x0             1.9751  2.389e-02     82.673      0.000 [  1.928,  2.022]
-x1            -2.0428  2.908e-02    -70.235      0.000 [ -2.100, -1.986]
+Const          2.7729      0.173     15.993  1.421e-57 [  2.433,  3.113]
+data[1]        0.6955  3.641e-03    191.033      0.000 [  0.688,  0.703]
+x0             2.0352  2.326e-02     87.482      0.000 [  1.990,  2.081]
+x1            -1.9836  2.579e-02    -76.922      0.000 [ -2.034, -1.933]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          0.1353  4.242e-02      3.190  1.424e-03 [5.217e-02,  0.218]
-alpha[1]       0.1064  2.594e-02      4.102  4.101e-05 [5.556e-02,  0.157]
-beta[1]        0.7709  5.105e-02     15.101  1.603e-51   [  0.671,  0.871]
+omega          0.1275  4.762e-02      2.677  7.434e-03 [3.414e-02,  0.221]
+alpha[1]       0.1001  2.519e-02      3.972  7.127e-05 [5.068e-02,  0.149]
+beta[1]        0.7771  5.855e-02     13.272  3.347e-40   [  0.662,  0.892]
 ==========================================================================
 
 Covariance estimator: robust
@@ -1613,133 +1613,133 @@ The shape is (2, 1, 10)
   <tbody>
     <tr>
       <th>990</th>
-      <td>21.121834</td>
-      <td>20.279559</td>
-      <td>19.144591</td>
-      <td>17.935643</td>
-      <td>16.768910</td>
-      <td>15.701506</td>
-      <td>14.756707</td>
-      <td>13.938787</td>
-      <td>13.241805</td>
-      <td>12.654804</td>
+      <td>25.082976</td>
+      <td>23.579883</td>
+      <td>21.771124</td>
+      <td>19.980516</td>
+      <td>18.348120</td>
+      <td>16.922720</td>
+      <td>15.709091</td>
+      <td>14.692109</td>
+      <td>13.848934</td>
+      <td>13.155050</td>
     </tr>
     <tr>
       <th>991</th>
-      <td>18.156311</td>
-      <td>17.671349</td>
-      <td>17.068341</td>
-      <td>16.369206</td>
-      <td>15.625382</td>
-      <td>14.884964</td>
-      <td>14.182925</td>
-      <td>13.540623</td>
-      <td>12.968442</td>
-      <td>12.468975</td>
+      <td>19.152844</td>
+      <td>16.869878</td>
+      <td>15.239600</td>
+      <td>14.048087</td>
+      <td>13.161416</td>
+      <td>12.492426</td>
+      <td>11.982324</td>
+      <td>11.590202</td>
+      <td>11.286858</td>
+      <td>11.051007</td>
     </tr>
     <tr>
       <th>992</th>
-      <td>10.597450</td>
-      <td>9.179183</td>
-      <td>8.569785</td>
-      <td>8.381656</td>
-      <td>8.406493</td>
-      <td>8.531915</td>
-      <td>8.697500</td>
-      <td>8.871286</td>
-      <td>9.037037</td>
-      <td>9.187227</td>
+      <td>20.747092</td>
+      <td>19.802811</td>
+      <td>18.769662</td>
+      <td>17.710591</td>
+      <td>16.681970</td>
+      <td>15.723169</td>
+      <td>14.856760</td>
+      <td>14.092122</td>
+      <td>13.429492</td>
+      <td>12.863393</td>
     </tr>
     <tr>
       <th>993</th>
-      <td>8.138668</td>
-      <td>7.647893</td>
-      <td>7.588222</td>
-      <td>7.735989</td>
-      <td>7.972199</td>
-      <td>8.234279</td>
-      <td>8.490343</td>
-      <td>8.725256</td>
-      <td>8.933004</td>
-      <td>9.112447</td>
+      <td>20.850361</td>
+      <td>19.907359</td>
+      <td>18.779872</td>
+      <td>17.623412</td>
+      <td>16.523818</td>
+      <td>15.524143</td>
+      <td>14.641625</td>
+      <td>13.878398</td>
+      <td>13.228214</td>
+      <td>12.680629</td>
     </tr>
     <tr>
       <th>994</th>
-      <td>10.693427</td>
-      <td>11.039317</td>
-      <td>11.141163</td>
-      <td>11.113990</td>
-      <td>11.023133</td>
-      <td>10.905572</td>
-      <td>10.781892</td>
-      <td>10.663117</td>
-      <td>10.554683</td>
-      <td>10.458792</td>
+      <td>17.952372</td>
+      <td>17.113383</td>
+      <td>16.273922</td>
+      <td>15.460357</td>
+      <td>14.698309</td>
+      <td>14.005146</td>
+      <td>13.389450</td>
+      <td>12.852831</td>
+      <td>12.392139</td>
+      <td>12.001382</td>
     </tr>
     <tr>
       <th>995</th>
-      <td>7.440577</td>
-      <td>7.660570</td>
-      <td>8.100629</td>
-      <td>8.548145</td>
-      <td>8.928398</td>
-      <td>9.225943</td>
-      <td>9.448254</td>
-      <td>9.609596</td>
-      <td>9.724389</td>
-      <td>9.804881</td>
+      <td>13.245518</td>
+      <td>12.427003</td>
+      <td>12.032269</td>
+      <td>11.798459</td>
+      <td>11.619009</td>
+      <td>11.456050</td>
+      <td>11.299867</td>
+      <td>11.150816</td>
+      <td>11.011744</td>
+      <td>10.885166</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>7.163561</td>
-      <td>7.698134</td>
-      <td>8.234385</td>
-      <td>8.688953</td>
-      <td>9.045361</td>
-      <td>9.312896</td>
-      <td>9.508388</td>
-      <td>9.648722</td>
-      <td>9.748225</td>
-      <td>9.818142</td>
+      <td>12.301154</td>
+      <td>11.293411</td>
+      <td>10.636564</td>
+      <td>10.229209</td>
+      <td>9.992572</td>
+      <td>9.868856</td>
+      <td>9.817250</td>
+      <td>9.809770</td>
+      <td>9.827721</td>
+      <td>9.858936</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>6.179464</td>
-      <td>6.855588</td>
-      <td>7.618512</td>
-      <td>8.285165</td>
-      <td>8.808502</td>
-      <td>9.195584</td>
-      <td>9.470910</td>
-      <td>9.661069</td>
-      <td>9.789129</td>
-      <td>9.873256</td>
+      <td>6.130299</td>
+      <td>5.491385</td>
+      <td>5.692577</td>
+      <td>6.213364</td>
+      <td>6.812462</td>
+      <td>7.384747</td>
+      <td>7.890309</td>
+      <td>8.319481</td>
+      <td>8.675774</td>
+      <td>8.967700</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>13.248461</td>
-      <td>13.748450</td>
-      <td>13.568787</td>
-      <td>13.135878</td>
-      <td>12.645416</td>
-      <td>12.181293</td>
-      <td>11.774340</td>
-      <td>11.431102</td>
-      <td>11.147783</td>
-      <td>10.916836</td>
+      <td>1.418060</td>
+      <td>1.197725</td>
+      <td>1.795821</td>
+      <td>2.726170</td>
+      <td>3.741329</td>
+      <td>4.720120</td>
+      <td>5.608178</td>
+      <td>6.386208</td>
+      <td>7.052894</td>
+      <td>7.615649</td>
     </tr>
     <tr>
       <th>999</th>
-      <td>12.501947</td>
-      <td>12.878892</td>
-      <td>12.918794</td>
-      <td>12.765497</td>
-      <td>12.512325</td>
-      <td>12.218075</td>
-      <td>11.918377</td>
-      <td>11.633613</td>
-      <td>11.374331</td>
-      <td>11.144919</td>
+      <td>-1.748122</td>
+      <td>-1.276264</td>
+      <td>-0.317967</td>
+      <td>0.853851</td>
+      <td>2.073635</td>
+      <td>3.246026</td>
+      <td>4.320709</td>
+      <td>5.275579</td>
+      <td>6.105614</td>
+      <td>6.815618</td>
     </tr>
   </tbody>
 </table>
@@ -1843,28 +1843,28 @@ np.float64(0.0)
 <div class="highlight"><pre>
                           AR-X - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   data   R-squared:                       0.953
-Mean Model:                      AR-X   Adj. R-squared:                  0.953
-Vol Model:                      GARCH   Log-Likelihood:               -2334.19
-Distribution:                  Normal   AIC:                           4680.37
-Method:            Maximum Likelihood   BIC:                           4709.81
+Dep. Variable:                   data   R-squared:                       0.949
+Mean Model:                      AR-X   Adj. R-squared:                  0.949
+Vol Model:                      GARCH   Log-Likelihood:               -2337.24
+Distribution:                  Normal   AIC:                           4686.48
+Method:            Maximum Likelihood   BIC:                           4715.92
                                         No. Observations:                  999
 Date:                Wed, Nov 18 2026   Df Residuals:                      996
-Time:                        10:34:55   Df Model:                            3
+Time:                        14:20:57   Df Model:                            3
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const         -6.8069      0.295    -23.113 3.409e-118 [ -7.384, -6.230]
-data[1]        0.7615  9.844e-03     77.357      0.000 [  0.742,  0.781]
-x0             1.8320  6.473e-02     28.303 3.154e-176 [  1.705,  1.959]
+Const         -7.2324      0.278    -26.035 2.005e-149 [ -7.777, -6.688]
+data[1]        0.7455  9.761e-03     76.373      0.000 [  0.726,  0.765]
+x0             1.9542  6.405e-02     30.508 2.016e-204 [  1.829,  2.080]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          5.3756      1.585      3.392  6.933e-04   [  2.270,  8.481]
-alpha[1]       0.1586  5.813e-02      2.728  6.363e-03 [4.468e-02,  0.273]
-beta[1]        0.0000      0.265      0.000      1.000   [ -0.520,  0.520]
+omega          4.0784      1.400      2.913  3.585e-03   [  1.334,  6.823]
+alpha[1]       0.1298  3.699e-02      3.510  4.482e-04 [5.734e-02,  0.202]
+beta[1]        0.2328      0.225      1.034      0.301   [ -0.209,  0.674]
 ==========================================================================
 
 Covariance estimator: robust
@@ -1915,8 +1915,8 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[1.01907623, 1.11558467, 1.17786829, 1.25129788, 1.2447052 ,
-        1.22711996, 1.20962005, 1.30326327, 1.29095788, 1.29521357]])
+array([[1.01506669, 1.3305133 , 1.27518257, 1.43730841, 1.49250923,
+        1.43470525, 1.26926241, 1.24672956, 1.3253373 , 1.49048903]])
 </pre></div></div>
 </div>
 <h3 id="Simulating-the-out-of-sample-x">Simulating the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Simulating-the-out-of-sample-x" title="Link to this heading">¶</a></h3>
@@ -1964,8 +1964,8 @@ array([[1.01907623, 1.11558467, 1.17786829, 1.25129788, 1.2447052 ,
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[2.91497056, 4.75515636, 6.43352122, 7.52373052, 8.18616347,
-        8.56479267, 8.58030055, 8.53994011, 8.91843187, 9.15313846]])
+array([[3.0716155 , 4.87537205, 6.21000042, 7.51708988, 8.31732983,
+        8.90090542, 8.92555534, 9.01899446, 9.22074149, 9.41811269]])
 </pre></div></div>
 </div>
 <h2 id="Conditional-Mean-Alignment-vs.-Forecast-Alignment">Conditional Mean Alignment vs. Forecast Alignment<a class="headerlink" href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" title="Link to this heading">¶</a></h2>
@@ -1990,16 +1990,16 @@ array([[2.91497056, 4.75515636, 6.43352122, 7.52373052, 8.18616347,
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 0            NaN
-1       5.771512
-2       8.096877
-3       8.483967
-4       6.122971
+1      -2.507946
+2      -3.037746
+3       1.781436
+4       1.507856
          ...
-995     7.620400
-996     7.231101
-997     5.464362
-998    11.360675
-999    12.512225
+995    14.674372
+996    13.204736
+997     7.517402
+998     3.202616
+999     0.520547
 Length: 1000, dtype: float64
 </pre></div></div>
 </div>
@@ -2069,23 +2069,23 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>0</th>
-      <td>5.771512</td>
+      <td>-2.507946</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>8.096877</td>
+      <td>-3.037746</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>8.483967</td>
+      <td>1.781436</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>6.122971</td>
+      <td>1.507856</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>-0.974987</td>
+      <td>2.839052</td>
     </tr>
     <tr>
       <th>...</th>
@@ -2093,19 +2093,19 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
     </tr>
     <tr>
       <th>995</th>
-      <td>7.231101</td>
+      <td>13.204736</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>5.464362</td>
+      <td>7.517402</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>11.360675</td>
+      <td>3.202616</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>12.512225</td>
+      <td>0.520547</td>
     </tr>
     <tr>
       <th>999</th>
@@ -2164,23 +2164,23 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>0</th>
-      <td>9.899818</td>
+      <td>-1.228885</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>5.103292</td>
+      <td>-2.838491</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>8.222068</td>
+      <td>-4.669954</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>5.205571</td>
+      <td>4.346038</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>4.289786</td>
+      <td>3.009447</td>
     </tr>
     <tr>
       <th>...</th>
@@ -2188,19 +2188,19 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
     </tr>
     <tr>
       <th>995</th>
-      <td>7.788681</td>
+      <td>14.628767</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>6.306584</td>
+      <td>10.046167</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>9.014919</td>
+      <td>6.553087</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>11.591794</td>
+      <td>2.417585</td>
     </tr>
     <tr>
       <th>999</th>
@@ -2267,16 +2267,16 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>999</th>
-      <td>12.436094</td>
-      <td>12.74749</td>
-      <td>12.723774</td>
-      <td>12.508124</td>
-      <td>12.193137</td>
-      <td>11.837408</td>
-      <td>11.476863</td>
-      <td>11.132469</td>
-      <td>10.815472</td>
-      <td>10.530921</td>
+      <td>-1.930021</td>
+      <td>-1.690516</td>
+      <td>-0.963803</td>
+      <td>0.001795</td>
+      <td>1.050196</td>
+      <td>2.087295</td>
+      <td>3.059898</td>
+      <td>3.941243</td>
+      <td>4.721188</td>
+      <td>5.399649</td>
     </tr>
   </tbody>
 </table>

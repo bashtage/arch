@@ -19,7 +19,7 @@
     
   
       
-        <title>Version 9 - arch v9.0.1 (+21)</title>
+        <title>Version 9 - arch v9.0.1 (+24)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+21)
+            arch v9.0.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+21)
+    arch v9.0.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -537,6 +537,27 @@ the points where a loss crosses the scaled VaR, and is a lower bound on what a
 non-proportional series could hide. The result is a
 <a class="reference internal" href="../univariate/utility.html#arch.univariate.MaxUndetectableUnderstatementResult" title="arch.univariate.MaxUndetectableUnderstatementResult (Python class) — Result of the maximum undetectable understatement backtest of VaR."><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxUndetectableUnderstatementResult</span></code></a> with the limit, the
 binding test, and the exceptions it would add (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/904">GH904</a>, <a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1015">GH1015</a>).</p></li>
+</ul>
+<h3 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The regressions of <a class="reference internal" href="../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> and <a class="reference internal" href="../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>, the
+cointegrating regressions of <a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">engle_granger()</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris" title="arch.unitroot.cointegration.phillips_ouliaris (Python function) — Test for cointegration within a set of time series."><code class="xref py py-func docutils literal notranslate"><span class="pre">phillips_ouliaris()</span></code></a>,
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html#arch.unitroot.cointegration.DynamicOLS" title="arch.unitroot.cointegration.DynamicOLS (Python class) — Dynamic OLS (DOLS) cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicOLS</span></code></a> and the first stage of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.FullyModifiedOLS.html#arch.unitroot.cointegration.FullyModifiedOLS" title="arch.unitroot.cointegration.FullyModifiedOLS (Python class) — Fully Modified OLS cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">FullyModifiedOLS</span></code></a> and
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a>, and the auxiliary
+regression of <code class="docutils literal notranslate"><span class="pre">arch_lm_test</span></code>, are estimated with the dependent variable and the
+regressors other than the constant centered on their means when they include a
+constant. The results are reported for the original variables, so the test
+statistics, the estimates, including the constant, and their covariance only
+change by rounding error. statsmodels 0.15.1 treats a regression as rank-deficient
+when its smallest singular value is below <code class="docutils literal notranslate"><span class="pre">max(nobs,</span> <span class="pre">ncols)</span></code> times the machine
+precision times the largest. ADF then raised <code class="docutils literal notranslate"><span class="pre">InfeasibleTestException</span></code> for a
+series whose variation is small compared with its level, for example 5.3 plus
+noise with a standard deviation of 1e-12, and the <code class="docutils literal notranslate"><span class="pre">regression</span></code> of
+<a class="reference internal" href="../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> returned minimum-norm estimates instead of
+the estimates of its regression (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/1032">GH1032</a>).</p></li>
 </ul>
 <h2 id="release-9-0-november-11-2026">Release 9.0 (November 11, 2026)<a class="headerlink" href="#release-9-0-november-11-2026" title="Link to this heading">¶</a></h2>
 <h3 id="highlights">Highlights<a class="headerlink" href="#highlights" title="Link to this heading">¶</a></h3>
@@ -1402,7 +1423,7 @@ as <code class="docutils literal notranslate"><span class="pre">&quot;1.5&quot;<
 first if that is intended. An integer that is too large for <code class="docutils literal notranslate"><span class="pre">float64</span></code> raises a
 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> where it raised an <code class="docutils literal notranslate"><span class="pre">OverflowError</span></code> (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/985">GH985</a>).</p></li>
 </ul>
-<h3 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<h3 id="id2">Bug fixes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Fixed <a class="reference internal" href="../multiple-comparison/generated/arch.bootstrap.StepM.html#arch.bootstrap.StepM" title="arch.bootstrap.StepM (Python class) — StepM multiple comparison procedure of Romano and Wolf."><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a>, which raised a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when all of the
 models were found to be superior after more than one round of the procedure

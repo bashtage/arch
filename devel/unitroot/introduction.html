@@ -23,7 +23,7 @@
     
   
       
-        <title>Introduction - arch v9.0.1 (+21)</title>
+        <title>Introduction - arch v9.0.1 (+24)</title>
       
     
 
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+21)
+            arch v9.0.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../index.html" title="arch v9.0.1 (+24)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+21)
+    arch v9.0.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -410,6 +410,16 @@
     
     <span class="md-ellipsis">
       <span title="/unitroot/introduction.rst#lag-length-selection (reference label)"><span>Lag Length Selection</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regressions-with-a-constant" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/unitroot/introduction.rst#regressions-with-a-constant (reference label)"><span>Regressions with a Constant</span></span>
     </span>
   </a>
   
@@ -709,6 +719,16 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#regressions-with-a-constant" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/unitroot/introduction.rst#regressions-with-a-constant (reference label)"><span>Regressions with a Constant</span></span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -830,6 +850,28 @@ lags than the AIC and BIC.</p>
 </div>
 <p>Ng, S., &amp; Perron, P. (2001). Lag length selection and the construction of unit
 root tests with good size and power. <em>Econometrica</em>, 69(6), 1519-1554.</p>
+<h2 id="regressions-with-a-constant"><span id="centered-regressors"></span>Regressions with a Constant<a class="headerlink" href="#regressions-with-a-constant" title="Link to this heading">¶</a></h2>
+<p>The regressions of <a class="reference internal" href="generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>,
+<a class="reference internal" href="generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron" title="arch.unitroot.PhillipsPerron (Python class) — Phillips-Perron unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">PhillipsPerron</span></code></a> and <a class="reference internal" href="generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS" title="arch.unitroot.KPSS (Python class) — Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test."><code class="xref py py-class docutils literal notranslate"><span class="pre">KPSS</span></code></a>, and the
+cointegrating regressions of the <a class="reference internal" href="cointegration.html"><span class="doc">cointegration tests and estimators</span></a>, are estimated with the dependent variable and the regressors
+other than the constant centered on their means when the trend includes a constant.
+Centering only changes the parametrization of the regression: the residuals and the
+estimated coefficients of the other regressors, and their covariance, are
+unchanged, and only the constant becomes the intercept at the means. The results
+are then reported for the original variables. The test statistics, the estimates,
+including the constant, and their standard errors, for example in <code class="docutils literal notranslate"><span class="pre">regression</span></code> of
+<a class="reference internal" href="generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test."><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a>, are those of the regression on the original
+regressors, up to rounding error.</p>
+<p>Centering removes the collinearity between the constant and a regressor whose
+variation is small compared with its level, such as the lagged level of a series
+that varies little around a large mean. statsmodels decides the rank of a
+regression from the singular values of its regressors, and from version 0.15.1
+treats a regression as rank-deficient when the smallest singular value is below
+<code class="docutils literal notranslate"><span class="pre">max(nobs,</span> <span class="pre">ncols)</span></code> times the machine precision times the largest. Without
+centering, the regression of a series equal to 5.3 plus noise with a standard
+deviation of 1e-12 would be treated as rank-deficient, although the noise is more
+than 1000 times larger than the rounding error of the series. The test would then
+raise <code class="docutils literal notranslate"><span class="pre">InfeasibleTestException</span></code>.</p>
 
 
 

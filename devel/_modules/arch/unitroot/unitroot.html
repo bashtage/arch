@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v9.0.1 (+21)</title>
+        <title>arch.unitroot.unitroot - arch v9.0.1 (+24)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+24)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+21)
+            arch v9.0.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+24)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+21)
+    arch v9.0.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -568,7 +568,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">Summary</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleTable</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">RegressionResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegressionResults</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.tsatools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lagmat</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -619,6 +619,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.kpss</span><span class="w"> </span><span class="kn">import</span> <span class="n">kpss_critical_values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.zivot_andrews</span><span class="w"> </span><span class="kn">import</span> <span class="n">za_critical_values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._regression</span><span class="w"> </span><span class="kn">import</span> <span class="n">centered_ols</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_array</span><span class="p">,</span>
     <span class="n">check_bool</span><span class="p">,</span>
@@ -1612,7 +1613,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The OLS regression results from the ADF model estimated."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The OLS regression results from the ADF model estimated.</span>
+
+<span class="sd">        If the trend includes a constant, the regression is estimated with the</span>
+<span class="sd">        dependent variable and the other regressors centered on their means, and</span>
+<span class="sd">        the results are then reported for the variables of the ADF regression, so that the</span>
+<span class="sd">        estimates, including the constant, and their covariance are those of</span>
+<span class="sd">        that regression. Centering does not change the test statistic. See</span>
+<span class="sd">        :ref:`centered-regressors`.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span>
 
@@ -1997,17 +2007,14 @@
             <span class="n">column_scales</span><span class="o">=</span><span class="p">[</span><span class="n">y_scale</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">rhs_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">hint</span><span class="o">=</span><span class="n">_UNIT_ROOT_SINGULAR</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># The regression of the specification of the test, with the level of y. It is</span>
-        <span class="c1"># not used by the statistic, and statsmodels finds it rank-deficient when the</span>
-        <span class="c1"># variation of y is small compared with its level, which the centered</span>
-        <span class="c1"># regression above is not</span>
-        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
-                <span class="s2">"ignore"</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">"The design matrix is rank-deficient"</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs_df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-                <span class="n">cov_type</span><span class="o">=</span><span class="s2">"HAC"</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxlags"</span><span class="p">:</span> <span class="n">lags</span><span class="p">}</span>
-            <span class="p">)</span>
+        <span class="c1"># The regression of the specification of the test, with the level of y, which</span>
+        <span class="c1"># is not used by the statistic. It is estimated with the lagged level centered</span>
+        <span class="c1"># if there is a constant, and reported for the level, since statsmodels finds</span>
+        <span class="c1"># the regression on the level rank-deficient when the variation of y is small</span>
+        <span class="c1"># compared with its level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">centered_ols</span><span class="p">(</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs_df</span><span class="p">,</span> <span class="n">cov_type</span><span class="o">=</span><span class="s2">"HAC"</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxlags"</span><span class="p">:</span> <span class="n">lags</span><span class="p">}</span>
+        <span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">rhs_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">n</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">,</span> <span class="n">resols</span><span class="o">.</span><span class="n">resid</span>
         <span class="n">lam2</span> <span class="o">=</span> <span class="n">cov_nw</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -2066,7 +2073,11 @@
 <span class="sd">        The OLS regression results for the specification used in the test.</span>
 
 <span class="sd">        The results returned use a Newey-West covariance matrix with the same</span>
-<span class="sd">        number of lags as are used in the test statistic.</span>
+<span class="sd">        number of lags as are used in the test statistic. If the trend includes a</span>
+<span class="sd">        constant, the regression is estimated with y, its lagged level and the trend</span>
+<span class="sd">        terms centered on their means, and the results are then reported for the</span>
+<span class="sd">        variables of the specification, as described in</span>
+<span class="sd">        :ref:`centered-regressors`.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span></div>
@@ -2192,7 +2203,8 @@
         <span class="c1"># 1. Estimate model with trend</span>
         <span class="n">nobs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
         <span class="n">z</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="n">trend</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="c1"># The residuals do not depend on centering the trend</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">centered_ols</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
         <span class="c1"># 2. Compute KPSS test</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resids</span> <span class="o">=</span> <span class="n">u</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">resid</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

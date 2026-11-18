@@ -19,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v9.0.1 (+21)</title>
+        <title>arch.univariate.base - arch v9.0.1 (+24)</title>
       
     
 
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+24)" class="md-header__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -101,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v9.0.1 (+21)
+            arch v9.0.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -196,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v9.0.1 (+21)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+21)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v9.0.1 (+24)" class="md-nav__button md-logo" aria-label="arch v9.0.1 (+24)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v9.0.1 (+21)
+    arch v9.0.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -544,7 +544,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizeResult</span><span class="p">,</span> <span class="n">minimize</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">Summary</span><span class="p">,</span> <span class="n">fmt_2cols</span><span class="p">,</span> <span class="n">fmt_params</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleTable</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">OLS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tools.numdiff</span><span class="w"> </span><span class="kn">import</span> <span class="n">approx_fprime</span><span class="p">,</span> <span class="n">approx_hess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tools.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_constant</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.tsatools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lagmat</span>
@@ -570,6 +569,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._regression</span><span class="w"> </span><span class="kn">import</span> <span class="n">centered_ols</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility._validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_array</span><span class="p">,</span>
     <span class="n">check_bool</span><span class="p">,</span>
@@ -3055,6 +3055,8 @@
 <span class="sd">        scales :math:`R^2` by the number of observations in the regression, as</span>
 <span class="sd">        in :func:`statsmodels.stats.diagnostic.het_arch`. The statistic has an</span>
 <span class="sd">        asymptotic :math:`\chi^2_{\text{lags}}` distribution under the null.</span>
+<span class="sd">        The auxiliary regression is estimated with the squared residuals and</span>
+<span class="sd">        their lags centered on their means, which does not change :math:`R^2`.</span>
 <span class="sd">        """</span>
         <span class="n">lags</span> <span class="o">=</span> <span class="n">check_int</span><span class="p">(</span><span class="s2">"lags"</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">standardized</span> <span class="o">=</span> <span class="n">check_bool</span><span class="p">(</span><span class="s2">"standardized"</span><span class="p">,</span> <span class="n">standardized</span><span class="p">)</span>
@@ -3075,7 +3077,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Test requires at least 3 non-nan observations"</span><span class="p">)</span>
         <span class="n">lag</span><span class="p">,</span> <span class="n">lead</span> <span class="o">=</span> <span class="n">lagmat</span><span class="p">(</span><span class="n">resid2</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">,</span> <span class="s2">"sep"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">lag</span> <span class="o">=</span> <span class="n">add_constant</span><span class="p">(</span><span class="n">lag</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="c1"># The R-squared does not depend on centering the lags</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">centered_ols</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span>
         <span class="n">stat</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">res</span><span class="o">.</span><span class="n">rsquared</span>
         <span class="n">test_type</span> <span class="o">=</span> <span class="s2">"R"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">standardized</span> <span class="k">else</span> <span class="s2">"Standardized r"</span>
         <span class="n">null</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">test_type</span><span class="si">}</span><span class="s2">esiduals are homoskedastic."</span>
