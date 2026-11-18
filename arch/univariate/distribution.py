@@ -1432,7 +1432,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
                     )
                 )
 
-            if z > loc:
+            # lambda=-1 leaves the right half empty, with rscale=0.
+            if z > loc and lam != -1.0:
                 rhs = (
                     (1 + lam)
                     * (loc ** (n - k))
