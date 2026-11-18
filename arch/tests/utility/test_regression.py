@@ -81,13 +81,13 @@ def test_centered_ols_level_with_tiny_variation():
     # The reference centers and normalizes the columns, which makes them
     # orthogonal to the constant and of the same size
     centered = rhs.to_numpy().copy()
-    centered[:, :3] -= centered[:, :3].mean(0)
+    centered[:, :3] -= centered[:, :3].mean(axis=0)
     norms = np.linalg.norm(centered, axis=0)
     beta = np.linalg.lstsq(centered / norms, lhs, rcond=None)[0] / norms
     assert_allclose(res.params.iloc[:3], beta[:3], rtol=1e-4)
     # The intercept of the centered regression is the mean of lhs, and the constant
     # is the intercept of the regression on the level
-    means = rhs.iloc[:, :3].mean(0).to_numpy()
+    means = rhs.iloc[:, :3].mean(axis=0).to_numpy()
     params = res.params.to_numpy()
     assert_allclose(params[3], lhs.mean() - means @ params[:3], rtol=1e-12)
     assert np.isfinite(res.tvalues).all()
