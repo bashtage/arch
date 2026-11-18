@@ -1,5 +1,5 @@
-from numpy import exp, inf, log, nan, ones_like, pi
-from numpy.testing import assert_almost_equal, assert_equal
+from numpy import errstate, exp, inf, log, nan, ones_like, pi
+from numpy.testing import assert_allclose, assert_almost_equal, assert_equal
 import pytest
 from scipy.integrate import quad
 from scipy.special import gammaln
@@ -125,3 +125,16 @@ def test_students_t_partial_moment_infinite_bound(nu):
     for n in range(5):
         assert dist.partial_moment(n, -inf, [nu]) == 0.0
         assert_almost_equal(dist.partial_moment(n, inf, [nu]), dist.moment(n, [nu]))
+
+
+@pytest.mark.parametrize("eta", [3.0, 8.0, 30.0])
+@pytest.mark.parametrize(("order", "expected"), [(0, 1.0), (1, 0.0), (2, 1.0)])
+@pytest.mark.parametrize("bound", [2.0, 5.0, inf])
+def test_skew_student_partial_moment_above_left_half_support(
+    eta, order, expected, bound
+):
+    # At lambda=-1 the standardized left half-t has a finite upper endpoint.
+    # Above it, the first three partial moments equal mass, mean and variance.
+    with errstate(divide="raise", invalid="raise"):
+        actual = SkewStudent().partial_moment(order, bound, [eta, -1.0])
+    assert_allclose(actual, expected, atol=1e-12)
