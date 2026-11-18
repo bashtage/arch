@@ -16,6 +16,27 @@ New features
   :class:`~arch.univariate.MaxUndetectableUnderstatementResult` with the limit, the
   binding test, and the exceptions it would add (:issue:`904`, :issue:`1015`).
 
+Bug fixes
+~~~~~~~~~
+- The regressions of :class:`~arch.unitroot.ADF`,
+  :class:`~arch.unitroot.PhillipsPerron` and :class:`~arch.unitroot.KPSS`, the
+  cointegrating regressions of :func:`~arch.unitroot.cointegration.engle_granger`,
+  :func:`~arch.unitroot.cointegration.phillips_ouliaris`,
+  :class:`~arch.unitroot.cointegration.DynamicOLS` and the first stage of
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS` and
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg`, and the auxiliary
+  regression of ``arch_lm_test``, are estimated with the dependent variable and the
+  regressors other than the constant centered on their means when they include a
+  constant. The results are reported for the original variables, so the test
+  statistics, the estimates, including the constant, and their covariance only
+  change by rounding error. statsmodels 0.15.1 treats a regression as rank-deficient
+  when its smallest singular value is below ``max(nobs, ncols)`` times the machine
+  precision times the largest. ADF then raised ``InfeasibleTestException`` for a
+  series whose variation is small compared with its level, for example 5.3 plus
+  noise with a standard deviation of 1e-12, and the ``regression`` of
+  :class:`~arch.unitroot.PhillipsPerron` returned minimum-norm estimates instead of
+  the estimates of its regression (:issue:`1032`).
+
 Release 9.0 (November 11, 2026)
 ===============================
 

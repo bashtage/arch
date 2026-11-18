@@ -1,14 +1,14 @@
 from collections.abc import Callable, Sequence
 import functools
 from typing import Any, NamedTuple, Optional, TypeVar, cast
-import warnings
 
 import numpy as np
 import pandas as pd
 from statsmodels.iolib.summary import Summary
-from statsmodels.regression.linear_model import OLS, RegressionResults
+from statsmodels.regression.linear_model import RegressionResults
 
 from arch._typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
+from arch.utility._regression import centered_ols
 from arch.utility._validation import (
     check_array,
     check_instance,
@@ -147,12 +147,13 @@ def _fit_ols(
     """
     Fit an OLS regression of a test, which is not singular.
 
-    The exact singularity is checked first by _check_regression. statsmodels then
-    finds the rank from the singular values of the regressors, and warns with
-    SingularMatrixWarning if they are rank-deficient, which happens when a column
-    is tiny compared with another one, for example a variation of 1e-13 of the level
-    of y and t**2. The estimates are then not unique, and the test raises instead
-    of warning.
+    The exact singularity is checked first by _check_regression. The regression is
+    then estimated by centered_ols, which centers the regressors that are not
+    constant if rhs has a constant, and reports the results for rhs. statsmodels
+    finds the rank from the singular values of the centered regressors, which are
+    rank-deficient when a column is tiny compared with another one, for example a
+    variation of 1e-13 of the level of y and t**2. The estimates are then not unique,
+    and the test raises instead of warning.
     """
     _check_regression(
         lhs,
@@ -163,9 +164,7 @@ def _fit_ols(
         hint=hint,
         result=result,
     )
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", message="The design matrix is rank-deficient")
-        res = OLS(lhs, rhs).fit()
+    res = centered_ols(lhs, rhs)
     rank, ncols = int(res.model.rank), int(res.model.wexog.shape[1])
     if rank < ncols:
         raise InfeasibleTestException(
