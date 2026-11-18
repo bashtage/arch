@@ -204,9 +204,9 @@ jobs:
   - script: |
       echo "Testing site packages"
       mkdir test_run_dir
-      pushd test_run_dir
+      cd test_run_dir
+      # Last command: the step fails with the exit status of the tests
       python -c "import arch; arch.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
-      popd
     displayName: 'Run tests (site-packages)'
     condition: or(eq(variables['test.wheel'], 'true'), eq(variables['test.sdist'], 'true'))
 
