@@ -168,8 +168,8 @@ jobs:
     condition: eq(variables['test.sdist'], 'true')
 
   - script: |
-      echo "Installing to site packages (wheel)
-      python -m pip install pip wheel --upgrade"
+      echo "Installing to site packages (wheel)"
+      python -m pip install pip wheel --upgrade
       python -m pip wheel . --no-deps --wheel-dir ./dist/
       WHL=$(ls -t ./dist/arch-*.whl | head -1)
       pip install ${WHL} -v
