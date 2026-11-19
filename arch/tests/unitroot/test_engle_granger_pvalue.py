@@ -94,15 +94,21 @@ def test_pvalue_monotone_and_bounded(key):
     assert np.all(pvals <= 1.0)
     # Allow for rounding when two points of the grid are within 1e-15 of each other
     assert np.all(np.diff(pvals) >= -1e-14)
-    # The p-value is not constant in the part of the distribution that matters
-    middle = [
-        engle_granger_pval(float(stat), trend, num_x)
-        for stat in np.linspace(star - 3, 0, 301)
-    ]
     assert engle_granger_pval(-np.inf, trend, num_x) == 0.0
     assert engle_granger_pval(np.inf, trend, num_x) == 1.0
     assert pvals[0] < 1e-12
     assert pvals[-1] > 1 - 1e-12
+    # The p-value is not constant in the part of the distribution that matters.
+    # The normal cdf rounds to the largest double below 1 once 1 - p is below about
+    # 1e-16, which some tables with many regressors reach before a statistic of 0,
+    # so the p-value can only increase strictly where it differs from 1.
+    middle = np.array(
+        [
+            engle_granger_pval(float(stat), trend, num_x)
+            for stat in np.linspace(star - 3, 0, 301)
+        ]
+    )
+    middle = middle[middle < 1 - 1e-12]
     assert np.all(
         np.diff(middle) > 0.0
     ), f"Count 0 or negative {(np.diff(middle) <= 0.0).sum()}"
