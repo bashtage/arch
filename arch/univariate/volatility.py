@@ -1731,10 +1731,12 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids = ensure1d(resids, "resids")
         p, o, q = self.p, self.o, self.q
         power = self.power
-        alphas = [0.01, 0.05, 0.1, 0.2]
-        # Without asymmetric terms gamma is unused, so one value gives every
-        # distinct starting value, in the same order as the full grid
-        gammas = alphas if o > 0 else alphas[:1]
+        grid = [0.01, 0.05, 0.1, 0.2]
+        # alpha is unused when p is 0, and gamma when o is 0. One value of an unused
+        # coefficient gives every distinct candidate, in the order of the full grid,
+        # so the first maximum is the same candidate
+        alphas = grid if p > 0 else grid[:1]
+        gammas = grid if o > 0 else grid[:1]
         abg = [0.5, 0.7, 0.9, 0.98]
         abgs = list(itertools.product(*[alphas, gammas, abg]))
 
