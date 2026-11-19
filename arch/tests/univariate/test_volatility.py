@@ -1,3 +1,4 @@
+import itertools
 import types
 from typing import NamedTuple
 import warnings
@@ -2462,3 +2463,83 @@ def test_fiaparch_updater_reduce_setstate(setup, delta):
         restored._update_tester(t, parameters, setup.resids, sigma2_post, var_bounds)
 
     assert_allclose(sigma2_post, sigma2_pre)
+
+
+def _full_grid_starting_values(vol, resids):
+    # The original search: every (alpha, gamma, persistence) in the 4 x 4 x 4 grid,
+    # each scored with compute_variance, the first maximum wins
+    p, o, q, power = vol.p, vol.o, vol.q, vol.power
+    alphas = [0.01, 0.05, 0.1, 0.2]
+    persistences = [0.5, 0.7, 0.9, 0.98]
+    target = np.mean(np.absolute(resids) ** power)
+    scale = np.mean(resids**2) / (target ** (2.0 / power))
+    target *= scale ** (power / 2)
+    var_bounds = vol.variance_bounds(resids)
+    backcast = vol.backcast(resids)
+    svs, llfs = [], []
+    for alpha, asym, persistence in itertools.product(alphas, alphas, persistences):
+        sv = (1.0 - persistence) * target * np.ones(p + o + q + 1)
+        remaining = persistence
+        if p > 0:
+            sv[1 : 1 + p] = alpha / p
+            remaining -= alpha
+        if o > 0:
+            sv[1 + p : 1 + p + o] = asym / o
+            remaining -= asym / 2.0
+        if q > 0:
+            sv[1 + p + o : 1 + p + o + q] = remaining / q
+        sigma2 = np.zeros(resids.shape[0])
+        vol.compute_variance(sv, resids, sigma2, backcast, var_bounds)
+        svs.append(sv)
+        llfs.append(Normal().loglikelihood([], resids, sigma2))
+    return svs[int(np.argmax(llfs))]
+
+
+@pytest.mark.parametrize(
+    ("p", "o", "q", "power"),
+    [
+        (1, 0, 1, 2.0),
+        (1, 1, 1, 2.0),
+        (2, 0, 2, 2.0),
+        (1, 0, 1, 1.0),
+        (1, 1, 1, 1.0),
+        (0, 1, 1, 2.0),
+        (1, 0, 0, 2.0),
+    ],
+)
+def test_garch_starting_values_match_full_grid(setup, p, o, q, power):
+    vol = GARCH(p=p, o=o, q=q, power=power)
+    resids = setup.resids * np.sqrt(np.linspace(0.5, 2.0, setup.t))
+    assert_equal(vol.starting_values(resids), _full_grid_starting_values(vol, resids))
+
+
+def test_garch_starting_values_use_overridden_compute_variance(setup):
+    class CountingGARCH(GARCH):
+        calls = 0
+
+        def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
+            CountingGARCH.calls += 1
+            return super().compute_variance(
+                parameters, resids, sigma2, backcast, var_bounds
+            )
+
+    vol = CountingGARCH(o=1)
+    sv = vol.starting_values(setup.resids)
+    assert CountingGARCH.calls == 64
+    assert_equal(sv, GARCH(o=1).starting_values(setup.resids))
+
+
+def test_garch_starting_values_score_distinct_candidates(setup):
+    # Without asymmetric terms gamma is unused, so 16 of the 64 grid candidates
+    # are distinct, and each is scored once
+    class CountingGARCH(GARCH):
+        calls = 0
+
+        def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
+            CountingGARCH.calls += 1
+            return super().compute_variance(
+                parameters, resids, sigma2, backcast, var_bounds
+            )
+
+    CountingGARCH().starting_values(setup.resids)
+    assert CountingGARCH.calls == 16
