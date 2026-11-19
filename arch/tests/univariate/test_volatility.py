@@ -2513,33 +2513,23 @@ def test_garch_starting_values_match_full_grid(setup, p, o, q, power):
     assert_equal(vol.starting_values(resids), _full_grid_starting_values(vol, resids))
 
 
-def test_garch_starting_values_use_overridden_compute_variance(setup):
-    class CountingGARCH(GARCH):
-        calls = 0
+@pytest.mark.parametrize(
+    ("p", "o", "q", "expected"),
+    [(1, 0, 1, 16), (0, 1, 1, 16), (1, 1, 1, 64), (2, 0, 2, 16), (1, 0, 0, 16)],
+)
+def test_garch_starting_values_score_distinct_candidates(setup, p, o, q, expected):
+    # alpha is unused when p is 0 and gamma when o is 0, so only the distinct
+    # candidates of the 4 x 4 x 4 grid are scored, each once
+    scored = []
 
+    class RecordingGARCH(GARCH):
         def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
-            CountingGARCH.calls += 1
+            scored.append(tuple(parameters))
             return super().compute_variance(
                 parameters, resids, sigma2, backcast, var_bounds
             )
 
-    vol = CountingGARCH(o=1)
-    sv = vol.starting_values(setup.resids)
-    assert CountingGARCH.calls == 64
-    assert_equal(sv, GARCH(o=1).starting_values(setup.resids))
-
-
-def test_garch_starting_values_score_distinct_candidates(setup):
-    # Without asymmetric terms gamma is unused, so 16 of the 64 grid candidates
-    # are distinct, and each is scored once
-    class CountingGARCH(GARCH):
-        calls = 0
-
-        def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
-            CountingGARCH.calls += 1
-            return super().compute_variance(
-                parameters, resids, sigma2, backcast, var_bounds
-            )
-
-    CountingGARCH().starting_values(setup.resids)
-    assert CountingGARCH.calls == 16
+    RecordingGARCH(p=p, o=o, q=q).starting_values(setup.resids)
+    num_scored, num_distinct = len(scored), len(set(scored))
+    assert num_scored == expected
+    assert num_distinct == expected
