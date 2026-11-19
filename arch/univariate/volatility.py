@@ -6,7 +6,7 @@ the same methods with the same inputs.
 """
 
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 import inspect
 import itertools
 from typing import TYPE_CHECKING, Any, cast
@@ -1638,33 +1638,14 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         power = self.power
         fresids = np.absolute(resids) ** power
         sresids = np.sign(resids)
-        return self._transformed_variance(
-            parameters, fresids, sresids, sigma2, backcast, var_bounds
-        )
 
-    def _transformed_variance(
-        self,
-        parameters: Float64Array1D,
-        fresids: Float64Array1D,
-        sresids: Float64Array1D,
-        sigma2: Float64Array1D,
-        backcast: float | Float64Array1D,
-        var_bounds: Float64Array2D,
-    ) -> Float64Array1D:
-        """
-        Compute the variance from residuals already raised to the power.
-
-        ``fresids`` is ``abs(resids) ** power`` and ``sresids`` is ``sign(resids)``,
-        so that callers that evaluate many parameter values on the same residuals
-        compute them once.
-        """
         p, o, q = self.p, self.o, self.q
-        nobs = fresids.shape[0]
+        nobs = resids.shape[0]
 
         rec.garch_recursion(
             parameters, fresids, sresids, sigma2, p, o, q, nobs, backcast, var_bounds
         )
-        inv_power = 2.0 / self.power
+        inv_power = 2.0 / power
         sigma2 **= inv_power
 
         return sigma2
@@ -1765,7 +1746,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds = self.variance_bounds(resids)
         backcast = self.backcast(resids)
         llfs = np.zeros(len(abgs))
-        loglik = self._starting_value_loglikelihood(resids, backcast, var_bounds)
         for i, values in enumerate(abgs):
             alpha, gamma, agb = values
             sv = (1.0 - agb) * target * np.ones(p + o + q + 1, dtype=float)
@@ -1778,48 +1758,12 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             if q > 0:
                 sv[1 + p + o : 1 + p + o + q] = agb / q
             svs.append(cast("Float64Array1D", sv))
-            llfs[i] = loglik(cast("Float64Array1D", sv))
+            llfs[i] = self._gaussian_loglikelihood(
+                cast("Float64Array1D", sv), resids, backcast, var_bounds
+            )
         loc = np.argmax(llfs)
 
         return svs[int(loc)]
-
-    def _starting_value_loglikelihood(
-        self,
-        resids: Float64Array1D,
-        backcast: float | Float64Array1D,
-        var_bounds: Float64Array2D,
-    ) -> Callable[[Float64Array1D], float]:
-        """
-        Return the Gaussian log-likelihood of candidate starting values.
-
-        The residual transforms in ``compute_variance`` do not depend on the
-        parameters, so they are computed once for the whole grid. The arrays passed
-        to the recursion are created here as C contiguous float64 vectors and
-        matrices, so the argument checks of ``compute_variance`` are not repeated. A
-        subclass that replaces ``compute_variance`` keeps using it.
-        """
-        if type(self).compute_variance is not GARCH.compute_variance:
-
-            def generic(parameters: Float64Array1D) -> float:
-                return self._gaussian_loglikelihood(
-                    parameters, resids, backcast, var_bounds
-                )
-
-            return generic
-
-        resids = np.ascontiguousarray(resids, dtype=float)
-        var_bounds = np.ascontiguousarray(var_bounds, dtype=float)
-        fresids = np.absolute(resids) ** self.power
-        sresids = np.sign(resids)
-        sigma2 = np.empty(resids.shape[0])
-
-        def transformed(parameters: Float64Array1D) -> float:
-            self._transformed_variance(
-                parameters, fresids, sresids, sigma2, backcast, var_bounds
-            )
-            return float(self._normal.loglikelihood([], resids, sigma2))
-
-        return transformed
 
     def parameter_names(self) -> list[str]:
         return _common_names(self.p, self.o, self.q)

@@ -2513,22 +2513,6 @@ def test_garch_starting_values_match_full_grid(setup, p, o, q, power):
     assert_equal(vol.starting_values(resids), _full_grid_starting_values(vol, resids))
 
 
-def test_garch_starting_values_use_overridden_compute_variance(setup):
-    class CountingGARCH(GARCH):
-        calls = 0
-
-        def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
-            CountingGARCH.calls += 1
-            return super().compute_variance(
-                parameters, resids, sigma2, backcast, var_bounds
-            )
-
-    vol = CountingGARCH(o=1)
-    sv = vol.starting_values(setup.resids)
-    assert CountingGARCH.calls == 64
-    assert_equal(sv, GARCH(o=1).starting_values(setup.resids))
-
-
 def test_garch_starting_values_score_distinct_candidates(setup):
     # Without asymmetric terms gamma is unused, so 16 of the 64 grid candidates
     # are distinct, and each is scored once
