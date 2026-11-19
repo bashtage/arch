@@ -153,26 +153,18 @@ def constraint(a: Float64Array, b: Float64Array) -> list[dict[str, object]]:
     a = check_array("a", a, ndim=2, squeeze=False)
     b = check_array("b", b, ndim=1, shape=(a.shape[0],), squeeze=False)
 
-    def factory(coeff: Float64Array, val: float) -> Callable[..., float]:
+    def factory(coeff: Float64Array, val: float) -> dict[str, object]:
         def f(params: Float64Array, *args: Any) -> float:
             return np.dot(coeff, params) - val
 
-        return f
-
-    def jac_factory(coeff: Float64Array) -> Callable[..., Float64Array]:
         # The constraints are linear, so the gradient is the row of a. Without it
         # SLSQP approximates the gradient by finite differences at every iteration.
         def jac(params: Float64Array, *args: Any) -> Float64Array:
             return coeff
 
-        return jac
+        return {"type": "ineq", "fun": f, "jac": jac}
 
-    constraints = []
-    for i in range(a.shape[0]):
-        con = {"type": "ineq", "fun": factory(a[i], b[i]), "jac": jac_factory(a[i])}
-        constraints.append(con)
-
-    return constraints
+    return [factory(a[i], b[i]) for i in range(a.shape[0])]
 
 
 def format_float_fixed(x: float, max_digits: int = 10, decimal: int = 4) -> str:
