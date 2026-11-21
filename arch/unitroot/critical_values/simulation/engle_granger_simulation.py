@@ -6,31 +6,30 @@ import argparse
 from collections.abc import Sequence
 import datetime as dt
 from functools import partial
-from itertools import product
-import os
+import pathlib
 from random import shuffle
-import sys
 
 import colorama
 from joblib import Parallel, cpu_count, delayed
 import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
 
-ROOT = os.path.join(os.path.split(os.path.abspath(__file__))[0], "engle-granger")
-if not os.path.exists(ROOT):
-    os.mkdir(ROOT)
+ROOT = pathlib.Path(__file__).resolve().parent / "engle-granger"
+ROOT.mkdir(exist_ok=True)
+# Colors in the Windows console
+colorama.just_fix_windows_console()
 # Number of simulations per exercise
-EX_SIZE = 250000
+EX_SIZE = 250_000
 # Number of experiments
-EX_NUM = 500
+EX_NUM = 2000
 # percentiles to save
-PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
+PERCENTILES = list(np.arange(1, 50, 1) / 10) + list(np.arange(50, 1000, 5) / 10)
 PERCENTILES = PERCENTILES[::-1]
 # Maximum memory of the main simulated data
 MAX_MEMORY = 2**21
-
-if sys.platform.lower() == "win32":
-    os.system("color")
+TRENDS = ("nc", "c", "ct", "ctt")
+BLUE = colorama.Fore.BLUE
+RESET = colorama.Fore.RESET
 
 
 def block(
@@ -42,22 +41,23 @@ def block(
     idx: int,
 ) -> None:
     filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
-    fullfile = os.path.join(ROOT, filename)
-    if os.path.exists(fullfile):
+    fullfile = ROOT / filename
+    if fullfile.exists():
         return
+    # The data are the dependent variable and max_k regressors
     max_k = cross_section_size
     max_t = max(sample_sizes) + 1
-    max_blocks_size = max(MAX_MEMORY // (max_t * max_k * 8), 1)
+    max_blocks_size = max(MAX_MEMORY // (max_t * (max_k + 1) * 8), 1)
     print(f"Max block size: {max_blocks_size}")
     remaining = simulations
     completed = 0
-    tstats = np.empty((len(sample_sizes), simulations, max_k))
+    tstats = np.empty((len(sample_sizes), simulations, max_k + 1))
     start = dt.datetime.now()
     last_report = remaining + 1001
     while remaining:
         this_block = min(remaining, max_blocks_size)
         remaining -= this_block
-        e = rg.standard_normal((this_block, max_t + 50, max_k))
+        e = rg.standard_normal((this_block, max_t + 50, max_k + 1))
         data = np.cumsum(e, 1)
         data = data[:, 50:, :]
         del e
@@ -68,8 +68,8 @@ def block(
                 raise NotImplementedError
             if trend in ("c", "ct", "ctt"):
                 # Mean 0
-                mu = sub.mean(1)
-                mu = np.reshape(mu, (this_block, 1, cross_section_size), copy=False)
+                mu = sub.mean(axis=1)
+                mu = np.reshape(mu, (this_block, 1, cross_section_size + 1), copy=False)
                 sub -= mu
             if trend in ("ct", "ctt"):
                 # Orthogonalize to trend
@@ -78,7 +78,7 @@ def block(
                 tau = _tau.reshape((sub_size + 1, 1))
                 coefs = (tau * sub).sum(1) / (tau**2).sum()
                 coefs = np.reshape(
-                    coefs, (this_block, 1, cross_section_size), copy=False
+                    coefs, (this_block, 1, cross_section_size + 1), copy=False
                 )
                 sub -= coefs * tau
             if trend == "ctt":
@@ -90,17 +90,17 @@ def block(
                 tau2 = _tau2.reshape((sub_size + 1, 1))
                 coefs = (tau2 * sub).sum(1) / (tau2**2).sum()
                 coefs = np.reshape(
-                    coefs, (this_block, 1, cross_section_size), copy=False
+                    coefs, (this_block, 1, cross_section_size + 1), copy=False
                 )
                 sub -= coefs * tau2
-            errors = np.empty((this_block, sub_size + 1, max_k))
+            errors = np.empty((this_block, sub_size + 1, max_k + 1))
             errors[:, :, :1] = sub[:, :, :1]
             rhs = sub[:, :, 1:]
             ip = np.matmul(np.transpose(rhs, (0, 2, 1)), rhs) / sub_size
             ip_chol_inv = np.linalg.inv(np.linalg.cholesky(ip))
             orth = np.matmul(rhs, np.transpose(ip_chol_inv, (0, 2, 1)))
             del ip_chol_inv, ip, rhs, sub
-            for i in range(1, max_k):
+            for i in range(1, max_k + 1):
                 y = errors[:, :, (i - 1) : i]
                 x = orth[:, :, (i - 1) : i]
                 xp = np.transpose(x, (0, 2, 1))
@@ -127,15 +127,21 @@ def block(
         elapsed = dt.datetime.now() - start
         time_per_iter = elapsed.total_seconds() / completed
         remaining_time = int(time_per_iter * remaining)
-        if last_report - remaining > 1000:
+        if last_report - remaining > 10000:
             last_report = remaining
-            print(f"Index: {idx}, Trend: {trend}, Remaining: {remaining}")
-            print(f"Est. time remaining: {dt.timedelta(seconds=remaining_time)!s}")
+            remaining_count = remaining
+            if remaining_count < 15000:
+                remaining_count = colorama.Fore.RED + f"{remaining_count}"
+            print(f"Index: {idx}, Trend: {trend}, Remaining: {remaining_count}" + RESET)
+            print(
+                f"Est. time remaining: {BLUE}{dt.timedelta(seconds=remaining_time)!s}{RESET}"
+            )
 
     out = np.percentile(tstats, PERCENTILES, 1)
     np.savez(
         fullfile,
         quantiles=out,
+        percentiles=np.array(PERCENTILES),
         trend=np.array([trend]),
         sample_sizes=np.array(sample_sizes),
     )
@@ -150,9 +156,9 @@ if __name__ == "__main__":
         help="Number of CPUs to use. If not specified, uses cpu_count() - 1",
     )
     args = parser.parse_args()
-    njobs = getattr(args, "ncpu", None)
-    njobs = cpu_count() - 1 if njobs is None else njobs
-    print(f"Running on {njobs} CPUs")
+    ncpu = getattr(args, "ncpu", None)
+    ncpu = cpu_count() - 1 if ncpu is None else ncpu
+    print(f"Running on {ncpu} CPUs")
     entropy_bits = [
         41526,
         18062,
@@ -173,7 +179,8 @@ if __name__ == "__main__":
     ]
     entropy = sum(bits << (16 * i) for i, bits in enumerate(entropy_bits))
     seq = SeedSequence(entropy)
-    gen = [Generator(PCG64(child)) for child in seq.spawn(EX_NUM)]
+    gen = [Generator(PCG64(child)) for child in seq.spawn(EX_NUM * len(TRENDS))]
+    assert len(gen) == EX_NUM * len(TRENDS)
     sample_sizes = (
         20,
         25,
@@ -207,7 +214,7 @@ if __name__ == "__main__":
         1400,
         2000,
     )
-    trends = ("nc", "c", "ct", "ctt")
+    # The largest number of regressors, which is the largest num_x of engle_granger
     cross_section_size = 12
     simulations = EX_SIZE
 
@@ -219,24 +226,32 @@ if __name__ == "__main__":
     )
 
     remaining_configs = []
-    configs = list(product(enumerate(gen), trends))
-    for config in configs:
-        trend = config[-1]
-        idx = config[0][0]
-        filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
-        fullfile = os.path.join(ROOT, filename)
-        if not os.path.exists(fullfile):
-            remaining_configs.append(config)
-    nconfig = colorama.Fore.GREEN + f"{len(configs)}" + colorama.Fore.RESET
+    count = 0
+    ids_seen = []
+    for idx in range(EX_NUM):
+        for trend in TRENDS:
+            config = ((idx, gen[count]), trend)
+            ids_seen.append(id(gen[count]))
+            filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
+            fullfile = ROOT / filename
+            count += 1
+            if not fullfile.exists():
+                remaining_configs.append(config)
+    assert len(set(ids_seen)) == (EX_NUM * len(TRENDS))
+    assert len({id(config[0][1]) for config in remaining_configs}) == len(
+        remaining_configs
+    )
+
+    nconfig = colorama.Fore.GREEN + f"{len(gen)}" + colorama.Fore.RESET
     nremconfig = colorama.Fore.RED + f"{len(remaining_configs)}" + colorama.Fore.RESET
     print(f"Total configuration: {nconfig}, Remaining: {nremconfig}")
 
     shuffle(remaining_configs)
-    if njobs == 1:
+    if ncpu == 1:
         for (idx, rg), trend in remaining_configs:
             partial_block(rg, trend=trend, idx=idx)
     else:
-        Parallel(verbose=50, n_jobs=njobs)(
+        Parallel(verbose=50, n_jobs=ncpu)(
             delayed(partial_block)(rg, trend=trend, idx=idx)
             for ((idx, rg), trend) in remaining_configs
         )

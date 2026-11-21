@@ -18,17 +18,20 @@ from arch.unitroot.critical_values.engle_granger import (
     TAU_MAX,
     TAU_MIN,
     TAU_STAR,
+    eg_num_variables,
 )
 from arch.unitroot.unitroot import ADF, TREND_DESCRIPTION
 from arch.utility._validation import check_bool, check_int, check_option
 
+# The largest number of regressors in the simulations
+_MAX_NUM_X = int(eg_num_variables[-1])
+
 
 def _check_num_x(num_x: int) -> None:
-    # The simulations have up to 11 regressors
-    if not 1 <= num_x <= 11:
+    if not 1 <= num_x <= _MAX_NUM_X:
         raise ValueError(
             "The number of cross-sectional variables must be between 1 and "
-            "11 (inclusive)"
+            f"{_MAX_NUM_X} (inclusive)"
         )
 
 
@@ -52,7 +55,7 @@ def engle_granger(
         1-d and contain only finite values.
     x : array_like
         The right-hand-side variables in the cointegrating regression. It must
-        be 1-d or 2-d with the same number of rows as y, between 1 and 11 columns,
+        be 1-d or 2-d with the same number of rows as y, between 1 and 12 columns,
         the same index as y if both are pandas objects, and contain only finite
         values. The number of rows must be at least two more than the number of
         parameters in the cointegrating regression (the number of columns of x
@@ -106,7 +109,7 @@ def engle_granger(
     ValueError
         If y or x contains NaN or inf, does not have the required dimensions, the
         same number of rows or the same index, or has too few rows. Also if x has
-        more than 11 columns, lags is negative, max_lags is not between 0 and
+        more than 12 columns, lags is negative, max_lags is not between 0 and
         nobs - 2, or trend or method is not one of the options.
     InfeasibleTestException
         If `y` is constant, or the Augmented Dickey-Fuller regression of the
@@ -320,7 +323,7 @@ def engle_granger_cv(trend: str, num_x: int, nobs: int) -> pd.Series:
         The trend included in the model. Not case sensitive.
     num_x : int
         The number of cross-sectional regressors in the model.
-        Must be between 1 and 11.
+        Must be between 1 and 12.
     nobs : int
         The number of observations in the ADF regression of the residuals, which
         is the number of observations in the time series less the number of lags
@@ -355,7 +358,7 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
         The trend included in the model. Not case sensitive.
     num_x : int
         The number of cross-sectional regressors in the model.
-        Must be between 1 and 11.
+        Must be between 1 and 12.
 
     Returns
     -------

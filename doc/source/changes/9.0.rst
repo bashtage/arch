@@ -15,6 +15,15 @@ New features
   non-proportional series could hide. The result is a
   :class:`~arch.univariate.MaxUndetectableUnderstatementResult` with the limit, the
   binding test, and the exceptions it would add (:issue:`904`, :issue:`1015`).
+- :func:`~arch.unitroot.engle_granger` accepts up to 12 regressors in ``x``, as
+  :func:`~arch.unitroot.phillips_ouliaris` does. It accepted up to 11.
+
+Changes that alter results
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+- The critical values and p-values of :func:`~arch.unitroot.engle_granger` come from new
+  simulations, with 2000 experiments of 250,000 replications instead of 500, and
+  quantiles every 0.1% up to 5% (up to 1% in 9.0) and every 0.5% above. The critical
+  values and p-values of every test differ slightly from 9.0.
 
 Bug fixes
 ~~~~~~~~~
