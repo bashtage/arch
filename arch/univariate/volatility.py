@@ -2145,7 +2145,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         data[:max_lag] = np.sqrt(initial_value)
         # The squared data, to avoid squaring it once for each term of each sum
         data2 = np.empty(nobs + burn)
-        data2[:max_lag] = data[0] ** 2.0
+        data2[:max_lag] = data[:max_lag] ** 2.0
         # The weight and the lag of each term that is added to omega, in order.
         # The terms are added one at a time, in this order, using a cumulative sum
         weights = np.concatenate(
@@ -2460,7 +2460,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         data[:m] = np.sqrt(initial_value)
         # The squared data, to avoid squaring it once for each term of each sum
         data2 = np.empty(nobs + burn)
-        data2[:m] = data[0] ** 2.0
+        data2[:m] = data[:m] ** 2.0
         # Coefficient on the first m values, which are initial values
         init_coef = aw + 0.5 * gw
         # The m terms that are added to omega are added one at a time, in order of

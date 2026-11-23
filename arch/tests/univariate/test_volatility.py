@@ -372,6 +372,25 @@ def test_harch(setup, initial_value):
     assert str(hex(id(harch))) in txt
 
 
+def test_harch_simulate_vector_initial_value():
+    harch = HARCH(lags=[1, 3])
+    params = np.array([0.1, 0.2, 0.3])
+    iv = np.array([1.0, 4.0, 9.0])
+    _, sigma2 = harch.simulate(
+        params,
+        5,
+        rng=np.zeros,
+        burn=0,
+        initial_value=iv,
+    )
+    assert_allclose(sigma2[:3], iv)
+    expected_lag1 = iv[2]
+    expected_lag3 = np.mean(iv)
+    assert_allclose(
+        sigma2[3], params[0] + params[1] * expected_lag1 + params[2] * expected_lag3
+    )
+
+
 def test_constant_variance(setup):
     cv = ConstantVariance()
 
@@ -1240,6 +1259,22 @@ def test_midas_symmetric(setup, initial_value):
     parameters = np.array([0.1, 1.1, 0.4])
     with pytest.warns(InitialValueWarning, match=r"Parameters are not consistent"):
         midas.simulate(parameters, setup.t, rng.simulate([]))
+
+
+def test_midas_simulate_vector_initial_value():
+    midas = MIDASHyperbolic(m=3)
+    params = np.array([0.1, 0.4, 0.5])
+    iv = np.array([1.0, 4.0, 9.0])
+    _, sigma2 = midas.simulate(
+        params,
+        5,
+        rng=np.zeros,
+        burn=0,
+        initial_value=iv,
+    )
+    weights = midas._weights(params)
+    expected_first = params[0] + params[1] * np.dot(weights, iv[::-1])
+    assert_allclose(sigma2[0], expected_first)
 
 
 def test_midas_asymmetric(setup):
