@@ -1805,6 +1805,19 @@ def test_aparch_configs(p, o, q, delta, common_asym):
     assert aparch.common_asym == (common_asym and o > 0)
 
 
+def test_aparch_constraints_multiple_q():
+    aparch = APARCH(p=1, o=1, q=2)
+    a, b = aparch.constraints()
+    # alpha (2 rows: omega, alpha[1]), gamma (2*o rows), beta (q rows),
+    # delta (2 rows), stationarity (1 row) -> 9 x 6
+    assert_equal(a.shape, (9, 6))
+    # Each beta[i] >= 0 constraint must occupy its own row
+    assert_array_equal(a[4], np.array([0.0, 0.0, 0.0, 1.0, 0.0, 0.0]))
+    assert_array_equal(a[5], np.array([0.0, 0.0, 0.0, 0.0, 1.0, 0.0]))
+    assert_array_equal(a[8], np.array([0.0, -1.0, 0.0, -1.0, -1.0, 0.0]))
+    assert_array_equal(b[4:6], np.array([0.0, 0.0]))
+
+
 def test_figarch_weights():
     params = np.array([0.2, 0.4, 0.2])
     lam_py = recpy.figarch_weights_python(params, 1, 1, 1000)

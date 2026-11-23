@@ -4905,7 +4905,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             a[1 + p + i, 1 + p + i] = 1.0
             a[1 + p + o + i, 1 + p + i] = -1.0
         for i in range(q):
-            a[1 + p + 2 * o, 1 + p + o + i] = 1.0
+            a[1 + p + 2 * o + i, 1 + p + o + i] = 1.0
         if self._est_delta:
             a[1 + p + 2 * o + q, 1 + p + o + q] = 1.0
             a[1 + p + 2 * o + q + 1, 1 + p + o + q] = -1.0
