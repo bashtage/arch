@@ -319,6 +319,37 @@ class TestUnitRoot:
         assert_almost_equal(ratio, vr.vr)
         assert_equal(vr.debiased, False)
 
+    def test_variance_ratio_no_constant_debiased(self):
+        # With trend "n" the drift is known to be 0, and so no degree of freedom is
+        # used to estimate it. The unbiased variances divide by nq and q(nq - q + 1),
+        # not by the nq - 1 and m of an estimated drift.
+        y = np.cumsum(self.rng.standard_normal(101))
+        q = 10
+        vr = VarianceRatio(y, lags=q, trend="n", debiased=True)
+        dy = np.diff(y)
+        nq = dy.shape[0]
+        denom = np.sum(dy**2.0) / nq
+        num = np.sum((y[q:] - y[:-q]) ** 2.0) / (q * (nq - q + 1))
+        assert_allclose(vr.vr, num / denom)
+        assert_equal(vr.debiased, True)
+
+    @pytest.mark.parametrize("trend", ["n", "c"])
+    def test_variance_ratio_debiased_centered(self, trend):
+        # Under the null of a Gaussian random walk without drift, the debiased
+        # variance ratio has mean 1 whether or not the drift is estimated
+        rng = RandomState(12345)
+        nq, q = 60, 12
+        ratios = [
+            VarianceRatio(
+                np.cumsum(rng.standard_normal(nq + 1)),
+                lags=q,
+                trend=trend,
+                debiased=True,
+            ).vr
+            for _ in range(1000)
+        ]
+        assert_allclose(np.mean(ratios), 1.0, atol=0.06)
+
     def test_variance_ratio_invalid_lags(self):
         y = self.inflation
         with pytest.raises(ValueError, match=r"lags must be an integer >= 2; got 1"):
