@@ -2177,8 +2177,15 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._summary_text = ["Computed with overlapping blocks"]
 
         if debiased and overlap:
-            sigma2_1 *= nq / (nq - 1)
-            m = q * (nq - q + 1) * (1 - (q / nq))
+            if trend == "n":
+                # The drift is known to be 0, so no degree of freedom is used to
+                # estimate it, and the sums of squares have expected values nq and
+                # q(nq - q + 1) times the variance
+                m = q * (nq - q + 1)
+            else:
+                # Lo and MacKinlay's corrections for the estimated drift
+                sigma2_1 *= nq / (nq - 1)
+                m = q * (nq - q + 1) * (1 - (q / nq))
             sigma2_q *= (nq * q) / m
             self._summary_text = ["Computed with overlapping blocks (de-biased)"]
 
