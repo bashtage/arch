@@ -1123,6 +1123,11 @@ class ARCHModel(metaclass=ABCMeta):
             v.closed_form and d.num_params == 0 and isinstance(v, ConstantVariance)
         )
 
+        if self.scale != 1.0:
+            # Choose the scale of each estimation sample in the original units.
+            self.scale = 1.0
+            self._y = to_array_1d(self._y_series.to_numpy(dtype=float, copy=True))
+            self._scale_changed()
         self._adjust_sample(first_obs, last_obs)
 
         resids = self.resids(self.starting_values())

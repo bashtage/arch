@@ -3,7 +3,7 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
-from arch.univariate import GARCH, Normal, ZeroMean
+from arch.univariate import ARX, GARCH, Normal, ZeroMean
 
 
 @pytest.fixture(scope="module")
@@ -54,3 +54,28 @@ def test_rescale_fit(small_data, std_data):
     small_fcast = small_res.forecast(start=0)
     direct_fcast = direct_res.forecast(start=0)
     assert_allclose(small_fcast.variance, direct_fcast.variance)
+
+
+@pytest.mark.parametrize(
+    ("amplitude", "scale"), [(0.02, 100.0), (2.0, 1.0), (200.0, 0.1)]
+)
+def test_rescale_refit_window(amplitude, scale):
+    rng = np.random.default_rng(1243)
+    y = rng.standard_normal(400)
+    y[:200] *= 0.0002
+    y[200:] *= amplitude
+    model = ARX(y, lags=1, rescale=True)
+    first = model.fit(last_obs=200, disp="off")
+    assert first.scale == 10000.0
+    result = model.fit(first_obs=200, disp="off")
+
+    # OLS on the second window in the units selected for this window.
+    window = scale * y[200:]
+    x = np.column_stack((np.ones(window.size - 1), window[:-1]))
+    params = np.linalg.lstsq(x, window[1:], rcond=None)[0]
+    sigma2 = np.mean((window[1:] - x @ params) ** 2)
+    assert result.scale == scale
+    assert_allclose(result.params, [*params, sigma2])
+    forecast = result.forecast()
+    assert_allclose(forecast.mean.iloc[-1, 0], params[0] + params[1] * window[-1])
+    assert_allclose(forecast.variance.iloc[-1, 0], sigma2)
